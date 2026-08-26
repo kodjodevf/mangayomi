@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/extension_store_service.dart';
@@ -19,7 +19,7 @@ class AndroidProxyServerState extends _$AndroidProxyServerState {
   @override
   String build() {
     String proxyServer =
-        isar.settings.getSync(227)!.androidProxyServer ??
+        settingsRepository.currentOrNull?.androidProxyServer ??
         "http://127.0.0.1:8080";
     if (!proxyServer.startsWith("http")) {
       proxyServer = "http://$proxyServer";
@@ -34,15 +34,8 @@ class AndroidProxyServerState extends _$AndroidProxyServerState {
   }
 
   void set(String value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..androidProxyServer = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.androidProxyServer = value);
   }
 }
 
@@ -51,18 +44,14 @@ class AutoStartExtensionServerOnLaunchState
     extends _$AutoStartExtensionServerOnLaunchState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.autoStartExtensionServerOnLaunch ?? false;
+    return settingsRepository.currentOrNull?.autoStartExtensionServerOnLaunch ??
+        false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..autoStartExtensionServerOnLaunch = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
+    settingsRepository.update(
+      (s) => s.autoStartExtensionServerOnLaunch = value,
     );
   }
 }
@@ -71,19 +60,12 @@ class AutoStartExtensionServerOnLaunchState
 class OnlyIncludePinnedSourceState extends _$OnlyIncludePinnedSourceState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.onlyIncludePinnedSources!;
+    return settingsRepository.current.onlyIncludePinnedSources!;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..onlyIncludePinnedSources = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.onlyIncludePinnedSources = value);
   }
 }
 
@@ -91,33 +73,52 @@ class OnlyIncludePinnedSourceState extends _$OnlyIncludePinnedSourceState {
 class ShowNSFWState extends _$ShowNSFWState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.showNSFW ?? false;
+    return settingsRepository.current.showNSFW ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..showNSFW = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.showNSFW = value);
   }
 }
 
 @riverpod
 class ExtensionsRepoState extends _$ExtensionsRepoState {
+  static List<Repo> _deduplicate(List<Repo> repos) {
+    final seen = <String>{};
+    final result = <Repo>[];
+    for (final repo in repos) {
+      final key = repo.jsonUrl?.trim().toLowerCase();
+      if (key != null && key.isNotEmpty) {
+        if (seen.add(key)) {
+          result.add(repo);
+        }
+      } else {
+        result.add(repo);
+      }
+    }
+    return result;
+  }
+
   @override
   List<Repo> build(ItemType itemType) {
-    final settings = isar.settings.getSync(227)!;
-    return switch (itemType) {
+    final settings = settingsRepository.current;
+    final list = switch (itemType) {
           ItemType.manga => settings.mangaExtensionsRepo,
           ItemType.anime => settings.animeExtensionsRepo,
           _ => settings.novelExtensionsRepo,
         } ??
         [];
+    return _deduplicate(list);
+  }
+
+  bool containsRepo(String url) {
+    final clean = url.trim().toLowerCase();
+    return state.any((r) {
+      final rUrl = r.jsonUrl?.trim().toLowerCase();
+      if (rUrl == null) return false;
+      return rUrl == clean || rUrl == '$clean/' || '$rUrl/' == clean;
+    });
   }
 
   void setVisibility(Repo repo, bool hidden) {
@@ -131,27 +132,19 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
   }
 
   void set(List<Repo> value) {
-    final settings = isar.settings.getSync(227)!;
-    state = value;
-    isar.writeTxnSync(() {
-      final a = switch (itemType) {
-        ItemType.manga => isar.settings.putSync(
-          settings
-            ..mangaExtensionsRepo = value
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-        ),
-        ItemType.anime => isar.settings.putSync(
-          settings
-            ..animeExtensionsRepo = value
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-        ),
-        _ => isar.settings.putSync(
-          settings
-            ..novelExtensionsRepo = value
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-        ),
-      };
-      a;
+    final deduplicated = _deduplicate(value);
+    state = deduplicated;
+    settingsRepository.update((s) {
+      switch (itemType) {
+        case ItemType.manga:
+          s.mangaExtensionsRepo = deduplicated;
+          break;
+        case ItemType.anime:
+          s.animeExtensionsRepo = deduplicated;
+          break;
+        default:
+          s.novelExtensionsRepo = deduplicated;
+      }
     });
     try {
       final a = ref.refresh(
@@ -170,19 +163,12 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
 class AutoUpdateExtensionsState extends _$AutoUpdateExtensionsState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.autoExtensionsUpdates ?? false;
+    return settingsRepository.current.autoExtensionsUpdates ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..autoExtensionsUpdates = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.autoExtensionsUpdates = value);
   }
 }
 
@@ -190,69 +176,110 @@ class AutoUpdateExtensionsState extends _$AutoUpdateExtensionsState {
 class CheckForExtensionsUpdateState extends _$CheckForExtensionsUpdateState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.checkForExtensionUpdates ?? true;
+    return settingsRepository.current.checkForExtensionUpdates ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..checkForExtensionUpdates = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.checkForExtensionUpdates = value);
   }
 }
 
 @riverpod
 Future<Repo?> getRepoInfos(Ref ref, {required String jsonUrl}) async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
+  final cleanUrl = jsonUrl.trim();
 
-  if (['/.min.json', '.pb'].any((suffix) => jsonUrl.endsWith(suffix))) {
-    final result = await ExtensionStoreService.fetchStore(jsonUrl, http);
-    if (result != null) {
-      return Repo(
-        name: result.name,
-        website: result.website,
-        jsonUrl: result.indexUrl,
-      );
-    }
+  // Normalize URLs that don't end with a file name (e.g. https://aidoku-community.github.io/sources)
+  final urlsToTry = <String>[cleanUrl];
+  if (!cleanUrl.endsWith('.json') && !cleanUrl.endsWith('.pb')) {
+    final normalized = cleanUrl.endsWith('/')
+        ? cleanUrl.substring(0, cleanUrl.length - 1)
+        : cleanUrl;
+    urlsToTry.addAll([
+      '$normalized/index.min.json',
+      '$normalized/repo.json',
+      '$normalized/index.json',
+      '$normalized/index_v2.json',
+    ]);
   }
 
-  Map<String, dynamic> infos = {};
-  final match = RegExp(r'^(.*)/[^/]+\.json$').firstMatch(jsonUrl);
-
-  final res = await http.get(Uri.parse(jsonUrl));
-  if (!_checkValidUrl(res)) {
-    return null;
+  // 1. Try ExtensionStoreService (.pb, NetworkExtensionStore JSON, Aidoku JSON index, legacy JSON store)
+  for (final url in urlsToTry) {
+    try {
+      final result = await ExtensionStoreService.fetchStore(url, http);
+      if (result != null &&
+          (result.sources.isNotEmpty || result.name.isNotEmpty)) {
+        String repoName = result.name;
+        if (repoName.isEmpty || repoName.endsWith('.json')) {
+          final uri = Uri.parse(url);
+          final segments = uri.pathSegments
+              .where((s) => s.isNotEmpty && !s.endsWith('.json'))
+              .toList();
+          repoName = segments.lastOrNull ?? uri.host;
+        }
+        return Repo(
+          name: repoName,
+          website: result.website ?? url,
+          jsonUrl: result.indexUrl,
+        );
+      }
+    } catch (_) {}
   }
 
-  if (match != null) {
-    String url = match.group(1)!;
-    final res = await http.get(Uri.parse("$url/repo.json"));
-    if (res.statusCode == 200) {
-      infos.addAll(jsonDecode(res.body));
-    }
+  // 2. Fallback for custom / legacy JSON list format
+  for (final url in urlsToTry) {
+    try {
+      final res = await http.get(Uri.parse(url));
+      if (_checkValidUrl(res)) {
+        Map<String, dynamic> infos = {};
+        final match = RegExp(r'^(.*)/[^/]+\.json$').firstMatch(url);
+        if (match != null) {
+          String baseUrl = match.group(1)!;
+          try {
+            final repoRes = await http.get(Uri.parse("$baseUrl/repo.json"));
+            if (repoRes.statusCode == 200) {
+              final decoded = jsonDecode(repoRes.body);
+              if (decoded is Map<String, dynamic>) {
+                infos.addAll(decoded);
+              }
+            }
+          } catch (_) {}
+        }
+        infos["jsonUrl"] = url;
+        final repo = Repo.fromJson(infos);
+        if (repo.name == null ||
+            repo.name!.isEmpty ||
+            repo.name!.endsWith('.json')) {
+          final uri = Uri.parse(url);
+          final segments = uri.pathSegments
+              .where((s) => s.isNotEmpty && !s.endsWith('.json'))
+              .toList();
+          repo.name = segments.lastOrNull ?? uri.host;
+        }
+        return repo;
+      }
+    } catch (_) {}
   }
 
-  infos["jsonUrl"] = jsonUrl;
-  return Repo.fromJson(infos);
+  return null;
 }
 
 bool _checkValidUrl(Response res) {
   try {
-    final sourceList = (jsonDecode(res.body) as List).map(
-      (e) => Source.fromJson(e),
-    );
-    if (sourceList.firstOrNull?.name == null) {
-      return false;
+    final decoded = jsonDecode(res.body);
+    if (decoded is List) {
+      final sourceList = decoded.map((e) => Source.fromJson(e));
+      if (sourceList.firstOrNull?.name != null) {
+        return true;
+      }
+    } else if (decoded is Map && decoded['sources'] is List) {
+      return true;
     }
   } catch (err) {
     return false;
   }
-  return true;
+  return false;
 }
 
 final isExtensionServerInstalledStreamProvider = StreamProvider<bool>((
@@ -262,12 +289,9 @@ final isExtensionServerInstalledStreamProvider = StreamProvider<bool>((
     yield true;
     return;
   }
-  await for (final settings in isar.settings.watchObject(
-    227,
-    fireImmediately: true,
-  )) {
-    final jrePath = settings?.jrePath ?? '';
-    final serverPath = settings?.extensionServerPath ?? '';
+  await for (final settings in settingsRepository.watch()) {
+    final jrePath = settings.jrePath ?? '';
+    final serverPath = settings.extensionServerPath ?? '';
     if (jrePath.isEmpty || serverPath.isEmpty) {
       yield false;
     } else {

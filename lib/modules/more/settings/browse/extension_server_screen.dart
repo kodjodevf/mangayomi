@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -7,14 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/extension_server/android_proxy_server_dialog.dart';
 import 'package:mangayomi/modules/more/settings/browse/extension_server/extension_server_release.dart';
 import 'package:mangayomi/modules/more/settings/browse/extension_server/extension_server_tiles.dart';
 import 'package:mangayomi/modules/more/settings/browse/extension_server/extension_server_utils.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/m_extension_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -53,8 +54,8 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _refreshStatus();
-      _refreshRuntimeStatus();
+      unawaited(_refreshStatus());
+      unawaited(_refreshRuntimeStatus());
     });
   }
 
@@ -406,24 +407,50 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     }
     final l10n = l10nLocalizations(context)!;
     _setCheckingState(true);
-    final configuredPaths = _readConfiguredPaths();
-    final fileState = await _resolveFileState(configuredPaths);
-    final releaseState = await _resolveLatestReleaseState(l10n, fileState);
+    try {
+      final configuredPaths = _readConfiguredPaths();
+      final fileState = await _resolveFileState(configuredPaths);
+      final releaseState = await _resolveLatestReleaseState(l10n, fileState);
+      if (!mounted) return;
+      final selectedInstallDirectory = await _resolveSelectedInstallDirectory(
+        configuredPaths,
+      );
+      _applyStatusState(
+        selectedInstallDirectory: selectedInstallDirectory,
+        configuredPaths: configuredPaths,
+        fileState: fileState,
+        releaseState: releaseState,
+      );
+    } on FileSystemException {
+      _applyStatusFailure(l10n.could_not_check_proxy_server_updates);
+    } catch (error, stack) {
+      // Expected storage failures are handled above. Anything else is still a
+      // genuine app failure and should remain actionable in the reporter.
+      CrashReports.record(
+        source: 'ExtensionServerStatus',
+        error: error,
+        stack: stack,
+      );
+      _applyStatusFailure(l10n.could_not_check_proxy_server_updates);
+    }
+  }
+
+  void _applyStatusFailure(String message) {
     if (!mounted) return;
-    final selectedInstallDirectory = await _resolveSelectedInstallDirectory(
-      configuredPaths,
-    );
-    _applyStatusState(
-      selectedInstallDirectory: selectedInstallDirectory,
-      configuredPaths: configuredPaths,
-      fileState: fileState,
-      releaseState: releaseState,
-    );
+    setState(() {
+      _isChecking = false;
+      _releaseCheckMessage = message;
+    });
   }
 
   Future<void> _refreshRuntimeStatus() async {
     if (!Platform.isIOS) return;
-    final running = await MExtensionServerPlatform(ref).checkLocalServer();
+    var running = false;
+    try {
+      running = await MExtensionServerPlatform(ref).checkLocalServer();
+    } catch (_) {
+      // A missing local runtime is a stopped server, not a global app crash.
+    }
     if (mounted) setState(() => _runtimeRunning = running);
   }
 
@@ -564,14 +591,10 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     required String extensionServerPath,
     required String installDirectory,
   }) async {
-    final settings = isar.settings.getSync(227);
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..jrePath = jrePath
-          ..extensionServerPath = extensionServerPath
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
+    settingsRepository.update(
+      (s) => s
+        ..jrePath = jrePath
+        ..extensionServerPath = extensionServerPath,
     );
     if (mounted) {
       setState(() {
@@ -594,8 +617,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
 
   Future<Directory> _defaultInstallDirectory() async {
     final provider = StorageProvider();
-    final serverDirectory = await provider.getExtensionServerDirectory();
-    return serverDirectory!;
+    return provider.getExtensionServerDirectory();
   }
 
   Future<ExtensionServerRelease?> _fetchLatestRelease() async {
@@ -646,7 +668,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   }
 
   _ConfiguredPaths _readConfiguredPaths() {
-    final settings = isar.settings.getSync(227);
+    final settings = settingsRepository.currentOrNull;
     return _ConfiguredPaths(
       jrePath: settings?.jrePath ?? '',
       extensionServerPath: settings?.extensionServerPath ?? '',

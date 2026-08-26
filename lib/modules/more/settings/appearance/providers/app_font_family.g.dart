@@ -56,7 +56,7 @@ final class AppFontFamilyProvider
   }
 }
 
-String _$appFontFamilyHash() => r'dd41a837a85941ec5d167e0281ede0e660a7097d';
+String _$appFontFamilyHash() => r'0ec01471b2f54563146e49a1d104a9ac2420bb02';
 
 /// Provides both the raw and resolved font family.
 ///

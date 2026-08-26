@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/custom_button.dart';
@@ -79,9 +79,12 @@ class StorageProvider {
     return await dir.exists() ? dir : null;
   }
 
-  Future<Directory?> getExtensionServerDirectory() async {
+  Future<Directory> getExtensionServerDirectory() async {
     final defaultDirectory = await getDefaultDirectory();
-    String dbDir = path.join(defaultDirectory!.path, 'extension_server');
+    if (defaultDirectory == null) {
+      throw StateError('The app storage directory is unavailable');
+    }
+    String dbDir = path.join(defaultDirectory.path, 'extension_server');
     await Directory(dbDir).create(recursive: true);
     return Directory(dbDir);
   }
@@ -133,7 +136,7 @@ class StorageProvider {
     Directory? directory;
     String dPath = "";
     try {
-      final setting = isar.settings.getSync(227);
+      final setting = settingsRepository.currentOrNull;
       dPath = setting?.downloadLocation ?? "";
     } catch (e) {
       if (kDebugMode) {
@@ -319,27 +322,20 @@ class StorageProvider {
       inspector: inspector,
     );
     try {
-      final settings = await isar.settings.filter().idEqualTo(227).findFirst();
+      final settings = await isar.settings.get(227);
       if (settings == null) {
-        await isar.writeTxn(
-          // TV defaults to dark on first run (a fresh library). Only the
-          // initial Settings row is seeded, so switching to light later sticks.
-          () async => isar.settings.put(Settings()..themeIsDark = isTv),
-        );
+        // TV defaults to dark on first run (a fresh library). Only the
+        // initial Settings row is seeded, so switching to light later sticks.
+        await isar.writeTxn(() async => isar.settings.put(Settings()..themeIsDark = isTv));
       }
     } catch (_) {
       if (await requestPermission()) {
         try {
-          final settings = await isar.settings
-              .filter()
-              .idEqualTo(227)
-              .findFirst();
+          final settings = await isar.settings.get(227);
           if (settings == null) {
-            await isar.writeTxn(
-              // TV defaults to dark on first run (a fresh library). Only the
-              // initial Settings row is seeded, so switching to light later sticks.
-              () async => isar.settings.put(Settings()..themeIsDark = isTv),
-            );
+            // TV defaults to dark on first run (a fresh library). Only the
+            // initial Settings row is seeded, so switching to light later sticks.
+            await isar.writeTxn(() async => isar.settings.put(Settings()..themeIsDark = isTv));
           }
         } catch (e) {
           if (kDebugMode) {
@@ -358,11 +354,11 @@ class StorageProvider {
         .syncIdIsNotNull()
         .findAll();
     if (prefs.isNotEmpty) {
-      await isar.writeTxn(() async {
-        await isar.trackPreferences.putAll([
+      await isar.writeTxn(
+        () => isar.trackPreferences.putAll([
           for (final pref in prefs) pref..refreshing = true,
-        ]);
-      });
+        ]),
+      );
     }
 
     final customButton = await isar.customButtons
@@ -370,8 +366,8 @@ class StorageProvider {
         .idIsNotNull()
         .findFirst();
     if (customButton == null) {
-      await isar.writeTxn(() async {
-        await isar.customButtons.put(
+      await isar.writeTxn(
+        () => isar.customButtons.put(
           CustomButton(
             title: "+85 s",
             codePress: """local intro_length = mp.get_property_native("user-data/current-anime/intro-length")
@@ -394,10 +390,9 @@ if \$isPrimary then
 end""",
             isFavourite: true,
             pos: 0,
-            updatedAt: DateTime.now().millisecondsSinceEpoch,
           ),
-        );
-      });
+        ),
+      );
     }
 
     return isar;

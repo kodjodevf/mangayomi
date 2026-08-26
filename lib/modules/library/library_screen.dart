@@ -4,8 +4,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/tv_home/tv_anime_home_view.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
@@ -73,18 +73,37 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   void dispose() {
     _textEditingController.dispose();
     tabBarController?.dispose();
+    // Anything waiting for the end of a frame that will now never come.
+    for (final controller in _retiredTabControllers) {
+      controller.dispose();
+    }
+    _retiredTabControllers.clear();
     _searchDebounce?.cancel();
     super.dispose();
+  }
+
+  /// Controllers replaced this frame, disposed once nothing can still paint
+  /// from them.
+  final List<TabController> _retiredTabControllers = [];
+
+  /// Schedules [controller] for disposal after the current frame.
+  ///
+  /// Held in a list rather than disposed inline because the widgets built in
+  /// the previous frame still reference it until this frame is painted.
+  void _retireTabController(TabController? controller) {
+    if (controller == null) return;
+    _retiredTabControllers.add(controller);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_retiredTabControllers.remove(controller)) return;
+      controller.dispose();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final settingsStream = ref.watch(getSettingsStreamProvider);
     return settingsStream.when(
-      data: (settingsList) {
-        final settings = settingsList.first;
-        return _buildWithSettings(settings);
-      },
+      data: (settings) => _buildWithSettings(settings),
       error: (error, _) => ErrorText(error),
       loading: () => const ProgressCenter(),
     );
@@ -353,7 +372,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         (tabBarController == null || tabBarController!.length != tabCount)) {
       int newTabIndex = _tabIndex;
       if (newTabIndex >= tabCount) newTabIndex = tabCount - 1;
-      tabBarController?.dispose();
+      // Retire the old one after this frame rather than here. Disposing a
+      // TabController sets its animation to null, and the TabBar built in the
+      // previous frame is still holding this one: its _IndicatorPainter reads
+      // `controller.animation!.value` on the next paint and dies on the null
+      // check. That is #923, reported from the library screen with exactly
+      // that frame at the top of the stack.
+      _retireTabController(tabBarController);
       tabBarController = TabController(
         length: tabCount,
         vsync: this,
@@ -491,7 +516,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
               icon: Icon(Icons.label_outline_rounded, color: color),
               onPressed: () {
                 final List<Manga> bulkMangas = mangaIds
-                    .map((id) => isar.mangas.getSync(id)!)
+                    .map((id) => mangaRepository.getById(id))
                     .toList();
                 showCategorySelectionDialog(
                   context: context,

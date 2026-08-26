@@ -737,6 +737,7 @@
   "clear_all_sources_msg": "This will completely erase all sources of the application. Are you sure you want to continue?",
   "sources_cleared": "Sources cleared!!!",
   "repo_added": "Source repository added!",
+  "repo_already_exists": "Repository already exists!",
   "add_repo": "Add Repository?",
   "genre_search_library": "Search genre in library",
   "genre_search_source": "Browse in source",
@@ -1033,6 +1034,8 @@
   "dual_page_invert": "Invert cut half pages",
   "dual_page_rotate_to_fit": "Rotate to fit",
   "dual_page_rotate_to_fit_invert": "Invert rotation direction",
+  "double_page_single_first_page": "Single first page",
+  "double_page_single_first_page_subtitle": "Display the first page alone in double page mode",
   "landscape_zoom": "Automatic landscape zoom",
   "zoom_start_position": "Zoom start position",
   "zoom_start_left": "Left",
@@ -1221,6 +1224,8 @@
       "duplicateTracks": {}
     }
   },
+  "memory_overlay": "Show memory usage",
+  "memory_overlay_subtitle": "A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.",
   "beta": "Beta",
   "error_reports": "Error reports",
   "error_reports_subtitle": "Errors the app caught, and a way to report them",
@@ -1232,6 +1237,9 @@
   "error_reports_copy": "Copy",
   "error_reports_copied": "Copied to the clipboard",
   "error_reports_clear": "Clear",
+  "error_reports_extension_failure": "This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.",
+  "error_reports_already_reported": "Already reported",
+  "error_reports_expected_failure": "This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.",
   "share_unavailable_copied": "Sharing isn't available on this platform, so it was copied to the clipboard instead.",
   "onboarding_title": "Welcome to Mangayomi",
   "onboarding_libraries_body": "Pick what you read and watch. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.",
@@ -1273,5 +1281,35 @@
       }
     }
   },
-  "missing_source_check_result_message": "These library entries point at a source that isn't installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them."
+ "global_search_no_sources": "No {itemType} sources are installed.",
+  "@global_search_no_sources": {
+    "placeholders": {"itemType": {"type": "String"}}
+  },
+  "global_search_no_sources_hint": "Add a repository under Browse, then install an extension for it.",
+  "global_search_only_pinned": "You have {count, plural, =1{1 source} other{{count} sources}} for this, but only pinned ones are searched.",
+  "@global_search_only_pinned": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "global_search_only_pinned_hint": "Pin one, or turn off \"Only include pinned sources\" in Browse settings.",
+  "global_search_all_nsfw": "Every source you have for this is marked NSFW, and those are hidden.",
+  "global_search_all_nsfw_hint": "Turn on NSFW sources in Browse settings to search them.",
+  "missing_source_check_result_message": "These library entries point at a source that isn't installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them.",
+  "related_titles": "Related",
+  "related_none": "Nothing related was found for this title.",
+  "relation_adaptation": "Adaptation",
+  "relation_sequel": "Sequel",
+  "relation_prequel": "Prequel",
+  "relation_parent": "Parent story",
+  "relation_side_story": "Side story",
+  "relation_spin_off": "Spin-off",
+  "relation_alternative": "Alternative version",
+  "auto_library_update": "Automatic library updates",
+  "auto_library_update_subtitle": "Check every entry in your library for new chapters when the app starts.",
+  "auto_library_update_never": "Never",
+  "auto_library_update_12_hours": "Every 12 hours",
+  "auto_library_update_daily": "Daily",
+  "auto_library_update_2_days": "Every 2 days",
+  "auto_library_update_weekly": "Weekly",
+  "auto_library_update_wifi_only": "Only on Wi-Fi",
+  "auto_library_update_wifi_only_subtitle": "Skip the scheduled update while on mobile data."
 }

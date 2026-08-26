@@ -1,6 +1,7 @@
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/services/anilist_discovery.dart';
+import 'package:mangayomi/services/discovery/service_availability.dart';
 
 /// Recommendations ("more like this"), backed by AniList's `recommendations`.
 ///
@@ -9,6 +10,13 @@ import 'package:mangayomi/services/anilist_discovery.dart';
 /// nothing for every title. It now resolves the name to an AniList media id and
 /// asks AniList for related titles. Errors propagate on purpose so the screen
 /// shows a real message instead of a blank "No result".
+///
+/// There is no fallback for this one. Kitsu, which stands in for AniList
+/// elsewhere, has no "more like this" endpoint, and Jikan depends on
+/// MyAnimeList's own API, which was returning 504 while this was written. So
+/// when AniList refuses, the [DiscoveryUnavailable] it throws carries AniList's
+/// own explanation up to the screen — that is more use than an empty list
+/// pretending nothing is wrong.
 ///
 /// [algorithmWeights] is retained for call-site compatibility; AniList has no
 /// tunable weighting, so it is unused.

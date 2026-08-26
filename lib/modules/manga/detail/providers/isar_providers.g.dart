@@ -59,7 +59,7 @@ final class GetMangaDetailStreamProvider
 }
 
 String _$getMangaDetailStreamHash() =>
-    r'6e7c5dc20ee7d32a091e884ac6980e191f698c8c';
+    r'03dc6231218ca8c0f8bef31ae9b06270b0d242e9';
 
 final class GetMangaDetailStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<Manga?>, int> {
@@ -134,7 +134,7 @@ final class GetChaptersStreamProvider
   }
 }
 
-String _$getChaptersStreamHash() => r'0f03db54c5a639c4356a81e4bad50fa8a077ceac';
+String _$getChaptersStreamHash() => r'c66f2dd4e71b1dce03bdc89986f692f021d2b824';
 
 final class GetChaptersStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Chapter>>, int> {

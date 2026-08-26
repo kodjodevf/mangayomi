@@ -215,7 +215,7 @@ final class SortChapterStateProvider
   }
 }
 
-String _$sortChapterStateHash() => r'a6e547fd4badfa14ecb9270054c7e166dfc6e238';
+String _$sortChapterStateHash() => r'34d1527e0a27945ba95b28713dca697097864712';
 
 final class SortChapterStateFamily extends $Family
     with
@@ -315,7 +315,7 @@ final class ChapterFilterDownloadedStateProvider
 }
 
 String _$chapterFilterDownloadedStateHash() =>
-    r'1a4309b9dff1fd9d1dc0c09eab18629ee9fe8d66';
+    r'f3a086e0e066355d64de253b30bdd2ecf6089f8f';
 
 final class ChapterFilterDownloadedStateFamily extends $Family
     with
@@ -408,7 +408,7 @@ final class ChapterFilterUnreadStateProvider
 }
 
 String _$chapterFilterUnreadStateHash() =>
-    r'95b34a7b0fd3282f8a2c0626c06ac251585fffec';
+    r'869107c6251cf69b138eef230db9e6c1bb64a0c9';
 
 final class ChapterFilterUnreadStateFamily extends $Family
     with $ClassFamilyOverride<ChapterFilterUnreadState, int, int, int, int> {
@@ -501,7 +501,7 @@ final class ChapterFilterBookmarkedStateProvider
 }
 
 String _$chapterFilterBookmarkedStateHash() =>
-    r'639c257c1a77766438abf3b19cb61aa0eb7a8db6';
+    r'adcff7cd9fda7a2bd68fd0451682cd6dfff86939';
 
 final class ChapterFilterBookmarkedStateFamily extends $Family
     with
@@ -693,7 +693,7 @@ final class ChapterSetIsBookmarkStateProvider
 }
 
 String _$chapterSetIsBookmarkStateHash() =>
-    r'23b56105244d0aeed6ae9c27cee1897de8a306af';
+    r'316618dea926b49a2136bc99f3903dd31f25e713';
 
 final class ChapterSetIsBookmarkStateFamily extends $Family
     with
@@ -791,7 +791,7 @@ final class ChapterSetIsReadStateProvider
 }
 
 String _$chapterSetIsReadStateHash() =>
-    r'b75796ed2dd03bf3167258bcdf064817e8fa69c9';
+    r'6a27adceed9f20f793507ae99461c59074104b25';
 
 final class ChapterSetIsReadStateFamily extends $Family
     with $ClassFamilyOverride<ChapterSetIsReadState, void, void, void, Manga> {
@@ -883,7 +883,7 @@ final class ChapterSetDownloadStateProvider
 }
 
 String _$chapterSetDownloadStateHash() =>
-    r'cb89abd653c018b762eb405634c7f8ca0ee8e99b';
+    r'21c13768c767899a0e03562e65cf54ea2e4e10f3';
 
 final class ChapterSetDownloadStateFamily extends $Family
     with
@@ -1033,7 +1033,7 @@ final class ScanlatorsFilterStateProvider
 }
 
 String _$scanlatorsFilterStateHash() =>
-    r'fa85d5d0f89044d3eb5c11bd1265c7a513a5558d';
+    r'ec533b9b81b8d0f6d6229bd9c342c430975df885';
 
 final class ScanlatorsFilterStateFamily extends $Family
     with

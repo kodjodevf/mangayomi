@@ -2,10 +2,11 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/archive_reader/models/models.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -67,8 +68,8 @@ Future importArchivesFromFile(
             manga.customCoverImage = data!.$3.getCoverImage;
           }
         }
-        await isar.writeTxn(() async {
-          final mangaId = await isar.mangas.put(manga);
+        await mangaRepository.writeTransactionAsync(() async {
+          final mangaId = await mangaRepository.putAsync(manga);
           final List<Chapter> chapters = [];
           if (itemType == ItemType.novel) {
             final book = await parseEpubFromPath(
@@ -77,7 +78,7 @@ Future importArchivesFromFile(
             );
 
             if (book.cover != null) {
-              await isar.mangas.put(
+              await mangaRepository.putAsync(
                 manga..customCoverImage = book.cover!.getCoverImage,
               );
             }
@@ -118,7 +119,7 @@ Future importArchivesFromFile(
             );
           }
           for (final chapter in chapters) {
-            await isar.chapters.put(chapter);
+            await chapterRepository.putAsync(chapter);
             await chapter.manga.save();
           }
         });

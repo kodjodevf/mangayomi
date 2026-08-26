@@ -81,7 +81,15 @@ class SourceNovel extends NovelItem {
 
   factory SourceNovel.fromJson(Map<String, dynamic> json) {
     if (json['path'] == null) {
-      throw 'path is null';
+      // Reported as "path is null" and filed as an app bug (#936), because a
+      // bare string says nothing about whose fault it is. A novel with no
+      // path came from the plugin, and the fix belongs wherever that plugin
+      // is maintained.
+      throw Exception(
+        'The source returned a novel with no path, so it cannot be opened. '
+        'This is the extension rather than Mangayomi'
+        '${json['name'] is String ? ' (while reading "${json['name']}")' : ''}.',
+      );
     }
     return SourceNovel(
       name: json['name'] ?? '',

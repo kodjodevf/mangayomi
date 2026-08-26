@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/mass_migration/mass_migration_preview_screen.dart';
 import 'package:mangayomi/modules/mass_migration/models/mass_migration_models.dart';
@@ -11,6 +8,7 @@ import 'package:mangayomi/modules/more/data_and_storage/providers/delete_source.
 import 'package:mangayomi/modules/more/data_and_storage/providers/pre_import_backup.dart';
 import 'package:mangayomi/modules/more/widgets/dialog_actions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
@@ -375,7 +373,7 @@ Future<void> _mergeDuplicateManga(BuildContext context, WidgetRef ref) async {
   final mangaList = [...picked.cluster.mangaList];
   final chapterCounts = <int, int>{
     for (final m in mangaList)
-      m.id!: isar.chapters.filter().mangaIdEqualTo(m.id).countSync(),
+      m.id!: chapterRepository.countByMangaId(m.id),
   };
   mangaList.sort(
     (a, b) => (chapterCounts[b.id!] ?? 0).compareTo(chapterCounts[a.id!] ?? 0),

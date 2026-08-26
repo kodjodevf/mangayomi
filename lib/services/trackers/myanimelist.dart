@@ -17,6 +17,7 @@ import 'package:mangayomi/utils/localized_message.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 
 import 'base_tracker.dart';
+import 'tracker_account.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'myanimelist.g.dart';
@@ -126,13 +127,15 @@ class MyAnimeList extends _$MyAnimeList implements BaseTracker {
       ..clientId = clientId;
   }
 
-  void _saveOAuth(String username, OAuth oAuth) {
+  void _saveOAuth(TrackerAccount user, OAuth oAuth) {
     widgetRef
         .read(tracksProvider(syncId: syncId).notifier)
         .login(
           TrackPreference(
             syncId: syncId,
-            username: username,
+            username: user.id,
+            displayName: user.name,
+            avatarUrl: user.avatarUrl,
             prefs: "",
             oAuth: jsonEncode(oAuth.toJson()),
           ),
@@ -365,12 +368,16 @@ class MyAnimeList extends _$MyAnimeList implements BaseTracker {
     return jsonDecode(response.body);
   }
 
-  Future<String> _getUserName(String accessToken) async {
+  /// The account behind the token.
+  ///
+  /// `/users/@me` already answers with `picture`, so the avatar costs nothing
+  /// beyond reading a field that was being thrown away.
+  Future<TrackerAccount> _getUserName(String accessToken) async {
     final response = await _makeGetRequest(
       Uri.parse('$_baseApiUrl/users/@me'),
       accessToken,
     );
-    return jsonDecode(response.body)['name'];
+    return malAccount(jsonDecode(response.body) as Map<String, dynamic>);
   }
 
   @override

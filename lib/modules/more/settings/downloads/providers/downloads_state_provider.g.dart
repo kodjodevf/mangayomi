@@ -41,7 +41,7 @@ final class OnlyOnWifiStateProvider
   }
 }
 
-String _$onlyOnWifiStateHash() => r'ea6df18bb5dc5019a00fca258d45cb0dfee0dffe';
+String _$onlyOnWifiStateHash() => r'555e188c0c387000776c53d307dfac30414b7ba1';
 
 abstract class _$OnlyOnWifiState extends $Notifier<bool> {
   bool build();
@@ -94,7 +94,7 @@ final class SaveAsCBZArchiveStateProvider
 }
 
 String _$saveAsCBZArchiveStateHash() =>
-    r'836e8cce08b3d307c58d2a850a7dcb3c9d739fc1';
+    r'4b788221d147d44306e5fc9ff94956c8629e9cab';
 
 abstract class _$SaveAsCBZArchiveState extends $Notifier<bool> {
   bool build();
@@ -148,7 +148,7 @@ final class DeleteDownloadAfterReadingStateProvider
 }
 
 String _$deleteDownloadAfterReadingStateHash() =>
-    r'23f5d5e4a51a1cb6ae78db5a015ca5e1cc6e98e3';
+    r'd62528777daecc7a0c1e121b145bd55f483bb1bf';
 
 abstract class _$DeleteDownloadAfterReadingState extends $Notifier<bool> {
   bool build();
@@ -201,7 +201,7 @@ final class DownloadLocationStateProvider
 }
 
 String _$downloadLocationStateHash() =>
-    r'75e2679930508fdd5e1b59baca632e03aace598e';
+    r'1210f9a6a3da5d29742ea22f2a7acd0a859d370b';
 
 abstract class _$DownloadLocationState extends $Notifier<(String, String)> {
   (String, String) build();
@@ -254,7 +254,7 @@ final class ConcurrentDownloadsStateProvider
 }
 
 String _$concurrentDownloadsStateHash() =>
-    r'1b2df8d425fb0f0697883e9a121eace99fd4f5e4';
+    r'faa9d5cd82f792be68820dd4a464033f9f42406e';
 
 abstract class _$ConcurrentDownloadsState extends $Notifier<int> {
   int build();
@@ -308,7 +308,7 @@ final class AllowConcurrentDownloadsStateProvider
 }
 
 String _$allowConcurrentDownloadsStateHash() =>
-    r'2d71d79e343a17be62684c9b5b99539243519754';
+    r'd130c3144530825f882ffca0516c55c8a6753af5';
 
 abstract class _$AllowConcurrentDownloadsState extends $Notifier<bool> {
   bool build();
@@ -362,7 +362,7 @@ final class AskDownloadDestinationStateProvider
 }
 
 String _$askDownloadDestinationStateHash() =>
-    r'532592dc0cc33f295b96ccf5423fd006d6a6e898';
+    r'123c974bbb0701c5f2550cf099137c9986b86d47';
 
 abstract class _$AskDownloadDestinationState extends $Notifier<bool> {
   bool build();
@@ -415,7 +415,7 @@ final class DownloadDelaySecondsStateProvider
 }
 
 String _$downloadDelaySecondsStateHash() =>
-    r'eb97bd41f669e2e1bd27ca32a98b1a470f3d50c4';
+    r'b7ac759dfb05e52600b1e432425995dcb1517ec3';
 
 abstract class _$DownloadDelaySecondsState extends $Notifier<int> {
   int build();

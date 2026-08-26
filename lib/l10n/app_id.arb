@@ -904,5 +904,380 @@
   "saved_searches": "Pencarian tersimpan",
   "enter_search_to_save_first": "Masukkan pencarian untuk disimpan terlebih dahulu",
   "no_saved_searches": "Belum ada pencarian tersimpan untuk sumber ini.\nJalankan pencarian, lalu pilih \"Simpan pencarian\".",
-  "source": "Sumber"
+  "source": "Sumber",
+  "label_value": "{label}: {value}",
+  "url": "URL",
+  "beta_version": "Beta ({version})",
+  "empty_placeholder": "KOSONG",
+  "error": "Kesalahan",
+  "error_with_message": "Kesalahan: {error}",
+  "no_pages_available": "Kesalahan: tidak ada halaman tersedia",
+  "create_extension": "Buat Ekstensi",
+  "choose_extension_language": "Pilih bahasa ekstensi",
+  "lang": "Bahasa",
+  "base_url": "URL Dasar",
+  "api_url_optional": "URL API (opsional)",
+  "icon_url": "URL Ikon",
+  "source_icon_url": "URL Ikon Sumber",
+  "notes": "Catatan",
+  "extension_name_example": "contoh: Animeku",
+  "language_code_example": "contoh: id",
+  "base_url_example": "contoh: https://contoh.com",
+  "api_url_example": "contoh: https://api.contoh.com",
+  "extension_notes_example": "contoh: ekstensi ini memerlukan login",
+  "type": "Tipe",
+  "target": "Target",
+  "source_type_single": "tunggal",
+  "source_type_multi": "multi",
+  "source_type_torrent": "torrent",
+  "source_language_dart": "Dart",
+  "source_language_javascript": "JavaScript",
+  "source_language_lnreader_compiled_js": "JS terkompilasi LNReader",
+  "source_created_successfully": "Sumber berhasil dibuat",
+  "source_already_exists": "Sumber sudah ada",
+  "error_when_creating_source": "Kesalahan saat membuat sumber",
+  "cookies_deleted": "Cookie dihapus!",
+  "delete_all_cookies": "Hapus semua cookie",
+  "missing_chapters": "{count} bab hilang",
+  "sync_restore_in_progress": "Sinkronisasi dilewati — pemulihan sedang berlangsung",
+  "sync_status_not_configured": "Tidak terhubung",
+  "sync_status_checking": "Memeriksa koneksi...",
+  "sync_status_connected": "Terhubung",
+  "sync_status_unauthorized": "Sesi berakhir, silakan masuk kembali",
+  "sync_status_unreachable": "Server tidak dapat dijangkau",
+  "sync_section_general": "Umum",
+  "sync_section_data_types": "Yang disinkronkan",
+  "missing_episodes": "{count} episode hilang",
+  "encrypt_backups": "Enkripsi cadangan",
+  "encrypt_backups_info": "Lindungi file cadangan dengan kata sandi menggunakan enkripsi AES",
+  "no_secure_storage": "Penyimpanan aman tidak ditemukan",
+  "no_keyring_warning": "Sistem ini tidak memiliki layanan keyring, kata sandi tidak dapat disimpan dengan aman.\n\nSimpan tanpa enkripsi di database aplikasi?",
+  "enter_backup_password": "Masukkan kata sandi cadangan",
+  "incorrect_password_try_again": "Kata sandi salah, coba lagi.",
+  "set_backup_password": "Atur kata sandi cadangan",
+  "confirm_password": "Konfirmasi kata sandi",
+  "passwords_do_not_match": "Kata sandi tidak cocok",
+  "password_required_to_restore": "Kata sandi diperlukan untuk memulihkan cadangan ini.",
+  "restore_sync_question_title": "Sinkronkan pemulihan ini?",
+  "restore_sync_question_message": "Perangkat terhubung ke server sinkronisasi. Unggah data yang dipulihkan sekarang?",
+  "restore_sync_question_confirm": "Ya, sinkronkan",
+  "restore_sync_question_deny": "Tidak, nonaktifkan sinkronisasi",
+  "sync_disabled_after_restore": "Sinkronisasi dinonaktifkan. Anda dapat mengaktifkannya di Pengaturan.",
+  "restore_sync_disabled_question_title": "Sinkronisasi dinonaktifkan",
+  "restore_sync_disabled_question_message": "Sinkronisasi mati. Aktifkan kembali dan unggah ke server?",
+  "restore_sync_question_reenable": "Ya, aktifkan dan sinkronkan",
+  "restore_sync_question_keep_disabled": "Biarkan dinonaktifkan",
+  "restore_sync_uploading": "Menyinkronkan data ke server…",
+  "restore_sync_upload_success": "Data berhasil disinkronkan ke server",
+  "default_download_destination": "Tujuan unduhan default",
+  "ask_download_destination": "Tanyakan tujuan unduhan",
+  "ask_download_destination_desc": "Pilih folder lokal setiap kali unduhan dimulai.",
+  "select_download_destination": "Pilih tujuan unduhan",
+  "clear_local_library": "Bersihkan pustaka lokal",
+  "clear_local_library_desc": "Hapus entri folder dan arsip lokal dari pustaka.",
+  "clear_local_library_msg": "Ini akan menghapus entri folder dan arsip lokal dari pustaka. File tidak akan dihapus dari disk.",
+  "custom": "Kustom",
+  "no_local_folder_available_for_downloads": "Tidak ada folder lokal untuk unduhan",
+  "failed_to_create_cbz": "Gagal membuat CBZ: {error}",
+  "error_reading_cover_image": "Gagal membaca gambar sampul: {error}",
+  "error_reading_metadata": "Gagal membaca metadata: {error}",
+  "error_saving_chapter_episode_to_library": "Gagal menyimpan ke pustaka: {error}",
+  "error_reading_chapter_cover_image": "Gagal membaca sampul bab: {error}",
+  "error_reading_archive_cover_image": "Gagal membaca sampul arsip: {error}",
+  "error_getting_local_library": "Gagal memuat pustaka lokal: {error}",
+  "failed_to_export_metadata": "Gagal mengekspor metadata: {error}",
+  "unrecognized_chapter_numbers": "{count} bab tidak dapat diberi nomor otomatis.",
+  "cloudflare_resolution_webview_server_start_failed": "Gagal memulai server webview Cloudflare.",
+  "tracker_token_expired": "Token {tracker} kedaluwarsa",
+  "video_list_empty": "Daftar video kosong",
+  "playback_speed_multiplier": "x{value}",
+  "could_not_launch_url": "Tidak dapat membuka {url}",
+  "zero_interpreter": "Penerjemah Zero",
+  "zero_interpreter_description": "Kendalikan server penerjemah Zero secara otomatis atau manual.",
+  "start_server_on_launch": "Mulai server saat aplikasi dibuka",
+  "runtime_status": "Status runtime",
+  "running": "Berjalan",
+  "stopped": "Berhenti",
+  "start": "Mulai",
+  "stop": "Berhenti",
+  "something_went_wrong": "Terjadi kesalahan",
+  "startup_failed": "Mangayomi gagal menyelesaikan peluncuran",
+  "sources_with_no_results": "{count, plural, =1{1 sumber tanpa hasil} other{{count} sumber tanpa hasil}}",
+  "import_mode_title": "Bagaimana data diimpor?",
+  "import_mode_message": "Pilih untuk menggabungkan cadangan ini dengan pustaka saat ini atau mengganti seluruhnya.",
+  "import_mode_keep_existing": "Gabungkan",
+  "import_mode_keep_existing_subtitle": "Menambahkan seri baru dan memperbarui yang cocok. Tidak ada yang dihapus.",
+  "import_mode_replace": "Ganti",
+  "import_mode_replace_subtitle": "Menghapus seluruh pustaka saat ini dan menggantinya dengan cadangan ini.",
+  "replace_summary_title": "Siap mengganti pustaka",
+  "replace_summary_message": "Ini akan menghapus {currentCount} seri dan menggantinya dengan {backupCount} seri.",
+  "replace_summary_confirm": "Ganti",
+  "replace_result_message": "Pustaka diganti dengan {count} seri dari cadangan.",
+  "category_conflict_title": "Kategori yang sudah ada ditemukan",
+  "category_conflict_message": "Cadangan berisi kategori yang sudah ada di pustaka.",
+  "category_conflict_keep": "Simpan — gabungkan ke kategori yang ada",
+  "category_conflict_delete": "Hapus — biarkan tanpa kategori",
+  "source_conflict_title": "Sumber tidak ditemukan",
+  "source_conflict_message": "Beberapa sumber tidak cocok dengan ekstensi yang terpasang.",
+  "source_conflict_keep": "Pertahankan nama asli",
+  "import_summary_title": "Siap mengimpor",
+  "import_summary_message": "{newSeries} seri baru, {updatedSeries} diperbarui, dan {newChapters} bab baru.",
+  "import_summary_confirm": "Impor",
+  "import_result_message": "Diimpor {newSeries} seri baru, diperbarui {updatedSeries}, ditambahkan {newChapters} bab.",
+  "roll_back": "Kembalikan",
+  "roll_back_confirm_message": "Mengembalikan pustaka ke snapshot sebelum perubahan ini dibuat.",
+  "roll_back_done": "Berhasil dikembalikan ke snapshot sebelumnya.",
+  "restoring_backup": "Memulihkan pustaka…",
+  "roll_back_last_change": "Kembalikan perubahan terakhir",
+  "roll_back_last_change_subtitle": "Snapshot dari {date} — {description}",
+  "roll_back_available_count": "{count} perubahan terbaru tersedia untuk dikembalikan",
+  "delete_source_title": "Hapus sumber dan manganya",
+  "delete_source_subtitle": "Hapus semua manga dari suatu sumber beserta bab, unduhan, dan riwayatnya.",
+  "delete_source_pick_title": "Pilih sumber yang akan dihapus",
+  "delete_source_empty": "Tidak ada sumber di pustaka.",
+  "delete_source_confirm_title": "Hapus {sourceName}?",
+  "delete_source_confirm_message": "Ini akan menghapus permanen {mangaCount} manga, {chapterCount} bab, {historyCount} entri riwayat.",
+  "delete_source_also_remove_extension": "Hapus juga ekstensi yang terpasang",
+  "delete_source_keep_history": "Pertahankan riwayat membaca",
+  "delete_source_keep_downloads": "Pertahankan riwayat unduhan",
+  "delete_source_button": "Hapus",
+  "delete_source_result_message": "Dihapus {mangaCount} manga dari {sourceName}.",
+  "merge_manga_title": "Gabungkan manga duplikat",
+  "merge_manga_subtitle": "Temukan manga dengan judul yang sama di bawah sumber yang sama dan gabungkan.",
+  "merge_manga_none_found": "Tidak ada manga duplikat ditemukan.",
+  "merge_manga_pick_title": "Manga yang mungkin duplikat",
+  "merge_manga_choose_primary_title": "Gabungkan ke entri yang mana?",
+  "merge_manga_choose_primary_message": "Bab, riwayat, dan pelacakan akan digabungkan ke entri yang dipilih.",
+  "merge_manga_chapters_subtitle": "{count, plural, =1{1 bab} other{{count} bab}}",
+  "merge_manga_button": "Gabungkan",
+  "merge_manga_result_message": "Digabungkan {count} manga duplikat ke {mangaName}.",
+  "merge_preview_title": "Konfirmasi penggabungan",
+  "merge_manga_preview_message": "{totalChapters} bab ditemukan. {duplicateChapters} duplikat akan dibuang, {keptChapters} akan ditambahkan.",
+  "beta": "Beta",
+  "error_reports": "Laporan kesalahan",
+  "error_reports_subtitle": "Kesalahan yang ditangkap aplikasi dan cara melaporkannya",
+  "error_reports_empty": "Tidak ada kesalahan.",
+  "error_reports_likely_cause": "Kemungkinan penyebab",
+  "error_reports_report": "Laporkan di GitHub",
+  "error_reports_banner": "Mangayomi mengalami kesalahan",
+  "error_reports_banner_action": "Lihat",
+  "error_reports_copy": "Salin",
+  "error_reports_copied": "Disalin ke papan klip",
+  "error_reports_clear": "Bersihkan",
+  "share_unavailable_copied": "Berbagi tidak tersedia, disalin ke papan klip.",
+  "onboarding_title": "Selamat datang di Mangayomi",
+  "onboarding_libraries_body": "Pilih apa yang ingin Anda baca dan tonton.",
+  "onboarding_nav_title": "Pustaka Anda",
+  "onboarding_nav_body": "Tab terpisah untuk masing-masing atau digabung di bawah satu tab Pustaka.",
+  "onboarding_nav_split": "Tab terpisah",
+  "onboarding_nav_merged": "Satu tab Pustaka",
+  "onboarding_nav_inside": "Mengetuk Pustaka akan mengganti tab ini",
+  "onboarding_next": "Berikutnya",
+  "onboarding_restore": "Pulihkan cadangan",
+  "onboarding_or_local": "Atau gunakan file yang sudah Anda miliki",
+  "onboarding_local_folder": "Tambah folder",
+  "onboarding_local_existing": "{count} folder sudah diatur",
+  "onboarding_local_any_type": "Manga, anime, dan novel didukung.",
+  "onboarding_local_scanning": "Memindai folder",
+  "onboarding_local_found": "{count} judul ditemukan",
+  "onboarding_local_remove": "Hapus folder",
+  "onboarding_local_in_downloads": "Ini adalah folder unduhan aplikasi.",
+  "onboarding_local_empty": "Tidak ada yang ditemukan. Pilih folder induk.",
+  "onboarding_repo_failed": "Gagal membaca repositori.",
+  "onboarding_repo_title": "Tambah sumber",
+  "onboarding_body": "Tambahkan repositori untuk menginstal ekstensi.",
+  "onboarding_add": "Tambah repositori",
+  "onboarding_skip": "Lewati untuk sekarang",
+  "onboarding_continue": "Lanjutkan",
+  "onboarding_later": "Anda dapat menambahkannya nanti di Pengaturan > Jelajah.",
+  "onboarding_replay": "Tampilkan layar selamat datang",
+  "onboarding_replay_subtitle": "Buka kembali layar pengaturan awal.",
+  "missing_source_check_title": "Periksa sumber yang hilang",
+  "missing_source_check_subtitle": "Temukan entri yang ekstensinya belum terpasang.",
+  "missing_source_check_none_found": "Semua sumber entri pustaka terpasang.",
+  "missing_source_check_result_title": "{count, plural, =1{1 sumber hilang} other{{count} sumber hilang}}",
+  "missing_source_check_result_message": "Entri ini mengarah ke sumber yang tidak terpasang. Ketuk untuk memigrasikan atau pasang ekstensi.",
+  "@tts_paragraph_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "@label_value": {
+    "placeholders": {
+      "label": {},
+      "value": {}
+    }
+  },
+  "@beta_version": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "@error_with_message": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_create_cbz": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_saving_chapter_episode_to_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_chapter_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_archive_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_getting_local_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_export_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@unrecognized_chapter_numbers": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@tracker_token_expired": {
+    "placeholders": {
+      "tracker": {}
+    }
+  },
+  "@playback_speed_multiplier": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "@could_not_launch_url": {
+    "placeholders": {
+      "url": {}
+    }
+  },
+  "@sources_with_no_results": {
+    "description": "Header of the collapsed group in global search holding every source that failed or found nothing.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@replace_summary_message": {
+    "placeholders": {
+      "currentCount": {},
+      "backupCount": {}
+    }
+  },
+  "@replace_result_message": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@import_summary_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@import_result_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@roll_back_last_change_subtitle": {
+    "placeholders": {
+      "date": {},
+      "description": {}
+    }
+  },
+  "@roll_back_available_count": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@delete_source_confirm_title": {
+    "placeholders": {
+      "sourceName": {}
+    }
+  },
+  "@delete_source_confirm_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "chapterCount": {},
+      "historyCount": {},
+      "updateCount": {}
+    }
+  },
+  "@delete_source_result_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "sourceName": {}
+    }
+  },
+  "@merge_manga_chapters_subtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@merge_manga_result_message": {
+    "placeholders": {
+      "count": {},
+      "mangaName": {}
+    }
+  },
+  "@merge_manga_preview_message": {
+    "placeholders": {
+      "totalChapters": {},
+      "duplicateChapters": {},
+      "keptChapters": {},
+      "duplicateTracks": {}
+    }
+  },
+  "@onboarding_local_existing": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@onboarding_local_found": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@missing_source_check_result_title": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

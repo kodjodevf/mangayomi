@@ -3,9 +3,8 @@ import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/track_preference.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
@@ -31,9 +30,7 @@ class TrackScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10nLocalizations(context)!.tracking)),
       body: SingleChildScrollView(
         child: StreamBuilder(
-          stream: isar.trackPreferences.filter().syncIdIsNotNull().watch(
-            fireImmediately: true,
-          ),
+          stream: trackRepository.watchAllWithSyncId(),
           builder: (context, snapshot) {
             List<TrackPreference>? entries = snapshot.hasData
                 ? snapshot.data

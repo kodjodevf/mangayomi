@@ -1,5 +1,4 @@
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'security_state_provider.g.dart';
 
@@ -7,19 +6,12 @@ part 'security_state_provider.g.dart';
 class AppLockEnabledState extends _$AppLockEnabledState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.appLockEnabled ?? false;
+    return settingsRepository.current.appLockEnabled ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227)!;
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings
-          ..appLockEnabled = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.appLockEnabled = value);
   }
 }
 
@@ -30,7 +22,7 @@ class AppUnlockedState extends _$AppUnlockedState {
   @override
   bool build() {
     // If app lock is not enabled, always unlocked
-    final lockEnabled = isar.settings.getSync(227)!.appLockEnabled ?? false;
+    final lockEnabled = settingsRepository.current.appLockEnabled ?? false;
     return !lockEnabled;
   }
 

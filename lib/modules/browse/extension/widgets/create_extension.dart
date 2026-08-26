@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -292,13 +292,7 @@ class _CreateExtensionState extends State<CreateExtension> {
                               ..isNsfw = _isNsfw
                               ..typeSource =
                                   _sourceTypeValues[_sourceTypeIndex];
-                            isar.writeTxnSync(() {
-                              isar.sources.putSync(
-                                source
-                                  ..updatedAt =
-                                      DateTime.now().millisecondsSinceEpoch,
-                              );
-                            });
+                            sourceRepository.save(source);
                             Navigator.pop(context, source);
                             botToast("Source updated successfully");
                             return;
@@ -307,7 +301,7 @@ class _CreateExtensionState extends State<CreateExtension> {
                               _sourceCodeLanguage == SourceCodeLanguage.dart
                               ? 'mangayomi-$_lang.$_name'.hashCode
                               : 'mangayomi-js-$_lang.$_name'.hashCode;
-                          final checkIfExist = isar.sources.getSync(id);
+                          final checkIfExist = sourceRepository.getById(id);
                           if (checkIfExist == null) {
                             Source source = Source(
                               id: id,
@@ -332,13 +326,7 @@ class _CreateExtensionState extends State<CreateExtension> {
                                   _sourceCodeLanguage == SourceCodeLanguage.dart
                                   ? _dartTemplate
                                   : _jsSample(source);
-                            isar.writeTxnSync(() {
-                              isar.sources.putSync(
-                                source
-                                  ..updatedAt =
-                                      DateTime.now().millisecondsSinceEpoch,
-                              );
-                            });
+                            sourceRepository.save(source);
                             Navigator.pop(context);
                             botToast(l10n.source_created_successfully);
                           } else {

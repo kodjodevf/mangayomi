@@ -41,7 +41,7 @@ final class LocalFoldersStateProvider
   }
 }
 
-String _$localFoldersStateHash() => r'8474346611f9ae03e6dd7a191c131d2edecf2bc0';
+String _$localFoldersStateHash() => r'23812f818bb33d3d3b3aa8970b57585c4bd7a499';
 
 abstract class _$LocalFoldersState extends $Notifier<List<LocalFolder>> {
   List<LocalFolder> build();
@@ -95,7 +95,7 @@ final class DownloadLocalFolderNameStateProvider
 }
 
 String _$downloadLocalFolderNameStateHash() =>
-    r'7e387abdaba7244750225a380e3c23a1fd1b1159';
+    r'7b0b53217a77ef741221bd74cd1903789512e98e';
 
 abstract class _$DownloadLocalFolderNameState extends $Notifier<String?> {
   String? build();

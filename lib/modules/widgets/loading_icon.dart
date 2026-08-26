@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/utils/constant.dart';
 
 /// The full screen shown while the app finishes starting up.
 ///
@@ -16,7 +17,7 @@ class LoadingIcon extends StatelessWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
         child: Image.asset(
-          "assets/app_icons/icon.png",
+          appIconAssets[2],
           color: theme.colorScheme.onSurface,
           fit: BoxFit.cover,
           height: 100,

@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:flutter/material.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/transition_view_paged.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/transition_view_vertical.dart';
@@ -106,7 +106,7 @@ class _DoublePageViewState extends State<DoublePageView>
 
   Duration _doubleTapAnimationDuration() {
     final doubleTapAnimationValue =
-        isar.settings.getSync(227)?.doubleTapAnimationSpeed ?? 1;
+        settingsRepository.current.doubleTapAnimationSpeed ?? 1;
     return switch (doubleTapAnimationValue) {
       0 => const Duration(milliseconds: 10),
       1 => const Duration(milliseconds: 800),

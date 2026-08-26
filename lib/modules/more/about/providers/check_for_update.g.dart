@@ -42,7 +42,7 @@ final class CheckForAppUpdatesProvider
 }
 
 String _$checkForAppUpdatesHash() =>
-    r'53f64da3b2e1228c2000d7a77be6c12a63682385';
+    r'ae04e9287ba511f636c9e39c2bd67a6e18d337f8';
 
 abstract class _$CheckForAppUpdates extends $Notifier<bool> {
   bool build();

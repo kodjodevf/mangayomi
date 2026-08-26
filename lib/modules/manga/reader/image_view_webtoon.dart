@@ -373,6 +373,18 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     super.dispose();
   }
 
+  int get _itemCount {
+    if (widget.isDoublePageMode && !widget.isHorizontalContinuous) {
+      if (widget.pages.isEmpty) return 0;
+      final singleFirst = ref.watch(doublePageSingleFirstPageStateProvider);
+      if (singleFirst) {
+        return 1 + ((widget.pages.length - 1) / 2).ceil();
+      }
+      return (widget.pages.length / 2).ceil();
+    }
+    return widget.pages.length;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -389,7 +401,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
           reverse: widget.reverse,
           minCacheExtent: widget.minCacheExtent,
           initialScrollIndex: widget.initialScrollIndex,
-          itemCount: widget.pages.length,
+          itemCount: _itemCount,
           physics: widget.physics,
           itemScrollController: widget.itemScrollController,
           scrollOffsetController: widget.scrollOffsetController,
@@ -409,6 +421,9 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
   }
 
   Widget _buildItem(BuildContext context, int index) {
+    if (widget.isDoublePageMode && !widget.isHorizontalContinuous) {
+      return _buildDoublePageItem(context, index);
+    }
     final currentPage = widget.pages[index];
     final uniqueKey = ValueKey(
       '${currentPage.chapter?.id ?? "trans"}-${currentPage.index ?? index}',
@@ -416,9 +431,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
 
     return KeyedSubtree(
       key: uniqueKey,
-      child: (widget.isDoublePageMode && !widget.isHorizontalContinuous)
-          ? _buildDoublePageItem(context, index)
-          : _buildSinglePageItem(context, index),
+      child: _buildSinglePageItem(context, index),
     );
   }
 
@@ -464,26 +477,47 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
 
   Widget _buildDoublePageItem(BuildContext context, int index) {
     final pageLength = widget.pages.length;
-    if (index >= pageLength) {
+    final singleFirst = ref.watch(doublePageSingleFirstPageStateProvider);
+
+    int index1;
+    int? index2;
+    if (singleFirst) {
+      if (index == 0) {
+        index1 = 0;
+        index2 = null;
+      } else {
+        index1 = index * 2 - 1;
+        index2 = index1 + 1;
+      }
+    } else {
+      index1 = index * 2;
+      index2 = index1 + 1;
+    }
+
+    if (index1 >= pageLength) {
       return const SizedBox.shrink();
     }
 
-    final int index1 = index * 2 - 1;
-    final int index2 = index1 + 1;
+    final page1 = widget.pages[index1];
+    final page2 = (index2 != null && index2 < pageLength)
+        ? widget.pages[index2]
+        : null;
 
-    final List<UChapDataPreload?> datas = index == 0
-        ? [widget.pages[0], null]
-        : [
-            index1 < pageLength ? widget.pages[index1] : null,
-            index2 < pageLength ? widget.pages[index2] : null,
-          ];
+    final List<UChapDataPreload?> datas = [page1, page2];
 
-    return DoublePageView.vertical(
-      pages: datas,
-      backgroundColor: widget.backgroundColor,
-      onFailedToLoadImage: (failed) =>
-          widget.onFailedToLoadImage(index, failed),
-      onLongPressData: widget.onLongPressData,
+    final uniqueKey = ValueKey(
+      'double-${page1.chapter?.id ?? "trans"}-${page1.index ?? index1}-${page2?.index ?? "none"}',
+    );
+
+    return KeyedSubtree(
+      key: uniqueKey,
+      child: DoublePageView.vertical(
+        pages: datas,
+        backgroundColor: widget.backgroundColor,
+        onFailedToLoadImage: (failed) =>
+            widget.onFailedToLoadImage(index1, failed),
+        onLongPressData: widget.onLongPressData,
+      ),
     );
   }
 

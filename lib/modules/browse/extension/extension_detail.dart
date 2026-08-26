@@ -3,16 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/source_preference_widget.dart';
 import 'package:mangayomi/modules/widgets/extension_server_warning_banner.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_source_preference.dart';
 import 'package:mangayomi/services/http/m_client.dart';
@@ -30,7 +27,7 @@ class ExtensionDetail extends ConsumerStatefulWidget {
 }
 
 class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
-  late Source source = isar.sources.getSync(widget.source.id!)!;
+  late Source source = sourceRepository.getById(widget.source.id!)!;
   late List<SourcePreference>? sourcePreference = () {
     try {
       if (source.sourceCodeLanguage == SourceCodeLanguage.mihon &&
@@ -343,51 +340,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                                 const SizedBox(width: 15),
                                 TextButton(
                                   onPressed: () {
-                                    final sourcePrefsIds = isar
-                                        .sourcePreferences
-                                        .filter()
-                                        .sourceIdEqualTo(source.id!)
-                                        .idProperty()
-                                        .findAllSync();
-                                    final sourcePrefsStringIds = isar
-                                        .sourcePreferenceStringValues
-                                        .filter()
-                                        .sourceIdEqualTo(source.id!)
-                                        .idProperty()
-                                        .findAllSync();
-                                    isar.writeTxnSync(() {
-                                      if ((source.isObsolete ?? false) ||
-                                          (source.isLocal ?? false)) {
-                                        isar.sources.deleteSync(
-                                          widget.source.id!,
-                                        );
-                                        ref
-                                            .read(
-                                              synchingProvider(syncId: 1)
-                                                  .notifier,
-                                            )
-                                            .addChangedPart(
-                                              ActionType.removeExtension,
-                                              source.id,
-                                              "{}",
-                                              false,
-                                            );
-                                      } else {
-                                        isar.sources.putSync(
-                                          widget.source
-                                            ..sourceCode = ""
-                                            ..isAdded = false
-                                            ..isPinned = false
-                                            ..updatedAt = DateTime.now()
-                                                .millisecondsSinceEpoch,
-                                        );
-                                      }
-                                      isar.sourcePreferences.deleteAllSync(
-                                        sourcePrefsIds,
-                                      );
-                                      isar.sourcePreferenceStringValues
-                                          .deleteAllSync(sourcePrefsStringIds);
-                                    });
+                                    sourceRepository.uninstall(ref, source);
 
                                     Navigator.pop(ctx);
                                     Navigator.pop(context);

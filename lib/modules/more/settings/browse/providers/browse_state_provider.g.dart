@@ -42,7 +42,7 @@ final class AndroidProxyServerStateProvider
 }
 
 String _$androidProxyServerStateHash() =>
-    r'3ac060f8a61added586dcefc889fa44c71263c5b';
+    r'467140adbc0ca4bcd3bf904bcce8afd720226281';
 
 abstract class _$AndroidProxyServerState extends $Notifier<String> {
   String build();
@@ -98,7 +98,7 @@ final class AutoStartExtensionServerOnLaunchStateProvider
 }
 
 String _$autoStartExtensionServerOnLaunchStateHash() =>
-    r'be04fc2923244e09d51c699d411e692c7d139ac6';
+    r'd312820e810888adde370f3b6fb74ee34cdde354';
 
 abstract class _$AutoStartExtensionServerOnLaunchState extends $Notifier<bool> {
   bool build();
@@ -152,7 +152,7 @@ final class OnlyIncludePinnedSourceStateProvider
 }
 
 String _$onlyIncludePinnedSourceStateHash() =>
-    r'b9f707348d5d0f7abfa8e615c1d2b35c6dbd57f3';
+    r'4bf4198428614f48e0f293a7c3675744fe110b57';
 
 abstract class _$OnlyIncludePinnedSourceState extends $Notifier<bool> {
   bool build();
@@ -204,7 +204,7 @@ final class ShowNSFWStateProvider
   }
 }
 
-String _$showNSFWStateHash() => r'e1c8ac8c545ff11f315fd51ad049ffb7fa905142';
+String _$showNSFWStateHash() => r'5be75c412238453697f9dae2a1ff6f18bb0e2b10';
 
 abstract class _$ShowNSFWState extends $Notifier<bool> {
   bool build();
@@ -274,7 +274,7 @@ final class ExtensionsRepoStateProvider
 }
 
 String _$extensionsRepoStateHash() =>
-    r'86edc9a3f78d72acda4b20a058031c345ee406eb';
+    r'1f868c08bdc2b2377f98596679d1eb0395fd6a26';
 
 final class ExtensionsRepoStateFamily extends $Family
     with
@@ -355,7 +355,7 @@ final class AutoUpdateExtensionsStateProvider
 }
 
 String _$autoUpdateExtensionsStateHash() =>
-    r'0aa0006368f418e62a8dc9b5a427698f082f29a6';
+    r'b48592e06dd793eccd601c1cecddc76d655dd577';
 
 abstract class _$AutoUpdateExtensionsState extends $Notifier<bool> {
   bool build();
@@ -409,7 +409,7 @@ final class CheckForExtensionsUpdateStateProvider
 }
 
 String _$checkForExtensionsUpdateStateHash() =>
-    r'c700ecd686cce971b70b74b6086d4950157a3f13';
+    r'afa9cd5f07c10a9a239a19858d87c7a6419842f6';
 
 abstract class _$CheckForExtensionsUpdateState extends $Notifier<bool> {
   bool build();
@@ -478,7 +478,7 @@ final class GetRepoInfosProvider
   }
 }
 
-String _$getRepoInfosHash() => r'91181c43ba8778d8886be9bba4ac0aaf9f4357bb';
+String _$getRepoInfosHash() => r'399a78e9c23b235105137a502415a4d9481364c5';
 
 final class GetRepoInfosFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Repo?>, String> {

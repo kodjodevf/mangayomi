@@ -99,7 +99,7 @@ final class ClearChapterCacheOnAppLaunchStateProvider
 }
 
 String _$clearChapterCacheOnAppLaunchStateHash() =>
-    r'1decadd07db6946a1daaa4ae90e0f082555fab78';
+    r'5afdfb0a33698f8fe9deb2df50cb979e1055282d';
 
 abstract class _$ClearChapterCacheOnAppLaunchState extends $Notifier<bool> {
   bool build();

@@ -42,7 +42,7 @@ final class BackupEncryptionEnabledProvider
 }
 
 String _$backupEncryptionEnabledHash() =>
-    r'71cd564b1446c685162b67898e8dbaca5960de3f';
+    r'eefefd0a13e6a12ae74ccddc7f161b9898f2d764';
 
 abstract class _$BackupEncryptionEnabled extends $Notifier<bool> {
   bool build();
