@@ -139,7 +139,13 @@ bool isExpectedFailure(Object error) {
       text.contains('connection reset') ||
       text.contains('connection refused') ||
       text.contains('timeoutexception') ||
-      text.contains('handshakeexception');
+      text.contains('handshakeexception') ||
+      // What a half-downloaded or non-image response decodes to. #927 shows
+      // the sequence plainly in its own recent-errors block: two failed
+      // MangaDex page loads, then this, seconds apart. It is the same failure
+      // one step further along, not a separate bug.
+      text.contains('could not decompress image') ||
+      text.contains('invalid image data');
 }
 
 /// Whether [error] came from an extension rather than from the app.

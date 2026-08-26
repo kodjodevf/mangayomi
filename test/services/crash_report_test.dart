@@ -114,7 +114,7 @@ void main() {
         expect(CrashReports.reports, hasLength(10));
         expect(CrashReports.reports.first.error, 'error 20');
         final stored = jsonDecode(file().readAsStringSync()) as Map;
-      expect(stored['reports'], hasLength(10));
+        expect(stored['reports'], hasLength(10));
       },
     );
 
@@ -175,6 +175,13 @@ void main() {
         isExpectedFailure("SocketException: Failed host lookup: 'x.test'"),
         true,
       );
+    });
+
+    test('and what a failed download decodes to afterwards', () {
+      // #927, whose own recent-errors block shows two failed page loads
+      // seconds before it. The bytes that arrived were not an image.
+      expect(isExpectedFailure('Exception: Could not decompress image.'), true);
+      expect(isExpectedFailure('Exception: Invalid image data'), true);
     });
 
     test('an app bug is not one of them', () {
