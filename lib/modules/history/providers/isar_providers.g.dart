@@ -158,7 +158,7 @@ final class GetAllUpdateStreamProvider
 }
 
 String _$getAllUpdateStreamHash() =>
-    r'80e1489533dde2073348da448807f6edb0de3c52';
+    r'e8d1054b9dd12085d611c345143ce7dacfce5df6';
 
 final class GetAllUpdateStreamFamily extends $Family
     with

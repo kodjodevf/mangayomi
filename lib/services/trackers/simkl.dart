@@ -17,7 +17,6 @@ import 'base_tracker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'simkl.g.dart';
 
-@riverpod
 /// Which Simkl library a mangayomi library maps to.
 ///
 /// Simkl keeps anime apart from tv, with their own endpoints. Asking the tv
@@ -33,6 +32,7 @@ String simklMediaType(bool isManga) => isManga ? "movies" : "anime";
 /// URL.
 String simklSearchType(bool isManga) => isManga ? "tv" : "anime";
 
+@riverpod
 class Simkl extends _$Simkl implements BaseTracker {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   static const _baseOAuthUrl = 'https://simkl.com/oauth';
