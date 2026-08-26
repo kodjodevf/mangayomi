@@ -4,6 +4,7 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/epub.dart';
+import 'api/rar.dart';
 import 'api/rhttp/client.dart';
 import 'api/rhttp/error.dart';
 import 'api/rhttp/http.dart';
@@ -71,7 +72,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0';
 
   @override
-  int get rustContentHash => -1109570704;
+  int get rustContentHash => -1477350731;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -99,6 +100,14 @@ abstract class RustLibApi extends BaseApi {
 
   DnsSettings crateApiRhttpClientCreateStaticResolverSync({
     required StaticDnsSettings settings,
+  });
+
+  Future<LocalRarArchive> crateApiRarExtractRarArchive({
+    required String archivePath,
+  });
+
+  Future<LocalRarMetadata> crateApiRarExtractRarMetadata({
+    required String archivePath,
   });
 
   Future<String> crateApiEpubGetChapterContent({
@@ -331,6 +340,72 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<LocalRarArchive> crateApiRarExtractRarArchive({
+    required String archivePath,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(archivePath, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 7,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_local_rar_archive,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRarExtractRarArchiveConstMeta,
+        argValues: [archivePath],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRarExtractRarArchiveConstMeta =>
+      const TaskConstMeta(
+        debugName: "extract_rar_archive",
+        argNames: ["archivePath"],
+      );
+
+  @override
+  Future<LocalRarMetadata> crateApiRarExtractRarMetadata({
+    required String archivePath,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(archivePath, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 8,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_local_rar_metadata,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRarExtractRarMetadataConstMeta,
+        argValues: [archivePath],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRarExtractRarMetadataConstMeta =>
+      const TaskConstMeta(
+        debugName: "extract_rar_metadata",
+        argNames: ["archivePath"],
+      );
+
+  @override
   Future<String> crateApiEpubGetChapterContent({
     required String epubPath,
     required String chapterPath,
@@ -344,7 +419,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 9,
             port: port_,
           );
         },
@@ -415,7 +490,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 8,
+              funcId: 10,
               port: port_,
             );
           },
@@ -478,7 +553,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 9,
+            funcId: 11,
             port: port_,
           );
         },
@@ -513,7 +588,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 10,
+            funcId: 12,
             port: port_,
           );
         },
@@ -546,7 +621,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 11,
+            funcId: 13,
             port: port_,
           );
         },
@@ -574,7 +649,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_box_autoadd_client_settings(settings, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -1210,6 +1285,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<LocalRarImage> dco_decode_list_local_rar_image(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_local_rar_image).toList();
+  }
+
+  @protected
   List<int> dco_decode_list_prim_u_8_loose(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as List<int>;
@@ -1235,6 +1316,45 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   List<(String, String)> dco_decode_list_record_string_string(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_record_string_string).toList();
+  }
+
+  @protected
+  LocalRarArchive dco_decode_local_rar_archive(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return LocalRarArchive(
+      name: dco_decode_String(arr[0]),
+      coverImage: dco_decode_opt_list_prim_u_8_strict(arr[1]),
+      images: dco_decode_list_local_rar_image(arr[2]),
+      path: dco_decode_String(arr[3]),
+    );
+  }
+
+  @protected
+  LocalRarImage dco_decode_local_rar_image(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return LocalRarImage(
+      name: dco_decode_String(arr[0]),
+      image: dco_decode_list_prim_u_8_strict(arr[1]),
+    );
+  }
+
+  @protected
+  LocalRarMetadata dco_decode_local_rar_metadata(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return LocalRarMetadata(
+      name: dco_decode_String(arr[0]),
+      coverImage: dco_decode_list_prim_u_8_strict(arr[1]),
+      path: dco_decode_String(arr[2]),
+    );
   }
 
   @protected
@@ -1997,6 +2117,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<LocalRarImage> sse_decode_list_local_rar_image(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <LocalRarImage>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_local_rar_image(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
   List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var len_ = sse_decode_i_32(deserializer);
@@ -2036,6 +2170,42 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       ans_.add(sse_decode_record_string_string(deserializer));
     }
     return ans_;
+  }
+
+  @protected
+  LocalRarArchive sse_decode_local_rar_archive(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_name = sse_decode_String(deserializer);
+    var var_coverImage = sse_decode_opt_list_prim_u_8_strict(deserializer);
+    var var_images = sse_decode_list_local_rar_image(deserializer);
+    var var_path = sse_decode_String(deserializer);
+    return LocalRarArchive(
+      name: var_name,
+      coverImage: var_coverImage,
+      images: var_images,
+      path: var_path,
+    );
+  }
+
+  @protected
+  LocalRarImage sse_decode_local_rar_image(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_name = sse_decode_String(deserializer);
+    var var_image = sse_decode_list_prim_u_8_strict(deserializer);
+    return LocalRarImage(name: var_name, image: var_image);
+  }
+
+  @protected
+  LocalRarMetadata sse_decode_local_rar_metadata(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_name = sse_decode_String(deserializer);
+    var var_coverImage = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_path = sse_decode_String(deserializer);
+    return LocalRarMetadata(
+      name: var_name,
+      coverImage: var_coverImage,
+      path: var_path,
+    );
   }
 
   @protected
@@ -2965,6 +3135,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_local_rar_image(
+    List<LocalRarImage> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_local_rar_image(item, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_list_prim_u_8_loose(
     List<int> self,
     SseSerializer serializer,
@@ -3008,6 +3190,39 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     for (final item in self) {
       sse_encode_record_string_string(item, serializer);
     }
+  }
+
+  @protected
+  void sse_encode_local_rar_archive(
+    LocalRarArchive self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.name, serializer);
+    sse_encode_opt_list_prim_u_8_strict(self.coverImage, serializer);
+    sse_encode_list_local_rar_image(self.images, serializer);
+    sse_encode_String(self.path, serializer);
+  }
+
+  @protected
+  void sse_encode_local_rar_image(
+    LocalRarImage self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.name, serializer);
+    sse_encode_list_prim_u_8_strict(self.image, serializer);
+  }
+
+  @protected
+  void sse_encode_local_rar_metadata(
+    LocalRarMetadata self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.name, serializer);
+    sse_encode_list_prim_u_8_strict(self.coverImage, serializer);
+    sse_encode_String(self.path, serializer);
   }
 
   @protected

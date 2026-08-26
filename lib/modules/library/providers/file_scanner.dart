@@ -1249,7 +1249,12 @@ bool _isImage(String path) {
 bool _isArchive(String path) {
   if (_isHiddenSystemFile(path)) return false;
   final ext = p.extension(path).toLowerCase();
-  return ext == '.cbz' || ext == '.zip' || ext == '.cbt' || ext == '.tar';
+  return ext == '.cbz' ||
+      ext == '.zip' ||
+      ext == '.cbt' ||
+      ext == '.tar' ||
+      ext == '.cbr' ||
+      ext == '.rar';
 }
 
 /// Returns if file is a video

@@ -7,6 +7,7 @@
 // ignore_for_file: argument_type_not_assignable
 
 import 'api/epub.dart';
+import 'api/rar.dart';
 import 'api/rhttp/client.dart';
 import 'api/rhttp/error.dart';
 import 'api/rhttp/http.dart';
@@ -241,6 +242,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  List<LocalRarImage> dco_decode_list_local_rar_image(dynamic raw);
+
+  @protected
   List<int> dco_decode_list_prim_u_8_loose(dynamic raw);
 
   @protected
@@ -253,6 +257,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<(String, String)> dco_decode_list_record_string_string(dynamic raw);
+
+  @protected
+  LocalRarArchive dco_decode_local_rar_archive(dynamic raw);
+
+  @protected
+  LocalRarImage dco_decode_local_rar_image(dynamic raw);
+
+  @protected
+  LocalRarMetadata dco_decode_local_rar_metadata(dynamic raw);
 
   @protected
   RequestClient?
@@ -543,6 +556,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  List<LocalRarImage> sse_decode_list_local_rar_image(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer);
 
   @protected
@@ -557,6 +575,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<(String, String)> sse_decode_list_record_string_string(
     SseDeserializer deserializer,
   );
+
+  @protected
+  LocalRarArchive sse_decode_local_rar_archive(SseDeserializer deserializer);
+
+  @protected
+  LocalRarImage sse_decode_local_rar_image(SseDeserializer deserializer);
+
+  @protected
+  LocalRarMetadata sse_decode_local_rar_metadata(SseDeserializer deserializer);
 
   @protected
   RequestClient?
@@ -950,6 +977,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_local_rar_image(
+    List<LocalRarImage> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_list_prim_u_8_loose(List<int> self, SseSerializer serializer);
 
   @protected
@@ -967,6 +1000,21 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_record_string_string(
     List<(String, String)> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_local_rar_archive(
+    LocalRarArchive self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_local_rar_image(LocalRarImage self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_local_rar_metadata(
+    LocalRarMetadata self,
     SseSerializer serializer,
   );
 
