@@ -18,6 +18,21 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'simkl.g.dart';
 
 @riverpod
+/// Which Simkl library a mangayomi library maps to.
+///
+/// Simkl keeps anime apart from tv, with their own endpoints. Asking the tv
+/// ones for an anime is why tracked entries landed under TV Shows (#922):
+/// searching `/search/tv` for "frieren" returns nothing, while
+/// `/search/anime` returns the series.
+///
+/// Manga stays mapped onto movies, which is what it already did. Simkl has no
+/// manga library and changing that is a separate question.
+String simklMediaType(bool isManga) => isManga ? "movies" : "anime";
+
+/// The same choice where Simkl uses the singular: a search path and a public
+/// URL.
+String simklSearchType(bool isManga) => isManga ? "tv" : "anime";
+
 class Simkl extends _$Simkl implements BaseTracker {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   static const _baseOAuthUrl = 'https://simkl.com/oauth';
@@ -73,7 +88,9 @@ class Simkl extends _$Simkl implements BaseTracker {
     String rankingType = "trending",
   }) async {
     /// isManga <> isMovie
-    final type = isManga ? "movies" : "tv";
+    // Simkl keeps anime apart from tv, with its own endpoints. Asking the tv
+    // ones for an anime is why entries landed under TV Shows (#922).
+    final type = simklMediaType(isManga);
     final accessToken = await _getAccessToken();
     final url = Uri.parse('$_baseApiUrl/$type/$rankingType').replace(
       queryParameters: {
@@ -113,14 +130,16 @@ class Simkl extends _$Simkl implements BaseTracker {
 
   @override
   Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
-    final type = isManga ? "movies" : "shows";
-    final nodeType = isManga ? "movie" : "show";
+    final type = simklMediaType(isManga);
     final accessToken = await _getAccessToken();
     final url = Uri.parse('$_baseApiUrl/sync/all-items/$type');
     final result = await _makeGetRequest(url, accessToken);
     final data = jsonDecode(result.body) as Map<String, dynamic>?;
     return (data?[type] as List?)?.map((e) {
-          final node = e[nodeType];
+          // Simkl models anime as shows internally, so an entry under the
+          // anime key can still arrive with a "show" node. Accept either
+          // rather than depend on which one this account happens to get.
+          final node = e['anime'] ?? e['show'] ?? e['movie'];
           return TrackSearch(
             mediaId: node['ids']?['simkl'],
             summary: 'No summary available.',
@@ -131,7 +150,7 @@ class Simkl extends _$Simkl implements BaseTracker {
             title: node['title'] ?? 'Unknown Title',
             score: 0,
             startDate: "",
-            publishingType: isManga ? "movie" : "tv",
+            publishingType: isManga ? "movie" : "anime",
             publishingStatus: e["status"],
             trackingUrl: "https://simkl.com/$type/${node['ids']?['simkl']}",
             syncId: syncId,
@@ -209,14 +228,15 @@ class Simkl extends _$Simkl implements BaseTracker {
           );
         }).toList() ??
         [];
-    final urlSeries = Uri.parse('$_baseApiUrl/search/tv').replace(
-      queryParameters: {
-        'q': query,
-        'extended': 'full',
-        'clientId': _clientId,
-        'limit': '15',
-      },
-    );
+    final urlSeries =
+        Uri.parse('$_baseApiUrl/search/${simklSearchType(isManga)}').replace(
+          queryParameters: {
+            'q': query,
+            'extended': 'full',
+            'clientId': _clientId,
+            'limit': '15',
+          },
+        );
     final resultSeries = await _makeGetRequest(urlSeries, accessToken);
     final dataSeries = jsonDecode(resultSeries.body) as List?;
     final series =
@@ -231,10 +251,10 @@ class Simkl extends _$Simkl implements BaseTracker {
             title: e['title'] ?? 'Unknown Title',
             score: (e["ratings"]?["simkl"]?["rating"] as num?)?.toDouble(),
             startDate: e["release_date"] ?? "",
-            publishingType: "tv",
+            publishingType: simklSearchType(isManga),
             publishingStatus: e["status"],
             trackingUrl:
-                "https://simkl.com/tv/${e['ids']?['simkl_id'] ?? e['ids']?['simkl']}",
+                "https://simkl.com/${simklSearchType(isManga)}/${e['ids']?['simkl_id'] ?? e['ids']?['simkl']}",
             syncId: syncId,
           );
         }).toList() ??
