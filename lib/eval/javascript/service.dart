@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:mangayomi/eval/javascript/dom_selector.dart';
+import 'package:mangayomi/eval/javascript/js_errors.dart';
 import 'package:mangayomi/eval/javascript/extractors.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/eval/javascript/preferences.dart';
@@ -82,9 +83,18 @@ async function jsonStringify(fn) {
     return JSON.stringify(await fn());
 }
 ''');
-    runtime.evaluate('''${source.sourceCode}
+    // evaluate() reports a failure by returning a result with isError set; it
+    // does not throw. Ignoring that meant a source which failed to evaluate
+    // still set _isInitialized, so `extention` was never created and every
+    // later call answered its default. That is what "Video list is empty"
+    // was: not an empty list from the source, but a source that never loaded.
+    // See #873.
+    _throwIfError(
+      runtime.evaluate('''${source.sourceCode}
 var extention = new DefaultExtension();
-''');
+'''),
+      'loading the source',
+    );
     _isInitialized = true;
   }
 
@@ -225,15 +235,20 @@ var extention = new DefaultExtension();
   T _extensionCall<T>(String call, T def) {
     _init();
 
-    try {
-      final res = runtime.evaluate('JSON.stringify(extention.$call)');
+    final res = runtime.evaluate('JSON.stringify(extention.$call)');
+    if (res.isError) {
+      // A source that simply does not implement an optional method is not a
+      // failure, and falling back is the whole point of `def`. Anything else
+      // is a real error and used to arrive as a JSON parse failure, or as
+      // silence when def was non-null.
+      if (_isNotImplemented(res) && def != null) return def;
+      _throwIfError(res, call);
+    }
 
+    try {
       return jsonDecode(res.stringResult) as T;
     } catch (_) {
-      if (def != null) {
-        return def;
-      }
-
+      if (def != null) return def;
       rethrow;
     }
   }
@@ -241,14 +256,35 @@ var extention = new DefaultExtension();
   Future<T> _extensionCallAsync<T>(String call) async {
     _init();
 
-    try {
-      final promised = await runtime.handlePromise(
-        await runtime.evaluateAsync('jsonStringify(() => extention.$call)'),
-      );
+    final evaluated = await runtime.evaluateAsync(
+      'jsonStringify(() => extention.$call)',
+    );
+    _throwIfError(evaluated, call);
 
-      return jsonDecode(promised.stringResult) as T;
-    } catch (e) {
-      rethrow;
-    }
+    final promised = await runtime.handlePromise(evaluated);
+    _throwIfError(promised, call);
+
+    return jsonDecode(promised.stringResult) as T;
   }
+
+  /// Turns a failed evaluation into an error that says what the source
+  /// actually reported.
+  ///
+  /// Without this the message reaching the reader is either nothing at all or
+  /// a JSON parse failure, neither of which says which source broke or why.
+  void _throwIfError(JsEvalResult result, String what) {
+    if (!result.isError) return;
+    throw Exception(
+      jsExtensionErrorMessage(
+        sourceName: source.name ?? 'unknown',
+        whileDoing: what,
+        reported: result.stringResult,
+      ),
+    );
+  }
+
+  /// Whether this is the base class saying the source does not implement
+  /// something, rather than the source going wrong.
+  bool _isNotImplemented(JsEvalResult result) =>
+      isNotImplementedError(result.stringResult);
 }
