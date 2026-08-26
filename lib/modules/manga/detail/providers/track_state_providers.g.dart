@@ -160,7 +160,7 @@ final class LastTrackerLibraryLocationStateProvider
 }
 
 String _$lastTrackerLibraryLocationStateHash() =>
-    r'c09efe7fe4f8dda723c31bc6543dbaa571718342';
+    r'2ebcc2fe2f546ac397403909e659b94bdc3d6a9a';
 
 abstract class _$LastTrackerLibraryLocationState
     extends $Notifier<(int, bool)> {

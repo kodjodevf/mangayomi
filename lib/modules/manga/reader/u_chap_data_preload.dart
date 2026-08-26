@@ -21,6 +21,14 @@ class UChapDataPreload {
   bool? isLastChapter;
   Rect? srcRect;
 
+  /// The real on-disk path of this page, for local image-folder chapters
+  /// whose pages already exist as standalone files. When set, this page
+  /// never needs to be read into memory and copied back out to a temp file -
+  /// [getLocalFilePath] returns it directly. Null for everything else
+  /// (archive-file entries, downloaded/remote pages), which have no single
+  /// real file they can point to up front.
+  String? localImagePath;
+
   /// Cached rendered dimensions (set after image first loads)
   double? loadedHeight;
   double? loadedWidth;
@@ -45,6 +53,7 @@ class UChapDataPreload {
     this.mangaName,
     this.isLastChapter = false,
     this.srcRect,
+    this.localImagePath,
   });
 
   UChapDataPreload.transition({
@@ -61,5 +70,6 @@ class UChapDataPreload {
        archiveImage = null,
        index = null,
        chapterUrlModel = null,
-       srcRect = null;
+       srcRect = null,
+       localImagePath = null;
 }

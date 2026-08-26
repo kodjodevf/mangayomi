@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/http/doh/doh_custom_store.dart';
 import 'package:mangayomi/services/http/doh/doh_providers.dart';
 
@@ -26,7 +25,7 @@ final doHProviderStateProvider =
 class DoHProviderNotifier extends Notifier<DoHProviderState> {
   @override
   DoHProviderState build() {
-    final settings = isar.settings.getSync(227)!;
+    final settings = settingsRepository.current;
     return DoHProviderState(
       enabled: settings.doHEnabled ?? false,
       providerId: settings.doHProviderId,
@@ -34,13 +33,11 @@ class DoHProviderNotifier extends Notifier<DoHProviderState> {
   }
 
   void setDoHEnabled(bool enabled) {
-    final settings = isar.settings.getSync(227)!;
-    settings.doHEnabled = enabled;
-    if (enabled && settings.doHProviderId == null) {
-      settings.doHProviderId = 0;
-    }
-    isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+    settingsRepository.update((s) {
+      s.doHEnabled = enabled;
+      if (enabled && s.doHProviderId == null) {
+        s.doHProviderId = 0;
+      }
     });
     state = state.copyWith(enabled: enabled);
   }
@@ -51,11 +48,9 @@ class DoHProviderNotifier extends Notifier<DoHProviderState> {
       return;
     }
 
-    final settings = isar.settings.getSync(227)!;
-    settings.doHProviderId = providerId;
-    settings.doHEnabled = true;
-    isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+    settingsRepository.update((s) {
+      s.doHProviderId = providerId;
+      s.doHEnabled = true;
     });
     state = state.copyWith(enabled: true, providerId: providerId);
   }
@@ -65,11 +60,9 @@ class DoHProviderNotifier extends Notifier<DoHProviderState> {
   void setCustomDoH(String url) {
     DohCustomStore.setUrl(url.trim());
 
-    final settings = isar.settings.getSync(227)!;
-    settings.doHProviderId = DoHProviders.customId;
-    settings.doHEnabled = true;
-    isar.writeTxnSync(() {
-      isar.settings.putSync(settings);
+    settingsRepository.update((s) {
+      s.doHProviderId = DoHProviders.customId;
+      s.doHEnabled = true;
     });
     state = state.copyWith(enabled: true, providerId: DoHProviders.customId);
   }

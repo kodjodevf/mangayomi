@@ -1,5 +1,4 @@
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 
 /// Accessor for the external Cloudflare-bypass proxy URL (FlareSolverr /
 /// Byparr), e.g. `http://localhost:8191/v1`.
@@ -8,15 +7,10 @@ import 'package:mangayomi/models/settings.dart';
 /// app's preferences.
 class CfProxyStore {
   /// The saved proxy URL, or an empty string if none.
-  static String get url => isar.settings.getSync(227)?.cfProxyUrl ?? '';
+  static String get url => settingsRepository.current.cfProxyUrl ?? '';
 
   /// Persists [value] as the proxy URL.
   static void setUrl(String value) {
-    isar.writeTxnSync(() {
-      final settings = isar.settings.getSync(227);
-      if (settings != null) {
-        isar.settings.putSync(settings..cfProxyUrl = value);
-      }
-    });
+    settingsRepository.update((s) => s.cfProxyUrl = value);
   }
 }

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/repositories/category_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/library/widgets/list_tile_manga_category.dart';
@@ -105,12 +104,7 @@ void showCategorySelectionDialog({
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: StreamBuilder(
-                    stream: isar.categorys
-                        .filter()
-                        .idIsNotNull()
-                        .and()
-                        .forItemTypeEqualTo(itemType)
-                        .watch(fireImmediately: true),
+                    stream: categoryRepository.watchByItemType(itemType),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return Center(
@@ -279,34 +273,27 @@ void showCategorySelectionDialog({
                             ),
                           ),
                           onPressed: () {
-                            isar.writeTxnSync(() {
-                              if (isBulk) {
-                                for (var manga in bulkMangas) {
-                                  manga.categories = categoryIds;
-                                  manga.updatedAt =
-                                      DateTime.now().millisecondsSinceEpoch;
-                                  isar.mangas.putSync(manga);
-                                }
-                              } else {
-                                if (!isFavorite) {
-                                  singleManga!.favorite = true;
-                                  singleManga.dateAdded =
-                                      DateTime.now().millisecondsSinceEpoch;
-                                }
-                                singleManga.categories = categoryIds;
-                                singleManga.updatedAt =
+                            if (isBulk) {
+                              final now = DateTime.now().millisecondsSinceEpoch;
+                              for (var manga in bulkMangas) {
+                                manga
+                                  ..categories = categoryIds
+                                  ..updatedAt = now;
+                              }
+                              mangaRepository.putAll(bulkMangas);
+                              ref.read(mangasListStateProvider.notifier).clear();
+                              ref
+                                  .read(isLongPressedStateProvider.notifier)
+                                  .update(false);
+                            } else {
+                              if (!isFavorite) {
+                                singleManga!.favorite = true;
+                                singleManga.dateAdded =
                                     DateTime.now().millisecondsSinceEpoch;
-                                isar.mangas.putSync(singleManga);
                               }
-                              if (isBulk) {
-                                ref
-                                    .read(mangasListStateProvider.notifier)
-                                    .clear();
-                                ref
-                                    .read(isLongPressedStateProvider.notifier)
-                                    .update(false);
-                              }
-                            });
+                              singleManga.categories = categoryIds;
+                              mangaRepository.save(singleManga);
+                            }
                             if (context.mounted) Navigator.pop(context);
                           },
                           child: Text(l10n.ok),

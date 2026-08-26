@@ -14,6 +14,16 @@ const defaultUserAgent =
 const metadataApiUserAgent =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36";
 
+/// `icon-black.png`, `icon-red.png`, `icon.png`
+const appIconAssets = [
+  'assets/app_icons/icon-black.png',
+  'assets/app_icons/icon-red.png',
+  'assets/app_icons/icon.png',
+];
+
+/// `transparent.png`
+const transparentAsset = 'assets/transparent.png';
+
 String getMangaStatusName(Status status, BuildContext context) {
   final l10n = l10nLocalizations(context)!;
   return switch (status) {

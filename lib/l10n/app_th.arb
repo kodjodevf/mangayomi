@@ -771,5 +771,516 @@
   "saved_searches": "การค้นหาที่บันทึกไว้",
   "enter_search_to_save_first": "ป้อนการค้นหาเพื่อบันทึกก่อน",
   "no_saved_searches": "ไม่มีการค้นหาที่บันทึกไว้สำหรับแหล่งที่มานี้เพื่อ\nทำการค้นหาแล้วเลือก \"บันทึกการค้นหา\"",
-  "source": "แหล่งที่มา"
+  "source": "แหล่งที่มา",
+  "label_value": "{label}: {value}",
+  "url": "URL",
+  "beta_version": "เบต้า ({version})",
+  "empty_placeholder": "ว่าง",
+  "error": "ข้อผิดพลาด",
+  "error_with_message": "ข้อผิดพลาด: {error}",
+  "no_pages_available": "ข้อผิดพลาด: ไม่มีหน้าว่าง",
+  "create_extension": "สร้างส่วนขยาย",
+  "choose_extension_language": "เลือกภาษาส่วนขยาย",
+  "lang": "ภาษา",
+  "base_url": "URL ฐาน",
+  "api_url_optional": "API URL (ทางเลือก)",
+  "icon_url": "URL ไอคอน",
+  "source_icon_url": "URL ไอคอนแหล่งที่มา",
+  "notes": "หมายเหตุ",
+  "extension_name_example": "ตัวอย่าง: myAnime",
+  "language_code_example": "ตัวอย่าง: th",
+  "base_url_example": "ตัวอย่าง: https://example.com",
+  "api_url_example": "ตัวอย่าง: https://api.example.com",
+  "extension_notes_example": "ตัวอย่าง: ส่วนขยายนี้ต้องเข้าสู่ระบบ",
+  "type": "ประเภท",
+  "target": "เป้าหมาย",
+  "source_type_single": "เดี่ยว",
+  "source_type_multi": "หลายรายการ",
+  "source_type_torrent": "ทอร์เรนต์",
+  "source_language_dart": "Dart",
+  "source_language_javascript": "JavaScript",
+  "source_language_lnreader_compiled_js": "JS คอมไพล์ของ LNReader",
+  "source_created_successfully": "สร้างแหล่งที่มาเรียบร้อยแล้ว",
+  "source_already_exists": "แหล่งที่มามีอยู่แล้ว",
+  "error_when_creating_source": "เกิดข้อผิดพลาดในการสร้างแหล่งที่มา",
+  "cookies_deleted": "ลบคุกกี้แล้ว!",
+  "delete_all_cookies": "ลบคุกกี้ทั้งหมด",
+  "missing_chapters": "ขาด {count} ตอน",
+  "sync_restore_in_progress": "ข้ามการซิงค์ — กำลังกู้คืน",
+  "sync_status_not_configured": "ไม่ได้เชื่อมต่อ",
+  "sync_status_checking": "กำลังตรวจสอบการเชื่อมต่อ...",
+  "sync_status_connected": "เชื่อมต่อแล้ว",
+  "sync_status_unauthorized": "เซสชันหมดอายุ โปรดเข้าสู่ระบบอีกครั้ง",
+  "sync_status_unreachable": "ไม่สามารถติดต่อเซิร์ฟเวอร์ได้",
+  "sync_section_general": "ทั่วไป",
+  "sync_section_data_types": "สิ่งที่ต้องการซิงค์",
+  "missing_episodes": "ขาด {count} ตอน",
+  "encrypt_backups": "เข้ารหัสข้อมูลสำรอง",
+  "encrypt_backups_info": "ป้องกันไฟล์สำรองด้วยรหัสผ่านโดยใช้การเข้ารหัส AES",
+  "no_secure_storage": "ไม่พบที่จัดเก็บที่ปลอดภัย",
+  "no_keyring_warning": "ระบบนี้ไม่มีบริการพวงกุญแจ รหัสผ่านจึงไม่สามารถจัดเก็บได้อย่างปลอดภัย",
+  "enter_backup_password": "ป้อนรหัสผ่านข้อมูลสำรอง",
+  "incorrect_password_try_again": "รหัสผ่านไม่ถูกต้อง โปรดลองอีกครั้ง",
+  "set_backup_password": "ตั้งรหัสผ่านข้อมูลสำรอง",
+  "confirm_password": "ยืนยันรหัสผ่าน",
+  "passwords_do_not_match": "รหัสผ่านไม่ตรงกัน",
+  "password_required_to_restore": "จำเป็นต้องใช้รหัสผ่านในการกู้คืนข้อมูลสำรองนี้",
+  "restore_sync_question_title": "ซิงค์การกู้คืนนี้หรือไม่?",
+  "restore_sync_question_message": "อุปกรณ์นี้เชื่อมต่อกับเซิร์ฟเวอร์ซิงค์ ต้องการอัปโหลดข้อมูลที่กู้คืนตอนนี้หรือไม่?",
+  "restore_sync_question_confirm": "ใช่ ซิงค์",
+  "restore_sync_question_deny": "ไม่ ปิดใช้งานการซิงค์",
+  "sync_disabled_after_restore": "การซิงค์ถูกปิดใช้งาน คุณสามารถเปิดใช้งานได้ในการตั้งค่า",
+  "restore_sync_disabled_question_title": "การซิงค์ถูกปิดใช้งานอยู่",
+  "restore_sync_disabled_question_message": "การซิงค์ปิดอยู่ ต้องการเปิดใช้งานและอัปโหลดข้อมูลไปยังเซิร์ฟเวอร์หรือไม่?",
+  "restore_sync_question_reenable": "ใช่ เปิดใช้งานและซิงค์",
+  "restore_sync_question_keep_disabled": "ปิดไว้ต่อไป",
+  "restore_sync_uploading": "กำลังซิงค์ข้อมูลกับเซิร์ฟเวอร์…",
+  "restore_sync_upload_success": "ซิงค์ข้อมูลกับเซิร์ฟเวอร์สำเร็จ",
+  "default_download_destination": "ตำแหน่งดาวน์โหลดเริ่มต้น",
+  "ask_download_destination": "ถามตำแหน่งดาวน์โหลด",
+  "ask_download_destination_desc": "เลือกโฟลเดอร์ในเครื่องทุกครั้งที่เริ่มดาวน์โหลด",
+  "select_download_destination": "เลือกตำแหน่งดาวน์โหลด",
+  "clear_local_library": "ล้างคลังในเครื่อง",
+  "clear_local_library_desc": "ลบโฟลเดอร์และไฟล์เก็บถาวรในเครื่องออกจากคลัง",
+  "clear_local_library_msg": "การดำเนินการนี้จะลบรายการในเครื่องออกจากคลัง (ไฟล์ในเครื่องจะไม่ถูกลบ)",
+  "custom": "กำหนดเอง",
+  "no_local_folder_available_for_downloads": "ไม่มีโฟลเดอร์ในเครื่องสำหรับการดาวน์โหลด",
+  "failed_to_create_cbz": "สร้าง CBZ ล้มเหลว: {error}",
+  "error_reading_cover_image": "เกิดข้อผิดพลาดในการอ่านภาพหน้าปก: {error}",
+  "error_reading_metadata": "เกิดข้อผิดพลาดในการอ่านข้อมูลเมตา: {error}",
+  "error_saving_chapter_episode_to_library": "เกิดข้อผิดพลาดในการบันทึกลงคลัง: {error}",
+  "error_reading_chapter_cover_image": "เกิดข้อผิดพลาดในการอ่านหน้าปกตอน: {error}",
+  "error_reading_archive_cover_image": "เกิดข้อผิดพลาดในการอ่านหน้าปกไฟล์เก็บถาวร: {error}",
+  "error_getting_local_library": "เกิดข้อผิดพลาดในการรับคลังในเครื่อง: {error}",
+  "failed_to_export_metadata": "ส่งออกข้อมูลเมตาล้มเหลว: {error}",
+  "unrecognized_chapter_numbers": "มี {count} ตอนที่ไม่สามารถใส่หมายเลขอัตโนมัติได้",
+  "cloudflare_resolution_webview_server_start_failed": "ไม่สามารถเริ่มเซิร์ฟเวอร์แก้ปัญหา Cloudflare ได้",
+  "tracker_token_expired": "โทเค็น {tracker} หมดอายุ",
+  "video_list_empty": "รายการวิดีโอว่างเปล่า",
+  "playback_speed_multiplier": "x{value}",
+  "could_not_launch_url": "ไม่สามารถเปิด {url} ได้",
+  "zero_interpreter": "ตัวแปล Zero",
+  "zero_interpreter_description": "ควบคุมเซิร์ฟเวอร์ตัวแปล Zero อัตโนมัติหรือด้วยตนเอง",
+  "start_server_on_launch": "เริ่มเซิร์ฟเวอร์เมื่อเปิดแอป",
+  "runtime_status": "สถานะการทำงาน",
+  "running": "กำลังทำงาน",
+  "stopped": "หยุดแล้ว",
+  "start": "เริ่ม",
+  "stop": "หยุด",
+  "something_went_wrong": "เกิดข้อผิดพลาดบางอย่าง",
+  "startup_failed": "Mangayomi ไม่สามารถเริ่มต้นทำงานได้",
+  "sources_with_no_results": "{count, plural, other{{count} แหล่งที่มาไม่มีผลลัพธ์}}",
+  "import_mode_title": "ต้องการนำเข้าอย่างไร?",
+  "import_mode_message": "เลือกว่าจะผสานข้อมูลสำรองนี้เข้ากับคลังปัจจุบัน หรือแทนที่ทั้งคลัง",
+  "import_mode_keep_existing": "ผสาน",
+  "import_mode_keep_existing_subtitle": "เพิ่มเรื่องใหม่และอัปเดตเรื่องที่ตรงกัน",
+  "import_mode_replace": "แทนที่",
+  "import_mode_replace_subtitle": "ลบคลังปัจจุบันทั้งหมดและแทนที่ด้วยข้อมูลสำรองนี้",
+  "replace_summary_title": "พร้อมแทนที่คลังของคุณ",
+  "replace_summary_message": "การดำเนินการนี้จะลบคลังปัจจุบัน ({currentCount} เรื่อง) และแทนที่ด้วย {backupCount} เรื่อง",
+  "replace_summary_confirm": "แทนที่",
+  "replace_result_message": "แทนที่คลังด้วย {count} เรื่องจากข้อมูลสำรองเรียบร้อยแล้ว",
+  "category_conflict_title": "พบหมวดหมู่ที่มีอยู่แล้ว",
+  "category_conflict_message": "ข้อมูลสำรองมีหมวดหมู่ที่มีอยู่แล้วในคลัง",
+  "category_conflict_keep": "เก็บไว้ — ผสานเข้ากับหมวดหมู่ที่มีอยู่",
+  "category_conflict_delete": "ลบ — ปล่อยให้ไม่มีหมวดหมู่",
+  "source_conflict_title": "ไม่พบแหล่งที่มา",
+  "source_conflict_message": "บางแหล่งที่มาไม่ตรงกับส่วนขยายที่ติดตั้งไว้",
+  "source_conflict_keep": "เก็บชื่อเดิมไว้",
+  "import_summary_title": "พร้อมนำเข้า",
+  "import_summary_message": "เพิ่ม {newSeries} เรื่องใหม่ อัปเดต {updatedSeries} เรื่อง และเพิ่ม {newChapters} ตอนใหม่",
+  "import_summary_confirm": "นำเข้า",
+  "import_result_message": "นำเข้า {newSeries} เรื่องใหม่ อัปเดต {updatedSeries} เรื่อง และเพิ่ม {newChapters} ตอน",
+  "roll_back": "ย้อนกลับ",
+  "roll_back_confirm_message": "กู้คืนคลังกลับไปยังสแนปช็อตก่อนการเปลี่ยนแปลงนี้",
+  "roll_back_done": "ย้อนกลับไปยังสแนปช็อตก่อนหน้าเรียบร้อยแล้ว",
+  "restoring_backup": "กำลังกู้คืนคลัง…",
+  "roll_back_last_change": "ย้อนกลับการเปลี่ยนแปลงล่าสุด",
+  "roll_back_last_change_subtitle": "สแนปช็อตเมื่อ {date} — {description}",
+  "roll_back_available_count": "มี {count} การเปลี่ยนแปลงล่าสุดที่สามารถย้อนกลับได้",
+  "delete_source_title": "ลบแหล่งที่มาและมังงะ",
+  "delete_source_subtitle": "ลบมังงะ ตอน การดาวน์โหลด และประวัติทั้งหมดของแหล่งที่มานี้",
+  "delete_source_pick_title": "เลือกแหล่งที่มาที่จะลบ",
+  "delete_source_empty": "ไม่พบแหล่งที่มาในคลัง",
+  "delete_source_confirm_title": "ลบ {sourceName} หรือไม่?",
+  "delete_source_confirm_message": "การดำเนินการนี้จะลบ {mangaCount} เรื่อง {chapterCount} ตอน และ {historyCount} ประวัติอย่างถาวร",
+  "delete_source_also_remove_extension": "ถอนการติดตั้งส่วนขยายด้วย",
+  "delete_source_keep_history": "เก็บประวัติการอ่านไว้",
+  "delete_source_keep_downloads": "เก็บบันทึกการดาวน์โหลดไว้",
+  "delete_source_button": "ลบ",
+  "delete_source_result_message": "ลบ {mangaCount} เรื่องจาก {sourceName} เรียบร้อยแล้ว",
+  "merge_manga_title": "ผสานมังงะที่ซ้ำกัน",
+  "merge_manga_subtitle": "ค้นหามังงะที่มีชื่อตรงกันภายใต้แหล่งที่มาเดียวกันและรวมเข้าด้วยกัน",
+  "merge_manga_none_found": "ไม่พบมังงะที่ซ้ำกัน",
+  "merge_manga_pick_title": "มังงะที่อาจซ้ำกัน",
+  "merge_manga_choose_primary_title": "ต้องการผสานเรื่องอื่นเข้ากับเรื่องใด?",
+  "merge_manga_choose_primary_message": "ตอน ประวัติ และการติดตามจะถูกรวมเข้ากับเรื่องที่เลือก",
+  "merge_manga_chapters_subtitle": "{count, plural, other{{count} ตอน}}",
+  "merge_manga_button": "ผสาน",
+  "merge_manga_result_message": "ผสาน {count} มังงะที่ซ้ำกันเข้ากับ {mangaName} เรียบร้อยแล้ว",
+  "merge_preview_title": "ยืนยันการผสาน",
+  "merge_manga_preview_message": "พบทั้งหมด {totalChapters} ตอน จะตัด {duplicateChapters} ตอนที่ซ้ำกันออก และเพิ่ม {keptChapters} ตอน",
+  "beta": "เบต้า",
+  "error_reports": "รายงานข้อผิดพลาด",
+  "error_reports_subtitle": "ข้อผิดพลาดที่พบและวิธีการรายงาน",
+  "error_reports_empty": "ไม่พบข้อผิดพลาด",
+  "error_reports_likely_cause": "สาเหตุที่เป็นไปได้",
+  "error_reports_report": "รายงานบน GitHub",
+  "error_reports_banner": "Mangayomi พบข้อผิดพลาด",
+  "error_reports_banner_action": "ดู",
+  "error_reports_copy": "คัดลอก",
+  "error_reports_copied": "คัดลอกไปยังคลิปบอร์ดแล้ว",
+  "error_reports_clear": "ล้าง",
+  "share_unavailable_copied": "ไม่สามารถแชร์ได้ จึงคัดลอกไปยังคลิปบอร์ดแทน",
+  "onboarding_title": "ยินดีต้อนรับสู่ Mangayomi",
+  "onboarding_libraries_body": "เลือกสิ่งที่คุณต้องการอ่านและดู",
+  "onboarding_nav_title": "คลังของคุณ",
+  "onboarding_nav_body": "แยกแท็บสำหรับแต่ละประเภท หรือรวมไว้ในแท็บคลังเดียว",
+  "onboarding_nav_split": "แยกแท็บ",
+  "onboarding_nav_merged": "แท็บคลังเดียว",
+  "onboarding_nav_inside": "แตะคลังเพื่อสลับแท็บเหล่านี้",
+  "onboarding_next": "ถัดไป",
+  "onboarding_restore": "กู้คืนข้อมูลสำรอง",
+  "onboarding_or_local": "หรือใช้ไฟล์ที่คุณมีอยู่แล้ว",
+  "onboarding_local_folder": "เพิ่มโฟลเดอร์",
+  "onboarding_local_existing": "ตั้งค่าแล้ว {count} โฟลเดอร์",
+  "onboarding_local_any_type": "รองรับมังงะ อนิเมะ และนิยาย",
+  "onboarding_local_scanning": "กำลังสแกนโฟลเดอร์",
+  "onboarding_local_found": "พบ {count} เรื่อง",
+  "onboarding_local_remove": "ลบโฟลเดอร์",
+  "onboarding_local_in_downloads": "นี่คือโฟลเดอร์ดาวน์โหลดของแอป",
+  "onboarding_local_empty": "ไม่พบอะไรเลย โปรดเลือกโฟลเดอร์หลัก",
+  "onboarding_repo_failed": "ไม่สามารถอ่านที่เก็บข้อมูลนี้ได้",
+  "onboarding_repo_title": "เพิ่มแหล่งที่มา",
+  "onboarding_body": "เพิ่มที่เก็บข้อมูลเพื่อติดตั้งส่วนขยาย",
+  "onboarding_add": "เพิ่มที่เก็บข้อมูล",
+  "onboarding_skip": "ข้ามไปก่อน",
+  "onboarding_continue": "ดำเนินการต่อ",
+  "onboarding_later": "คุณสามารถเพิ่มได้ในภายหลังที่ การตั้งค่า > เรียกดู",
+  "onboarding_replay": "แสดงหน้าจอต้อนรับ",
+  "onboarding_replay_subtitle": "เปิดหน้าจอตั้งค่าเริ่มต้นอีกครั้ง",
+  "missing_source_check_title": "ตรวจสอบแหล่งที่มาที่หายไป",
+  "missing_source_check_subtitle": "ค้นหารายการที่ยังไม่ได้ติดตั้งส่วนขยาย",
+  "missing_source_check_none_found": "ติดตั้งแหล่งที่มาทั้งหมดแล้ว",
+  "missing_source_check_result_title": "{count, plural, other{ขาด {count} แหล่งที่มา}}",
+  "missing_source_check_result_message": "รายการเหล่านี้เชื่อมโยงกับแหล่งที่มาที่ไม่ได้ติดตั้ง แตะเพื่อย้ายหรือติดตั้งส่วนขยาย",
+  "@mass_migration_items_ready_for_review": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_item_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_finding_matches": {
+    "placeholders": {
+      "source": {},
+      "language": {}
+    }
+  },
+  "@mass_migration_processing_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_matched_so_far": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_no_match_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_review_matches": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "@mass_migration_found_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_no_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_selected_to_migrate": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_migrate_selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_migrating_selected": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "@mass_migration_migrating_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_route_summary": {
+    "placeholders": {
+      "source": {},
+      "destination": {}
+    }
+  },
+  "@mass_migration_query": {
+    "placeholders": {
+      "query": {}
+    }
+  },
+  "@mass_migration_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_source_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_destination_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_and_more_chapters": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@failed_to_download_bundle": {
+    "placeholders": {
+      "statusCode": {}
+    }
+  },
+  "@tts_paragraph_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "@label_value": {
+    "placeholders": {
+      "label": {},
+      "value": {}
+    }
+  },
+  "@beta_version": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "@error_with_message": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_create_cbz": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_saving_chapter_episode_to_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_chapter_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_archive_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_getting_local_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_export_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@unrecognized_chapter_numbers": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@tracker_token_expired": {
+    "placeholders": {
+      "tracker": {}
+    }
+  },
+  "@playback_speed_multiplier": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "@could_not_launch_url": {
+    "placeholders": {
+      "url": {}
+    }
+  },
+  "@sources_with_no_results": {
+    "description": "Header of the collapsed group in global search holding every source that failed or found nothing.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@replace_summary_message": {
+    "placeholders": {
+      "currentCount": {},
+      "backupCount": {}
+    }
+  },
+  "@replace_result_message": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@import_summary_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@import_result_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@roll_back_last_change_subtitle": {
+    "placeholders": {
+      "date": {},
+      "description": {}
+    }
+  },
+  "@roll_back_available_count": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@delete_source_confirm_title": {
+    "placeholders": {
+      "sourceName": {}
+    }
+  },
+  "@delete_source_confirm_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "chapterCount": {},
+      "historyCount": {},
+      "updateCount": {}
+    }
+  },
+  "@delete_source_result_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "sourceName": {}
+    }
+  },
+  "@merge_manga_chapters_subtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@merge_manga_result_message": {
+    "placeholders": {
+      "count": {},
+      "mangaName": {}
+    }
+  },
+  "@merge_manga_preview_message": {
+    "placeholders": {
+      "totalChapters": {},
+      "duplicateChapters": {},
+      "keptChapters": {},
+      "duplicateTracks": {}
+    }
+  },
+  "@onboarding_local_existing": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@onboarding_local_found": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@missing_source_check_result_title": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

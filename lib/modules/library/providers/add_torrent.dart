@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -54,15 +55,15 @@ Future addTorrentFromUrlOrFromFile(
 
     if (url != null) {
       manga.customCoverImage = null;
-      isar.writeTxnSync(() {
-        isar.mangas.putSync(manga);
+      mangaRepository.writeTransaction(() {
+        mangaRepository.putSync(manga);
         final chapters = Chapter(
           name: torrentName,
           url: url,
           mangaId: manga.id,
           updatedAt: DateTime.now().millisecondsSinceEpoch,
         )..manga.value = manga;
-        isar.chapters.putSync(chapters);
+        chapterRepository.putSync(chapters);
         chapters.manga.saveSync();
       });
     } else {
@@ -73,15 +74,15 @@ Future addTorrentFromUrlOrFromFile(
           manga.customCoverImage = null;
         }
 
-        isar.writeTxnSync(() {
-          isar.mangas.putSync(manga);
+        mangaRepository.writeTransaction(() {
+          mangaRepository.putSync(manga);
           final chapters = Chapter(
             name: name,
             archivePath: file.path,
             mangaId: manga.id,
             updatedAt: DateTime.now().millisecondsSinceEpoch,
           )..manga.value = manga;
-          isar.chapters.putSync(chapters);
+          chapterRepository.putSync(chapters);
           chapters.manga.saveSync();
         });
       }

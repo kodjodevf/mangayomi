@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/repositories/history_repository.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
@@ -23,7 +21,7 @@ class ContinueReaderButton extends ConsumerWidget {
         final incognitoMode = ref.read(incognitoModeStateProvider);
         final history = incognitoMode
             ? null
-            : isar.historys.where().mangaIdEqualTo(entry.id!).findFirstSync();
+            : historyRepository.findByMangaId(entry.id!);
         if (history != null && !history.chapter.isLoaded) {
           history.chapter.loadSync();
         }

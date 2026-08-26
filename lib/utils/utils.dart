@@ -1,6 +1,5 @@
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 
 Source? getSource(
   String lang,
@@ -9,11 +8,9 @@ Source? getSource(
   bool installedOnly = false,
 }) {
   try {
-    var sourcesFilter = isar.sources.filter().idIsNotNull();
-    if (installedOnly) {
-      sourcesFilter = sourcesFilter.isActiveEqualTo(true).isAddedEqualTo(true);
-    }
-    final sourcesList = sourcesFilter.findAllSync();
+    final sourcesList = sourceRepository.getAllOrInstalled(
+      installedOnly: installedOnly,
+    );
     bool byNameAndLang(Source element) =>
         element.name!.toLowerCase() == name.toLowerCase() &&
         element.lang == lang &&

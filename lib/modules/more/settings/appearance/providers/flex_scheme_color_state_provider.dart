@@ -1,7 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'flex_scheme_color_state_provider.g.dart';
 
@@ -15,7 +14,7 @@ part 'flex_scheme_color_state_provider.g.dart';
 class FlexSchemeColorState extends _$FlexSchemeColorState {
   @override
   (FlexSchemeColor color, int index) build() {
-    final index = isar.settings.getSync(227)!.flexSchemeColorIndex!;
+    final index = settingsRepository.current.flexSchemeColorIndex!;
     final color = ref.read(themeModeStateProvider)
         ? ThemeAA.schemes[index].dark
         : ThemeAA.schemes[index].light;
@@ -23,15 +22,8 @@ class FlexSchemeColorState extends _$FlexSchemeColorState {
   }
 
   void setTheme(FlexSchemeColor color, int index) {
-    final settings = isar.settings.getSync(227);
     state = (color, index);
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..flexSchemeColorIndex = index
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.flexSchemeColorIndex = index);
   }
 }
 

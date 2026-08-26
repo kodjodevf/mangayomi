@@ -1,7 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/backup_password_fallback.dart';
+import 'package:mangayomi/repositories/backup_password_repository.dart';
 
 /// Thrown by [BackupPasswordStorage.save] when the OS-backed secure storage
 /// (Keychain / Keystore / Credential Manager / libsecret) isn't available -
@@ -49,13 +47,8 @@ class BackupPasswordStorage {
   /// Explicit opt-in path: stores [password] unencrypted in a local-only
   /// Isar collection (never synced). Only ever call this after the user has
   /// been told what it means and has agreed.
-  static Future<void> savePlaintextFallback(String password) async {
-    await isar.writeTxn(() async {
-      await isar.backupPasswordFallbacks.put(
-        BackupPasswordFallback()..password = password,
-      );
-    });
-  }
+  static Future<void> savePlaintextFallback(String password) =>
+      backupPasswordRepository.savePlaintextFallback(password);
 
   /// Reads the stored password, checking secure storage first and falling
   /// back to the plaintext Isar fallback collection. Returns null if
@@ -67,10 +60,7 @@ class BackupPasswordStorage {
     } catch (_) {
       // Fall through to the plaintext fallback below.
     }
-    final fallback = await isar.backupPasswordFallbacks
-        .filter()
-        .idEqualTo(0)
-        .findFirst();
+    final fallback = await backupPasswordRepository.findPlaintextFallback();
     return fallback?.password;
   }
 
@@ -85,9 +75,6 @@ class BackupPasswordStorage {
     await _clearPlaintextFallback();
   }
 
-  static Future<void> _clearPlaintextFallback() async {
-    await isar.writeTxn(() async {
-      await isar.backupPasswordFallbacks.delete(0);
-    });
-  }
+  static Future<void> _clearPlaintextFallback() =>
+      backupPasswordRepository.clearPlaintextFallback();
 }

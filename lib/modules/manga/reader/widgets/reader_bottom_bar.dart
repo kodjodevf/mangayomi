@@ -416,6 +416,7 @@ class PageNumberOverlay extends StatelessWidget {
   final bool isVisible;
   final bool showPageNumbers;
   final PageMode pageMode;
+  final bool singleFirstPage;
 
   const PageNumberOverlay({
     super.key,
@@ -424,6 +425,7 @@ class PageNumberOverlay extends StatelessWidget {
     required this.isVisible,
     required this.showPageNumbers,
     required this.pageMode,
+    this.singleFirstPage = false,
   });
 
   @override
@@ -432,7 +434,7 @@ class PageNumberOverlay extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    final label = pageMode == PageMode.doublePage && currentIndex > 0
+    final label = pageMode == PageMode.doublePage
         ? _getDoublePageLabel()
         : '${currentIndex + 1}';
 
@@ -459,13 +461,17 @@ class PageNumberOverlay extends StatelessWidget {
   }
 
   String _getDoublePageLabel() {
-    final index1 = currentIndex * 2;
-    final index2 = index1 + 1;
-
-    if (index1 >= totalPages) {
-      return '$totalPages';
+    if (singleFirstPage) {
+      if (currentIndex == 0) return '1';
+      final pv = (currentIndex + 1) ~/ 2;
+      final p1 = pv * 2;
+      final p2 = p1 + 1;
+      return p2 > totalPages ? '$p1' : '$p1-$p2';
+    } else {
+      final pv = currentIndex ~/ 2;
+      final p1 = pv * 2 + 1;
+      final p2 = p1 + 1;
+      return p2 > totalPages ? '$p1' : '$p1-$p2';
     }
-
-    return index2 >= totalPages ? '$totalPages' : '$index1-$index2';
   }
 }

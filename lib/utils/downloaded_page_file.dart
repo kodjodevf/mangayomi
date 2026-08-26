@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -16,6 +17,24 @@ const List<String> knownPageImageExtensions = [
   '.avif',
 ];
 
+/// Superset of [knownPageImageExtensions] for recognizing image files
+/// mangayomi didn't create itself - user-added local comics, archive
+/// contents, anything from outside the downloader. Includes the '.jpeg'
+/// spelling some external tools use, which detectImageExtension never
+/// produces, so [knownPageImageExtensions] deliberately excludes it - a
+/// lookup for one of mangayomi's own downloaded pages should never need to
+/// check for a spelling it never writes.
+const List<String> recognizedImageExtensions = [
+  ...knownPageImageExtensions,
+  '.jpeg',
+];
+
+/// Whether [path]'s extension is a recognized image format. Case-insensitive.
+/// For scanning arbitrary files - see [recognizedImageExtensions].
+bool isRecognizedImageFile(String path) {
+  return recognizedImageExtensions.contains(p.extension(path).toLowerCase());
+}
+
 /// Sniffs [bytes] for a known image-format magic number and returns the
 /// matching extension (including the leading dot). Falls back to '.jpg' for
 /// anything unrecognized - matches the historical always-.jpg behavior for
@@ -28,6 +47,19 @@ String detectImageExtension(Uint8List bytes) {
   if (isGifImage(bytes)) return knownPageImageExtensions[3];
   if (isAvifImage(bytes)) return knownPageImageExtensions[4];
   return knownPageImageExtensions[0];
+}
+
+/// The mime type for an extension from [detectImageExtension]/
+/// [knownPageImageExtensions]. Falls back to 'image/jpeg' for anything else,
+/// matching detectImageExtension's own jpg fallback.
+String mimeTypeForImageExtension(String extension) {
+  return switch (extension.toLowerCase()) {
+    '.png' => 'image/png',
+    '.webp' => 'image/webp',
+    '.gif' => 'image/gif',
+    '.avif' => 'image/avif',
+    _ => 'image/jpeg',
+  };
 }
 
 bool isJpegImage(Uint8List bytes) {
@@ -69,6 +101,36 @@ bool isGifImage(Uint8List bytes) {
       bytes[3] == 0x38 && // '8'
       (bytes[4] == 0x37 || bytes[4] == 0x39) && // '7' or '9'
       bytes[5] == 0x61; // 'a'
+}
+
+/// The single source of truth for "does an exported cover already exist in
+/// [directory], and under what extension" - same tolerant-extension lookup
+/// as [findDownloadedPageFile], but for the fixed "cover" basename that
+/// exportMangaMetadata/exportMangaCoverFromFile write under (see
+/// export_metadata.dart), rather than a page index.
+File? findMangaCoverFile(Directory directory) {
+  for (final ext in knownPageImageExtensions) {
+    final file = File(p.join(directory.path, 'cover$ext'));
+    if (file.existsSync()) return file;
+  }
+  return null;
+}
+
+/// Ensures image bytes end up at a stable temp-file path. Skips writing
+/// when the file already exists. Caller supplies [extension] so caching
+/// works without running [bytesProvider] unnecessarily.
+Future<File> cacheImageBytesToTempFile({
+  required Directory tempDir,
+  required String baseName,
+  required String extension,
+  required FutureOr<Uint8List> Function() bytesProvider,
+}) async {
+  final file = File(p.join(tempDir.path, '$baseName$extension'));
+  if (!await file.exists()) {
+    final bytes = await bytesProvider();
+    await file.writeAsBytes(bytes, flush: true);
+  }
+  return file;
 }
 
 /// The single source of truth for "where is page [index] of this chapter on

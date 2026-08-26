@@ -58,7 +58,7 @@ final class KitsuProvider extends $NotifierProvider<Kitsu, void> {
   }
 }
 
-String _$kitsuHash() => r'4ab8850f17c417a9c523cf9076e3d6035a02b6be';
+String _$kitsuHash() => r'9dceced92ed93848803fb07b305fe8aac4caaaea';
 
 final class KitsuFamily extends $Family
     with

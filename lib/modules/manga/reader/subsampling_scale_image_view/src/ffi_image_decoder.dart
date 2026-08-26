@@ -70,6 +70,7 @@ class FfiImageDecoder {
   static DynamicLibrary? _dylib;
 
   bool _isRunning = false;
+  Future<void>? _startFuture;
   Isolate? _cIsolate;
   ReceivePort? _receivePort;
   SendPort? _sendPort;
@@ -96,17 +97,25 @@ class FfiImageDecoder {
     });
   }
 
-  Future<void> start() async {
-    if (!_isRunning) {
-      try {
-        await _initCIsolate();
-      } catch (e, stackTrace) {
-        if (kDebugMode) {
-          print('Error starting FFI isolate: $e');
-          print(stackTrace);
-        }
-        await stop();
+  Future<void> start() {
+    if (_isRunning) {
+      return Future.value();
+    }
+    _startFuture ??= _doStart();
+    return _startFuture!;
+  }
+
+  Future<void> _doStart() async {
+    try {
+      await _initCIsolate();
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print('Error starting FFI isolate: $e');
+        print(stackTrace);
       }
+      await stop();
+    } finally {
+      _startFuture = null;
     }
   }
 
@@ -534,17 +543,21 @@ class FfiImageDecoder {
   }
 
   Future<void> stop() async {
-    if (!_isRunning) {
+    _startFuture = null;
+    if (!_isRunning && _cIsolate == null && _receivePort == null) {
       return;
     }
 
-    _sendPort?.send('dispose');
+    try {
+      _sendPort?.send('dispose');
+    } catch (_) {}
     _cIsolate?.kill(priority: Isolate.immediate);
     _receivePort?.close();
     _sendPort = null;
     _cIsolate = null;
     _receivePort = null;
     _isRunning = false;
+    _activeJobs = 0;
 
     for (final job in _queue) {
       if (!job.completer.isCompleted) {

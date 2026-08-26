@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/widgets/tv_row_button.dart';
@@ -30,19 +29,7 @@ class SourceListTile extends StatelessWidget {
       builder: (context, ref, child) => ListTile(
         onTap: () {
           if (!isLocal) {
-            isar.writeTxn(() async {
-              final sources = await isar.sources
-                  .filter()
-                  .idIsNotNull()
-                  .itemTypeEqualTo(itemType)
-                  .findAll();
-              final updated = sources.map((src) {
-                return src
-                  ..lastUsed = src.id == source.id
-                  ..updatedAt = DateTime.now().millisecondsSinceEpoch;
-              }).toList();
-              await isar.sources.putAll(updated);
-            });
+            sourceRepository.markLastUsed(itemType, source.id);
           }
           context.push('/mangaHome', extra: (source, false));
         },
@@ -130,13 +117,7 @@ class SourceListTile extends StatelessWidget {
                 IconButton(
                   padding: const EdgeInsets.all(0),
                   onPressed: () {
-                    isar.writeTxn(
-                      () async => await isar.sources.put(
-                        source
-                          ..isPinned = !source.isPinned!
-                          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-                      ),
-                    );
+                    sourceRepository.save(source..isPinned = !source.isPinned!);
                   },
                   icon: Icon(
                     Icons.push_pin_outlined,
@@ -174,19 +155,14 @@ class TvSourceRow extends StatelessWidget {
 
   void _openPopular(BuildContext context) {
     if (!isLocal) {
-      final sources = isar.sources
-          .filter()
-          .itemTypeEqualTo(itemType)
-          .findAllSync();
+      final sources = sourceRepository.getByItemType(itemType);
       final now = DateTime.now().millisecondsSinceEpoch;
-      isar.writeTxnSync(() {
-        for (var src in sources) {
-          src
-            ..lastUsed = src.id == source.id
-            ..updatedAt = now;
-        }
-        isar.sources.putAllSync(sources);
-      });
+      for (var src in sources) {
+        src
+          ..lastUsed = src.id == source.id
+          ..updatedAt = now;
+      }
+      sourceRepository.putAll(sources);
     }
     context.push('/mangaHome', extra: (source, false));
   }
@@ -306,13 +282,7 @@ class TvSourceRow extends StatelessWidget {
             TvRowButton(
               focusNode: pinNode,
               onTap: () {
-                isar.writeTxnSync(
-                  () => isar.sources.putSync(
-                    source
-                      ..isPinned = !source.isPinned!
-                      ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-                  ),
-                );
+                sourceRepository.save(source..isPinned = !source.isPinned!);
               },
               child: Padding(
                 padding: const EdgeInsets.all(12),

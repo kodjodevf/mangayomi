@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/share.dart';
 import 'package:path/path.dart' as path;
@@ -39,7 +40,7 @@ class AboutScreen extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 40),
                     child: Image.asset(
-                      "assets/app_icons/icon.png",
+                      appIconAssets[2],
                       color: Theme.of(context).brightness == Brightness.light
                           ? Colors.black
                           : Colors.white,

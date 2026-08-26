@@ -45,6 +45,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/build/
 
 /android/app/.cxx
 untranslated_messages.txt
@@ -54,3 +55,4 @@ untranslated_messages.txt
 libisar.dylib
 libisar.so
 isar.dll
+libisar.dll

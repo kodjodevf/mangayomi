@@ -5,6 +5,7 @@ import 'dart/service.dart';
 import 'javascript/service.dart';
 import 'mihon/service.dart';
 import 'lnreader/service.dart';
+import 'aidoku/service.dart';
 
 ExtensionService getExtensionService(Source source, String androidProxyServer) {
   return switch (source.sourceCodeLanguage) {
@@ -15,6 +16,7 @@ ExtensionService getExtensionService(Source source, String androidProxyServer) {
       androidProxyServer,
     ),
     SourceCodeLanguage.lnreader => LNReaderExtensionService(source),
+    SourceCodeLanguage.aidoku => AidokuExtensionService(source),
   };
 }
 

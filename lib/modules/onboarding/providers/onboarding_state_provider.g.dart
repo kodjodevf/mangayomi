@@ -75,7 +75,7 @@ final class OnboardingCompletedStateProvider
 }
 
 String _$onboardingCompletedStateHash() =>
-    r'1cf7729b66a79b9584ee8266d41f26030fcec9e0';
+    r'762854e31b6c411f43c26cc3ab7a42275cacd4dd';
 
 /// Whether the first-run screen has already been dismissed.
 ///

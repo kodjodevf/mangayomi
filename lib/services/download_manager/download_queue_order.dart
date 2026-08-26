@@ -1,6 +1,5 @@
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/download.dart';
-import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 
 /// The user's manual ordering of the download queue as a list of Download ids
 /// (which equal their chapter ids), highest priority first.
@@ -12,16 +11,11 @@ import 'package:mangayomi/models/settings.dart';
 class DownloadQueueOrder {
   /// The saved priority order (Download ids), or an empty list if none.
   static List<int> get order =>
-      isar.settings.getSync(227)?.downloadQueueOrder ?? const [];
+      settingsRepository.current.downloadQueueOrder ?? const [];
 
   /// Persists [ids] as the new priority order.
   static void setOrder(List<int> ids) {
-    isar.writeTxnSync(() {
-      final settings = isar.settings.getSync(227);
-      if (settings != null) {
-        isar.settings.putSync(settings..downloadQueueOrder = ids);
-      }
-    });
+    settingsRepository.update((s) => s.downloadQueueOrder = ids);
   }
 
   /// Returns [items] arranged by the saved manual order. Items whose id isn't

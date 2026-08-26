@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:path/path.dart' as p;
 
 Future<void> exportMangaMetadata({
@@ -13,10 +14,9 @@ Future<void> exportMangaMetadata({
 }) async {
   await directory.create(recursive: true);
 
-  final coverFile = File(p.join(directory.path, "cover.jpg"));
   final metadataFile = File(p.join(directory.path, "metadata.json"));
 
-  if (!onlyIfMissing || !await coverFile.exists()) {
+  if (!onlyIfMissing || findMangaCoverFile(directory) == null) {
     final imageUrl = (manga.customCoverFromTracker ?? manga.imageUrl ?? "")
         .trim();
     if (imageUrl.isNotEmpty) {
@@ -26,6 +26,8 @@ Future<void> exportMangaMetadata({
           final client = MClient.init();
           final res = await client.get(uri, headers: headers);
           if (res.bodyBytes.isNotEmpty) {
+            final ext = detectImageExtension(res.bodyBytes);
+            final coverFile = File(p.join(directory.path, "cover$ext"));
             await coverFile.writeAsBytes(res.bodyBytes);
           }
         } catch (_) {
@@ -55,10 +57,12 @@ Future<void> exportMangaCoverFromFile({
   required File imageFile,
   bool onlyIfMissing = true,
 }) async {
-  final coverFile = File(p.join(directory.path, "cover.jpg"));
-  if (onlyIfMissing && await coverFile.exists()) return;
+  if (onlyIfMissing && findMangaCoverFile(directory) != null) return;
   if (!await imageFile.exists()) return;
 
   await directory.create(recursive: true);
-  await coverFile.writeAsBytes(await imageFile.readAsBytes());
+  final bytes = await imageFile.readAsBytes();
+  final ext = detectImageExtension(bytes);
+  final coverFile = File(p.join(directory.path, "cover$ext"));
+  await coverFile.writeAsBytes(bytes);
 }

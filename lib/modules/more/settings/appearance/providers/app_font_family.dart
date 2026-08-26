@@ -1,6 +1,5 @@
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'app_font_family.g.dart';
 
@@ -22,19 +21,12 @@ class AppFontFamily extends _$AppFontFamily {
 
   @override
   (String? raw, String? resolved) build() {
-    final fontFamily = isar.settings.getSync(227)?.appFontFamily;
+    final fontFamily = settingsRepository.current.appFontFamily;
     return (fontFamily, _resolveFontFamily(fontFamily));
   }
 
   void set(String? fontFamily) {
-    final settings = isar.settings.getSync(227);
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..appFontFamily = fontFamily
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.appFontFamily = fontFamily);
     state = (fontFamily, _resolveFontFamily(fontFamily));
   }
 }

@@ -1,5 +1,5 @@
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'player_audio_state_provider.g.dart';
@@ -8,19 +8,12 @@ part 'player_audio_state_provider.g.dart';
 class AudioPreferredLangState extends _$AudioPreferredLangState {
   @override
   String build() {
-    return isar.settings.getSync(227)!.audioPreferredLanguages ?? "";
+    return settingsRepository.current.audioPreferredLanguages ?? "";
   }
 
   void set(String value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..audioPreferredLanguages = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.audioPreferredLanguages = value);
   }
 }
 
@@ -29,19 +22,12 @@ class EnableAudioPitchCorrectionState
     extends _$EnableAudioPitchCorrectionState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.enableAudioPitchCorrection ?? true;
+    return settingsRepository.current.enableAudioPitchCorrection ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..enableAudioPitchCorrection = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.enableAudioPitchCorrection = value);
   }
 }
 
@@ -49,19 +35,12 @@ class EnableAudioPitchCorrectionState
 class AudioChannelState extends _$AudioChannelState {
   @override
   AudioChannel build() {
-    return isar.settings.getSync(227)!.audioChannels;
+    return settingsRepository.current.audioChannels;
   }
 
   void set(AudioChannel value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..audioChannels = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.audioChannels = value);
   }
 }
 
@@ -69,18 +48,11 @@ class AudioChannelState extends _$AudioChannelState {
 class VolumeBoostCapState extends _$VolumeBoostCapState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.volumeBoostCap ?? 30;
+    return settingsRepository.current.volumeBoostCap ?? 30;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..volumeBoostCap = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.volumeBoostCap = value);
   }
 }

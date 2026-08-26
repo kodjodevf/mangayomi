@@ -40,7 +40,7 @@ final class LogsStateProvider extends $NotifierProvider<LogsState, bool> {
   }
 }
 
-String _$logsStateHash() => r'39f2707c981402db909d8d64c668571014ae48d5';
+String _$logsStateHash() => r'5b64a4584ec445b844436c93360b5eb6fa179581';
 
 abstract class _$LogsState extends $Notifier<bool> {
   bool build();

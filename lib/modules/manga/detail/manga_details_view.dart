@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/category.dart';
-import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/custom_floating_action_btn.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/repositories/category_repository.dart';
+import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_view.dart';
@@ -66,16 +64,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                         .toList()
                         .isNotEmpty
               ? StreamBuilder(
-                  stream: isar.historys
-                      .filter()
-                      .idIsNotNull()
-                      .and()
-                      .chapter(
-                        (q) => q.manga(
-                          (q) => q.itemTypeEqualTo(widget.manga.itemType),
-                        ),
-                      )
-                      .watch(fireImmediately: true),
+                  stream: historyRepository.watchByItemType(
+                    widget.manga.itemType,
+                  ),
                   builder: (context, snapshot) {
                     String buttonLabel = widget.manga.itemType != ItemType.anime
                         ? l10n.read
@@ -162,14 +153,11 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     elevation: 0,
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     final model = widget.manga;
-                    isar.writeTxnSync(() {
-                      model.favorite = false;
-                      model.dateAdded = 0;
-                      model.updatedAt = DateTime.now().millisecondsSinceEpoch;
-                      isar.mangas.putSync(model);
-                    });
+                    model.favorite = false;
+                    model.dateAdded = 0;
+                    await mangaRepository.save(model);
                   },
                   child: Column(
                     children: [
@@ -189,14 +177,10 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   elevation: 0,
                 ),
-                onPressed: () {
+                onPressed: () async {
                   final model = widget.manga;
-                  final checkCategoryList = isar.categorys
-                      .filter()
-                      .idIsNotNull()
-                      .and()
-                      .forItemTypeEqualTo(model.itemType)
-                      .isNotEmptySync();
+                  final checkCategoryList = categoryRepository
+                      .isNotEmptyByItemType(model.itemType);
                   if (checkCategoryList) {
                     showCategorySelectionDialog(
                       context: context,
@@ -205,12 +189,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                       singleManga: model,
                     );
                   } else {
-                    isar.writeTxnSync(() {
-                      model.favorite = true;
-                      model.dateAdded = DateTime.now().millisecondsSinceEpoch;
-                      model.updatedAt = DateTime.now().millisecondsSinceEpoch;
-                      isar.mangas.putSync(model);
-                    });
+                    model.favorite = true;
+                    model.dateAdded = DateTime.now().millisecondsSinceEpoch;
+                    await mangaRepository.save(model);
                   }
                 },
                 child: Column(

@@ -48,15 +48,19 @@ extension StringExtensions on String {
   }
 
   String get getUrlWithoutDomain {
-    final uri = Uri.parse(replaceAll(' ', '%20'));
-    String out = uri.path;
-    if (uri.query.isNotEmpty) {
-      out += '?${uri.query}';
+    try {
+      final uri = Uri.parse(replaceAll(' ', '%20'));
+      String out = uri.path;
+      if (uri.query.isNotEmpty) {
+        out += '?${uri.query}';
+      }
+      if (uri.fragment.isNotEmpty) {
+        out += '#${uri.fragment}';
+      }
+      return out.isEmpty ? this : out;
+    } catch (_) {
+      return this;
     }
-    if (uri.fragment.isNotEmpty) {
-      out += '#${uri.fragment}';
-    }
-    return out;
   }
 
   bool isMediaVideo() {

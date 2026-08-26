@@ -1,47 +1,48 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/repositories/source_preference_repository.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/services/get_source_preference.dart';
 
+import 'package:mangayomi/eval/aidoku/aidoku_ext_dart.dart' as aidoku;
+
 void setPreferenceSetting(SourcePreference sourcePreference, Source source) {
-  final sourcePref = isar.sourcePreferences
-      .filter()
-      .sourceIdEqualTo(source.id)
-      .keyEqualTo(sourcePreference.key)
-      .findFirstSync();
+  final sourcePref = sourcePreferenceRepository.findByKey(
+    source.id,
+    sourcePreference.key,
+  );
   unawaited(
-    isar
-        .writeTxn(() async {
-          if (source.sourceCodeLanguage == SourceCodeLanguage.mihon &&
-              source.preferenceList != null) {
-            final prefs = (jsonDecode(source.preferenceList!) as List)
-                .map((e) => SourcePreference.fromJson(e))
-                .toList();
-            final idx = prefs.indexWhere((e) => e.key == sourcePreference.key);
-            if (idx != -1) {
-              prefs[idx] = sourcePreference..id = null;
-              await isar.sources.put(
-                source
-                  ..preferenceList = jsonEncode(
-                    prefs.map((e) => e.toJson()).toList(),
-                  ),
-              );
-            }
-          }
-          if (sourcePref != null) {
-            await isar.sourcePreferences.put(sourcePreference);
-          } else {
-            await isar.sourcePreferences.put(
-              sourcePreference..sourceId = source.id,
-            );
-          }
-        })
+    sourcePreferenceRepository
+        .save(sourcePreference, source, sourcePref)
         .catchError((_) {}),
   );
+
+  if (source.sourceCodeLanguage == SourceCodeLanguage.aidoku &&
+      sourcePreference.key != null) {
+    final key = sourcePreference.key!;
+    dynamic val;
+    if (sourcePreference.listPreference != null) {
+      final p = sourcePreference.listPreference!;
+      val = (p.entryValues != null &&
+              p.valueIndex != null &&
+              p.valueIndex! < p.entryValues!.length)
+          ? p.entryValues![p.valueIndex!]
+          : p.valueIndex;
+    } else if (sourcePreference.checkBoxPreference != null) {
+      val = sourcePreference.checkBoxPreference!.value;
+    } else if (sourcePreference.switchPreferenceCompat != null) {
+      val = sourcePreference.switchPreferenceCompat!.value;
+    } else if (sourcePreference.multiSelectListPreference != null) {
+      val = sourcePreference.multiSelectListPreference!.values;
+    } else if (sourcePreference.editTextPreference != null) {
+      val = sourcePreference.editTextPreference!.value;
+    }
+    if (val != null) {
+      aidoku.SettingsStore.shared.setValue(key, val);
+    }
+  }
 }
 
 dynamic getPreferenceValue(int sourceId, String key) {
@@ -61,13 +62,12 @@ dynamic getPreferenceValue(int sourceId, String key) {
 }
 
 SourcePreference getSourcePreferenceEntry(String key, int sourceId) {
-  SourcePreference? sourcePreference = isar.sourcePreferences
-      .filter()
-      .sourceIdEqualTo(sourceId)
-      .keyEqualTo(key)
-      .findFirstSync();
+  SourcePreference? sourcePreference = sourcePreferenceRepository.findByKey(
+    sourceId,
+    key,
+  );
   if (sourcePreference == null) {
-    final source = isar.sources.getSync(sourceId)!;
+    final source = sourceRepository.getById(sourceId)!;
     sourcePreference = getSourcePreference(source: source).firstWhere(
       (element) => element.key == key,
       orElse: () => throw "Error when getting source preference",
@@ -83,12 +83,8 @@ String getSourcePreferenceStringValue(
   String key,
   String defaultValue,
 ) {
-  SourcePreferenceStringValue? sourcePreferenceStringValue = isar
-      .sourcePreferenceStringValues
-      .filter()
-      .sourceIdEqualTo(sourceId)
-      .keyEqualTo(key)
-      .findFirstSync();
+  SourcePreferenceStringValue? sourcePreferenceStringValue =
+      sourcePreferenceRepository.findStringValueByKey(sourceId, key);
   if (sourcePreferenceStringValue == null) {
     setSourcePreferenceStringValue(sourceId, key, defaultValue);
     return defaultValue;
@@ -98,27 +94,13 @@ String getSourcePreferenceStringValue(
 }
 
 void setSourcePreferenceStringValue(int sourceId, String key, String value) {
-  final sourcePref = isar.sourcePreferenceStringValues
-      .filter()
-      .sourceIdEqualTo(sourceId)
-      .keyEqualTo(key)
-      .findFirstSync();
+  final sourcePref = sourcePreferenceRepository.findStringValueByKey(
+    sourceId,
+    key,
+  );
   unawaited(
-    isar
-        .writeTxn(() async {
-          if (sourcePref != null) {
-            await isar.sourcePreferenceStringValues.put(
-              sourcePref..value = value,
-            );
-          } else {
-            await isar.sourcePreferenceStringValues.put(
-              SourcePreferenceStringValue()
-                ..key = key
-                ..sourceId = sourceId
-                ..value = value,
-            );
-          }
-        })
+    sourcePreferenceRepository
+        .saveStringValue(sourceId, key, value, sourcePref)
         .catchError((_) {}),
   );
 }

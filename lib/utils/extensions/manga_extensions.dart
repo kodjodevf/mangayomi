@@ -1,9 +1,8 @@
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/download_repository.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 
 /// Sort/identity keys that only bucket by season if numbering actually
@@ -70,7 +69,7 @@ extension MangaExtensions on Manga {
   /// bookmarked, downloaded, scanlator). Sorted by chapter number ascending.
   /// Base list — no user-chosen sort, no deduplication.
   List<Chapter> getFilteredChapters([Settings? settingsOverride]) {
-    final settings = settingsOverride ?? isar.settings.getSync(227)!;
+    final settings = settingsOverride ?? settingsRepository.current;
 
     final filterUnread =
         (settings.chapterFilterUnreadList!
@@ -113,14 +112,7 @@ extension MangaExtensions on Manga {
     final chapterIds = data.map((c) => c.id).whereType<int>().toList();
     final downloadedIds = (filterDownloaded == 0 || chapterIds.isEmpty)
         ? const <int>{}
-        : isar.downloads
-              .where()
-              .anyOf(chapterIds, (q, id) => q.idEqualTo(id))
-              .filter()
-              .isDownloadEqualTo(true)
-              .findAllSync()
-              .map((d) => d.id!)
-              .toSet();
+        : downloadRepository.getDownloadedIdsAmong(chapterIds).toSet();
 
     return data
         .where(
@@ -149,7 +141,7 @@ extension MangaExtensions on Manga {
   /// Filtered chapters for display in the chapter list UI: same filters as
   /// [getFilteredChapters] with the user's chosen sort order and direction applied.
   List<Chapter> getSortedFilteredChapters() {
-    final settings = isar.settings.getSync(227)!;
+    final settings = settingsRepository.current;
 
     final sortChapterEntry =
         settings.sortChapterList!.where((e) => e.mangaId == id).firstOrNull ??

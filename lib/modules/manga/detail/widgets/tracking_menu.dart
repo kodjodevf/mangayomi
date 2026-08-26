@@ -1,8 +1,6 @@
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
@@ -12,6 +10,7 @@ import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dar
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -63,12 +62,10 @@ void openTrackingMenu({
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return StreamBuilder(
-                    stream: isar.tracks
-                        .filter()
-                        .idIsNotNull()
-                        .syncIdEqualTo(entries[index].syncId)
-                        .mangaIdEqualTo(manga.id!)
-                        .watch(fireImmediately: true),
+                    stream: trackRepository.watchBySyncIdAndMangaId(
+                      entries[index].syncId,
+                      manga.id!,
+                    ),
                     builder: (context, snapshot) {
                       List<Track>? trackRes = snapshot.hasData
                           ? snapshot.data

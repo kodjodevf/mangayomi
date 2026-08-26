@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 
 import 'dart:convert';
 
@@ -14,7 +14,10 @@ import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/localized_message.dart';
+import 'package:mangayomi/services/discovery/service_availability.dart';
+
 import 'base_tracker.dart';
+import 'tracker_account.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'anilist.g.dart';
@@ -75,7 +78,9 @@ class Anilist extends _$Anilist implements BaseTracker {
           .login(
             TrackPreference(
               syncId: syncId,
-              username: currenUser.$1,
+              username: currenUser.$1.id,
+              displayName: currenUser.$1.name,
+              avatarUrl: currenUser.$1.avatarUrl,
               prefs: jsonEncode({"scoreFormat": currenUser.$2}),
               oAuth: jsonEncode(aLOAuth.toJson()),
             ),
@@ -374,6 +379,12 @@ class Anilist extends _$Anilist implements BaseTracker {
     String document,
     Map<String, dynamic> variables,
   ) async {
+    // Same host as discovery, so the same outage applies: skip the request
+    // rather than wait out a client timeout on a service already known to be
+    // refusing.
+    final known = ServiceAvailability.outage(DiscoveryService.anilist);
+    if (known != null) throw known;
+
     final response = await http.post(
       Uri.parse(_baseApiUrl),
       headers: {
@@ -383,16 +394,45 @@ class Anilist extends _$Anilist implements BaseTracker {
       body: jsonEncode({'query': document, 'variables': variables}),
     );
 
-    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    Map<String, dynamic>? decoded;
+    try {
+      final parsed = jsonDecode(response.body);
+      if (parsed is Map<String, dynamic>) decoded = parsed;
+    } catch (_) {
+      decoded = null;
+    }
 
-    return decoded['data'] as Map<String, dynamic>;
+    // Without this a refusal reached `decoded['data'] as Map` and died as a
+    // null cast, so a service saying plainly why it will not answer surfaced
+    // as a type error or, through the client's own timeout, as "Request timed
+    // out".
+    final refusal = anilistRefusal(response.statusCode, decoded);
+    if (refusal != null) {
+      throw ServiceAvailability.markDown(DiscoveryService.anilist, refusal);
+    }
+
+    final data = decoded?['data'];
+    if (data is! Map<String, dynamic>) {
+      throw Exception('AniList returned no data: ${response.statusCode}');
+    }
+    ServiceAvailability.markUp(DiscoveryService.anilist);
+    return data;
   }
 
-  Future<(String, String)> _getCurrentUser(String accessToken) async {
+  /// The viewer's account, and the score format stored alongside it.
+  ///
+  /// The id and the name are both needed and are not interchangeable. Two
+  /// queries here parse the id as an int, while chiaki.site's sequel lookup
+  /// wants the name, so storing only one of them makes the other caller wrong.
+  Future<(TrackerAccount, String)> _getCurrentUser(String accessToken) async {
     const query = '''
     query User {
       Viewer {
         id
+        name
+        avatar {
+          large
+        }
         mediaListOptions {
           scoreFormat
         }
@@ -412,9 +452,9 @@ class Anilist extends _$Anilist implements BaseTracker {
     );
     final data = json.decode(response.body);
 
-    final viewer = data['data']['Viewer'];
+    final viewer = data['data']['Viewer'] as Map<String, dynamic>;
     return (
-      viewer['id'].toString(),
+      anilistAccount(viewer),
       viewer['mediaListOptions']['scoreFormat'].toString(),
     );
   }
@@ -436,7 +476,7 @@ class Anilist extends _$Anilist implements BaseTracker {
   }
 
   String _toAnilistScore(int score) {
-    final prefs = isar.trackPreferences.getSync(syncId)!.prefs;
+    final prefs = trackRepository.getPreferenceById(syncId)!.prefs;
     final scoreFormat = jsonDecode(prefs!)['scoreFormat'];
     return switch (scoreFormat) {
       "POINT_10" => (score / 10).toString(),
@@ -517,7 +557,7 @@ class Anilist extends _$Anilist implements BaseTracker {
 
   @override
   String displayScore(int score) {
-    final prefs = isar.trackPreferences.getSync(syncId)!.prefs;
+    final prefs = trackRepository.getPreferenceById(syncId)!.prefs;
     final scoreFormat = jsonDecode(prefs!)['scoreFormat'];
     return switch (scoreFormat) {
       'POINT_5' => switch (score) {
@@ -536,7 +576,7 @@ class Anilist extends _$Anilist implements BaseTracker {
 
   @override
   (int, int) getScoreValue() {
-    final prefs = isar.trackPreferences.getSync(syncId)!.prefs;
+    final prefs = trackRepository.getPreferenceById(syncId)!.prefs;
     String scoreFormat = jsonDecode(prefs!)['scoreFormat'];
     return switch (scoreFormat) {
       'POINT_10' => (100, 10),

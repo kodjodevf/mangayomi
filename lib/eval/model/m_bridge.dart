@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:bot_toast/bot_toast.dart';
@@ -27,6 +28,7 @@ import 'package:mangayomi/services/anime_extractors/streamwish_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/vidbom_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/voe_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/your_upload_extractor.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/cryptoaes/crypto_aes.dart';
 import 'package:mangayomi/utils/cryptoaes/deobfuscator.dart';
 import 'package:mangayomi/utils/cryptoaes/js_unpacker.dart';
@@ -678,10 +680,6 @@ void Function() botToast(
   String? detailsLabel,
 }) {
   final context = navigatorKey.currentState?.context;
-  final assets = [
-    'assets/app_icons/icon-black.png',
-    'assets/app_icons/icon-red.png',
-  ];
   return BotToast.showNotification(
     onlyOne: onlyOne,
     dismissDirections: dismissDirections,
@@ -692,8 +690,8 @@ void Function() botToast(
     leading: showIcon
         ? (_) => Image.asset(
             (themeDark == null
-                ? (assets..shuffle()).first
-                : assets[themeDark ? 0 : 1]),
+                ? appIconAssets[Random().nextInt(2)]
+                : appIconAssets[themeDark ? 0 : 1]),
             height: 25,
           )
         : null,

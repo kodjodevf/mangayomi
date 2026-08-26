@@ -3,24 +3,26 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mangayomi/modules/manga/archive_reader/models/models.dart';
+import 'package:mangayomi/src/rust/api/rar.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:path/path.dart' as p;
 part 'archive_reader_providers.g.dart';
 
 // Constants for supported file types
-const List<String> _kImageExtensions = [
-  '.png',
-  '.jpg',
-  '.jpeg',
-  '.gif',
-  '.webp',
+const List<String> _kArchiveExtensions = [
+  '.cbz',
+  '.zip',
+  '.cbt',
+  '.tar',
+  '.cbr',
+  '.rar'
 ];
-const List<String> _kArchiveExtensions = ['.cbz', '.zip', '.cbt', '.tar'];
 
 @riverpod
 Future<List<(String, LocalExtensionType, Uint8List, String)>>
 getArchivesDataFromDirectory(Ref ref, String path) async {
-  return compute(_extractArchiveMetadataFromDirectory, path);
+  return _extractArchiveMetadataFromDirectory(path);
 }
 
 @riverpod
@@ -28,7 +30,7 @@ Future<List<LocalArchive>> getArchiveDataFromDirectory(
   Ref ref,
   String path,
 ) async {
-  return compute(_extractArchivesFromDirectory, path);
+  return _extractArchivesFromDirectory(path);
 }
 
 @riverpod
@@ -36,12 +38,12 @@ Future<(String, LocalExtensionType, Uint8List, String)> getArchivesDataFromFile(
   Ref ref,
   String path,
 ) async {
-  return compute(_extractArchiveMetadata, path);
+  return _extractArchiveMetadata(path);
 }
 
 @riverpod
 Future<LocalArchive> getArchiveDataFromFile(Ref ref, String path) async {
-  return compute(_extractArchive, path);
+  return _extractArchive(path);
 }
 
 /// Extract full archive data from all archives in a directory (recursive)
@@ -139,8 +141,7 @@ Future<void> _scanDirectoryRecursive(
 /// Check if a file is an image based on extension
 bool _isImageFile(String path) {
   if (_isHiddenSystemFile(path)) return false;
-  final extension = p.extension(path).toLowerCase();
-  return _kImageExtensions.contains(extension);
+  return isRecognizedImageFile(path);
 }
 
 /// Check if a file is a supported archive based on extension
@@ -163,8 +164,26 @@ Future<LocalArchive> _extractArchive(String path) async {
       return await _extractFromImageFolder(path);
     }
 
-    // Handle archive file
-    return _extractFromArchiveFile(path);
+    final extensionType = _getArchiveType(path);
+    if (extensionType == LocalExtensionType.cbr ||
+        extensionType == LocalExtensionType.rar) {
+      final rarData = await extractRarArchive(archivePath: path);
+      return LocalArchive()
+        ..path = path
+        ..extensionType = extensionType
+        ..name = rarData.name
+        ..coverImage = rarData.coverImage
+        ..images = rarData.images
+            .map(
+              (img) => LocalImage()
+                ..name = img.name
+                ..image = img.image,
+            )
+            .toList();
+    }
+
+    // Handle archive file (CBZ/ZIP/CBT/TAR)
+    return await compute(_extractFromArchiveFile, path);
   } catch (e) {
     if (kDebugMode) {
       debugPrint('Error extracting archive from $path: $e');
@@ -174,15 +193,21 @@ Future<LocalArchive> _extractArchive(String path) async {
 }
 
 /// Extract images from a folder
+///
+/// Unlike the archive-file case, these pages already exist as standalone
+/// files on disk - there's no need to read every one of them into memory
+/// just to hand the bytes back to a caller who's only going to write them
+/// back out to a temp file to get a path again. Only the first file (the
+/// cover) is actually read; every other [LocalImage] carries its real [path]
+/// instead of [image], and callers read the file directly when they need it.
 Future<LocalArchive> _extractFromImageFolder(String path) async {
   final dir = Directory(path);
-  final imageFiles =
-      await dir
-            .list()
-            .where((entity) => entity is File && _isImageFile(entity.path))
-            .cast<File>()
-            .toList()
-        ..sort((a, b) => a.path.compareTo(b.path));
+  final imageFiles = await dir
+      .list()
+      .where((entity) => entity is File && _isImageFile(entity.path))
+      .cast<File>()
+      .toList()
+    ..sort((a, b) => a.path.compareTo(b.path));
 
   if (imageFiles.isEmpty) {
     throw Exception('No images found in folder: $path');
@@ -190,7 +215,7 @@ Future<LocalArchive> _extractFromImageFolder(String path) async {
 
   final images = imageFiles.map((file) {
     return LocalImage()
-      ..image = file.readAsBytesSync()
+      ..path = file.path
       ..name = p.basename(file.path);
   }).toList();
 
@@ -199,7 +224,7 @@ Future<LocalArchive> _extractFromImageFolder(String path) async {
     ..extensionType = LocalExtensionType.folder
     ..name = p.basename(path)
     ..images = images
-    ..coverImage = images.first.image;
+    ..coverImage = imageFiles.first.readAsBytesSync();
 }
 
 /// Extract images from an archive file
@@ -217,11 +242,10 @@ LocalArchive _extractFromArchiveFile(String path) {
     inputStream = InputFileStream(path);
     final archive = _decodeArchive(inputStream, extensionType);
 
-    final imageFiles =
-        archive.files
-            .where((file) => file.isFile && _isImageFile(file.name))
-            .toList()
-          ..sort((a, b) => a.name.compareTo(b.name));
+    final imageFiles = archive.files
+        .where((file) => file.isFile && _isImageFile(file.name))
+        .toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
 
     if (imageFiles.isEmpty) {
       throw Exception('No images found in archive: $path');
@@ -262,8 +286,15 @@ Future<(String, LocalExtensionType, Uint8List, String)> _extractArchiveMetadata(
       return await _extractMetadataFromImageFolder(path);
     }
 
+    final extensionType = _getArchiveType(path);
+    if (extensionType == LocalExtensionType.cbr ||
+        extensionType == LocalExtensionType.rar) {
+      final rarMeta = await extractRarMetadata(archivePath: path);
+      return (rarMeta.name, extensionType, rarMeta.coverImage, path);
+    }
+
     // Handle archive file
-    return _extractMetadataFromArchiveFile(path);
+    return await compute(_extractMetadataFromArchiveFile, path);
   } catch (e) {
     if (kDebugMode) {
       debugPrint('Error extracting metadata from $path: $e');
@@ -276,13 +307,12 @@ Future<(String, LocalExtensionType, Uint8List, String)> _extractArchiveMetadata(
 Future<(String, LocalExtensionType, Uint8List, String)>
 _extractMetadataFromImageFolder(String path) async {
   final dir = Directory(path);
-  final images =
-      await dir
-            .list()
-            .where((entity) => entity is File && _isImageFile(entity.path))
-            .cast<File>()
-            .toList()
-        ..sort((a, b) => a.path.compareTo(b.path));
+  final images = await dir
+      .list()
+      .where((entity) => entity is File && _isImageFile(entity.path))
+      .cast<File>()
+      .toList()
+    ..sort((a, b) => a.path.compareTo(b.path));
 
   if (images.isEmpty) {
     throw Exception('No images found in folder: $path');
@@ -313,11 +343,10 @@ _extractMetadataFromImageFolder(String path) async {
           file.name.toLowerCase().contains('cover'),
       orElse: () {
         // If no cover, get first image alphabetically
-        final imageFiles =
-            archive.files
-                .where((file) => file.isFile && _isImageFile(file.name))
-                .toList()
-              ..sort((a, b) => a.name.compareTo(b.name));
+        final imageFiles = archive.files
+            .where((file) => file.isFile && _isImageFile(file.name))
+            .toList()
+          ..sort((a, b) => a.name.compareTo(b.name));
 
         if (imageFiles.isEmpty) {
           throw Exception('No images found in archive: $path');
@@ -342,6 +371,8 @@ Archive _decodeArchive(InputFileStream stream, LocalExtensionType type) {
       return TarDecoder().decodeStream(stream);
     case LocalExtensionType.zip:
     case LocalExtensionType.cbz:
+    case LocalExtensionType.cbr:
+    case LocalExtensionType.rar:
     case LocalExtensionType.folder:
       return ZipDecoder().decodeStream(stream);
   }
@@ -363,6 +394,8 @@ LocalExtensionType setTypeExtension(String extension) {
     'zip' => LocalExtensionType.zip,
     'tar' => LocalExtensionType.tar,
     'cbz' => LocalExtensionType.cbz,
+    'cbr' => LocalExtensionType.cbr,
+    'rar' => LocalExtensionType.rar,
     _ => LocalExtensionType.cbz,
   };
 }

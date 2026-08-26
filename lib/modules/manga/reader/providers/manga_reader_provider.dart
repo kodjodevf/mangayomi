@@ -1,5 +1,5 @@
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'manga_reader_provider.g.dart';
@@ -13,7 +13,7 @@ class ChapterWithPages {
 
 @riverpod
 Future<ChapterWithPages> mangaReader(Ref ref, int chapterId) async {
-  final chap = await isar.chapters.get(chapterId);
+  final chap = await chapterRepository.findById(chapterId);
   if (chap == null) {
     throw Exception('Chapter #$chapterId not found');
   }

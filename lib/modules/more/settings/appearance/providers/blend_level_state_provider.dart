@@ -1,5 +1,4 @@
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'blend_level_state_provider.g.dart';
 
@@ -7,20 +6,13 @@ part 'blend_level_state_provider.g.dart';
 class BlendLevelState extends _$BlendLevelState {
   @override
   double build() {
-    return isar.settings.getSync(227)!.flexColorSchemeBlendLevel!;
+    return settingsRepository.current.flexColorSchemeBlendLevel!;
   }
 
   void setBlendLevel(double blendLevelValue, {bool end = false}) {
-    final settings = isar.settings.getSync(227);
     state = blendLevelValue;
     if (end) {
-      isar.writeTxnSync(
-        () => isar.settings.putSync(
-          settings!
-            ..flexColorSchemeBlendLevel = state
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-        ),
-      );
+      settingsRepository.update((s) => s.flexColorSchemeBlendLevel = state);
     }
   }
 }
