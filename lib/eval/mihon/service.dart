@@ -58,6 +58,8 @@ class MihonExtensionService implements ExtensionService {
         "search": "",
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
+        "lang": source.lang,
+        "sourceId": source.id?.toString(),
       }),
       headers: getCookie(),
     );
@@ -95,6 +97,8 @@ class MihonExtensionService implements ExtensionService {
         "search": "",
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
+        "lang": source.lang,
+        "sourceId": source.id?.toString(),
       }),
       headers: getCookie(),
     );
@@ -133,6 +137,8 @@ class MihonExtensionService implements ExtensionService {
         "filterList": _convertFilters(filters),
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
+        "lang": source.lang,
+        "sourceId": source.id?.toString(),
       }),
       headers: getCookie(),
     );
@@ -170,6 +176,8 @@ class MihonExtensionService implements ExtensionService {
         if (source.itemType == ItemType.anime) "animeData": {"url": url},
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
+        "lang": source.lang,
+        "sourceId": source.id?.toString(),
       }),
       headers: getCookie(),
     );
@@ -207,6 +215,8 @@ class MihonExtensionService implements ExtensionService {
         if (source.itemType == ItemType.anime) "animeData": {"url": url},
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
+        "lang": source.lang,
+        "sourceId": source.id?.toString(),
       }),
       headers: getCookie(),
     );
@@ -235,6 +245,8 @@ class MihonExtensionService implements ExtensionService {
         "chapterData": {"url": url},
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
+        "lang": source.lang,
+        "sourceId": source.id?.toString(),
       }),
       headers: getCookie(),
     );
@@ -252,6 +264,8 @@ class MihonExtensionService implements ExtensionService {
         "episodeData": {"url": url},
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
+        "lang": source.lang,
+        "sourceId": source.id?.toString(),
       }),
       headers: getCookie(),
     );

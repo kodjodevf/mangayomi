@@ -107,9 +107,62 @@ impl RequestClient {
     }
 }
 
+/// A TLS config that trusts the bundled Mozilla root store instead of the
+/// platform's.
+///
+/// reqwest 0.13 dropped the `rustls-tls-webpki-roots` feature this app used to
+/// build with, and its `rustls` feature verifies against the OS trust store
+/// through `rustls-platform-verifier`. On Android that crate has to be handed
+/// a JNI environment and an Android `Context` before anything uses it, and
+/// nothing here can do that: Flutter does not pass a `Context` down to the
+/// Rust side. So the first HTTPS request panicked with
+/// "Expect rustls-platform-verifier to be initialized" (#917, #918).
+///
+/// Bundling the roots is what the app did before v0.8.9, needs no platform
+/// setup, and behaves the same on every target.
+fn webpki_tls_config() -> Result<rustls::ClientConfig, RhttpError> {
+    let mut roots = rustls::RootCertStore::empty();
+    roots.extend(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
+
+    // Reuse whichever provider is already installed rather than installing a
+    // second one; fall back to the one compiled in when nothing has yet.
+    let provider = rustls::crypto::CryptoProvider::get_default()
+        .cloned()
+        .unwrap_or_else(|| std::sync::Arc::new(rustls::crypto::aws_lc_rs::default_provider()));
+
+    rustls::ClientConfig::builder_with_provider(provider)
+        .with_safe_default_protocol_versions()
+        .map_err(|e| RhttpError::RhttpUnknownError(format!("TLS setup failed: {e:?}")))
+        .map(|builder| builder.with_root_certificates(roots).with_no_client_auth())
+}
+
+/// Whether the caller asked for something the bundled-roots config cannot
+/// express, in which case reqwest's own TLS handling is left alone.
+///
+/// Those paths still go through the platform verifier and so still need it
+/// initialized, but they are opt-in and were already broken; this is about not
+/// silently discarding a certificate or a version pin somebody set on purpose.
+fn wants_custom_tls(settings: &Option<TlsSettings>) -> bool {
+    match settings {
+        None => false,
+        Some(tls) => {
+            !tls.trust_root_certificates
+                || !tls.trusted_root_certificates.is_empty()
+                || !tls.verify_certificates
+                || tls.client_certificate.is_some()
+                || tls.min_tls_version.is_some()
+                || tls.max_tls_version.is_some()
+        }
+    }
+}
+
 fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> {
+    let custom_tls = wants_custom_tls(&settings.tls_settings);
     let client: reqwest::Client = {
         let mut client = reqwest::Client::builder();
+        if !custom_tls {
+            client = client.use_preconfigured_tls(webpki_tls_config()?);
+        }
         if let Some(proxy_settings) = settings.proxy_settings {
             match proxy_settings {
                 ProxySettings::NoProxy => client = client.no_proxy(),
@@ -357,5 +410,69 @@ impl SocketAddrDigester for String {
         }
 
         self
+    }
+}
+
+#[cfg(test)]
+mod tls_tests {
+    use super::*;
+
+    fn tls(f: impl FnOnce(&mut TlsSettings)) -> Option<TlsSettings> {
+        let mut settings = TlsSettings {
+            trust_root_certificates: true,
+            trusted_root_certificates: vec![],
+            verify_certificates: true,
+            client_certificate: None,
+            min_tls_version: None,
+            max_tls_version: None,
+        };
+        f(&mut settings);
+        Some(settings)
+    }
+
+    #[test]
+    fn the_bundled_root_store_is_not_empty() {
+        // If webpki-roots ever ships an empty set, every HTTPS request fails
+        // closed and this is the cheapest place to notice.
+        let config = webpki_tls_config().expect("config should build");
+        assert!(config.crypto_provider().cipher_suites.len() > 0);
+        assert!(!webpki_roots::TLS_SERVER_ROOTS.is_empty());
+    }
+
+    #[test]
+    fn ordinary_settings_use_the_bundled_roots() {
+        // The case that was crashing on Android: no custom TLS at all.
+        assert!(!wants_custom_tls(&None));
+        assert!(!wants_custom_tls(&tls(|_| {})));
+    }
+
+    #[test]
+    fn anything_deliberate_is_left_to_reqwest() {
+        // Silently discarding one of these would be worse than the panic.
+        assert!(wants_custom_tls(&tls(|s| s.trust_root_certificates = false)));
+        assert!(wants_custom_tls(&tls(|s| s.verify_certificates = false)));
+        assert!(wants_custom_tls(&tls(|s| {
+            s.trusted_root_certificates = vec![vec![1, 2, 3]]
+        })));
+        assert!(wants_custom_tls(&tls(|s| {
+            s.min_tls_version = Some(TlsVersion::Tls1_2)
+        })));
+        assert!(wants_custom_tls(&tls(|s| {
+            s.max_tls_version = Some(TlsVersion::Tls1_3)
+        })));
+    }
+
+    /// Proves the bundled roots actually verify a real certificate chain.
+    ///
+    /// Needs the network, so it does not run by default:
+    /// `cargo test -- --ignored tls`
+    #[test]
+    #[ignore]
+    fn a_real_https_request_succeeds() {
+        let client = create_client(ClientSettings::default()).expect("client");
+        let response = tokio::runtime::Runtime::new()
+            .unwrap()
+            .block_on(async { client.client.get("https://github.com").send().await });
+        assert!(response.is_ok(), "request failed: {:?}", response.err());
     }
 }
