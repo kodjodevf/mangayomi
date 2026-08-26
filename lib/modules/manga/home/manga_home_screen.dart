@@ -717,9 +717,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 : Consumer(
                     builder: (context, ref, child) => CoverGridSkeleton(
                       gridSize: ref.watch(
-                        libraryGridSizeStateProvider(
-                          itemType: source.itemType,
-                        ),
+                        libraryGridSizeStateProvider(itemType: source.itemType),
                       ),
                       childAspectRatio:
                           displayType == DisplayType.comfortableGrid

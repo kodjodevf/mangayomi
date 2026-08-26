@@ -319,7 +319,12 @@ Future<Map<String, String>> fetchHeadersDalvik(
     final name = source.itemType == ItemType.anime ? "Anime" : "Manga";
     final res = await client.post(
       Uri.parse("$androidProxyServer/dalvik"),
-      body: jsonEncode({"method": "headers$name", "data": source.sourceCode}),
+      body: jsonEncode({
+        "method": "headers$name",
+        "data": source.sourceCode,
+        "lang": source.lang,
+        "sourceId": source.id?.toString(),
+      }),
     );
     final data = jsonDecode(res.body) as List;
     final Map<String, String> headers = {};
@@ -344,6 +349,8 @@ Future<bool> fetchSupportLatestDalvik(
       body: jsonEncode({
         "method": "supportLatest$name",
         "data": source.sourceCode,
+        "lang": source.lang,
+        "sourceId": source.id?.toString(),
       }),
     );
     return res.body.trim() == "true";
@@ -361,7 +368,12 @@ Future<FilterList?> fetchFilterListDalvik(
     final name = source.itemType == ItemType.anime ? "Anime" : "Manga";
     final res = await client.post(
       Uri.parse("$androidProxyServer/dalvik"),
-      body: jsonEncode({"method": "filters$name", "data": source.sourceCode}),
+      body: jsonEncode({
+        "method": "filters$name",
+        "data": source.sourceCode,
+        "lang": source.lang,
+        "sourceId": source.id?.toString(),
+      }),
     );
     final data = jsonDecode(res.body) as List;
 
@@ -457,6 +469,8 @@ Future<List<SourcePreference>?> fetchPreferencesDalvik(
       body: jsonEncode({
         "method": "preferences$name",
         "data": source.sourceCode,
+        "lang": source.lang,
+        "sourceId": source.id?.toString(),
       }),
     );
     final data = jsonDecode(res.body) as List;
