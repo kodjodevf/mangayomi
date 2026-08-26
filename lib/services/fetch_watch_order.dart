@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/anilist_discovery.dart';
+import 'package:mangayomi/services/discovery/service_availability.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/constant.dart';
 
@@ -66,7 +67,10 @@ Future<List<WatchOrderSearch>> searchWatchOrder(String name) async {
 /// adapted from and loose shared-character links; and (2) order by release date
 /// rather than relation type, which is the reliable watch order for most
 /// franchises (AniList's relation graph has no order of its own).
-Future<List<WatchOrderItem>> fetchWatchOrder(String id) async {
+Future<List<WatchOrderItem>> fetchWatchOrder(
+  String id, {
+  DiscoveryService source = DiscoveryService.anilist,
+}) async {
   final rootId = int.tryParse(id);
   if (rootId == null) return [];
 
@@ -92,7 +96,10 @@ Future<List<WatchOrderItem>> fetchWatchOrder(String id) async {
     final current = queue.removeAt(0);
     if (!visited.add(current)) continue;
     queries++;
-    final (self, relations) = await fetchMediaWithRelations(current);
+    final (self, relations) = await fetchMediaWithRelations(
+      current,
+      source: source,
+    );
     if (self != null && self.isAnime) collected[self.id] = self;
     for (final r in relations) {
       if (!r.media.isAnime) continue;
@@ -145,9 +152,12 @@ Future<List<WatchOrderItem>> fetchWatchOrder(String id) async {
 /// Resolve an anime name to its AniList id and build its watch order directly,
 /// with no manual pick step. The resolved title becomes the "current" anchor.
 Future<List<WatchOrderItem>> fetchWatchOrderByName(String name) async {
-  final mediaId = await searchMediaId(ItemType.anime, name);
-  if (mediaId == null) return [];
-  return fetchWatchOrder(mediaId.toString());
+  // searchMediaRef falls back to Kitsu when AniList will not answer, and says
+  // which of them resolved the name so the walk below asks the same service.
+  final ref = await searchMediaRef(ItemType.anime, name);
+  if (ref == null) return [];
+  final (source, mediaId) = ref;
+  return fetchWatchOrder(mediaId.toString(), source: source);
 }
 
 class SequelItem {
