@@ -1221,6 +1221,8 @@
       "duplicateTracks": {}
     }
   },
+  "memory_overlay": "Show memory usage",
+  "memory_overlay_subtitle": "A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.",
   "beta": "Beta",
   "error_reports": "Error reports",
   "error_reports_subtitle": "Errors the app caught, and a way to report them",
