@@ -936,5 +936,380 @@
   "saved_searches": "عمليات البحث المحفوظة",
   "enter_search_to_save_first": "أدخل بحثًا لحفظه أولاً",
   "no_saved_searches": "لا توجد عمليات بحث محفوظة لهذا المصدر حتى الآن.\nقم بإجراء بحث، ثم اختر \"حفظ البحث\".",
-  "source": "المصدر"
+  "source": "المصدر",
+  "label_value": "{label}: {value}",
+  "url": "الرابط",
+  "beta_version": "تجريبي ({version})",
+  "empty_placeholder": "فارغ",
+  "error": "خطأ",
+  "error_with_message": "خطأ: {error}",
+  "no_pages_available": "خطأ: لا توجد صفحات متاحة",
+  "create_extension": "إنشاء إضافة",
+  "choose_extension_language": "اختر لغة الإضافة",
+  "lang": "اللغة",
+  "base_url": "الرابط الأساسي",
+  "api_url_optional": "رابط API (اختياري)",
+  "icon_url": "رابط الأيقونة",
+  "source_icon_url": "رابط أيقونة المصدر",
+  "notes": "ملاحظات",
+  "extension_name_example": "مثال: myAnime",
+  "language_code_example": "مثال: ar",
+  "base_url_example": "مثال: https://example.com",
+  "api_url_example": "مثال: https://api.example.com",
+  "extension_notes_example": "مثال: هذه الإضافة تتطلب تسجيل الدخول",
+  "type": "النوع",
+  "target": "الهدف",
+  "source_type_single": "فردي",
+  "source_type_multi": "متعدد",
+  "source_type_torrent": "تورنت",
+  "source_language_dart": "Dart",
+  "source_language_javascript": "JavaScript",
+  "source_language_lnreader_compiled_js": "JS مجمع لـ LNReader",
+  "source_created_successfully": "تم إنشاء المصدر بنجاح",
+  "source_already_exists": "المصدر موجود بالفعل",
+  "error_when_creating_source": "خطأ أثناء إنشاء المصدر",
+  "cookies_deleted": "تم حذف ملفات تعريف الارتباط!",
+  "delete_all_cookies": "حذف جميع ملفات تعريف الارتباط",
+  "missing_chapters": "فصول مفقودة: {count}",
+  "sync_restore_in_progress": "تم تخطي المزامنة — الاستعادة قيد التقدم",
+  "sync_status_not_configured": "غير متصل",
+  "sync_status_checking": "جارٍ التحقق من الاتصال...",
+  "sync_status_connected": "متصل",
+  "sync_status_unauthorized": "انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى",
+  "sync_status_unreachable": "تعذر الوصول إلى الخادم",
+  "sync_section_general": "عام",
+  "sync_section_data_types": "ما تريد مزامنته",
+  "missing_episodes": "حلقات مفقودة: {count}",
+  "encrypt_backups": "تشفير النسخ الاحتياطية",
+  "encrypt_backups_info": "حماية النسخ بكلمة مرور باستخدام تشفير AES",
+  "no_secure_storage": "لم يتم العثور على تخزين آمن",
+  "no_keyring_warning": "لا يتوفر في النظام خدمة إدارة المفاتيح، لذا لا يمكن حفظ كلمة المرور بأمان.\n\nهل تريد حفظها غير مشفرة في قاعدة البيانات المحلية؟",
+  "enter_backup_password": "أدخل كلمة مرور النسخة الاحتياطية",
+  "incorrect_password_try_again": "كلمة المرور غير صحيحة، حاول مجدداً.",
+  "set_backup_password": "تعيين كلمة مرور النسخة الاحتياطية",
+  "confirm_password": "تأكيد كلمة المرور",
+  "passwords_do_not_match": "كلمتا المرور غير متطابقتين",
+  "password_required_to_restore": "يلزم إدخال كلمة المرور لاستعادة هذه النسخة.",
+  "restore_sync_question_title": "مزامنة هذه الاستعادة؟",
+  "restore_sync_question_message": "هذا الجهاز متصل بخادم مزامنة. هل تريد رفع البيانات المستعادة الآن؟",
+  "restore_sync_question_confirm": "نعم، مزامنة",
+  "restore_sync_question_deny": "لا، تعطيل المزامنة",
+  "sync_disabled_after_restore": "تم تعطيل المزامنة. يمكنك تفعيلها من الإعدادات.",
+  "restore_sync_disabled_question_title": "المزامنة معطلة حالياً",
+  "restore_sync_disabled_question_message": "المزامنة متوقفة. هل تريد إعادة تفعيلها ورفع البيانات المستعادة إلى الخادم؟",
+  "restore_sync_question_reenable": "نعم، إعادة تفعيل ومزامنة",
+  "restore_sync_question_keep_disabled": "الإبقاء معطلة",
+  "restore_sync_uploading": "جارٍ مزامنة البيانات المستعادة مع الخادم…",
+  "restore_sync_upload_success": "تمت مزامنة البيانات المستعادة مع الخادم",
+  "default_download_destination": "مجلد التنزيل الافتراضي",
+  "ask_download_destination": "السؤال عن وجهة التنزيل",
+  "ask_download_destination_desc": "اختيار مجلد محلي عند كل تنزيل.",
+  "select_download_destination": "تحديد وجهة التنزيل",
+  "clear_local_library": "مسح المكتبة المحلية",
+  "clear_local_library_desc": "إزالة المجلدات والأرشيفات المحلية من المكتبة.",
+  "clear_local_library_msg": "سيؤدي هذا إلى إزالة المجلدات المحلية من المكتبة دون حذف الملفات من القرص.",
+  "custom": "مخصص",
+  "no_local_folder_available_for_downloads": "لا يوجد مجلد محلي متاح للتنزيلات",
+  "failed_to_create_cbz": "فشل إنشاء CBZ: {error}",
+  "error_reading_cover_image": "خطأ في قراءة صورة الغلاف: {error}",
+  "error_reading_metadata": "خطأ في قراءة البيانات الوصفية: {error}",
+  "error_saving_chapter_episode_to_library": "خطأ في الحفظ بالمكتبة: {error}",
+  "error_reading_chapter_cover_image": "خطأ في قراءة غلاف الفصل: {error}",
+  "error_reading_archive_cover_image": "خطأ في قراءة غلاف الأرشيف: {error}",
+  "error_getting_local_library": "خطأ في جلب المكتبة المحلية: {error}",
+  "failed_to_export_metadata": "فشل تصدير البيانات الوصفية: {error}",
+  "unrecognized_chapter_numbers": "تعذر ترقيم {count} فصول تلقائياً.",
+  "cloudflare_resolution_webview_server_start_failed": "تعذر بدء خادم حل Cloudflare.",
+  "tracker_token_expired": "انتهت صلاحية رمز {tracker}",
+  "video_list_empty": "قائمة الفيديو فارغة",
+  "playback_speed_multiplier": "x{value}",
+  "could_not_launch_url": "تعذر فتح {url}",
+  "zero_interpreter": "مترجم Zero",
+  "zero_interpreter_description": "التحكم في خادم مترجم Zero تلقائياً أو يدوياً.",
+  "start_server_on_launch": "تشغيل الخادم عند بدء التطبيق",
+  "runtime_status": "حالة التشغيل",
+  "running": "قيد التشغيل",
+  "stopped": "متوقف",
+  "start": "بدء",
+  "stop": "إيقاف",
+  "something_went_wrong": "حدث خطأ ما",
+  "startup_failed": "تعذر على Mangayomi إكمال بدء التشغيل",
+  "sources_with_no_results": "{count, plural, =1{مصدر واحد بلا نتائج} few{{count} مصادر بلا نتائج} other{{count} مصدراً بلا نتائج}}",
+  "import_mode_title": "كيف تريد الاستيراد؟",
+  "import_mode_message": "اختر دمج هذه النسخة مع المكتبة الحالية أو استبدال المكتبة بأكملها.",
+  "import_mode_keep_existing": "دمج",
+  "import_mode_keep_existing_subtitle": "إضافة السلاسل الجديدة وتحديث المطابقة. لن يتم حذف أي شيء.",
+  "import_mode_replace": "استبدال",
+  "import_mode_replace_subtitle": "حذف المكتبة الحالية واستبدالها بهذه النسخة.",
+  "replace_summary_title": "جاهز لاستبدال المكتبة",
+  "replace_summary_message": "سيؤدي هذا إلى حذف {currentCount} سلسلة واستبدالها بـ {backupCount} سلسلة.",
+  "replace_summary_confirm": "استبدال",
+  "replace_result_message": "تم استبدال المكتبة بـ {count} سلسلة من النسخة الاحتياطية.",
+  "category_conflict_title": "تم العثور على تصنيفات موجودة",
+  "category_conflict_message": "تحتوي النسخة على تصنيفات موجودة بالفعل في المكتبة.",
+  "category_conflict_keep": "احتفاظ — دمج في التصنيف الموجود",
+  "category_conflict_delete": "حذف — ترك السلاسل بدون تصنيف",
+  "source_conflict_title": "المصادر غير موجودة",
+  "source_conflict_message": "بعض المصادر لا تطابق أي إضافة مثبتة.",
+  "source_conflict_keep": "الاحتفاظ بالاسم الأصلي",
+  "import_summary_title": "جاهز للاستيراد",
+  "import_summary_message": "{newSeries} سلسلة جديدة، وتحديث {updatedSeries}، وإضافة {newChapters} فصول.",
+  "import_summary_confirm": "استيراد",
+  "import_result_message": "تم استيراد {newSeries} جديدة، وتحديث {updatedSeries}، وإضافة {newChapters} فصول.",
+  "roll_back": "تراجع",
+  "roll_back_confirm_message": "استعادة المكتبة إلى اللقطة المحفوظة قبل هذا التغيير مباشرة.",
+  "roll_back_done": "تم التراجع إلى اللقطة السابقة.",
+  "restoring_backup": "جارٍ استعادة المكتبة…",
+  "roll_back_last_change": "التراجع عن آخر تغيير",
+  "roll_back_last_change_subtitle": "لقطة من {date} — {description}",
+  "roll_back_available_count": "{count} تغييرات متاحة للتراجع",
+  "delete_source_title": "حذف مصدر ومانغاته",
+  "delete_source_subtitle": "حذف جميع مانغات المصدر وفصوله وتنزيلاته وسجله من المكتبة.",
+  "delete_source_pick_title": "اختر مصدراً لحذفه",
+  "delete_source_empty": "لم يتم العثور على مصادر في المكتبة.",
+  "delete_source_confirm_title": "حذف {sourceName}؟",
+  "delete_source_confirm_message": "سيؤدي هذا إلى حذف نهائي لـ {mangaCount} مانغا و{chapterCount} فصول و{historyCount} سجلات.",
+  "delete_source_also_remove_extension": "إزالة الإضافة المثبتة أيضاً",
+  "delete_source_keep_history": "الاحتفاظ بسجل القراءة",
+  "delete_source_keep_downloads": "الاحتفاظ بسجلات التنزيل",
+  "delete_source_button": "حذف",
+  "delete_source_result_message": "تم حذف {mangaCount} مانغا من {sourceName}.",
+  "merge_manga_title": "دمج المانغا المكررة",
+  "merge_manga_subtitle": "البحث عن مانغا بنفس العنوان تحت نفس المصدر ودمجها معاً.",
+  "merge_manga_none_found": "لم يتم العثور على مانغا مكررة.",
+  "merge_manga_pick_title": "مانغا مكررة محتملة",
+  "merge_manga_choose_primary_title": "إلى أي مانغا يجب دمج البقية؟",
+  "merge_manga_choose_primary_message": "سيتم دمج الفصول والسجل والتتبع في المانغا المختارة دون حذف شيء.",
+  "merge_manga_chapters_subtitle": "{count, plural, =1{فصل واحد} few{{count} فصول} other{{count} فصلاً}}",
+  "merge_manga_button": "دمج",
+  "merge_manga_result_message": "تم دمج {count} مانغا مكررة في {mangaName}.",
+  "merge_preview_title": "تأكيد الدمج",
+  "merge_manga_preview_message": "تم العثور على {totalChapters} فصول. سيتم تجاهل {duplicateChapters} مكررة وإضافة {keptChapters}.",
+  "beta": "تجريبي",
+  "error_reports": "تقارير الأخطاء",
+  "error_reports_subtitle": "الأخطاء المسجلة وطريقة الإبلاغ عنها",
+  "error_reports_empty": "لم تحدث أي أخطاء.",
+  "error_reports_likely_cause": "السبب المحتمل",
+  "error_reports_report": "إبلاغ على GitHub",
+  "error_reports_banner": "واجه Mangayomi خطأ",
+  "error_reports_banner_action": "عرض",
+  "error_reports_copy": "نسخ",
+  "error_reports_copied": "تم النسخ إلى الحافظة",
+  "error_reports_clear": "مسح",
+  "share_unavailable_copied": "المشاركة غير متاحة، تم النسخ إلى الحافظة.",
+  "onboarding_title": "مرحباً بك في Mangayomi",
+  "onboarding_libraries_body": "اختر ما تقرأه وتشاهده.",
+  "onboarding_nav_title": "مكتباتك",
+  "onboarding_nav_body": "تبويب لكل منها أو تجميعها في تبويب مكتبة واحد.",
+  "onboarding_nav_split": "تبويب لكل نوع",
+  "onboarding_nav_merged": "تبويب مكتبة موحد",
+  "onboarding_nav_inside": "الضغط على المكتبة يبدل هذه التبويبات",
+  "onboarding_next": "التالي",
+  "onboarding_restore": "استعادة نسخة احتياطية",
+  "onboarding_or_local": "أو استخدام ملفات موجودة لديك",
+  "onboarding_local_folder": "إضافة مجلد",
+  "onboarding_local_existing": "{count} مجلدات معدة بالفعل",
+  "onboarding_local_any_type": "يدعم المانغا والأنمي والروايات.",
+  "onboarding_local_scanning": "جارٍ فحص المجلد",
+  "onboarding_local_found": "تم العثور على {count} عناوين",
+  "onboarding_local_remove": "إزالة المجلد",
+  "onboarding_local_in_downloads": "هذا مجلد تنزيلات التطبيق.",
+  "onboarding_local_empty": "لم يتم العثور على شيء. اختر المجلد الرئيسي.",
+  "onboarding_repo_failed": "تعذر قراءة المستودع.",
+  "onboarding_repo_title": "إضافة مصدر",
+  "onboarding_body": "أضف مستودعاً لتتمكن من تثبيت الإضافات وتصفحها.",
+  "onboarding_add": "إضافة مستودع",
+  "onboarding_skip": "تخطي الآن",
+  "onboarding_continue": "متابعة",
+  "onboarding_later": "يمكنك إضافته لاحقاً من الإعدادات > تصفح.",
+  "onboarding_replay": "عرض شاشة الترحيب",
+  "onboarding_replay_subtitle": "فتح شاشة الإعداد الأولى مجدداً.",
+  "missing_source_check_title": "فحص المصادر المفقودة",
+  "missing_source_check_subtitle": "العثور على عناصر لم يتم تثبيت إضافاتها.",
+  "missing_source_check_none_found": "جميع مصادر المكتبة مثبتة.",
+  "missing_source_check_result_title": "{count, plural, =1{مصدر واحد مفقود} few{{count} مصادر مفقودة} other{{count} مصدراً مفقوداً}}",
+  "missing_source_check_result_message": "تشير هذه العناصر إلى مصادر غير مثبتة. اضغط لنقلها أو ثبت الإضافة.",
+  "@tts_paragraph_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "@label_value": {
+    "placeholders": {
+      "label": {},
+      "value": {}
+    }
+  },
+  "@beta_version": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "@error_with_message": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_create_cbz": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_saving_chapter_episode_to_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_chapter_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_archive_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_getting_local_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_export_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@unrecognized_chapter_numbers": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@tracker_token_expired": {
+    "placeholders": {
+      "tracker": {}
+    }
+  },
+  "@playback_speed_multiplier": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "@could_not_launch_url": {
+    "placeholders": {
+      "url": {}
+    }
+  },
+  "@sources_with_no_results": {
+    "description": "Header of the collapsed group in global search holding every source that failed or found nothing.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@replace_summary_message": {
+    "placeholders": {
+      "currentCount": {},
+      "backupCount": {}
+    }
+  },
+  "@replace_result_message": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@import_summary_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@import_result_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@roll_back_last_change_subtitle": {
+    "placeholders": {
+      "date": {},
+      "description": {}
+    }
+  },
+  "@roll_back_available_count": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@delete_source_confirm_title": {
+    "placeholders": {
+      "sourceName": {}
+    }
+  },
+  "@delete_source_confirm_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "chapterCount": {},
+      "historyCount": {},
+      "updateCount": {}
+    }
+  },
+  "@delete_source_result_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "sourceName": {}
+    }
+  },
+  "@merge_manga_chapters_subtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@merge_manga_result_message": {
+    "placeholders": {
+      "count": {},
+      "mangaName": {}
+    }
+  },
+  "@merge_manga_preview_message": {
+    "placeholders": {
+      "totalChapters": {},
+      "duplicateChapters": {},
+      "keptChapters": {},
+      "duplicateTracks": {}
+    }
+  },
+  "@onboarding_local_existing": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@onboarding_local_found": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@missing_source_check_result_title": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }
