@@ -9,6 +9,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/src/rust/api/epub.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/local_directory_access.dart';
 import 'package:mangayomi/utils/localized_message.dart';
@@ -1241,8 +1242,7 @@ bool _isJson(String path) {
 /// Returns if file is an image
 bool _isImage(String path) {
   if (_isHiddenSystemFile(path)) return false;
-  final ext = p.extension(path).toLowerCase();
-  return ext == '.jpg' || ext == '.jpeg' || ext == '.png' || ext == '.webp';
+  return isRecognizedImageFile(path);
 }
 
 /// Returns if file is an archive
