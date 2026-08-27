@@ -17,12 +17,6 @@ import 'package:mangayomi/utils/platform_utils.dart';
 const double _coverWidth = 96;
 const double _coverHeight = 144;
 
-/// Cover plus the card's vertical padding.
-const double _cardExtent = _coverHeight + 12;
-
-/// One column on a phone, two above this, and never more than two.
-const double _twoColumnBreakpoint = 700;
-
 const double _alphaTint = 0.08;
 const double _alphaFocus = 0.14;
 const double _alphaSecondary = 0.70;
@@ -96,24 +90,15 @@ class _RelatedScreenState extends State<RelatedScreen> {
             )
           : (data == null || data!.isEmpty)
           ? Center(child: Text(l10n.related_none))
-          : LayoutBuilder(
-              builder: (context, constraints) {
-                final columns = constraints.maxWidth >= _twoColumnBreakpoint
-                    ? 2
-                    : 1;
-                return GridView.builder(
-                  padding: tvPageInsets,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: columns,
-                    mainAxisExtent: _cardExtent,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                  ),
-                  itemCount: data!.length,
-                  itemBuilder: (context, index) =>
-                      _card(context, data![index], index),
-                );
-              },
+          // One column, like the watch order this sits beside. The list is
+          // short, and an adaptation is meant to be read down the page rather
+          // than scanned across it.
+          : ListView.separated(
+              padding: tvPageInsets,
+              itemCount: data!.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 4),
+              itemBuilder: (context, index) =>
+                  _card(context, data![index], index),
             ),
     );
   }
