@@ -2992,6 +2992,13 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get memory_overlay => 'Show memory usage';
+
+  @override
+  String get memory_overlay_subtitle =>
+      'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.';
+
+  @override
   String get beta => 'ベータ';
 
   @override

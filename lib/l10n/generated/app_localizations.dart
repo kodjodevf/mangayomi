@@ -5519,6 +5519,18 @@ abstract class AppLocalizations {
     Object duplicateTracks,
   );
 
+  /// No description provided for @memory_overlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Show memory usage'**
+  String get memory_overlay;
+
+  /// No description provided for @memory_overlay_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.'**
+  String get memory_overlay_subtitle;
+
   /// No description provided for @beta.
   ///
   /// In en, this message translates to:
