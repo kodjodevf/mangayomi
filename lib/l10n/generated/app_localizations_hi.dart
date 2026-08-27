@@ -3209,6 +3209,38 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String global_search_no_sources(String itemType) {
+    return 'No $itemType sources are installed.';
+  }
+
+  @override
+  String get global_search_no_sources_hint =>
+      'Add a repository under Browse, then install an extension for it.';
+
+  @override
+  String global_search_only_pinned(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sources',
+      one: '1 source',
+    );
+    return 'You have $_temp0 for this, but only pinned ones are searched.';
+  }
+
+  @override
+  String get global_search_only_pinned_hint =>
+      'Pin one, or turn off \"Only include pinned sources\" in Browse settings.';
+
+  @override
+  String get global_search_all_nsfw =>
+      'Every source you have for this is marked NSFW, and those are hidden.';
+
+  @override
+  String get global_search_all_nsfw_hint =>
+      'Turn on NSFW sources in Browse settings to search them.';
+
+  @override
   String get missing_source_check_result_message =>
       'ये प्रविष्टियां ऐसे स्रोत की ओर इशारा करती हैं जो स्थापित नहीं है। माइग्रेट करने के लिए टैप करें या एक्सटेंशन स्थापित करें।';
 }

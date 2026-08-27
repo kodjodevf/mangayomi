@@ -14,6 +14,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/language.dart';
@@ -38,18 +39,22 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   String _query = "";
   final _textEditingController = TextEditingController();
   late final bool _showNSFW = ref.read(showNSFWStateProvider);
+
+  /// Every installed source for this item type, before the pinned-only and
+  /// NSFW settings are applied.
+  ///
+  /// Kept so an empty result can say which of the three reasons it is: none
+  /// installed, none pinned, or all of them hidden as NSFW. They need
+  /// different things done about them.
+  late final List<Source> _installedSources = isar.sources
+      .where()
+      .itemTypeIsAddedEqualTo(widget.itemType, true)
+      .findAllSync();
+
   late final List<Source> sourceList = () {
     final sources = ref.read(onlyIncludePinnedSourceStateProvider)
-        ? isar.sources
-              .filter()
-              .isPinnedEqualTo(true)
-              .and()
-              .itemTypeEqualTo(widget.itemType)
-              .findAllSync()
-        : isar.sources
-              .where()
-              .itemTypeIsAddedEqualTo(widget.itemType, true)
-              .findAllSync();
+        ? _installedSources.where((e) => e.isPinned ?? false).toList()
+        : _installedSources;
     if (_showNSFW) return sources;
     return sources.where((e) => !(e.isNsfw ?? false)).toList();
   }();
@@ -110,7 +115,12 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
           ),
         ],
       ),
-      body: _query.isNotEmpty || widget.search != null
+      body: sourceList.isEmpty
+          // Without this the screen is a search field over a blank page, which
+          // reads as "nothing matched" when the truth is that nothing was
+          // searched.
+          ? _noSources(context)
+          : _query.isNotEmpty || widget.search != null
           // Every row is built rather than lazily. A source that fails or finds
           // nothing collapses to zero height, and a lazy list that estimates
           // extents cannot cope with that: scrolling up builds more rows, they
@@ -136,6 +146,66 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
               ),
             )
           : Container(),
+    );
+  }
+
+  /// Why a search over no sources found nothing.
+  ///
+  /// Three different situations reach here and only one of them is "install
+  /// something": the other two are settings that filtered every source out,
+  /// and saying "no sources installed" to someone who has ten of them is
+  /// worse than saying nothing.
+  Widget _noSources(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
+    final pinnedOnly = ref.read(onlyIncludePinnedSourceStateProvider);
+
+    final (String message, String hint) = switch (noSourcesReason(
+      installed: _installedSources.length,
+      pinnedOnly: pinnedOnly,
+    )) {
+      NoSourcesReason.noneInstalled => (
+        l10n.global_search_no_sources(widget.itemType.localized(l10n)),
+        l10n.global_search_no_sources_hint,
+      ),
+      NoSourcesReason.nonePinned => (
+        l10n.global_search_only_pinned(_installedSources.length),
+        l10n.global_search_only_pinned_hint,
+      ),
+      NoSourcesReason.allNsfw => (
+        l10n.global_search_all_nsfw,
+        l10n.global_search_all_nsfw_hint,
+      ),
+    };
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.extension_off_outlined,
+              size: 44,
+              color: context.textColor.withValues(alpha: 0.4),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              hint,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                color: context.textColor.withValues(alpha: 0.7),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -533,4 +603,36 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
 
   @override
   bool get wantKeepAlive => true;
+}
+
+/// Why a global search has nothing to search.
+///
+/// Only one of these means "install something". The other two are settings
+/// that filtered every source out, and telling someone with ten sources that
+/// they have none is worse than saying nothing at all.
+enum NoSourcesReason {
+  /// Nothing installed for this item type. The novel library on a device that
+  /// only ever installed manga extensions, for instance.
+  noneInstalled,
+
+  /// Sources exist, but "Only include pinned sources" is on and none of them
+  /// are pinned.
+  nonePinned,
+
+  /// Sources exist and are not excluded by the pinned setting, so the NSFW
+  /// filter is what removed them.
+  allNsfw,
+}
+
+/// Decides which of the three it is.
+///
+/// Called only once the searchable list is already known to be empty, so
+/// something removed every source and this works out what.
+NoSourcesReason noSourcesReason({
+  required int installed,
+  required bool pinnedOnly,
+}) {
+  if (installed == 0) return NoSourcesReason.noneInstalled;
+  if (pinnedOnly) return NoSourcesReason.nonePinned;
+  return NoSourcesReason.allNsfw;
 }

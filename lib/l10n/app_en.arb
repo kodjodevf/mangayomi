@@ -1273,5 +1273,17 @@
       }
     }
   },
+  "global_search_no_sources": "No {itemType} sources are installed.",
+  "@global_search_no_sources": {
+    "placeholders": {"itemType": {"type": "String"}}
+  },
+  "global_search_no_sources_hint": "Add a repository under Browse, then install an extension for it.",
+  "global_search_only_pinned": "You have {count, plural, =1{1 source} other{{count} sources}} for this, but only pinned ones are searched.",
+  "@global_search_only_pinned": {
+    "placeholders": {"count": {"type": "int"}}
+  },
+  "global_search_only_pinned_hint": "Pin one, or turn off \"Only include pinned sources\" in Browse settings.",
+  "global_search_all_nsfw": "Every source you have for this is marked NSFW, and those are hidden.",
+  "global_search_all_nsfw_hint": "Turn on NSFW sources in Browse settings to search them.",
   "missing_source_check_result_message": "These library entries point at a source that isn't installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them."
 }

@@ -5777,6 +5777,42 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 source missing} other{{count} sources missing}}'**
   String missing_source_check_result_title(int count);
 
+  /// No description provided for @global_search_no_sources.
+  ///
+  /// In en, this message translates to:
+  /// **'No {itemType} sources are installed.'**
+  String global_search_no_sources(String itemType);
+
+  /// No description provided for @global_search_no_sources_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a repository under Browse, then install an extension for it.'**
+  String get global_search_no_sources_hint;
+
+  /// No description provided for @global_search_only_pinned.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count, plural, =1{1 source} other{{count} sources}} for this, but only pinned ones are searched.'**
+  String global_search_only_pinned(int count);
+
+  /// No description provided for @global_search_only_pinned_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin one, or turn off \"Only include pinned sources\" in Browse settings.'**
+  String get global_search_only_pinned_hint;
+
+  /// No description provided for @global_search_all_nsfw.
+  ///
+  /// In en, this message translates to:
+  /// **'Every source you have for this is marked NSFW, and those are hidden.'**
+  String get global_search_all_nsfw;
+
+  /// No description provided for @global_search_all_nsfw_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on NSFW sources in Browse settings to search them.'**
+  String get global_search_all_nsfw_hint;
+
   /// No description provided for @missing_source_check_result_message.
   ///
   /// In en, this message translates to:
