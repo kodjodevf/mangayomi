@@ -528,20 +528,40 @@ void main() {
   });
 
   group('on a TV', () {
-    setUp(() => debugIsTvOverride = true);
+    setUp(() {
+      debugIsTvOverride = true;
+      _StubHideItems.lastSet = null;
+    });
 
-    testWidgets('chooses with pills, not chips', (tester) async {
+    testWidgets('never asks which libraries, it is a television', (
+      tester,
+    ) async {
+      // Nobody reads manga on a television, so the question has one answer and
+      // is not worth a screen of d-pad presses. The flow opens on the source.
       await pump(tester);
-      // A chip row is not reliably reachable with a d-pad.
+
+      expect(find.byType(TvPill), findsNothing);
       expect(find.byType(FilterChip), findsNothing);
-      expect(find.byType(TvPill), findsNWidgets(ItemType.values.length));
+      expect(find.byType(TextField), findsOneWidget, reason: 'the repo step');
+    });
+
+    testWidgets('and hides the libraries it did not choose', (tester) async {
+      // The step that writes that choice is the one being skipped, so it has
+      // to be written anyway or manga and novel stay in the rail.
+      await pump(tester);
+      await tester.pumpAndSettle();
+
+      final hidden = _StubHideItems.lastSet;
+      expect(hidden, isNotNull, reason: 'the choice was written at all');
+      expect(hidden, contains('/MangaLibrary'));
+      expect(hidden, contains('/NovelLibrary'));
+      expect(hidden, isNot(contains('/AnimeLibrary')));
     });
 
     testWidgets('the url field takes focus, so OK opens the keyboard', (
       tester,
     ) async {
       await pump(tester);
-      await toRepoStep(tester);
       final field = tester.widget<TextField>(find.byType(TextField));
       expect(field.autofocus, isTrue);
     });
@@ -550,7 +570,6 @@ void main() {
       tester,
     ) async {
       await pump(tester);
-      await toRepoStep(tester);
       // Typing a url on a remote is miserable; leaving now has to look like a
       // real option rather than a failure.
       expect(
@@ -595,11 +614,19 @@ class _StubLocalFolders extends LocalFoldersState {
 }
 
 class _StubHideItems extends HideItemsState {
+  /// What the screen last wrote. Captured because the provider is autoDispose:
+  /// reading it back after nothing is listening rebuilds it and the write is
+  /// gone, which made an earlier version of this test look like a failure.
+  static List<String>? lastSet;
+
   @override
   List<String> build() => const ['/trackerLibrary'];
 
   @override
-  void set(List<String> values) => state = values;
+  void set(List<String> values) {
+    lastSet = values;
+    state = values;
+  }
 }
 
 class _StubMergeNav extends MergeLibraryNavMobileState {

@@ -95,13 +95,19 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
     with WidgetsBindingObserver {
   final _controller = TextEditingController();
 
-  _Step _step = _Step.libraries;
+  _Step _step = _firstStep;
 
   /// Which way the last step change went, so the new words arrive from the
   /// side they came from. Going back animating like going forward is what made
   /// the movement feel arbitrary.
   bool _forward = true;
-  final Set<ItemType> _libraries = {...ItemType.values};
+
+  /// A television only ever reads anime, so the question is not asked there
+  /// and this is the answer. Everywhere else it starts with everything ticked
+  /// and the reader narrows it.
+  final Set<ItemType> _libraries = isTv
+      ? {ItemType.anime}
+      : {...ItemType.values};
   bool _mergeLibraries = false;
   ItemType _repoType = ItemType.manga;
 
@@ -168,6 +174,15 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
     // registers after the router, so it gets first refusal for as long as it
     // is on screen.
     WidgetsBinding.instance.addObserver(this);
+    // A television never visits the library step, so the step that would have
+    // written the choice never runs. Write it here instead, or the answer the
+    // flow made on the reader's behalf would be silently dropped and manga and
+    // novel would stay in the rail.
+    if (isTv) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _applyLibraries();
+      });
+    }
   }
 
   @override
@@ -182,7 +197,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   /// nothing behind it, so it does nothing and Skip stays the way out.
   @override
   Future<bool> didPopRoute() async {
-    if (!_adding && _step != _Step.libraries) _back();
+    if (!_adding && _step != _firstStep) _back();
     return true;
   }
 
@@ -209,10 +224,15 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   /// Not a constant: the arrange step drops out for a single library or a wide
   /// window, so the flow is two steps long as often as three.
   List<_Step> get _visibleSteps => [
-    _Step.libraries,
+    if (!isTv) _Step.libraries,
     if (_shouldArrangeBar) _Step.navigation,
     _Step.repository,
   ];
+
+  /// Where the flow starts. A television skips straight to the source, because
+  /// the two questions before it have one answer each there: anime, and a rail
+  /// rather than a bar.
+  static _Step get _firstStep => isTv ? _Step.repository : _Step.libraries;
 
   /// Whether the arrange step has anything to offer.
   ///
@@ -396,7 +416,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
       _forward = false;
       _step = _step == _Step.repository && _shouldArrangeBar
           ? _Step.navigation
-          : _Step.libraries;
+          : _firstStep;
     });
   }
 
@@ -488,7 +508,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
             _content(l10n, theme),
             // A way back to change an earlier answer. Absent on the first
             // step, where there is nothing behind it.
-            if (_step != _Step.libraries)
+            if (_step != _firstStep)
               Align(
                 alignment: AlignmentDirectional.topStart,
                 child: Padding(
