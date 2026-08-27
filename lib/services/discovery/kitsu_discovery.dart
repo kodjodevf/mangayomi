@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/anilist_discovery.dart';
+import 'package:mangayomi/services/discovery/title_match.dart';
 import 'package:mangayomi/services/discovery/service_availability.dart';
 import 'package:mangayomi/utils/constant.dart';
 
@@ -94,15 +95,43 @@ DiscoveryMedia kitsuMediaFrom(Map<String, dynamic> entry) {
   );
 }
 
-/// Resolves [title] to a Kitsu id.
+/// Resolves [title] to a Kitsu id, or null when nothing is close enough.
+///
+/// Asks for several and picks the one whose own titles match, rather than
+/// taking the first and trusting it. A library title comes from whichever
+/// source it was added from, and those disagree with Kitsu about punctuation,
+/// romanisation and how much of a subtitle to keep.
+///
+/// Returning null is a real answer here. Relations of the wrong series look
+/// exactly as confident as relations of the right one.
 Future<int?> kitsuSearchMediaId(ItemType itemType, String title) async {
   final body = await _get('/${_kitsuType(itemType)}', {
     'filter[text]': title,
-    'page[limit]': '1',
+    'page[limit]': '5',
   });
-  final data = body?["data"] as List?;
-  final first = data?.firstOrNull as Map<String, dynamic>?;
-  return first == null ? null : int.tryParse('${first["id"]}');
+  final data = (body?["data"] as List?)
+      ?.whereType<Map<String, dynamic>>()
+      .toList();
+  if (data == null || data.isEmpty) return null;
+
+  final best = bestTitleMatch(title, [for (final e in data) kitsuTitlesOf(e)]);
+  if (best == null) return null;
+  return int.tryParse('${data[best]["id"]}');
+}
+
+/// Every name Kitsu knows an entry by.
+///
+/// The abbreviations are worth including: they carry the alternate
+/// romanisations and the fan-translation names, which is often what a source
+/// called it.
+List<String> kitsuTitlesOf(Map<String, dynamic> entry) {
+  final attributes = (entry["attributes"] as Map<String, dynamic>?) ?? const {};
+  final titles = (attributes["titles"] as Map<String, dynamic>?) ?? const {};
+  return [
+    ...titles.values.whereType<String>(),
+    if (attributes["canonicalTitle"] case final String canonical) canonical,
+    ...?(attributes["abbreviatedTitles"] as List?)?.whereType<String>(),
+  ].where((t) => t.isNotEmpty).toList();
 }
 
 /// A Kitsu media plus its relations, shaped like the AniList call it stands in
