@@ -1651,145 +1651,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           ),
                   ),
                   const SizedBox(height: 15),
-                  SizedBox(
-                    width: context.width(1),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: OutlinedButton.icon(
-                        style: ButtonStyle(
-                          shape: WidgetStatePropertyAll(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                          ),
-                        ),
-                        onPressed: () {
-                          final algorithmWeights = ref.read(
-                            algorithmWeightsStateProvider,
-                          );
-                          context.push(
-                            "/recommendations",
-                            extra: (
-                              widget.manga!.name,
-                              widget.manga!.itemType,
-                              algorithmWeights,
-                            ),
-                          );
-                        },
-                        label: Text(l10n.recommendations),
-                        icon: Icon(Icons.arrow_right_alt_outlined),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  // Everything this title is related to, including the one
-                  // thing that cannot be reached any other way from in here:
-                  // its adaptation in the other medium.
-                  SizedBox(
-                    width: context.width(1),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: OutlinedButton.icon(
-                        style: ButtonStyle(
-                          shape: WidgetStatePropertyAll(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                          ),
-                        ),
-                        onPressed: () {
-                          context.push(
-                            "/related",
-                            extra: (
-                              widget.manga!.name!,
-                              widget.manga!.itemType,
-                            ),
-                          );
-                        },
-                        label: Text(l10n.related_titles),
-                        icon: Icon(Icons.arrow_right_alt_outlined),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  if (widget.manga!.itemType == ItemType.anime)
-                    SizedBox(
-                      width: context.width(1),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: OutlinedButton.icon(
-                          style: ButtonStyle(
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
-                            ),
-                          ),
-                          onPressed: () {
-                            context.push(
-                              "/watchOrder",
-                              extra: (widget.manga!.name, null),
-                            );
-                          },
-                          label: Text(l10n.watch_order),
-                          icon: Icon(Icons.arrow_right_alt_outlined),
-                        ),
-                      ),
-                    ),
-                  if (widget.manga!.itemType == ItemType.anime)
-                    StreamBuilder(
-                      stream: isar.tracks
-                          .filter()
-                          .idIsNotNull()
-                          .mangaIdEqualTo(widget.manga!.id!)
-                          .watch(fireImmediately: true),
-                      builder: (context, snapshot) {
-                        List<Track>? trackRes = snapshot.hasData
-                            ? snapshot.data
-                            : [];
-                        final isNotSupported =
-                            trackRes?.firstOrNull?.syncId !=
-                                TrackerProviders.myAnimeList.syncId &&
-                            trackRes?.firstOrNull?.syncId !=
-                                TrackerProviders.anilist.syncId;
-                        if ((trackRes?.isEmpty ?? true) || (isNotSupported)) {
-                          return Container();
-                        }
-                        return Column(
-                          children: [
-                            const SizedBox(height: 15),
-                            SizedBox(
-                              width: context.width(1),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: OutlinedButton.icon(
-                                  style: ButtonStyle(
-                                    shape: WidgetStatePropertyAll(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          30.0,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    context.push(
-                                      "/watchOrder",
-                                      extra: (
-                                        widget.manga!.name,
-                                        trackRes?.firstOrNull,
-                                      ),
-                                    );
-                                  },
-                                  label: Text(l10n.sequels),
-                                  icon: Icon(Icons.arrow_right_alt_outlined),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                  _DetailActions(manga: widget.manga!),
                   const SizedBox(height: 15),
                   if (!context.isTablet)
                     Column(
@@ -2520,4 +2382,109 @@ Future<bool> _showSplitChaptersDialog(BuildContext context) async {
         ),
       ) ??
       true;
+}
+
+/// The things you can do with a title from its detail page, as one row.
+///
+/// These used to be up to three full-width buttons stacked down the page,
+/// each carrying the same right-arrow icon, so the column said nothing about
+/// what any of them did and grew every time one was added.
+///
+/// A Wrap rather than a Row: the labels are localised and some translations
+/// are long, so on a narrow phone they take a second line instead of being
+/// squeezed or clipped.
+class _DetailActions extends ConsumerWidget {
+  const _DetailActions({required this.manga});
+
+  final Manga manga;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = l10nLocalizations(context)!;
+
+    final recommendations = _pill(
+      context,
+      icon: Icons.auto_awesome_outlined,
+      label: l10n.recommendations,
+      onPressed: () => context.push(
+        "/recommendations",
+        extra: (
+          manga.name,
+          manga.itemType,
+          ref.read(algorithmWeightsStateProvider),
+        ),
+      ),
+    );
+
+    if (manga.itemType != ItemType.anime) return _row([recommendations]);
+
+    final watchOrder = _pill(
+      context,
+      icon: Icons.format_list_numbered_outlined,
+      label: l10n.watch_order,
+      onPressed: () => context.push("/watchOrder", extra: (manga.name, null)),
+    );
+
+    // Sequels needs a MyAnimeList or AniList track to look anything up, so it
+    // only appears once there is one.
+    return StreamBuilder(
+      stream: isar.tracks
+          .filter()
+          .idIsNotNull()
+          .mangaIdEqualTo(manga.id!)
+          .watch(fireImmediately: true),
+      builder: (context, snapshot) {
+        final tracks = snapshot.data ?? const <Track>[];
+        final syncId = tracks.firstOrNull?.syncId;
+        final supported =
+            syncId == TrackerProviders.myAnimeList.syncId ||
+            syncId == TrackerProviders.anilist.syncId;
+
+        return _row([
+          recommendations,
+          watchOrder,
+          if (tracks.isNotEmpty && supported)
+            _pill(
+              context,
+              icon: Icons.playlist_play_outlined,
+              label: l10n.sequels,
+              onPressed: () => context.push(
+                "/watchOrder",
+                extra: (manga.name, tracks.firstOrNull),
+              ),
+            ),
+        ]);
+      },
+    );
+  }
+
+  Widget _row(List<Widget> children) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8),
+    child: Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 8,
+      runSpacing: 8,
+      children: children,
+    ),
+  );
+
+  /// Sized to its label rather than to the screen, so several fit on a line.
+  Widget _pill(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+  }) => OutlinedButton.icon(
+    style: ButtonStyle(
+      shape: WidgetStatePropertyAll(
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+      ),
+      padding: const WidgetStatePropertyAll(
+        EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      ),
+    ),
+    onPressed: onPressed,
+    icon: Icon(icon, size: 18),
+    label: Text(label),
+  );
 }
