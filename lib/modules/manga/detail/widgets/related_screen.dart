@@ -7,19 +7,31 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/related_titles.dart';
 import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
-/// Covers are 2:3, matching the recommendation screen so the two read as the
-/// same kind of list.
-const double _coverWidth = 64;
-const double _coverHeight = 96;
+/// Covers are 2:3, matching the recommendation screen so the two read as one
+/// kind of list rather than two.
+const double _coverWidth = 96;
+const double _coverHeight = 144;
 
-/// What the manga being read is related to.
+/// Cover plus the card's vertical padding.
+const double _cardExtent = _coverHeight + 12;
+
+/// One column on a phone, two above this, and never more than two.
+const double _twoColumnBreakpoint = 700;
+
+const double _alphaTint = 0.08;
+const double _alphaFocus = 0.14;
+const double _alphaSecondary = 0.70;
+
+/// What the open title is related to.
 ///
 /// Opening one searches the sources installed for its medium, so an anime
-/// adaptation found here leads to somewhere it can actually be watched rather
-/// than to a database entry.
+/// adaptation found from a manga leads somewhere it can be watched rather than
+/// to a database entry.
 class RelatedScreen extends StatefulWidget {
   const RelatedScreen({super.key, required this.name, required this.itemType});
 
@@ -31,109 +43,215 @@ class RelatedScreen extends StatefulWidget {
 }
 
 class _RelatedScreenState extends State<RelatedScreen> {
-  late Future<List<RelatedTitle>> _future = _load();
+  String _errorMessage = "";
+  bool _isLoading = true;
+  List<RelatedTitle>? data;
 
-  Future<List<RelatedTitle>> _load() =>
-      fetchRelatedTitles(widget.name, widget.itemType);
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  Future<void> _init() async {
+    try {
+      _errorMessage = "";
+      data = await fetchRelatedTitles(widget.name, widget.itemType);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = l10nLocalizations(context)!;
+    final l10n = context.l10n;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.related_titles)),
-      body: FutureBuilder<List<RelatedTitle>>(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const ProgressCenter();
-          }
-          if (snapshot.hasError) {
-            return ErrorState(
-              // The real message, not "no result": a lookup that failed and a
-              // title with nothing related to it are different answers.
-              message: snapshot.error.toString(),
-              onRetry: () => setState(() => _future = _load()),
-            );
-          }
+      body: _isLoading
+          ? const ProgressCenter()
+          : _errorMessage.isNotEmpty
+          // The cause goes in detail, not message: a lookup that failed and a
+          // title with nothing related to it are different answers, and only
+          // one of them is worth a stack.
+          ? ErrorState(
+              detail: _errorMessage,
+              onRetry: () {
+                setState(() {
+                  _isLoading = true;
+                  _errorMessage = "";
+                });
+                _init();
+              },
+            )
+          : (data == null || data!.isEmpty)
+          ? Center(child: Text(l10n.related_none))
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                final columns = constraints.maxWidth >= _twoColumnBreakpoint
+                    ? 2
+                    : 1;
+                return GridView.builder(
+                  padding: tvPageInsets,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    mainAxisExtent: _cardExtent,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemCount: data!.length,
+                  itemBuilder: (context, index) =>
+                      _card(context, data![index], index),
+                );
+              },
+            ),
+    );
+  }
 
-          final titles = snapshot.data ?? const <RelatedTitle>[];
-          if (titles.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  l10n.related_none,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: context.secondaryColor),
+  Widget _card(BuildContext context, RelatedTitle related, int index) {
+    final l10n = context.l10n;
+    final crossesMedium = related.crossesMedium(widget.itemType);
+
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(8),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        // Nothing is focusable on entry otherwise, so a remote does nothing
+        // until the user guesses a direction.
+        autofocus: isTv && index == 0,
+        focusColor: context.primaryColor.withValues(alpha: _alphaFocus),
+        onTap: () => context.push(
+          '/globalSearch',
+          extra: (related.title, related.itemType),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(6),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image(
+                  // toImgUrl stands a blank in for an entry with no poster, so
+                  // a missing cover leaves a gap of the right shape instead of
+                  // collapsing the row.
+                  image: coverProvider(toImgUrl(related.coverImage ?? "")),
+                  width: _coverWidth,
+                  height: _coverHeight,
+                  fit: BoxFit.cover,
                 ),
               ),
-            );
-          }
-
-          return ListView.builder(
-            itemCount: titles.length,
-            itemBuilder: (context, index) =>
-                _RelatedTile(title: titles[index], from: widget.itemType),
-          );
-        },
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _relationPill(
+                          context,
+                          _relationLabel(l10n, related.relation),
+                          filled: crossesMedium,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            related.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 7),
+                    Wrap(
+                      spacing: 5,
+                      runSpacing: 4,
+                      children: [
+                        _chip(context, related.itemType.localized(l10n)),
+                        if (related.format != null)
+                          _chip(context, _prettyFormat(related.format!)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
-}
 
-class _RelatedTile extends StatelessWidget {
-  const _RelatedTile({required this.title, required this.from});
+  /// The relation, in the same place the recommendation card puts its score,
+  /// because it answers the same question: why is this here.
+  ///
+  /// Filled with the accent only when the entry is in the other medium. That
+  /// is the one the list exists for, and it should be findable without
+  /// reading.
+  Widget _relationPill(
+    BuildContext context,
+    String label, {
+    required bool filled,
+  }) {
+    final accent = context.primaryColor;
+    // Computed against the accent rather than the theme, so it stays readable
+    // whichever hue the user picked and in either brightness.
+    final onAccent = accent.computeLuminance() > 0.5
+        ? Colors.black
+        : Colors.white;
 
-  final RelatedTitle title;
-  final ItemType from;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = l10nLocalizations(context)!;
-    final cover = title.coverImage;
-
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      leading: SizedBox(
-        width: _coverWidth,
-        height: _coverHeight,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(6),
-          child: cover == null
-              ? Container(
-                  color: context.secondaryColor.withValues(alpha: 0.12),
-                  child: const Icon(Icons.image_not_supported_outlined),
-                )
-              : Image(
-                  image: coverProvider(cover),
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) =>
-                      const Icon(Icons.broken_image_outlined),
-                ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: filled
+            ? accent
+            : context.textColor.withValues(alpha: _alphaTint),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w800,
+          color: filled
+              ? onAccent
+              : context.textColor.withValues(alpha: _alphaSecondary),
         ),
       ),
-      title: Text(title.title),
-      subtitle: Text(
-        [
-          _relationLabel(l10n, title.relation),
-          if (title.format != null) _prettyFormat(title.format!),
-        ].join(' · '),
-        style: TextStyle(color: context.secondaryColor, fontSize: 12),
+    );
+  }
+
+  Widget _chip(BuildContext context, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: context.textColor.withValues(alpha: _alphaTint),
+        borderRadius: BorderRadius.circular(6),
       ),
-      // The medium is the thing worth spotting at a glance, so it is a chip
-      // rather than another line of prose.
-      trailing: title.crossesMedium(from)
-          ? Chip(
-              label: Text(
-                title.itemType.localized(l10n),
-                style: const TextStyle(fontSize: 11),
-              ),
-              visualDensity: VisualDensity.compact,
-            )
-          : null,
-      onTap: () =>
-          context.push('/globalSearch', extra: (title.title, title.itemType)),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 11,
+          color: context.textColor.withValues(alpha: _alphaSecondary),
+        ),
+      ),
     );
   }
 }
@@ -154,13 +272,12 @@ String _relationLabel(AppLocalizations l10n, String relation) =>
       _ => l10n.related_titles,
     };
 
-/// SIDE_STORY reads badly on a card; Side story does not.
+/// LIGHT_NOVEL reads badly on a card; Light novel does not.
 String _prettyFormat(String format) {
   final words = format.toLowerCase().split('_');
+  if (words.first.isEmpty) return format;
   return [
-    words.first.isEmpty
-        ? ''
-        : words.first[0].toUpperCase() + words.first.substring(1),
+    words.first[0].toUpperCase() + words.first.substring(1),
     ...words.skip(1),
   ].join(' ');
 }
