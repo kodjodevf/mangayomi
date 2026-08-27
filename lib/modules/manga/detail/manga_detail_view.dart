@@ -2473,7 +2473,10 @@ class _DetailActions extends ConsumerWidget {
   }
 
   Widget _strip(BuildContext context, List<_DetailAction> actions) {
-    final outline = Theme.of(context).colorScheme.outlineVariant;
+    // Tinted rather than the neutral outline, so the border belongs to the
+    // accent the segments are drawn in. Kept faint: it frames the strip, it
+    // is not another thing to look at.
+    final outline = context.primaryColor.withValues(alpha: 0.35);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -2505,25 +2508,35 @@ class _DetailActions extends ConsumerWidget {
   /// Icon above label rather than beside it. These labels are localised and
   /// some translations are long; stacked, a long one takes a second line
   /// instead of pushing the icon out or clipping.
-  Widget _segment(BuildContext context, _DetailAction action) => InkWell(
-    onTap: action.onPressed,
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(action.icon, size: 20),
-          const SizedBox(height: 5),
-          Text(
-            action.label,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-          ),
-        ],
+  Widget _segment(BuildContext context, _DetailAction action) {
+    // The accent, so the strip reads as something to press and follows
+    // whichever colour the user picked rather than sitting in body-text grey.
+    final accent = context.primaryColor;
+
+    return InkWell(
+      onTap: action.onPressed,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(action.icon, size: 20, color: accent),
+            const SizedBox(height: 5),
+            Text(
+              action.label,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: accent,
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
