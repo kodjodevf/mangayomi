@@ -1273,5 +1273,14 @@
       }
     }
   },
-  "missing_source_check_result_message": "These library entries point at a source that isn't installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them."
+  "missing_source_check_result_message": "These library entries point at a source that isn't installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them.",
+  "related_titles": "Related",
+  "related_none": "Nothing related was found for this title.",
+  "relation_adaptation": "Adaptation",
+  "relation_sequel": "Sequel",
+  "relation_prequel": "Prequel",
+  "relation_parent": "Parent story",
+  "relation_side_story": "Side story",
+  "relation_spin_off": "Spin-off",
+  "relation_alternative": "Alternative version"
 }

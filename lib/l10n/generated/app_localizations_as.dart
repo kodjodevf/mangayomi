@@ -3207,4 +3207,31 @@ class AppLocalizationsAs extends AppLocalizations {
   @override
   String get missing_source_check_result_message =>
       'এই এণ্ট্ৰিসমূহ ইনষ্টল নথকা উৎসৰ সৈতে জড়িত। স্থানান্তৰ কৰিবলৈ টিপক বা এক্সটেনচন ইনষ্টল কৰক।';
+
+  @override
+  String get related_titles => 'Related';
+
+  @override
+  String get related_none => 'Nothing related was found for this title.';
+
+  @override
+  String get relation_adaptation => 'Adaptation';
+
+  @override
+  String get relation_sequel => 'Sequel';
+
+  @override
+  String get relation_prequel => 'Prequel';
+
+  @override
+  String get relation_parent => 'Parent story';
+
+  @override
+  String get relation_side_story => 'Side story';
+
+  @override
+  String get relation_spin_off => 'Spin-off';
+
+  @override
+  String get relation_alternative => 'Alternative version';
 }

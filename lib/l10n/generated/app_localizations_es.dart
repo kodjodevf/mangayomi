@@ -3252,6 +3252,33 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get missing_source_check_result_message =>
       'Estas entradas apuntan a una fuente no instalada en este dispositivo. Toca una para migrarla a una fuente instalada, instala la extensión correspondiente o usa \"Eliminar fuente y sus mangas\".';
+
+  @override
+  String get related_titles => 'Related';
+
+  @override
+  String get related_none => 'Nothing related was found for this title.';
+
+  @override
+  String get relation_adaptation => 'Adaptation';
+
+  @override
+  String get relation_sequel => 'Sequel';
+
+  @override
+  String get relation_prequel => 'Prequel';
+
+  @override
+  String get relation_parent => 'Parent story';
+
+  @override
+  String get relation_side_story => 'Side story';
+
+  @override
+  String get relation_spin_off => 'Spin-off';
+
+  @override
+  String get relation_alternative => 'Alternative version';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

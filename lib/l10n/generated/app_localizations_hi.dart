@@ -3211,4 +3211,31 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get missing_source_check_result_message =>
       'ये प्रविष्टियां ऐसे स्रोत की ओर इशारा करती हैं जो स्थापित नहीं है। माइग्रेट करने के लिए टैप करें या एक्सटेंशन स्थापित करें।';
+
+  @override
+  String get related_titles => 'Related';
+
+  @override
+  String get related_none => 'Nothing related was found for this title.';
+
+  @override
+  String get relation_adaptation => 'Adaptation';
+
+  @override
+  String get relation_sequel => 'Sequel';
+
+  @override
+  String get relation_prequel => 'Prequel';
+
+  @override
+  String get relation_parent => 'Parent story';
+
+  @override
+  String get relation_side_story => 'Side story';
+
+  @override
+  String get relation_spin_off => 'Spin-off';
+
+  @override
+  String get relation_alternative => 'Alternative version';
 }
