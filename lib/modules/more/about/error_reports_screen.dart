@@ -58,17 +58,22 @@ class _ErrorReportsScreenState extends ConsumerState<ErrorReportsScreen> {
           : ListView.separated(
               itemCount: reports.length,
               separatorBuilder: (_, _) => const Divider(height: 1),
-              itemBuilder: (context, index) =>
-                  _ReportTile(report: reports[index]),
+              itemBuilder: (context, index) => _ReportTile(
+                report: reports[index],
+                onReported: () => setState(() {}),
+              ),
             ),
     );
   }
 }
 
 class _ReportTile extends StatelessWidget {
-  const _ReportTile({required this.report});
+  const _ReportTile({required this.report, required this.onReported});
 
   final CrashReport report;
+
+  /// Lets the list redraw once a fault has been sent, so the button says so.
+  final VoidCallback onReported;
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +90,36 @@ class _ReportTile extends StatelessWidget {
       childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       expandedCrossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (isExtensionFailure(report.error)) ...[
+          // #914 was an extension bug filed here, because the screen offered a
+          // Report button pointing at this repository and gave the reader no
+          // way to know the difference.
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: context.secondaryColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(l10n.error_reports_extension_failure),
+          ),
+          const SizedBox(height: 12),
+        ],
+        if (isExpectedFailure(report.error)) ...[
+          // #915 and #916 were both filed through this screen for images that
+          // failed to load. The likely-cause line was not enough on its own,
+          // so say plainly that this one is probably not the app's fault.
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: context.secondaryColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(l10n.error_reports_expected_failure),
+          ),
+          const SizedBox(height: 12),
+        ],
         if (cause != null) ...[
           Text(
             l10n.error_reports_likely_cause,
@@ -109,11 +144,20 @@ class _ReportTile extends StatelessWidget {
         Wrap(
           spacing: 8,
           children: [
-            FilledButton.icon(
-              onPressed: () => _report(context),
-              icon: const Icon(Icons.bug_report_outlined, size: 18),
-              label: Text(l10n.error_reports_report),
-            ),
+            // An extension bug does not belong in this repository, and a
+            // fault already sent does not need sending twice (#917, #918).
+            if (!isExtensionFailure(report.error))
+              FilledButton.icon(
+                onPressed: CrashReports.wasReported(report)
+                    ? null
+                    : () => _report(context),
+                icon: const Icon(Icons.bug_report_outlined, size: 18),
+                label: Text(
+                  CrashReports.wasReported(report)
+                      ? l10n.error_reports_already_reported
+                      : l10n.error_reports_report,
+                ),
+              ),
             TextButton.icon(
               onPressed: () async {
                 await Clipboard.setData(
@@ -133,6 +177,8 @@ class _ReportTile extends StatelessWidget {
   }
 
   Future<void> _report(BuildContext context) async {
+    CrashReports.markReported(report);
+    onReported();
     final url = buildIssueUrl(
       report,
       appVersion: await appVersionDescription(),

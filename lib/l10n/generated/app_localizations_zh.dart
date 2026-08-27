@@ -2983,6 +2983,17 @@ class AppLocalizationsZh extends AppLocalizations {
   String get error_reports_clear => '清除';
 
   @override
+  String get error_reports_extension_failure =>
+      'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.';
+
+  @override
+  String get error_reports_already_reported => 'Already reported';
+
+  @override
+  String get error_reports_expected_failure =>
+      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
+
+  @override
   String get share_unavailable_copied => '此平台不支持分享，已复制到剪贴板。';
 
   @override
