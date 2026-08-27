@@ -145,7 +145,12 @@ bool isExpectedFailure(Object error) {
       // MangaDex page loads, then this, seconds apart. It is the same failure
       // one step further along, not a separate bug.
       text.contains('could not decompress image') ||
-      text.contains('invalid image data');
+      text.contains('invalid image data') ||
+      // The Rust HTTP stack's transport errors, which are the same network
+      // failures one layer down. #933 is one of these.
+      text.contains('rhttpunknownexception') ||
+      text.contains('hyper_util') ||
+      text.contains('statuscode: 5');
 }
 
 /// Whether [error] came from an extension rather than from the app.
@@ -160,10 +165,22 @@ bool isExpectedFailure(Object error) {
 /// told apart from an app bug with reasonable confidence.
 bool isExtensionFailure(Object error) {
   final text = error.toString();
-  return text.startsWith('Runtime Error:') ||
+  return
+  // d4rt, the Dart interpreter
+  text.startsWith('Runtime Error:') ||
       text.startsWith('SourceCodeException:') ||
       text.contains('Native error during bridged method call') ||
-      text.contains('Undefined property or method');
+      text.contains('Undefined property or method') ||
+      // Mihon extensions, which are Kotlin and fail their own way. #935 is a
+      // source answering 500 and the extension's deserialisation reporting a
+      // missing field, named by its JVM package.
+      text.contains('eu.kanade.tachiyomi.extension') ||
+      text.contains("is required for type with serial name") ||
+      // LNReader plugins. #936 is a plugin returning a novel with no path.
+      // The old wording is still matched because reports keep arriving from
+      // builds that predate the clearer message.
+      text.contains('path is null') ||
+      text.contains('returned a novel with no path');
 }
 
 /// A stable key for "this same thing went wrong again".

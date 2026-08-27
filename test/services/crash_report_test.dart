@@ -177,6 +177,16 @@ void main() {
       );
     });
 
+    test('the Rust http stack failing is the same network failure', () {
+      // #933, a transport error one layer below SocketException.
+      expect(
+        isExpectedFailure(
+          '[RhttpUnknownException] hyper_util::client::legacy::Error',
+        ),
+        true,
+      );
+    });
+
     test('and what a failed download decodes to afterwards', () {
       // #927, whose own recent-errors block shows two failed page loads
       // seconds before it. The bytes that arrived were not an image.
@@ -243,6 +253,31 @@ void main() {
       expect(
         isExtensionFailure(
           "Native error during bridged method call 'forEach' on List",
+        ),
+        true,
+      );
+    });
+
+    test('a Mihon extension failing is one too', () {
+      // #935: the source answered 500 and the extension's deserialisation
+      // reported a missing field, named by its JVM package.
+      expect(
+        isExtensionFailure(
+          "Field 'largeImage' is required for type with serial name "
+          "'eu.kanade.tachiyomi.extension.en.atsumaru.MangaDto', but it was "
+          "missing at path: \$.mangaPage",
+        ),
+        true,
+      );
+    });
+
+    test('and an LNReader plugin returning nothing usable', () {
+      // #936, in both the old wording and the clearer one that replaced it.
+      expect(isExtensionFailure('path is null'), true);
+      expect(
+        isExtensionFailure(
+          'Exception: The source returned a novel with no path, so it cannot '
+          'be opened. This is the extension rather than Mangayomi.',
         ),
         true,
       );
