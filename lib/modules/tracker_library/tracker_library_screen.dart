@@ -14,6 +14,7 @@ import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
+import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_section.dart';
 import 'package:mangayomi/modules/widgets/tracker_account_avatar.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_section_screen.dart';
@@ -714,20 +715,18 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
 /// The app bar title for a tracker's library: the service and item type, with
 /// the account underneath it.
 ///
-/// The account is read here rather than passed in so the title updates when a
-/// login completes without the screen being rebuilt from above.
-class _TrackerLibraryTitle extends StatelessWidget {
+/// Watches the preference rather than reading it once, so signing out drops
+/// the account from the title instead of leaving a stale name above an empty
+/// list.
+class _TrackerLibraryTitle extends ConsumerWidget {
   const _TrackerLibraryTitle({required this.text, required this.syncId});
 
   final String text;
   final int syncId;
 
   @override
-  Widget build(BuildContext context) {
-    final preference = isar.trackPreferences
-        .filter()
-        .syncIdEqualTo(syncId)
-        .findFirstSync();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final preference = ref.watch(tracksProvider(syncId: syncId));
     final label = preference?.accountLabel;
 
     if (preference == null || label == null) return Text(text);
