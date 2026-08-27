@@ -1592,10 +1592,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         child: Text(
                                           widget.manga!.genre![i],
                                           style: TextStyle(
-                                            fontSize: 11.5,
-                                            color: context.isLight
-                                                ? Colors.black
-                                                : Colors.white,
+                                            // 11 is the chip step. 11.5 is not
+                                            // on the scale and renders
+                                            // inconsistently across platforms.
+                                            fontSize: 11,
+                                            // The theme already answers this;
+                                            // picking black or white by hand
+                                            // ignores the palette.
+                                            color: context.textColor,
                                           ),
                                         ),
                                       ),
@@ -1637,10 +1641,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         child: Text(
                                           widget.manga!.genre![i],
                                           style: TextStyle(
-                                            fontSize: 11.5,
-                                            color: context.isLight
-                                                ? Colors.black
-                                                : Colors.white,
+                                            // 11 is the chip step. 11.5 is not
+                                            // on the scale and renders
+                                            // inconsistently across platforms.
+                                            fontSize: 11,
+                                            // The theme already answers this;
+                                            // picking black or white by hand
+                                            // ignores the palette.
+                                            color: context.textColor,
                                           ),
                                         ),
                                       ),
