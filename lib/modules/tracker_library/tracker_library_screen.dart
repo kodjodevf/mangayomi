@@ -15,6 +15,7 @@ import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_section.dart';
+import 'package:mangayomi/modules/widgets/tracker_account_avatar.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_section_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -89,11 +90,13 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          (trackerProvider.syncId == TrackerProviders.simkl.syncId ||
+        title: _TrackerLibraryTitle(
+          text:
+              (trackerProvider.syncId == TrackerProviders.simkl.syncId ||
                   trackerProvider.syncId == TrackerProviders.trakt.syncId)
               ? trackerProvider.name
               : "${trackerProvider.name} | ${itemType.localized(l10n)}",
+          syncId: trackerProvider.syncId,
         ),
         leading: !_isSearch ? null : Container(),
         actions: [
@@ -704,6 +707,53 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
           }
         },
       ),
+    );
+  }
+}
+
+/// The app bar title for a tracker's library: the service and item type, with
+/// the account underneath it.
+///
+/// The account is read here rather than passed in so the title updates when a
+/// login completes without the screen being rebuilt from above.
+class _TrackerLibraryTitle extends StatelessWidget {
+  const _TrackerLibraryTitle({required this.text, required this.syncId});
+
+  final String text;
+  final int syncId;
+
+  @override
+  Widget build(BuildContext context) {
+    final preference = isar.trackPreferences
+        .filter()
+        .syncIdEqualTo(syncId)
+        .findFirstSync();
+    final label = preference?.accountLabel;
+
+    if (preference == null || label == null) return Text(text);
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TrackerAccountAvatar(preference: preference, radius: 14),
+        const SizedBox(width: 10),
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(text, overflow: TextOverflow.ellipsis),
+              Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

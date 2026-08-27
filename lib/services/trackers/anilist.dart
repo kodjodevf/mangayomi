@@ -17,6 +17,7 @@ import 'package:mangayomi/utils/localized_message.dart';
 import 'package:mangayomi/services/discovery/service_availability.dart';
 
 import 'base_tracker.dart';
+import 'tracker_account.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'anilist.g.dart';
@@ -77,7 +78,9 @@ class Anilist extends _$Anilist implements BaseTracker {
           .login(
             TrackPreference(
               syncId: syncId,
-              username: currenUser.$1,
+              username: currenUser.$1.id,
+              displayName: currenUser.$1.name,
+              avatarUrl: currenUser.$1.avatarUrl,
               prefs: jsonEncode({"scoreFormat": currenUser.$2}),
               oAuth: jsonEncode(aLOAuth.toJson()),
             ),
@@ -416,11 +419,20 @@ class Anilist extends _$Anilist implements BaseTracker {
     return data;
   }
 
-  Future<(String, String)> _getCurrentUser(String accessToken) async {
+  /// The viewer's account, and the score format stored alongside it.
+  ///
+  /// The id and the name are both needed and are not interchangeable. Two
+  /// queries here parse the id as an int, while chiaki.site's sequel lookup
+  /// wants the name, so storing only one of them makes the other caller wrong.
+  Future<(TrackerAccount, String)> _getCurrentUser(String accessToken) async {
     const query = '''
     query User {
       Viewer {
         id
+        name
+        avatar {
+          large
+        }
         mediaListOptions {
           scoreFormat
         }
@@ -440,9 +452,9 @@ class Anilist extends _$Anilist implements BaseTracker {
     );
     final data = json.decode(response.body);
 
-    final viewer = data['data']['Viewer'];
+    final viewer = data['data']['Viewer'] as Map<String, dynamic>;
     return (
-      viewer['id'].toString(),
+      anilistAccount(viewer),
       viewer['mediaListOptions']['scoreFormat'].toString(),
     );
   }

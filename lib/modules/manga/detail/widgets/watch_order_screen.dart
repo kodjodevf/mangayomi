@@ -115,7 +115,10 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
             .filter()
             .syncIdEqualTo(TrackerProviders.anilist.syncId)
             .findFirst();
-        final data = await fetchSequels(mal?.username, anilist?.username);
+        // chiaki.site is sent `user=` and looks it up by handle, so AniList
+        // has to pass its display name here. Its `username` is a numeric
+        // viewer id, which the lookup silently answers nothing for.
+        final data = await fetchSequels(mal?.username, anilist?.displayName);
         sequels = data
             .where((e) => e.reason.any((r) => r.id == mediaId))
             .toList();
