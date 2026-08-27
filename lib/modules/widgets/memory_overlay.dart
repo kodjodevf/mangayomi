@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/utils/memory_probe.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 /// A live readout of what the app is holding, for measuring on the device
 /// rather than guessing from a desktop.
@@ -16,11 +17,18 @@ class MemoryOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The buttons are only offered where they can be pressed. A television
+    // has no pointer, and this sits in a Stack above the whole app rather than
+    // inside its focus traversal, so a d-pad can never reach them: they would
+    // be two controls that look live and are not. The settings toggle already
+    // resets the run when it is switched on, and that is reachable.
+    final interactive = onClose != null && !isTv;
+
     return Positioned(
       top: MediaQuery.paddingOf(context).top + 8,
       right: 8,
       child: IgnorePointer(
-        ignoring: onClose == null,
+        ignoring: !interactive,
         child: Material(
           color: Colors.black.withValues(alpha: 0.78),
           borderRadius: BorderRadius.circular(8),
@@ -56,6 +64,8 @@ class MemoryOverlay extends StatelessWidget {
         ? Colors.amber
         : (pressure > 0 ? Colors.white : Colors.white70);
 
+    final interactive = onClose != null && !isTv;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -81,7 +91,12 @@ class MemoryOverlay extends StatelessWidget {
           '${stats.samples} samples',
           style: style.copyWith(color: pressureColour),
         ),
-        if (onClose != null)
+        if (isTv)
+          Text(
+            'toggle it off and on in settings to reset',
+            style: style.copyWith(color: Colors.white54, fontSize: 11),
+          ),
+        if (interactive)
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [

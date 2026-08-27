@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/modules/widgets/memory_overlay.dart';
 import 'package:mangayomi/utils/memory_probe.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 /// The readout has to be legible from a sofa and has to say the thing that
 /// decides the question: whether the cache is spending its time full.
@@ -64,6 +65,37 @@ void main() {
     await tester.pump();
 
     expect(find.textContaining('waiting for a sample'), findsOneWidget);
+  });
+
+  testWidgets('on a TV it offers no buttons a d-pad cannot reach', (
+    tester,
+  ) async {
+    // It sits in a Stack above the whole app rather than inside its focus
+    // traversal, so a remote can never land on those buttons. Showing them
+    // would be two controls that look live and are not.
+    debugIsTvOverride = true;
+    addTearDown(() => debugIsTvOverride = null);
+    final probe = MemoryProbe();
+    addTearDown(probe.dispose);
+    probe.sample();
+
+    await pump(tester, probe);
+
+    expect(find.text('Reset'), findsNothing);
+    expect(find.text('Hide'), findsNothing);
+    expect(find.textContaining('toggle it off and on'), findsOneWidget);
+  });
+
+  testWidgets('and still offers them where there is a pointer', (tester) async {
+    debugIsTvOverride = false;
+    addTearDown(() => debugIsTvOverride = null);
+    final probe = MemoryProbe();
+    addTearDown(probe.dispose);
+    probe.sample();
+
+    await pump(tester, probe);
+
+    expect(find.text('Reset'), findsOneWidget);
   });
 
   testWidgets('without a close button it does not eat taps meant for the app', (
