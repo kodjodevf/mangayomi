@@ -2384,15 +2384,30 @@ Future<bool> _showSplitChaptersDialog(BuildContext context) async {
       true;
 }
 
-/// The things you can do with a title from its detail page, as one row.
+/// One action on the detail page.
+class _DetailAction {
+  const _DetailAction({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+}
+
+/// The things you can do with a title from its detail page, as one control.
 ///
-/// These used to be up to three full-width buttons stacked down the page,
-/// each carrying the same right-arrow icon, so the column said nothing about
-/// what any of them did and grew every time one was added.
+/// These used to be up to three full-width buttons stacked down the page, each
+/// carrying the same right-arrow icon, so the column said nothing about what
+/// any of them did and grew a row every time an action was added.
 ///
-/// A Wrap rather than a Row: the labels are localised and some translations
-/// are long, so on a narrow phone they take a second line instead of being
-/// squeezed or clipped.
+/// One bordered strip of equal segments rather than loose buttons. Loose ones
+/// size to their labels, so they sat ragged and adrift in the middle of a
+/// desktop window and left an orphan on the second line of a phone. Segments
+/// divide the width they are given, which means the strip looks deliberate at
+/// any width and with two, three or four actions in it.
 class _DetailActions extends ConsumerWidget {
   const _DetailActions({required this.manga});
 
@@ -2402,8 +2417,7 @@ class _DetailActions extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;
 
-    final recommendations = _pill(
-      context,
+    final recommendations = _DetailAction(
       icon: Icons.auto_awesome_outlined,
       label: l10n.recommendations,
       onPressed: () => context.push(
@@ -2416,10 +2430,11 @@ class _DetailActions extends ConsumerWidget {
       ),
     );
 
-    if (manga.itemType != ItemType.anime) return _row([recommendations]);
+    if (manga.itemType != ItemType.anime) {
+      return _strip(context, [recommendations]);
+    }
 
-    final watchOrder = _pill(
-      context,
+    final watchOrder = _DetailAction(
       icon: Icons.format_list_numbered_outlined,
       label: l10n.watch_order,
       onPressed: () => context.push("/watchOrder", extra: (manga.name, null)),
@@ -2440,12 +2455,11 @@ class _DetailActions extends ConsumerWidget {
             syncId == TrackerProviders.myAnimeList.syncId ||
             syncId == TrackerProviders.anilist.syncId;
 
-        return _row([
+        return _strip(context, [
           recommendations,
           watchOrder,
           if (tracks.isNotEmpty && supported)
-            _pill(
-              context,
+            _DetailAction(
               icon: Icons.playlist_play_outlined,
               label: l10n.sequels,
               onPressed: () => context.push(
@@ -2458,33 +2472,58 @@ class _DetailActions extends ConsumerWidget {
     );
   }
 
-  Widget _row(List<Widget> children) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 8),
-    child: Wrap(
-      alignment: WrapAlignment.center,
-      spacing: 8,
-      runSpacing: 8,
-      children: children,
-    ),
-  );
+  Widget _strip(BuildContext context, List<_DetailAction> actions) {
+    final outline = Theme.of(context).colorScheme.outlineVariant;
 
-  /// Sized to its label rather than to the screen, so several fit on a line.
-  Widget _pill(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required VoidCallback onPressed,
-  }) => OutlinedButton.icon(
-    style: ButtonStyle(
-      shape: WidgetStatePropertyAll(
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: outline),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        // So a segment's ink and its focus highlight stay inside the border.
+        clipBehavior: Clip.antiAlias,
+        // Every segment as tall as the tallest, which is what keeps the
+        // dividers full height when one label wraps to two lines.
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var i = 0; i < actions.length; i++) ...[
+                if (i > 0)
+                  VerticalDivider(width: 1, thickness: 1, color: outline),
+                Expanded(child: _segment(context, actions[i])),
+              ],
+            ],
+          ),
+        ),
       ),
-      padding: const WidgetStatePropertyAll(
-        EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+    );
+  }
+
+  /// Icon above label rather than beside it. These labels are localised and
+  /// some translations are long; stacked, a long one takes a second line
+  /// instead of pushing the icon out or clipping.
+  Widget _segment(BuildContext context, _DetailAction action) => InkWell(
+    onTap: action.onPressed,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(action.icon, size: 20),
+          const SizedBox(height: 5),
+          Text(
+            action.label,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+        ],
       ),
     ),
-    onPressed: onPressed,
-    icon: Icon(icon, size: 18),
-    label: Text(label),
   );
 }
