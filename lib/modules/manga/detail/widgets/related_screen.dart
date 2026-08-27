@@ -94,7 +94,13 @@ class _RelatedScreenState extends State<RelatedScreen> {
           // short, and an adaptation is meant to be read down the page rather
           // than scanned across it.
           : ListView.separated(
-              padding: tvPageInsets,
+              // tvPageInsets is zero off TV, and the card draws its own row
+              // rather than a ListTile, so without this the covers run flush
+              // to the window edge.
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ).add(tvPageInsets),
               itemCount: data!.length,
               separatorBuilder: (_, _) => const SizedBox(height: 4),
               itemBuilder: (context, index) =>
@@ -106,6 +112,10 @@ class _RelatedScreenState extends State<RelatedScreen> {
   Widget _card(BuildContext context, RelatedTitle related, int index) {
     final l10n = context.l10n;
     final crossesMedium = related.crossesMedium(widget.itemType);
+    final medium = related.itemType.localized(l10n);
+    final format = related.format == null
+        ? null
+        : prettyFormat(related.format!);
 
     return Material(
       color: Colors.transparent,
@@ -142,36 +152,39 @@ class _RelatedScreenState extends State<RelatedScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _relationPill(
-                          context,
-                          _relationLabel(l10n, related.relation),
-                          filled: crossesMedium,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            related.title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
-                      ],
+                    // The title gets the full width. Putting a tag beside it
+                    // cost it a line on anything with a subtitle, and the
+                    // title is what is being scanned for.
+                    Text(
+                      related.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     const SizedBox(height: 7),
                     Wrap(
                       spacing: 5,
                       runSpacing: 4,
                       children: [
-                        _chip(context, related.itemType.localized(l10n)),
-                        if (related.format != null)
-                          _chip(context, _prettyFormat(related.format!)),
+                        // The medium leads and is filled with the accent when
+                        // it differs from what is being read, because that is
+                        // the whole point of the list.
+                        _tag(
+                          context,
+                          medium,
+                          filled: crossesMedium,
+                          bold: true,
+                        ),
+                        _tag(context, _relationLabel(l10n, related.relation)),
+                        // Kitsu's subtype for a manga is "manga", so this said
+                        // "Manga  Manga" on every manga entry. Shown only when
+                        // it narrows the medium: Manhwa, Oneshot, TV, Movie.
+                        if (format != null &&
+                            format.toLowerCase() != medium.toLowerCase())
+                          _tag(context, format),
                       ],
                     ),
                   ],
@@ -184,16 +197,16 @@ class _RelatedScreenState extends State<RelatedScreen> {
     );
   }
 
-  /// The relation, in the same place the recommendation card puts its score,
-  /// because it answers the same question: why is this here.
+  /// One tag.
   ///
-  /// Filled with the accent only when the entry is in the other medium. That
-  /// is the one the list exists for, and it should be findable without
-  /// reading.
-  Widget _relationPill(
+  /// Filled with the accent when it is the thing the row is here for, tinted
+  /// otherwise, so a glance down the list finds the medium changes without
+  /// reading any of the words.
+  Widget _tag(
     BuildContext context,
     String label, {
-    required bool filled,
+    bool filled = false,
+    bool bold = false,
   }) {
     final accent = context.primaryColor;
     // Computed against the accent rather than the theme, so it stays readable
@@ -203,7 +216,7 @@ class _RelatedScreenState extends State<RelatedScreen> {
         : Colors.white;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
         color: filled
             ? accent
@@ -214,27 +227,10 @@ class _RelatedScreenState extends State<RelatedScreen> {
         label,
         style: TextStyle(
           fontSize: 11,
-          fontWeight: FontWeight.w800,
+          fontWeight: bold ? FontWeight.w800 : FontWeight.w400,
           color: filled
               ? onAccent
               : context.textColor.withValues(alpha: _alphaSecondary),
-        ),
-      ),
-    );
-  }
-
-  Widget _chip(BuildContext context, String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(
-        color: context.textColor.withValues(alpha: _alphaTint),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 11,
-          color: context.textColor.withValues(alpha: _alphaSecondary),
         ),
       ),
     );
@@ -257,12 +253,26 @@ String _relationLabel(AppLocalizations l10n, String relation) =>
       _ => l10n.related_titles,
     };
 
-/// LIGHT_NOVEL reads badly on a card; Light novel does not.
-String _prettyFormat(String format) {
-  final words = format.toLowerCase().split('_');
-  if (words.first.isEmpty) return format;
+/// Kitsu and AniList both hand these over shouting: TV, OVA, ONE_SHOT,
+/// LIGHT_NOVEL. Title case reads better on a card, except where the word is an
+/// acronym and title case turns TV into "Tv".
+@visibleForTesting
+const formatAcronyms = {'TV', 'OVA', 'ONA', 'OAV', 'CM', 'PV'};
+
+@visibleForTesting
+String prettyFormat(String format) {
+  final words = format.split('_').where((w) => w.isNotEmpty).map((word) {
+    if (formatAcronyms.contains(word.toUpperCase())) return word.toUpperCase();
+    final lower = word.toLowerCase();
+    return lower[0].toUpperCase() + lower.substring(1);
+  }).toList();
+
+  if (words.isEmpty) return format;
+  // Only the first word is capitalised: "Light novel", not "Light Novel".
   return [
-    words.first[0].toUpperCase() + words.first.substring(1),
-    ...words.skip(1),
+    words.first,
+    ...words
+        .skip(1)
+        .map((w) => formatAcronyms.contains(w) ? w : w.toLowerCase()),
   ].join(' ');
 }
