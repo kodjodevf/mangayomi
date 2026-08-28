@@ -2438,8 +2438,18 @@ class _DetailActions extends ConsumerWidget {
       ),
     );
 
+    // Everything this title is related to, including the one thing that
+    // cannot be reached any other way from in here: its adaptation in the
+    // other medium.
+    final related = _DetailAction(
+      icon: Icons.account_tree_outlined,
+      label: l10n.related_titles,
+      onPressed: () =>
+          context.push("/related", extra: (manga.name!, manga.itemType)),
+    );
+
     if (manga.itemType != ItemType.anime) {
-      return _strip(context, [recommendations]);
+      return _strip(context, [recommendations, related]);
     }
 
     final watchOrder = _DetailAction(
@@ -2465,6 +2475,7 @@ class _DetailActions extends ConsumerWidget {
 
         return _strip(context, [
           recommendations,
+          related,
           watchOrder,
           if (tracks.isNotEmpty && supported)
             _DetailAction(
