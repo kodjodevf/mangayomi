@@ -912,6 +912,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _completed;
     _currentTotalDurationSub;
     _loadAndroidFont().then((_) {
+      // Loading the subtitle font writes a file, so this callback can arrive
+      // after the reader has already left. Everything below it touches the
+      // player, and media_kit asserts "[Player] has been disposed" the moment
+      // it is used after dispose. That is #925. The torrent branch further
+      // down already checked for this; the path everyone takes did not.
+      if (!mounted) return;
       _openMedia(_video.value!, _streamController.getCurrentPosition());
       if (widget.isTorrent) {
         Future.delayed(const Duration(seconds: 10)).then((_) {
@@ -957,7 +963,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         _player.stream.duration
             .firstWhere((d) => d > Duration.zero)
             .timeout(const Duration(seconds: 8))
-            .then((_) => _player.seek(start))
+            // Up to eight seconds after the media opened, which is long
+            // enough for the reader to have gone. Seeking a disposed player
+            // reaches native state that has already been torn down.
+            .then((_) => mounted ? _player.seek(start) : null)
             .catchError((_) {}),
       );
     }
@@ -988,7 +997,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   Future<void> _initAniSkip() async {
+    // Waits for the media to buffer, which the reader can outlast.
     await _player.stream.buffer.first;
+    if (!mounted) return;
     _streamController.getAniSkipResults((result) {
       final openingRes = result
           .where((element) => element.skipType == "op")

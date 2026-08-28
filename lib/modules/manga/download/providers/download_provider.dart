@@ -178,15 +178,9 @@ Future<void> downloadChapter(
     bool nonM3U8File = false;
     M3u8Downloader? m3u8Downloader;
 
-    bool isMangaImageFile(String path) {
-      final ext = p.extension(path).toLowerCase();
-      return ext == '.jpg' || ext == '.jpeg' || ext == '.png' || ext == '.webp';
-    }
-
     Future<void> exportCoverFromDownloadedPages() async {
       if (itemType != ItemType.manga) return;
-      final coverFile = File(p.join(mangaMainDirectory.path, "cover.jpg"));
-      if (await coverFile.exists()) return;
+      if (findMangaCoverFile(mangaMainDirectory) != null) return;
 
       final dir = Directory(chapterDirectory.path);
       if (!await dir.exists()) return;
@@ -195,7 +189,8 @@ Future<void> downloadChapter(
           await dir
                 .list()
                 .where(
-                  (entity) => entity is File && isMangaImageFile(entity.path),
+                  (entity) =>
+                      entity is File && isRecognizedImageFile(entity.path),
                 )
                 .cast<File>()
                 .toList()

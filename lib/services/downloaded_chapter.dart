@@ -6,7 +6,7 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
-import 'package:mangayomi/utils/reg_exp_matcher.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:path/path.dart' as p;
 
 /// Where a downloaded chapter's pages actually sit on disk.
@@ -135,13 +135,12 @@ File? findChapterArchive(Directory mangaDirectory, String chapterName) {
 
 /// How many pages of [directory] the reader can actually address.
 ///
-/// The reader asks for page `i` by rebuilding `padIndex(i).jpg`, so the run has
-/// to be counted from the first page and stop at the first gap. A folder
-/// missing `003.jpg` can only serve two pages however many files it holds.
+/// Uses [findDownloadedPageFile] so callers don’t need to assume a fixed
+/// extension. Counts from page 0 upward until the first missing page.
 int countDownloadedPages(Directory directory) {
   if (!directory.existsSync()) return 0;
   var count = 0;
-  while (File(p.join(directory.path, '${padIndex(count)}.jpg')).existsSync()) {
+  while (findDownloadedPageFile(directory, count) != null) {
     count++;
   }
   return count;

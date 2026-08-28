@@ -501,7 +501,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String label_value(Object label, Object value) {
-    return '$label: $value';
+    return '$label：$value';
   }
 
   @override
@@ -667,7 +667,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String beta_version(Object version) {
-    return 'Beta ($version)';
+    return '测试版 ($version)';
   }
 
   @override
@@ -724,18 +724,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get unknown => '未知';
 
   @override
-  String get empty_placeholder => 'EMPTY\nMPTY\nMTY\nMT\n\n';
+  String get empty_placeholder => '空';
 
   @override
-  String get error => 'Error';
+  String get error => '错误';
 
   @override
   String error_with_message(Object error) {
-    return 'Error: $error';
+    return '错误：$error';
   }
 
   @override
-  String get no_pages_available => 'Error: no pages available';
+  String get no_pages_available => '错误：无可用页面';
 
   @override
   String get set_categories => '设置类别';
@@ -768,58 +768,58 @@ class AppLocalizationsZh extends AppLocalizations {
   String get source_title => '来源标题';
 
   @override
-  String get create_extension => 'Create Extension';
+  String get create_extension => '创建扩展';
 
   @override
-  String get choose_extension_language => 'Choose extension language';
+  String get choose_extension_language => '选择扩展语言';
 
   @override
-  String get lang => 'Lang';
+  String get lang => '语言';
 
   @override
-  String get base_url => 'BaseUrl';
+  String get base_url => '基础 URL';
 
   @override
-  String get api_url_optional => 'ApiUrl (optional)';
+  String get api_url_optional => 'API URL（可选）';
 
   @override
-  String get icon_url => 'iconUrl';
+  String get icon_url => '图标 URL';
 
   @override
-  String get source_icon_url => 'Source icon url';
+  String get source_icon_url => '图源图标 URL';
 
   @override
-  String get notes => 'notes';
+  String get notes => '备注';
 
   @override
-  String get extension_name_example => 'ex: myAnime';
+  String get extension_name_example => '例如：myAnime';
 
   @override
-  String get language_code_example => 'ex: en';
+  String get language_code_example => '例如：zh';
 
   @override
-  String get base_url_example => 'ex: https://example.com';
+  String get base_url_example => '例如：https://example.com';
 
   @override
-  String get api_url_example => 'ex: https://api.example.com';
+  String get api_url_example => '例如：https://api.example.com';
 
   @override
-  String get extension_notes_example => 'ex: this extension requires login';
+  String get extension_notes_example => '例如：此扩展需要登录';
 
   @override
-  String get type => 'Type';
+  String get type => '类型';
 
   @override
-  String get target => 'Target';
+  String get target => '目标';
 
   @override
-  String get source_type_single => 'single';
+  String get source_type_single => '单一';
 
   @override
-  String get source_type_multi => 'multi';
+  String get source_type_multi => '多源';
 
   @override
-  String get source_type_torrent => 'torrent';
+  String get source_type_torrent => '种子 (Torrent)';
 
   @override
   String get source_language_dart => 'Dart';
@@ -828,22 +828,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get source_language_javascript => 'JavaScript';
 
   @override
-  String get source_language_lnreader_compiled_js => 'LNReader compiled JS';
+  String get source_language_lnreader_compiled_js => 'LNReader 编译 JS';
 
   @override
-  String get source_created_successfully => 'Source created successfully';
+  String get source_created_successfully => '图源创建成功';
 
   @override
-  String get source_already_exists => 'Source already exists';
+  String get source_already_exists => '图源已存在';
 
   @override
-  String get error_when_creating_source => 'Error when creating source';
+  String get error_when_creating_source => '创建图源时出错';
 
   @override
-  String get cookies_deleted => 'Cookies deleted!';
+  String get cookies_deleted => 'Cookie 已删除！';
 
   @override
-  String get delete_all_cookies => 'Delete all cookies';
+  String get delete_all_cookies => '删除所有 Cookie';
 
   @override
   String get chapter_number => '章节号';
@@ -861,7 +861,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String missing_chapters(Object count) {
-    return 'Missing $count chapters';
+    return '缺少 $count 个章节';
   }
 
   @override
@@ -1058,7 +1058,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sync_failed => '同步失败';
 
   @override
-  String get sync_restore_in_progress => 'Sync skipped — restore in progress';
+  String get sync_restore_in_progress => '已跳过同步 — 正在恢复中';
 
   @override
   String get sync_button_sync => '同步进度';
@@ -1076,25 +1076,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sync_button_download_info => '此操作将完全用远程数据替换本地数据！';
 
   @override
-  String get sync_status_not_configured => 'Not connected';
+  String get sync_status_not_configured => '未连接';
 
   @override
-  String get sync_status_checking => 'Checking connection...';
+  String get sync_status_checking => '正在检查连接...';
 
   @override
-  String get sync_status_connected => 'Connected';
+  String get sync_status_connected => '已连接';
 
   @override
-  String get sync_status_unauthorized => 'Session expired, please log in again';
+  String get sync_status_unauthorized => '会话已过期，请重新登录';
 
   @override
-  String get sync_status_unreachable => 'Can\'t reach server';
+  String get sync_status_unreachable => '无法连接到服务器';
 
   @override
-  String get sync_section_general => 'General';
+  String get sync_section_general => '通用';
 
   @override
-  String get sync_section_data_types => 'What to sync';
+  String get sync_section_data_types => '同步内容';
 
   @override
   String get sync_on => '启用同步';
@@ -1162,7 +1162,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String missing_episodes(Object count) {
-    return 'Missing $count episodes';
+    return '缺少 $count 集';
   }
 
   @override
@@ -1367,37 +1367,34 @@ class AppLocalizationsZh extends AppLocalizations {
   String get restore_backup => '恢复备份';
 
   @override
-  String get encrypt_backups => 'Encrypt backups';
+  String get encrypt_backups => '加密备份';
 
   @override
-  String get encrypt_backups_info =>
-      'Password-protect backup files using AES encryption';
+  String get encrypt_backups_info => '使用 AES 加密和密码保护备份文件';
 
   @override
-  String get no_secure_storage => 'No secure storage found';
+  String get no_secure_storage => '未找到安全存储';
 
   @override
-  String get no_keyring_warning =>
-      'This system doesn\'t have a keyring service available (e.g. gnome-keyring or kwallet on Linux), so the password can\'t be stored securely.\n\nStore it unencrypted in the local app database instead? Anyone with access to this device\'s app data would be able to read it.';
+  String get no_keyring_warning => '当前系统没有密钥环服务，无法安全存储密码。\n\n是否以明文形式存储在本地数据库中？';
 
   @override
-  String get enter_backup_password => 'Enter backup password';
+  String get enter_backup_password => '输入备份密码';
 
   @override
-  String get incorrect_password_try_again => 'Incorrect password, try again.';
+  String get incorrect_password_try_again => '密码错误，请重试。';
 
   @override
-  String get set_backup_password => 'Set backup password';
+  String get set_backup_password => '设置备份密码';
 
   @override
-  String get confirm_password => 'Confirm password';
+  String get confirm_password => '确认密码';
 
   @override
-  String get passwords_do_not_match => 'Passwords do not match';
+  String get passwords_do_not_match => '密码不匹配';
 
   @override
-  String get password_required_to_restore =>
-      'A password is required to restore this backup.';
+  String get password_required_to_restore => '需要密码才能恢复此备份。';
 
   @override
   String get restore_backup_subtitle => '从备份文件恢复图书馆';
@@ -1448,41 +1445,38 @@ class AppLocalizationsZh extends AppLocalizations {
   String get restore_backup_warning_title => '恢复备份将覆盖所有现有数据。\n\n继续恢复？';
 
   @override
-  String get restore_sync_question_title => 'Sync this restore?';
+  String get restore_sync_question_title => '是否同步此次恢复？';
 
   @override
-  String get restore_sync_question_message =>
-      'This device is connected to a sync server. Upload this restored data to it now? If not, sync will be turned off so the server\'s old data doesn\'t overwrite what you just restored.';
+  String get restore_sync_question_message => '此设备已连接到同步服务器。是否立即将恢复的数据上传？';
 
   @override
-  String get restore_sync_question_confirm => 'Yes, sync';
+  String get restore_sync_question_confirm => '是，进行同步';
 
   @override
-  String get restore_sync_question_deny => 'No, disable sync';
+  String get restore_sync_question_deny => '否，禁用同步';
 
   @override
-  String get sync_disabled_after_restore =>
-      'Sync is disabled. You can turn it on again in Settings.';
+  String get sync_disabled_after_restore => '同步已禁用。您可以在“设置”中重新开启。';
 
   @override
-  String get restore_sync_disabled_question_title =>
-      'Sync is currently disabled';
+  String get restore_sync_disabled_question_title => '同步当前已禁用';
 
   @override
   String get restore_sync_disabled_question_message =>
-      'Sync is turned off. Turn it back on and upload this restored data to your server?';
+      '同步已关闭。是否重新开启并将恢复的数据上传到服务器？';
 
   @override
-  String get restore_sync_question_reenable => 'Yes, re-enable and sync';
+  String get restore_sync_question_reenable => '是，重新开启并同步';
 
   @override
-  String get restore_sync_question_keep_disabled => 'Keep it disabled';
+  String get restore_sync_question_keep_disabled => '保持禁用';
 
   @override
-  String get restore_sync_uploading => 'Syncing restored data to server…';
+  String get restore_sync_uploading => '正在同步恢复的数据到服务器…';
 
   @override
-  String get restore_sync_upload_success => 'Restored data synced to server';
+  String get restore_sync_upload_success => '恢复的数据已同步到服务器';
 
   @override
   String get services => '服务';
@@ -2163,69 +2157,65 @@ class AppLocalizationsZh extends AppLocalizations {
   String get rescan_local_folder => '立即重新扫描所有本地文件夹';
 
   @override
-  String get default_download_destination => 'Default download destination';
+  String get default_download_destination => '默认下载位置';
 
   @override
-  String get ask_download_destination => 'Ask for download destination';
+  String get ask_download_destination => '每次下载前询问位置';
 
   @override
-  String get ask_download_destination_desc =>
-      'Choose a local folder each time a download starts.';
+  String get ask_download_destination_desc => '每次开始下载时选择本地文件夹。';
 
   @override
-  String get select_download_destination => 'Select download destination';
+  String get select_download_destination => '选择下载位置';
 
   @override
-  String get clear_local_library => 'Clear local library';
+  String get clear_local_library => '清空本地书库';
 
   @override
-  String get clear_local_library_desc =>
-      'Remove local folder and archive entries from the library.';
+  String get clear_local_library_desc => '从书库中移除本地文件夹和压缩包条目。';
 
   @override
-  String get clear_local_library_msg =>
-      'This will remove local folder and archive entries from your library. It will not delete files from disk.';
+  String get clear_local_library_msg => '这将从书库中移除本地条目，不会删除磁盘上的文件。';
 
   @override
-  String get custom => 'Custom';
+  String get custom => '自定义';
 
   @override
-  String get no_local_folder_available_for_downloads =>
-      'No local folder is available for downloads';
+  String get no_local_folder_available_for_downloads => '没有可用于下载的本地文件夹';
 
   @override
   String failed_to_create_cbz(Object error) {
-    return 'Failed to create CBZ: $error';
+    return '创建 CBZ 失败：$error';
   }
 
   @override
   String error_reading_cover_image(Object error) {
-    return 'Error reading cover image: $error';
+    return '读取封面出错：$error';
   }
 
   @override
   String error_reading_metadata(Object error) {
-    return 'Error reading metadata: $error';
+    return '读取元数据出错：$error';
   }
 
   @override
   String error_saving_chapter_episode_to_library(Object error) {
-    return 'Error saving chapter/episode to library: $error';
+    return '保存到书库时出错：$error';
   }
 
   @override
   String error_reading_chapter_cover_image(Object error) {
-    return 'Error reading chapter cover image: $error';
+    return '读取章节封面出错：$error';
   }
 
   @override
   String error_reading_archive_cover_image(Object error) {
-    return 'Error reading archive cover image: $error';
+    return '读取归档封面出错：$error';
   }
 
   @override
   String error_getting_local_library(Object error) {
-    return 'Error getting local library: $error';
+    return '获取本地书库时出错：$error';
   }
 
   @override
@@ -2236,34 +2226,34 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String failed_to_export_metadata(Object error) {
-    return 'Failed to export metadata: $error';
+    return '导出元数据失败：$error';
   }
 
   @override
   String unrecognized_chapter_numbers(Object count) {
-    return '$count chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.';
+    return '有 $count 个章节无法自动编号，可能在阅读器中缺失或顺序错乱。';
   }
 
   @override
   String get cloudflare_resolution_webview_server_start_failed =>
-      'Couldn\'t start Cloudflare Resolution Webview Server.';
+      '无法启动 Cloudflare 验证 Webview 服务。';
 
   @override
   String tracker_token_expired(Object tracker) {
-    return '$tracker Token expired';
+    return '$tracker 令牌已过期';
   }
 
   @override
-  String get video_list_empty => 'Video list is empty';
+  String get video_list_empty => '视频列表为空';
 
   @override
   String playback_speed_multiplier(Object value) {
-    return 'x$value';
+    return '${value}x';
   }
 
   @override
   String could_not_launch_url(Object url) {
-    return 'Could not launch $url';
+    return '无法打开 $url';
   }
 
   @override
@@ -2539,29 +2529,28 @@ class AppLocalizationsZh extends AppLocalizations {
   String get not_configured => '未配置';
 
   @override
-  String get zero_interpreter => 'Zero interpreter';
+  String get zero_interpreter => 'Zero 解释器';
 
   @override
-  String get zero_interpreter_description =>
-      'Control the Zero interpreter server automatically or manually.';
+  String get zero_interpreter_description => '自动或手动控制 Zero 解释器服务。';
 
   @override
-  String get start_server_on_launch => 'Start server on launch';
+  String get start_server_on_launch => '启动时开启服务';
 
   @override
-  String get runtime_status => 'Runtime status';
+  String get runtime_status => '运行状态';
 
   @override
-  String get running => 'Running';
+  String get running => '运行中';
 
   @override
-  String get stopped => 'Stopped';
+  String get stopped => '已停止';
 
   @override
-  String get start => 'Start';
+  String get start => '启动';
 
   @override
-  String get stop => 'Stop';
+  String get stop => '停止';
 
   @override
   String get webview => 'Webview';
@@ -2748,84 +2737,78 @@ class AppLocalizationsZh extends AppLocalizations {
   String get source => '来源';
 
   @override
-  String get something_went_wrong => 'Something went wrong';
+  String get something_went_wrong => '出错了';
 
   @override
-  String get startup_failed => 'Mangayomi could not finish starting up';
+  String get startup_failed => 'Mangayomi 无法完成启动';
 
   @override
   String sources_with_no_results(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sources with no results',
-      one: '1 source with no results',
+      other: '$count 个图源无结果',
     );
     return '$_temp0';
   }
 
   @override
-  String get import_mode_title => 'How should this be imported?';
+  String get import_mode_title => '如何导入此备份？';
 
   @override
-  String get import_mode_message =>
-      'Choose whether to merge this backup into your current library, or replace your entire library with it.';
+  String get import_mode_message => '选择将此备份合并到当前书库，还是完全替换当前书库。';
 
   @override
-  String get import_mode_keep_existing => 'Merge';
+  String get import_mode_keep_existing => '合并';
 
   @override
-  String get import_mode_keep_existing_subtitle =>
-      'Adds new series and updates matching ones. Nothing in your current library is removed.';
+  String get import_mode_keep_existing_subtitle => '添加新条目并更新匹配条目。不会删除现有内容。';
 
   @override
-  String get import_mode_replace => 'Replace';
+  String get import_mode_replace => '替换';
 
   @override
-  String get import_mode_replace_subtitle =>
-      'Deletes your entire current library and replaces it with this backup.';
+  String get import_mode_replace_subtitle => '清空当前书库并完全替换为备份内容。';
 
   @override
-  String get replace_summary_title => 'Ready to replace your library';
+  String get replace_summary_title => '准备替换书库';
 
   @override
   String replace_summary_message(Object currentCount, Object backupCount) {
-    return 'This deletes your entire current library ($currentCount series) and replaces it with $backupCount series from this backup. This can only be undone by rolling back.';
+    return '这将删除当前的所有条目（$currentCount 项），并替换为备份中的 $backupCount 项。';
   }
 
   @override
-  String get replace_summary_confirm => 'Replace';
+  String get replace_summary_confirm => '替换';
 
   @override
   String replace_result_message(Object count) {
-    return 'Replaced your library with $count series from this backup.';
+    return '已将书库替换为备份中的 $count 个条目。';
   }
 
   @override
-  String get category_conflict_title => 'Existing categories found';
+  String get category_conflict_title => '发现已有分类';
 
   @override
-  String get category_conflict_message =>
-      'The backup has categories that already exist in your library. Keep to fold incoming series into the existing category, or delete to leave those series uncategorized instead.';
+  String get category_conflict_message => '备份中包含书库中已存在的分类。';
 
   @override
-  String get category_conflict_keep => 'Keep — merge into existing category';
+  String get category_conflict_keep => '保留 — 合并到已有分类';
 
   @override
-  String get category_conflict_delete => 'Delete — leave series uncategorized';
+  String get category_conflict_delete => '删除 — 归为未分类';
 
   @override
-  String get source_conflict_title => 'Sources not found';
+  String get source_conflict_title => '未找到图源';
 
   @override
-  String get source_conflict_message =>
-      'These backup sources don\'t match an installed extension. Keep the original name (imported without a working source), or migrate to an installed extension so these series can be updated.';
+  String get source_conflict_message => '备份中的部分图源未安装相应扩展。';
 
   @override
-  String get source_conflict_keep => 'Keep original name (no live source)';
+  String get source_conflict_keep => '保留原名';
 
   @override
-  String get import_summary_title => 'Ready to import';
+  String get import_summary_title => '准备导入';
 
   @override
   String import_summary_message(
@@ -2833,11 +2816,11 @@ class AppLocalizationsZh extends AppLocalizations {
     Object updatedSeries,
     Object newChapters,
   ) {
-    return '$newSeries new series, $updatedSeries existing series will be updated, and $newChapters new chapters will be added. Nothing already in your library will be removed.';
+    return '将导入 $newSeries 个新条目，更新 $updatedSeries 个已有条目，并添加 $newChapters 个章节。';
   }
 
   @override
-  String get import_summary_confirm => 'Import';
+  String get import_summary_confirm => '导入';
 
   @override
   String import_result_message(
@@ -2845,51 +2828,49 @@ class AppLocalizationsZh extends AppLocalizations {
     Object updatedSeries,
     Object newChapters,
   ) {
-    return 'Imported $newSeries new series, updated $updatedSeries existing, added $newChapters new chapters.';
+    return '已导入 $newSeries 个新条目，更新 $updatedSeries 个条目，添加 $newChapters 个章节。';
   }
 
   @override
-  String get roll_back => 'Roll back';
+  String get roll_back => '回滚';
 
   @override
-  String get roll_back_confirm_message =>
-      'This restores your library to the safety snapshot taken right before this change, undoing everything it just did.';
+  String get roll_back_confirm_message => '将书库恢复到本次更改前的安全快照。';
 
   @override
-  String get roll_back_done => 'Rolled back to the pre-change snapshot.';
+  String get roll_back_done => '已回滚至更改前的快照。';
 
   @override
-  String get restoring_backup => 'Restoring your library…';
+  String get restoring_backup => '正在恢复书库…';
 
   @override
-  String get roll_back_last_change => 'Roll back last change';
+  String get roll_back_last_change => '回滚上次更改';
 
   @override
   String roll_back_last_change_subtitle(Object date, Object description) {
-    return 'Snapshot from $date — $description';
+    return '快照时间：$date — $description';
   }
 
   @override
   String roll_back_available_count(Object count) {
-    return '$count recent changes available to roll back to';
+    return '有 $count 个最近更改可供回滚';
   }
 
   @override
-  String get delete_source_title => 'Delete a source & its manga';
+  String get delete_source_title => '删除图源及其漫画';
 
   @override
-  String get delete_source_subtitle =>
-      'Pick a source and remove every manga it has in your library, along with their chapters, downloads, history and tracking.';
+  String get delete_source_subtitle => '从书库中删除指定图源的所有内容（含章节、下载和历史）。';
 
   @override
-  String get delete_source_pick_title => 'Pick a source to delete';
+  String get delete_source_pick_title => '选择要删除的图源';
 
   @override
-  String get delete_source_empty => 'No sources found in your library.';
+  String get delete_source_empty => '书库中没有找到图源。';
 
   @override
   String delete_source_confirm_title(Object sourceName) {
-    return 'Delete $sourceName?';
+    return '删除 $sourceName？';
   }
 
   @override
@@ -2899,69 +2880,64 @@ class AppLocalizationsZh extends AppLocalizations {
     Object historyCount,
     Object updateCount,
   ) {
-    return 'This permanently deletes $mangaCount manga, $chapterCount chapters, $historyCount history entries and $updateCount update entries. Tracking links are kept. This cannot be undone except by rolling back.';
+    return '将永久删除 $mangaCount 部漫画、$chapterCount 个章节和 $historyCount 条历史记录。';
   }
 
   @override
-  String get delete_source_also_remove_extension =>
-      'Also remove the installed extension';
+  String get delete_source_also_remove_extension => '同时卸载对应扩展';
 
   @override
-  String get delete_source_keep_history => 'Keep reading history';
+  String get delete_source_keep_history => '保留阅读历史';
 
   @override
-  String get delete_source_keep_downloads => 'Keep download records';
+  String get delete_source_keep_downloads => '保留下载记录';
 
   @override
-  String get delete_source_button => 'Delete';
+  String get delete_source_button => '删除';
 
   @override
   String delete_source_result_message(Object mangaCount, Object sourceName) {
-    return 'Deleted $mangaCount manga from $sourceName.';
+    return '已从 $sourceName 中删除 $mangaCount 部漫画。';
   }
 
   @override
-  String get merge_manga_title => 'Merge duplicate manga';
+  String get merge_manga_title => '合并重复漫画';
 
   @override
-  String get merge_manga_subtitle =>
-      'Finds manga with matching titles under the same source (e.g. after merging duplicate sources) and folds them into one, without deleting anything you\'d want kept.';
+  String get merge_manga_subtitle => '查找同图源下标题相同的漫画并进行合并。';
 
   @override
-  String get merge_manga_none_found => 'No likely duplicate manga found.';
+  String get merge_manga_none_found => '未找到重复漫画。';
 
   @override
-  String get merge_manga_pick_title => 'Possible duplicate manga';
+  String get merge_manga_pick_title => '可能重复的漫画';
 
   @override
-  String get merge_manga_choose_primary_title =>
-      'Which one should the others merge into?';
+  String get merge_manga_choose_primary_title => '要合并到哪一部漫画？';
 
   @override
-  String get merge_manga_choose_primary_message =>
-      'Chapters, history and tracking from the other entries will be folded into whichever one you pick — nothing is deleted.';
+  String get merge_manga_choose_primary_message => '其他条目的章节、历史和追踪将合并到所选项中。';
 
   @override
   String merge_manga_chapters_subtitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count chapters',
-      one: '1 chapter',
+      other: '$count 章节',
     );
     return '$_temp0';
   }
 
   @override
-  String get merge_manga_button => 'Merge';
+  String get merge_manga_button => '合并';
 
   @override
   String merge_manga_result_message(Object count, Object mangaName) {
-    return 'Merged $count duplicate manga into $mangaName.';
+    return '已将 $count 部重复漫画合并到 $mangaName。';
   }
 
   @override
-  String get merge_preview_title => 'Confirm merge';
+  String get merge_preview_title => '确认合并';
 
   @override
   String merge_manga_preview_message(
@@ -2970,165 +2946,227 @@ class AppLocalizationsZh extends AppLocalizations {
     Object keptChapters,
     Object duplicateTracks,
   ) {
-    return '$totalChapters chapters found across the other entries. $duplicateChapters are duplicates and will be dropped (keeping whichever copy has reading progress); $keptChapters will be added. $duplicateTracks duplicate tracking link(s) will also be dropped.';
+    return '在其他条目中共找到 $totalChapters 个章节。将丢弃 $duplicateChapters 个重复项并添加 $keptChapters 个新章节。';
   }
+
+  @override
+  String get memory_overlay => 'Show memory usage';
+
+  @override
+  String get memory_overlay_subtitle =>
+      'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.';
 
   @override
   String get beta => 'Beta';
 
   @override
-  String get error_reports => 'Error reports';
+  String get error_reports => '错误报告';
 
   @override
-  String get error_reports_subtitle =>
-      'Errors the app caught, and a way to report them';
+  String get error_reports_subtitle => '应用捕获的错误及反馈入口';
 
   @override
-  String get error_reports_empty =>
-      'Nothing has gone wrong. Errors the app catches are kept here so you can report them.';
+  String get error_reports_empty => '运行正常，无错误记录。';
 
   @override
-  String get error_reports_likely_cause => 'Likely cause';
+  String get error_reports_likely_cause => '可能原因';
 
   @override
-  String get error_reports_report => 'Report on GitHub';
+  String get error_reports_report => '在 GitHub 上反馈';
 
   @override
-  String get error_reports_banner => 'Mangayomi ran into an error';
+  String get error_reports_banner => 'Mangayomi 遇到了一个错误';
 
   @override
-  String get error_reports_banner_action => 'See it';
+  String get error_reports_banner_action => '查看';
 
   @override
-  String get error_reports_copy => 'Copy';
+  String get error_reports_copy => '复制';
 
   @override
-  String get error_reports_copied => 'Copied to the clipboard';
+  String get error_reports_copied => '已复制到剪贴板';
 
   @override
-  String get error_reports_clear => 'Clear';
+  String get error_reports_clear => '清除';
 
   @override
-  String get share_unavailable_copied =>
-      'Sharing isn\'t available on this platform, so it was copied to the clipboard instead.';
+  String get error_reports_extension_failure =>
+      'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.';
 
   @override
-  String get onboarding_title => 'Welcome to Mangayomi';
+  String get error_reports_already_reported => 'Already reported';
 
   @override
-  String get onboarding_libraries_body =>
-      'Pick what you read and watch. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.';
+  String get error_reports_expected_failure =>
+      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
 
   @override
-  String get onboarding_nav_title => 'Your libraries';
+  String get share_unavailable_copied => '此平台不支持分享，已复制到剪贴板。';
 
   @override
-  String get onboarding_nav_body =>
-      'Keep a tab for each of them, or put them together behind one Library tab you can switch inside.';
+  String get onboarding_title => '欢迎使用 Mangayomi';
 
   @override
-  String get onboarding_nav_split => 'A tab each';
+  String get onboarding_libraries_body => '选择您要阅读和观看的内容类型。';
 
   @override
-  String get onboarding_nav_merged => 'One Library tab';
+  String get onboarding_nav_title => '您的书库';
 
   @override
-  String get onboarding_nav_inside => 'Tapping Library swaps the bar for these';
+  String get onboarding_nav_body => '可以为每种类型设置独立标签页，或合并在一个“书库”标签页中。';
 
   @override
-  String get onboarding_next => 'Next';
+  String get onboarding_nav_split => '独立标签页';
 
   @override
-  String get onboarding_restore => 'Restore a backup';
+  String get onboarding_nav_merged => '统一书库标签页';
 
   @override
-  String get onboarding_or_local => 'Or use files you already have';
+  String get onboarding_nav_inside => '点击“书库”可在各类型间切换';
 
   @override
-  String get onboarding_local_folder => 'Add a folder';
+  String get onboarding_next => '下一步';
+
+  @override
+  String get onboarding_restore => '恢复备份';
+
+  @override
+  String get onboarding_or_local => '或使用现有本地文件';
+
+  @override
+  String get onboarding_local_folder => '添加文件夹';
 
   @override
   String onboarding_local_existing(Object count) {
-    return '$count folders already set up';
+    return '已设置 $count 个文件夹';
   }
 
   @override
-  String get onboarding_local_any_type =>
-      'Manga, anime and novels all work. Each title goes to the right library based on what is inside it.';
+  String get onboarding_local_any_type => '支持漫画、动漫与轻小说。';
 
   @override
-  String get onboarding_local_scanning => 'Scanning the folder';
+  String get onboarding_local_scanning => '正在扫描文件夹';
 
   @override
   String onboarding_local_found(Object count) {
-    return '$count titles found';
+    return '找到 $count 个作品';
   }
 
   @override
-  String get onboarding_local_remove => 'Remove that folder';
+  String get onboarding_local_remove => '移除该文件夹';
 
   @override
-  String get onboarding_local_in_downloads =>
-      'That is the app\'s downloads folder. Adding it makes a second, local copy of a library the app already manages.';
+  String get onboarding_local_in_downloads => '这是应用的下载文件夹。';
 
   @override
-  String get onboarding_local_empty =>
-      'Nothing found. Pick the folder that holds your manga folders, not one manga.';
+  String get onboarding_local_empty => '未找到内容。请选择父级文件夹。';
 
   @override
-  String get onboarding_repo_failed =>
-      'Couldn\'t read that repository. Check the address and your connection.';
+  String get onboarding_repo_failed => '无法读取该仓库。';
 
   @override
-  String get onboarding_repo_title => 'Add a source';
+  String get onboarding_repo_title => '添加图源';
 
   @override
-  String get onboarding_body =>
-      'Mangayomi comes with no sources of its own. Add a repository and the extensions it holds become available to install and browse.';
+  String get onboarding_body => '添加仓库即可浏览和安装丰富的扩展插件。';
 
   @override
-  String get onboarding_add => 'Add repository';
+  String get onboarding_add => '添加仓库';
 
   @override
-  String get onboarding_skip => 'Skip for now';
+  String get onboarding_skip => '暂时跳过';
 
   @override
-  String get onboarding_continue => 'Continue';
+  String get onboarding_continue => '继续';
 
   @override
-  String get onboarding_later =>
-      'You can add one later in Settings, under Browse.';
+  String get onboarding_later => '您可以稍后在“设置 > 浏览”中添加。';
 
   @override
-  String get onboarding_replay => 'Show the welcome screen';
+  String get onboarding_replay => '显示欢迎界面';
 
   @override
-  String get onboarding_replay_subtitle =>
-      'Opens the first-run screen again, the one a new install starts on.';
+  String get onboarding_replay_subtitle => '重新打开首次运行的引导设置界面。';
 
   @override
-  String get missing_source_check_title => 'Check for missing sources';
+  String get missing_source_check_title => '检查缺失图源';
 
   @override
-  String get missing_source_check_subtitle =>
-      'Find library entries whose extension isn\'t installed - restoring a backup can leave entries pointing at a source you never installed on this device.';
+  String get missing_source_check_subtitle => '查找未安装对应扩展的书库条目。';
 
   @override
-  String get missing_source_check_none_found =>
-      'Every library entry\'s source is installed.';
+  String get missing_source_check_none_found => '书库中所有条目的图源均已安装。';
 
   @override
   String missing_source_check_result_title(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sources missing',
-      one: '1 source missing',
+      other: '缺少 $count 个图源',
     );
     return '$_temp0';
   }
 
   @override
+  String global_search_no_sources(String itemType) {
+    return 'No $itemType sources are installed.';
+  }
+
+  @override
+  String get global_search_no_sources_hint =>
+      'Add a repository under Browse, then install an extension for it.';
+
+  @override
+  String global_search_only_pinned(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sources',
+      one: '1 source',
+    );
+    return 'You have $_temp0 for this, but only pinned ones are searched.';
+  }
+
+  @override
+  String get global_search_only_pinned_hint =>
+      'Pin one, or turn off \"Only include pinned sources\" in Browse settings.';
+
+  @override
+  String get global_search_all_nsfw =>
+      'Every source you have for this is marked NSFW, and those are hidden.';
+
+  @override
+  String get global_search_all_nsfw_hint =>
+      'Turn on NSFW sources in Browse settings to search them.';
+
+  @override
   String get missing_source_check_result_message =>
-      'These library entries point at a source that isn\'t installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them.';
+      '这些条目关联的图源未安装。点击可进行迁移或安装对应扩展。';
+
+  @override
+  String get related_titles => 'Related';
+
+  @override
+  String get related_none => 'Nothing related was found for this title.';
+
+  @override
+  String get relation_adaptation => 'Adaptation';
+
+  @override
+  String get relation_sequel => 'Sequel';
+
+  @override
+  String get relation_prequel => 'Prequel';
+
+  @override
+  String get relation_parent => 'Parent story';
+
+  @override
+  String get relation_side_story => 'Side story';
+
+  @override
+  String get relation_spin_off => 'Spin-off';
+
+  @override
+  String get relation_alternative => 'Alternative version';
 }

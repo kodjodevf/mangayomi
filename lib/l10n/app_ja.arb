@@ -876,5 +876,512 @@
   "save_search": "検索を保存",
   "saved_searches": "保存済み検索",
   "enter_search_to_save_first": "まず検索を入力して保存してください",
-  "no_saved_searches": "このソースの保存済み検索はまだありません。\n検索を実行してから、「検索を保存」を選択してください。"
+  "no_saved_searches": "このソースの保存済み検索はまだありません。\n検索を実行してから、「検索を保存」を選択してください。",
+  "label_value": "{label}: {value}",
+  "url": "URL",
+  "beta_version": "ベータ ({version})",
+  "empty_placeholder": "空",
+  "error_with_message": "エラー: {error}",
+  "no_pages_available": "エラー: 利用可能なページがありません",
+  "create_extension": "拡張機能を作成",
+  "choose_extension_language": "拡張機能の言語を選択",
+  "lang": "言語",
+  "base_url": "ベースURL",
+  "api_url_optional": "API URL（任意）",
+  "icon_url": "アイコンURL",
+  "source_icon_url": "ソースアイコンURL",
+  "notes": "備考",
+  "extension_name_example": "例: myAnime",
+  "language_code_example": "例: ja",
+  "base_url_example": "例: https://example.com",
+  "api_url_example": "例: https://api.example.com",
+  "extension_notes_example": "例: この拡張機能にはログインが必要です",
+  "target": "ターゲット",
+  "source_type_single": "単一",
+  "source_type_multi": "複数",
+  "source_type_torrent": "トレント",
+  "source_language_dart": "Dart",
+  "source_language_javascript": "JavaScript",
+  "source_language_lnreader_compiled_js": "LNReaderコンパイル済みJS",
+  "source_created_successfully": "ソースが正常に作成されました",
+  "source_already_exists": "ソースは既に存在します",
+  "error_when_creating_source": "ソース作成エラー",
+  "cookies_deleted": "Cookieを削除しました！",
+  "delete_all_cookies": "すべてのCookieを削除",
+  "missing_chapters": "不足している話数: {count}",
+  "sync_restore_in_progress": "同期をスキップ — 復元中",
+  "sync_status_not_configured": "未接続",
+  "sync_status_checking": "接続を確認中...",
+  "sync_status_connected": "接続済み",
+  "sync_status_unauthorized": "セッションが切れました。再ログインしてください",
+  "sync_status_unreachable": "サーバーに接続できません",
+  "sync_section_general": "一般",
+  "sync_section_data_types": "同期する項目",
+  "missing_episodes": "不足しているエピソード: {count}",
+  "encrypt_backups": "バックアップを暗号化",
+  "encrypt_backups_info": "AES暗号化によりバックアップをパスワード保護します",
+  "no_secure_storage": "安全なストレージが見つかりません",
+  "no_keyring_warning": "キーリングサービスがないためパスワードを安全に保存できません。\n\nローカルデータベースに暗号化なしで保存しますか？",
+  "enter_backup_password": "バックアップパスワードを入力",
+  "incorrect_password_try_again": "パスワードが正しくありません。再試行してください。",
+  "set_backup_password": "バックアップパスワードを設定",
+  "confirm_password": "パスワードを確認",
+  "passwords_do_not_match": "パスワードが一致しません",
+  "password_required_to_restore": "復元にはパスワードが必要です。",
+  "restore_sync_question_title": "この復元を同期しますか？",
+  "restore_sync_question_message": "復元されたデータを今すぐ同期サーバーにアップロードしますか？",
+  "restore_sync_question_confirm": "はい、同期する",
+  "restore_sync_question_deny": "いいえ、同期を無効化",
+  "sync_disabled_after_restore": "同期が無効になりました。設定から再度有効にできます。",
+  "restore_sync_disabled_question_title": "同期は現在無効です",
+  "restore_sync_disabled_question_message": "同期を再有効化してサーバーにアップロードしますか？",
+  "restore_sync_question_reenable": "はい、有効化して同期",
+  "restore_sync_question_keep_disabled": "無効のままにする",
+  "restore_sync_uploading": "復元データをサーバーに同期中…",
+  "restore_sync_upload_success": "復元データをサーバーに同期しました",
+  "default_download_destination": "デフォルトのダウンロード先",
+  "ask_download_destination": "ダウンロード先を毎回確認",
+  "ask_download_destination_desc": "ダウンロード開始時にフォルダを選択します。",
+  "select_download_destination": "ダウンロード先を選択",
+  "clear_local_library": "ローカルライブラリをクリア",
+  "clear_local_library_desc": "ローカルフォルダおよびアーカイブをライブラリから削除します。",
+  "clear_local_library_msg": "ライブラリから削除されます（ファイル自体は削除されません）。",
+  "no_local_folder_available_for_downloads": "利用可能なダウンロードフォルダがありません",
+  "failed_to_create_cbz": "CBZの作成に失敗しました: {error}",
+  "error_reading_cover_image": "カバー画像の読み込みエラー: {error}",
+  "error_reading_metadata": "メタデータの読み込みエラー: {error}",
+  "error_saving_chapter_episode_to_library": "ライブラリ保存エラー: {error}",
+  "error_reading_chapter_cover_image": "章カバー画像の読み込みエラー: {error}",
+  "error_reading_archive_cover_image": "アーカイブカバー画像の読み込みエラー: {error}",
+  "error_getting_local_library": "ローカルライブラリ取得エラー: {error}",
+  "failed_to_export_metadata": "メタデータのエクスポートに失敗: {error}",
+  "unrecognized_chapter_numbers": "{count}話の番号を自動取得できませんでした。",
+  "cloudflare_resolution_webview_server_start_failed": "Cloudflare解決サーバーを起動できませんでした。",
+  "tracker_token_expired": "{tracker}のトークンが期限切れです",
+  "video_list_empty": "動画リストが空です",
+  "playback_speed_multiplier": "x{value}",
+  "could_not_launch_url": "{url} を開けませんでした",
+  "zero_interpreter": "Zero インタープリタ",
+  "zero_interpreter_description": "Zero インタープリタサーバーを制御します。",
+  "start_server_on_launch": "起動時にサーバーを開始",
+  "runtime_status": "実行状態",
+  "running": "実行中",
+  "stopped": "停止",
+  "stop": "停止",
+  "something_went_wrong": "問題が発生しました",
+  "startup_failed": "Mangayomiの起動に失敗しました",
+  "sources_with_no_results": "{count, plural, other{{count}件のソースで結果なし}}",
+  "import_mode_title": "どのようにインポートしますか？",
+  "import_mode_message": "現在のライブラリに統合するか、完全に置き換えるか選択してください。",
+  "import_mode_keep_existing": "統合",
+  "import_mode_keep_existing_subtitle": "新しい作品を追加し、一致するものを更新します。",
+  "import_mode_replace": "置換",
+  "import_mode_replace_subtitle": "現在のライブラリを削除しバックアップで置き換えます。",
+  "replace_summary_title": "ライブラリを置き換える準備ができました",
+  "replace_summary_message": "現在の{currentCount}作品を削除し、バックアップの{backupCount}作品に置き換えます。",
+  "replace_summary_confirm": "置換",
+  "replace_result_message": "ライブラリを{count}作品に置き換えました。",
+  "category_conflict_title": "既存のカテゴリが見つかりました",
+  "category_conflict_message": "バックアップに既存のカテゴリが含まれています。",
+  "category_conflict_keep": "保持 — 既存カテゴリに統合",
+  "category_conflict_delete": "削除 — 未分類にする",
+  "source_conflict_title": "ソースが見つかりません",
+  "source_conflict_message": "一部のソースに対応する拡張機能がありません。",
+  "source_conflict_keep": "元の名前を保持",
+  "import_summary_title": "インポート準備完了",
+  "import_summary_message": "新規{newSeries}作品、更新{updatedSeries}作品、新規{newChapters}話を追加します。",
+  "import_summary_confirm": "インポート",
+  "import_result_message": "新規{newSeries}作品、更新{updatedSeries}作品、{newChapters}話を追加しました。",
+  "roll_back": "ロールバック",
+  "roll_back_confirm_message": "変更前のスナップショットにライブラリを復元します。",
+  "roll_back_done": "以前のスナップショットにロールバックしました。",
+  "restoring_backup": "ライブラリを復元中…",
+  "roll_back_last_change": "前回の変更をロールバック",
+  "roll_back_last_change_subtitle": "{date} のスナップショット — {description}",
+  "roll_back_available_count": "ロールバック可能な変更: {count}件",
+  "delete_source_title": "ソースと作品を削除",
+  "delete_source_subtitle": "選択したソースの作品、話、ダウンロード、履歴をすべて削除します。",
+  "delete_source_pick_title": "削除するソースを選択",
+  "delete_source_empty": "ライブラリにソースが見つかりません。",
+  "delete_source_confirm_title": "{sourceName}を削除しますか？",
+  "delete_source_confirm_message": "{mangaCount}作品、{chapterCount}話、{historyCount}件の履歴が完全に削除されます。",
+  "delete_source_also_remove_extension": "インストール済み拡張機能も削除",
+  "delete_source_keep_history": "読書履歴を保持",
+  "delete_source_keep_downloads": "ダウンロード記録を保持",
+  "delete_source_button": "削除",
+  "delete_source_result_message": "{sourceName}から{mangaCount}作品を削除しました。",
+  "merge_manga_title": "重複作品を統合",
+  "merge_manga_subtitle": "同じソース内の同名作品を統合します。",
+  "merge_manga_none_found": "重複作品は見つかりませんでした。",
+  "merge_manga_pick_title": "重複の可能性がある作品",
+  "merge_manga_choose_primary_title": "どの作品に統合しますか？",
+  "merge_manga_choose_primary_message": "話、履歴、追跡情報が選択した作品に集約されます。",
+  "merge_manga_chapters_subtitle": "{count, plural, other{{count} 話}}",
+  "merge_manga_button": "統合",
+  "merge_manga_result_message": "{count}件の重複作品を{mangaName}に統合しました。",
+  "merge_preview_title": "統合の確認",
+  "merge_manga_preview_message": "{totalChapters}話見つかりました。{duplicateChapters}件の重複を除外し、{keptChapters}話を追加します。",
+  "beta": "ベータ",
+  "error_reports": "エラーレポート",
+  "error_reports_subtitle": "アプリで発生したエラーの確認と報告",
+  "error_reports_empty": "エラーはありません。",
+  "error_reports_likely_cause": "考えられる原因",
+  "error_reports_report": "GitHubで報告",
+  "error_reports_banner": "エラーが発生しました",
+  "error_reports_banner_action": "表示",
+  "error_reports_copy": "コピー",
+  "error_reports_copied": "クリップボードにコピーしました",
+  "error_reports_clear": "クリア",
+  "share_unavailable_copied": "共有機能が利用できないためクリップボードにコピーしました。",
+  "onboarding_title": "Mangayomiへようこそ",
+  "onboarding_libraries_body": "読みたいもの、観たいものを選択してください。",
+  "onboarding_nav_title": "ライブラリ",
+  "onboarding_nav_body": "個別のタブで表示するか、1つのライブラリタブにまとめるか選択できます。",
+  "onboarding_nav_split": "個別のタブ",
+  "onboarding_nav_merged": "1つのライブラリタブ",
+  "onboarding_nav_inside": "ライブラリをタップして切り替え",
+  "onboarding_next": "次へ",
+  "onboarding_restore": "バックアップを復元",
+  "onboarding_or_local": "または手持ちのファイルを使用",
+  "onboarding_local_folder": "フォルダを追加",
+  "onboarding_local_existing": "設定済みフォルダ: {count}個",
+  "onboarding_local_any_type": "マンガ、アニメ、小説に対応しています。",
+  "onboarding_local_scanning": "フォルダをスキャン中",
+  "onboarding_local_found": "{count}作品見つかりました",
+  "onboarding_local_remove": "フォルダを削除",
+  "onboarding_local_in_downloads": "これはアプリのダウンロードフォルダです。",
+  "onboarding_local_empty": "見つかりませんでした。親フォルダを選択してください。",
+  "onboarding_repo_failed": "リポジトリを読み込めませんでした。",
+  "onboarding_repo_title": "ソースを追加",
+  "onboarding_body": "リポジトリを追加して拡張機能をインストールしましょう。",
+  "onboarding_add": "リポジトリを追加",
+  "onboarding_skip": "今はスキップ",
+  "onboarding_continue": "続ける",
+  "onboarding_later": "設定 > 閲覧から後で追加できます。",
+  "onboarding_replay": "ウェルカム画面を表示",
+  "onboarding_replay_subtitle": "初期設定画面を再度開きます。",
+  "missing_source_check_title": "不足しているソースを確認",
+  "missing_source_check_subtitle": "拡張機能が未インストールの作品を検出します。",
+  "missing_source_check_none_found": "すべてのソースがインストールされています。",
+  "missing_source_check_result_title": "{count, plural, other{{count}件のソースが未インストール}}",
+  "missing_source_check_result_message": "これらの作品のソースがインストールされていません。移行するか拡張機能をインストールしてください。",
+  "@mass_migration_items_ready_for_review": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_item_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_finding_matches": {
+    "placeholders": {
+      "source": {},
+      "language": {}
+    }
+  },
+  "@mass_migration_processing_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_matched_so_far": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_no_match_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_review_matches": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "@mass_migration_found_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_no_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_selected_to_migrate": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_migrate_selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_migrating_selected": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "@mass_migration_migrating_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_route_summary": {
+    "placeholders": {
+      "source": {},
+      "destination": {}
+    }
+  },
+  "@mass_migration_query": {
+    "placeholders": {
+      "query": {}
+    }
+  },
+  "@mass_migration_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_source_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_destination_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mass_migration_and_more_chapters": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@failed_to_download_bundle": {
+    "placeholders": {
+      "statusCode": {}
+    }
+  },
+  "@tts_paragraph_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "@label_value": {
+    "placeholders": {
+      "label": {},
+      "value": {}
+    }
+  },
+  "@beta_version": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "@error_with_message": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_create_cbz": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_saving_chapter_episode_to_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_chapter_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_archive_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_getting_local_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_export_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@unrecognized_chapter_numbers": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@tracker_token_expired": {
+    "placeholders": {
+      "tracker": {}
+    }
+  },
+  "@playback_speed_multiplier": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "@could_not_launch_url": {
+    "placeholders": {
+      "url": {}
+    }
+  },
+  "@sources_with_no_results": {
+    "description": "Header of the collapsed group in global search holding every source that failed or found nothing.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@replace_summary_message": {
+    "placeholders": {
+      "currentCount": {},
+      "backupCount": {}
+    }
+  },
+  "@replace_result_message": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@import_summary_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@import_result_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@roll_back_last_change_subtitle": {
+    "placeholders": {
+      "date": {},
+      "description": {}
+    }
+  },
+  "@roll_back_available_count": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@delete_source_confirm_title": {
+    "placeholders": {
+      "sourceName": {}
+    }
+  },
+  "@delete_source_confirm_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "chapterCount": {},
+      "historyCount": {},
+      "updateCount": {}
+    }
+  },
+  "@delete_source_result_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "sourceName": {}
+    }
+  },
+  "@merge_manga_chapters_subtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@merge_manga_result_message": {
+    "placeholders": {
+      "count": {},
+      "mangaName": {}
+    }
+  },
+  "@merge_manga_preview_message": {
+    "placeholders": {
+      "totalChapters": {},
+      "duplicateChapters": {},
+      "keptChapters": {},
+      "duplicateTracks": {}
+    }
+  },
+  "@onboarding_local_existing": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@onboarding_local_found": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@missing_source_check_result_title": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

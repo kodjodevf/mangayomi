@@ -950,7 +950,7 @@ class _EpisodeRowState extends State<_EpisodeRow> {
                   child: Text(
                     'FILLER',
                     style: TextStyle(
-                      fontSize: 9,
+                      fontSize: 12,
                       color: Theme.of(context).hintColor,
                     ),
                   ),

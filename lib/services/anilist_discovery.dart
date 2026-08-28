@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:mangayomi/services/discovery/kitsu_discovery.dart';
+import 'package:mangayomi/services/discovery/service_availability.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/constant.dart';
 
@@ -58,32 +61,72 @@ const String _searchFields = '''
 String _mediaTypeOf(ItemType itemType) =>
     itemType == ItemType.anime ? "ANIME" : "MANGA";
 
+/// How long to wait before deciding AniList is not going to answer.
+///
+/// A refusal comes back in well under a second, so anything near this is a
+/// genuine hang. Without it the default client waits until the socket gives
+/// up, which is where "Request timed out" came from on a service that had
+/// actually replied immediately.
+const Duration _anilistTimeout = Duration(seconds: 15);
+
 Future<Map<String, dynamic>?> _executeGraphQL(
   String query,
   Map<String, dynamic> variables,
 ) async {
-  // Plain HTTP client with a fixed browser User-Agent. AniList is behind
-  // Cloudflare, which 403-bans non-browser user-agents, so a bare client with a
-  // known Chrome UA is the reliable choice (MClient would send the user's
-  // configured UA, which may not satisfy Cloudflare).
+  // Fail immediately while AniList is known to be refusing, rather than
+  // sending a request per screen build to a service that is shedding load.
+  final known = ServiceAvailability.outage(DiscoveryService.anilist);
+  if (known != null) throw known;
+
+  // Plain HTTP client with a fixed browser User-Agent, kept because the user's
+  // own configured UA is not worth sending to a third-party metadata API. It
+  // is not a Cloudflare workaround: AniList's public API gates on Referer, not
+  // on User-Agent, and this deliberately does not send one — a Referer naming
+  // their website would be claiming to be their website.
   final client = http.Client();
   try {
-    final res = await client.post(
-      Uri.parse(_anilistEndpoint),
-      headers: const {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "User-Agent": metadataApiUserAgent,
-      },
-      body: jsonEncode({"query": query, "variables": variables}),
-    );
-    final decoded = jsonDecode(res.body) as Map<String, dynamic>;
+    final res = await client
+        .post(
+          Uri.parse(_anilistEndpoint),
+          headers: const {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": metadataApiUserAgent,
+          },
+          body: jsonEncode({"query": query, "variables": variables}),
+        )
+        .timeout(_anilistTimeout);
+
+    final decoded = _decodeOrNull(res.body);
+    final refusal = anilistRefusal(res.statusCode, decoded);
+    if (refusal != null) {
+      throw ServiceAvailability.markDown(DiscoveryService.anilist, refusal);
+    }
+    if (decoded == null) {
+      throw Exception("AniList returned something that is not JSON");
+    }
     if (decoded["errors"] != null) {
       throw Exception("AniList error: ${jsonEncode(decoded["errors"])}");
     }
+    ServiceAvailability.markUp(DiscoveryService.anilist);
     return decoded["data"] as Map<String, dynamic>?;
+  } on TimeoutException {
+    throw ServiceAvailability.markDown(
+      DiscoveryService.anilist,
+      "did not answer within ${_anilistTimeout.inSeconds}s",
+      cooldown: const Duration(minutes: 2),
+    );
   } finally {
     client.close();
+  }
+}
+
+Map<String, dynamic>? _decodeOrNull(String body) {
+  try {
+    final decoded = jsonDecode(body);
+    return decoded is Map<String, dynamic> ? decoded : null;
+  } catch (_) {
+    return null;
   }
 }
 
@@ -130,8 +173,35 @@ $_searchFields
       const [];
 }
 
-/// Best-effort resolve a title to its AniList media id. The recommendation
-/// screen only knows a manga/anime name, so this maps it to an id.
+/// Best-effort resolve a title to a media id, and say who it belongs to.
+///
+/// The recommendation and watch-order screens only know a name. When AniList
+/// will not answer, Kitsu resolves the same title, and the returned service
+/// tells the caller where to send the follow-up call — the two id spaces are
+/// not interchangeable.
+Future<(DiscoveryService, int)?> searchMediaRef(
+  ItemType itemType,
+  String title,
+) async {
+  try {
+    final results = await fetchDiscoveryPage(
+      itemType: itemType,
+      search: title,
+      sort: const ["SEARCH_MATCH"],
+      perPage: 1,
+    );
+    final id = results.firstOrNull?.id;
+    if (id != null) return (DiscoveryService.anilist, id);
+  } on DiscoveryUnavailable {
+    final id = await kitsuSearchMediaId(itemType, title);
+    if (id != null) return (DiscoveryService.kitsu, id);
+    rethrow;
+  }
+  return null;
+}
+
+/// The AniList id for [title], or null. Kept for callers that can only work
+/// against AniList, such as recommendations.
 Future<int?> searchMediaId(ItemType itemType, String title) async {
   final results = await fetchDiscoveryPage(
     itemType: itemType,
@@ -174,8 +244,13 @@ $_mediaFields
 /// A media plus its relations in one call, for building a watch order. AniList
 /// gives no linear order, so the caller filters/orders the graph.
 Future<(DiscoveryMedia?, List<DiscoveryRelation>)> fetchMediaWithRelations(
-  int mediaId,
-) async {
+  int mediaId, {
+  DiscoveryService source = DiscoveryService.anilist,
+  ItemType itemType = ItemType.anime,
+}) async {
+  if (source == DiscoveryService.kitsu) {
+    return kitsuMediaWithRelations(itemType, mediaId);
+  }
   final query =
       '''
     query(\$id: Int) {
@@ -200,6 +275,10 @@ $_mediaFields
 
 class DiscoveryMedia {
   final int id;
+
+  /// Which service produced [id]. Kitsu ids are not AniList ids, so a follow-up
+  /// call has to go back to whoever answered the first one.
+  final DiscoveryService source;
   final int? idMal;
   final String? romaji;
   final String? english;
@@ -222,6 +301,7 @@ class DiscoveryMedia {
 
   DiscoveryMedia({
     required this.id,
+    this.source = DiscoveryService.anilist,
     this.idMal,
     this.romaji,
     this.english,

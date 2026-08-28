@@ -934,5 +934,380 @@
   "saved_searches": "Сохраненные поиски",
   "enter_search_to_save_first": "Сначала введите поиск для сохранения",
   "no_saved_searches": "Для этого источника еще нет сохраненных поисков.\nВыполните поиск, а затем выберите \"Сохранить поиск\".",
-  "source": "Источник"
+  "source": "Источник",
+  "label_value": "{label}: {value}",
+  "url": "URL",
+  "beta_version": "Бета ({version})",
+  "empty_placeholder": "ПУСТО",
+  "error": "Ошибка",
+  "error_with_message": "Ошибка: {error}",
+  "no_pages_available": "Ошибка: нет доступных страниц",
+  "create_extension": "Создать расширение",
+  "choose_extension_language": "Выберите язык расширения",
+  "lang": "Язык",
+  "base_url": "Базовый URL",
+  "api_url_optional": "URL API (необязательно)",
+  "icon_url": "URL значка",
+  "source_icon_url": "URL значка источника",
+  "notes": "Примечания",
+  "extension_name_example": "напр.: myAnime",
+  "language_code_example": "напр.: ru",
+  "base_url_example": "напр.: https://example.com",
+  "api_url_example": "напр.: https://api.example.com",
+  "extension_notes_example": "напр.: для этого расширения требуется вход",
+  "type": "Тип",
+  "target": "Цель",
+  "source_type_single": "одиночный",
+  "source_type_multi": "множественный",
+  "source_type_torrent": "торрент",
+  "source_language_dart": "Dart",
+  "source_language_javascript": "JavaScript",
+  "source_language_lnreader_compiled_js": "Скомпилированный JS LNReader",
+  "source_created_successfully": "Источник успешно создан",
+  "source_already_exists": "Источник уже существует",
+  "error_when_creating_source": "Ошибка при создании источника",
+  "cookies_deleted": "Файлы cookie удалены!",
+  "delete_all_cookies": "Удалить все cookie",
+  "missing_chapters": "Отсутствует глав: {count}",
+  "sync_restore_in_progress": "Синхронизация пропущена — идет восстановление",
+  "sync_status_not_configured": "Не подключено",
+  "sync_status_checking": "Проверка соединения...",
+  "sync_status_connected": "Подключено",
+  "sync_status_unauthorized": "Сессия истекла, войдите снова",
+  "sync_status_unreachable": "Сервер недоступен",
+  "sync_section_general": "Общие",
+  "sync_section_data_types": "Что синхронизировать",
+  "missing_episodes": "Отсутствует эпизодов: {count}",
+  "encrypt_backups": "Шифровать резервные копии",
+  "encrypt_backups_info": "Защитить резервные копии паролем с использованием шифрования AES",
+  "no_secure_storage": "Безопасное хранилище не найдено",
+  "no_keyring_warning": "В системе нет службы связки ключей (напр. gnome-keyring или kwallet в Linux), пароль не может быть сохранен безопасно.\n\nСохранить в незашифрованном виде в базе данных приложения?",
+  "enter_backup_password": "Введите пароль резервной копии",
+  "incorrect_password_try_again": "Неверный пароль, попробуйте еще раз.",
+  "set_backup_password": "Установить пароль резервной копии",
+  "confirm_password": "Подтвердите пароль",
+  "passwords_do_not_match": "Пароли не совпадают",
+  "password_required_to_restore": "Для восстановления резервной копии требуется пароль.",
+  "restore_sync_question_title": "Синхронизировать восстановление?",
+  "restore_sync_question_message": "Устройство подключено к серверу синхронизации. Загрузить восстановленные данные сейчас?",
+  "restore_sync_question_confirm": "Да, синхронизировать",
+  "restore_sync_question_deny": "Нет, отключить синхронизацию",
+  "sync_disabled_after_restore": "Синхронизация отключена. Вы можете включить ее в Настройках.",
+  "restore_sync_disabled_question_title": "Синхронизация отключена",
+  "restore_sync_disabled_question_message": "Синхронизация выключена. Включить ее и загрузить восстановленные данные на сервер?",
+  "restore_sync_question_reenable": "Да, включить и синхронизировать",
+  "restore_sync_question_keep_disabled": "Оставить отключенной",
+  "restore_sync_uploading": "Синхронизация восстановленных данных с сервером…",
+  "restore_sync_upload_success": "Восстановленные данные синхронизированы с сервером",
+  "default_download_destination": "Место загрузки по умолчанию",
+  "ask_download_destination": "Запрашивать место загрузки",
+  "ask_download_destination_desc": "Выбирать локальную папку перед началом каждой загрузки.",
+  "select_download_destination": "Выбрать место загрузки",
+  "clear_local_library": "Очистить локальную библиотеку",
+  "clear_local_library_desc": "Удалить локальные папки и архивы из библиотеки.",
+  "clear_local_library_msg": "Локальные папки и архивы будут удалены из библиотеки. Файлы на диске останутся нетронутыми.",
+  "custom": "Пользовательский",
+  "no_local_folder_available_for_downloads": "Нет доступных локальных папок для загрузок",
+  "failed_to_create_cbz": "Не удалось создать CBZ: {error}",
+  "error_reading_cover_image": "Ошибка чтения обложки: {error}",
+  "error_reading_metadata": "Ошибка чтения метаданных: {error}",
+  "error_saving_chapter_episode_to_library": "Ошибка сохранения в библиотеку: {error}",
+  "error_reading_chapter_cover_image": "Ошибка чтения обложки главы: {error}",
+  "error_reading_archive_cover_image": "Ошибка чтения обложки архива: {error}",
+  "error_getting_local_library": "Ошибка получения локальной библиотеки: {error}",
+  "failed_to_export_metadata": "Ошибка экспорта метаданных: {error}",
+  "unrecognized_chapter_numbers": "Для {count} глав не удалось определить номер автоматически.",
+  "cloudflare_resolution_webview_server_start_failed": "Не удалось запустить сервер разрешения Cloudflare.",
+  "tracker_token_expired": "Срок действия токена {tracker} истек",
+  "video_list_empty": "Список видео пуст",
+  "playback_speed_multiplier": "x{value}",
+  "could_not_launch_url": "Не удалось открыть {url}",
+  "zero_interpreter": "Интерпретатор Zero",
+  "zero_interpreter_description": "Управление сервером интерпретатора Zero автоматически или вручную.",
+  "start_server_on_launch": "Запускать сервер при старте",
+  "runtime_status": "Состояние среды",
+  "running": "Работает",
+  "stopped": "Остановлен",
+  "start": "Запустить",
+  "stop": "Остановить",
+  "something_went_wrong": "Что-то пошло не так",
+  "startup_failed": "Mangayomi не удалось завершить запуск",
+  "sources_with_no_results": "{count, plural, =1{1 источник без результатов} few{{count} источника без результатов} other{{count} источников без результатов}}",
+  "import_mode_title": "Как импортировать данные?",
+  "import_mode_message": "Выберите: объединить резервную копию с текущей библиотекой или полностью заменить ее.",
+  "import_mode_keep_existing": "Объединить",
+  "import_mode_keep_existing_subtitle": "Добавляет новые тайтлы и обновляет существующие. Ничего не удаляется.",
+  "import_mode_replace": "Заменить",
+  "import_mode_replace_subtitle": "Удаляет текущую библиотеку и заменяет ее резервной копией.",
+  "replace_summary_title": "Готово к замене библиотеки",
+  "replace_summary_message": "Это удалит текущую библиотеку ({currentCount} тайтлов) и заменит ее на {backupCount} тайтлов из копии.",
+  "replace_summary_confirm": "Заменить",
+  "replace_result_message": "Библиотека заменена на {count} тайтлов из копии.",
+  "category_conflict_title": "Найдены существующие категории",
+  "category_conflict_message": "Резервная копия содержит категории, которые уже существуют в библиотеке.",
+  "category_conflict_keep": "Сохранить — объединить с существующей категорией",
+  "category_conflict_delete": "Удалить — оставить тайтлы без категории",
+  "source_conflict_title": "Источники не найдены",
+  "source_conflict_message": "Некоторые источники не соответствуют установленным расширениям.",
+  "source_conflict_keep": "Сохранить исходное название",
+  "import_summary_title": "Готово к импорту",
+  "import_summary_message": "Новых тайтлов: {newSeries}, обновлено: {updatedSeries}, добавлено глав: {newChapters}.",
+  "import_summary_confirm": "Импортировать",
+  "import_result_message": "Импортировано {newSeries} новых тайтлов, обновлено {updatedSeries}, добавлено {newChapters} глав.",
+  "roll_back": "Откатить",
+  "roll_back_confirm_message": "Восстанавливает библиотеку до момента перед этим изменением.",
+  "roll_back_done": "Выполнен откат к предыдущему снимку.",
+  "restoring_backup": "Восстановление библиотеки…",
+  "roll_back_last_change": "Откатить последнее изменение",
+  "roll_back_last_change_subtitle": "Снимок от {date} — {description}",
+  "roll_back_available_count": "Доступно для отката изменений: {count}",
+  "delete_source_title": "Удалить источник и его мангу",
+  "delete_source_subtitle": "Удаляет из библиотеки все тайтлы источника с главами, загрузками и историей.",
+  "delete_source_pick_title": "Выберите источник для удаления",
+  "delete_source_empty": "Источники в библиотеке не найдены.",
+  "delete_source_confirm_title": "Удалить {sourceName}?",
+  "delete_source_confirm_message": "Это безвозвратно удалит {mangaCount} тайтлов, {chapterCount} глав, {historyCount} записей истории.",
+  "delete_source_also_remove_extension": "Также удалить установленное расширение",
+  "delete_source_keep_history": "Сохранить историю чтения",
+  "delete_source_keep_downloads": "Сохранить записи загрузок",
+  "delete_source_button": "Удалить",
+  "delete_source_result_message": "Удалено {mangaCount} тайтлов из {sourceName}.",
+  "merge_manga_title": "Объединить дубликаты манги",
+  "merge_manga_subtitle": "Находит мангу с одинаковыми названиями в одном источнике и объединяет их.",
+  "merge_manga_none_found": "Дубликаты манги не найдены.",
+  "merge_manga_pick_title": "Возможные дубликаты",
+  "merge_manga_choose_primary_title": "В какой тайтл объединить остальные?",
+  "merge_manga_choose_primary_message": "Главы, история и трекинг будут перенесены в выбранный тайтл.",
+  "merge_manga_chapters_subtitle": "{count, plural, =1{1 глава} few{{count} главы} other{{count} глав}}",
+  "merge_manga_button": "Объединить",
+  "merge_manga_result_message": "Объединено {count} дубликатов в {mangaName}.",
+  "merge_preview_title": "Подтверждение объединения",
+  "merge_manga_preview_message": "Найдено глав: {totalChapters}. Дубликатов: {duplicateChapters}, будет добавлено: {keptChapters}.",
+  "beta": "Бета",
+  "error_reports": "Отчеты об ошибках",
+  "error_reports_subtitle": "Ошибки, зафиксированные приложением, и способ их отправки",
+  "error_reports_empty": "Ошибок нет.",
+  "error_reports_likely_cause": "Вероятная причина",
+  "error_reports_report": "Сообщить на GitHub",
+  "error_reports_banner": "Mangayomi столкнулся с ошибкой",
+  "error_reports_banner_action": "Посмотреть",
+  "error_reports_copy": "Копировать",
+  "error_reports_copied": "Скопировано в буфер обмена",
+  "error_reports_clear": "Очистить",
+  "share_unavailable_copied": "Отправка недоступна, скопировано в буфер обмена.",
+  "onboarding_title": "Добро пожаловать в Mangayomi",
+  "onboarding_libraries_body": "Выберите, что вы читаете и смотрите.",
+  "onboarding_nav_title": "Ваши библиотеки",
+  "onboarding_nav_body": "Отдельная вкладка для каждой или объединение в общую вкладку Библиотека.",
+  "onboarding_nav_split": "Отдельные вкладки",
+  "onboarding_nav_merged": "Одна вкладка Библиотека",
+  "onboarding_nav_inside": "Нажатие на Библиотеку переключает эти вкладки",
+  "onboarding_next": "Далее",
+  "onboarding_restore": "Восстановить резервную копию",
+  "onboarding_or_local": "Или используйте имеющиеся файлы",
+  "onboarding_local_folder": "Добавить папку",
+  "onboarding_local_existing": "Настроено папок: {count}",
+  "onboarding_local_any_type": "Поддерживаются манга, аниме и новеллы.",
+  "onboarding_local_scanning": "Сканирование папки",
+  "onboarding_local_found": "Найдено тайтлов: {count}",
+  "onboarding_local_remove": "Удалить эту папку",
+  "onboarding_local_in_downloads": "Это папка загрузок приложения.",
+  "onboarding_local_empty": "Ничего не найдено. Выберите родительскую папку.",
+  "onboarding_repo_failed": "Не удалось прочитать репозиторий.",
+  "onboarding_repo_title": "Добавить источник",
+  "onboarding_body": "Добавьте репозиторий, чтобы устанавливать расширения.",
+  "onboarding_add": "Добавить репозиторий",
+  "onboarding_skip": "Пропустить",
+  "onboarding_continue": "Продолжить",
+  "onboarding_later": "Вы можете добавить его позже в Настройки > Обзор.",
+  "onboarding_replay": "Показать экран приветствия",
+  "onboarding_replay_subtitle": "Повторно открывает экран начальной настройки.",
+  "missing_source_check_title": "Проверка отсутствующих источников",
+  "missing_source_check_subtitle": "Поиск тайтлов, чьи расширения не установлены.",
+  "missing_source_check_none_found": "Источники для всех тайтлов установлены.",
+  "missing_source_check_result_title": "{count, plural, =1{Отсутствует 1 источник} few{Отсутствуют {count} источника} other{Отсутствуют {count} источников}}",
+  "missing_source_check_result_message": "Эти тайтлы привязаны к неустановленным источникам. Нажмите для миграции или установите расширение.",
+  "@tts_paragraph_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "@label_value": {
+    "placeholders": {
+      "label": {},
+      "value": {}
+    }
+  },
+  "@beta_version": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "@error_with_message": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_create_cbz": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_saving_chapter_episode_to_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_chapter_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_archive_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_getting_local_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_export_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@unrecognized_chapter_numbers": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@tracker_token_expired": {
+    "placeholders": {
+      "tracker": {}
+    }
+  },
+  "@playback_speed_multiplier": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "@could_not_launch_url": {
+    "placeholders": {
+      "url": {}
+    }
+  },
+  "@sources_with_no_results": {
+    "description": "Header of the collapsed group in global search holding every source that failed or found nothing.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@replace_summary_message": {
+    "placeholders": {
+      "currentCount": {},
+      "backupCount": {}
+    }
+  },
+  "@replace_result_message": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@import_summary_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@import_result_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@roll_back_last_change_subtitle": {
+    "placeholders": {
+      "date": {},
+      "description": {}
+    }
+  },
+  "@roll_back_available_count": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@delete_source_confirm_title": {
+    "placeholders": {
+      "sourceName": {}
+    }
+  },
+  "@delete_source_confirm_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "chapterCount": {},
+      "historyCount": {},
+      "updateCount": {}
+    }
+  },
+  "@delete_source_result_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "sourceName": {}
+    }
+  },
+  "@merge_manga_chapters_subtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@merge_manga_result_message": {
+    "placeholders": {
+      "count": {},
+      "mangaName": {}
+    }
+  },
+  "@merge_manga_preview_message": {
+    "placeholders": {
+      "totalChapters": {},
+      "duplicateChapters": {},
+      "keptChapters": {},
+      "duplicateTracks": {}
+    }
+  },
+  "@onboarding_local_existing": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@onboarding_local_found": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@missing_source_check_result_title": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

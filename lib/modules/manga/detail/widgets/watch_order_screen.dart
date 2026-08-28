@@ -12,21 +12,13 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_watch_order.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/design_tokens.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:marquee/marquee.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
-
-/// Tints are an alpha over the theme foreground or the accent, never a fixed
-/// colour, because the palette is chosen at runtime. Shared with
-/// recommendation_screen so the two sibling screens cannot drift apart.
-const double _alphaTint = 0.08;
-const double _alphaHairline = 0.16;
-const double _alphaFocus = 0.14;
-const double _alphaAccentTint = 0.16;
-const double _alphaSecondary = 0.70;
 
 /// Cover height over width, taken from the artwork itself: AniList serves
 /// these at 230x320. Matching it means BoxFit.cover has nothing to crop, so
@@ -115,7 +107,10 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
             .filter()
             .syncIdEqualTo(TrackerProviders.anilist.syncId)
             .findFirst();
-        final data = await fetchSequels(mal?.username, anilist?.username);
+        // chiaki.site is sent `user=` and looks it up by handle, so AniList
+        // has to pass its display name here. Its `username` is a numeric
+        // viewer id, which the lookup silently answers nothing for.
+        final data = await fetchSequels(mal?.username, anilist?.displayName);
         sequels = data
             .where((e) => e.reason.any((r) => r.id == mediaId))
             .toList();
@@ -274,7 +269,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
                             autofocus: isTv && isCurrent,
                             borderRadius: BorderRadius.circular(12),
                             focusColor: context.primaryColor.withValues(
-                              alpha: _alphaFocus,
+                              alpha: Alphas.focus,
                             ),
                             onTap: () => _openWatchOrder(item),
                             child: Padding(
@@ -327,7 +322,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
                                       width: 2,
                                       height: 22,
                                       color: context.textColor.withValues(
-                                        alpha: _alphaHairline,
+                                        alpha: Alphas.hairline,
                                       ),
                                     ),
                                   ),
@@ -365,7 +360,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 11,
-              color: context.textColor.withValues(alpha: _alphaSecondary),
+              color: context.textColor.withValues(alpha: Alphas.secondary),
             ),
           ),
         if (item.text.isNotEmpty)
@@ -377,7 +372,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 11,
-                color: context.textColor.withValues(alpha: _alphaSecondary),
+                color: context.textColor.withValues(alpha: Alphas.secondary),
               ),
             ),
           ),
@@ -497,7 +492,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: accent.withValues(alpha: _alphaAccentTint),
+            color: accent.withValues(alpha: Alphas.accentTint),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
@@ -514,7 +509,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: neutral.withValues(alpha: _alphaTint),
+            color: neutral.withValues(alpha: Alphas.tint),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
@@ -522,7 +517,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: neutral.withValues(alpha: _alphaSecondary),
+              color: neutral.withValues(alpha: Alphas.secondary),
             ),
           ),
         );

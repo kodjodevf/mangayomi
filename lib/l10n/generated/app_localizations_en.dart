@@ -3049,6 +3049,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get memory_overlay => 'Show memory usage';
+
+  @override
+  String get memory_overlay_subtitle =>
+      'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.';
+
+  @override
   String get beta => 'Beta';
 
   @override
@@ -3082,6 +3089,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get error_reports_clear => 'Clear';
+
+  @override
+  String get error_reports_extension_failure =>
+      'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.';
+
+  @override
+  String get error_reports_already_reported => 'Already reported';
+
+  @override
+  String get error_reports_expected_failure =>
+      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
 
   @override
   String get share_unavailable_copied =>
@@ -3204,6 +3222,65 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String global_search_no_sources(String itemType) {
+    return 'No $itemType sources are installed.';
+  }
+
+  @override
+  String get global_search_no_sources_hint =>
+      'Add a repository under Browse, then install an extension for it.';
+
+  @override
+  String global_search_only_pinned(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sources',
+      one: '1 source',
+    );
+    return 'You have $_temp0 for this, but only pinned ones are searched.';
+  }
+
+  @override
+  String get global_search_only_pinned_hint =>
+      'Pin one, or turn off \"Only include pinned sources\" in Browse settings.';
+
+  @override
+  String get global_search_all_nsfw =>
+      'Every source you have for this is marked NSFW, and those are hidden.';
+
+  @override
+  String get global_search_all_nsfw_hint =>
+      'Turn on NSFW sources in Browse settings to search them.';
+
+  @override
   String get missing_source_check_result_message =>
       'These library entries point at a source that isn\'t installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them.';
+
+  @override
+  String get related_titles => 'Related';
+
+  @override
+  String get related_none => 'Nothing related was found for this title.';
+
+  @override
+  String get relation_adaptation => 'Adaptation';
+
+  @override
+  String get relation_sequel => 'Sequel';
+
+  @override
+  String get relation_prequel => 'Prequel';
+
+  @override
+  String get relation_parent => 'Parent story';
+
+  @override
+  String get relation_side_story => 'Side story';
+
+  @override
+  String get relation_spin_off => 'Spin-off';
+
+  @override
+  String get relation_alternative => 'Alternative version';
 }

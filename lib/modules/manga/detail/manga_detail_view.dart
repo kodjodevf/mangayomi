@@ -1517,15 +1517,20 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       popUpAnimationStyle: popupAnimationStyle,
                                       itemBuilder: (context) {
                                         return [
+                                          // 48 rather than 40: these are the
+                                          // only two menu rows in the app that
+                                          // set their own height, and 40 is
+                                          // under the minimum target on both
+                                          // Material and Apple.
                                           PopupMenuItem<int>(
-                                            height: 40,
+                                            height: 48,
                                             value: 0,
                                             child: Text(
                                               context.l10n.genre_search_library,
                                             ),
                                           ),
                                           PopupMenuItem<int>(
-                                            height: 40,
+                                            height: 48,
                                             value: 1,
                                             child: Text(
                                               context.l10n.genre_search_source,
@@ -1672,6 +1677,36 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           );
                         },
                         label: Text(l10n.recommendations),
+                        icon: Icon(Icons.arrow_right_alt_outlined),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  // Everything this title is related to, including the one
+                  // thing that cannot be reached any other way from in here:
+                  // its adaptation in the other medium.
+                  SizedBox(
+                    width: context.width(1),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: OutlinedButton.icon(
+                        style: ButtonStyle(
+                          shape: WidgetStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          context.push(
+                            "/related",
+                            extra: (
+                              widget.manga!.name!,
+                              widget.manga!.itemType,
+                            ),
+                          );
+                        },
+                        label: Text(l10n.related_titles),
                         icon: Icon(Icons.arrow_right_alt_outlined),
                       ),
                     ),

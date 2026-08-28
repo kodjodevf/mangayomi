@@ -937,5 +937,380 @@
   "saved_searches": "已保存的搜索",
   "enter_search_to_save_first": "先输入搜索进行保存",
   "no_saved_searches": "此来源还没有保存的搜索。\n执行搜索，然后选择\"保存搜索\"。",
-  "source": "来源"
+  "source": "来源",
+  "label_value": "{label}：{value}",
+  "url": "URL",
+  "beta_version": "测试版 ({version})",
+  "empty_placeholder": "空",
+  "error": "错误",
+  "error_with_message": "错误：{error}",
+  "no_pages_available": "错误：无可用页面",
+  "create_extension": "创建扩展",
+  "choose_extension_language": "选择扩展语言",
+  "lang": "语言",
+  "base_url": "基础 URL",
+  "api_url_optional": "API URL（可选）",
+  "icon_url": "图标 URL",
+  "source_icon_url": "图源图标 URL",
+  "notes": "备注",
+  "extension_name_example": "例如：myAnime",
+  "language_code_example": "例如：zh",
+  "base_url_example": "例如：https://example.com",
+  "api_url_example": "例如：https://api.example.com",
+  "extension_notes_example": "例如：此扩展需要登录",
+  "type": "类型",
+  "target": "目标",
+  "source_type_single": "单一",
+  "source_type_multi": "多源",
+  "source_type_torrent": "种子 (Torrent)",
+  "source_language_dart": "Dart",
+  "source_language_javascript": "JavaScript",
+  "source_language_lnreader_compiled_js": "LNReader 编译 JS",
+  "source_created_successfully": "图源创建成功",
+  "source_already_exists": "图源已存在",
+  "error_when_creating_source": "创建图源时出错",
+  "cookies_deleted": "Cookie 已删除！",
+  "delete_all_cookies": "删除所有 Cookie",
+  "missing_chapters": "缺少 {count} 个章节",
+  "sync_restore_in_progress": "已跳过同步 — 正在恢复中",
+  "sync_status_not_configured": "未连接",
+  "sync_status_checking": "正在检查连接...",
+  "sync_status_connected": "已连接",
+  "sync_status_unauthorized": "会话已过期，请重新登录",
+  "sync_status_unreachable": "无法连接到服务器",
+  "sync_section_general": "通用",
+  "sync_section_data_types": "同步内容",
+  "missing_episodes": "缺少 {count} 集",
+  "encrypt_backups": "加密备份",
+  "encrypt_backups_info": "使用 AES 加密和密码保护备份文件",
+  "no_secure_storage": "未找到安全存储",
+  "no_keyring_warning": "当前系统没有密钥环服务，无法安全存储密码。\n\n是否以明文形式存储在本地数据库中？",
+  "enter_backup_password": "输入备份密码",
+  "incorrect_password_try_again": "密码错误，请重试。",
+  "set_backup_password": "设置备份密码",
+  "confirm_password": "确认密码",
+  "passwords_do_not_match": "密码不匹配",
+  "password_required_to_restore": "需要密码才能恢复此备份。",
+  "restore_sync_question_title": "是否同步此次恢复？",
+  "restore_sync_question_message": "此设备已连接到同步服务器。是否立即将恢复的数据上传？",
+  "restore_sync_question_confirm": "是，进行同步",
+  "restore_sync_question_deny": "否，禁用同步",
+  "sync_disabled_after_restore": "同步已禁用。您可以在“设置”中重新开启。",
+  "restore_sync_disabled_question_title": "同步当前已禁用",
+  "restore_sync_disabled_question_message": "同步已关闭。是否重新开启并将恢复的数据上传到服务器？",
+  "restore_sync_question_reenable": "是，重新开启并同步",
+  "restore_sync_question_keep_disabled": "保持禁用",
+  "restore_sync_uploading": "正在同步恢复的数据到服务器…",
+  "restore_sync_upload_success": "恢复的数据已同步到服务器",
+  "default_download_destination": "默认下载位置",
+  "ask_download_destination": "每次下载前询问位置",
+  "ask_download_destination_desc": "每次开始下载时选择本地文件夹。",
+  "select_download_destination": "选择下载位置",
+  "clear_local_library": "清空本地书库",
+  "clear_local_library_desc": "从书库中移除本地文件夹和压缩包条目。",
+  "clear_local_library_msg": "这将从书库中移除本地条目，不会删除磁盘上的文件。",
+  "custom": "自定义",
+  "no_local_folder_available_for_downloads": "没有可用于下载的本地文件夹",
+  "failed_to_create_cbz": "创建 CBZ 失败：{error}",
+  "error_reading_cover_image": "读取封面出错：{error}",
+  "error_reading_metadata": "读取元数据出错：{error}",
+  "error_saving_chapter_episode_to_library": "保存到书库时出错：{error}",
+  "error_reading_chapter_cover_image": "读取章节封面出错：{error}",
+  "error_reading_archive_cover_image": "读取归档封面出错：{error}",
+  "error_getting_local_library": "获取本地书库时出错：{error}",
+  "failed_to_export_metadata": "导出元数据失败：{error}",
+  "unrecognized_chapter_numbers": "有 {count} 个章节无法自动编号，可能在阅读器中缺失或顺序错乱。",
+  "cloudflare_resolution_webview_server_start_failed": "无法启动 Cloudflare 验证 Webview 服务。",
+  "tracker_token_expired": "{tracker} 令牌已过期",
+  "video_list_empty": "视频列表为空",
+  "playback_speed_multiplier": "{value}x",
+  "could_not_launch_url": "无法打开 {url}",
+  "zero_interpreter": "Zero 解释器",
+  "zero_interpreter_description": "自动或手动控制 Zero 解释器服务。",
+  "start_server_on_launch": "启动时开启服务",
+  "runtime_status": "运行状态",
+  "running": "运行中",
+  "stopped": "已停止",
+  "start": "启动",
+  "stop": "停止",
+  "something_went_wrong": "出错了",
+  "startup_failed": "Mangayomi 无法完成启动",
+  "sources_with_no_results": "{count, plural, other{{count} 个图源无结果}}",
+  "import_mode_title": "如何导入此备份？",
+  "import_mode_message": "选择将此备份合并到当前书库，还是完全替换当前书库。",
+  "import_mode_keep_existing": "合并",
+  "import_mode_keep_existing_subtitle": "添加新条目并更新匹配条目。不会删除现有内容。",
+  "import_mode_replace": "替换",
+  "import_mode_replace_subtitle": "清空当前书库并完全替换为备份内容。",
+  "replace_summary_title": "准备替换书库",
+  "replace_summary_message": "这将删除当前的所有条目（{currentCount} 项），并替换为备份中的 {backupCount} 项。",
+  "replace_summary_confirm": "替换",
+  "replace_result_message": "已将书库替换为备份中的 {count} 个条目。",
+  "category_conflict_title": "发现已有分类",
+  "category_conflict_message": "备份中包含书库中已存在的分类。",
+  "category_conflict_keep": "保留 — 合并到已有分类",
+  "category_conflict_delete": "删除 — 归为未分类",
+  "source_conflict_title": "未找到图源",
+  "source_conflict_message": "备份中的部分图源未安装相应扩展。",
+  "source_conflict_keep": "保留原名",
+  "import_summary_title": "准备导入",
+  "import_summary_message": "将导入 {newSeries} 个新条目，更新 {updatedSeries} 个已有条目，并添加 {newChapters} 个章节。",
+  "import_summary_confirm": "导入",
+  "import_result_message": "已导入 {newSeries} 个新条目，更新 {updatedSeries} 个条目，添加 {newChapters} 个章节。",
+  "roll_back": "回滚",
+  "roll_back_confirm_message": "将书库恢复到本次更改前的安全快照。",
+  "roll_back_done": "已回滚至更改前的快照。",
+  "restoring_backup": "正在恢复书库…",
+  "roll_back_last_change": "回滚上次更改",
+  "roll_back_last_change_subtitle": "快照时间：{date} — {description}",
+  "roll_back_available_count": "有 {count} 个最近更改可供回滚",
+  "delete_source_title": "删除图源及其漫画",
+  "delete_source_subtitle": "从书库中删除指定图源的所有内容（含章节、下载和历史）。",
+  "delete_source_pick_title": "选择要删除的图源",
+  "delete_source_empty": "书库中没有找到图源。",
+  "delete_source_confirm_title": "删除 {sourceName}？",
+  "delete_source_confirm_message": "将永久删除 {mangaCount} 部漫画、{chapterCount} 个章节和 {historyCount} 条历史记录。",
+  "delete_source_also_remove_extension": "同时卸载对应扩展",
+  "delete_source_keep_history": "保留阅读历史",
+  "delete_source_keep_downloads": "保留下载记录",
+  "delete_source_button": "删除",
+  "delete_source_result_message": "已从 {sourceName} 中删除 {mangaCount} 部漫画。",
+  "merge_manga_title": "合并重复漫画",
+  "merge_manga_subtitle": "查找同图源下标题相同的漫画并进行合并。",
+  "merge_manga_none_found": "未找到重复漫画。",
+  "merge_manga_pick_title": "可能重复的漫画",
+  "merge_manga_choose_primary_title": "要合并到哪一部漫画？",
+  "merge_manga_choose_primary_message": "其他条目的章节、历史和追踪将合并到所选项中。",
+  "merge_manga_chapters_subtitle": "{count, plural, other{{count} 章节}}",
+  "merge_manga_button": "合并",
+  "merge_manga_result_message": "已将 {count} 部重复漫画合并到 {mangaName}。",
+  "merge_preview_title": "确认合并",
+  "merge_manga_preview_message": "在其他条目中共找到 {totalChapters} 个章节。将丢弃 {duplicateChapters} 个重复项并添加 {keptChapters} 个新章节。",
+  "beta": "Beta",
+  "error_reports": "错误报告",
+  "error_reports_subtitle": "应用捕获的错误及反馈入口",
+  "error_reports_empty": "运行正常，无错误记录。",
+  "error_reports_likely_cause": "可能原因",
+  "error_reports_report": "在 GitHub 上反馈",
+  "error_reports_banner": "Mangayomi 遇到了一个错误",
+  "error_reports_banner_action": "查看",
+  "error_reports_copy": "复制",
+  "error_reports_copied": "已复制到剪贴板",
+  "error_reports_clear": "清除",
+  "share_unavailable_copied": "此平台不支持分享，已复制到剪贴板。",
+  "onboarding_title": "欢迎使用 Mangayomi",
+  "onboarding_libraries_body": "选择您要阅读和观看的内容类型。",
+  "onboarding_nav_title": "您的书库",
+  "onboarding_nav_body": "可以为每种类型设置独立标签页，或合并在一个“书库”标签页中。",
+  "onboarding_nav_split": "独立标签页",
+  "onboarding_nav_merged": "统一书库标签页",
+  "onboarding_nav_inside": "点击“书库”可在各类型间切换",
+  "onboarding_next": "下一步",
+  "onboarding_restore": "恢复备份",
+  "onboarding_or_local": "或使用现有本地文件",
+  "onboarding_local_folder": "添加文件夹",
+  "onboarding_local_existing": "已设置 {count} 个文件夹",
+  "onboarding_local_any_type": "支持漫画、动漫与轻小说。",
+  "onboarding_local_scanning": "正在扫描文件夹",
+  "onboarding_local_found": "找到 {count} 个作品",
+  "onboarding_local_remove": "移除该文件夹",
+  "onboarding_local_in_downloads": "这是应用的下载文件夹。",
+  "onboarding_local_empty": "未找到内容。请选择父级文件夹。",
+  "onboarding_repo_failed": "无法读取该仓库。",
+  "onboarding_repo_title": "添加图源",
+  "onboarding_body": "添加仓库即可浏览和安装丰富的扩展插件。",
+  "onboarding_add": "添加仓库",
+  "onboarding_skip": "暂时跳过",
+  "onboarding_continue": "继续",
+  "onboarding_later": "您可以稍后在“设置 > 浏览”中添加。",
+  "onboarding_replay": "显示欢迎界面",
+  "onboarding_replay_subtitle": "重新打开首次运行的引导设置界面。",
+  "missing_source_check_title": "检查缺失图源",
+  "missing_source_check_subtitle": "查找未安装对应扩展的书库条目。",
+  "missing_source_check_none_found": "书库中所有条目的图源均已安装。",
+  "missing_source_check_result_title": "{count, plural, other{缺少 {count} 个图源}}",
+  "missing_source_check_result_message": "这些条目关联的图源未安装。点击可进行迁移或安装对应扩展。",
+  "@tts_paragraph_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "@label_value": {
+    "placeholders": {
+      "label": {},
+      "value": {}
+    }
+  },
+  "@beta_version": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "@error_with_message": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_create_cbz": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_saving_chapter_episode_to_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_chapter_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_archive_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_getting_local_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_export_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@unrecognized_chapter_numbers": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@tracker_token_expired": {
+    "placeholders": {
+      "tracker": {}
+    }
+  },
+  "@playback_speed_multiplier": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "@could_not_launch_url": {
+    "placeholders": {
+      "url": {}
+    }
+  },
+  "@sources_with_no_results": {
+    "description": "Header of the collapsed group in global search holding every source that failed or found nothing.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@replace_summary_message": {
+    "placeholders": {
+      "currentCount": {},
+      "backupCount": {}
+    }
+  },
+  "@replace_result_message": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@import_summary_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@import_result_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@roll_back_last_change_subtitle": {
+    "placeholders": {
+      "date": {},
+      "description": {}
+    }
+  },
+  "@roll_back_available_count": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@delete_source_confirm_title": {
+    "placeholders": {
+      "sourceName": {}
+    }
+  },
+  "@delete_source_confirm_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "chapterCount": {},
+      "historyCount": {},
+      "updateCount": {}
+    }
+  },
+  "@delete_source_result_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "sourceName": {}
+    }
+  },
+  "@merge_manga_chapters_subtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@merge_manga_result_message": {
+    "placeholders": {
+      "count": {},
+      "mangaName": {}
+    }
+  },
+  "@merge_manga_preview_message": {
+    "placeholders": {
+      "totalChapters": {},
+      "duplicateChapters": {},
+      "keptChapters": {},
+      "duplicateTracks": {}
+    }
+  },
+  "@onboarding_local_existing": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@onboarding_local_found": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@missing_source_check_result_title": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

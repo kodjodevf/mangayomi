@@ -740,18 +740,18 @@ class AppLocalizationsTr extends AppLocalizations {
   String get unknown => 'Bilinmiyor';
 
   @override
-  String get empty_placeholder => 'EMPTY\nMPTY\nMTY\nMT\n\n';
+  String get empty_placeholder => 'BOŞ';
 
   @override
-  String get error => 'Error';
+  String get error => 'Hata';
 
   @override
   String error_with_message(Object error) {
-    return 'Error: $error';
+    return 'Hata: $error';
   }
 
   @override
-  String get no_pages_available => 'Error: no pages available';
+  String get no_pages_available => 'Hata: kullanılabilir sayfa yok';
 
   @override
   String get set_categories => 'Kategorileri Ayarla';
@@ -784,55 +784,55 @@ class AppLocalizationsTr extends AppLocalizations {
   String get source_title => 'Kaynak Başlığı';
 
   @override
-  String get create_extension => 'Create Extension';
+  String get create_extension => 'Eklenti Oluştur';
 
   @override
-  String get choose_extension_language => 'Choose extension language';
+  String get choose_extension_language => 'Eklenti dilini seçin';
 
   @override
-  String get lang => 'Lang';
+  String get lang => 'Dil';
 
   @override
-  String get base_url => 'BaseUrl';
+  String get base_url => 'Temel URL';
 
   @override
-  String get api_url_optional => 'ApiUrl (optional)';
+  String get api_url_optional => 'API URL (isteğe bağlı)';
 
   @override
-  String get icon_url => 'iconUrl';
+  String get icon_url => 'Simge URL';
 
   @override
-  String get source_icon_url => 'Source icon url';
+  String get source_icon_url => 'Kaynak simge URL';
 
   @override
-  String get notes => 'notes';
+  String get notes => 'Notlar';
 
   @override
-  String get extension_name_example => 'ex: myAnime';
+  String get extension_name_example => 'ör: AnimeAdım';
 
   @override
-  String get language_code_example => 'ex: en';
+  String get language_code_example => 'ör: tr';
 
   @override
-  String get base_url_example => 'ex: https://example.com';
+  String get base_url_example => 'ör: https://ornek.com';
 
   @override
-  String get api_url_example => 'ex: https://api.example.com';
+  String get api_url_example => 'ör: https://api.ornek.com';
 
   @override
-  String get extension_notes_example => 'ex: this extension requires login';
+  String get extension_notes_example => 'ör: bu eklenti giriş gerektirir';
 
   @override
-  String get type => 'Type';
+  String get type => 'Tür';
 
   @override
-  String get target => 'Target';
+  String get target => 'Hedef';
 
   @override
-  String get source_type_single => 'single';
+  String get source_type_single => 'tekli';
 
   @override
-  String get source_type_multi => 'multi';
+  String get source_type_multi => 'çoklu';
 
   @override
   String get source_type_torrent => 'torrent';
@@ -844,22 +844,22 @@ class AppLocalizationsTr extends AppLocalizations {
   String get source_language_javascript => 'JavaScript';
 
   @override
-  String get source_language_lnreader_compiled_js => 'LNReader compiled JS';
+  String get source_language_lnreader_compiled_js => 'LNReader derlenmiş JS';
 
   @override
-  String get source_created_successfully => 'Source created successfully';
+  String get source_created_successfully => 'Kaynak başarıyla oluşturuldu';
 
   @override
-  String get source_already_exists => 'Source already exists';
+  String get source_already_exists => 'Kaynak zaten mevcut';
 
   @override
-  String get error_when_creating_source => 'Error when creating source';
+  String get error_when_creating_source => 'Kaynak oluşturulurken hata oluştu';
 
   @override
-  String get cookies_deleted => 'Cookies deleted!';
+  String get cookies_deleted => 'Çerezler silindi!';
 
   @override
-  String get delete_all_cookies => 'Delete all cookies';
+  String get delete_all_cookies => 'Tüm çerezleri sil';
 
   @override
   String get chapter_number => 'Bölüm Numarası';
@@ -877,7 +877,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String missing_chapters(Object count) {
-    return 'Missing $count chapters';
+    return '$count eksik bölüm';
   }
 
   @override
@@ -1075,7 +1075,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get sync_failed => 'Senkronizasyon başarısız';
 
   @override
-  String get sync_restore_in_progress => 'Sync skipped — restore in progress';
+  String get sync_restore_in_progress =>
+      'Senkronizasyon atlandı — geri yükleme sürüyor';
 
   @override
   String get sync_button_sync => 'İlerlemeyi senkronize et';
@@ -1095,25 +1096,26 @@ class AppLocalizationsTr extends AppLocalizations {
       'Bu işlem yerel verileri uzak verilerle tamamen değiştirecektir!';
 
   @override
-  String get sync_status_not_configured => 'Not connected';
+  String get sync_status_not_configured => 'Bağlı değil';
 
   @override
-  String get sync_status_checking => 'Checking connection...';
+  String get sync_status_checking => 'Bağlantı kontrol ediliyor...';
 
   @override
-  String get sync_status_connected => 'Connected';
+  String get sync_status_connected => 'Bağlandı';
 
   @override
-  String get sync_status_unauthorized => 'Session expired, please log in again';
+  String get sync_status_unauthorized =>
+      'Oturum süresi doldu, lütfen tekrar giriş yapın';
 
   @override
-  String get sync_status_unreachable => 'Can\'t reach server';
+  String get sync_status_unreachable => 'Sunucuya ulaşılamıyor';
 
   @override
-  String get sync_section_general => 'General';
+  String get sync_section_general => 'Genel';
 
   @override
-  String get sync_section_data_types => 'What to sync';
+  String get sync_section_data_types => 'Senkronize edilecekler';
 
   @override
   String get sync_on => 'Senkronizasyonu etkinleştir';
@@ -1184,7 +1186,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String missing_episodes(Object count) {
-    return 'Missing $count episodes';
+    return '$count eksik bölüm';
   }
 
   @override
@@ -1393,37 +1395,37 @@ class AppLocalizationsTr extends AppLocalizations {
   String get restore_backup => 'Yedeği Geri Yükle';
 
   @override
-  String get encrypt_backups => 'Encrypt backups';
+  String get encrypt_backups => 'Yedekleri şifrele';
 
   @override
   String get encrypt_backups_info =>
-      'Password-protect backup files using AES encryption';
+      'Yedekleme dosyalarını AES şifreleme ile parolayla koruyun';
 
   @override
-  String get no_secure_storage => 'No secure storage found';
+  String get no_secure_storage => 'Güvenli depolama bulunamadı';
 
   @override
   String get no_keyring_warning =>
-      'This system doesn\'t have a keyring service available (e.g. gnome-keyring or kwallet on Linux), so the password can\'t be stored securely.\n\nStore it unencrypted in the local app database instead? Anyone with access to this device\'s app data would be able to read it.';
+      'Bu sistemde anahtarlık hizmeti yok, parola güvenli şekilde saklanamaz.\n\nUygulama veritabanında şifresiz saklansın mı?';
 
   @override
-  String get enter_backup_password => 'Enter backup password';
+  String get enter_backup_password => 'Yedekleme parolasını girin';
 
   @override
-  String get incorrect_password_try_again => 'Incorrect password, try again.';
+  String get incorrect_password_try_again => 'Hatalı parola, tekrar deneyin.';
 
   @override
-  String get set_backup_password => 'Set backup password';
+  String get set_backup_password => 'Yedekleme parolası belirle';
 
   @override
-  String get confirm_password => 'Confirm password';
+  String get confirm_password => 'Parolayı onayla';
 
   @override
-  String get passwords_do_not_match => 'Passwords do not match';
+  String get passwords_do_not_match => 'Parolalar eşleşmiyor';
 
   @override
   String get password_required_to_restore =>
-      'A password is required to restore this backup.';
+      'Bu yedeği geri yüklemek için parola gereklidir.';
 
   @override
   String get restore_backup_subtitle =>
@@ -1478,41 +1480,45 @@ class AppLocalizationsTr extends AppLocalizations {
       'Bir yedeği geri yüklemek mevcut tüm verilerin üzerine yazacaktır.\n\nGeri yüklemeye devam et?';
 
   @override
-  String get restore_sync_question_title => 'Sync this restore?';
+  String get restore_sync_question_title =>
+      'Bu geri yükleme senkronize edilsin mi?';
 
   @override
   String get restore_sync_question_message =>
-      'This device is connected to a sync server. Upload this restored data to it now? If not, sync will be turned off so the server\'s old data doesn\'t overwrite what you just restored.';
+      'Cihaz bir senkronizasyon sunucusuna bağlı. Geri yüklenen veriler sunucuya yüklensin mi?';
 
   @override
-  String get restore_sync_question_confirm => 'Yes, sync';
+  String get restore_sync_question_confirm => 'Evet, senkronize et';
 
   @override
-  String get restore_sync_question_deny => 'No, disable sync';
+  String get restore_sync_question_deny => 'Hayır, senkronizasyonu kapat';
 
   @override
   String get sync_disabled_after_restore =>
-      'Sync is disabled. You can turn it on again in Settings.';
+      'Senkronizasyon devre dışı bırakıldı. Ayarlar\'dan tekrar açabilirsiniz.';
 
   @override
   String get restore_sync_disabled_question_title =>
-      'Sync is currently disabled';
+      'Senkronizasyon devre dışı';
 
   @override
   String get restore_sync_disabled_question_message =>
-      'Sync is turned off. Turn it back on and upload this restored data to your server?';
+      'Senkronizasyon kapalı. Tekrar açıp sunucuya yüklemek ister misiniz?';
 
   @override
-  String get restore_sync_question_reenable => 'Yes, re-enable and sync';
+  String get restore_sync_question_reenable =>
+      'Evet, etkinleştir ve senkronize et';
 
   @override
-  String get restore_sync_question_keep_disabled => 'Keep it disabled';
+  String get restore_sync_question_keep_disabled => 'Kapalı tut';
 
   @override
-  String get restore_sync_uploading => 'Syncing restored data to server…';
+  String get restore_sync_uploading =>
+      'Geri yüklenen veriler sunucuyla senkronize ediliyor…';
 
   @override
-  String get restore_sync_upload_success => 'Restored data synced to server';
+  String get restore_sync_upload_success =>
+      'Veriler sunucuyla senkronize edildi';
 
   @override
   String get services => 'Hizmetler';
@@ -2227,69 +2233,69 @@ class AppLocalizationsTr extends AppLocalizations {
   String get rescan_local_folder => 'Tüm yerel klasörleri şimdi yeniden tara';
 
   @override
-  String get default_download_destination => 'Default download destination';
+  String get default_download_destination => 'Varsayılan indirme konumu';
 
   @override
-  String get ask_download_destination => 'Ask for download destination';
+  String get ask_download_destination => 'İndirme konumunu sor';
 
   @override
   String get ask_download_destination_desc =>
-      'Choose a local folder each time a download starts.';
+      'Her indirme başladığında yerel bir klasör seçin.';
 
   @override
-  String get select_download_destination => 'Select download destination';
+  String get select_download_destination => 'İndirme konumunu seçin';
 
   @override
-  String get clear_local_library => 'Clear local library';
+  String get clear_local_library => 'Yerel kitaplığı temizle';
 
   @override
   String get clear_local_library_desc =>
-      'Remove local folder and archive entries from the library.';
+      'Yerel klasör ve arşiv girdilerini kitaplıktan kaldırın.';
 
   @override
   String get clear_local_library_msg =>
-      'This will remove local folder and archive entries from your library. It will not delete files from disk.';
+      'Yerel klasör ve arşivler kitaplıktan kaldırılacak. Disk üzerindeki dosyalar silinmez.';
 
   @override
-  String get custom => 'Custom';
+  String get custom => 'Özel';
 
   @override
   String get no_local_folder_available_for_downloads =>
-      'No local folder is available for downloads';
+      'İndirmeler için yerel klasör bulunamadı';
 
   @override
   String failed_to_create_cbz(Object error) {
-    return 'Failed to create CBZ: $error';
+    return 'CBZ oluşturulamadı: $error';
   }
 
   @override
   String error_reading_cover_image(Object error) {
-    return 'Error reading cover image: $error';
+    return 'Kapak resmi okunamadı: $error';
   }
 
   @override
   String error_reading_metadata(Object error) {
-    return 'Error reading metadata: $error';
+    return 'Meta veri okunamadı: $error';
   }
 
   @override
   String error_saving_chapter_episode_to_library(Object error) {
-    return 'Error saving chapter/episode to library: $error';
+    return 'Kitaplığa kaydedilirken hata: $error';
   }
 
   @override
   String error_reading_chapter_cover_image(Object error) {
-    return 'Error reading chapter cover image: $error';
+    return 'Bölüm kapağı okunamadı: $error';
   }
 
   @override
   String error_reading_archive_cover_image(Object error) {
-    return 'Error reading archive cover image: $error';
+    return 'Arşiv kapağı okunamadı: $error';
   }
 
   @override
   String error_getting_local_library(Object error) {
-    return 'Error getting local library: $error';
+    return 'Yerel kitaplık alınamadı: $error';
   }
 
   @override
@@ -2300,25 +2306,25 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String failed_to_export_metadata(Object error) {
-    return 'Failed to export metadata: $error';
+    return 'Meta veri dışa aktarılamadı: $error';
   }
 
   @override
   String unrecognized_chapter_numbers(Object count) {
-    return '$count chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.';
+    return '$count bölüm otomatik numaralandırılamadı.';
   }
 
   @override
   String get cloudflare_resolution_webview_server_start_failed =>
-      'Couldn\'t start Cloudflare Resolution Webview Server.';
+      'Cloudflare çözüm sunucusu başlatılamadı.';
 
   @override
   String tracker_token_expired(Object tracker) {
-    return '$tracker Token expired';
+    return '$tracker belirtecinin süresi doldu';
   }
 
   @override
-  String get video_list_empty => 'Video list is empty';
+  String get video_list_empty => 'Video listesi boş';
 
   @override
   String playback_speed_multiplier(Object value) {
@@ -2327,7 +2333,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String could_not_launch_url(Object url) {
-    return 'Could not launch $url';
+    return '$url açılamadı';
   }
 
   @override
@@ -2621,29 +2627,29 @@ class AppLocalizationsTr extends AppLocalizations {
   String get not_configured => 'Yapılandırılmadı';
 
   @override
-  String get zero_interpreter => 'Zero interpreter';
+  String get zero_interpreter => 'Zero yorumlayıcı';
 
   @override
   String get zero_interpreter_description =>
-      'Control the Zero interpreter server automatically or manually.';
+      'Zero yorumlayıcı sunucusunu otomatik veya manuel kontrol edin.';
 
   @override
-  String get start_server_on_launch => 'Start server on launch';
+  String get start_server_on_launch => 'Başlangıçta sunucuyu başlat';
 
   @override
-  String get runtime_status => 'Runtime status';
+  String get runtime_status => 'Çalışma durumu';
 
   @override
-  String get running => 'Running';
+  String get running => 'Çalışıyor';
 
   @override
-  String get stopped => 'Stopped';
+  String get stopped => 'Durduruldu';
 
   @override
-  String get start => 'Start';
+  String get start => 'Başlat';
 
   @override
-  String get stop => 'Stop';
+  String get stop => 'Durdur';
 
   @override
   String get webview => 'Webview';
@@ -2837,84 +2843,84 @@ class AppLocalizationsTr extends AppLocalizations {
   String get source => 'Kaynak';
 
   @override
-  String get something_went_wrong => 'Something went wrong';
+  String get something_went_wrong => 'Bir şeyler ters gitti';
 
   @override
-  String get startup_failed => 'Mangayomi could not finish starting up';
+  String get startup_failed => 'Mangayomi başlatılamadı';
 
   @override
   String sources_with_no_results(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sources with no results',
-      one: '1 source with no results',
+      other: 'Sonuçsuz $count kaynak',
+      one: 'Sonuçsuz 1 kaynak',
     );
     return '$_temp0';
   }
 
   @override
-  String get import_mode_title => 'How should this be imported?';
+  String get import_mode_title => 'Nasıl içe aktarılsın?';
 
   @override
   String get import_mode_message =>
-      'Choose whether to merge this backup into your current library, or replace your entire library with it.';
+      'Bu yedeği mevcut kitaplıkla birleştirin veya tüm kitaplığı bununla değiştirin.';
 
   @override
-  String get import_mode_keep_existing => 'Merge';
+  String get import_mode_keep_existing => 'Birleştir';
 
   @override
   String get import_mode_keep_existing_subtitle =>
-      'Adds new series and updates matching ones. Nothing in your current library is removed.';
+      'Yeni serileri ekler ve eşleşenleri günceller. Hiçbir şey silinmez.';
 
   @override
-  String get import_mode_replace => 'Replace';
+  String get import_mode_replace => 'Değiştir';
 
   @override
   String get import_mode_replace_subtitle =>
-      'Deletes your entire current library and replaces it with this backup.';
+      'Mevcut kitaplığı siler ve bu yedekle değiştirir.';
 
   @override
-  String get replace_summary_title => 'Ready to replace your library';
+  String get replace_summary_title => 'Kitaplık değiştirilmeye hazır';
 
   @override
   String replace_summary_message(Object currentCount, Object backupCount) {
-    return 'This deletes your entire current library ($currentCount series) and replaces it with $backupCount series from this backup. This can only be undone by rolling back.';
+    return 'Bu işlem mevcut $currentCount seriyi silecek ve $backupCount seri ile değiştirecektir.';
   }
 
   @override
-  String get replace_summary_confirm => 'Replace';
+  String get replace_summary_confirm => 'Değiştir';
 
   @override
   String replace_result_message(Object count) {
-    return 'Replaced your library with $count series from this backup.';
+    return 'Kitaplık yedekten gelen $count seri ile değiştirildi.';
   }
 
   @override
-  String get category_conflict_title => 'Existing categories found';
+  String get category_conflict_title => 'Mevcut kategoriler bulundu';
 
   @override
   String get category_conflict_message =>
-      'The backup has categories that already exist in your library. Keep to fold incoming series into the existing category, or delete to leave those series uncategorized instead.';
+      'Yedekte zaten var olan kategoriler bulundu.';
 
   @override
-  String get category_conflict_keep => 'Keep — merge into existing category';
+  String get category_conflict_keep => 'Koru — mevcut kategoriye birleştir';
 
   @override
-  String get category_conflict_delete => 'Delete — leave series uncategorized';
+  String get category_conflict_delete => 'Sil — serileri kategorisiz bırak';
 
   @override
-  String get source_conflict_title => 'Sources not found';
+  String get source_conflict_title => 'Kaynaklar bulunamadı';
 
   @override
   String get source_conflict_message =>
-      'These backup sources don\'t match an installed extension. Keep the original name (imported without a working source), or migrate to an installed extension so these series can be updated.';
+      'Bazı kaynaklar yüklü eklentilerle eşleşmiyor.';
 
   @override
-  String get source_conflict_keep => 'Keep original name (no live source)';
+  String get source_conflict_keep => 'Orijinal adı koru';
 
   @override
-  String get import_summary_title => 'Ready to import';
+  String get import_summary_title => 'İçe aktarılmaya hazır';
 
   @override
   String import_summary_message(
@@ -2922,11 +2928,11 @@ class AppLocalizationsTr extends AppLocalizations {
     Object updatedSeries,
     Object newChapters,
   ) {
-    return '$newSeries new series, $updatedSeries existing series will be updated, and $newChapters new chapters will be added. Nothing already in your library will be removed.';
+    return '$newSeries yeni seri, $updatedSeries güncellenen seri ve $newChapters yeni bölüm.';
   }
 
   @override
-  String get import_summary_confirm => 'Import';
+  String get import_summary_confirm => 'İçe aktar';
 
   @override
   String import_result_message(
@@ -2934,51 +2940,51 @@ class AppLocalizationsTr extends AppLocalizations {
     Object updatedSeries,
     Object newChapters,
   ) {
-    return 'Imported $newSeries new series, updated $updatedSeries existing, added $newChapters new chapters.';
+    return '$newSeries yeni seri aktarıldı, $updatedSeries güncellendi, $newChapters bölüm eklendi.';
   }
 
   @override
-  String get roll_back => 'Roll back';
+  String get roll_back => 'Geri al';
 
   @override
   String get roll_back_confirm_message =>
-      'This restores your library to the safety snapshot taken right before this change, undoing everything it just did.';
+      'Kitaplığı bu değişiklikten hemen önceki anlık görüntüye döndürür.';
 
   @override
-  String get roll_back_done => 'Rolled back to the pre-change snapshot.';
+  String get roll_back_done => 'Önceki duruma geri dönüldü.';
 
   @override
-  String get restoring_backup => 'Restoring your library…';
+  String get restoring_backup => 'Kitaplık geri yükleniyor…';
 
   @override
-  String get roll_back_last_change => 'Roll back last change';
+  String get roll_back_last_change => 'Son değişikliği geri al';
 
   @override
   String roll_back_last_change_subtitle(Object date, Object description) {
-    return 'Snapshot from $date — $description';
+    return '$date tarihli anlık görüntü — $description';
   }
 
   @override
   String roll_back_available_count(Object count) {
-    return '$count recent changes available to roll back to';
+    return 'Geri alınabilir $count son değişiklik mevcut';
   }
 
   @override
-  String get delete_source_title => 'Delete a source & its manga';
+  String get delete_source_title => 'Kaynağı ve mangalarını sil';
 
   @override
   String get delete_source_subtitle =>
-      'Pick a source and remove every manga it has in your library, along with their chapters, downloads, history and tracking.';
+      'Bir kaynak seçerek tüm mangalarını, bölümlerini, indirmelerini ve geçmişini kaldırın.';
 
   @override
-  String get delete_source_pick_title => 'Pick a source to delete';
+  String get delete_source_pick_title => 'Silinecek kaynağı seçin';
 
   @override
-  String get delete_source_empty => 'No sources found in your library.';
+  String get delete_source_empty => 'Kitaplıkta kaynak bulunamadı.';
 
   @override
   String delete_source_confirm_title(Object sourceName) {
-    return 'Delete $sourceName?';
+    return '$sourceName silinsin mi?';
   }
 
   @override
@@ -2988,69 +2994,68 @@ class AppLocalizationsTr extends AppLocalizations {
     Object historyCount,
     Object updateCount,
   ) {
-    return 'This permanently deletes $mangaCount manga, $chapterCount chapters, $historyCount history entries and $updateCount update entries. Tracking links are kept. This cannot be undone except by rolling back.';
+    return '$mangaCount manga, $chapterCount bölüm, $historyCount geçmiş kaydı kalıcı olarak silinecek.';
   }
 
   @override
-  String get delete_source_also_remove_extension =>
-      'Also remove the installed extension';
+  String get delete_source_also_remove_extension => 'Yüklü eklentiyi de kaldır';
 
   @override
-  String get delete_source_keep_history => 'Keep reading history';
+  String get delete_source_keep_history => 'Okuma geçmişini koru';
 
   @override
-  String get delete_source_keep_downloads => 'Keep download records';
+  String get delete_source_keep_downloads => 'İndirme kayıtlarını koru';
 
   @override
-  String get delete_source_button => 'Delete';
+  String get delete_source_button => 'Sil';
 
   @override
   String delete_source_result_message(Object mangaCount, Object sourceName) {
-    return 'Deleted $mangaCount manga from $sourceName.';
+    return '$sourceName kaynağından $mangaCount manga silindi.';
   }
 
   @override
-  String get merge_manga_title => 'Merge duplicate manga';
+  String get merge_manga_title => 'Yinelenen mangaları birleştir';
 
   @override
   String get merge_manga_subtitle =>
-      'Finds manga with matching titles under the same source (e.g. after merging duplicate sources) and folds them into one, without deleting anything you\'d want kept.';
+      'Aynı kaynak altındaki aynı başlıklı mangaları bulur ve birleştirir.';
 
   @override
-  String get merge_manga_none_found => 'No likely duplicate manga found.';
+  String get merge_manga_none_found => 'Yinelenen manga bulunamadı.';
 
   @override
-  String get merge_manga_pick_title => 'Possible duplicate manga';
+  String get merge_manga_pick_title => 'Olası yinelenen mangalar';
 
   @override
   String get merge_manga_choose_primary_title =>
-      'Which one should the others merge into?';
+      'Diğerleri hangisinde birleştirilsin?';
 
   @override
   String get merge_manga_choose_primary_message =>
-      'Chapters, history and tracking from the other entries will be folded into whichever one you pick — nothing is deleted.';
+      'Bölümler, geçmiş ve takip seçilen girdiye aktarılacaktır.';
 
   @override
   String merge_manga_chapters_subtitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count chapters',
-      one: '1 chapter',
+      other: '$count bölüm',
+      one: '1 bölüm',
     );
     return '$_temp0';
   }
 
   @override
-  String get merge_manga_button => 'Merge';
+  String get merge_manga_button => 'Birleştir';
 
   @override
   String merge_manga_result_message(Object count, Object mangaName) {
-    return 'Merged $count duplicate manga into $mangaName.';
+    return '$count yinelenen manga $mangaName içinde birleştirildi.';
   }
 
   @override
-  String get merge_preview_title => 'Confirm merge';
+  String get merge_preview_title => 'Birleştirmeyi onayla';
 
   @override
   String merge_manga_preview_message(
@@ -3059,165 +3064,237 @@ class AppLocalizationsTr extends AppLocalizations {
     Object keptChapters,
     Object duplicateTracks,
   ) {
-    return '$totalChapters chapters found across the other entries. $duplicateChapters are duplicates and will be dropped (keeping whichever copy has reading progress); $keptChapters will be added. $duplicateTracks duplicate tracking link(s) will also be dropped.';
+    return '$totalChapters bölüm bulundu. $duplicateChapters yinelenen atılacak, $keptChapters eklenecek.';
   }
+
+  @override
+  String get memory_overlay => 'Show memory usage';
+
+  @override
+  String get memory_overlay_subtitle =>
+      'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.';
 
   @override
   String get beta => 'Beta';
 
   @override
-  String get error_reports => 'Error reports';
+  String get error_reports => 'Hata raporları';
 
   @override
   String get error_reports_subtitle =>
-      'Errors the app caught, and a way to report them';
+      'Uygulamanın yakaladığı hatalar ve bildirme yolu';
 
   @override
-  String get error_reports_empty =>
-      'Nothing has gone wrong. Errors the app catches are kept here so you can report them.';
+  String get error_reports_empty => 'Hata oluşmadı.';
 
   @override
-  String get error_reports_likely_cause => 'Likely cause';
+  String get error_reports_likely_cause => 'Olası neden';
 
   @override
-  String get error_reports_report => 'Report on GitHub';
+  String get error_reports_report => 'GitHub\'da Bildir';
 
   @override
-  String get error_reports_banner => 'Mangayomi ran into an error';
+  String get error_reports_banner => 'Mangayomi bir hatayla karşılaştı';
 
   @override
-  String get error_reports_banner_action => 'See it';
+  String get error_reports_banner_action => 'Görüntüle';
 
   @override
-  String get error_reports_copy => 'Copy';
+  String get error_reports_copy => 'Kopyala';
 
   @override
-  String get error_reports_copied => 'Copied to the clipboard';
+  String get error_reports_copied => 'Panoya kopyalandı';
 
   @override
-  String get error_reports_clear => 'Clear';
+  String get error_reports_clear => 'Temizle';
+
+  @override
+  String get error_reports_extension_failure =>
+      'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.';
+
+  @override
+  String get error_reports_already_reported => 'Already reported';
+
+  @override
+  String get error_reports_expected_failure =>
+      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
 
   @override
   String get share_unavailable_copied =>
-      'Sharing isn\'t available on this platform, so it was copied to the clipboard instead.';
+      'Paylaşım kullanılamıyor, panoya kopyalandı.';
 
   @override
-  String get onboarding_title => 'Welcome to Mangayomi';
+  String get onboarding_title => 'Mangayomi\'ye Hoş Geldiniz';
 
   @override
   String get onboarding_libraries_body =>
-      'Pick what you read and watch. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.';
+      'Okumak ve izlemek istediklerinizi seçin.';
 
   @override
-  String get onboarding_nav_title => 'Your libraries';
+  String get onboarding_nav_title => 'Kitaplıklarınız';
 
   @override
   String get onboarding_nav_body =>
-      'Keep a tab for each of them, or put them together behind one Library tab you can switch inside.';
+      'Her biri için ayrı sekme veya tek bir Kitaplık sekmesi altında toplayın.';
 
   @override
-  String get onboarding_nav_split => 'A tab each';
+  String get onboarding_nav_split => 'Ayrı sekmeler';
 
   @override
-  String get onboarding_nav_merged => 'One Library tab';
+  String get onboarding_nav_merged => 'Tek Kitaplık sekmesi';
 
   @override
-  String get onboarding_nav_inside => 'Tapping Library swaps the bar for these';
+  String get onboarding_nav_inside =>
+      'Kitaplık\'a dokunmak sekmeleri değiştirir';
 
   @override
-  String get onboarding_next => 'Next';
+  String get onboarding_next => 'İleri';
 
   @override
-  String get onboarding_restore => 'Restore a backup';
+  String get onboarding_restore => 'Yedekten geri yükle';
 
   @override
-  String get onboarding_or_local => 'Or use files you already have';
+  String get onboarding_or_local => 'Veya mevcut dosyaları kullanın';
 
   @override
-  String get onboarding_local_folder => 'Add a folder';
+  String get onboarding_local_folder => 'Klasör ekle';
 
   @override
   String onboarding_local_existing(Object count) {
-    return '$count folders already set up';
+    return '$count klasör zaten ayarlanmış';
   }
 
   @override
-  String get onboarding_local_any_type =>
-      'Manga, anime and novels all work. Each title goes to the right library based on what is inside it.';
+  String get onboarding_local_any_type => 'Manga, anime ve novel desteklenir.';
 
   @override
-  String get onboarding_local_scanning => 'Scanning the folder';
+  String get onboarding_local_scanning => 'Klasör taranıyor';
 
   @override
   String onboarding_local_found(Object count) {
-    return '$count titles found';
+    return '$count başlık bulundu';
   }
 
   @override
-  String get onboarding_local_remove => 'Remove that folder';
+  String get onboarding_local_remove => 'Klasörü kaldır';
 
   @override
   String get onboarding_local_in_downloads =>
-      'That is the app\'s downloads folder. Adding it makes a second, local copy of a library the app already manages.';
+      'Bu uygulamanın indirme klasörüdür.';
 
   @override
   String get onboarding_local_empty =>
-      'Nothing found. Pick the folder that holds your manga folders, not one manga.';
+      'Hiçbir şey bulunamadı. Ana klasörü seçin.';
 
   @override
-  String get onboarding_repo_failed =>
-      'Couldn\'t read that repository. Check the address and your connection.';
+  String get onboarding_repo_failed => 'Depo okunamadı.';
 
   @override
-  String get onboarding_repo_title => 'Add a source';
+  String get onboarding_repo_title => 'Kaynak ekle';
 
   @override
-  String get onboarding_body =>
-      'Mangayomi comes with no sources of its own. Add a repository and the extensions it holds become available to install and browse.';
+  String get onboarding_body => 'Eklentileri yüklemek için bir depo ekleyin.';
 
   @override
-  String get onboarding_add => 'Add repository';
+  String get onboarding_add => 'Depo ekle';
 
   @override
-  String get onboarding_skip => 'Skip for now';
+  String get onboarding_skip => 'Şimdilik atla';
 
   @override
-  String get onboarding_continue => 'Continue';
+  String get onboarding_continue => 'Devam et';
 
   @override
   String get onboarding_later =>
-      'You can add one later in Settings, under Browse.';
+      'Daha sonra Ayarlar > Gözat bölümünden ekleyebilirsiniz.';
 
   @override
-  String get onboarding_replay => 'Show the welcome screen';
+  String get onboarding_replay => 'Karşılama ekranını göster';
 
   @override
-  String get onboarding_replay_subtitle =>
-      'Opens the first-run screen again, the one a new install starts on.';
+  String get onboarding_replay_subtitle => 'İlk kurulum ekranını yeniden açar.';
 
   @override
-  String get missing_source_check_title => 'Check for missing sources';
+  String get missing_source_check_title => 'Eksik kaynakları kontrol et';
 
   @override
   String get missing_source_check_subtitle =>
-      'Find library entries whose extension isn\'t installed - restoring a backup can leave entries pointing at a source you never installed on this device.';
+      'Eklentisi yüklü olmayan girdileri bulur.';
 
   @override
-  String get missing_source_check_none_found =>
-      'Every library entry\'s source is installed.';
+  String get missing_source_check_none_found => 'Tüm kaynaklar yüklü.';
 
   @override
   String missing_source_check_result_title(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sources missing',
-      one: '1 source missing',
+      other: '$count kaynak eksik',
+      one: '1 kaynak eksik',
     );
     return '$_temp0';
   }
 
   @override
+  String global_search_no_sources(String itemType) {
+    return 'No $itemType sources are installed.';
+  }
+
+  @override
+  String get global_search_no_sources_hint =>
+      'Add a repository under Browse, then install an extension for it.';
+
+  @override
+  String global_search_only_pinned(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sources',
+      one: '1 source',
+    );
+    return 'You have $_temp0 for this, but only pinned ones are searched.';
+  }
+
+  @override
+  String get global_search_only_pinned_hint =>
+      'Pin one, or turn off \"Only include pinned sources\" in Browse settings.';
+
+  @override
+  String get global_search_all_nsfw =>
+      'Every source you have for this is marked NSFW, and those are hidden.';
+
+  @override
+  String get global_search_all_nsfw_hint =>
+      'Turn on NSFW sources in Browse settings to search them.';
+
+  @override
   String get missing_source_check_result_message =>
-      'These library entries point at a source that isn\'t installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them.';
+      'Bu girdiler yüklü olmayan kaynaklara işaret ediyor. Taşımak için dokunun veya eklentiyi yükleyin.';
+
+  @override
+  String get related_titles => 'Related';
+
+  @override
+  String get related_none => 'Nothing related was found for this title.';
+
+  @override
+  String get relation_adaptation => 'Adaptation';
+
+  @override
+  String get relation_sequel => 'Sequel';
+
+  @override
+  String get relation_prequel => 'Prequel';
+
+  @override
+  String get relation_parent => 'Parent story';
+
+  @override
+  String get relation_side_story => 'Side story';
+
+  @override
+  String get relation_spin_off => 'Spin-off';
+
+  @override
+  String get relation_alternative => 'Alternative version';
 }

@@ -234,7 +234,7 @@ Future<String> _deleteDownload(Manga manga, String mangaDirectory) async {
 void showImportLocalDialog(BuildContext context, ItemType itemType) {
   final l10n = l10nLocalizations(context)!;
   final filesText = switch (itemType) {
-    ItemType.manga => ".zip, .cbz",
+    ItemType.manga => ".zip, .cbz, .rar, .cbr",
     ItemType.anime => ".mp4, .mkv, .avi, and more",
     ItemType.novel => ".epub",
   };
