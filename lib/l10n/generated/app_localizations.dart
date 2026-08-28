@@ -5812,6 +5812,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'These library entries point at a source that isn\'t installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them.'**
   String get missing_source_check_result_message;
+
+  /// No description provided for @related_titles.
+  ///
+  /// In en, this message translates to:
+  /// **'Related'**
+  String get related_titles;
+
+  /// No description provided for @related_none.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing related was found for this title.'**
+  String get related_none;
+
+  /// No description provided for @relation_adaptation.
+  ///
+  /// In en, this message translates to:
+  /// **'Adaptation'**
+  String get relation_adaptation;
+
+  /// No description provided for @relation_sequel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sequel'**
+  String get relation_sequel;
+
+  /// No description provided for @relation_prequel.
+  ///
+  /// In en, this message translates to:
+  /// **'Prequel'**
+  String get relation_prequel;
+
+  /// No description provided for @relation_parent.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent story'**
+  String get relation_parent;
+
+  /// No description provided for @relation_side_story.
+  ///
+  /// In en, this message translates to:
+  /// **'Side story'**
+  String get relation_side_story;
+
+  /// No description provided for @relation_spin_off.
+  ///
+  /// In en, this message translates to:
+  /// **'Spin-off'**
+  String get relation_spin_off;
+
+  /// No description provided for @relation_alternative.
+  ///
+  /// In en, this message translates to:
+  /// **'Alternative version'**
+  String get relation_alternative;
 }
 
 class _AppLocalizationsDelegate
