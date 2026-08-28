@@ -8,6 +8,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/recommendation.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/design_tokens.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -21,12 +22,6 @@ const double _cardExtent = _coverHeight + 12;
 /// One column on a phone, two above this, and never more than two: a third
 /// column turns a scannable list of cover-plus-prose into a wall.
 const double _twoColumnBreakpoint = 700;
-
-/// Tints are an alpha over the theme foreground or the accent, never a fixed
-/// colour, because the palette is chosen at runtime.
-const double _alphaTint = 0.08;
-const double _alphaFocus = 0.14;
-const double _alphaSecondary = 0.70;
 
 class RecommendationScreen extends StatefulWidget {
   final String name;
@@ -105,8 +100,9 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
           // to two columns instead so they never run into empty space.
           : LayoutBuilder(
               builder: (context, constraints) {
-                final columns =
-                    constraints.maxWidth >= _twoColumnBreakpoint ? 2 : 1;
+                final columns = constraints.maxWidth >= _twoColumnBreakpoint
+                    ? 2
+                    : 1;
                 return GridView.builder(
                   padding: tvPageInsets,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -135,7 +131,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
         // Nothing was focusable on entry, so a remote did nothing until the
         // user guessed a direction. The first card claims focus on a TV.
         autofocus: isTv && index == 0,
-        focusColor: context.primaryColor.withValues(alpha: _alphaFocus),
+        focusColor: context.primaryColor.withValues(alpha: Alphas.focus),
         onTap: () =>
             context.push('/globalSearch', extra: (title, widget.itemType)),
         child: Padding(
@@ -186,7 +182,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                           fontSize: 12,
                           height: 1.35,
                           color: context.textColor.withValues(
-                            alpha: _alphaSecondary,
+                            alpha: Alphas.secondary,
                           ),
                         ),
                       ),
@@ -240,14 +236,14 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
       decoration: BoxDecoration(
-        color: context.textColor.withValues(alpha: _alphaTint),
+        color: context.textColor.withValues(alpha: Alphas.tint),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Text(
         text,
         style: TextStyle(
           fontSize: 11,
-          color: context.textColor.withValues(alpha: _alphaSecondary),
+          color: context.textColor.withValues(alpha: Alphas.secondary),
         ),
       ),
     );
