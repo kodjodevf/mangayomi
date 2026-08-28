@@ -82,9 +82,21 @@ final darkThemeProvider = Provider<ThemeData>((ref) {
     FlexThemeData.dark(
       colors: colors,
       surfaceMode: FlexSurfaceMode.level,
-      blendLevel: blendLevel,
+      // Pure black means pure black. The slider that sets this is hidden while
+      // the toggle is on, but hiding a control does not stop it applying, so a
+      // blend chosen beforehand went on tinting every surface that is not the
+      // scaffold: cards, sheets, dialogs, the nav bar. The result was a black
+      // page with visibly grey-blue things floating on it, and no way to
+      // correct it without turning pure black back off.
+      //
+      // The stored level is left alone, so turning the toggle off restores
+      // whatever blend was chosen.
+      blendLevel: pureBlack ? 0 : blendLevel,
       appBarOpacity: 0.00,
-      scaffoldBackground: pureBlack ? Colors.black : null,
+      // The framework's own switch rather than painting the scaffold black by
+      // hand: it takes the surfaces down with it, which is the half that was
+      // missing.
+      darkIsTrueBlack: pureBlack,
       subThemesData: const FlexSubThemesData(
         blendOnLevel: 10,
         thinBorderWidth: 2.0,
