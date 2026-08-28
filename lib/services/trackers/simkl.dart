@@ -13,6 +13,7 @@ import 'package:mangayomi/modules/more/settings/track/providers/track_providers.
 import 'package:mangayomi/services/http/m_client.dart';
 
 import 'base_tracker.dart';
+import 'tracker_account.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'simkl.g.dart';
@@ -367,25 +368,31 @@ class Simkl extends _$Simkl implements BaseTracker {
     return OAuth.fromJson(json)..clientId = clientId;
   }
 
-  void _saveOAuth(String username, OAuth oAuth) {
+  void _saveOAuth(TrackerAccount user, OAuth oAuth) {
     widgetRef
         .read(tracksProvider(syncId: syncId).notifier)
         .login(
           TrackPreference(
             syncId: syncId,
-            username: username,
+            username: user.id,
+            displayName: user.name,
+            avatarUrl: user.avatarUrl,
             prefs: "",
             oAuth: jsonEncode(oAuth.toJson()),
           ),
         );
   }
 
-  Future<String> _getUserName(String accessToken) async {
+  /// The account behind the token.
+  ///
+  /// Same split as AniList: the id is what other calls need, the name is what
+  /// a person recognises, and `/users/settings` answers with both already.
+  Future<TrackerAccount> _getUserName(String accessToken) async {
     final response = await _makeGetRequest(
       Uri.parse('$_baseApiUrl/users/settings'),
       accessToken,
     );
-    return "${jsonDecode(response.body)['account']['id']}";
+    return simklAccount(jsonDecode(response.body) as Map<String, dynamic>);
   }
 
   String _authUrl() {

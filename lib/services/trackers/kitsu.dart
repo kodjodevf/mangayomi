@@ -11,7 +11,9 @@ import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/localized_message.dart';
+
 import 'base_tracker.dart';
+import 'tracker_account.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'kitsu.g.dart';
@@ -71,7 +73,9 @@ class Kitsu extends _$Kitsu implements BaseTracker {
           .read(tracksProvider(syncId: syncId).notifier)
           .login(
             TrackPreference(
-              username: currentUser.$1,
+              username: currentUser.$1.id,
+              displayName: currentUser.$1.name,
+              avatarUrl: currentUser.$1.avatarUrl,
               syncId: syncId,
               prefs: jsonEncode({"ratingSystem": currentUser.$2}),
               oAuth: jsonEncode(aKOAuth.toJson()),
@@ -348,13 +352,17 @@ class Kitsu extends _$Kitsu implements BaseTracker {
       ..finishedReadingDate = _parseDate(attributes["finishedAt"]);
   }
 
-  Future<(String, String)> _getCurrentUser(String accessToken) async {
+  /// The account, and the rating system stored alongside it.
+  ///
+  /// As on AniList and Simkl the id is what the rest of this file needs, so
+  /// the readable name is returned beside it rather than in place of it.
+  Future<(TrackerAccount, String)> _getCurrentUser(String accessToken) async {
     final url = Uri.parse('${_baseUrl}users?filter[self]=true');
     Response response = await _makeGetRequest(url, accessToken);
-    final data = json.decode(response.body)['data'][0];
+    final data = json.decode(response.body)['data'][0] as Map<String, dynamic>;
     return (
-      data['id'].toString(),
-      data['attributes']['ratingSystem'].toString(),
+      kitsuAccount(data),
+      (data['attributes'] as Map<String, dynamic>)['ratingSystem'].toString(),
     );
   }
 

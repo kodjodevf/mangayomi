@@ -54,6 +54,8 @@ import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/services.dart' show rootBundle, LogicalKeyboardKey;
 import 'package:mangayomi/utils/window_geometry.dart';
+import 'package:mangayomi/modules/more/settings/general/providers/memory_probe_provider.dart';
+import 'package:mangayomi/modules/widgets/memory_overlay.dart';
 import 'package:mangayomi/modules/widgets/app_ui_scale.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_ui_scale_state_provider.dart';
 
@@ -138,7 +140,10 @@ void main(List<String> args) async {
       // "Enable logs". Anything raised before this is held in memory and
       // written out here.
       unawaited(
-        storage.getDefaultDirectory().then(CrashReports.init).catchError((_) {}),
+        storage
+            .getDefaultDirectory()
+            .then(CrashReports.init)
+            .catchError((_) {}),
       );
       Object? startupError;
       try {
@@ -356,6 +361,22 @@ class _MyAppState extends ConsumerState<MyApp>
               children: [withBackHandler, const AppLockScreen()],
             );
           }
+        }
+
+        // Sits above everything, including the lock screen, because a
+        // measurement is not worth taking if navigating away ends it.
+        if (ref.watch(memoryOverlayVisibleProvider)) {
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              withBackHandler,
+              MemoryOverlay(
+                probe: ref.read(memoryProbeProvider),
+                onClose: () =>
+                    ref.read(memoryOverlayVisibleProvider.notifier).set(false),
+              ),
+            ],
+          );
         }
 
         return withBackHandler;

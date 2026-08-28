@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/modules/more/settings/general/providers/memory_probe_provider.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
@@ -461,6 +462,13 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                   ),
                 ],
               ),
+            ),
+            SwitchListTile(
+              value: ref.watch(memoryOverlayVisibleProvider),
+              title: Text(l10n.memory_overlay),
+              subtitle: Text(l10n.memory_overlay_subtitle),
+              onChanged: (value) =>
+                  ref.read(memoryOverlayVisibleProvider.notifier).set(value),
             ),
             SwitchListTile(
               value: enableDiscordRpc,

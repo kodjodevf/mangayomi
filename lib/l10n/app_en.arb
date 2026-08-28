@@ -1221,6 +1221,8 @@
       "duplicateTracks": {}
     }
   },
+  "memory_overlay": "Show memory usage",
+  "memory_overlay_subtitle": "A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.",
   "beta": "Beta",
   "error_reports": "Error reports",
   "error_reports_subtitle": "Errors the app caught, and a way to report them",
@@ -1232,6 +1234,9 @@
   "error_reports_copy": "Copy",
   "error_reports_copied": "Copied to the clipboard",
   "error_reports_clear": "Clear",
+  "error_reports_extension_failure": "This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.",
+  "error_reports_already_reported": "Already reported",
+  "error_reports_expected_failure": "This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.",
   "share_unavailable_copied": "Sharing isn't available on this platform, so it was copied to the clipboard instead.",
   "onboarding_title": "Welcome to Mangayomi",
   "onboarding_libraries_body": "Pick what you read and watch. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.",
@@ -1273,7 +1278,7 @@
       }
     }
   },
-  "global_search_no_sources": "No {itemType} sources are installed.",
+ "global_search_no_sources": "No {itemType} sources are installed.",
   "@global_search_no_sources": {
     "placeholders": {"itemType": {"type": "String"}}
   },
@@ -1285,5 +1290,14 @@
   "global_search_only_pinned_hint": "Pin one, or turn off \"Only include pinned sources\" in Browse settings.",
   "global_search_all_nsfw": "Every source you have for this is marked NSFW, and those are hidden.",
   "global_search_all_nsfw_hint": "Turn on NSFW sources in Browse settings to search them.",
-  "missing_source_check_result_message": "These library entries point at a source that isn't installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them."
+  "missing_source_check_result_message": "These library entries point at a source that isn't installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them.",
+  "related_titles": "Related",
+  "related_none": "Nothing related was found for this title.",
+  "relation_adaptation": "Adaptation",
+  "relation_sequel": "Sequel",
+  "relation_prequel": "Prequel",
+  "relation_parent": "Parent story",
+  "relation_side_story": "Side story",
+  "relation_spin_off": "Spin-off",
+  "relation_alternative": "Alternative version"
 }

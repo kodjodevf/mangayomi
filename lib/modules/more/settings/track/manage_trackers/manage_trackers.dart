@@ -4,6 +4,7 @@ import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
+import 'package:mangayomi/modules/widgets/tracker_account_avatar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -36,6 +37,7 @@ class _ManageTrackersScreenState extends State<ManageTrackersScreen> {
         itemCount: trackPreferences.length,
         itemBuilder: (context, index) {
           final trackerPref = trackPreferences[index];
+          final accountLabel = trackerPref.accountLabel;
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: MaterialButton(
@@ -70,7 +72,7 @@ class _ManageTrackersScreenState extends State<ManageTrackersScreen> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Text(
                       trackerPref.syncId == -1
                           ? 'Local'
@@ -81,6 +83,35 @@ class _ManageTrackersScreenState extends State<ManageTrackersScreen> {
                       ),
                     ),
                   ),
+                  // Which account, not just which service. Four services can
+                  // be connected at once and nothing here said whose lists
+                  // were being shown.
+                  if (accountLabel != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TrackerAccountAvatar(
+                            preference: trackerPref,
+                            radius: 10,
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              accountLabel,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: context.secondaryColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    const SizedBox(height: 10),
                 ],
               ),
             ),

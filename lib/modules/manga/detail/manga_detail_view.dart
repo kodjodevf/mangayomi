@@ -1677,6 +1677,36 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     ),
                   ),
                   const SizedBox(height: 15),
+                  // Everything this title is related to, including the one
+                  // thing that cannot be reached any other way from in here:
+                  // its adaptation in the other medium.
+                  SizedBox(
+                    width: context.width(1),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: OutlinedButton.icon(
+                        style: ButtonStyle(
+                          shape: WidgetStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          context.push(
+                            "/related",
+                            extra: (
+                              widget.manga!.name!,
+                              widget.manga!.itemType,
+                            ),
+                          );
+                        },
+                        label: Text(l10n.related_titles),
+                        icon: Icon(Icons.arrow_right_alt_outlined),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
                   if (widget.manga!.itemType == ItemType.anime)
                     SizedBox(
                       width: context.width(1),

@@ -3058,6 +3058,13 @@ class AppLocalizationsAs extends AppLocalizations {
   }
 
   @override
+  String get memory_overlay => 'Show memory usage';
+
+  @override
+  String get memory_overlay_subtitle =>
+      'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.';
+
+  @override
   String get beta => 'বিটা';
 
   @override
@@ -3090,6 +3097,17 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get error_reports_clear => 'পৰিষ্কাৰ কৰক';
+
+  @override
+  String get error_reports_extension_failure =>
+      'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.';
+
+  @override
+  String get error_reports_already_reported => 'Already reported';
+
+  @override
+  String get error_reports_expected_failure =>
+      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
 
   @override
   String get share_unavailable_copied =>
@@ -3239,4 +3257,31 @@ class AppLocalizationsAs extends AppLocalizations {
   @override
   String get missing_source_check_result_message =>
       'এই এণ্ট্ৰিসমূহ ইনষ্টল নথকা উৎসৰ সৈতে জড়িত। স্থানান্তৰ কৰিবলৈ টিপক বা এক্সটেনচন ইনষ্টল কৰক।';
+
+  @override
+  String get related_titles => 'Related';
+
+  @override
+  String get related_none => 'Nothing related was found for this title.';
+
+  @override
+  String get relation_adaptation => 'Adaptation';
+
+  @override
+  String get relation_sequel => 'Sequel';
+
+  @override
+  String get relation_prequel => 'Prequel';
+
+  @override
+  String get relation_parent => 'Parent story';
+
+  @override
+  String get relation_side_story => 'Side story';
+
+  @override
+  String get relation_spin_off => 'Spin-off';
+
+  @override
+  String get relation_alternative => 'Alternative version';
 }

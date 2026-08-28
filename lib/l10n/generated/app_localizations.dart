@@ -5519,6 +5519,18 @@ abstract class AppLocalizations {
     Object duplicateTracks,
   );
 
+  /// No description provided for @memory_overlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Show memory usage'**
+  String get memory_overlay;
+
+  /// No description provided for @memory_overlay_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.'**
+  String get memory_overlay_subtitle;
+
   /// No description provided for @beta.
   ///
   /// In en, this message translates to:
@@ -5584,6 +5596,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear'**
   String get error_reports_clear;
+
+  /// No description provided for @error_reports_extension_failure.
+  ///
+  /// In en, this message translates to:
+  /// **'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.'**
+  String get error_reports_extension_failure;
+
+  /// No description provided for @error_reports_already_reported.
+  ///
+  /// In en, this message translates to:
+  /// **'Already reported'**
+  String get error_reports_already_reported;
+
+  /// No description provided for @error_reports_expected_failure.
+  ///
+  /// In en, this message translates to:
+  /// **'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.'**
+  String get error_reports_expected_failure;
 
   /// No description provided for @share_unavailable_copied.
   ///
@@ -5818,6 +5848,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'These library entries point at a source that isn\'t installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them.'**
   String get missing_source_check_result_message;
+
+  /// No description provided for @related_titles.
+  ///
+  /// In en, this message translates to:
+  /// **'Related'**
+  String get related_titles;
+
+  /// No description provided for @related_none.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing related was found for this title.'**
+  String get related_none;
+
+  /// No description provided for @relation_adaptation.
+  ///
+  /// In en, this message translates to:
+  /// **'Adaptation'**
+  String get relation_adaptation;
+
+  /// No description provided for @relation_sequel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sequel'**
+  String get relation_sequel;
+
+  /// No description provided for @relation_prequel.
+  ///
+  /// In en, this message translates to:
+  /// **'Prequel'**
+  String get relation_prequel;
+
+  /// No description provided for @relation_parent.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent story'**
+  String get relation_parent;
+
+  /// No description provided for @relation_side_story.
+  ///
+  /// In en, this message translates to:
+  /// **'Side story'**
+  String get relation_side_story;
+
+  /// No description provided for @relation_spin_off.
+  ///
+  /// In en, this message translates to:
+  /// **'Spin-off'**
+  String get relation_spin_off;
+
+  /// No description provided for @relation_alternative.
+  ///
+  /// In en, this message translates to:
+  /// **'Alternative version'**
+  String get relation_alternative;
 }
 
 class _AppLocalizationsDelegate
