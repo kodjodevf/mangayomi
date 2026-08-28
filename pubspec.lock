@@ -309,10 +309,10 @@ packages:
     dependency: "direct main"
     description:
       name: d4rt
-      sha256: "4c178f741141592d60e4037c3205f9c081a3b32edc1061029a43667dff409a36"
+      sha256: "42f63dcb886279272b617700c166f16e7730baa19572029edc8b4501d3a39360"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.2"
+    version: "0.2.4"
   dart_style:
     dependency: transitive
     description:

@@ -98,7 +98,7 @@ dependencies:
   fixnum: ^1.1.1
   device_info_plus: ^13.2.0
   marquee: ^2.2.3
-  d4rt: ^0.2.2
+  d4rt: ^0.2.4
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   flutter_discord_rpc_fork:
