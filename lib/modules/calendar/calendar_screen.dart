@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/modules/calendar/models/upcoming_ui_model.dart';
 import 'package:mangayomi/modules/calendar/providers/calendar_provider.dart';
 import 'package:mangayomi/modules/calendar/widgets/upcoming_calendar.dart';
@@ -291,10 +290,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     if (manga.smartUpdateDays == null || manga.smartUpdateDays! <= 0) {
       return null;
     }
-    final lastChapter = manga.chapters
-        .filter()
-        .sortByDateUploadDesc()
-        .findFirstSync();
+    final lastChapter = chapterRepository.findLatestByMangaId(manga.id);
     final lastChapterMs = int.tryParse(lastChapter?.dateUpload ?? '');
     return FetchInterval.computeExpectedDate(
       lastChapterDateMs: lastChapterMs,

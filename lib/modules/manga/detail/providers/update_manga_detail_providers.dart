@@ -1,8 +1,10 @@
 import 'package:mangayomi/utils/chapter_recognition.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/services/get_detail.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/fetch_interval.dart';
@@ -19,7 +21,7 @@ Future<dynamic> updateMangaDetail(
   bool showToast = true,
 }) async {
   try {
-    final manga = isar.mangas.getSync(mangaId!);
+    final manga = mangaRepository.findById(mangaId!);
     if (manga == null) return;
 
     manga.chapters.loadSync();
@@ -75,8 +77,8 @@ Future<dynamic> updateMangaDetail(
 
     final chaps = getManga.chapters;
 
-    await isar.writeTxn(() async {
-      final savedMangaId = await isar.mangas.put(manga);
+    await mangaRepository.writeTransactionAsync(() async {
+      final savedMangaId = await mangaRepository.putAsync(manga);
 
       if (chaps == null || chaps.isEmpty) return;
 
@@ -212,7 +214,7 @@ Future<dynamic> updateMangaDetail(
       }
 
       if (chaptersToUpdate.isNotEmpty) {
-        await isar.chapters.putAll(chaptersToUpdate);
+        await chapterRepository.putAllAsync(chaptersToUpdate);
       }
 
       if (newChapters.isNotEmpty) {
@@ -224,7 +226,7 @@ Future<dynamic> updateMangaDetail(
           chap.manga.value = manga;
         }
 
-        await isar.chapters.putAll(orderedNew);
+        await chapterRepository.putAllAsync(orderedNew);
         for (final chap in orderedNew) {
           await chap.manga.save();
         }
@@ -244,7 +246,7 @@ Future<dynamic> updateMangaDetail(
         }
 
         if (updatesToInsert.isNotEmpty) {
-          await isar.updates.putAll(updatesToInsert);
+          await updateRepository.putAllAsync(updatesToInsert);
           for (final upd in updatesToInsert) {
             await upd.chapter.save();
           }
@@ -252,7 +254,7 @@ Future<dynamic> updateMangaDetail(
       }
 
       if (duplicateIds.isNotEmpty) {
-        await isar.chapters.deleteAll(duplicateIds.toList());
+        await chapterRepository.deleteAllAsync(duplicateIds.toList());
       }
 
       final dedupedExisting = duplicateIds.isEmpty
@@ -268,7 +270,7 @@ Future<dynamic> updateMangaDetail(
         manga
           ..id = savedMangaId
           ..smartUpdateDays = interval;
-        await isar.mangas.put(manga);
+        await mangaRepository.putAsync(manga);
       }
     });
   } catch (e, s) {

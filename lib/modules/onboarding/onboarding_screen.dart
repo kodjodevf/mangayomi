@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
 import 'package:mangayomi/modules/browse/providers/browse_initial_tab_provider.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -343,10 +342,8 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
           // every local title the library already had and tell the user
           // nothing about the folder they just picked.
           final prefix = '${p.basename(path)}/';
-          final mine = isar.mangas
-              .filter()
-              .isLocalArchiveEqualTo(true)
-              .findAllSync()
+          final mine = mangaRepository
+              .getLocalArchive()
               .where((manga) => (manga.link ?? '').startsWith(prefix))
               .toList();
           _foundTitles = mine.length;

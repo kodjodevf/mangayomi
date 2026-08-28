@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/sync_preference_repository.dart';
 import 'package:mangayomi/modules/more/settings/appearance/appearance_screen.dart'
     show SettingsSection;
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_connection_status_provider.dart';
@@ -40,9 +39,7 @@ class SyncScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10nLocalizations(context)!.syncing)),
       body: SingleChildScrollView(
         child: StreamBuilder(
-          stream: isar.syncPreferences.filter().syncIdIsNotNull().watch(
-            fireImmediately: true,
-          ),
+          stream: syncPreferenceRepository.watchAllWithSyncId(),
           builder: (context, snapshot) {
             SyncPreference syncPreference = snapshot.data?.isNotEmpty ?? false
                 ? snapshot.data?.first ?? SyncPreference()

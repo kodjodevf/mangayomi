@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
 import 'package:mangayomi/modules/widgets/tracker_account_avatar.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -21,10 +20,7 @@ class _ManageTrackersScreenState extends State<ManageTrackersScreen> {
   @override
   void initState() {
     super.initState();
-    trackPreferences = isar.trackPreferences
-        .filter()
-        .syncIdIsNotNull()
-        .findAllSync();
+    trackPreferences = trackRepository.getAllPreferences();
     // trackPreferences.insert(0, TrackPreference(syncId: -1));
   }
 

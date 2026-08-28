@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:path/path.dart' as path;
 
 class AppLogger {
@@ -17,7 +16,8 @@ class AppLogger {
     if (_initialized || _busy) return;
     _busy = true;
     try {
-      final enabled = (await isar.settings.get(227))?.enableLogs ?? false;
+      final enabled =
+          (await settingsRepository.currentAsync)?.enableLogs ?? false;
       if (!enabled) return;
       final storage = StorageProvider();
       final directory = await storage.getDefaultDirectory();

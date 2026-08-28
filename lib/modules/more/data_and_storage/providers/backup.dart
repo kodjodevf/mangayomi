@@ -4,22 +4,20 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/eval/model/source_preference.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/category.dart';
-import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/custom_button.dart';
-import 'package:mangayomi/models/download.dart';
-import 'package:mangayomi/models/history.dart';
-import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/models/track.dart';
-import 'package:mangayomi/models/track_preference.dart';
-import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/backup_compression.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/repositories/category_repository.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/custom_button_repository.dart';
+import 'package:mangayomi/repositories/download_repository.dart';
+import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/repositories/source_preference_repository.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
+import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/services/backup_password_storage.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/share.dart';
@@ -120,75 +118,36 @@ Future<String> writeMangayomiBackupZip({
   Map<String, dynamic> datas = {};
   datas.addAll({"version": "2"});
   if (list.contains(0)) {
-    final res = isar.mangas
-        .filter()
-        .idIsNotNull()
-        .favoriteEqualTo(true)
-        .isLocalArchiveEqualTo(false)
-        .findAllSync()
+    final res = mangaRepository
+        .getFavoritesNonLocalArchive()
         .map((e) => e.toJson())
         .toList();
     datas.addAll({"manga": res});
   }
   if (list.contains(1)) {
-    final res = isar.categorys
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final res = categoryRepository.getAll().map((e) => e.toJson()).toList();
     datas.addAll({"categories": res});
   }
   if (list.contains(2)) {
-    final res = isar.chapters
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final res = chapterRepository.getAll().map((e) => e.toJson()).toList();
     datas.addAll({"chapters": res});
-    final res_ = isar.downloads
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final res_ = downloadRepository.getAll().map((e) => e.toJson()).toList();
     datas.addAll({"downloads": res_});
   }
   if (list.contains(3)) {
-    final res = isar.tracks
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final res = trackRepository.getAll().map((e) => e.toJson()).toList();
     datas.addAll({"tracks": res});
   }
   if (list.contains(4)) {
-    final res = isar.historys
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final res = historyRepository.getAll().map((e) => e.toJson()).toList();
     datas.addAll({"history": res});
   }
   if (list.contains(5)) {
-    final res = isar.updates
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final res = updateRepository.getAll().map((e) => e.toJson()).toList();
     datas.addAll({"updates": res});
   }
   if (list.contains(6)) {
-    final res = isar.settings
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final res = settingsRepository.getAll().map((e) => e.toJson()).toList();
     datas.addAll({"settings": res});
   } else {
     final setting = Settings()..themeIsDark = isTv;
@@ -197,44 +156,30 @@ Future<String> writeMangayomiBackupZip({
     });
   }
   if (list.contains(7)) {
-    final res = isar.sourcePreferences
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
+    final res = sourcePreferenceRepository
+        .getAll()
         .map((e) => e.toJson())
         .toList();
     datas.addAll({"extensions_preferences": res});
   }
   if (list.contains(8)) {
-    final res_ = isar.trackPreferences
-        .filter()
-        .syncIdIsNotNull()
-        .findAllSync()
+    final res_ = trackRepository
+        .getAllPreferences()
         .map((e) => e.toJson())
         .toList();
     datas.addAll({"trackPreferences": res_});
   }
   if (list.contains(9)) {
-    final res = isar.sources
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final res = sourceRepository.getAll().map((e) => e.toJson()).toList();
     datas.addAll({"extensions": res});
   }
   if (list.contains(10)) {
-    final res = isar.customButtons
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    final res = customButtonRepository.getAll().map((e) => e.toJson()).toList();
     datas.addAll({"customButtons": res});
   }
   String? encryptionPassword;
   if (encrypt &&
-      (isar.settings.getSync(227)?.backupEncryptionEnabled ?? false)) {
+      (settingsRepository.currentOrNull?.backupEncryptionEnabled ?? false)) {
     encryptionPassword = await BackupPasswordStorage.get();
     if (encryptionPassword == null) {
       throw Exception(

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'onboarding_state_provider.g.dart';
 
@@ -19,7 +18,7 @@ part 'onboarding_state_provider.g.dart';
 class OnboardingCompletedState extends _$OnboardingCompletedState {
   @override
   bool build() {
-    final settings = isar.settings.getSync(227)!;
+    final settings = settingsRepository.current;
     final completed = settings.onboardingCompleted;
     if (completed != null) return completed;
     if (kDebugMode) return true;
@@ -38,14 +37,7 @@ class OnboardingCompletedState extends _$OnboardingCompletedState {
   void showAgain() => _set(false);
 
   void _set(bool value) {
-    final settings = isar.settings.getSync(227)!;
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings
-          ..onboardingCompleted = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.onboardingCompleted = value);
   }
 }

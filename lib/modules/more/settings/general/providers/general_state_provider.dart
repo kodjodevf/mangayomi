@@ -1,5 +1,4 @@
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'general_state_provider.g.dart';
 
@@ -7,19 +6,12 @@ part 'general_state_provider.g.dart';
 class CustomDnsState extends _$CustomDnsState {
   @override
   String build() {
-    return isar.settings.getSync(227)!.customDns ?? "";
+    return settingsRepository.current.customDns ?? "";
   }
 
   void set(String value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..customDns = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.customDns = value);
   }
 }
 
@@ -27,19 +19,12 @@ class CustomDnsState extends _$CustomDnsState {
 class EnableDiscordRpcState extends _$EnableDiscordRpcState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.enableDiscordRpc ?? true;
+    return settingsRepository.current.enableDiscordRpc ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..enableDiscordRpc = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.enableDiscordRpc = value);
   }
 }
 
@@ -47,19 +32,12 @@ class EnableDiscordRpcState extends _$EnableDiscordRpcState {
 class HideDiscordRpcInIncognitoState extends _$HideDiscordRpcInIncognitoState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.hideDiscordRpcInIncognito ?? true;
+    return settingsRepository.current.hideDiscordRpcInIncognito ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..hideDiscordRpcInIncognito = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.hideDiscordRpcInIncognito = value);
   }
 }
 
@@ -68,18 +46,13 @@ class RpcShowReadingWatchingProgressState
     extends _$RpcShowReadingWatchingProgressState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.rpcShowReadingWatchingProgress ?? true;
+    return settingsRepository.current.rpcShowReadingWatchingProgress ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..rpcShowReadingWatchingProgress = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
+    settingsRepository.update(
+      (s) => s.rpcShowReadingWatchingProgress = value,
     );
   }
 }
@@ -88,19 +61,12 @@ class RpcShowReadingWatchingProgressState
 class RpcShowTitleState extends _$RpcShowTitleState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.rpcShowTitle ?? true;
+    return settingsRepository.current.rpcShowTitle ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..rpcShowTitle = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.rpcShowTitle = value);
   }
 }
 
@@ -108,19 +74,12 @@ class RpcShowTitleState extends _$RpcShowTitleState {
 class RpcShowCoverImageState extends _$RpcShowCoverImageState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.rpcShowCoverImage ?? true;
+    return settingsRepository.current.rpcShowCoverImage ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..rpcShowCoverImage = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.rpcShowCoverImage = value);
   }
 }
 
@@ -128,18 +87,11 @@ class RpcShowCoverImageState extends _$RpcShowCoverImageState {
 class UserAgentState extends _$UserAgentState {
   @override
   String build() {
-    return isar.settings.getSync(227)!.userAgent!;
+    return settingsRepository.current.userAgent!;
   }
 
   void set(String value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..userAgent = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.userAgent = value);
   }
 }

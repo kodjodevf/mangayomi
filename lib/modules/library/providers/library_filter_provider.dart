@@ -1,10 +1,8 @@
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/models/track.dart';
+import 'package:mangayomi/repositories/download_repository.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'library_filter_provider.g.dart';
 
@@ -12,20 +10,17 @@ part 'library_filter_provider.g.dart';
 /// Returns a [Set<int>] for O(1) lookup instead of per-chapter queries.
 @riverpod
 Stream<Set<int>> downloadedChapterIds(Ref ref) {
-  return isar.downloads
-      .where()
-      .isDownloadEqualTo(true)
-      .watch(fireImmediately: true)
-      .map((list) => list.map((d) => d.id).whereType<int>().toSet());
+  return downloadRepository.watchDownloaded().map(
+    (list) => list.map((d) => d.id).whereType<int>().toSet(),
+  );
 }
 
 /// Pre-fetches all manga IDs that have at least one tracking entry reactively.
 @riverpod
 Stream<Set<int>> trackedMangaIds(Ref ref) {
-  return isar.tracks
-      .where()
-      .watch(fireImmediately: true)
-      .map((tracks) => tracks.map((t) => t.mangaId).whereType<int>().toSet());
+  return trackRepository.watchAll().map(
+    (tracks) => tracks.map((t) => t.mangaId).whereType<int>().toSet(),
+  );
 }
 
 /// Filters and sorts a list of [Manga] based on library filter/sort settings.

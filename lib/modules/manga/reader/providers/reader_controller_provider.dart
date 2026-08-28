@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
@@ -8,6 +7,8 @@ import 'package:mangayomi/modules/manga/reader/mixins/chapter_reader_settings_mi
 import 'package:mangayomi/modules/manga/reader/mixins/chapter_controller_mixin.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -54,7 +55,7 @@ class ReaderController extends _$ReaderController
 
   // Keep incognitoMode as a final field so it is read from Isar only once.
   @override
-  final bool incognitoMode = isar.settings.getSync(227)!.incognitoMode!;
+  final bool incognitoMode = settingsRepository.current.incognitoMode!;
 
   // ---------------------------------------------------------------------------
   // Reader-specific settings
@@ -96,12 +97,8 @@ class ReaderController extends _$ReaderController
         ..mangaId = getManga().id
         ..readerMode = newReaderMode,
     );
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        getIsarSetting()
-          ..personalReaderModeList = personalReaderModeLists
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
+    settingsRepository.save(
+      getIsarSetting()..personalReaderModeList = personalReaderModeLists,
     );
     onSettingsMutated();
   }
@@ -118,12 +115,8 @@ class ReaderController extends _$ReaderController
         ..mangaId = getManga().id
         ..pageMode = newPageMode,
     );
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        getIsarSetting()
-          ..personalPageModeList = personalPageModeLists
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
+    settingsRepository.save(
+      getIsarSetting()..personalPageModeList = personalPageModeLists,
     );
     onSettingsMutated();
   }
@@ -217,8 +210,8 @@ class ReaderController extends _$ReaderController
         }
       }
       final chap = chapter;
-      isar.writeTxnSync(() {
-        isar.settings.putSync(
+      chapterRepository.writeTransaction(() {
+        settingsRepository.putSync(
           getIsarSetting()
             ..chapterPageIndexList = chapterPageIndexs
             ..updatedAt = now,
@@ -226,8 +219,8 @@ class ReaderController extends _$ReaderController
         chap.isRead = isRead;
         chap.lastPageRead = isRead ? '1' : (newIndex + 1).toString();
         chap.updatedAt = now;
-        isar.chapters.putSync(chap);
-        if (siblings.isNotEmpty) isar.chapters.putAllSync(siblings);
+        chapterRepository.putSync(chap);
+        if (siblings.isNotEmpty) chapterRepository.putAllSync(siblings);
       });
       onSettingsMutated();
       if (isRead) {

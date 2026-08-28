@@ -20,8 +20,9 @@ import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/repositories/custom_button_repository.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/models/track.dart' as track;
-import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
@@ -534,16 +535,13 @@ class _MyAppState extends ConsumerState<MyApp>
                         child: Text(l10n.add),
                         onPressed: () async {
                           if (context.mounted) Navigator.of(context).pop();
-                          await isar.writeTxn(() async {
-                            await isar.customButtons.put(
-                              customButton
-                                ..pos = await isar.customButtons.count()
-                                ..isFavourite = false
-                                ..id = null
-                                ..updatedAt =
-                                    DateTime.now().millisecondsSinceEpoch,
-                            );
-                          });
+                          final pos = await customButtonRepository.count();
+                          await customButtonRepository.save(
+                            customButton
+                              ..pos = pos
+                              ..isFavourite = false
+                              ..id = null,
+                          );
                           botToast(l10n.custom_buttons_added);
                         },
                       ),
@@ -623,10 +621,7 @@ class _MyAppState extends ConsumerState<MyApp>
   }
 
   Future<void> _checkTrackerRefresh() async {
-    final prefs = await isar.trackPreferences
-        .filter()
-        .syncIdIsNotNull()
-        .findAll();
+    final prefs = await trackRepository.getAllPreferencesWithSyncId();
     for (final pref in prefs) {
       final temp = track.Track(
         syncId: pref.syncId,

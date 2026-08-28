@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -275,17 +274,15 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
   void _removeOrphanSources(Repo removedRepo) {
     final repoUrl = removedRepo.jsonUrl;
     if (repoUrl == null) return;
-    final orphanIds = isar.sources
-        .filter()
-        .itemTypeEqualTo(widget.itemType)
-        .findAllSync()
+    final orphanIds = sourceRepository
+        .getByItemType(widget.itemType)
         .where(
           (s) => s.repo?.jsonUrl == repoUrl && (s.sourceCode?.isEmpty ?? true),
         )
         .map((s) => s.id!)
         .toList();
     if (orphanIds.isNotEmpty) {
-      isar.writeTxnSync(() => isar.sources.deleteAllSync(orphanIds));
+      sourceRepository.deleteAll(orphanIds);
     }
   }
 

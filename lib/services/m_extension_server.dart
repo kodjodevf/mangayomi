@@ -4,9 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:m_extension_server/m_extension_server.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 class MExtensionServerPlatform {
@@ -52,7 +51,7 @@ class MExtensionServerPlatform {
         final port = server.port;
         await server.close();
         if (isDesktop) {
-          final settings = isar.settings.getSync(227);
+          final settings = settingsRepository.currentOrNull;
           final jrePath = settings?.jrePath;
           final serverJarPath = settings?.extensionServerPath;
           if ((jrePath?.isEmpty ?? true) || (serverJarPath?.isEmpty ?? true)) {

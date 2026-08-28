@@ -1,10 +1,9 @@
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/trackers/anilist.dart';
 import 'package:mangayomi/services/trackers/base_tracker.dart';
 import 'package:mangayomi/services/trackers/kitsu.dart';
@@ -210,7 +209,7 @@ class LastTrackerLibraryLocationState
     extends _$LastTrackerLibraryLocationState {
   @override
   (int, bool) build() {
-    final value = isar.settings.getSync(227)!.lastTrackerLibraryLocation;
+    final value = settingsRepository.current.lastTrackerLibraryLocation;
     if (value != null) {
       final data = value.split(",");
       return (int.parse(data[0]), bool.parse(data[1]));
@@ -219,15 +218,8 @@ class LastTrackerLibraryLocationState
   }
 
   void set((int, bool) value) {
-    final settings = isar.settings.getSync(227);
     final val = "${value.$1},${value.$2}";
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..lastTrackerLibraryLocation = val
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.lastTrackerLibraryLocation = val);
   }
 }

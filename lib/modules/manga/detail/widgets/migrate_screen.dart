@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/repositories/category_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
@@ -44,16 +44,8 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
   final _textEditingController = TextEditingController();
   late final List<Source> sourceList =
       ref.read(onlyIncludePinnedSourceStateProvider)
-      ? isar.sources
-            .filter()
-            .isPinnedEqualTo(true)
-            .and()
-            .itemTypeEqualTo(widget.manga.itemType)
-            .findAllSync()
-      : isar.sources
-            .where()
-            .itemTypeIsAddedEqualTo(widget.manga.itemType, true)
-            .findAllSync();
+      ? sourceRepository.getPinnedByItemType(widget.manga.itemType)
+      : sourceRepository.getAddedByItemType(widget.manga.itemType);
   // Set once the first source row with results has taken the TV autofocus, so
   // no other row steals it afterwards.
   bool _autofocusClaimed = false;
@@ -371,12 +363,11 @@ class _MigrationMangaGlobalImageCardState
           child: GestureDetector(
             onTap: () => _showMigrateDialog(context, l10n),
             child: StreamBuilder(
-              stream: isar.mangas
-                  .filter()
-                  .langEqualTo(widget.source.lang)
-                  .nameEqualTo(getMangaDetail.name)
-                  .sourceEqualTo(widget.source.name)
-                  .watch(fireImmediately: true),
+              stream: mangaRepository.watchByLangNameSource(
+                widget.source.lang,
+                getMangaDetail.name,
+                widget.source.name,
+              ),
               builder: (context, snapshot) {
                 final hasData = snapshot.hasData && snapshot.data!.isNotEmpty;
                 return Stack(
@@ -600,12 +591,9 @@ class _MigrationMangaGlobalImageCardState
               content: SizedBox(
                 width: context.width(0.8),
                 child: StreamBuilder(
-                  stream: isar.categorys
-                      .filter()
-                      .idIsNotNull()
-                      .and()
-                      .forItemTypeEqualTo(widget.oldManga.itemType)
-                      .watch(fireImmediately: true),
+                  stream: categoryRepository.watchByItemType(
+                    widget.oldManga.itemType,
+                  ),
                   builder: (context, snapshot) {
                     if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                       final entries = snapshot.data!;
@@ -686,10 +674,7 @@ class _MigrationMangaGlobalImageCardState
                               updatedAt: DateTime.now().millisecondsSinceEpoch,
                               sourceId: widget.source.id,
                             );
-                            int mangaId = -1;
-                            isar.writeTxnSync(() {
-                              mangaId = isar.mangas.putSync(manga);
-                            });
+                            final mangaId = await mangaRepository.put(manga);
                             if (mangaId != -1) {
                               await ref
                                   .read(

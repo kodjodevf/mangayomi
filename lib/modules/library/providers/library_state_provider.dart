@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -52,11 +54,7 @@ class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
         appSettings = settings..novelDisplayType = displayType;
     }
 
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
   }
 }
 
@@ -74,9 +72,7 @@ class LibraryGridSizeState extends _$LibraryGridSizeState {
     }
   }
 
-  Settings get settings {
-    return isar.settings.getSync(227)!;
-  }
+  Settings get settings => settingsRepository.current;
 
   void set(int? value, {bool end = false}) {
     Settings appSettings = Settings();
@@ -94,11 +90,7 @@ class LibraryGridSizeState extends _$LibraryGridSizeState {
           appSettings = settings..novelGridSize = value;
       }
 
-      isar.writeTxnSync(() {
-        isar.settings.putSync(
-          appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-        );
-      });
+      settingsRepository.save(appSettings);
     }
   }
 }
@@ -138,11 +130,7 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
       default:
         appSettings = settings..libraryFilterNovelDownloadType = type;
     }
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
     state = type;
   }
 
@@ -192,11 +180,7 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
       default:
         appSettings = settings..libraryFilterNovelUnreadType = type;
     }
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
     state = type;
   }
 
@@ -269,11 +253,7 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
       default:
         appSettings = settings..libraryFilterNovelStartedType = type;
     }
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
     state = type;
   }
 
@@ -346,11 +326,7 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
       default:
         appSettings = settings..libraryFilterNovelBookMarkedType = type;
     }
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
     state = type;
   }
 
@@ -433,11 +409,7 @@ class MangaFilterCompletedState extends _$MangaFilterCompletedState {
       default:
         appSettings = settings..libraryFilterNovelCompletedType = type;
     }
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
     state = type;
   }
 
@@ -489,11 +461,7 @@ class MangaFilterTrackingState extends _$MangaFilterTrackingState {
       default:
         appSettings = settings..libraryFilterNovelTrackingType = type;
     }
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
     state = type;
   }
 
@@ -554,11 +522,7 @@ class MangaFilterSourceState extends _$MangaFilterSourceState {
       default:
         appSettings = settings..libraryFilterNovelSourceIds = names;
     }
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
   }
 
   void setFilteredList(String source) {
@@ -673,11 +637,7 @@ class LibraryShowCategoryTabsState extends _$LibraryShowCategoryTabsState {
         appSettings = settings..novelLibraryShowCategoryTabs = value;
     }
     state = value;
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
   }
 }
 
@@ -708,11 +668,7 @@ class LibraryDownloadedChaptersState extends _$LibraryDownloadedChaptersState {
         appSettings = settings..novelLibraryDownloadedChapters = value;
     }
     state = value;
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
   }
 }
 
@@ -743,11 +699,7 @@ class LibraryLanguageState extends _$LibraryLanguageState {
         appSettings = settings..novelLibraryShowLanguage = value;
     }
     state = value;
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
   }
 }
 
@@ -778,11 +730,7 @@ class LibraryLocalSourceState extends _$LibraryLocalSourceState {
         appSettings = settings..novelLibraryLocalSource = value;
     }
     state = value;
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
   }
 }
 
@@ -813,11 +761,7 @@ class LibraryShowNumbersOfItemsState extends _$LibraryShowNumbersOfItemsState {
         appSettings = settings..novelLibraryShowNumbersOfItems = value;
     }
     state = value;
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
   }
 }
 
@@ -849,11 +793,7 @@ class LibraryShowContinueReadingButtonState
         appSettings = settings..novelLibraryShowContinueReadingButton = value;
     }
     state = value;
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
   }
 }
 
@@ -890,11 +830,7 @@ class SortLibraryMangaState extends _$SortLibraryMangaState {
       default:
         appSettings = settings..sortLibraryNovel = value;
     }
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.save(appSettings);
     state = value;
   }
 
@@ -951,7 +887,7 @@ class MangasSetIsReadState extends _$MangasSetIsReadState {
     final allMangas = <Manga>[];
     final now = DateTime.now().millisecondsSinceEpoch;
     for (var mangaid in mangaIds) {
-      final manga = isar.mangas.getSync(mangaid)!;
+      final manga = mangaRepository.getById(mangaid);
       final chapters = manga.chapters;
       if (chapters.isEmpty) continue;
       if (markAsRead) chapters.last.updateTrackChapterRead(ref);
@@ -965,9 +901,9 @@ class MangasSetIsReadState extends _$MangasSetIsReadState {
       allMangas.add(manga);
     }
 
-    isar.writeTxnSync(() {
-      isar.chapters.putAllSync(allChapters);
-      isar.mangas.putAllSync(allMangas);
+    chapterRepository.writeTransaction(() {
+      chapterRepository.putAllSync(allChapters);
+      mangaRepository.putAllSync(allMangas);
     });
 
     ref.read(isLongPressedStateProvider.notifier).update(false);

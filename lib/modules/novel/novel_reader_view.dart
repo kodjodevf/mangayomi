@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_gestures.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/auto_scroll_button.dart';
@@ -44,7 +45,7 @@ typedef DoubleClickAnimationListener = void Function();
 class NovelReaderView extends ConsumerWidget {
   final int chapterId;
   NovelReaderView({super.key, required this.chapterId});
-  late final Chapter chapter = isar.chapters.getSync(chapterId)!;
+  late final Chapter chapter = chapterRepository.getById(chapterId);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final result = ref.watch(getHtmlContentProvider(chapter: chapter));

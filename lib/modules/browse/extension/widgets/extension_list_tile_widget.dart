@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/eval/model/source_preference.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/tv_row_button.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -104,44 +100,7 @@ class _ExtensionListTileWidgetState
                 const SizedBox(width: 15),
                 TextButton(
                   onPressed: () {
-                    final sourcePrefsIds = isar.sourcePreferences
-                        .filter()
-                        .sourceIdEqualTo(widget.source.id!)
-                        .idProperty()
-                        .findAllSync();
-                    final sourcePrefsStringIds = isar
-                        .sourcePreferenceStringValues
-                        .filter()
-                        .sourceIdEqualTo(widget.source.id!)
-                        .idProperty()
-                        .findAllSync();
-                    isar.writeTxnSync(() {
-                      if ((widget.source.isObsolete ?? false) ||
-                          (widget.source.isLocal ?? false)) {
-                        isar.sources.deleteSync(widget.source.id!);
-                        ref
-                            .read(synchingProvider(syncId: 1).notifier)
-                            .addChangedPart(
-                              ActionType.removeExtension,
-                              widget.source.id,
-                              "{}",
-                              false,
-                            );
-                      } else {
-                        isar.sources.putSync(
-                          widget.source
-                            ..sourceCode = ""
-                            ..isAdded = false
-                            ..isPinned = false
-                            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-                        );
-                      }
-                      isar.sourcePreferences.deleteAllSync(sourcePrefsIds);
-                      isar.sourcePreferenceStringValues.deleteAllSync(
-                        sourcePrefsStringIds,
-                      );
-                    });
-
+                    sourceRepository.uninstall(ref, widget.source);
                     Navigator.pop(ctx);
                   },
                   child: Text(ctx.l10n.ok),

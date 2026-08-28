@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -73,18 +72,11 @@ class ClearChapterCacheOnAppLaunchState
     extends _$ClearChapterCacheOnAppLaunchState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.clearChapterCacheOnAppLaunch ?? false;
+    return settingsRepository.current.clearChapterCacheOnAppLaunch ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..clearChapterCacheOnAppLaunch = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.clearChapterCacheOnAppLaunch = value);
   }
 }

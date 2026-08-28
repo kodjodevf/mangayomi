@@ -6,13 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/models/update.dart';
-import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
+import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/modules/more/about/providers/download_file_screen.dart';
 import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -995,23 +993,11 @@ class _ExtensionBadgeWidget extends ConsumerWidget {
     final hideItems = ref.watch(hideItemsStateProvider);
 
     return StreamBuilder(
-      stream: isar.sources
-          .where()
-          .isActiveEqualTo(true)
-          .filter()
-          .optional(
-            hideItems.contains("/MangaLibrary"),
-            (q) => q.not().itemTypeEqualTo(ItemType.manga),
-          )
-          .optional(
-            hideItems.contains("/AnimeLibrary"),
-            (q) => q.not().itemTypeEqualTo(ItemType.anime),
-          )
-          .optional(
-            hideItems.contains("/NovelLibrary"),
-            (q) => q.not().itemTypeEqualTo(ItemType.novel),
-          )
-          .watch(fireImmediately: true),
+      stream: sourceRepository.watchActiveExcludingHiddenItemTypes(
+        hideManga: hideItems.contains("/MangaLibrary"),
+        hideAnime: hideItems.contains("/AnimeLibrary"),
+        hideNovel: hideItems.contains("/NovelLibrary"),
+      ),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return icon;
@@ -1045,31 +1031,11 @@ class _UpdatesBadgeWidget extends ConsumerWidget {
     final hideItems = ref.watch(hideItemsStateProvider);
 
     return StreamBuilder(
-      stream: isar.updates
-          .filter()
-          .optional(
-            hideItems.contains("/MangaLibrary"),
-            (q) => q.chapter(
-              (c) => c.manga((m) => m.not().itemTypeEqualTo(ItemType.manga)),
-            ),
-          )
-          .optional(
-            hideItems.contains("/AnimeLibrary"),
-            (q) => q.chapter(
-              (c) => c.manga((m) => m.not().itemTypeEqualTo(ItemType.anime)),
-            ),
-          )
-          .optional(
-            hideItems.contains("/NovelLibrary"),
-            (q) => q.chapter(
-              (c) => c.manga((m) => m.not().itemTypeEqualTo(ItemType.novel)),
-            ),
-          )
-          // Filter unread in the query itself — loading every linked chapter
-          // with loadSync() in the builder ran N+1 sync DB reads on the
-          // always-mounted nav bar for every update write.
-          .chapter((c) => c.not().isReadEqualTo(true))
-          .watch(fireImmediately: true),
+      stream: updateRepository.watchUnreadExcludingHiddenItemTypes(
+        hideManga: hideItems.contains("/MangaLibrary"),
+        hideAnime: hideItems.contains("/AnimeLibrary"),
+        hideNovel: hideItems.contains("/NovelLibrary"),
+      ),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return icon;
