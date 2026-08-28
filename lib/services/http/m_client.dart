@@ -274,14 +274,32 @@ class LoggerInterceptor extends InterceptorContract {
         Logger.add(LoggerLevel.info, content);
       }
       if (cloudflare) {
+        // The in-app resolver is disabled on Linux, and cookies cannot be read
+        // back from a webview there either, so the offer to solve it manually
+        // in one is an offer nobody on Linux can take. A proxy is the only
+        // thing that gets past this, so say that instead.
+        //
+        // This is also reached by sites nobody thinks of as "having
+        // Cloudflare": a plain proxied site answers every response with
+        // `server: cloudflare`, including a 403 raised for some other reason,
+        // and that is enough to land here.
+        final noResolverAvailable =
+            Platform.isLinux && CfProxyStore.url.trim().isEmpty;
         try {
           botToast(
-            "${response.statusCode} Failed to bypass Cloudflare",
-            hasCloudFlare: cloudflare,
+            noResolverAvailable
+                ? "${response.statusCode} blocked by Cloudflare. Set a "
+                      "FlareSolverr or Byparr URL in Settings > General to get "
+                      "past it on Linux."
+                : "${response.statusCode} Failed to bypass Cloudflare",
+            // The button opens the webview resolver, which does nothing here.
+            hasCloudFlare: cloudflare && !noResolverAvailable,
             url: response.request!.url.toString(),
           );
         } catch (e) {
-          throw "Failed to bypass Cloudflare.\n\n\nYou can try to bypass it manually in the webview \n\n\nstatusCode: ${response.statusCode}";
+          throw noResolverAvailable
+              ? "Blocked by Cloudflare.\n\n\nThe in-app resolver is not available on Linux. Set a FlareSolverr or Byparr URL in Settings > General.\n\n\nstatusCode: ${response.statusCode}"
+              : "Failed to bypass Cloudflare.\n\n\nYou can try to bypass it manually in the webview \n\n\nstatusCode: ${response.statusCode}";
         }
       }
     }

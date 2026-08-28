@@ -83,20 +83,20 @@ Future<dynamic> updateMangaDetail(
       final existingChapters = manga.chapters.toList();
       final recognition = ChapterRecognition();
 
-      // The exact number, not the sort key. parseChapterNumber truncates, so
-      // chapters 12, 12.1 and 12.5 all answer 12 and every use of this below
-      // treats them as the same chapter: the composite key drops two of the
-      // three before they reach the library, and read state carries across
-      // all three. rawSeasonAndNumber keeps the fraction, and answers null
-      // for a name with no number at all rather than folding every "Special"
-      // and "Prologue" onto zero.
-      double? numberOf(Chapter c) {
+      // Season and episode together, never the episode alone. The episode
+      // alone makes season 2 episode 1 the same chapter as season 1 episode 1,
+      // so whichever arrives second is dropped before it reaches the library
+      // and a two season show displays one season.
+      //
+      // Not parseChapterNumber either: that truncates, so 12, 12.1 and 12.5
+      // all answer 12 and two of the three are dropped the same way.
+      String? identityOf(Chapter c, {bool withScanlator = true}) {
         if (c.name == null) return null;
-        final (_, number) = recognition.rawSeasonAndNumber(
+        return recognition.chapterIdentityKey(
           manga.name ?? '',
           c.name!,
+          withScanlator ? (c.scanlator ?? '') : null,
         );
-        return (number ?? 0) > 0 ? number : null;
       }
 
       final existingByUrl = <String, Chapter>{};
@@ -105,8 +105,7 @@ Future<dynamic> updateMangaDetail(
       for (final c in existingChapters) {
         final u = c.url?.trim();
         final urlKey = (u == null || u.isEmpty) ? null : u.getUrlWithoutDomain;
-        final num = numberOf(c);
-        final compositeKey = num == null ? null : '$num::${c.scanlator ?? ''}';
+        final compositeKey = identityOf(c);
 
         final prior =
             (urlKey != null ? existingByUrl[urlKey] : null) ??
@@ -125,12 +124,15 @@ Future<dynamic> updateMangaDetail(
         }
       }
 
-      final readByNumber = <double, bool>{};
+      // Keyed without the scanlator: the same episode from a different group
+      // is still that episode, so read state carries. Keyed with the season
+      // for the same reason as above.
+      final readByEpisode = <String, bool>{};
       for (final c in existingChapters) {
-        final num = numberOf(c);
-        if (num != null) {
-          readByNumber[num] =
-              (readByNumber[num] ?? false) || (c.isRead ?? false);
+        final key = identityOf(c, withScanlator: false);
+        if (key != null) {
+          readByEpisode[key] =
+              (readByEpisode[key] ?? false) || (c.isRead ?? false);
         }
       }
 
@@ -143,13 +145,16 @@ Future<dynamic> updateMangaDetail(
         if (url == null || url.isEmpty) continue;
         final key = url.getUrlWithoutDomain;
 
-        final (_, chapNumber) = chap.name != null
-            ? recognition.rawSeasonAndNumber(manga.name!, chap.name!)
-            : (0, null);
-        final chapNum = chapNumber ?? 0;
-        final compositeKey = chapNum > 0
-            ? '$chapNum::${chap.scanlator ?? ''}'
-            : null;
+        final compositeKey = chap.name == null
+            ? null
+            : recognition.chapterIdentityKey(
+                manga.name!,
+                chap.name!,
+                chap.scanlator ?? '',
+              );
+        final episodeKey = chap.name == null
+            ? null
+            : recognition.chapterIdentityKey(manga.name!, chap.name!);
 
         if (!seenKeys.add(key)) continue;
         if (compositeKey != null && !seenKeys.add('c:$compositeKey')) {
@@ -161,7 +166,8 @@ Future<dynamic> updateMangaDetail(
             (compositeKey != null ? existingByComposite[compositeKey] : null);
 
         if (existing == null) {
-          final alreadyRead = chapNum > 0 && (readByNumber[chapNum] ?? false);
+          final alreadyRead =
+              episodeKey != null && (readByEpisode[episodeKey] ?? false);
 
           final newChapter = Chapter(
             name: chap.name!,

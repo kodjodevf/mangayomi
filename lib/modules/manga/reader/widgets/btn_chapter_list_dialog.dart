@@ -8,6 +8,7 @@ import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/date.dart';
+import 'package:mangayomi/utils/design_tokens.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -229,7 +230,7 @@ class _ChapterListTileState extends State<ChapterListTile> {
                   height: 48,
                   decoration: BoxDecoration(
                     color: chapter.isRead!
-                        ? Colors.grey.withValues(alpha: 0.3)
+                        ? context.textColor.withValues(alpha: Alphas.disabled)
                         : context.primaryColor,
                     borderRadius: BorderRadius.circular(2),
                   ),
@@ -277,14 +278,19 @@ class _ChapterListTileState extends State<ChapterListTile> {
                                           Icon(
                                             Icons.access_time_rounded,
                                             size: 12,
-                                            color: Colors.grey,
+                                            color: context.textColor.withValues(
+                                              alpha: Alphas.secondary,
+                                            ),
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
                                             dateText,
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 11,
-                                              color: Colors.grey,
+                                              color: context.textColor
+                                                  .withValues(
+                                                    alpha: Alphas.secondary,
+                                                  ),
                                             ),
                                           ),
                                         ],
@@ -300,22 +306,26 @@ class _ChapterListTileState extends State<ChapterListTile> {
                                         false) &&
                                     (chapter.dateUpload != null &&
                                         chapter.dateUpload!.isNotEmpty))
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
                                       horizontal: 6,
                                     ),
                                     child: Text(
                                       '•',
                                       style: TextStyle(
                                         fontSize: 11,
-                                        color: Colors.grey,
+                                        color: context.textColor.withValues(
+                                          alpha: Alphas.secondary,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 Icon(
                                   Icons.group_rounded,
                                   size: 12,
-                                  color: Colors.grey,
+                                  color: context.textColor.withValues(
+                                    alpha: Alphas.secondary,
+                                  ),
                                 ),
                                 const SizedBox(width: 4),
                                 Flexible(
@@ -323,7 +333,9 @@ class _ChapterListTileState extends State<ChapterListTile> {
                                     chapter.scanlator!,
                                     style: TextStyle(
                                       fontSize: 11,
-                                      color: Colors.grey,
+                                      color: context.textColor.withValues(
+                                        alpha: Alphas.secondary,
+                                      ),
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -402,7 +414,9 @@ class _ChapterListTileState extends State<ChapterListTile> {
                               : Icons.bookmark_outline_rounded,
                           color: isBookmarked
                               ? context.primaryColor
-                              : Colors.grey,
+                              : context.textColor.withValues(
+                                  alpha: Alphas.disabled,
+                                ),
                           size: 22,
                         ),
                       ),

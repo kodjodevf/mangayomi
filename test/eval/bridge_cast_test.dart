@@ -18,6 +18,10 @@ class _FakeCallable implements Callable {
   int get arity => 1;
 
   String get name => 'toList';
+
+  @override
+  // TODO: implement callableRuntimeType
+  RuntimeType get callableRuntimeType => throw UnimplementedError();
 }
 
 void main() {

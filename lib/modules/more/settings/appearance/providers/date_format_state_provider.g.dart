@@ -91,7 +91,7 @@ final class DateFormatStateProvider
   }
 }
 
-String _$dateFormatStateHash() => r'8e18a6bdf0858544ab2532aa3980a456c742da69';
+String _$dateFormatStateHash() => r'c585f589b476358c657126e844ce496dea762f2d';
 
 abstract class _$DateFormatState extends $Notifier<String> {
   String build();
@@ -144,7 +144,7 @@ final class RelativeTimesTampsStateProvider
 }
 
 String _$relativeTimesTampsStateHash() =>
-    r'f0b503eed4c0e574a5d0e4c95b3227f9f7504d01';
+    r'b2246fed868512fdc44a3b403c766a02a1e646d7';
 
 abstract class _$RelativeTimesTampsState extends $Notifier<int> {
   int build();

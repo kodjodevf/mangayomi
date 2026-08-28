@@ -114,6 +114,85 @@ String? describeLikelyCause(String error) {
   return null;
 }
 
+/// Whether [error] is a thing that goes wrong rather than a thing that is
+/// broken.
+///
+/// A cover that 404s, a CDN that times out, a source that is down: these are
+/// expected on a network, they already show as a broken image in the UI, and
+/// nothing in the app needs changing when one happens. They still reach
+/// FlutterError.onError, though, because an ImageProvider reports a failed
+/// load whether or not the widget drew a placeholder for it.
+///
+/// Left unfiltered they raise the "something went wrong" banner and get filed
+/// as bugs. Issues #915 and #916 are exactly that: two reports about images
+/// not loading from a CDN, sent through the reporter as if the app had
+/// crashed.
+///
+/// These are still recorded, because "images stopped loading" is worth being
+/// able to look up. They just do not interrupt anybody.
+bool isExpectedFailure(Object error) {
+  final text = error.toString().toLowerCase();
+  return text.contains('failed to load http') ||
+      text.contains('socketexception') ||
+      text.contains('failed host lookup') ||
+      text.contains('connection closed') ||
+      text.contains('connection reset') ||
+      text.contains('connection refused') ||
+      text.contains('timeoutexception') ||
+      text.contains('handshakeexception') ||
+      // What a half-downloaded or non-image response decodes to. #927 shows
+      // the sequence plainly in its own recent-errors block: two failed
+      // MangaDex page loads, then this, seconds apart. It is the same failure
+      // one step further along, not a separate bug.
+      text.contains('could not decompress image') ||
+      text.contains('invalid image data') ||
+      // The Rust HTTP stack's transport errors, which are the same network
+      // failures one layer down. #933 is one of these.
+      text.contains('rhttpunknownexception') ||
+      text.contains('hyper_util') ||
+      text.contains('statuscode: 5');
+}
+
+/// Whether [error] came from an extension rather than from the app.
+///
+/// Extensions are third-party code the app runs in an interpreter, and when
+/// one is wrong the fix belongs in the repository it came from. #914 is an
+/// extension calling `.toList()` on a Map, filed here because the reporter had
+/// no way to tell the difference and the app offered them a button.
+///
+/// d4rt prefixes everything it raises with "Runtime Error:", and wraps
+/// failures inside bridged calls with a recognisable phrase, so this can be
+/// told apart from an app bug with reasonable confidence.
+bool isExtensionFailure(Object error) {
+  final text = error.toString();
+  return
+  // d4rt, the Dart interpreter
+  text.startsWith('Runtime Error:') ||
+      text.startsWith('SourceCodeException:') ||
+      text.contains('Native error during bridged method call') ||
+      text.contains('Undefined property or method') ||
+      // Mihon extensions, which are Kotlin and fail their own way. #935 is a
+      // source answering 500 and the extension's deserialisation reporting a
+      // missing field, named by its JVM package.
+      text.contains('eu.kanade.tachiyomi.extension') ||
+      text.contains("is required for type with serial name") ||
+      // LNReader plugins. #936 is a plugin returning a novel with no path.
+      // The old wording is still matched because reports keep arriving from
+      // builds that predate the clearer message.
+      text.contains('path is null') ||
+      text.contains('returned a novel with no path');
+}
+
+/// A stable key for "this same thing went wrong again".
+///
+/// The first line only, with digits flattened, so two runs of the same fault
+/// match even though their addresses, ids and timestamps differ. #917 and #918
+/// are one crash reported twice by one person, which is what this is for.
+String fingerprintOf(Object error) {
+  final first = error.toString().split('\n').first.trim();
+  return first.replaceAll(RegExp(r'\d+'), '#').toLowerCase();
+}
+
 /// Strips anything from [text] that identifies the reader or what they were
 /// reading, so a report can be sent without sending their library with it.
 ///
@@ -155,6 +234,10 @@ class CrashReports {
   static const _fileName = 'crash_reports.json';
 
   static final List<CrashReport> _reports = [];
+
+  /// Fingerprints the reader has already opened a report for. Kept so the
+  /// same fault is not filed twice, which is what #917 and #918 are.
+  static final Set<String> _reported = {};
 
   /// Recorded before [init] found somewhere to put them. The handlers are
   /// installed before storage is resolved, so a startup error arrives with
@@ -199,13 +282,19 @@ class CrashReports {
     try {
       if (await _file!.exists()) {
         final decoded = jsonDecode(await _file!.readAsString());
-        if (decoded is List) {
-          for (final entry in decoded) {
-            if (entry is! Map) continue;
-            final report = CrashReport.fromJson(
-              Map<String, dynamic>.from(entry),
-            );
-            if (report != null) _reports.add(report);
+        // Earlier builds wrote a bare list. Read it rather than throwing the
+        // reader's history away on upgrade.
+        final entries = decoded is List
+            ? decoded
+            : (decoded is Map ? decoded['reports'] as List? : null) ?? const [];
+        for (final entry in entries) {
+          if (entry is! Map) continue;
+          final report = CrashReport.fromJson(Map<String, dynamic>.from(entry));
+          if (report != null) _reports.add(report);
+        }
+        if (decoded is Map) {
+          for (final f in (decoded['reported'] as List?) ?? const []) {
+            if (f is String) _reported.add(f);
           }
         }
       }
@@ -242,10 +331,22 @@ class CrashReports {
       );
       _reports.add(report);
       if (!_loaded) _pending.add(report);
-      _seen = false;
+      // Kept, but it does not raise the banner: nothing here needs the
+      // reader's attention or a bug report.
+      if (!isExpectedFailure(error)) _seen = false;
       _trim();
       _flush();
     } catch (_) {}
+  }
+
+  /// Whether this fault has already been sent somewhere.
+  static bool wasReported(CrashReport report) =>
+      _reported.contains(fingerprintOf(report.error));
+
+  /// Records that the reader opened a report for this fault.
+  static void markReported(CrashReport report) {
+    _reported.add(fingerprintOf(report.error));
+    _flush();
   }
 
   /// Marks what is kept as shown, so the banner stops offering it.
@@ -267,6 +368,7 @@ class CrashReports {
   static void resetForTest() {
     _reports.clear();
     _pending.clear();
+    _reported.clear();
     _file = null;
     _screen = null;
     _seen = false;
@@ -285,7 +387,10 @@ class CrashReports {
     if (file == null) return;
     try {
       file.writeAsStringSync(
-        jsonEncode(_reports.map((e) => e.toJson()).toList()),
+        jsonEncode({
+          'reports': _reports.map((e) => e.toJson()).toList(),
+          'reported': _reported.toList(),
+        }),
         flush: true,
       );
     } catch (_) {}

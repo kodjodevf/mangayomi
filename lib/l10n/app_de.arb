@@ -917,5 +917,370 @@
   "saved_searches": "Gespeicherte Suchen",
   "enter_search_to_save_first": "Geben Sie zuerst eine Suche ein, um sie zu speichern",
   "no_saved_searches": "Für diese Quelle gibt es noch keine gespeicherten Suchen.\nFühren Sie eine Suche durch und wählen Sie dann \"Suche speichern\".",
-  "source": "Quelle"
+  "source": "Quelle",
+  "label_value": "{label}: {value}",
+  "url": "URL",
+  "beta_version": "Beta ({version})",
+  "empty_placeholder": "LEER",
+  "error": "Fehler",
+  "error_with_message": "Fehler: {error}",
+  "no_pages_available": "Fehler: keine Seiten verfügbar",
+  "create_extension": "Erweiterung erstellen",
+  "choose_extension_language": "Sprache der Erweiterung wählen",
+  "lang": "Sprache",
+  "base_url": "Basis-URL",
+  "api_url_optional": "API-URL (optional)",
+  "icon_url": "Icon-URL",
+  "source_icon_url": "Quell-Icon-URL",
+  "notes": "Hinweise",
+  "extension_name_example": "z. B.: meinAnime",
+  "language_code_example": "z. B.: de",
+  "base_url_example": "z. B.: https://beispiel.de",
+  "api_url_example": "z. B.: https://api.beispiel.de",
+  "extension_notes_example": "z. B.: Diese Erweiterung erfordert eine Anmeldung",
+  "type": "Typ",
+  "target": "Ziel",
+  "source_type_single": "einzeln",
+  "source_type_multi": "mehrfach",
+  "source_type_torrent": "Torrent",
+  "source_language_dart": "Dart",
+  "source_language_javascript": "JavaScript",
+  "source_language_lnreader_compiled_js": "LNReader kompiliertes JS",
+  "source_created_successfully": "Quelle erfolgreich erstellt",
+  "source_already_exists": "Quelle existiert bereits",
+  "error_when_creating_source": "Fehler beim Erstellen der Quelle",
+  "cookies_deleted": "Cookies gelöscht!",
+  "delete_all_cookies": "Alle Cookies löschen",
+  "missing_chapters": "{count} fehlende Kapitel",
+  "sync_restore_in_progress": "Synchronisierung übersprungen – Wiederherstellung läuft",
+  "sync_status_not_configured": "Nicht verbunden",
+  "sync_status_checking": "Verbindung wird überprüft...",
+  "sync_status_connected": "Verbunden",
+  "sync_status_unauthorized": "Sitzung abgelaufen, bitte erneut anmelden",
+  "sync_status_unreachable": "Server nicht erreichbar",
+  "sync_section_general": "Allgemein",
+  "sync_section_data_types": "Zu synchronisierende Daten",
+  "missing_episodes": "{count} fehlende Episoden",
+  "restore_sync_question_title": "Diese Wiederherstellung synchronisieren?",
+  "restore_sync_question_message": "Dieses Gerät ist mit einem Synchronisationsserver verbunden. Sollen die wiederhergestellten Daten jetzt hochgeladen werden? Andernfalls wird die Synchronisation deaktiviert.",
+  "restore_sync_question_confirm": "Ja, synchronisieren",
+  "restore_sync_question_deny": "Nein, Synchronisation deaktivieren",
+  "sync_disabled_after_restore": "Synchronisation ist deaktiviert. Sie kann in den Einstellungen wieder aktiviert werden.",
+  "restore_sync_disabled_question_title": "Synchronisation ist derzeit deaktiviert",
+  "restore_sync_disabled_question_message": "Synchronisation ist ausgeschaltet. Wieder aktivieren und Daten auf den Server hochladen?",
+  "restore_sync_question_reenable": "Ja, reaktivieren und synchronisieren",
+  "restore_sync_question_keep_disabled": "Deaktiviert lassen",
+  "restore_sync_uploading": "Wiederhergestellte Daten werden synchronisiert…",
+  "restore_sync_upload_success": "Wiederhergestellte Daten erfolgreich synchronisiert",
+  "default_download_destination": "Standard-Download-Ziel",
+  "ask_download_destination": "Nach Download-Ziel fragen",
+  "ask_download_destination_desc": "Bei jedem Download nach einem lokalen Ordner fragen.",
+  "select_download_destination": "Download-Ziel auswählen",
+  "clear_local_library": "Lokale Bibliothek leeren",
+  "clear_local_library_desc": "Lokale Ordner- und Archiveinträge aus der Bibliothek entfernen.",
+  "clear_local_library_msg": "Dadurch werden lokale Ordner- und Archiveinträge aus der Bibliothek entfernt. Dateien auf dem Speicher werden nicht gelöscht.",
+  "custom": "Benutzerdefiniert",
+  "no_local_folder_available_for_downloads": "Kein lokaler Ordner für Downloads verfügbar",
+  "failed_to_create_cbz": "CBZ konnte nicht erstellt werden: {error}",
+  "error_reading_cover_image": "Fehler beim Lesen des Titelbilds: {error}",
+  "error_reading_metadata": "Fehler beim Lesen der Metadaten: {error}",
+  "error_saving_chapter_episode_to_library": "Fehler beim Speichern in der Bibliothek: {error}",
+  "error_reading_chapter_cover_image": "Fehler beim Lesen des Kapitel-Covers: {error}",
+  "error_reading_archive_cover_image": "Fehler beim Lesen des Archiv-Covers: {error}",
+  "error_getting_local_library": "Fehler beim Laden der lokalen Bibliothek: {error}",
+  "failed_to_export_metadata": "Fehler beim Exportieren der Metadaten: {error}",
+  "unrecognized_chapter_numbers": "{count} Kapitel konnten nicht nummeriert werden und fehlen möglicherweise im Reader.",
+  "cloudflare_resolution_webview_server_start_failed": "Cloudflare Resolution Webview Server konnte nicht gestartet werden.",
+  "tracker_token_expired": "{tracker}-Token abgelaufen",
+  "video_list_empty": "Videoliste ist leer",
+  "playback_speed_multiplier": "x{value}",
+  "could_not_launch_url": "{url} konnte nicht geöffnet werden",
+  "zero_interpreter": "Zero-Interpreter",
+  "zero_interpreter_description": "Zero-Interpreter-Server automatisch oder manuell steuern.",
+  "start_server_on_launch": "Server beim Start starten",
+  "runtime_status": "Laufzeitstatus",
+  "running": "Läuft",
+  "stopped": "Angehalten",
+  "start": "Starten",
+  "stop": "Stoppen",
+  "something_went_wrong": "Etwas ist schiefgelaufen",
+  "startup_failed": "Mangayomi konnte nicht gestartet werden",
+  "sources_with_no_results": "{count, plural, =1{1 Quelle ohne Ergebnisse} other{{count} Quellen ohne Ergebnisse}}",
+  "import_mode_title": "Wie soll importiert werden?",
+  "import_mode_message": "Wähle, ob das Backup in die aktuelle Bibliothek zusammengeführt oder die gesamte Bibliothek ersetzt werden soll.",
+  "import_mode_keep_existing": "Zusammenführen",
+  "import_mode_keep_existing_subtitle": "Fügt neue Serien hinzu und aktualisiert vorhandene. Es wird nichts gelöscht.",
+  "import_mode_replace": "Ersetzen",
+  "import_mode_replace_subtitle": "Löscht die aktuelle Bibliothek und ersetzt sie durch das Backup.",
+  "replace_summary_title": "Bereit zum Ersetzen der Bibliothek",
+  "replace_summary_message": "Dies löscht die gesamte aktuelle Bibliothek ({currentCount} Serien) und ersetzt sie durch {backupCount} Serien. Dies kann nur durch ein Rollback rückgängig gemacht werden.",
+  "replace_summary_confirm": "Ersetzen",
+  "replace_result_message": "Bibliothek durch {count} Serien aus dem Backup ersetzt.",
+  "category_conflict_title": "Bestehende Kategorien gefunden",
+  "category_conflict_message": "Das Backup enthält Kategorien, die bereits existieren. Zusammenführen oder löschen?",
+  "category_conflict_keep": "Behalten – in bestehende Kategorie zusammenführen",
+  "category_conflict_delete": "Löschen – Serien ohne Kategorie belassen",
+  "source_conflict_title": "Quellen nicht gefunden",
+  "source_conflict_message": "Einige Quellen stimmen mit keiner installierten Erweiterung überein.",
+  "source_conflict_keep": "Ursprünglichen Namen behalten",
+  "import_summary_title": "Bereit zum Importieren",
+  "import_summary_message": "{newSeries} neue Serien, {updatedSeries} aktualisierte Serien und {newChapters} neue Kapitel werden hinzugefügt.",
+  "import_summary_confirm": "Importieren",
+  "import_result_message": "{newSeries} neue Serien importiert, {updatedSeries} aktualisiert, {newChapters} neue Kapitel hinzugefügt.",
+  "roll_back": "Zurücksetzen",
+  "roll_back_confirm_message": "Stellt die Bibliothek auf den Sicherheits-Schnappschuss vor dieser Änderung zurück.",
+  "roll_back_done": "Auf vorherigen Zustand zurückgesetzt.",
+  "restoring_backup": "Bibliothek wird wiederhergestellt…",
+  "roll_back_last_change": "Letzte Änderung rückgängig machen",
+  "roll_back_last_change_subtitle": "Schnappschuss vom {date} – {description}",
+  "roll_back_available_count": "{count} verfügbare Änderungen zum Zurücksetzen",
+  "delete_source_title": "Quelle und deren Manga löschen",
+  "delete_source_subtitle": "Entfernt alle Einträge einer Quelle samt Kapiteln, Downloads und Verlauf.",
+  "delete_source_pick_title": "Zu löschende Quelle wählen",
+  "delete_source_empty": "Keine Quellen in der Bibliothek gefunden.",
+  "delete_source_confirm_title": "{sourceName} löschen?",
+  "delete_source_confirm_message": "Löscht {mangaCount} Manga, {chapterCount} Kapitel, {historyCount} Verlaufseinträge und {updateCount} Updates.",
+  "delete_source_also_remove_extension": "Installierte Erweiterung ebenfalls entfernen",
+  "delete_source_keep_history": "Leseverlauf behalten",
+  "delete_source_keep_downloads": "Downloads behalten",
+  "delete_source_button": "Löschen",
+  "delete_source_result_message": "{mangaCount} Manga von {sourceName} gelöscht.",
+  "merge_manga_title": "Doppelte Manga zusammenführen",
+  "merge_manga_subtitle": "Findet gleiche Titel unter derselben Quelle und führt sie zusammen.",
+  "merge_manga_none_found": "Keine doppelten Manga gefunden.",
+  "merge_manga_pick_title": "Mögliche Duplikate",
+  "merge_manga_choose_primary_title": "In welchen Eintrag soll zusammengeführt werden?",
+  "merge_manga_choose_primary_message": "Kapitel, Verlauf und Tracking werden in den gewählten Eintrag übernommen.",
+  "merge_manga_chapters_subtitle": "{count, plural, =1{1 Kapitel} other{{count} Kapitel}}",
+  "merge_manga_button": "Zusammenführen",
+  "merge_manga_result_message": "{count} Duplikate in {mangaName} zusammengeführt.",
+  "merge_preview_title": "Zusammenführung bestätigen",
+  "merge_manga_preview_message": "{totalChapters} Kapitel gefunden. {duplicateChapters} Duplikate werden verworfen, {keptChapters} hinzugefügt.",
+  "beta": "Beta",
+  "error_reports": "Fehlerberichte",
+  "error_reports_subtitle": "Aufgetretene Fehler und Möglichkeit zur Meldung",
+  "error_reports_empty": "Keine Fehler aufgetreten.",
+  "error_reports_likely_cause": "Wahrscheinliche Ursache",
+  "error_reports_report": "Auf GitHub melden",
+  "error_reports_banner": "Mangayomi hat einen Fehler festgestellt",
+  "error_reports_banner_action": "Anzeigen",
+  "error_reports_copy": "Kopieren",
+  "error_reports_copied": "In die Zwischenablage kopiert",
+  "error_reports_clear": "Löschen",
+  "share_unavailable_copied": "Teilen nicht verfügbar, in Zwischenablage kopiert.",
+  "onboarding_title": "Willkommen bei Mangayomi",
+  "onboarding_libraries_body": "Wähle aus, was du lesen und ansehen möchtest.",
+  "onboarding_nav_title": "Deine Bibliotheken",
+  "onboarding_nav_body": "Eigener Tab für jede Bibliothek oder alle unter einem Bibliothek-Tab bündeln.",
+  "onboarding_nav_split": "Getrennte Tabs",
+  "onboarding_nav_merged": "Ein Bibliothek-Tab",
+  "onboarding_nav_inside": "Tippen auf Bibliothek wechselt die Leiste",
+  "onboarding_next": "Weiter",
+  "onboarding_restore": "Backup wiederherstellen",
+  "onboarding_or_local": "Oder vorhandene Dateien nutzen",
+  "onboarding_local_folder": "Ordner hinzufügen",
+  "onboarding_local_existing": "{count} Ordner bereits eingerichtet",
+  "onboarding_local_any_type": "Manga, Anime und Novels werden unterstützt.",
+  "onboarding_local_scanning": "Ordner wird durchsucht",
+  "onboarding_local_found": "{count} Titel gefunden",
+  "onboarding_local_remove": "Ordner entfernen",
+  "onboarding_local_in_downloads": "Dies ist der Download-Ordner der App.",
+  "onboarding_local_empty": "Nichts gefunden. Wähle den übergeordneten Ordner.",
+  "onboarding_repo_failed": "Repository konnte nicht geladen werden.",
+  "onboarding_repo_title": "Quelle hinzufügen",
+  "onboarding_body": "Füge ein Repository hinzu, um Erweiterungen zu installieren.",
+  "onboarding_add": "Repository hinzufügen",
+  "onboarding_skip": "Jetzt überspringen",
+  "onboarding_continue": "Fortfahren",
+  "onboarding_later": "Kann später unter Einstellungen > Durchsuchen hinzugefügt werden.",
+  "onboarding_replay": "Willkommensbildschirm anzeigen",
+  "onboarding_replay_subtitle": "Öffnet den Einrichtungsbildschirm erneut.",
+  "missing_source_check_title": "Auf fehlende Quellen prüfen",
+  "missing_source_check_subtitle": "Findet Einträge, deren Erweiterung nicht installiert ist.",
+  "missing_source_check_none_found": "Alle Quellen der Bibliothek sind installiert.",
+  "missing_source_check_result_title": "{count, plural, =1{1 Quelle fehlt} other{{count} Quellen fehlen}}",
+  "missing_source_check_result_message": "Diese Einträge verweisen auf nicht installierte Quellen. Tippe auf einen Eintrag zur Migration oder installiere die Erweiterung.",
+  "@tts_paragraph_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "@label_value": {
+    "placeholders": {
+      "label": {},
+      "value": {}
+    }
+  },
+  "@beta_version": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "@error_with_message": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_create_cbz": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_saving_chapter_episode_to_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_chapter_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_archive_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_getting_local_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_export_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@unrecognized_chapter_numbers": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@tracker_token_expired": {
+    "placeholders": {
+      "tracker": {}
+    }
+  },
+  "@playback_speed_multiplier": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "@could_not_launch_url": {
+    "placeholders": {
+      "url": {}
+    }
+  },
+  "@sources_with_no_results": {
+    "description": "Header of the collapsed group in global search holding every source that failed or found nothing.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@replace_summary_message": {
+    "placeholders": {
+      "currentCount": {},
+      "backupCount": {}
+    }
+  },
+  "@replace_result_message": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@import_summary_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@import_result_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@roll_back_last_change_subtitle": {
+    "placeholders": {
+      "date": {},
+      "description": {}
+    }
+  },
+  "@roll_back_available_count": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@delete_source_confirm_title": {
+    "placeholders": {
+      "sourceName": {}
+    }
+  },
+  "@delete_source_confirm_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "chapterCount": {},
+      "historyCount": {},
+      "updateCount": {}
+    }
+  },
+  "@delete_source_result_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "sourceName": {}
+    }
+  },
+  "@merge_manga_chapters_subtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@merge_manga_result_message": {
+    "placeholders": {
+      "count": {},
+      "mangaName": {}
+    }
+  },
+  "@merge_manga_preview_message": {
+    "placeholders": {
+      "totalChapters": {},
+      "duplicateChapters": {},
+      "keptChapters": {},
+      "duplicateTracks": {}
+    }
+  },
+  "@onboarding_local_existing": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@onboarding_local_found": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@missing_source_check_result_title": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

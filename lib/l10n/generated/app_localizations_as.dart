@@ -686,7 +686,7 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String beta_version(Object version) {
-    return 'Beta ($version)';
+    return 'বিটা ($version)';
   }
 
   @override
@@ -743,18 +743,18 @@ class AppLocalizationsAs extends AppLocalizations {
   String get unknown => 'অজ্ঞাত';
 
   @override
-  String get empty_placeholder => 'EMPTY\nMPTY\nMTY\nMT\n\n';
+  String get empty_placeholder => 'খালি';
 
   @override
-  String get error => 'Error';
+  String get error => 'ত্ৰুটি';
 
   @override
   String error_with_message(Object error) {
-    return 'Error: $error';
+    return 'ত্ৰুটি: $error';
   }
 
   @override
-  String get no_pages_available => 'Error: no pages available';
+  String get no_pages_available => 'ত্ৰুটি: কোনো পৃষ্ঠা উপলব্ধ নাই';
 
   @override
   String get set_categories => 'শ্ৰেণী নিৰ্ধাৰণ কৰক';
@@ -787,58 +787,59 @@ class AppLocalizationsAs extends AppLocalizations {
   String get source_title => 'উৎসৰ শিৰোনাম';
 
   @override
-  String get create_extension => 'Create Extension';
+  String get create_extension => 'এক্সটেনচন সৃষ্টি কৰক';
 
   @override
-  String get choose_extension_language => 'Choose extension language';
+  String get choose_extension_language => 'এক্সটেনচনৰ ভাষা বাছক';
 
   @override
-  String get lang => 'Lang';
+  String get lang => 'ভাষা';
 
   @override
-  String get base_url => 'BaseUrl';
+  String get base_url => 'মূল URL';
 
   @override
-  String get api_url_optional => 'ApiUrl (optional)';
+  String get api_url_optional => 'API URL (ঐচ্ছিক)';
 
   @override
-  String get icon_url => 'iconUrl';
+  String get icon_url => 'আইকন URL';
 
   @override
-  String get source_icon_url => 'Source icon url';
+  String get source_icon_url => 'উৎস আইকন URL';
 
   @override
-  String get notes => 'notes';
+  String get notes => 'টোকা';
 
   @override
-  String get extension_name_example => 'ex: myAnime';
+  String get extension_name_example => 'উদাহৰণ: myAnime';
 
   @override
-  String get language_code_example => 'ex: en';
+  String get language_code_example => 'উদাহৰণ: as';
 
   @override
-  String get base_url_example => 'ex: https://example.com';
+  String get base_url_example => 'উদাহৰণ: https://example.com';
 
   @override
-  String get api_url_example => 'ex: https://api.example.com';
+  String get api_url_example => 'উদাহৰণ: https://api.example.com';
 
   @override
-  String get extension_notes_example => 'ex: this extension requires login';
+  String get extension_notes_example =>
+      'উদাহৰণ: এই এক্সটেনচনৰ বাবে লগইন প্ৰয়োজন';
 
   @override
-  String get type => 'Type';
+  String get type => 'প্ৰকাৰ';
 
   @override
-  String get target => 'Target';
+  String get target => 'লক্ষ্য';
 
   @override
-  String get source_type_single => 'single';
+  String get source_type_single => 'একক';
 
   @override
-  String get source_type_multi => 'multi';
+  String get source_type_multi => 'একাধিক';
 
   @override
-  String get source_type_torrent => 'torrent';
+  String get source_type_torrent => 'টৰেণ্ট';
 
   @override
   String get source_language_dart => 'Dart';
@@ -847,22 +848,22 @@ class AppLocalizationsAs extends AppLocalizations {
   String get source_language_javascript => 'JavaScript';
 
   @override
-  String get source_language_lnreader_compiled_js => 'LNReader compiled JS';
+  String get source_language_lnreader_compiled_js => 'LNReader সংকলিত JS';
 
   @override
-  String get source_created_successfully => 'Source created successfully';
+  String get source_created_successfully => 'উৎস সফলতাৰে সৃষ্টি কৰা হ\'ল';
 
   @override
-  String get source_already_exists => 'Source already exists';
+  String get source_already_exists => 'উৎস ইতিমধ্যে আছে';
 
   @override
-  String get error_when_creating_source => 'Error when creating source';
+  String get error_when_creating_source => 'উৎস সৃষ্টি কৰোঁতে ত্ৰুটি';
 
   @override
-  String get cookies_deleted => 'Cookies deleted!';
+  String get cookies_deleted => 'কুকিজ মচি পেলোৱা হ\'ল!';
 
   @override
-  String get delete_all_cookies => 'Delete all cookies';
+  String get delete_all_cookies => 'সকলো কুকিজ মচক';
 
   @override
   String get chapter_number => 'অধ্যায় নম্বৰ';
@@ -880,7 +881,7 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String missing_chapters(Object count) {
-    return 'Missing $count chapters';
+    return '$count টা অধ্যায় বাদ পৰিছে';
   }
 
   @override
@@ -1078,7 +1079,8 @@ class AppLocalizationsAs extends AppLocalizations {
   String get sync_failed => 'সিংক বিফল';
 
   @override
-  String get sync_restore_in_progress => 'Sync skipped — restore in progress';
+  String get sync_restore_in_progress =>
+      'চিঙ্ক এৰাই চলা হ\'ল — পুনৰুদ্ধাৰ চলি আছে';
 
   @override
   String get sync_button_sync => 'প্ৰগতি সিংক কৰক';
@@ -1098,25 +1100,26 @@ class AppLocalizationsAs extends AppLocalizations {
       'এই অপাৰেশনে ল\'কেল ডাটা সম্পূৰ্ণৰূপে ৰিম\'ট ডাটাৰ সৈতে প্ৰতিস্থাপন কৰিব!';
 
   @override
-  String get sync_status_not_configured => 'Not connected';
+  String get sync_status_not_configured => 'সংযুক্ত নহয়';
 
   @override
-  String get sync_status_checking => 'Checking connection...';
+  String get sync_status_checking => 'সংযোগ পৰীক্ষা কৰা হৈছে...';
 
   @override
-  String get sync_status_connected => 'Connected';
+  String get sync_status_connected => 'সংযুক্ত';
 
   @override
-  String get sync_status_unauthorized => 'Session expired, please log in again';
+  String get sync_status_unauthorized =>
+      'অধিবেশনৰ ম্যাদ উকলিল, অনুগ্ৰহ কৰি পুনৰ লগইন কৰক';
 
   @override
-  String get sync_status_unreachable => 'Can\'t reach server';
+  String get sync_status_unreachable => 'চাৰ্ভাৰ পোৱা নগ\'ল';
 
   @override
-  String get sync_section_general => 'General';
+  String get sync_section_general => 'সাধাৰণ';
 
   @override
-  String get sync_section_data_types => 'What to sync';
+  String get sync_section_data_types => 'কি চিঙ্ক কৰিব';
 
   @override
   String get sync_on => 'সিংক সক্ষম কৰক';
@@ -1187,7 +1190,7 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String missing_episodes(Object count) {
-    return 'Missing $count episodes';
+    return '$count টা খণ্ড বাদ পৰিছে';
   }
 
   @override
@@ -1394,37 +1397,37 @@ class AppLocalizationsAs extends AppLocalizations {
   String get restore_backup => 'বেকআপ পুনৰুদ্ধাৰ';
 
   @override
-  String get encrypt_backups => 'Encrypt backups';
+  String get encrypt_backups => 'বেকআপ এনক্ৰিপ্ট কৰক';
 
   @override
   String get encrypt_backups_info =>
-      'Password-protect backup files using AES encryption';
+      'AES এনক্ৰিপচনৰ সহায়ত পাছৱৰ্ডেৰে বেকআপ সুৰক্ষিত কৰক';
 
   @override
-  String get no_secure_storage => 'No secure storage found';
+  String get no_secure_storage => 'কোনো সুৰক্ষিত সংগ্ৰহালয় পোৱা নগ\'ল';
 
   @override
   String get no_keyring_warning =>
-      'This system doesn\'t have a keyring service available (e.g. gnome-keyring or kwallet on Linux), so the password can\'t be stored securely.\n\nStore it unencrypted in the local app database instead? Anyone with access to this device\'s app data would be able to read it.';
+      'চিষ্টেমত কি-ৰিং সেৱা নাই, সেয়েহে পাছৱৰ্ড সুৰক্ষিতভাৱে সংৰক্ষণ কৰিব নোৱাৰি।';
 
   @override
-  String get enter_backup_password => 'Enter backup password';
+  String get enter_backup_password => 'বেকআপ পাছৱৰ্ড দিয়ক';
 
   @override
-  String get incorrect_password_try_again => 'Incorrect password, try again.';
+  String get incorrect_password_try_again => 'ভুল পাছৱৰ্ড, পুনৰ চেষ্টা কৰক।';
 
   @override
-  String get set_backup_password => 'Set backup password';
+  String get set_backup_password => 'বেকআপ পাছৱৰ্ড ছেট কৰক';
 
   @override
-  String get confirm_password => 'Confirm password';
+  String get confirm_password => 'পাছৱৰ্ড নিশ্চিত কৰক';
 
   @override
-  String get passwords_do_not_match => 'Passwords do not match';
+  String get passwords_do_not_match => 'পাছৱৰ্ড মিল খোৱা নাই';
 
   @override
   String get password_required_to_restore =>
-      'A password is required to restore this backup.';
+      'এই বেকআপ পুনৰুদ্ধাৰ কৰিবলৈ পাছৱৰ্ড প্ৰয়োজন।';
 
   @override
   String get restore_backup_subtitle =>
@@ -1478,41 +1481,40 @@ class AppLocalizationsAs extends AppLocalizations {
       'বেকআপ পুনৰুদ্ধাৰে সকলো বিদ্যমান তথ্য ওভাৰৰাইট কৰিব।\n\nপুনৰুদ্ধাৰ অব্যাহত ৰাখিব নে?';
 
   @override
-  String get restore_sync_question_title => 'Sync this restore?';
+  String get restore_sync_question_title => 'এই পুনৰুদ্ধাৰ চিঙ্ক কৰিবনে?';
 
   @override
   String get restore_sync_question_message =>
-      'This device is connected to a sync server. Upload this restored data to it now? If not, sync will be turned off so the server\'s old data doesn\'t overwrite what you just restored.';
+      'এই ডিভাইচটো চিঙ্ক চাৰ্ভাৰৰ সৈতে সংযুক্ত। পুনৰুদ্ধাৰ কৰা তথ্য এতিয়া আপলোড কৰিবনে?';
 
   @override
-  String get restore_sync_question_confirm => 'Yes, sync';
+  String get restore_sync_question_confirm => 'হয়, চিঙ্ক কৰক';
 
   @override
-  String get restore_sync_question_deny => 'No, disable sync';
+  String get restore_sync_question_deny => 'নহয়, চিঙ্ক অক্ষম কৰক';
 
   @override
   String get sync_disabled_after_restore =>
-      'Sync is disabled. You can turn it on again in Settings.';
+      'চিঙ্ক অক্ষম কৰা হৈছে। আপুনি ছেটিংছত পুনৰ সক্ষম কৰিব পাৰে।';
 
   @override
-  String get restore_sync_disabled_question_title =>
-      'Sync is currently disabled';
+  String get restore_sync_disabled_question_title => 'চিঙ্ক বৰ্তমান অক্ষম আছে';
 
   @override
   String get restore_sync_disabled_question_message =>
-      'Sync is turned off. Turn it back on and upload this restored data to your server?';
+      'চিঙ্ক বন্ধ আছে। পুনৰ সক্ষম কৰি চাৰ্ভাৰত আপলোড কৰিবনে?';
 
   @override
-  String get restore_sync_question_reenable => 'Yes, re-enable and sync';
+  String get restore_sync_question_reenable => 'হয়, সক্ষম আৰু চিঙ্ক কৰক';
 
   @override
-  String get restore_sync_question_keep_disabled => 'Keep it disabled';
+  String get restore_sync_question_keep_disabled => 'অক্ষম কৰি ৰাখক';
 
   @override
-  String get restore_sync_uploading => 'Syncing restored data to server…';
+  String get restore_sync_uploading => 'তথ্য চাৰ্ভাৰলৈ চিঙ্ক কৰা হৈছে…';
 
   @override
-  String get restore_sync_upload_success => 'Restored data synced to server';
+  String get restore_sync_upload_success => 'তথ্য সফলতাৰে চাৰ্ভাৰলৈ চিঙ্ক হ\'ল';
 
   @override
   String get services => 'সেৱা';
@@ -2231,69 +2233,69 @@ class AppLocalizationsAs extends AppLocalizations {
       'সকলো স্থানীয় ফ\'ল্ডাৰ এতিয়াই পুনৰ স্কেন কৰক';
 
   @override
-  String get default_download_destination => 'Default download destination';
+  String get default_download_destination => 'ডিফল্ট ডাউনল\'ড স্থান';
 
   @override
-  String get ask_download_destination => 'Ask for download destination';
+  String get ask_download_destination => 'ডাউনল\'ড স্থান সোধক';
 
   @override
   String get ask_download_destination_desc =>
-      'Choose a local folder each time a download starts.';
+      'প্ৰতিটো ডাউনল\'ড আৰম্ভ হওঁতে স্থানীয় ফ\'ল্ডাৰ বাছক।';
 
   @override
-  String get select_download_destination => 'Select download destination';
+  String get select_download_destination => 'ডাউনল\'ড স্থান নিৰ্বাচন কৰক';
 
   @override
-  String get clear_local_library => 'Clear local library';
+  String get clear_local_library => 'স্থানীয় লাইব্ৰেৰী পৰিষ্কাৰ কৰক';
 
   @override
   String get clear_local_library_desc =>
-      'Remove local folder and archive entries from the library.';
+      'লাইব্ৰেৰীৰ পৰা স্থানীয় ফ\'ল্ডাৰ আৰু আৰ্কাইভ আঁতৰাওক।';
 
   @override
   String get clear_local_library_msg =>
-      'This will remove local folder and archive entries from your library. It will not delete files from disk.';
+      'ইয়াৰ দ্বাৰা স্থানীয় ফ\'ল্ডাৰসমূহ লাইব্ৰেৰীৰ পৰা আঁতৰিব (ফাইল ডিলিট নহয়)।';
 
   @override
-  String get custom => 'Custom';
+  String get custom => 'স্বনিৰ্বাচিত';
 
   @override
   String get no_local_folder_available_for_downloads =>
-      'No local folder is available for downloads';
+      'ডাউনল\'ডৰ বাবে কোনো স্থানীয় ফ\'ল্ডাৰ উপলব্ধ নাই';
 
   @override
   String failed_to_create_cbz(Object error) {
-    return 'Failed to create CBZ: $error';
+    return 'CBZ সৃষ্টি কৰাত ব্যৰ্থ: $error';
   }
 
   @override
   String error_reading_cover_image(Object error) {
-    return 'Error reading cover image: $error';
+    return 'কভাৰ ছবি পঢ়াত ত্ৰুটি: $error';
   }
 
   @override
   String error_reading_metadata(Object error) {
-    return 'Error reading metadata: $error';
+    return 'মেটাডেটা পঢ়াত ত্ৰুটি: $error';
   }
 
   @override
   String error_saving_chapter_episode_to_library(Object error) {
-    return 'Error saving chapter/episode to library: $error';
+    return 'লাইব্ৰেৰীত সংৰক্ষণ কৰাত ত্ৰুটি: $error';
   }
 
   @override
   String error_reading_chapter_cover_image(Object error) {
-    return 'Error reading chapter cover image: $error';
+    return 'অধ্যায় কভাৰ পঢ়াত ত্ৰুটি: $error';
   }
 
   @override
   String error_reading_archive_cover_image(Object error) {
-    return 'Error reading archive cover image: $error';
+    return 'আৰ্কাইভ কভাৰ পঢ়াত ত্ৰুটি: $error';
   }
 
   @override
   String error_getting_local_library(Object error) {
-    return 'Error getting local library: $error';
+    return 'স্থানীয় লাইব্ৰেৰী পোৱাত ত্ৰুটি: $error';
   }
 
   @override
@@ -2304,25 +2306,25 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String failed_to_export_metadata(Object error) {
-    return 'Failed to export metadata: $error';
+    return 'মেটাডেটা এক্সপোৰ্ট কৰাত ব্যৰ্থ: $error';
   }
 
   @override
   String unrecognized_chapter_numbers(Object count) {
-    return '$count chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.';
+    return '$count টা অধ্যায় স্বয়ংক্ৰিয়ভাৱে নম্বৰ দিব পৰা নগ\'ল।';
   }
 
   @override
   String get cloudflare_resolution_webview_server_start_failed =>
-      'Couldn\'t start Cloudflare Resolution Webview Server.';
+      'Cloudflare সমাধান চাৰ্ভাৰ আৰম্ভ নহ\'ল।';
 
   @override
   String tracker_token_expired(Object tracker) {
-    return '$tracker Token expired';
+    return '$tracker টোকেনৰ ম্যাদ উকলিল';
   }
 
   @override
-  String get video_list_empty => 'Video list is empty';
+  String get video_list_empty => 'ভিডিঅ\' তালিকা খালী';
 
   @override
   String playback_speed_multiplier(Object value) {
@@ -2331,7 +2333,7 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String could_not_launch_url(Object url) {
-    return 'Could not launch $url';
+    return '$url খুলিব পৰা নগ\'ল';
   }
 
   @override
@@ -2623,29 +2625,29 @@ class AppLocalizationsAs extends AppLocalizations {
   String get not_configured => 'Not configured';
 
   @override
-  String get zero_interpreter => 'Zero interpreter';
+  String get zero_interpreter => 'Zero দোভাষী';
 
   @override
   String get zero_interpreter_description =>
-      'Control the Zero interpreter server automatically or manually.';
+      'Zero দোভাষী চাৰ্ভাৰ স্বয়ংক্ৰিয় বা মেনুৱেল নিয়ন্ত্ৰণ কৰক।';
 
   @override
-  String get start_server_on_launch => 'Start server on launch';
+  String get start_server_on_launch => 'আৰম্ভণিতে চাৰ্ভাৰ চলাওক';
 
   @override
-  String get runtime_status => 'Runtime status';
+  String get runtime_status => 'ৰানটাইম স্থিতি';
 
   @override
-  String get running => 'Running';
+  String get running => 'চলমান';
 
   @override
-  String get stopped => 'Stopped';
+  String get stopped => 'বন্ধ';
 
   @override
-  String get start => 'Start';
+  String get start => 'আৰম্ভ';
 
   @override
-  String get stop => 'Stop';
+  String get stop => 'বন্ধ কৰক';
 
   @override
   String get webview => 'Webview';
@@ -2838,84 +2840,84 @@ class AppLocalizationsAs extends AppLocalizations {
   String get source => 'উত্স';
 
   @override
-  String get something_went_wrong => 'Something went wrong';
+  String get something_went_wrong => 'কিবা ভুল হ\'ল';
 
   @override
-  String get startup_failed => 'Mangayomi could not finish starting up';
+  String get startup_failed => 'Mangayomi আৰম্ভ হ\'ব নোৱাৰিলে';
 
   @override
   String sources_with_no_results(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sources with no results',
-      one: '1 source with no results',
+      other: '$countটা উৎসত কোনো ফলাফল নাই',
+      one: '১টা উৎসত কোনো ফলাফল নাই',
     );
     return '$_temp0';
   }
 
   @override
-  String get import_mode_title => 'How should this be imported?';
+  String get import_mode_title => 'ইয়াক কেনেকৈ আমদানি কৰিব?';
 
   @override
   String get import_mode_message =>
-      'Choose whether to merge this backup into your current library, or replace your entire library with it.';
+      'বেকআপটো বৰ্তমানৰ লাইব্ৰেৰীত একত্ৰিত কৰক বা সলনি কৰক।';
 
   @override
-  String get import_mode_keep_existing => 'Merge';
+  String get import_mode_keep_existing => 'একত্ৰিত কৰক';
 
   @override
   String get import_mode_keep_existing_subtitle =>
-      'Adds new series and updates matching ones. Nothing in your current library is removed.';
+      'নতুন শৃংখলা যোগ কৰে আৰু পুৰণি আপডেট কৰে।';
 
   @override
-  String get import_mode_replace => 'Replace';
+  String get import_mode_replace => 'সলনি কৰক';
 
   @override
   String get import_mode_replace_subtitle =>
-      'Deletes your entire current library and replaces it with this backup.';
+      'বৰ্তমানৰ লাইব্ৰেৰী ডিলিট কৰি এই বেকআপেৰে সলনি কৰে।';
 
   @override
-  String get replace_summary_title => 'Ready to replace your library';
+  String get replace_summary_title => 'লাইব্ৰেৰী সলনি কৰিবলৈ সাজু';
 
   @override
   String replace_summary_message(Object currentCount, Object backupCount) {
-    return 'This deletes your entire current library ($currentCount series) and replaces it with $backupCount series from this backup. This can only be undone by rolling back.';
+    return 'ই বৰ্তমানৰ $currentCount টা শৃংখলা ডিলিট কৰি $backupCount টাৰে সলনি কৰিব।';
   }
 
   @override
-  String get replace_summary_confirm => 'Replace';
+  String get replace_summary_confirm => 'সলনি কৰক';
 
   @override
   String replace_result_message(Object count) {
-    return 'Replaced your library with $count series from this backup.';
+    return 'লাইব্ৰেৰী $count টা শৃংখলাৰে সলনি কৰা হ\'ল।';
   }
 
   @override
-  String get category_conflict_title => 'Existing categories found';
+  String get category_conflict_title => 'পূৰ্বৰ শ্ৰেণী পোৱা গ\'ল';
 
   @override
   String get category_conflict_message =>
-      'The backup has categories that already exist in your library. Keep to fold incoming series into the existing category, or delete to leave those series uncategorized instead.';
+      'বেকআপত এনে শ্ৰেণী আছে যি ইতিমধ্যে আছে।';
 
   @override
-  String get category_conflict_keep => 'Keep — merge into existing category';
+  String get category_conflict_keep => 'ৰাখক — একত্ৰিত কৰক';
 
   @override
-  String get category_conflict_delete => 'Delete — leave series uncategorized';
+  String get category_conflict_delete => 'মচক — শ্ৰেণীহীন কৰি ৰাখক';
 
   @override
-  String get source_conflict_title => 'Sources not found';
+  String get source_conflict_title => 'উৎস পোৱা নগ\'ল';
 
   @override
   String get source_conflict_message =>
-      'These backup sources don\'t match an installed extension. Keep the original name (imported without a working source), or migrate to an installed extension so these series can be updated.';
+      'কিছুমান উৎসৰ এক্সটেনচন ইনষ্টল কৰা নাই।';
 
   @override
-  String get source_conflict_keep => 'Keep original name (no live source)';
+  String get source_conflict_keep => 'মূল নাম ৰাখক';
 
   @override
-  String get import_summary_title => 'Ready to import';
+  String get import_summary_title => 'আমদানি কৰিবলৈ সাজু';
 
   @override
   String import_summary_message(
@@ -2923,11 +2925,11 @@ class AppLocalizationsAs extends AppLocalizations {
     Object updatedSeries,
     Object newChapters,
   ) {
-    return '$newSeries new series, $updatedSeries existing series will be updated, and $newChapters new chapters will be added. Nothing already in your library will be removed.';
+    return '$newSeries নতুন শৃংখলা, $updatedSeries আপডেট আৰু $newChapters নতুন অধ্যায় যোগ হ\'ব।';
   }
 
   @override
-  String get import_summary_confirm => 'Import';
+  String get import_summary_confirm => 'আমদানি কৰক';
 
   @override
   String import_result_message(
@@ -2935,51 +2937,51 @@ class AppLocalizationsAs extends AppLocalizations {
     Object updatedSeries,
     Object newChapters,
   ) {
-    return 'Imported $newSeries new series, updated $updatedSeries existing, added $newChapters new chapters.';
+    return '$newSeries নতুন শৃংখলা আমদানি, $updatedSeries আপডেট, $newChapters অধ্যায় যোগ হ\'ল।';
   }
 
   @override
-  String get roll_back => 'Roll back';
+  String get roll_back => 'পূৰ্বাবস্থালৈ নিয়ক';
 
   @override
   String get roll_back_confirm_message =>
-      'This restores your library to the safety snapshot taken right before this change, undoing everything it just did.';
+      'এই পৰিৱৰ্তনৰ ঠিক আগৰ সুৰক্ষিত স্ন্যাপশ্বটলৈ লাইব্ৰেৰী ঘূৰাই আনে।';
 
   @override
-  String get roll_back_done => 'Rolled back to the pre-change snapshot.';
+  String get roll_back_done => 'পূৰ্বৰ অৱস্থালৈ ঘূৰাই অনা হ\'ল।';
 
   @override
-  String get restoring_backup => 'Restoring your library…';
+  String get restoring_backup => 'লাইব্ৰেৰী পুনৰুদ্ধাৰ কৰা হৈছে…';
 
   @override
-  String get roll_back_last_change => 'Roll back last change';
+  String get roll_back_last_change => 'শেষ পৰিৱৰ্তন বাতিল কৰক';
 
   @override
   String roll_back_last_change_subtitle(Object date, Object description) {
-    return 'Snapshot from $date — $description';
+    return '$date ৰ স্ন্যাপশ্বট — $description';
   }
 
   @override
   String roll_back_available_count(Object count) {
-    return '$count recent changes available to roll back to';
+    return '$count টা শেহতীয়া পৰিৱৰ্তন ঘূৰাই আনিবলৈ উপলব্ধ';
   }
 
   @override
-  String get delete_source_title => 'Delete a source & its manga';
+  String get delete_source_title => 'উৎস আৰু ইয়াৰ মাংগা মচক';
 
   @override
   String get delete_source_subtitle =>
-      'Pick a source and remove every manga it has in your library, along with their chapters, downloads, history and tracking.';
+      'এটা উৎস বাছক আৰু তাৰ সকলো মাংগা, অধ্যায়, ডাউনল\'ড আৰু ইতিহাস মচক।';
 
   @override
-  String get delete_source_pick_title => 'Pick a source to delete';
+  String get delete_source_pick_title => 'মচিবলগীয়া উৎস বাছক';
 
   @override
-  String get delete_source_empty => 'No sources found in your library.';
+  String get delete_source_empty => 'লাইব্ৰেৰীত কোনো উৎস পোৱা নগ\'ল।';
 
   @override
   String delete_source_confirm_title(Object sourceName) {
-    return 'Delete $sourceName?';
+    return '$sourceName মচিবনে?';
   }
 
   @override
@@ -2989,69 +2991,68 @@ class AppLocalizationsAs extends AppLocalizations {
     Object historyCount,
     Object updateCount,
   ) {
-    return 'This permanently deletes $mangaCount manga, $chapterCount chapters, $historyCount history entries and $updateCount update entries. Tracking links are kept. This cannot be undone except by rolling back.';
+    return 'ই স্থায়ীভাৱে $mangaCount মাংগা, $chapterCount অধ্যায় আৰু $historyCount ইতিহাস মচি পেলাব।';
   }
 
   @override
   String get delete_source_also_remove_extension =>
-      'Also remove the installed extension';
+      'ইনষ্টল কৰা এক্সটেনচনো আঁতৰাওক';
 
   @override
-  String get delete_source_keep_history => 'Keep reading history';
+  String get delete_source_keep_history => 'পঢ়াৰ ইতিহাস ৰাখক';
 
   @override
-  String get delete_source_keep_downloads => 'Keep download records';
+  String get delete_source_keep_downloads => 'ডাউনল\'ড ৰেকৰ্ড ৰাখক';
 
   @override
-  String get delete_source_button => 'Delete';
+  String get delete_source_button => 'মচক';
 
   @override
   String delete_source_result_message(Object mangaCount, Object sourceName) {
-    return 'Deleted $mangaCount manga from $sourceName.';
+    return '$sourceName ৰ পৰা $mangaCount মাংগা মচা হ\'ল।';
   }
 
   @override
-  String get merge_manga_title => 'Merge duplicate manga';
+  String get merge_manga_title => 'নকল মাংগা একত্ৰিত কৰক';
 
   @override
   String get merge_manga_subtitle =>
-      'Finds manga with matching titles under the same source (e.g. after merging duplicate sources) and folds them into one, without deleting anything you\'d want kept.';
+      'একে উৎসৰ একে শিৰোনামৰ মাংগা বিচাৰি একত্ৰিত কৰে।';
 
   @override
-  String get merge_manga_none_found => 'No likely duplicate manga found.';
+  String get merge_manga_none_found => 'কোনো নকল মাংগা পোৱা নগ\'ল।';
 
   @override
-  String get merge_manga_pick_title => 'Possible duplicate manga';
+  String get merge_manga_pick_title => 'সম্ভাব্য নকল মাংগা';
 
   @override
-  String get merge_manga_choose_primary_title =>
-      'Which one should the others merge into?';
+  String get merge_manga_choose_primary_title => 'আনবোৰ কোনটোত একত্ৰিত হ\'ব?';
 
   @override
   String get merge_manga_choose_primary_message =>
-      'Chapters, history and tracking from the other entries will be folded into whichever one you pick — nothing is deleted.';
+      'অধ্যায়, ইতিহাস আৰু ট্ৰেকিং বাছনি কৰা এণ্ট্ৰিত একত্ৰিত হ\'ব।';
 
   @override
   String merge_manga_chapters_subtitle(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count chapters',
-      one: '1 chapter',
+      other: '$countটা অধ্যায়',
+      one: '১টা অধ্যায়',
     );
     return '$_temp0';
   }
 
   @override
-  String get merge_manga_button => 'Merge';
+  String get merge_manga_button => 'একত্ৰিত কৰক';
 
   @override
   String merge_manga_result_message(Object count, Object mangaName) {
-    return 'Merged $count duplicate manga into $mangaName.';
+    return '$countটা নকল মাংগা $mangaName ত একত্ৰিত কৰা হ\'ল।';
   }
 
   @override
-  String get merge_preview_title => 'Confirm merge';
+  String get merge_preview_title => 'একত্ৰীকৰণ নিশ্চিত কৰক';
 
   @override
   String merge_manga_preview_message(
@@ -3060,165 +3061,234 @@ class AppLocalizationsAs extends AppLocalizations {
     Object keptChapters,
     Object duplicateTracks,
   ) {
-    return '$totalChapters chapters found across the other entries. $duplicateChapters are duplicates and will be dropped (keeping whichever copy has reading progress); $keptChapters will be added. $duplicateTracks duplicate tracking link(s) will also be dropped.';
+    return 'মুঠ $totalChaptersটা অধ্যায় পোৱা গ\'ল। $duplicateChaptersটা নকল অধ্যায় বাদ পৰিব, $keptChaptersটা যোগ হ\'ব।';
   }
 
   @override
-  String get beta => 'Beta';
+  String get memory_overlay => 'Show memory usage';
 
   @override
-  String get error_reports => 'Error reports';
+  String get memory_overlay_subtitle =>
+      'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.';
+
+  @override
+  String get beta => 'বিটা';
+
+  @override
+  String get error_reports => 'ত্ৰুটিৰ প্ৰতিবেদন';
 
   @override
   String get error_reports_subtitle =>
-      'Errors the app caught, and a way to report them';
+      'এপে ধৰা পেলোৱা ত্ৰুটিসমূহ আৰু ৰিপ\'ৰ্ট কৰাৰ উপায়';
 
   @override
-  String get error_reports_empty =>
-      'Nothing has gone wrong. Errors the app catches are kept here so you can report them.';
+  String get error_reports_empty => 'কোনো ত্ৰুটি হোৱা নাই।';
 
   @override
-  String get error_reports_likely_cause => 'Likely cause';
+  String get error_reports_likely_cause => 'সম্ভাব্য কাৰণ';
 
   @override
-  String get error_reports_report => 'Report on GitHub';
+  String get error_reports_report => 'GitHub ত ৰিপ\'ৰ্ট কৰক';
 
   @override
-  String get error_reports_banner => 'Mangayomi ran into an error';
+  String get error_reports_banner => 'Mangayomi ত এটা ত্ৰুটি হ\'ল';
 
   @override
-  String get error_reports_banner_action => 'See it';
+  String get error_reports_banner_action => 'চাওক';
 
   @override
-  String get error_reports_copy => 'Copy';
+  String get error_reports_copy => 'কপি কৰক';
 
   @override
-  String get error_reports_copied => 'Copied to the clipboard';
+  String get error_reports_copied => 'ক্লিপব\'ৰ্ডলৈ কপি কৰা হ\'ল';
 
   @override
-  String get error_reports_clear => 'Clear';
+  String get error_reports_clear => 'পৰিষ্কাৰ কৰক';
+
+  @override
+  String get error_reports_extension_failure =>
+      'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.';
+
+  @override
+  String get error_reports_already_reported => 'Already reported';
+
+  @override
+  String get error_reports_expected_failure =>
+      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
 
   @override
   String get share_unavailable_copied =>
-      'Sharing isn\'t available on this platform, so it was copied to the clipboard instead.';
+      'শ্বেয়াৰ উপলব্ধ নহয়, ক্লিপব\'ৰ্ডলৈ কপি কৰা হ\'ল।';
 
   @override
-  String get onboarding_title => 'Welcome to Mangayomi';
+  String get onboarding_title => 'Mangayomi লৈ স্বাগতম';
 
   @override
-  String get onboarding_libraries_body =>
-      'Pick what you read and watch. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.';
+  String get onboarding_libraries_body => 'আপুনি কি পঢ়িব আৰু চাব বিচাৰে বাছক।';
 
   @override
-  String get onboarding_nav_title => 'Your libraries';
+  String get onboarding_nav_title => 'আপোনাৰ লাইব্ৰেৰীসমূহ';
 
   @override
   String get onboarding_nav_body =>
-      'Keep a tab for each of them, or put them together behind one Library tab you can switch inside.';
+      'প্ৰতিটোৰ বাবে সুকীয়া টেব ৰাখক বা এটা লাইব্ৰেৰী টেবৰ অধীনত একত্ৰিত কৰক।';
 
   @override
-  String get onboarding_nav_split => 'A tab each';
+  String get onboarding_nav_split => 'সুকীয়া টেব';
 
   @override
-  String get onboarding_nav_merged => 'One Library tab';
+  String get onboarding_nav_merged => 'এটা লাইব্ৰেৰী টেব';
 
   @override
-  String get onboarding_nav_inside => 'Tapping Library swaps the bar for these';
+  String get onboarding_nav_inside => 'লাইব্ৰেৰীত টিপিলে এই টেববোৰ সলনি হয়';
 
   @override
-  String get onboarding_next => 'Next';
+  String get onboarding_next => 'পৰৱৰ্তী';
 
   @override
-  String get onboarding_restore => 'Restore a backup';
+  String get onboarding_restore => 'বেকআপ পুনৰুদ্ধাৰ কৰক';
 
   @override
-  String get onboarding_or_local => 'Or use files you already have';
+  String get onboarding_or_local => 'বা থকা ফাইলসমূহ ব্যৱহাৰ কৰক';
 
   @override
-  String get onboarding_local_folder => 'Add a folder';
+  String get onboarding_local_folder => 'ফ\'ল্ডাৰ যোগ কৰক';
 
   @override
   String onboarding_local_existing(Object count) {
-    return '$count folders already set up';
+    return '$countটা ফ\'ল্ডাৰ ইতিমধ্যে ছেট কৰা আছে';
   }
 
   @override
   String get onboarding_local_any_type =>
-      'Manga, anime and novels all work. Each title goes to the right library based on what is inside it.';
+      'মাংগা, এনিমে আৰু উপন্যাস সকলো সমৰ্থিত।';
 
   @override
-  String get onboarding_local_scanning => 'Scanning the folder';
+  String get onboarding_local_scanning => 'ফ\'ল্ডাৰ স্কেন কৰা হৈছে';
 
   @override
   String onboarding_local_found(Object count) {
-    return '$count titles found';
+    return '$countটা পোৱা গ\'ল';
   }
 
   @override
-  String get onboarding_local_remove => 'Remove that folder';
+  String get onboarding_local_remove => 'ফ\'ল্ডাৰ আঁতৰাওক';
 
   @override
-  String get onboarding_local_in_downloads =>
-      'That is the app\'s downloads folder. Adding it makes a second, local copy of a library the app already manages.';
+  String get onboarding_local_in_downloads => 'এইটো এপটোৰ ডাউনল\'ড ফ\'ল্ডাৰ।';
 
   @override
-  String get onboarding_local_empty =>
-      'Nothing found. Pick the folder that holds your manga folders, not one manga.';
+  String get onboarding_local_empty => 'একো পোৱা নগ\'ল। মূল ফ\'ল্ডাৰ বাছক।';
 
   @override
-  String get onboarding_repo_failed =>
-      'Couldn\'t read that repository. Check the address and your connection.';
+  String get onboarding_repo_failed => 'ৰেপজিটৰি পঢ়িব পৰা নগ\'ল।';
 
   @override
-  String get onboarding_repo_title => 'Add a source';
+  String get onboarding_repo_title => 'উৎস যোগ কৰক';
 
   @override
-  String get onboarding_body =>
-      'Mangayomi comes with no sources of its own. Add a repository and the extensions it holds become available to install and browse.';
+  String get onboarding_body => 'এক্সটেনচন ইনষ্টল কৰিবলৈ এটা ৰেপজিটৰি যোগ কৰক।';
 
   @override
-  String get onboarding_add => 'Add repository';
+  String get onboarding_add => 'ৰেপজিটৰি যোগ কৰক';
 
   @override
-  String get onboarding_skip => 'Skip for now';
+  String get onboarding_skip => 'এতিয়া বাদ দিয়ক';
 
   @override
-  String get onboarding_continue => 'Continue';
+  String get onboarding_continue => 'অব্যাহত ৰাখক';
 
   @override
-  String get onboarding_later =>
-      'You can add one later in Settings, under Browse.';
+  String get onboarding_later => 'আপুনি পিছত ছেটিংছ > ব্ৰাউজত যোগ কৰিব পাৰে।';
 
   @override
-  String get onboarding_replay => 'Show the welcome screen';
+  String get onboarding_replay => 'স্বাগতম স্ক্ৰীণ দেখুৱাওক';
 
   @override
   String get onboarding_replay_subtitle =>
-      'Opens the first-run screen again, the one a new install starts on.';
+      'প্ৰাৰম্ভিক ছেটআপ স্ক্ৰীণ পুনৰ খোলক।';
 
   @override
-  String get missing_source_check_title => 'Check for missing sources';
+  String get missing_source_check_title => 'বাদ পৰা উৎস পৰীক্ষা কৰক';
 
   @override
   String get missing_source_check_subtitle =>
-      'Find library entries whose extension isn\'t installed - restoring a backup can leave entries pointing at a source you never installed on this device.';
+      'এক্সটেনচন ইনষ্টল নোহোৱা এণ্ট্ৰিসমূহ বিচাৰক।';
 
   @override
-  String get missing_source_check_none_found =>
-      'Every library entry\'s source is installed.';
+  String get missing_source_check_none_found => 'সকলো উৎস ইনষ্টল কৰা আছে।';
 
   @override
   String missing_source_check_result_title(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sources missing',
-      one: '1 source missing',
+      other: '$countটা উৎস বাদ পৰিছে',
+      one: '১টা উৎস বাদ পৰিছে',
     );
     return '$_temp0';
   }
 
   @override
+  String global_search_no_sources(String itemType) {
+    return 'No $itemType sources are installed.';
+  }
+
+  @override
+  String get global_search_no_sources_hint =>
+      'Add a repository under Browse, then install an extension for it.';
+
+  @override
+  String global_search_only_pinned(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sources',
+      one: '1 source',
+    );
+    return 'You have $_temp0 for this, but only pinned ones are searched.';
+  }
+
+  @override
+  String get global_search_only_pinned_hint =>
+      'Pin one, or turn off \"Only include pinned sources\" in Browse settings.';
+
+  @override
+  String get global_search_all_nsfw =>
+      'Every source you have for this is marked NSFW, and those are hidden.';
+
+  @override
+  String get global_search_all_nsfw_hint =>
+      'Turn on NSFW sources in Browse settings to search them.';
+
+  @override
   String get missing_source_check_result_message =>
-      'These library entries point at a source that isn\'t installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them.';
+      'এই এণ্ট্ৰিসমূহ ইনষ্টল নথকা উৎসৰ সৈতে জড়িত। স্থানান্তৰ কৰিবলৈ টিপক বা এক্সটেনচন ইনষ্টল কৰক।';
+
+  @override
+  String get related_titles => 'Related';
+
+  @override
+  String get related_none => 'Nothing related was found for this title.';
+
+  @override
+  String get relation_adaptation => 'Adaptation';
+
+  @override
+  String get relation_sequel => 'Sequel';
+
+  @override
+  String get relation_prequel => 'Prequel';
+
+  @override
+  String get relation_parent => 'Parent story';
+
+  @override
+  String get relation_side_story => 'Side story';
+
+  @override
+  String get relation_spin_off => 'Spin-off';
+
+  @override
+  String get relation_alternative => 'Alternative version';
 }
