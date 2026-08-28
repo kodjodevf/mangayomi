@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/custom_floating_action_btn.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
@@ -30,12 +29,7 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
       // No explicit sort: the natural (insertion) id order is the stable base
       // the manual queue order is applied on top of, so rows don't reshuffle as
       // download progress ticks.
-      stream: isar.downloads
-          .filter()
-          .idIsNotNull()
-          .isDownloadEqualTo(false)
-          .isStartDownloadEqualTo(true)
-          .watch(fireImmediately: true),
+      stream: downloadRepository.watchPending(),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Scaffold(
@@ -64,11 +58,7 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
           }
         }
         if (orphanIds.isNotEmpty) {
-          isar.writeTxnSync(() {
-            for (final id in orphanIds) {
-              isar.downloads.deleteSync(id);
-            }
-          });
+          downloadRepository.deleteAll(orphanIds);
         }
         if (valid.isEmpty) {
           return Scaffold(
@@ -129,7 +119,15 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
           floatingActionButton: CustomFloatingActionBtn(
             isExtended: false,
             label: l10n.download_queue,
-            onPressed: () {
+            onPressed: () async {
+              for (final entry in entries) {
+                final chapter = entry.chapter.value;
+                if (chapter != null) {
+                  await downloadRepository.enqueue(chapter);
+                }
+              }
+              if (!mounted) return;
+              ref.invalidate(processDownloadsProvider());
               ref.read(processDownloadsProvider());
             },
           ),
@@ -170,7 +168,9 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
                       style: const TextStyle(fontSize: 16),
                     ),
                     Text(
-                      "${element.succeeded}/${element.total}",
+                      (element.failed ?? 0) > 0
+                          ? 'Failed — retry'
+                          : '${element.succeeded ?? 0}%',
                       style: const TextStyle(fontSize: 10),
                     ),
                   ],
@@ -255,9 +255,7 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
         element.chapter.value!.cancelDownloads(element.id!);
       } else {
         // Orphaned download: just delete the record.
-        isar.writeTxnSync(() {
-          isar.downloads.deleteSync(element.id!);
-        });
+        downloadRepository.delete(element.id!);
       }
     } else if (value == 'CancelAll') {
       final a = entries
@@ -272,7 +270,7 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
           .toList();
       for (var ids in a) {
         final (downloadId, chapterId) = ids;
-        final chapter = isar.chapters.getSync(chapterId!);
+        final chapter = chapterRepository.findByIdSync(chapterId!);
         chapter?.cancelDownloads(downloadId!);
       }
     }

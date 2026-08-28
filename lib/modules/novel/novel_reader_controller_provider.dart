@@ -1,6 +1,6 @@
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/chapter_reader_settings_mixin.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/chapter_controller_mixin.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -14,7 +14,7 @@ class NovelReaderController extends _$NovelReaderController
 
   // Keep incognitoMode as a final field (read once, not on every access).
   @override
-  final bool incognitoMode = isar.settings.getSync(227)!.incognitoMode!;
+  final bool incognitoMode = settingsRepository.current.incognitoMode!;
 
   // ---------------------------------------------------------------------------
   // Scroll-position tracking
@@ -25,13 +25,9 @@ class NovelReaderController extends _$NovelReaderController
     final isRead = (newOffset / (maxOffset != 0 ? maxOffset : 1)) >= 0.9;
     if (isRead || save) {
       final ch = chapter;
-      isar.writeTxnSync(() {
-        ch.isRead = isRead;
-        ch.lastPageRead = (maxOffset != 0 ? newOffset / maxOffset : 0)
-            .toString();
-        ch.updatedAt = DateTime.now().millisecondsSinceEpoch;
-        isar.chapters.putSync(ch);
-      });
+      ch.isRead = isRead;
+      ch.lastPageRead = (maxOffset != 0 ? newOffset / maxOffset : 0).toString();
+      chapterRepository.save(ch);
     }
   }
 }

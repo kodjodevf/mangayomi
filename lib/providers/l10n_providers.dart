@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 part 'l10n_providers.g.dart';
@@ -14,22 +14,17 @@ class L10nLocaleState extends _$L10nLocaleState {
   }
 
   L10nLocale _getLocale() {
-    return isar.settings.getSync(227)?.locale ??
+    return settingsRepository.current.locale ??
         L10nLocale(languageCode: "en", countryCode: "");
   }
 
   void setLocale(Locale locale) async {
-    final settings = isar.settings.getSync(227)!;
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        settings
-          ..locale = L10nLocale(
-            languageCode: locale.languageCode,
-            countryCode: locale.countryCode,
-          )
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.update(
+      (s) => s.locale = L10nLocale(
+        languageCode: locale.languageCode,
+        countryCode: locale.countryCode,
+      ),
+    );
     state = locale;
   }
 }

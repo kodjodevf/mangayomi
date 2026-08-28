@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:crypto/crypto.dart';
 import 'package:mangayomi/utils/avif.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 
 import 'coordinate_transformer.dart';
 import 'ffi_image_decoder.dart';
@@ -663,10 +664,13 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
       final dynamic dynProvider = provider;
       if (dynProvider.bytes is Uint8List) {
         final Uint8List bytes = dynProvider.bytes;
-        final tempDir = await getTemporaryDirectory();
         final cacheKey = provider.hashCode.abs();
-        final tempFile = File('${tempDir.path}/ssiv_cache_$cacheKey.png');
-        await tempFile.writeAsBytes(bytes, flush: true);
+        final tempFile = await cacheImageBytesToTempFile(
+          tempDir: await getTemporaryDirectory(),
+          baseName: 'ssiv_cache_$cacheKey',
+          extension: detectImageExtension(bytes),
+          bytesProvider: () => bytes,
+        );
         _resolvedFilePath = tempFile.path;
         await _initImage();
         return;
@@ -736,20 +740,21 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
       }
 
       // Fallback: Encode the image to PNG to save it to disk
-      final byteData = await loadedImage.toByteData(
-        format: ui.ImageByteFormat.png,
-      );
-      if (byteData == null) {
-        throw Exception('Failed to convert image to PNG bytes');
-      }
-
-      final bytes = byteData.buffer.asUint8List();
-
-      // Uses the platform's temporary directory
-      final tempDir = await getTemporaryDirectory();
       final cacheKey = provider.hashCode.abs();
-      final tempFile = File('${tempDir.path}/ssiv_cache_$cacheKey.png');
-      await tempFile.writeAsBytes(bytes, flush: true);
+      final tempFile = await cacheImageBytesToTempFile(
+        tempDir: await getTemporaryDirectory(),
+        baseName: 'ssiv_cache_$cacheKey',
+        extension: '.png', // we control the encode below, so this is exact
+        bytesProvider: () async {
+          final byteData = await loadedImage.toByteData(
+            format: ui.ImageByteFormat.png,
+          );
+          if (byteData == null) {
+            throw Exception('Failed to convert image to PNG bytes');
+          }
+          return byteData.buffer.asUint8List();
+        },
+      );
 
       _resolvedFilePath = tempFile.path;
 
@@ -934,15 +939,13 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     final key = _md5Hash(
       '$path:${stat.size}:${stat.modified.millisecondsSinceEpoch}',
     );
-    final target = File(
-      '${(await getTemporaryDirectory()).path}/ssiv_avif_$key.png',
+    // Decoding is deferred into bytesProvider so it only runs on a cache miss
+    final target = await cacheImageBytesToTempFile(
+      tempDir: await getTemporaryDirectory(),
+      baseName: 'ssiv_avif_$key',
+      extension: '.png', // decodeAvifToPng always returns PNG bytes
+      bytesProvider: () async => decodeAvifToPng(await source.readAsBytes()),
     );
-    if (!await target.exists()) {
-      await target.writeAsBytes(
-        await decodeAvifToPng(await source.readAsBytes()),
-        flush: true,
-      );
-    }
     return target.path;
   }
 

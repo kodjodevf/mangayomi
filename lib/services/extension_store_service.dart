@@ -56,32 +56,44 @@ class ExtensionStoreService {
 
       // 1. Legacy JSON array: Starts with '[' (0x5B)
       if (firstByte == 0x5B) {
-        if (currentUrl.endsWith('/index.min.json')) {
-          final repoUrl = currentUrl.replaceAll(
-            '/index.min.json',
-            '/repo.json',
-          );
-          try {
-            final repoRes = await client.get(Uri.parse(repoUrl));
-            if (repoRes.statusCode == 200) {
-              final repoJson = jsonDecode(repoRes.body);
-              if (repoJson is Map &&
-                  repoJson['index_v2'] != null &&
+        String? repoName;
+        String? repoWebsite;
+        final baseUrlMatch = RegExp(
+          r'^(.*)/[^/]+\.json$',
+        ).firstMatch(currentUrl);
+        final baseUrl =
+            baseUrlMatch != null ? baseUrlMatch.group(1)! : currentUrl;
+        try {
+          final repoRes = await client.get(Uri.parse('$baseUrl/repo.json'));
+          if (repoRes.statusCode == 200) {
+            final repoJson = jsonDecode(repoRes.body);
+            if (repoJson is Map) {
+              if (repoJson['index_v2'] != null &&
                   (repoJson['index_v2'] as String).isNotEmpty) {
                 // Redirect to V2 index (.pb or JSON store)
                 return await fetchStore(repoJson['index_v2'] as String, client);
               }
+              repoName =
+                  (repoJson['meta']?['name'] ?? repoJson['name']) as String?;
+              repoWebsite =
+                  (repoJson['meta']?['website'] ?? repoJson['website'])
+                      as String?;
             }
-          } catch (e, st) {
-            // Falls through to the legacy parser, so a broken v2 redirect just
-            // looks like an empty repo.
-            AppLogger.log(
-              'fetchStore: index_v2 redirect failed: $e\n$st',
-              logLevel: LogLevel.error,
-            );
           }
+        } catch (e, st) {
+          // Falls through to the legacy parser, so a broken v2 redirect or repo.json
+          // lookup just falls back to default inference.
+          AppLogger.log(
+            'fetchStore: repo.json check failed: $e\n$st',
+            logLevel: LogLevel.error,
+          );
         }
-        return _parseLegacyJsonStore(currentUrl, bytes);
+        return _parseLegacyJsonStore(
+          currentUrl,
+          bytes,
+          name: repoName,
+          website: repoWebsite,
+        );
       }
 
       // 2. JSON object: Starts with '{' (0x7B)
@@ -170,6 +182,14 @@ class ExtensionStoreService {
     InterceptedClient client,
   ) async {
     try {
+      // 1. Check if it's an Aidoku format repository index (e.g. index.min.json with "sources": [...])
+      if (jsonMap['sources'] is List) {
+        final aidokuResult = _parseAidokuJsonStore(indexUrl, jsonMap);
+        if (aidokuResult != null && aidokuResult.sources.isNotEmpty) {
+          return aidokuResult;
+        }
+      }
+
       final meta = jsonMap['meta'] as Map<String, dynamic>?;
       final repoName =
           (meta?['name'] as String?) ??
@@ -211,19 +231,154 @@ class ExtensionStoreService {
     }
   }
 
+  static ExtensionStoreFetchResult? _parseAidokuJsonStore(
+    String indexUrl,
+    Map<String, dynamic> jsonMap,
+  ) {
+    try {
+      final rawSources = jsonMap['sources'];
+      if (rawSources is! List) return null;
+
+      final repoName = (jsonMap['name'] as String?) ?? 'Aidoku Sources';
+      final baseUri = Uri.parse(indexUrl);
+      final sources = <Source>[];
+
+      for (final e in rawSources) {
+        if (e is! Map<String, dynamic>) continue;
+        final rawDownloadUrl =
+            (e['downloadURL'] as String?) ?? (e['file'] as String?);
+        final rawIconUrl = (e['iconURL'] as String?) ?? (e['icon'] as String?);
+
+        final downloadUrl = rawDownloadUrl != null && rawDownloadUrl.isNotEmpty
+            ? baseUri.resolve(rawDownloadUrl).toString()
+            : '';
+        final iconUrl = rawIconUrl != null && rawIconUrl.isNotEmpty
+            ? baseUri.resolve(rawIconUrl).toString()
+            : (e['id'] != null
+                  ? baseUri.resolve('icons/${e['id']}.png').toString()
+                  : '');
+
+        final langs =
+            (e['languages'] as List?)?.map((l) => l.toString()).toList() ??
+            [(e['lang'] as String?) ?? 'all'];
+
+        final rating = e['contentRating'] ?? e['nsfw'] ?? 0;
+        final isNsfw = rating is int
+            ? rating >= 2
+            : (rating == true || rating == 1);
+        final baseUrl =
+            (e['baseURL'] as String?) ?? (e['url'] as String?) ?? '';
+        final name = (e['name'] as String?) ?? (e['id'] as String?) ?? 'Source';
+        final version = e['version'] != null ? '${e['version']}.0.0' : '1.0.0';
+
+        for (final lang in langs) {
+          final src = Source()
+            ..apiUrl = ''
+            ..appMinVerReq = ''
+            ..dateFormat = ''
+            ..dateFormatLocale = ''
+            ..hasCloudflare = false
+            ..headers = ''
+            ..isActive = true
+            ..isAdded = false
+            ..isFullData = false
+            ..isNsfw = isNsfw
+            ..isPinned = false
+            ..lastUsed = false
+            ..sourceCode = ''
+            ..typeSource = ''
+            ..version = version
+            ..versionLast = '0.0.1'
+            ..isObsolete = false
+            ..isLocal = false
+            ..name = name
+            ..lang = lang
+            ..baseUrl = baseUrl
+            ..sourceCodeUrl = downloadUrl
+            ..sourceCodeLanguage = SourceCodeLanguage.aidoku
+            ..itemType = ItemType.manga
+            ..iconUrl = iconUrl
+            ..notes = null;
+          src.id = 'aidoku-${e['id']}-$lang'.hashCode.abs();
+          sources.add(src);
+        }
+      }
+
+      return ExtensionStoreFetchResult(
+        name: repoName,
+        website: indexUrl,
+        indexUrl: indexUrl,
+        sources: sources,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
   static ExtensionStoreFetchResult? _parseLegacyJsonStore(
     String indexUrl,
-    List<int> bytes,
-  ) {
+    List<int> bytes, {
+    String? name,
+    String? website,
+  }) {
     try {
       final jsonList = jsonDecode(utf8.decode(bytes));
       if (jsonList is! List) return null;
 
-      final repoBaseUrl = indexUrl.replaceAll('/index.min.json', '');
+      final repoBaseUrl = indexUrl.replaceAll(RegExp(r'/[^/]+\.json$'), '');
       final sources = <Source>[];
 
       for (final e in jsonList) {
         if (e is! Map<String, dynamic>) continue;
+        if (e['file'] != null && (e['file'] as String).endsWith('.aix')) {
+          final langs =
+              (e['languages'] as List?)?.map((l) => l.toString()).toList() ??
+              [(e['lang'] as String?) ?? 'all'];
+          final isNsfw = (e['nsfw'] ?? 0) != 0;
+          final icon = e['icon'] != null
+              ? (e['icon'] as String).startsWith('http')
+                    ? e['icon'] as String
+                    : '$repoBaseUrl/${e['icon']}'
+              : '$repoBaseUrl/icons/${e['id']}.png';
+          final sourceUrl = (e['file'] as String).startsWith('http')
+              ? e['file'] as String
+              : '$repoBaseUrl/${e['file']}';
+          final urls = (e['urls'] as List?)?.map((u) => u.toString()).toList();
+          final baseUrl = urls?.firstOrNull ?? (e['url'] as String?) ?? '';
+
+          for (final lang in langs) {
+            final src = Source()
+              ..apiUrl = ''
+              ..appMinVerReq = (e['min_app_version'] as String?) ?? ''
+              ..dateFormat = ''
+              ..dateFormatLocale = ''
+              ..hasCloudflare = false
+              ..headers = ''
+              ..isActive = true
+              ..isAdded = false
+              ..isFullData = false
+              ..isNsfw = isNsfw
+              ..isPinned = false
+              ..lastUsed = false
+              ..sourceCode = ''
+              ..typeSource = ''
+              ..version = '${e['version'] ?? 1}.0.0'
+              ..versionLast = '0.0.1'
+              ..isObsolete = false
+              ..isLocal = false
+              ..name = e['name']
+              ..lang = lang
+              ..baseUrl = baseUrl
+              ..sourceCodeUrl = sourceUrl
+              ..sourceCodeLanguage = SourceCodeLanguage.aidoku
+              ..itemType = ItemType.manga
+              ..iconUrl = icon
+              ..notes = null;
+            src.id = 'aidoku-${e['id']}-$lang'.hashCode;
+            sources.add(src);
+          }
+          continue;
+        }
         if (e['name'] != null &&
             e['pkg'] != null &&
             e['version'] != null &&
@@ -268,16 +423,34 @@ class ExtensionStoreService {
             src.id = 'mihon-${source['id']}'.hashCode;
             sources.add(src);
           }
+          continue;
         }
+
+        // Native Mangayomi source or other supported JSON source
+        try {
+          final src = Source.fromJson(e);
+          if (src.name != null && src.name!.isNotEmpty) {
+            sources.add(src);
+          }
+        } catch (_) {}
       }
 
-      final repoName =
-          repoBaseUrl.split('/').where((s) => s.isNotEmpty).lastOrNull ??
+      final defaultRepoName =
+          repoBaseUrl
+              .split('/')
+              .where((s) => s.isNotEmpty && !s.endsWith('.json'))
+              .lastOrNull ??
           'Mihon Repo';
+      final repoName =
+          (name != null && name.isNotEmpty && !name.endsWith('.json'))
+              ? name
+              : defaultRepoName;
+      final repoWebsite =
+          (website != null && website.isNotEmpty) ? website : repoBaseUrl;
 
       return ExtensionStoreFetchResult(
         name: repoName,
-        website: repoBaseUrl,
+        website: repoWebsite,
         indexUrl: indexUrl,
         sources: sources,
       );

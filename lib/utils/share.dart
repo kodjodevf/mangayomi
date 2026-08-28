@@ -105,6 +105,8 @@ String _fileName(XFile file, String? fallbackName, int index) {
     'image/png' => '.png',
     'image/jpeg' => '.jpg',
     'image/webp' => '.webp',
+    'image/avif' => '.avif',
+    'image/gif' => '.gif',
     _ => '',
   };
   if (extension.isNotEmpty && p.extension(name).toLowerCase() != extension) {

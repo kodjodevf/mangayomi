@@ -1,5 +1,4 @@
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'app_ui_scale_state_provider.g.dart';
 
@@ -9,20 +8,13 @@ part 'app_ui_scale_state_provider.g.dart';
 class AppUiScaleState extends _$AppUiScaleState {
   @override
   double build() {
-    return isar.settings.getSync(227)!.appUiScale ?? 1.0;
+    return settingsRepository.current.appUiScale ?? 1.0;
   }
 
   void set(double value, {bool end = false}) {
     state = value;
     if (end) {
-      final settings = isar.settings.getSync(227);
-      isar.writeTxnSync(
-        () => isar.settings.putSync(
-          settings!
-            ..appUiScale = state
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-        ),
-      );
+      settingsRepository.update((s) => s.appUiScale = state);
     }
   }
 }

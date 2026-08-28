@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -83,6 +84,17 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
     } else if (widget.data.archiveImage != null &&
         widget.data.archiveImage!.length > 5) {
       if (isGifImage(widget.data.archiveImage!)) isAnimated = true;
+    } else if (widget.data.localImagePath != null) {
+      // Local image-folder page: sniff the real file's bytes directly rather
+      // than trusting its extension.
+      try {
+        final raf = await File(widget.data.localImagePath!).open();
+        try {
+          if (isGifImage(await raf.read(6))) isAnimated = true;
+        } finally {
+          await raf.close();
+        }
+      } catch (_) {}
     } else if (widget.data.directory != null && widget.data.index != null) {
       try {
         // Look up whatever extension this page was actually saved under

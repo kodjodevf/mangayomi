@@ -4,20 +4,13 @@ import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed.dart';
-import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download.dart';
-import 'package:mangayomi/models/history.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/modules/more/settings/player/custom_button_screen.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/extension_server_warning_banner.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -338,9 +331,7 @@ void _showClearAllSourcesDialog(BuildContext context, dynamic l10n) {
               Consumer(
                 builder: (context, ref, child) => TextButton(
                   onPressed: () {
-                    isar.writeTxnSync(() {
-                      isar.sources.clearSync();
-                    });
+                    sourceRepository.clearAll();
 
                     Navigator.pop(ctx);
                     botToast(l10n.sources_cleared);
@@ -377,62 +368,8 @@ void _showCleanNonLibraryDialog(BuildContext context, dynamic l10n) {
               Consumer(
                 builder: (context, ref, child) => TextButton(
                   onPressed: () {
-                    final mangasList = isar.mangas
-                        .filter()
-                        .favoriteEqualTo(false)
-                        .findAllSync();
-                    final provider = ref.read(
-                      synchingProvider(syncId: 1).notifier,
-                    );
-                    isar.writeTxnSync(() {
-                      for (var manga in mangasList) {
-                        final histories = isar.historys
-                            .filter()
-                            .mangaIdEqualTo(manga.id)
-                            .findAllSync();
-                        for (var history in histories) {
-                          isar.historys.deleteSync(history.id!);
-                          provider.addChangedPart(
-                            ActionType.removeHistory,
-                            history.id,
-                            "{}",
-                            false,
-                          );
-                        }
-
-                        for (var chapter in manga.chapters) {
-                          final updates = isar.updates
-                              .filter()
-                              .mangaIdEqualTo(chapter.mangaId)
-                              .chapterNameEqualTo(chapter.name)
-                              .findAllSync();
-                          for (var update in updates) {
-                            isar.updates.deleteSync(update.id!);
-                            provider.addChangedPart(
-                              ActionType.removeUpdate,
-                              update.id,
-                              "{}",
-                              false,
-                            );
-                          }
-                          isar.downloads.deleteSync(chapter.id!);
-                          isar.chapters.deleteSync(chapter.id!);
-                          provider.addChangedPart(
-                            ActionType.removeChapter,
-                            chapter.id,
-                            "{}",
-                            false,
-                          );
-                        }
-                        isar.mangas.deleteSync(manga.id!);
-                        provider.addChangedPart(
-                          ActionType.removeItem,
-                          manga.id,
-                          "{}",
-                          false,
-                        );
-                      }
-                    });
+                    final mangasList = mangaRepository.getNonFavorites();
+                    mangaRepository.wipeMangas(ref, mangasList);
 
                     Navigator.pop(ctx);
                     botToast(l10n.cleaned_database(mangasList.length));
@@ -498,76 +435,18 @@ void _showClearLibraryDialog(BuildContext context, WidgetRef ref) {
                     onPressed: isInputError
                         ? null
                         : () {
-                            final mangasList = isar.mangas
-                                .filter()
-                                .anyOf(
-                                  textController.text
-                                      .split(",")
-                                      .map(
-                                        (e) => switch (e) {
-                                          "manga" => ItemType.manga,
-                                          "anime" => ItemType.anime,
-                                          "novel" => ItemType.novel,
-                                          _ => null,
-                                        },
-                                      ),
-                                  (q, element) => element == null
-                                      ? q.idIsNull()
-                                      : q.itemTypeEqualTo(element),
-                                )
-                                .findAllSync();
-                            final provider = ref.read(
-                              synchingProvider(syncId: 1).notifier,
-                            );
-                            isar.writeTxnSync(() {
-                              for (var manga in mangasList) {
-                                final histories = isar.historys
-                                    .filter()
-                                    .mangaIdEqualTo(manga.id)
-                                    .findAllSync();
-                                for (var history in histories) {
-                                  isar.historys.deleteSync(history.id!);
-                                  provider.addChangedPart(
-                                    ActionType.removeHistory,
-                                    history.id,
-                                    "{}",
-                                    false,
-                                  );
-                                }
-
-                                for (var chapter in manga.chapters) {
-                                  final updates = isar.updates
-                                      .filter()
-                                      .mangaIdEqualTo(chapter.mangaId)
-                                      .chapterNameEqualTo(chapter.name)
-                                      .findAllSync();
-                                  for (var update in updates) {
-                                    isar.updates.deleteSync(update.id!);
-                                    provider.addChangedPart(
-                                      ActionType.removeUpdate,
-                                      update.id,
-                                      "{}",
-                                      false,
-                                    );
-                                  }
-                                  isar.downloads.deleteSync(chapter.id!);
-                                  isar.chapters.deleteSync(chapter.id!);
-                                  provider.addChangedPart(
-                                    ActionType.removeChapter,
-                                    chapter.id,
-                                    "{}",
-                                    false,
-                                  );
-                                }
-                                isar.mangas.deleteSync(manga.id!);
-                                provider.addChangedPart(
-                                  ActionType.removeItem,
-                                  manga.id,
-                                  "{}",
-                                  false,
+                            final mangasList = mangaRepository
+                                .getByItemTypeNames(
+                                  textController.text.split(",").map(
+                                    (e) => switch (e) {
+                                      "manga" => ItemType.manga,
+                                      "anime" => ItemType.anime,
+                                      "novel" => ItemType.novel,
+                                      _ => null,
+                                    },
+                                  ),
                                 );
-                              }
-                            });
+                            mangaRepository.wipeMangas(ref, mangasList);
                             botToast(
                               context.l10n.cleaned_database(mangasList.length),
                             );
@@ -614,64 +493,8 @@ void _showClearLocalLibraryDialog(BuildContext context, WidgetRef ref) {
               ),
               TextButton(
                 onPressed: () {
-                  final mangasList = isar.mangas
-                      .filter()
-                      .sourceEqualTo("local")
-                      .or()
-                      .sourceEqualTo("archive")
-                      .findAllSync();
-                  final provider = ref.read(
-                    synchingProvider(syncId: 1).notifier,
-                  );
-                  isar.writeTxnSync(() {
-                    for (var manga in mangasList) {
-                      final histories = isar.historys
-                          .filter()
-                          .mangaIdEqualTo(manga.id)
-                          .findAllSync();
-                      for (var history in histories) {
-                        isar.historys.deleteSync(history.id!);
-                        provider.addChangedPart(
-                          ActionType.removeHistory,
-                          history.id,
-                          "{}",
-                          false,
-                        );
-                      }
-
-                      for (var chapter in manga.chapters) {
-                        final updates = isar.updates
-                            .filter()
-                            .mangaIdEqualTo(chapter.mangaId)
-                            .chapterNameEqualTo(chapter.name)
-                            .findAllSync();
-                        for (var update in updates) {
-                          isar.updates.deleteSync(update.id!);
-                          provider.addChangedPart(
-                            ActionType.removeUpdate,
-                            update.id,
-                            "{}",
-                            false,
-                          );
-                        }
-                        isar.downloads.deleteSync(chapter.id!);
-                        isar.chapters.deleteSync(chapter.id!);
-                        provider.addChangedPart(
-                          ActionType.removeChapter,
-                          chapter.id,
-                          "{}",
-                          false,
-                        );
-                      }
-                      isar.mangas.deleteSync(manga.id!);
-                      provider.addChangedPart(
-                        ActionType.removeItem,
-                        manga.id,
-                        "{}",
-                        false,
-                      );
-                    }
-                  });
+                  final mangasList = mangaRepository.getBySourceLocalOrArchive();
+                  mangaRepository.wipeMangas(ref, mangasList);
                   botToast(context.l10n.cleaned_database(mangasList.length));
                   Navigator.pop(context);
                 },

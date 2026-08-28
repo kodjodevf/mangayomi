@@ -13,6 +13,7 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/fetch_subtitles.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -240,7 +241,7 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
                               ? CustomExtendedNetworkImageProvider(
                                   titles[index].primaryImage!,
                                 )
-                              : const AssetImage('assets/transparent.png'),
+                              : const AssetImage(transparentAsset),
                         ),
                       ),
                     const SizedBox(width: 10),
@@ -393,7 +394,9 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
       } catch (e) {
         if (attempts >= 3) {
           AppLogger.log("Request retries failed", logLevel: LogLevel.error);
+          rethrow;
         }
+        await Future.delayed(Duration(milliseconds: 300 * attempts));
       }
     }
   }

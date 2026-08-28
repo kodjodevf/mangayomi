@@ -275,19 +275,20 @@ jobs:
           dart run inno_bundle:build --release
 
       - name: build windows zip
+        shell: pwsh
         run: |
-          # Rename the installer .exe
-          $installer = Get-ChildItem "build/windows/x64/installer/Release/*-Installer.exe"
-          Rename-Item -Path $installer.FullName -NewName "Mangayomi-${{ github.ref_name }}-windows.exe"
+          # Rename installer exe
+          $installer = Get-ChildItem -Path "build/windows/x64/installer/Release/*.exe" | Select-Object -First 1
+          if ($installer) {
+            Move-Item -Path $installer.FullName -Destination "build/windows/x64/installer/Release/Mangayomi-${{ github.ref_name }}-windows.exe" -Force
+          } else {
+            Write-Error "Installer executable not found in build/windows/x64/installer/Release/"
+          }
 
-          # Go to runner output dir
-          Set-Location -Path "build/windows/x64/runner/Release"
-
-          # Create zip
-          Compress-Archive -Path * -DestinationPath "Mangayomi-Windows.zip"
-
-          # Rename zip
-          Rename-Item -Path "Mangayomi-Windows.zip" -NewName "Mangayomi-${{ github.ref_name }}-windows.zip"
+          # Create zip of runner release
+          $tempZip = Join-Path $env:RUNNER_TEMP "Mangayomi-${{ github.ref_name }}-windows.zip"
+          Compress-Archive -Path "build/windows/x64/runner/Release/*" -DestinationPath $tempZip -Force
+          Move-Item -Path $tempZip -Destination "build/windows/x64/runner/Release/Mangayomi-${{ github.ref_name }}-windows.zip" -Force
 
       - name: upload artifact windows exe_zip
         uses: actions/upload-artifact@v4
@@ -296,6 +297,7 @@ jobs:
           path: |
             build/windows/x64/installer/Release/Mangayomi-*.exe
             build/windows/x64/runner/Release/Mangayomi-*.zip
+          if-no-files-found: error
 
   build-and-release-linux-zip_AppImage_RPM:
     permissions:

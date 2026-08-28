@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/modules/browse/sources/widgets/source_list_tile.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
@@ -18,14 +17,7 @@ final getSourcesStreamProvider = StreamProvider.family<List<Source>, ItemType>((
   ref,
   itemType,
 ) {
-  // Use composite index (itemType, isAdded) via where() for an index scan,
-  // then narrow to isActive=true with a secondary filter on the small result set.
-  return isar.sources
-      .where()
-      .itemTypeIsAddedEqualTo(itemType, true)
-      .filter()
-      .isActiveEqualTo(true)
-      .watch(fireImmediately: true);
+  return sourceRepository.watchAddedAndActiveByItemType(itemType);
 });
 
 class SourcesScreen extends ConsumerStatefulWidget {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/cached_network.dart';
@@ -16,6 +15,7 @@ import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/download/download_page_widget.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -48,22 +48,16 @@ class ChapterListTileWidget extends ConsumerWidget {
         if (direction == DismissDirection.startToEnd) {
           // Swipe right → toggle bookmark
           final chap = chapter;
-          isar.writeTxnSync(() {
-            chap.isBookmarked = !chap.isBookmarked!;
-            chap.updatedAt = DateTime.now().millisecondsSinceEpoch;
-            isar.chapters.putSync(chap);
-          });
+          chap.isBookmarked = !chap.isBookmarked!;
+          chapterRepository.save(chap);
         } else if (direction == DismissDirection.endToStart) {
           // Swipe left → toggle read
           final chap = chapter;
-          isar.writeTxnSync(() {
-            chap.isRead = !chap.isRead!;
-            if (!chap.isRead!) {
-              chap.lastPageRead = "1";
-            }
-            chap.updatedAt = DateTime.now().millisecondsSinceEpoch;
-            isar.chapters.putSync(chap);
-          });
+          chap.isRead = !chap.isRead!;
+          if (!chap.isRead!) {
+            chap.lastPageRead = "1";
+          }
+          chapterRepository.save(chap);
         }
         return false; // Don't dismiss, snap back
       },
@@ -88,162 +82,169 @@ class ChapterListTileWidget extends ConsumerWidget {
       child: Material(
         color: chapterList.contains(chapter)
             ? context.primaryColor.withValues(alpha: 0.4)
+            : (chapter.isFiller ?? false)
+            ? context.primaryColor.withValues(alpha: 0.15)
             : Colors.transparent,
-        child: GestureDetector(
+        child: InkWell(
+          onTap: () async => _handleInteraction(ref, context),
           onLongPress: () => _handleInteraction(ref),
           onSecondaryTap: () => _handleInteraction(ref),
-          child: ListTile(
-            contentPadding: EdgeInsets.symmetric(horizontal: 15),
-            minLeadingWidth: 0,
-            horizontalTitleGap: 13,
-            leading: Container(
-              width: 2,
-              height: 40,
-              decoration: BoxDecoration(
-                color: chapter.isRead!
-                    ? Colors.grey.withValues(alpha: 0.3)
-                    : context.primaryColor,
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            tileColor: (chapter.isFiller ?? false)
-                ? context.primaryColor.withValues(alpha: 0.15)
-                : null,
-            textColor: chapter.isRead!
-                ? context.isLight
-                      ? Colors.black.withValues(alpha: 0.4)
-                      : Colors.white.withValues(alpha: 0.3)
-                : null,
-            selectedColor: chapter.isRead!
-                ? Colors.white.withValues(alpha: 0.3)
-                : Colors.white,
-            onTap: () async => _handleInteraction(ref, context),
-            title: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+            child: Row(
               children: [
-                if (chapter.thumbnailUrl != null)
-                  _thumbnailPreview(context, chapter.thumbnailUrl),
-                chapter.isBookmarked!
-                    ? Icon(
-                        Icons.bookmark,
-                        size: 16,
-                        color: context.primaryColor,
-                      )
-                    : SizedBox.shrink(),
-                chapter.description != null
-                    ? Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildTitle(chapter.name!, context),
-                            Text(
-                              chapter.description!,
-                              style: const TextStyle(fontSize: 11),
-                              overflow: TextOverflow.ellipsis,
+                Container(
+                  width: 2,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: chapter.isRead!
+                        ? Colors.grey.withValues(alpha: 0.3)
+                        : context.primaryColor,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                const SizedBox(width: 13),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (chapter.thumbnailUrl != null)
+                            _thumbnailPreview(context, chapter.thumbnailUrl),
+                          if (chapter.isBookmarked!)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 4),
+                              child: Icon(
+                                Icons.bookmark,
+                                size: 16,
+                                color: context.primaryColor,
+                              ),
                             ),
-                          ],
-                        ),
-                      )
-                    : Flexible(child: _buildTitle(chapter.name!, context)),
-              ],
-            ),
-            subtitle: Row(
-              children: [
-                if (chapter.isFiller ?? false)
-                  Row(
-                    children: [
-                      Icon(Icons.label, size: 16, color: context.primaryColor),
-                      Text(
-                        " Filler ",
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: context.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                if ((manga.isLocalArchive ?? false) == false)
-                  Text(
-                    chapter.dateUpload == null || chapter.dateUpload!.isEmpty
-                        ? ""
-                        : dateFormat(
-                            chapter.dateUpload!,
-                            ref: ref,
-                            context: context,
-                          ),
-                    style: const TextStyle(fontSize: 11),
-                  ),
-                if (!chapter.isRead!)
-                  if (chapter.lastPageRead!.isNotEmpty &&
-                      chapter.lastPageRead != "1")
-                    Row(
-                      children: [
-                        const Text(' • '),
-                        Text(
-                          manga.itemType == ItemType.anime
-                              ? l10n.episode_progress(
-                                  Duration(
-                                    milliseconds: int.parse(
-                                      chapter.lastPageRead!,
-                                    ),
-                                  ).toString().substringBefore("."),
+                          chapter.description != null
+                              ? Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _buildTitle(chapter.name!, context),
+                                      Text(
+                                        chapter.description!,
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: chapter.isRead!
+                                              ? context.isLight
+                                                    ? Colors.black.withValues(
+                                                        alpha: 0.4,
+                                                      )
+                                                    : Colors.white.withValues(
+                                                        alpha: 0.3,
+                                                      )
+                                              : context.secondaryColor,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
                                 )
-                              : l10n.page(
-                                  manga.itemType ==
-                                          ItemType.manga
-                                      ? chapter.lastPageRead!
-                                      : "${((double.tryParse(chapter.lastPageRead!) ?? 0) * 100).toStringAsFixed(0)} %",
+                              : Expanded(
+                                  child: _buildTitle(chapter.name!, context),
                                 ),
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: context.isLight
-                                ? Colors.black.withValues(alpha: 0.4)
-                                : Colors.white.withValues(alpha: 0.3),
-                          ),
-                        ),
-                      ],
-                    ),
-                if (chapter.scanlator?.isNotEmpty ?? false)
-                  Row(
-                    children: [
-                      const Text(' • '),
-                      Text(
-                        chapter.scanlator!,
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      DefaultTextStyle(
                         style: TextStyle(
                           fontSize: 11,
                           color: chapter.isRead!
                               ? context.isLight
                                     ? Colors.black.withValues(alpha: 0.4)
                                     : Colors.white.withValues(alpha: 0.3)
-                              : null,
+                              : context.secondaryColor,
+                        ),
+                        child: Row(
+                          children: [
+                            if (chapter.isFiller ?? false)
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.label,
+                                    size: 16,
+                                    color: context.primaryColor,
+                                  ),
+                                  Text(
+                                    " Filler ",
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: context.primaryColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            if ((manga.isLocalArchive ?? false) == false)
+                              Text(
+                                chapter.dateUpload == null ||
+                                        chapter.dateUpload!.isEmpty
+                                    ? ""
+                                    : dateFormat(
+                                        chapter.dateUpload!,
+                                        ref: ref,
+                                        context: context,
+                                      ),
+                              ),
+                            if (!chapter.isRead!)
+                              if (chapter.lastPageRead!.isNotEmpty &&
+                                  chapter.lastPageRead != "1")
+                                Row(
+                                  children: [
+                                    const Text(' • '),
+                                    Text(
+                                      manga.itemType == ItemType.anime
+                                          ? l10n.episode_progress(
+                                              Duration(
+                                                milliseconds: int.parse(
+                                                  chapter.lastPageRead!,
+                                                ),
+                                              ).toString().substringBefore("."),
+                                            )
+                                          : l10n.page(
+                                              manga.itemType == ItemType.manga
+                                                  ? chapter.lastPageRead!
+                                                  : "${((double.tryParse(chapter.lastPageRead!) ?? 0) * 100).toStringAsFixed(0)} %",
+                                            ),
+                                    ),
+                                  ],
+                                ),
+                            if (chapter.scanlator?.isNotEmpty ?? false)
+                              Row(
+                                children: [
+                                  const Text(' • '),
+                                  Text(chapter.scanlator!),
+                                ],
+                              ),
+                            if (chapter.downloadSize != null)
+                              Row(
+                                children: [
+                                  const Text(' • '),
+                                  Text(chapter.downloadSize!),
+                                ],
+                              ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                if (chapter.downloadSize != null)
-                  Row(
-                    children: [
-                      const Text(' • '),
-                      Text(
-                        chapter.downloadSize!,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: context.isLight
-                              ? Colors.black.withValues(alpha: 0.4)
-                              : Colors.white.withValues(alpha: 0.3),
-                        ),
-                      ),
-                    ],
-                  ),
+                ),
+                if (!isTv &&
+                    sourceExist &&
+                    !(manga.isLocalArchive ?? false)) ...[
+                  const SizedBox(width: 8),
+                  ChapterPageDownload(chapter: chapter),
+                ],
               ],
             ),
-            trailing:
-                // Downloads are hidden on TV (no offline use case there).
-                isTv ||
-                    !sourceExist ||
-                    (manga.isLocalArchive ?? false)
-                ? null
-                : ChapterPageDownload(chapter: chapter),
           ),
         ),
       ),
@@ -272,24 +273,32 @@ class ChapterListTileWidget extends ConsumerWidget {
   }
 
   Widget _buildTitle(String text, BuildContext context) {
+    final titleColor = chapter.isRead!
+        ? context.isLight
+              ? Colors.black.withValues(alpha: 0.4)
+              : Colors.white.withValues(alpha: 0.3)
+        : null;
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Make sure that (constraints.maxWidth - (35 + 5)) is strictly positive.
-        final double availableWidth = constraints.maxWidth - (35 + 5);
+        final double availableWidth = constraints.maxWidth;
+        if (availableWidth <= 0) return const SizedBox.shrink();
         final textPainter = TextPainter(
-          text: TextSpan(text: text, style: const TextStyle(fontSize: 13)),
+          text: TextSpan(
+            text: text,
+            style: TextStyle(fontSize: 13, color: titleColor),
+          ),
           maxLines: 1,
           textDirection: TextDirection.ltr,
-        )..layout(maxWidth: availableWidth > 0 ? availableWidth : 1.0); // - Download icon size (download_page_widget.dart, Widget Build SizedBox width: 35)
+        )..layout(maxWidth: availableWidth);
 
         final isOverflowing = textPainter.didExceedMaxLines;
 
-        if (isOverflowing) {
+        if (isOverflowing && availableWidth > 50) {
           return SizedBox(
             height: 20,
             child: Marquee(
               text: text,
-              style: const TextStyle(fontSize: 13),
+              style: TextStyle(fontSize: 13, color: titleColor),
               blankSpace: 40.0,
               velocity: 30.0,
               pauseAfterRound: const Duration(seconds: 1),
@@ -299,7 +308,7 @@ class ChapterListTileWidget extends ConsumerWidget {
         } else {
           return Text(
             text,
-            style: const TextStyle(fontSize: 13),
+            style: TextStyle(fontSize: 13, color: titleColor),
             overflow: TextOverflow.ellipsis,
           );
         }

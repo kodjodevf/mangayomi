@@ -10,6 +10,7 @@ import 'dart:io';
 
 import 'package:mangayomi/eval/model/m_source.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart'
     as flutter_inappwebview;
 import 'package:mangayomi/models/settings.dart';
@@ -64,7 +65,7 @@ class MClient {
     rhttp.ClientSettings? settings,
     bool showCloudFlareError = true,
   }) {
-    final appSettings = isar.settings.getSync(227);
+    final appSettings = settingsRepository.currentOrNull;
     final useDoH = appSettings?.doHEnabled ?? false;
     final doHProviderId = appSettings?.doHProviderId;
 
@@ -116,7 +117,7 @@ class MClient {
   }
 
   static Map<String, String> getCookiesPref(String url) {
-    final cookiesList = isar.settings.getSync(227)!.cookiesList ?? [];
+    final cookiesList = settingsRepository.currentOrNull?.cookiesList ?? [];
     if (cookiesList.isEmpty) return {};
     final host = Uri.parse(url).host;
     final cookies = cookiesList
@@ -156,27 +157,17 @@ class MClient {
     if (cookies.isNotEmpty) {
       final host = Uri.parse(url).host;
       final newCookie = cookies.join("; ");
-      final settings = await isar.settings.get(227);
-      final existingCookies = settings!.cookiesList ?? [];
+      final existingCookies = settingsRepository.current.cookiesList ?? [];
       final filteredCookies = removeCookiesForHost(existingCookies, host);
       filteredCookies.add(
         MCookie()
           ..host = host
           ..cookie = newCookie,
       );
-      await isar.writeTxn(
-        () => isar.settings.put(settings..cookiesList = filteredCookies),
-      );
+      await settingsRepository.update((s) => s.cookiesList = filteredCookies);
     }
     if (ua.isNotEmpty) {
-      final settings = await isar.settings.get(227);
-      await isar.writeTxn(
-        () => isar.settings.put(
-          settings!
-            ..userAgent = ua
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-        ),
-      );
+      await settingsRepository.update((s) => s.userAgent = ua);
     }
   }
 
@@ -190,11 +181,10 @@ class MClient {
   }
 
   static Future<void> deleteAllCookies(String url) async {
-    final settings = await isar.settings.get(227);
-    final oldCookies = settings!.cookiesList ?? [];
+    final oldCookies = settingsRepository.current.cookiesList ?? [];
     final host = Uri.parse(url).host;
-    settings.cookiesList = removeCookiesForHost(oldCookies, host);
-    await isar.writeTxn(() => isar.settings.put(settings));
+    final newCookies = removeCookiesForHost(oldCookies, host);
+    await settingsRepository.update((s) => s.cookiesList = newCookies);
   }
 }
 
@@ -206,12 +196,14 @@ class MCookieManager extends InterceptorContract {
   Future<BaseRequest> interceptRequest({required BaseRequest request}) async {
     final cookie = MClient.getCookiesPref(request.url.toString());
     if (cookie.isNotEmpty) {
-      final settings = await isar.settings.get(227);
-      final userAgent = settings!.userAgent!;
+      final settings = await settingsRepository.currentAsync;
+      final userAgent = settings?.userAgent;
       if (request.headers[HttpHeaders.cookieHeader] == null) {
         request.headers.addAll(cookie);
       }
-      if (request.headers[HttpHeaders.userAgentHeader] == null) {
+      if (userAgent != null &&
+          userAgent.isNotEmpty &&
+          request.headers[HttpHeaders.userAgentHeader] == null) {
         request.headers[HttpHeaders.userAgentHeader] = userAgent;
       }
     }
@@ -274,14 +266,32 @@ class LoggerInterceptor extends InterceptorContract {
         Logger.add(LoggerLevel.info, content);
       }
       if (cloudflare) {
+        // The in-app resolver is disabled on Linux, and cookies cannot be read
+        // back from a webview there either, so the offer to solve it manually
+        // in one is an offer nobody on Linux can take. A proxy is the only
+        // thing that gets past this, so say that instead.
+        //
+        // This is also reached by sites nobody thinks of as "having
+        // Cloudflare": a plain proxied site answers every response with
+        // `server: cloudflare`, including a 403 raised for some other reason,
+        // and that is enough to land here.
+        final noResolverAvailable =
+            Platform.isLinux && CfProxyStore.url.trim().isEmpty;
         try {
           botToast(
-            "${response.statusCode} Failed to bypass Cloudflare",
-            hasCloudFlare: cloudflare,
+            noResolverAvailable
+                ? "${response.statusCode} blocked by Cloudflare. Set a "
+                      "FlareSolverr or Byparr URL in Settings > General to get "
+                      "past it on Linux."
+                : "${response.statusCode} Failed to bypass Cloudflare",
+            // The button opens the webview resolver, which does nothing here.
+            hasCloudFlare: cloudflare && !noResolverAvailable,
             url: response.request!.url.toString(),
           );
         } catch (e) {
-          throw "Failed to bypass Cloudflare.\n\n\nYou can try to bypass it manually in the webview \n\n\nstatusCode: ${response.statusCode}";
+          throw noResolverAvailable
+              ? "Blocked by Cloudflare.\n\n\nThe in-app resolver is not available on Linux. Set a FlareSolverr or Byparr URL in Settings > General.\n\n\nstatusCode: ${response.statusCode}"
+              : "Failed to bypass Cloudflare.\n\n\nYou can try to bypass it manually in the webview \n\n\nstatusCode: ${response.statusCode}";
         }
       }
     }

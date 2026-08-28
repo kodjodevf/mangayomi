@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'player_state_provider.g.dart';
 
@@ -16,22 +16,17 @@ class DefaultSubtitleLangState extends _$DefaultSubtitleLangState {
   }
 
   L10nLocale? _getLocale() {
-    return isar.settings.getSync(227)!.defaultSubtitleLang ??
+    return settingsRepository.current.defaultSubtitleLang ??
         L10nLocale(languageCode: "en", countryCode: "");
   }
 
   void setLocale(Locale locale) async {
-    final settings = isar.settings.getSync(227)!;
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        settings
-          ..defaultSubtitleLang = L10nLocale(
-            languageCode: locale.languageCode,
-            countryCode: locale.countryCode,
-          )
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.update(
+      (s) => s.defaultSubtitleLang = L10nLocale(
+        languageCode: locale.languageCode,
+        countryCode: locale.countryCode,
+      ),
+    );
     state = locale;
   }
 }
@@ -40,19 +35,12 @@ class DefaultSubtitleLangState extends _$DefaultSubtitleLangState {
 class MarkEpisodeAsSeenTypeState extends _$MarkEpisodeAsSeenTypeState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.markEpisodeAsSeenType ?? 75;
+    return settingsRepository.current.markEpisodeAsSeenType ?? 75;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..markEpisodeAsSeenType = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.markEpisodeAsSeenType = value);
   }
 }
 
@@ -60,19 +48,12 @@ class MarkEpisodeAsSeenTypeState extends _$MarkEpisodeAsSeenTypeState {
 class DefaultSkipIntroLengthState extends _$DefaultSkipIntroLengthState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.defaultSkipIntroLength ?? 85;
+    return settingsRepository.current.defaultSkipIntroLength ?? 85;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..defaultSkipIntroLength = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.defaultSkipIntroLength = value);
   }
 }
 
@@ -81,19 +62,12 @@ class DefaultDoubleTapToSkipLengthState
     extends _$DefaultDoubleTapToSkipLengthState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.defaultDoubleTapToSkipLength ?? 10;
+    return settingsRepository.current.defaultDoubleTapToSkipLength ?? 10;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..defaultDoubleTapToSkipLength = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.defaultDoubleTapToSkipLength = value);
   }
 }
 
@@ -101,19 +75,12 @@ class DefaultDoubleTapToSkipLengthState
 class DefaultPlayBackSpeedState extends _$DefaultPlayBackSpeedState {
   @override
   double build() {
-    return isar.settings.getSync(227)!.defaultPlayBackSpeed ?? 1.0;
+    return settingsRepository.current.defaultPlayBackSpeed ?? 1.0;
   }
 
   void set(double value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..defaultPlayBackSpeed = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.defaultPlayBackSpeed = value);
   }
 }
 
@@ -121,19 +88,12 @@ class DefaultPlayBackSpeedState extends _$DefaultPlayBackSpeedState {
 class FullScreenPlayerState extends _$FullScreenPlayerState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.fullScreenPlayer ?? false;
+    return settingsRepository.current.fullScreenPlayer ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..fullScreenPlayer = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.fullScreenPlayer = value);
   }
 }
 
@@ -141,19 +101,12 @@ class FullScreenPlayerState extends _$FullScreenPlayerState {
 class EnableAniSkipState extends _$EnableAniSkipState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.enableAniSkip ?? false;
+    return settingsRepository.current.enableAniSkip ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..enableAniSkip = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.enableAniSkip = value);
   }
 }
 
@@ -161,19 +114,12 @@ class EnableAniSkipState extends _$EnableAniSkipState {
 class EnableAutoSkipState extends _$EnableAutoSkipState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.enableAutoSkip ?? false;
+    return settingsRepository.current.enableAutoSkip ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..enableAutoSkip = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.enableAutoSkip = value);
   }
 }
 
@@ -181,19 +127,12 @@ class EnableAutoSkipState extends _$EnableAutoSkipState {
 class AniSkipTimeoutLengthState extends _$AniSkipTimeoutLengthState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.aniSkipTimeoutLength ?? 5;
+    return settingsRepository.current.aniSkipTimeoutLength ?? 5;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..aniSkipTimeoutLength = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.aniSkipTimeoutLength = value);
   }
 }
 
@@ -201,19 +140,12 @@ class AniSkipTimeoutLengthState extends _$AniSkipTimeoutLengthState {
 class UseLibassState extends _$UseLibassState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.useLibass ?? true;
+    return settingsRepository.current.useLibass ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..useLibass = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.useLibass = value);
   }
 }
 
@@ -221,15 +153,12 @@ class UseLibassState extends _$UseLibassState {
 class UseMpvConfigState extends _$UseMpvConfigState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.useMpvConfig ?? false;
+    return settingsRepository.current.useMpvConfig ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..useMpvConfig = value),
-    );
+    settingsRepository.update((s) => s.useMpvConfig = value);
   }
 }
 
@@ -237,18 +166,11 @@ class UseMpvConfigState extends _$UseMpvConfigState {
 class ForceLandscapePlayerState extends _$ForceLandscapePlayerState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.forceLandscapePlayer ?? false;
+    return settingsRepository.current.forceLandscapePlayer ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..forceLandscapePlayer = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.forceLandscapePlayer = value);
   }
 }

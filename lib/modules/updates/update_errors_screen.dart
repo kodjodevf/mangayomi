@@ -2,9 +2,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/migrate_screen.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/services/update_errors_provider.dart';
 
 /// Persistent list of the last library update's failures. Each entry can be
@@ -34,7 +34,7 @@ class UpdateErrorsScreen extends ConsumerWidget {
               itemCount: errors.length,
               itemBuilder: (context, index) {
                 final err = errors[index];
-                final manga = isar.mangas.getSync(err.mangaId);
+                final manga = mangaRepository.findById(err.mangaId);
                 return ListTile(
                   leading: _cover(manga),
                   title: Text(

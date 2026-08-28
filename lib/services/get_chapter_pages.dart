@@ -7,7 +7,6 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/services/isolate_service.dart';
 import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -16,7 +15,7 @@ import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/downloaded_chapter.dart';
 import 'package:mangayomi/utils/utils.dart';
-import 'package:mangayomi/utils/settings_write.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_chapter_pages.g.dart';
@@ -26,6 +25,11 @@ class GetChapterPagesModel {
   List<PageUrl> pageUrls = [];
   List<bool> isLocaleList = [];
   List<Uint8List?> archiveImages = [];
+  // Parallel to archiveImages: the real on-disk path for pages that are
+  // standalone files (local image-folder chapters), so they never have to be
+  // read into memory just to get a path back out. Null for every page that
+  // isn't a plain folder page (archive entries, downloaded/remote pages).
+  List<String?> localImagePaths = [];
   List<UChapDataPreload> uChapDataPreload;
   GetChapterPagesModel({
     required this.path,
@@ -33,6 +37,7 @@ class GetChapterPagesModel {
     required this.isLocaleList,
     required this.archiveImages,
     required this.uChapDataPreload,
+    required this.localImagePaths,
   });
 }
 
@@ -46,7 +51,7 @@ Future<GetChapterPagesModel> getChapterPages(
     Directory? path;
     List<PageUrl> pageUrls = [];
     List<bool> isLocaleList = [];
-    final settings = isar.settings.getSync(227);
+    final settings = settingsRepository.currentOrNull;
     List<ChapterPageurls>? chapterPageUrlsList =
         settings!.chapterPageUrlsList ?? [];
     final isarPageUrls = chapterPageUrlsList
@@ -115,6 +120,7 @@ Future<GetChapterPagesModel> getChapterPages(
       isLocaleList: isLocaleList,
       archiveImages: archiveImages,
       uChapDataPreload: [],
+      localImagePaths: <String?>[],
     );
 
     final archivePath = isLocalArchive
@@ -127,7 +133,12 @@ Future<GetChapterPagesModel> getChapterPages(
           getArchiveDataFromFileProvider(archivePath).future,
         );
         for (var image in local.images!) {
-          archiveImages.add(image.image!);
+          // Folder pages carry a real path instead of pre-read bytes (see
+          // LocalImage.path) - keep archiveImages/localImagePaths parallel
+          // to isLocaleList so index i always refers to the same page across
+          // all three lists.
+          archiveImages.add(image.image);
+          chapterModel.localImagePaths.add(image.path);
           isLocaleList.add(true);
         }
       } else {
@@ -138,6 +149,7 @@ Future<GetChapterPagesModel> getChapterPages(
             : downloaded!.pageCount;
         for (var i = 0; i < pageCount; i++) {
           archiveImages.add(null);
+          chapterModel.localImagePaths.add(null);
           if (await findDownloadedPageFileAsync(path!, i) != null) {
             isLocaleList.add(true);
           } else {
@@ -178,7 +190,7 @@ Future<GetChapterPagesModel> getChapterPages(
         // this function. Fetching the pages ran several awaits, and writing the
         // row puts all of it back, so the old copy would undo every setting
         // changed while the chapter was loading.
-        updateSettings((settings) {
+        settingsRepository.update((settings) {
           final chapterPageUrls = <ChapterPageurls>[];
           for (final chapterPageUrl in settings.chapterPageUrlsList ?? []) {
             if (chapterPageUrl.chapterId != chapter.id) {
@@ -214,6 +226,9 @@ Future<GetChapterPagesModel> getChapterPages(
             i,
             chapterModel,
             i,
+            localImagePath: i < chapterModel.localImagePaths.length
+                ? chapterModel.localImagePaths[i]
+                : null,
           ),
         );
       }

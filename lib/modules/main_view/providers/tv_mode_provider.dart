@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 // Android TV preferences, stored on the Settings collection. A null field means
@@ -16,12 +15,12 @@ final animeOnlyTvModeProvider = NotifierProvider<AnimeOnlyTvMode, bool>(
 
 class AnimeOnlyTvMode extends Notifier<bool> {
   @override
-  bool build() => isar.settings.getSync(227)?.tvAnimeOnlyOverride ?? isTv;
+  bool build() => settingsRepository.current.tvAnimeOnlyOverride ?? isTv;
 
   /// Explicitly turns the anime-only layout on/off and persists the choice.
   void set(bool value) {
     state = value;
-    _writeTvPref((s) => s.tvAnimeOnlyOverride = value);
+    settingsRepository.update((s) => s.tvAnimeOnlyOverride = value);
   }
 }
 
@@ -34,11 +33,11 @@ final tvPlayerStyleProvider = NotifierProvider<TvPlayerStyle, bool>(
 
 class TvPlayerStyle extends Notifier<bool> {
   @override
-  bool build() => isar.settings.getSync(227)?.tvPlayerStyle ?? true;
+  bool build() => settingsRepository.current.tvPlayerStyle ?? true;
 
   void set(bool value) {
     state = value;
-    _writeTvPref((s) => s.tvPlayerStyle = value);
+    settingsRepository.update((s) => s.tvPlayerStyle = value);
   }
 }
 
@@ -52,11 +51,11 @@ final tvHomeStyleProvider = NotifierProvider<TvHomeStyle, bool>(
 
 class TvHomeStyle extends Notifier<bool> {
   @override
-  bool build() => isar.settings.getSync(227)?.tvHomeStyle ?? isTv;
+  bool build() => settingsRepository.current.tvHomeStyle ?? isTv;
 
   void set(bool value) {
     state = value;
-    _writeTvPref((s) => s.tvHomeStyle = value);
+    settingsRepository.update((s) => s.tvHomeStyle = value);
   }
 }
 
@@ -69,21 +68,10 @@ final tvHomeGenreRowsProvider = NotifierProvider<TvHomeGenreRows, bool>(
 
 class TvHomeGenreRows extends Notifier<bool> {
   @override
-  bool build() => isar.settings.getSync(227)?.tvHomeGenreRows ?? true;
+  bool build() => settingsRepository.current.tvHomeGenreRows ?? true;
 
   void set(bool value) {
     state = value;
-    _writeTvPref((s) => s.tvHomeGenreRows = value);
+    settingsRepository.update((s) => s.tvHomeGenreRows = value);
   }
-}
-
-/// Applies [mutate] to the Settings singleton and persists it.
-void _writeTvPref(void Function(Settings) mutate) {
-  isar.writeTxnSync(() {
-    final settings = isar.settings.getSync(227);
-    if (settings != null) {
-      mutate(settings);
-      isar.settings.putSync(settings);
-    }
-  });
 }

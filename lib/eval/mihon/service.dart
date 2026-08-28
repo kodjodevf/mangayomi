@@ -8,11 +8,10 @@ import 'package:mangayomi/eval/model/m_chapter.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/page.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 
 import '../../models/manga.dart';
@@ -190,7 +189,12 @@ class MihonExtensionService implements ExtensionService {
       artist: data['artist'],
       author: data['author'],
       description: data['description'],
-      genre: (data['genres'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      genre:
+          (data['genre'] as String?)
+              ?.split(',')
+              .map((e) => e.toString())
+              .toList() ??
+          [],
       status: switch (data['status'] as int?) {
         1 => Status.ongoing,
         2 => Status.completed,
@@ -370,7 +374,7 @@ class MihonExtensionService implements ExtensionService {
   }
 
   Map<String, String> getCookie() {
-    final userAgent = isar.settings.getSync(227)!.userAgent;
+    final userAgent = settingsRepository.current.userAgent;
     return {
       ...MClient.getCookiesPref(source.baseUrl!),
       'user-agent': ?userAgent,

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/detail/manga_details_view.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 
 class MangaReaderDetail extends ConsumerStatefulWidget {
   final int mangaId;
@@ -47,16 +45,11 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
       body: manga.when(
         data: (manga) {
           return StreamBuilder(
-            stream: isar.sources
-                .where()
-                .itemTypeIsAddedEqualTo(manga!.itemType, true)
-                .filter()
-                .langContains(manga.lang!, caseSensitive: false)
-                .and()
-                .nameContains(manga.source!, caseSensitive: false)
-                .and()
-                .isActiveEqualTo(true)
-                .watch(fireImmediately: true),
+            stream: sourceRepository.watchActiveByItemTypeLangName(
+              manga!.itemType,
+              manga.lang!,
+              manga.source!,
+            ),
             builder: (context, snapshot) {
               final sourceExist = snapshot.hasData && snapshot.data!.isNotEmpty;
               return RefreshIndicator(

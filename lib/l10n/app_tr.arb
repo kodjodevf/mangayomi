@@ -904,5 +904,380 @@
   "saved_searches": "Kaydedilen aramalar",
   "enter_search_to_save_first": "Kaydedilecek bir arama girin",
   "no_saved_searches": "Bu kaynak için kaydedilen arama henüz yok.\nBir arama yapın, ardından \"Aramayı kaydet\" i seçin.",
-  "source": "Kaynak"
+  "source": "Kaynak",
+  "label_value": "{label}: {value}",
+  "url": "URL",
+  "beta_version": "Beta ({version})",
+  "empty_placeholder": "BOŞ",
+  "error": "Hata",
+  "error_with_message": "Hata: {error}",
+  "no_pages_available": "Hata: kullanılabilir sayfa yok",
+  "create_extension": "Eklenti Oluştur",
+  "choose_extension_language": "Eklenti dilini seçin",
+  "lang": "Dil",
+  "base_url": "Temel URL",
+  "api_url_optional": "API URL (isteğe bağlı)",
+  "icon_url": "Simge URL",
+  "source_icon_url": "Kaynak simge URL",
+  "notes": "Notlar",
+  "extension_name_example": "ör: AnimeAdım",
+  "language_code_example": "ör: tr",
+  "base_url_example": "ör: https://ornek.com",
+  "api_url_example": "ör: https://api.ornek.com",
+  "extension_notes_example": "ör: bu eklenti giriş gerektirir",
+  "type": "Tür",
+  "target": "Hedef",
+  "source_type_single": "tekli",
+  "source_type_multi": "çoklu",
+  "source_type_torrent": "torrent",
+  "source_language_dart": "Dart",
+  "source_language_javascript": "JavaScript",
+  "source_language_lnreader_compiled_js": "LNReader derlenmiş JS",
+  "source_created_successfully": "Kaynak başarıyla oluşturuldu",
+  "source_already_exists": "Kaynak zaten mevcut",
+  "error_when_creating_source": "Kaynak oluşturulurken hata oluştu",
+  "cookies_deleted": "Çerezler silindi!",
+  "delete_all_cookies": "Tüm çerezleri sil",
+  "missing_chapters": "{count} eksik bölüm",
+  "sync_restore_in_progress": "Senkronizasyon atlandı — geri yükleme sürüyor",
+  "sync_status_not_configured": "Bağlı değil",
+  "sync_status_checking": "Bağlantı kontrol ediliyor...",
+  "sync_status_connected": "Bağlandı",
+  "sync_status_unauthorized": "Oturum süresi doldu, lütfen tekrar giriş yapın",
+  "sync_status_unreachable": "Sunucuya ulaşılamıyor",
+  "sync_section_general": "Genel",
+  "sync_section_data_types": "Senkronize edilecekler",
+  "missing_episodes": "{count} eksik bölüm",
+  "encrypt_backups": "Yedekleri şifrele",
+  "encrypt_backups_info": "Yedekleme dosyalarını AES şifreleme ile parolayla koruyun",
+  "no_secure_storage": "Güvenli depolama bulunamadı",
+  "no_keyring_warning": "Bu sistemde anahtarlık hizmeti yok, parola güvenli şekilde saklanamaz.\n\nUygulama veritabanında şifresiz saklansın mı?",
+  "enter_backup_password": "Yedekleme parolasını girin",
+  "incorrect_password_try_again": "Hatalı parola, tekrar deneyin.",
+  "set_backup_password": "Yedekleme parolası belirle",
+  "confirm_password": "Parolayı onayla",
+  "passwords_do_not_match": "Parolalar eşleşmiyor",
+  "password_required_to_restore": "Bu yedeği geri yüklemek için parola gereklidir.",
+  "restore_sync_question_title": "Bu geri yükleme senkronize edilsin mi?",
+  "restore_sync_question_message": "Cihaz bir senkronizasyon sunucusuna bağlı. Geri yüklenen veriler sunucuya yüklensin mi?",
+  "restore_sync_question_confirm": "Evet, senkronize et",
+  "restore_sync_question_deny": "Hayır, senkronizasyonu kapat",
+  "sync_disabled_after_restore": "Senkronizasyon devre dışı bırakıldı. Ayarlar'dan tekrar açabilirsiniz.",
+  "restore_sync_disabled_question_title": "Senkronizasyon devre dışı",
+  "restore_sync_disabled_question_message": "Senkronizasyon kapalı. Tekrar açıp sunucuya yüklemek ister misiniz?",
+  "restore_sync_question_reenable": "Evet, etkinleştir ve senkronize et",
+  "restore_sync_question_keep_disabled": "Kapalı tut",
+  "restore_sync_uploading": "Geri yüklenen veriler sunucuyla senkronize ediliyor…",
+  "restore_sync_upload_success": "Veriler sunucuyla senkronize edildi",
+  "default_download_destination": "Varsayılan indirme konumu",
+  "ask_download_destination": "İndirme konumunu sor",
+  "ask_download_destination_desc": "Her indirme başladığında yerel bir klasör seçin.",
+  "select_download_destination": "İndirme konumunu seçin",
+  "clear_local_library": "Yerel kitaplığı temizle",
+  "clear_local_library_desc": "Yerel klasör ve arşiv girdilerini kitaplıktan kaldırın.",
+  "clear_local_library_msg": "Yerel klasör ve arşivler kitaplıktan kaldırılacak. Disk üzerindeki dosyalar silinmez.",
+  "custom": "Özel",
+  "no_local_folder_available_for_downloads": "İndirmeler için yerel klasör bulunamadı",
+  "failed_to_create_cbz": "CBZ oluşturulamadı: {error}",
+  "error_reading_cover_image": "Kapak resmi okunamadı: {error}",
+  "error_reading_metadata": "Meta veri okunamadı: {error}",
+  "error_saving_chapter_episode_to_library": "Kitaplığa kaydedilirken hata: {error}",
+  "error_reading_chapter_cover_image": "Bölüm kapağı okunamadı: {error}",
+  "error_reading_archive_cover_image": "Arşiv kapağı okunamadı: {error}",
+  "error_getting_local_library": "Yerel kitaplık alınamadı: {error}",
+  "failed_to_export_metadata": "Meta veri dışa aktarılamadı: {error}",
+  "unrecognized_chapter_numbers": "{count} bölüm otomatik numaralandırılamadı.",
+  "cloudflare_resolution_webview_server_start_failed": "Cloudflare çözüm sunucusu başlatılamadı.",
+  "tracker_token_expired": "{tracker} belirtecinin süresi doldu",
+  "video_list_empty": "Video listesi boş",
+  "playback_speed_multiplier": "x{value}",
+  "could_not_launch_url": "{url} açılamadı",
+  "zero_interpreter": "Zero yorumlayıcı",
+  "zero_interpreter_description": "Zero yorumlayıcı sunucusunu otomatik veya manuel kontrol edin.",
+  "start_server_on_launch": "Başlangıçta sunucuyu başlat",
+  "runtime_status": "Çalışma durumu",
+  "running": "Çalışıyor",
+  "stopped": "Durduruldu",
+  "start": "Başlat",
+  "stop": "Durdur",
+  "something_went_wrong": "Bir şeyler ters gitti",
+  "startup_failed": "Mangayomi başlatılamadı",
+  "sources_with_no_results": "{count, plural, =1{Sonuçsuz 1 kaynak} other{Sonuçsuz {count} kaynak}}",
+  "import_mode_title": "Nasıl içe aktarılsın?",
+  "import_mode_message": "Bu yedeği mevcut kitaplıkla birleştirin veya tüm kitaplığı bununla değiştirin.",
+  "import_mode_keep_existing": "Birleştir",
+  "import_mode_keep_existing_subtitle": "Yeni serileri ekler ve eşleşenleri günceller. Hiçbir şey silinmez.",
+  "import_mode_replace": "Değiştir",
+  "import_mode_replace_subtitle": "Mevcut kitaplığı siler ve bu yedekle değiştirir.",
+  "replace_summary_title": "Kitaplık değiştirilmeye hazır",
+  "replace_summary_message": "Bu işlem mevcut {currentCount} seriyi silecek ve {backupCount} seri ile değiştirecektir.",
+  "replace_summary_confirm": "Değiştir",
+  "replace_result_message": "Kitaplık yedekten gelen {count} seri ile değiştirildi.",
+  "category_conflict_title": "Mevcut kategoriler bulundu",
+  "category_conflict_message": "Yedekte zaten var olan kategoriler bulundu.",
+  "category_conflict_keep": "Koru — mevcut kategoriye birleştir",
+  "category_conflict_delete": "Sil — serileri kategorisiz bırak",
+  "source_conflict_title": "Kaynaklar bulunamadı",
+  "source_conflict_message": "Bazı kaynaklar yüklü eklentilerle eşleşmiyor.",
+  "source_conflict_keep": "Orijinal adı koru",
+  "import_summary_title": "İçe aktarılmaya hazır",
+  "import_summary_message": "{newSeries} yeni seri, {updatedSeries} güncellenen seri ve {newChapters} yeni bölüm.",
+  "import_summary_confirm": "İçe aktar",
+  "import_result_message": "{newSeries} yeni seri aktarıldı, {updatedSeries} güncellendi, {newChapters} bölüm eklendi.",
+  "roll_back": "Geri al",
+  "roll_back_confirm_message": "Kitaplığı bu değişiklikten hemen önceki anlık görüntüye döndürür.",
+  "roll_back_done": "Önceki duruma geri dönüldü.",
+  "restoring_backup": "Kitaplık geri yükleniyor…",
+  "roll_back_last_change": "Son değişikliği geri al",
+  "roll_back_last_change_subtitle": "{date} tarihli anlık görüntü — {description}",
+  "roll_back_available_count": "Geri alınabilir {count} son değişiklik mevcut",
+  "delete_source_title": "Kaynağı ve mangalarını sil",
+  "delete_source_subtitle": "Bir kaynak seçerek tüm mangalarını, bölümlerini, indirmelerini ve geçmişini kaldırın.",
+  "delete_source_pick_title": "Silinecek kaynağı seçin",
+  "delete_source_empty": "Kitaplıkta kaynak bulunamadı.",
+  "delete_source_confirm_title": "{sourceName} silinsin mi?",
+  "delete_source_confirm_message": "{mangaCount} manga, {chapterCount} bölüm, {historyCount} geçmiş kaydı kalıcı olarak silinecek.",
+  "delete_source_also_remove_extension": "Yüklü eklentiyi de kaldır",
+  "delete_source_keep_history": "Okuma geçmişini koru",
+  "delete_source_keep_downloads": "İndirme kayıtlarını koru",
+  "delete_source_button": "Sil",
+  "delete_source_result_message": "{sourceName} kaynağından {mangaCount} manga silindi.",
+  "merge_manga_title": "Yinelenen mangaları birleştir",
+  "merge_manga_subtitle": "Aynı kaynak altındaki aynı başlıklı mangaları bulur ve birleştirir.",
+  "merge_manga_none_found": "Yinelenen manga bulunamadı.",
+  "merge_manga_pick_title": "Olası yinelenen mangalar",
+  "merge_manga_choose_primary_title": "Diğerleri hangisinde birleştirilsin?",
+  "merge_manga_choose_primary_message": "Bölümler, geçmiş ve takip seçilen girdiye aktarılacaktır.",
+  "merge_manga_chapters_subtitle": "{count, plural, =1{1 bölüm} other{{count} bölüm}}",
+  "merge_manga_button": "Birleştir",
+  "merge_manga_result_message": "{count} yinelenen manga {mangaName} içinde birleştirildi.",
+  "merge_preview_title": "Birleştirmeyi onayla",
+  "merge_manga_preview_message": "{totalChapters} bölüm bulundu. {duplicateChapters} yinelenen atılacak, {keptChapters} eklenecek.",
+  "beta": "Beta",
+  "error_reports": "Hata raporları",
+  "error_reports_subtitle": "Uygulamanın yakaladığı hatalar ve bildirme yolu",
+  "error_reports_empty": "Hata oluşmadı.",
+  "error_reports_likely_cause": "Olası neden",
+  "error_reports_report": "GitHub'da Bildir",
+  "error_reports_banner": "Mangayomi bir hatayla karşılaştı",
+  "error_reports_banner_action": "Görüntüle",
+  "error_reports_copy": "Kopyala",
+  "error_reports_copied": "Panoya kopyalandı",
+  "error_reports_clear": "Temizle",
+  "share_unavailable_copied": "Paylaşım kullanılamıyor, panoya kopyalandı.",
+  "onboarding_title": "Mangayomi'ye Hoş Geldiniz",
+  "onboarding_libraries_body": "Okumak ve izlemek istediklerinizi seçin.",
+  "onboarding_nav_title": "Kitaplıklarınız",
+  "onboarding_nav_body": "Her biri için ayrı sekme veya tek bir Kitaplık sekmesi altında toplayın.",
+  "onboarding_nav_split": "Ayrı sekmeler",
+  "onboarding_nav_merged": "Tek Kitaplık sekmesi",
+  "onboarding_nav_inside": "Kitaplık'a dokunmak sekmeleri değiştirir",
+  "onboarding_next": "İleri",
+  "onboarding_restore": "Yedekten geri yükle",
+  "onboarding_or_local": "Veya mevcut dosyaları kullanın",
+  "onboarding_local_folder": "Klasör ekle",
+  "onboarding_local_existing": "{count} klasör zaten ayarlanmış",
+  "onboarding_local_any_type": "Manga, anime ve novel desteklenir.",
+  "onboarding_local_scanning": "Klasör taranıyor",
+  "onboarding_local_found": "{count} başlık bulundu",
+  "onboarding_local_remove": "Klasörü kaldır",
+  "onboarding_local_in_downloads": "Bu uygulamanın indirme klasörüdür.",
+  "onboarding_local_empty": "Hiçbir şey bulunamadı. Ana klasörü seçin.",
+  "onboarding_repo_failed": "Depo okunamadı.",
+  "onboarding_repo_title": "Kaynak ekle",
+  "onboarding_body": "Eklentileri yüklemek için bir depo ekleyin.",
+  "onboarding_add": "Depo ekle",
+  "onboarding_skip": "Şimdilik atla",
+  "onboarding_continue": "Devam et",
+  "onboarding_later": "Daha sonra Ayarlar > Gözat bölümünden ekleyebilirsiniz.",
+  "onboarding_replay": "Karşılama ekranını göster",
+  "onboarding_replay_subtitle": "İlk kurulum ekranını yeniden açar.",
+  "missing_source_check_title": "Eksik kaynakları kontrol et",
+  "missing_source_check_subtitle": "Eklentisi yüklü olmayan girdileri bulur.",
+  "missing_source_check_none_found": "Tüm kaynaklar yüklü.",
+  "missing_source_check_result_title": "{count, plural, =1{1 kaynak eksik} other{{count} kaynak eksik}}",
+  "missing_source_check_result_message": "Bu girdiler yüklü olmayan kaynaklara işaret ediyor. Taşımak için dokunun veya eklentiyi yükleyin.",
+  "@tts_paragraph_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "@label_value": {
+    "placeholders": {
+      "label": {},
+      "value": {}
+    }
+  },
+  "@beta_version": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "@error_with_message": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_create_cbz": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_saving_chapter_episode_to_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_chapter_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_reading_archive_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@error_getting_local_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@failed_to_export_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "@unrecognized_chapter_numbers": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@tracker_token_expired": {
+    "placeholders": {
+      "tracker": {}
+    }
+  },
+  "@playback_speed_multiplier": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "@could_not_launch_url": {
+    "placeholders": {
+      "url": {}
+    }
+  },
+  "@sources_with_no_results": {
+    "description": "Header of the collapsed group in global search holding every source that failed or found nothing.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@replace_summary_message": {
+    "placeholders": {
+      "currentCount": {},
+      "backupCount": {}
+    }
+  },
+  "@replace_result_message": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@import_summary_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@import_result_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "@roll_back_last_change_subtitle": {
+    "placeholders": {
+      "date": {},
+      "description": {}
+    }
+  },
+  "@roll_back_available_count": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@delete_source_confirm_title": {
+    "placeholders": {
+      "sourceName": {}
+    }
+  },
+  "@delete_source_confirm_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "chapterCount": {},
+      "historyCount": {},
+      "updateCount": {}
+    }
+  },
+  "@delete_source_result_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "sourceName": {}
+    }
+  },
+  "@merge_manga_chapters_subtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@merge_manga_result_message": {
+    "placeholders": {
+      "count": {},
+      "mangaName": {}
+    }
+  },
+  "@merge_manga_preview_message": {
+    "placeholders": {
+      "totalChapters": {},
+      "duplicateChapters": {},
+      "keptChapters": {},
+      "duplicateTracks": {}
+    }
+  },
+  "@onboarding_local_existing": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@onboarding_local_found": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "@missing_source_check_result_title": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

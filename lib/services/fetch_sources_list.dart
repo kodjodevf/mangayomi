@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
+import 'package:mangayomi/eval/aidoku/service.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -37,7 +37,8 @@ Future<void> fetchSourcesList({
         .where(
           (source) =>
               source.itemType == itemType &&
-              (source.appMinVerReq == null ||
+              (source.sourceCodeLanguage == SourceCodeLanguage.aidoku ||
+                  source.appMinVerReq == null ||
                   source.appMinVerReq!.isEmpty ||
                   compareVersions(info.version, source.appMinVerReq!) > -1),
         )
@@ -119,7 +120,7 @@ Future<void> fetchSourcesList({
     }
   } else {
     for (var source in sourceList) {
-      final existingSource = await isar.sources.get(source.id!);
+      final existingSource = await sourceRepository.findByIdAsync(source.id!);
       if (existingSource == null) {
         await _addNewSource(source, repo, itemType);
         continue;
@@ -131,9 +132,9 @@ Future<void> fetchSourcesList({
       if (autoUpdateExtensions) {
         await _updateSource(source, androidProxyServer, repo, itemType);
       } else {
-        await isar.writeTxn(() async {
-          isar.sources.put(existingSource..versionLast = source.version);
-        });
+        await sourceRepository.save(
+          existingSource..versionLast = source.version,
+        );
       }
     }
   }
@@ -149,7 +150,9 @@ Future<void> _updateSource(
 ) async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final req = await http.get(Uri.parse(source.sourceCodeUrl!));
-  final sourceCode = source.sourceCodeLanguage == SourceCodeLanguage.mihon
+  final sourceCode =
+      (source.sourceCodeLanguage == SourceCodeLanguage.mihon ||
+          source.sourceCodeLanguage == SourceCodeLanguage.aidoku)
       ? base64.encode(req.bodyBytes)
       : req.body;
 
@@ -171,6 +174,15 @@ Future<void> _updateSource(
       source,
       androidProxyServer,
     );
+  } else if (source.sourceCodeLanguage == SourceCodeLanguage.aidoku) {
+    final service = AidokuExtensionService(source);
+    try {
+      headers = service.getHeaders();
+      supportLatest = service.supportsLatest;
+      filterList = await service.fetchFilterList();
+    } finally {
+      service.dispose();
+    }
   } else {
     headers = await getIsolateService.get<Map<String, String>>(
       source: source,
@@ -211,7 +223,7 @@ Future<void> _updateSource(
     ..repo = repo
     ..updatedAt = DateTime.now().millisecondsSinceEpoch;
 
-  await isar.writeTxn(() async => isar.sources.put(updatedSource));
+  await sourceRepository.save(updatedSource);
 }
 
 Future<void> _addNewSource(Source source, Repo? repo, ItemType itemType) async {
@@ -239,7 +251,7 @@ Future<void> _addNewSource(Source source, Repo? repo, ItemType itemType) async {
     ..notes = source.notes
     ..repo = repo
     ..updatedAt = DateTime.now().millisecondsSinceEpoch;
-  await isar.writeTxn(() async => isar.sources.put(newSource));
+  await sourceRepository.save(newSource);
 }
 
 Future<void> checkIfSourceIsObsolete(
@@ -249,13 +261,7 @@ Future<void> checkIfSourceIsObsolete(
 ) async {
   if (sourceList.isEmpty) return;
 
-  final sources = await isar.sources
-      .filter()
-      .idIsNotNull()
-      .itemTypeEqualTo(itemType)
-      .and()
-      .isLocalEqualTo(false)
-      .findAll();
+  final sources = await sourceRepository.getNonLocalByItemType(itemType);
 
   if (sources.isEmpty) return;
 
@@ -285,29 +291,40 @@ Future<void> checkIfSourceIsObsolete(
     }
   }
   if (toUpdate.isNotEmpty) {
-    await isar.writeTxn(() => isar.sources.putAll(toUpdate));
+    await sourceRepository.putAll(toUpdate);
   }
   if (toDelete.isNotEmpty) {
-    await isar.writeTxn(() => isar.sources.deleteAll(toDelete));
+    await sourceRepository.deleteAll(toDelete);
   }
 }
 
 int compareVersions(String version1, String version2) {
-  final v1Parts = version1.split('.');
-  final v2Parts = version2.split('.');
-  final minLength = v1Parts.length < v2Parts.length
+  final clean1 = version1
+      .trim()
+      .replaceFirst(RegExp(r'^[vV]'), '')
+      .split(RegExp(r'[-+]'))
+      .first;
+  final clean2 = version2
+      .trim()
+      .replaceFirst(RegExp(r'^[vV]'), '')
+      .split(RegExp(r'[-+]'))
+      .first;
+
+  final v1Parts = clean1.split('.');
+  final v2Parts = clean2.split('.');
+  final maxLength = v1Parts.length > v2Parts.length
       ? v1Parts.length
       : v2Parts.length;
 
-  for (var i = 0; i < minLength; i++) {
-    final v1Value = int.parse(v1Parts[i].padRight(2, '0'));
-    final v2Value = int.parse(v2Parts[i].padRight(2, '0'));
+  for (var i = 0; i < maxLength; i++) {
+    final v1Value = i < v1Parts.length ? (int.tryParse(v1Parts[i]) ?? 0) : 0;
+    final v2Value = i < v2Parts.length ? (int.tryParse(v2Parts[i]) ?? 0) : 0;
 
     final comparison = v1Value.compareTo(v2Value);
     if (comparison != 0) return comparison;
   }
 
-  return v1Parts.length.compareTo(v2Parts.length);
+  return 0;
 }
 
 Future<Map<String, String>> fetchHeadersDalvik(

@@ -41,7 +41,7 @@ final class ThemeModeStateProvider
   }
 }
 
-String _$themeModeStateHash() => r'23f6de72068278674f7f935a234b2e5b589e225f';
+String _$themeModeStateHash() => r'59776d1214831acd50931ccd2758afdd784d7dce';
 
 abstract class _$ThemeModeState extends $Notifier<bool> {
   bool build();
@@ -94,7 +94,7 @@ final class FollowSystemThemeStateProvider
 }
 
 String _$followSystemThemeStateHash() =>
-    r'07837fff5d56fb0b15b555d203af2bbe94e138f8';
+    r'64420ad3a07a0f4d0a54e6a5502b8db62ff355c9';
 
 abstract class _$FollowSystemThemeState extends $Notifier<bool> {
   bool build();

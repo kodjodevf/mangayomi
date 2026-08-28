@@ -1,12 +1,11 @@
 import 'dart:io';
 
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
-import 'package:mangayomi/utils/reg_exp_matcher.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:path/path.dart' as p;
 
 /// Where a downloaded chapter's pages actually sit on disk.
@@ -73,7 +72,7 @@ Future<DownloadedChapter?> findDownloadedChapter(Chapter chapter) async {
   // The folder is written page by page, so a download still in flight has a
   // partial one; only the Isar record knows it is finished. An archive needs no
   // such check, since it is written once, at the end, from the complete folder.
-  final isComplete = isar.downloads.getSync(chapterId)?.isDownload ?? false;
+  final isComplete = downloadRepository.getById(chapterId)?.isDownload ?? false;
   final chapterDirectory = await StorageProvider().getMangaChapterDirectory(
     chapter,
   );
@@ -135,13 +134,12 @@ File? findChapterArchive(Directory mangaDirectory, String chapterName) {
 
 /// How many pages of [directory] the reader can actually address.
 ///
-/// The reader asks for page `i` by rebuilding `padIndex(i).jpg`, so the run has
-/// to be counted from the first page and stop at the first gap. A folder
-/// missing `003.jpg` can only serve two pages however many files it holds.
+/// Uses [findDownloadedPageFile] so callers don’t need to assume a fixed
+/// extension. Counts from page 0 upward until the first missing page.
 int countDownloadedPages(Directory directory) {
   if (!directory.existsSync()) return 0;
   var count = 0;
-  while (File(p.join(directory.path, '${padIndex(count)}.jpg')).existsSync()) {
+  while (findDownloadedPageFile(directory, count) != null) {
     count++;
   }
   return count;

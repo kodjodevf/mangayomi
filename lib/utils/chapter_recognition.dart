@@ -36,6 +36,30 @@ class ChapterRecognition {
     return (ep ?? 0).toInt();
   }
 
+  /// The key that answers "are these two the same chapter".
+  ///
+  /// Season is part of the answer. Without it, episode 1 of season 2 is the
+  /// same chapter as episode 1 of season 1, and whichever arrives second is
+  /// dropped before it reaches the library. A show with two seasons then
+  /// displays one of them.
+  ///
+  /// Null when the name carries no number at all, because "Special" and
+  /// "Prologue" are not all the same chapter either. Callers skip the
+  /// composite check in that case rather than folding them together.
+  ///
+  /// [scanlator] is omitted by callers deciding whether read state carries
+  /// over, since the same episode from a different group is still that
+  /// episode.
+  String? chapterIdentityKey(
+    String mangaTitle,
+    String chapterName, [
+    String? scanlator,
+  ]) {
+    final (season, ep) = rawSeasonAndNumber(mangaTitle, chapterName);
+    if (ep == null || ep <= 0) return null;
+    return '$season::$ep::${scanlator ?? ''}';
+  }
+
   /// Raw (season, episode) pair, unbucketed — season is 0 if none matched.
   /// Episode keeps its fractional part (e.g. 12.5) so callers needing exact
   /// chapter identity (dedup, stable sort of split chapters) don't collide

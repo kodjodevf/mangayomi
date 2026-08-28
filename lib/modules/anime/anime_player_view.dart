@@ -14,12 +14,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/custom_button_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/custom_button.dart';
-import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
@@ -30,7 +30,7 @@ import 'package:mangayomi/modules/anime/widgets/tv_player_settings_panel.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
-import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/utils/manga_cover_actions.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
@@ -75,7 +75,7 @@ class AnimePlayerView extends riv.ConsumerStatefulWidget {
 }
 
 class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
-  late final Chapter episode = isar.chapters.getSync(widget.episodeId)!;
+  late final Chapter episode = chapterRepository.getById(widget.episodeId);
   List<String> _infoHashList = [];
   bool desktopFullScreenPlayer = false;
   @override
@@ -115,6 +115,17 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   @override
   Widget build(BuildContext context) {
     final defaultSubtitleLang = ref.watch(defaultSubtitleLangStateProvider);
+    ref.listen(getVideoListProvider(episode: episode), (previous, next) {
+      if (next is riv.AsyncData) {
+        final infoHashes = next.value?.$3 ?? [];
+        _infoHashList = infoHashes;
+        if (!mounted) {
+          for (var infoHash in infoHashes) {
+            MTorrentServer().removeTorrent(infoHash);
+          }
+        }
+      }
+    });
     final serversData = ref.watch(getVideoListProvider(episode: episode));
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return serversData.when(
@@ -144,6 +155,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
           videos: videos,
           isLocal: isLocal,
           isTorrent: infoHashList.isNotEmpty,
+          infoHashList: infoHashList,
           desktopFullScreenPlayer: (value) {
             desktopFullScreenPlayer = value;
           },
@@ -192,6 +204,7 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   final String defaultSubtitle;
   final bool isLocal;
   final bool isTorrent;
+  final List<String> infoHashList;
   final Directory? mpvDirectory;
   final void Function(bool) desktopFullScreenPlayer;
   const AnimeStreamPage({
@@ -201,6 +214,7 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
     required this.videos,
     required this.episode,
     required this.isTorrent,
+    this.infoHashList = const [],
     required this.desktopFullScreenPlayer,
     required this.mpvDirectory,
   });
@@ -322,6 +336,11 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool _hasOpeningSkip = false;
   bool _hasEndingSkip = false;
   bool _initSubtitleAndAudio = true;
+  // Whatever subtitle/audio track is actually active right now, whether
+  // picked by the user or applied as the default - so a quality change can
+  // restore it instead of always falling back to the default track.
+  SubtitleTrack? _activeSubtitleTrack;
+  AudioTrack? _activeAudioTrack;
   bool _includeSubtitles = false;
   int _subDelay = 0;
   final _subDelayController = TextEditingController(text: "0");
@@ -342,20 +361,38 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool get hasNextEpisode => _streamController.hasNextEpisode;
 
   late final StreamSubscription<bool> _completed = _player.stream.completed
-      .listen((val) {
-        if (hasNextEpisode && val && ref.read(autoPlayNextEpisodeProvider)) {
-          if (mounted) {
-            pushToNewEpisode(context, _streamController.getNextEpisode());
-          }
-        }
-        // If the last episode of an Anime has ended, exit fullscreen mode
-        final isFullScreen = ref.read(fullscreenProvider);
-        if (!hasNextEpisode && val && isDesktop && isFullScreen) {
-          setFullScreen(value: false);
-          ref.read(fullscreenProvider.notifier).state = false;
-          widget.desktopFullScreenPlayer.call(false);
-        }
-      });
+      .listen(_handlePlaybackCompleted);
+
+  Future<void> _handlePlaybackCompleted(bool completed) async {
+    if (!completed || !mounted) return;
+
+    _watchStopwatch.stop();
+    final reportedDuration = _currentTotalDuration.value;
+    final totalDuration =
+        reportedDuration != null && reportedDuration > Duration.zero
+        ? reportedDuration
+        : _player.state.duration;
+    await _streamController.completeEpisode(
+      totalDuration,
+      elapsedSeconds: _watchStopwatch.elapsed.inSeconds,
+    );
+    _watchStopwatch.reset();
+    if (!mounted) return;
+
+    final hasNext = hasNextEpisode;
+    if (hasNext && ref.read(autoPlayNextEpisodeProvider)) {
+      pushToNewEpisode(context, _streamController.getNextEpisode());
+      return;
+    }
+
+    // If the last episode of an Anime has ended, exit fullscreen mode.
+    final isFullScreen = ref.read(fullscreenProvider);
+    if (!hasNext && isDesktop && isFullScreen) {
+      setFullScreen(value: false);
+      ref.read(fullscreenProvider.notifier).state = false;
+      widget.desktopFullScreenPlayer.call(false);
+    }
+  }
 
   Future<void> _handleMpvEvents(Pointer<generated.mpv_event> event) async {
     try {
@@ -667,7 +704,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   Future<void> _initCustomButton() async {
     if (!useMpvConfig) return;
-    final customButtons = isar.customButtons.where().sortByPos().findAllSync();
+    final customButtons = customButtonRepository.getAllSortedByPos();
     if (customButtons.isEmpty) return;
     final primaryButton =
         customButtons.firstWhereOrNull((e) => e.isFavourite ?? false) ??
@@ -720,7 +757,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _customButtons.value = customButtons;
   }
 
+  bool _hasPushedToNewEpisode = false;
+
   void pushToNewEpisode(BuildContext context, Chapter episode) {
+    // Guards against a double call (fast double-press on a TV remote,
+    // autoplay racing a manual tap) issuing two navigations before the
+    // first one replaces this route.
+    if (_hasPushedToNewEpisode) return;
+    _hasPushedToNewEpisode = true;
     widget.desktopFullScreenPlayer.call(ref.read(fullscreenProvider));
     if (context.mounted) {
       pushReplacementMangaReaderView(context: context, chapter: episode);
@@ -739,7 +783,16 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _currentPosition.value = position;
     if (_initSubtitleAndAudio) {
       _initSubtitleAndAudio = false;
-      if (_firstVid.subtitles?.isNotEmpty ?? false) {
+      if (_activeSubtitleTrack != null) {
+        try {
+          _player.setSubtitleTrack(_activeSubtitleTrack!);
+        } catch (_) {}
+        if (_activeAudioTrack != null) {
+          try {
+            _player.setAudioTrack(_activeAudioTrack!);
+          } catch (_) {}
+        }
+      } else if (_firstVid.subtitles?.isNotEmpty ?? false) {
         try {
           final defaultTrack = _firstVid.subtitles!.firstWhere(
             (sub) => sub.label == widget.defaultSubtitle,
@@ -750,18 +803,19 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           final track = (file.startsWith("http") || file.startsWith("file"))
               ? SubtitleTrack.uri(file, title: label, language: label)
               : SubtitleTrack.data(file, title: label, language: label);
+          _activeSubtitleTrack = track;
           _player.setSubtitleTrack(track);
         } catch (_) {}
         if (_firstVid.audios?.isNotEmpty ?? false) {
           try {
             final at = _firstVid.audios!.first;
-            _player.setAudioTrack(
-              AudioTrack.uri(
-                at.file ?? "",
-                title: at.label,
-                language: at.label,
-              ),
+            final track = AudioTrack.uri(
+              at.file ?? "",
+              title: at.label,
+              language: at.label,
             );
+            _activeAudioTrack = track;
+            _player.setAudioTrack(track);
           } catch (_) {}
         }
       }
@@ -912,6 +966,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _completed;
     _currentTotalDurationSub;
     _loadAndroidFont().then((_) {
+      // Loading the subtitle font writes a file, so this callback can arrive
+      // after the reader has already left. Everything below it touches the
+      // player, and media_kit asserts "[Player] has been disposed" the moment
+      // it is used after dispose. That is #925. The torrent branch further
+      // down already checked for this; the path everyone takes did not.
+      if (!mounted) return;
       _openMedia(_video.value!, _streamController.getCurrentPosition());
       if (widget.isTorrent) {
         Future.delayed(const Duration(seconds: 10)).then((_) {
@@ -957,7 +1017,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         _player.stream.duration
             .firstWhere((d) => d > Duration.zero)
             .timeout(const Duration(seconds: 8))
-            .then((_) => _player.seek(start))
+            // Up to eight seconds after the media opened, which is long
+            // enough for the reader to have gone. Seeking a disposed player
+            // reaches native state that has already been torn down.
+            .then((_) => mounted ? _player.seek(start) : null)
             .catchError((_) {}),
       );
     }
@@ -988,7 +1051,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   Future<void> _initAniSkip() async {
+    // Waits for the media to buffer, which the reader can outlast.
     await _player.stream.buffer.first;
+    if (!mounted) return;
     _streamController.getAniSkipResults((result) {
       final openingRes = result
           .where((element) => element.skipType == "op")
@@ -1049,6 +1114,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     discordRpc?.showOriginalTimestamp();
     _streamController.keepAliveLink?.close();
     _player.dispose();
+    if (widget.isTorrent) {
+      for (final hash in widget.infoHashList) {
+        MTorrentServer().removeTorrent(hash);
+      }
+    }
     super.dispose();
   }
 
@@ -1386,6 +1456,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               onTap: () {
                 Navigator.pop(context);
                 try {
+                  _activeSubtitleTrack = sub.subtitle!;
                   _player.setSubtitleTrack(sub.subtitle!);
                 } catch (_) {}
               },
@@ -1399,7 +1470,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 final file = await FilePicker.pickFile();
 
                 if (file != null && context.mounted) {
-                  _player.setSubtitleTrack(SubtitleTrack.uri(file.path!));
+                  final track = SubtitleTrack.uri(file.path!);
+                  _activeSubtitleTrack = track;
+                  _player.setSubtitleTrack(track);
                 }
                 if (!context.mounted) return;
                 Navigator.pop(context);
@@ -1420,13 +1493,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   isLocal: widget.isLocal,
                 ) as ImdbSubtitle?;
                 if (subtitle != null && context.mounted) {
-                  _player.setSubtitleTrack(
-                    SubtitleTrack.uri(
-                      subtitle.url!,
-                      title: subtitle.language,
-                      language: subtitle.language,
-                    ),
+                  final track = SubtitleTrack.uri(
+                    subtitle.url!,
+                    title: subtitle.language,
+                    language: subtitle.language,
                   );
+                  _activeSubtitleTrack = track;
+                  _player.setSubtitleTrack(track);
                 }
                 if (!context.mounted) return;
                 Navigator.pop(context);
@@ -1500,6 +1573,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             onTap: () {
               Navigator.pop(context);
               try {
+                _activeAudioTrack = aud.audio!;
                 _player.setAudioTrack(aud.audio!);
               } catch (_) {}
             },
@@ -1641,6 +1715,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         selected: selected,
         onTap: () {
           try {
+            _activeSubtitleTrack = sub.subtitle!;
             _player.setSubtitleTrack(sub.subtitle!);
           } catch (_) {}
         },
@@ -1699,6 +1774,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         selected: selected,
         onTap: () {
           try {
+            _activeAudioTrack = aud.audio!;
             _player.setAudioTrack(aud.audio!);
           } catch (_) {}
         },
@@ -2585,65 +2661,27 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                       ),
                       Row(
                         children: [
-                          button(context.l10n.set_as_cover, Icons.image_outlined, () async {
-                            final imageBytes = await _player.screenshot(
-                              format: "image/png",
-                              includeLibassSubtitles: _includeSubtitles,
-                            );
-                            if (context.mounted) {
-                              final res = await showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    content: Text(
-                                      context.l10n.use_this_as_cover_art,
-                                    ),
-                                    actions: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(context.l10n.cancel),
-                                          ),
-                                          const SizedBox(width: 15),
-                                          TextButton(
-                                            onPressed: () {
-                                              final manga =
-                                                  episode.manga.value!;
-                                              isar.writeTxnSync(() {
-                                                isar.mangas.putSync(
-                                                  manga
-                                                    ..updatedAt = DateTime.now()
-                                                        .millisecondsSinceEpoch
-                                                    ..customCoverImage =
-                                                        imageBytes
-                                                            ?.getCoverImage,
-                                                );
-                                              });
-                                              if (context.mounted) {
-                                                Navigator.pop(context, "ok");
-                                              }
-                                            },
-                                            child: Text(context.l10n.ok),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  );
-                                },
+                          button(
+                            context.l10n.set_as_cover,
+                            Icons.image_outlined,
+                            () async {
+                              final imageBytes = await _player.screenshot(
+                                format: "image/png",
+                                includeLibassSubtitles: _includeSubtitles,
                               );
-                              if (res != null &&
-                                  res == "ok" &&
-                                  context.mounted) {
-                                Navigator.pop(context);
-                                botToast(context.l10n.cover_updated, second: 3);
-                              }
-                            }
-                          }),
+                              if (!context.mounted) return;
+                              final confirmed = await confirmUseAsMangaCover(
+                                context,
+                              );
+                              if (!confirmed || !context.mounted) return;
+                              await applyMangaCover(
+                                context,
+                                episode.manga.value!,
+                                imageBytes,
+                              );
+                              if (context.mounted) Navigator.pop(context);
+                            },
+                          ),
                           button(
                             context.l10n.share,
                             Icons.share_outlined,

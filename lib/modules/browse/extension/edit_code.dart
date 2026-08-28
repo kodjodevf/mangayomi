@@ -7,9 +7,8 @@ import 'package:mangayomi/eval/interface.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/home/widget/filter_widget.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
@@ -38,17 +37,13 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
   dynamic result;
   late final source = widget.sourceId == null
       ? null
-      : isar.sources.getSync(widget.sourceId!);
+      : sourceRepository.getById(widget.sourceId!);
   final CodeLineEditingController _controller = CodeLineEditingController();
   Timer? _saveDebounceTimer;
 
   void _persistSourceCodeNow() {
     if (source == null) return;
-    isar.writeTxnSync(() {
-      isar.sources.putSync(
-        source!..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    sourceRepository.save(source!);
   }
 
   List<(String, int)> _getServices(BuildContext context) => [
@@ -239,11 +234,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () {
-            isar.writeTxnSync(() {
-              isar.sources.putSync(
-                source!..updatedAt = DateTime.now().millisecondsSinceEpoch,
-              );
-            });
+            sourceRepository.save(source!);
             Navigator.pop(context, source);
           },
         ),
@@ -484,13 +475,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                                   onPressed: () async {
                                     source?.sourceCode = _controller.text;
                                     if (source != null && context.mounted) {
-                                      isar.writeTxnSync(() {
-                                        isar.sources.putSync(
-                                          source!
-                                            ..updatedAt = DateTime.now()
-                                                .millisecondsSinceEpoch,
-                                        );
-                                      });
+                                      sourceRepository.save(source!);
                                     }
                                     setState(() {
                                       result = null;

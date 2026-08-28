@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 
 // SavedSearch is an @embedded model on the Settings collection; re-export it so
 // existing call sites can keep importing it from this provider.
@@ -18,7 +18,7 @@ class SavedSearchesNotifier extends Notifier<Map<int, List<SavedSearch>>> {
   @override
   Map<int, List<SavedSearch>> build() {
     final result = <int, List<SavedSearch>>{};
-    final list = isar.settings.getSync(227)?.savedSearchesList ?? const [];
+    final list = settingsRepository.current.savedSearchesList ?? const [];
     for (final s in list) {
       final id = s.sourceId;
       if (id == null) continue;
@@ -51,11 +51,6 @@ class SavedSearchesNotifier extends Notifier<Map<int, List<SavedSearch>>> {
 
   void _persist() {
     final flat = [for (final entry in state.values) ...entry];
-    isar.writeTxnSync(() {
-      final settings = isar.settings.getSync(227);
-      if (settings != null) {
-        isar.settings.putSync(settings..savedSearchesList = flat);
-      }
-    });
+    settingsRepository.update((s) => s.savedSearchesList = flat);
   }
 }

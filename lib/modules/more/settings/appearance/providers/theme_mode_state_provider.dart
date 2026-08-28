@@ -1,8 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
-import 'package:mangayomi/utils/settings_write.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'theme_mode_state_provider.g.dart';
 
@@ -10,7 +8,7 @@ part 'theme_mode_state_provider.g.dart';
 class ThemeModeState extends _$ThemeModeState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.themeIsDark!;
+    return settingsRepository.current.themeIsDark!;
   }
 
   void setTheme(Brightness brightness) {
@@ -35,7 +33,7 @@ class ThemeModeState extends _$ThemeModeState {
         .setTheme(isDark ? scheme.dark : scheme.light, schemeIndex);
 
     // After setTheme, which writes the same row.
-    updateSettings((settings) => settings.themeIsDark = isDark);
+    settingsRepository.update((s) => s.themeIsDark = isDark);
   }
 }
 
@@ -43,7 +41,7 @@ class ThemeModeState extends _$ThemeModeState {
 class FollowSystemThemeState extends _$FollowSystemThemeState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.followSystemTheme ?? false;
+    return settingsRepository.current.followSystemTheme ?? false;
   }
 
   void set(bool value) {
@@ -60,6 +58,6 @@ class FollowSystemThemeState extends _$FollowSystemThemeState {
     // before them and writing it here put their themeIsDark back to what it
     // was, so turning this on under a light system came back dark on the next
     // launch.
-    updateSettings((settings) => settings.followSystemTheme = value);
+    settingsRepository.update((s) => s.followSystemTheme = value);
   }
 }
