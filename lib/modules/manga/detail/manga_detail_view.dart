@@ -1584,10 +1584,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         child: Text(
                                           widget.manga!.genre![i],
                                           style: TextStyle(
-                                            fontSize: 11.5,
-                                            color: context.isLight
-                                                ? Colors.black
-                                                : Colors.white,
+                                            // 11 is the chip step. 11.5 is not
+                                            // on the scale and renders
+                                            // inconsistently across platforms.
+                                            fontSize: 11,
+                                            // The theme already answers this;
+                                            // picking black or white by hand
+                                            // ignores the palette.
+                                            color: context.textColor,
                                           ),
                                         ),
                                       ),
@@ -1629,10 +1633,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         child: Text(
                                           widget.manga!.genre![i],
                                           style: TextStyle(
-                                            fontSize: 11.5,
-                                            color: context.isLight
-                                                ? Colors.black
-                                                : Colors.white,
+                                            // 11 is the chip step. 11.5 is not
+                                            // on the scale and renders
+                                            // inconsistently across platforms.
+                                            fontSize: 11,
+                                            // The theme already answers this;
+                                            // picking black or white by hand
+                                            // ignores the palette.
+                                            color: context.textColor,
                                           ),
                                         ),
                                       ),
@@ -1643,143 +1651,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           ),
                   ),
                   const SizedBox(height: 15),
-                  SizedBox(
-                    width: context.width(1),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: OutlinedButton.icon(
-                        style: ButtonStyle(
-                          shape: WidgetStatePropertyAll(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                          ),
-                        ),
-                        onPressed: () {
-                          final algorithmWeights = ref.read(
-                            algorithmWeightsStateProvider,
-                          );
-                          context.push(
-                            "/recommendations",
-                            extra: (
-                              widget.manga!.name,
-                              widget.manga!.itemType,
-                              algorithmWeights,
-                            ),
-                          );
-                        },
-                        label: Text(l10n.recommendations),
-                        icon: Icon(Icons.arrow_right_alt_outlined),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  // Everything this title is related to, including the one
-                  // thing that cannot be reached any other way from in here:
-                  // its adaptation in the other medium.
-                  SizedBox(
-                    width: context.width(1),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: OutlinedButton.icon(
-                        style: ButtonStyle(
-                          shape: WidgetStatePropertyAll(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                          ),
-                        ),
-                        onPressed: () {
-                          context.push(
-                            "/related",
-                            extra: (
-                              widget.manga!.name!,
-                              widget.manga!.itemType,
-                            ),
-                          );
-                        },
-                        label: Text(l10n.related_titles),
-                        icon: Icon(Icons.arrow_right_alt_outlined),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  if (widget.manga!.itemType == ItemType.anime)
-                    SizedBox(
-                      width: context.width(1),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: OutlinedButton.icon(
-                          style: ButtonStyle(
-                            shape: WidgetStatePropertyAll(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
-                            ),
-                          ),
-                          onPressed: () {
-                            context.push(
-                              "/watchOrder",
-                              extra: (widget.manga!.name, null),
-                            );
-                          },
-                          label: Text(l10n.watch_order),
-                          icon: Icon(Icons.arrow_right_alt_outlined),
-                        ),
-                      ),
-                    ),
-                  if (widget.manga!.itemType == ItemType.anime)
-                    StreamBuilder(
-                      stream: trackRepository.watchByMangaId(
-                        widget.manga!.id!,
-                      ),
-                      builder: (context, snapshot) {
-                        List<Track>? trackRes = snapshot.hasData
-                            ? snapshot.data
-                            : [];
-                        final isNotSupported =
-                            trackRes?.firstOrNull?.syncId !=
-                                TrackerProviders.myAnimeList.syncId &&
-                            trackRes?.firstOrNull?.syncId !=
-                                TrackerProviders.anilist.syncId;
-                        if ((trackRes?.isEmpty ?? true) || (isNotSupported)) {
-                          return Container();
-                        }
-                        return Column(
-                          children: [
-                            const SizedBox(height: 15),
-                            SizedBox(
-                              width: context.width(1),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: OutlinedButton.icon(
-                                  style: ButtonStyle(
-                                    shape: WidgetStatePropertyAll(
-                                      RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          30.0,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    context.push(
-                                      "/watchOrder",
-                                      extra: (
-                                        widget.manga!.name,
-                                        trackRes?.firstOrNull,
-                                      ),
-                                    );
-                                  },
-                                  label: Text(l10n.sequels),
-                                  icon: Icon(Icons.arrow_right_alt_outlined),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                  _DetailActions(manga: widget.manga!),
                   const SizedBox(height: 15),
                   if (!context.isTablet)
                     Column(
@@ -2486,4 +2358,172 @@ Future<bool> _showSplitChaptersDialog(BuildContext context) async {
         ),
       ) ??
       true;
+}
+
+/// One action on the detail page.
+class _DetailAction {
+  const _DetailAction({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+}
+
+/// The things you can do with a title from its detail page, as one control.
+///
+/// These used to be up to three full-width buttons stacked down the page, each
+/// carrying the same right-arrow icon, so the column said nothing about what
+/// any of them did and grew a row every time an action was added.
+///
+/// One bordered strip of equal segments rather than loose buttons. Loose ones
+/// size to their labels, so they sat ragged and adrift in the middle of a
+/// desktop window and left an orphan on the second line of a phone. Segments
+/// divide the width they are given, which means the strip looks deliberate at
+/// any width and with two, three or four actions in it.
+class _DetailActions extends ConsumerWidget {
+  const _DetailActions({required this.manga});
+
+  final Manga manga;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = l10nLocalizations(context)!;
+
+    final recommendations = _DetailAction(
+      icon: Icons.auto_awesome_outlined,
+      label: l10n.recommendations,
+      onPressed: () => context.push(
+        "/recommendations",
+        extra: (
+          manga.name,
+          manga.itemType,
+          ref.read(algorithmWeightsStateProvider),
+        ),
+      ),
+    );
+
+    // Everything this title is related to, including the one thing that
+    // cannot be reached any other way from in here: its adaptation in the
+    // other medium.
+    final related = _DetailAction(
+      icon: Icons.account_tree_outlined,
+      label: l10n.related_titles,
+      onPressed: () =>
+          context.push("/related", extra: (manga.name!, manga.itemType)),
+    );
+
+    if (manga.itemType != ItemType.anime) {
+      return _strip(context, [recommendations, related]);
+    }
+
+    final watchOrder = _DetailAction(
+      icon: Icons.format_list_numbered_outlined,
+      label: l10n.watch_order,
+      onPressed: () => context.push("/watchOrder", extra: (manga.name, null)),
+    );
+
+    // Sequels needs a MyAnimeList or AniList track to look anything up, so it
+    // only appears once there is one.
+    return StreamBuilder(
+      stream: isar.tracks
+          .filter()
+          .idIsNotNull()
+          .mangaIdEqualTo(manga.id!)
+          .watch(fireImmediately: true),
+      builder: (context, snapshot) {
+        final tracks = snapshot.data ?? const <Track>[];
+        final syncId = tracks.firstOrNull?.syncId;
+        final supported =
+            syncId == TrackerProviders.myAnimeList.syncId ||
+            syncId == TrackerProviders.anilist.syncId;
+
+        return _strip(context, [
+          recommendations,
+          related,
+          watchOrder,
+          if (tracks.isNotEmpty && supported)
+            _DetailAction(
+              icon: Icons.playlist_play_outlined,
+              label: l10n.sequels,
+              onPressed: () => context.push(
+                "/watchOrder",
+                extra: (manga.name, tracks.firstOrNull),
+              ),
+            ),
+        ]);
+      },
+    );
+  }
+
+  Widget _strip(BuildContext context, List<_DetailAction> actions) {
+    // Tinted rather than the neutral outline, so the border belongs to the
+    // accent the segments are drawn in. Kept faint: it frames the strip, it
+    // is not another thing to look at.
+    final outline = context.primaryColor.withValues(alpha: 0.35);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: outline),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        // So a segment's ink and its focus highlight stay inside the border.
+        clipBehavior: Clip.antiAlias,
+        // Every segment as tall as the tallest, which is what keeps the
+        // dividers full height when one label wraps to two lines.
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var i = 0; i < actions.length; i++) ...[
+                if (i > 0)
+                  VerticalDivider(width: 1, thickness: 1, color: outline),
+                Expanded(child: _segment(context, actions[i])),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Icon above label rather than beside it. These labels are localised and
+  /// some translations are long; stacked, a long one takes a second line
+  /// instead of pushing the icon out or clipping.
+  Widget _segment(BuildContext context, _DetailAction action) {
+    // The accent, so the strip reads as something to press and follows
+    // whichever colour the user picked rather than sitting in body-text grey.
+    final accent = context.primaryColor;
+
+    return InkWell(
+      onTap: action.onPressed,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(action.icon, size: 20, color: accent),
+            const SizedBox(height: 5),
+            Text(
+              action.label,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: accent,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
