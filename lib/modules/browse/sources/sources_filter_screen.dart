@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
@@ -25,12 +24,7 @@ class SourcesFilterScreen extends ConsumerWidget {
         // Same inset as the other TV list screens; zero off-TV.
         padding: const EdgeInsets.only(top: 10).add(tvPageInsets),
         child: StreamBuilder(
-          stream: isar.sources
-              .filter()
-              .sourceCodeIsNotEmpty()
-              .and()
-              .itemTypeEqualTo(itemType)
-              .watch(fireImmediately: true),
+          stream: sourceRepository.watchWithCodeByItemType(itemType),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
               final entries = snapshot.data!
@@ -53,19 +47,20 @@ class SourcesFilterScreen extends ConsumerWidget {
                               )
                               .isNotEmpty,
                           onChanged: (val) {
-                            isar.writeTxnSync(() {
-                              for (var source in entries) {
-                                if (source.lang!.toLowerCase() ==
-                                    groupByValue) {
-                                  isar.sources.putSync(
-                                    source
-                                      ..isActive = val == true
-                                      ..updatedAt =
-                                          DateTime.now().millisecondsSinceEpoch,
-                                  );
-                                }
-                              }
-                            });
+                            final now = DateTime.now().millisecondsSinceEpoch;
+                            final toUpdate = entries
+                                .where(
+                                  (source) =>
+                                      source.lang!.toLowerCase() ==
+                                      groupByValue,
+                                )
+                                .map(
+                                  (source) => source
+                                    ..isActive = val == true
+                                    ..updatedAt = now,
+                                )
+                                .toList();
+                            sourceRepository.putAll(toUpdate);
                           },
                           title: Text(
                             completeLanguageName(groupByValue),
@@ -112,14 +107,7 @@ class SourcesFilterScreen extends ConsumerWidget {
                                 ),
                         ),
                         onChanged: (bool? value) {
-                          isar.writeTxnSync(() {
-                            isar.sources.putSync(
-                              element
-                                ..isAdded = value
-                                ..updatedAt =
-                                    DateTime.now().millisecondsSinceEpoch,
-                            );
-                          });
+                          sourceRepository.save(element..isAdded = value);
                         },
                         value: element.isAdded!,
                         title: Text(element.name!),

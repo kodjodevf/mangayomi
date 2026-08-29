@@ -1,9 +1,8 @@
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download.dart';
-import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/download_repository.dart';
+import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'statistics_provider.g.dart';
 
@@ -35,64 +34,41 @@ Future<StatisticsData> getStatistics(
   // 75+ manga library exhausts heap on Android and reliably crashes the
   // statistics screen — see issue #543.
 
-  final totalItems = await isar.mangas
-      .filter()
-      .favoriteEqualTo(true)
-      .itemTypeEqualTo(itemType)
-      .count();
+  final totalItems = await mangaRepository.countFavoritesByItemType(itemType);
 
-  final totalChapters = await isar.chapters
-      .filter()
-      .manga((q) => q.favoriteEqualTo(true).itemTypeEqualTo(itemType))
-      .count();
+  final totalChapters = await chapterRepository.countByFavoriteItemType(
+    itemType,
+  );
 
-  final readChapters = await isar.chapters
-      .filter()
-      .manga((q) => q.favoriteEqualTo(true).itemTypeEqualTo(itemType))
-      .isReadEqualTo(true)
-      .count();
+  final readChapters = await chapterRepository.countReadByFavoriteItemType(
+    itemType,
+  );
 
-  final downloadedCount = await isar.downloads
-      .filter()
-      .chapter(
-        (q) =>
-            q.manga((m) => m.favoriteEqualTo(true).itemTypeEqualTo(itemType)),
-      )
-      .isDownloadEqualTo(true)
-      .count();
+  final downloadedCount = await downloadRepository
+      .countDownloadedByFavoriteItemType(itemType);
 
   // Completed items: a favourite manga whose source-reported status is
   // Completed AND every chapter is read AND there is at least one chapter.
   // Pull only the IDs of completed favourites, then run two cheap count()
   // queries per item — never materialise the chapter rows.
-  final completedFavouriteIds = await isar.mangas
-      .filter()
-      .favoriteEqualTo(true)
-      .itemTypeEqualTo(itemType)
-      .statusEqualTo(Status.completed)
-      .idProperty()
-      .findAll();
+  final completedFavouriteIds = await mangaRepository.getCompletedFavoriteIds(
+    itemType,
+  );
 
   int completedItems = 0;
   for (final id in completedFavouriteIds) {
-    final total = await isar.chapters.filter().mangaIdEqualTo(id).count();
+    final total = await chapterRepository.countByMangaIdAsync(id);
     if (total == 0) continue;
-    final unread = await isar.chapters
-        .filter()
-        .mangaIdEqualTo(id)
-        .isReadEqualTo(false)
-        .count();
+    final unread = await chapterRepository.countUnreadByMangaId(id);
     if (unread == 0) completedItems++;
   }
 
   // Sum reading time without loading full History rows. Project just the
   // int field — Isar returns a List<int?> of plain ints, far cheaper than
   // hydrating every history record.
-  final readingTimes = await isar.historys
-      .filter()
-      .itemTypeEqualTo(itemType)
-      .readingTimeSecondsProperty()
-      .findAll();
+  final readingTimes = await historyRepository.getReadingTimesByItemType(
+    itemType,
+  );
   final totalReadingTimeSeconds = readingTimes.fold<int>(
     0,
     (sum, v) => sum + (v ?? 0),

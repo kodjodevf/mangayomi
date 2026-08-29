@@ -7,14 +7,12 @@ import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/modules/widgets/base_library_tab_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed.dart';
-import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -81,12 +79,10 @@ class _HistoryScreenState extends BaseLibraryTabScreenState<HistoryScreen> {
   }
 
   Future<void> _clearHistory() async {
-    final List<Id> idsToDelete = await isar.historys
-        .filter()
-        .chapter((q) => q.manga((q) => q.itemTypeEqualTo(getCurrentItemType())))
-        .idProperty()
-        .findAll();
-    await isar.writeTxn(() => isar.historys.deleteAll(idsToDelete));
+    final idsToDelete = await historyRepository.getIdsByItemType(
+      getCurrentItemType(),
+    );
+    await historyRepository.deleteAll(idsToDelete);
   }
 }
 
@@ -136,7 +132,8 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
             .toSet()
             .toList();
         final chapterById = {
-          for (final c in isar.chapters.getAllSync(chapterIds)) c?.id!: c!,
+          for (final c in chapterRepository.getAllByIds(chapterIds))
+            c?.id!: c!,
         };
         final mangaIds = chapterById.values
             .map((c) => c.mangaId)
@@ -144,7 +141,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
             .toSet()
             .toList();
         final mangaById = {
-          for (final m in isar.mangas.getAllSync(mangaIds)) m?.id!: m!,
+          for (final m in mangaRepository.getAllByIds(mangaIds)) m?.id!: m!,
         };
         final entries = allEntries.where((e) {
           final c = chapterById[e.chapterId];
@@ -473,12 +470,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
     Manga manga,
     int? deleteId,
   ) async {
-    isar.writeTxnSync(() {
-      isar.historys.deleteSync(deleteId!);
-      ref
-          .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(ActionType.removeHistory, deleteId, "{}", false);
-    });
+    historyRepository.delete(ref, deleteId!);
     if (context.mounted) {
       Navigator.pop(context);
     }

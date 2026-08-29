@@ -4,10 +4,9 @@ import 'dart:isolate';
 
 import 'package:flutter/services.dart';
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/ffi/torrent_server_ffi.dart' as libmtorrentserver_ffi;
@@ -205,18 +204,12 @@ class MTorrentServer {
 }
 
 String get _baseUrl {
-  final settings = isar.settings.getSync(227);
-  final port = settings!.btServerPort ?? 0;
+  final settings = settingsRepository.current;
+  final port = settings.btServerPort ?? 0;
   final address = settings.btServerAddress ?? "127.0.0.1";
   return "http://$address:$port";
 }
 
 void _setBtServerPort(int newPort) {
-  isar.writeTxnSync(
-    () => isar.settings.putSync(
-      isar.settings.getSync(227)!
-        ..btServerPort = newPort
-        ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-    ),
-  );
+  settingsRepository.update((s) => s.btServerPort = newPort);
 }

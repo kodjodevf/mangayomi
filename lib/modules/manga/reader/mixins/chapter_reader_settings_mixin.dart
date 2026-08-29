@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/chapter_controller_mixin.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 
 /// Shared reader-specific settings and actions for a [Chapter].
 ///
@@ -39,18 +40,15 @@ mixin ChapterReaderSettingsMixin on ChapterControllerMixin {
     if (incognitoMode) return;
     final isBookmarked = getChapterBookmarked();
     final chap = chapter;
-    isar.writeTxnSync(() {
-      chap.isBookmarked = !isBookmarked;
-      chap.updatedAt = DateTime.now().millisecondsSinceEpoch;
-      isar.chapters.putSync(chap);
-    });
+    chap.isBookmarked = !isBookmarked;
+    chapterRepository.save(chap);
   }
 
   /// Returns whether the current [chapter] is bookmarked.
   ///
   /// Reads directly from the database to ensure consistency.
   bool getChapterBookmarked() {
-    return isar.chapters.getSync(chapter.id!)!.isBookmarked!;
+    return chapterRepository.getById(chapter.id!).isBookmarked!;
   }
 
   // ---------------------------------------------------------------------------
@@ -96,12 +94,8 @@ mixin ChapterReaderSettingsMixin on ChapterControllerMixin {
         ..pageOffset = offset
         ..autoScroll = value,
     );
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        getIsarSetting()
-          ..autoScrollPages = autoScrollPagesList
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
+    settingsRepository.save(
+      getIsarSetting()..autoScrollPages = autoScrollPagesList,
     );
     onSettingsMutated();
   }

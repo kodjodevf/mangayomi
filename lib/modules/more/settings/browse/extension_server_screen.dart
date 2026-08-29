@@ -7,14 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/extension_server/android_proxy_server_dialog.dart';
 import 'package:mangayomi/modules/more/settings/browse/extension_server/extension_server_release.dart';
 import 'package:mangayomi/modules/more/settings/browse/extension_server/extension_server_tiles.dart';
 import 'package:mangayomi/modules/more/settings/browse/extension_server/extension_server_utils.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/m_extension_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -564,14 +563,10 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     required String extensionServerPath,
     required String installDirectory,
   }) async {
-    final settings = isar.settings.getSync(227);
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..jrePath = jrePath
-          ..extensionServerPath = extensionServerPath
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
+    settingsRepository.update(
+      (s) => s
+        ..jrePath = jrePath
+        ..extensionServerPath = extensionServerPath,
     );
     if (mounted) {
       setState(() {
@@ -646,10 +641,10 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   }
 
   _ConfiguredPaths _readConfiguredPaths() {
-    final settings = isar.settings.getSync(227);
+    final settings = settingsRepository.current;
     return _ConfiguredPaths(
-      jrePath: settings?.jrePath ?? '',
-      extensionServerPath: settings?.extensionServerPath ?? '',
+      jrePath: settings.jrePath ?? '',
+      extensionServerPath: settings.extensionServerPath ?? '',
     );
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
@@ -395,15 +395,8 @@ class _ChapterListTileState extends State<ChapterListTile> {
                         setState(() {
                           isBookmarked = !isBookmarked;
                         });
-                        isar.writeTxnSync(
-                          () => {
-                            isar.chapters.putSync(
-                              chapter
-                                ..isBookmarked = isBookmarked
-                                ..updatedAt =
-                                    DateTime.now().millisecondsSinceEpoch,
-                            ),
-                          },
+                        chapterRepository.save(
+                          chapter..isBookmarked = isBookmarked,
                         );
                       },
                       child: Padding(

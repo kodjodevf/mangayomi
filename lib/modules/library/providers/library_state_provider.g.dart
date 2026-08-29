@@ -60,7 +60,7 @@ final class LibraryDisplayTypeStateProvider
 }
 
 String _$libraryDisplayTypeStateHash() =>
-    r'459a91429b3d1490347cae4bd062745c5e372f05';
+    r'521b4fe8fac01994cdcc2228070ebb60a7d68131';
 
 final class LibraryDisplayTypeStateFamily extends $Family
     with
@@ -167,7 +167,7 @@ final class LibraryGridSizeStateProvider
 }
 
 String _$libraryGridSizeStateHash() =>
-    r'288b58266426aae511454e120d76a7fde7d2899b';
+    r'348939cae58b2184c3cbec2dd35cfabc6d7ffcf2';
 
 final class LibraryGridSizeStateFamily extends $Family
     with
@@ -261,7 +261,7 @@ final class MangaFilterDownloadedStateProvider
 }
 
 String _$mangaFilterDownloadedStateHash() =>
-    r'7ede8df99996399e368f5074dc1b3d4d7fa5e649';
+    r'43ef8051ae6b2d1e32ca8fe2950e0a3c069d8de9';
 
 final class MangaFilterDownloadedStateFamily extends $Family
     with
@@ -382,7 +382,7 @@ final class MangaFilterUnreadStateProvider
 }
 
 String _$mangaFilterUnreadStateHash() =>
-    r'b15457a1e579f14bb04ad3a602ff6a81b13536c2';
+    r'416ed3cf6a921cf9d53ee7b6d08c7171b76e032d';
 
 final class MangaFilterUnreadStateFamily extends $Family
     with
@@ -503,7 +503,7 @@ final class MangaFilterStartedStateProvider
 }
 
 String _$mangaFilterStartedStateHash() =>
-    r'094b89459d5d702a70d193ed22a289347aa358e1';
+    r'169b7a91303ed2141835c7ed38efc9a482492dea';
 
 final class MangaFilterStartedStateFamily extends $Family
     with
@@ -624,7 +624,7 @@ final class MangaFilterBookmarkedStateProvider
 }
 
 String _$mangaFilterBookmarkedStateHash() =>
-    r'f2f3fc6b3725e88dba093e0535723f936def82f0';
+    r'b7003b8c6c6143a74fcfeb1624b1252d2cbd8499';
 
 final class MangaFilterBookmarkedStateFamily extends $Family
     with
@@ -745,7 +745,7 @@ final class MangaFilterCompletedStateProvider
 }
 
 String _$mangaFilterCompletedStateHash() =>
-    r'8a9f60b94db16d65d29caa8598443c070f7c26e6';
+    r'6bc325789efeeb57f8f33c85279e9cb9ac99dd42';
 
 final class MangaFilterCompletedStateFamily extends $Family
     with
@@ -866,7 +866,7 @@ final class MangaFilterTrackingStateProvider
 }
 
 String _$mangaFilterTrackingStateHash() =>
-    r'fe79a139011725cf0a3d735930a41e1f593f0b70';
+    r'd05260918e5d0fffe08cfe29c14ef095b8285043';
 
 final class MangaFilterTrackingStateFamily extends $Family
     with
@@ -992,7 +992,7 @@ final class MangaFilterSourceStateProvider
 }
 
 String _$mangaFilterSourceStateHash() =>
-    r'18a2548ce96eac2f552594bf856d5e843f23fc31';
+    r'045578db4403b26946889e57243603c9f3196d4f';
 
 final class MangaFilterSourceStateFamily extends $Family
     with
@@ -1243,7 +1243,7 @@ final class LibraryShowCategoryTabsStateProvider
 }
 
 String _$libraryShowCategoryTabsStateHash() =>
-    r'0bdaf08a47247175aea9ca1fe515b6c347c27c61';
+    r'9dd38f0826f7728db4f8aef1a24f9807d0af65aa';
 
 final class LibraryShowCategoryTabsStateFamily extends $Family
     with
@@ -1352,7 +1352,7 @@ final class LibraryDownloadedChaptersStateProvider
 }
 
 String _$libraryDownloadedChaptersStateHash() =>
-    r'ac9868c3cda2c6a9097d9c4c8a6fd0a78edffe26';
+    r'c58036a1f9c8efedb90766f3fc8a573741586578';
 
 final class LibraryDownloadedChaptersStateFamily extends $Family
     with
@@ -1459,7 +1459,7 @@ final class LibraryLanguageStateProvider
 }
 
 String _$libraryLanguageStateHash() =>
-    r'3673dceb22d4220347f104efa31a2e5ecb0e5fb9';
+    r'629f7e7cb623327dfd86303001fce5470c9f6ddf';
 
 final class LibraryLanguageStateFamily extends $Family
     with
@@ -1567,7 +1567,7 @@ final class LibraryLocalSourceStateProvider
 }
 
 String _$libraryLocalSourceStateHash() =>
-    r'4a1beb1f43cd4023f848f9d76731c3095236a148';
+    r'971613def73be4d0109a8e5d3f856a07b0dc5c2d';
 
 final class LibraryLocalSourceStateFamily extends $Family
     with
@@ -1676,7 +1676,7 @@ final class LibraryShowNumbersOfItemsStateProvider
 }
 
 String _$libraryShowNumbersOfItemsStateHash() =>
-    r'040768e98505577b85e52b5e5f6ae6915de1b222';
+    r'9cbe0d59f776e530ef64b40a6e8bd288b67843d2';
 
 final class LibraryShowNumbersOfItemsStateFamily extends $Family
     with
@@ -1787,7 +1787,7 @@ final class LibraryShowContinueReadingButtonStateProvider
 }
 
 String _$libraryShowContinueReadingButtonStateHash() =>
-    r'e85d6a904a1aed27810aff85f55701da150a8a33';
+    r'55bbf3262837651eafc7a34cbaa4f1c24e587c82';
 
 final class LibraryShowContinueReadingButtonStateFamily extends $Family
     with
@@ -1894,7 +1894,7 @@ final class SortLibraryMangaStateProvider
 }
 
 String _$sortLibraryMangaStateHash() =>
-    r'35674a265f9519d33ec9ffc2c013ea995529784a';
+    r'abf901ae0407fc8fd5ef02ae05587a443e46be8a';
 
 final class SortLibraryMangaStateFamily extends $Family
     with
@@ -2056,7 +2056,7 @@ final class MangasSetIsReadStateProvider
 }
 
 String _$mangasSetIsReadStateHash() =>
-    r'a2c64ecdf03b3d27282c63d8cadbc1cc44943e39';
+    r'7bd5ede4ee9932ca30740fda7b4ae5257f3bcdb0';
 
 final class MangasSetIsReadStateFamily extends $Family
     with

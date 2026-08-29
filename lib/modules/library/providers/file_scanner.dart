@@ -3,8 +3,6 @@ import 'dart:io'; // For I/O-operations
 import 'dart:ui' as ui;
 import 'package:external_path/external_path.dart';
 import 'package:flutter/foundation.dart';
-import 'package:isar_community/isar.dart'; // Isar database package for local storage
-import 'package:mangayomi/main.dart'; // Exposes the global `isar` instance
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
@@ -18,6 +16,9 @@ import 'package:bot_toast/bot_toast.dart'; // For Exceptions
 import 'package:mangayomi/models/manga.dart'; // Has Manga model and ItemType enum
 import 'package:mangayomi/models/chapter.dart'; // Has Chapter model with archivePath
 import 'package:mangayomi/providers/storage_provider.dart'; // Provides storage directory selection
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart'; // Annotations for code generation
 part 'file_scanner.g.dart';
 
@@ -25,7 +26,7 @@ part 'file_scanner.g.dart';
 class LocalFoldersState extends _$LocalFoldersState {
   @override
   List<LocalFolder> build() {
-    final settings = isar.settings.getSync(227)!;
+    final settings = settingsRepository.current;
     return _normalizeLocalFolders(
       settings.namedLocalFolders ??
           settings.localFolders
@@ -36,21 +37,19 @@ class LocalFoldersState extends _$LocalFoldersState {
   }
 
   void set(List<LocalFolder> value) {
-    final settings = isar.settings.getSync(227)!;
+    final currentDownloadFolderName =
+        settingsRepository.current.downloadLocalFolderName;
     state = _normalizeLocalFolders(value);
     final downloadFolderName = _resolveDownloadFolderName(
-      settings.downloadLocalFolderName,
+      currentDownloadFolderName,
       [LocalFolder(name: 'local'), ...state],
     );
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings
-          ..localFolders = state.map((e) => e.path ?? '').toList()
-          ..namedLocalFolders = state
-          ..downloadLocalFolderName = downloadFolderName
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) {
+      s
+        ..localFolders = state.map((e) => e.path ?? '').toList()
+        ..namedLocalFolders = state
+        ..downloadLocalFolderName = downloadFolderName;
+    });
   }
 }
 
@@ -58,7 +57,7 @@ class LocalFoldersState extends _$LocalFoldersState {
 class DownloadLocalFolderNameState extends _$DownloadLocalFolderNameState {
   @override
   String? build() {
-    return isar.settings.getSync(227)!.downloadLocalFolderName;
+    return settingsRepository.current.downloadLocalFolderName;
   }
 
   void set(String? value) {
@@ -148,14 +147,7 @@ Future<void> _scanDirectory(
   final dateNow = DateTime.now().millisecondsSinceEpoch;
 
   // Fetch all existing mangas in library that are in /local (or \local)
-  final List<Manga> existingMangas = await isar.mangas
-      .filter()
-      .sourceEqualTo("local")
-      .or()
-      .linkContains("Mangayomi/local")
-      .or()
-      .linkContains("Mangayomi\\local")
-      .findAll();
+  final List<Manga> existingMangas = await mangaRepository.getAllLocal();
   final mangaMap = {
     for (var m in existingMangas)
       localVirtualPathFromStoredPath(m.link!, localFolders): m,
@@ -163,10 +155,9 @@ Future<void> _scanDirectory(
 
   // Fetch all chapters for existing mangas
   final existingMangaIds = existingMangas.map((m) => m.id);
-  final existingChapters = await isar.chapters
-      .filter()
-      .anyOf(existingMangaIds, (q, id) => q.mangaIdEqualTo(id))
-      .findAll();
+  final existingChapters = await chapterRepository.getAllByMangaIds(
+    existingMangaIds,
+  );
 
   // Map where the key is manga ID and the value is a set of chapter paths.
   final chaptersMap = <int, Set<String>>{};
@@ -401,7 +392,7 @@ Future<void> _scanDirectory(
   }
   try {
     // Save all new and changed items to the library
-    await isar.writeTxn(() async => await isar.mangas.putAll(changedMangas));
+    await mangaRepository.putAll(changedMangas);
   } catch (e) {
     BotToast.showText(
       text: "Database write error. Manga/Anime couldn't be saved: $e",
@@ -413,14 +404,7 @@ Future<void> _scanDirectory(
     // Copy processedMangas
     List<Manga> newAddedMangas = processedMangas;
     // Fetch all existing mangas in library that are in /local (or \local)
-    final savedMangas = await isar.mangas
-        .filter()
-        .sourceEqualTo("local")
-        .or()
-        .linkContains("Mangayomi/local")
-        .or()
-        .linkContains("Mangayomi\\local")
-        .findAll();
+    final savedMangas = await mangaRepository.getAllLocal();
     // Save all retrieved Manga objects (now with id) matching the processedMangas list
     newAddedMangas = savedMangas
         .where(
@@ -511,9 +495,7 @@ Future<void> _scanDirectory(
   try {
     if (saveManga > 0) {
       // Just to update the lastUpdate value of not new Mangas
-      await isar.writeTxn(
-        () async => await isar.mangas.putAll(processedMangas),
-      );
+      await mangaRepository.putAll(processedMangas);
     }
   } catch (e) {
     BotToast.showText(
@@ -525,7 +507,7 @@ Future<void> _scanDirectory(
   try {
     if (chaptersToSave.isNotEmpty) {
       final mangaMap = {for (final m in processedMangas) m.id: m};
-      await isar.writeTxn(() async {
+      await chapterRepository.writeTransactionAsync(() async {
         for (final chap in chaptersToSave) {
           final manga = mangaMap[chap.mangaId];
           if (manga != null) {
@@ -533,7 +515,7 @@ Future<void> _scanDirectory(
           }
         }
         // insert chapters
-        await isar.chapters.putAll(chaptersToSave);
+        await chapterRepository.putAllAsync(chaptersToSave);
 
         // save link references
         for (final chap in chaptersToSave) {
@@ -692,7 +674,7 @@ Future<LocalFolder?> getDefaultLocalFolder() async {
 Future<List<LocalFolder>> getAllLocalFolders({
   bool includeDefault = true,
 }) async {
-  final settings = isar.settings.getSync(227)!;
+  final settings = settingsRepository.current;
   final folders = _normalizeLocalFolders(
     settings.namedLocalFolders ??
         settings.localFolders
@@ -708,7 +690,7 @@ Future<List<LocalFolder>> getAllLocalFolders({
 Future<LocalFolder?> getDownloadLocalFolder() async {
   final folders = await getAllLocalFolders();
   if (folders.isEmpty) return null;
-  final settings = isar.settings.getSync(227)!;
+  final settings = settingsRepository.current;
   final name = _resolveDownloadFolderName(
     settings.downloadLocalFolderName,
     folders,
@@ -717,14 +699,7 @@ Future<LocalFolder?> getDownloadLocalFolder() async {
 }
 
 void setDownloadLocalFolderName(String? name) {
-  final settings = isar.settings.getSync(227)!;
-  isar.writeTxnSync(
-    () => isar.settings.putSync(
-      settings
-        ..downloadLocalFolderName = name
-        ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-    ),
-  );
+  settingsRepository.update((s) => s.downloadLocalFolderName = name);
 }
 
 String getLocalVirtualPath(LocalFolder folder, String entityPath) {

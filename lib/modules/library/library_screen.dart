@@ -4,8 +4,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/tv_home/tv_anime_home_view.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
@@ -103,10 +103,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   Widget build(BuildContext context) {
     final settingsStream = ref.watch(getSettingsStreamProvider);
     return settingsStream.when(
-      data: (settingsList) {
-        final settings = settingsList.first;
-        return _buildWithSettings(settings);
-      },
+      data: (settings) => _buildWithSettings(settings),
       error: (error, _) => ErrorText(error),
       loading: () => const ProgressCenter(),
     );
@@ -519,7 +516,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
               icon: Icon(Icons.label_outline_rounded, color: color),
               onPressed: () {
                 final List<Manga> bulkMangas = mangaIds
-                    .map((id) => isar.mangas.getSync(id)!)
+                    .map((id) => mangaRepository.getById(id))
                     .toList();
                 showCategorySelectionDialog(
                   context: context,

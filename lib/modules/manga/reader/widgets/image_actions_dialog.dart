@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
@@ -137,14 +137,12 @@ class _ImageActionsSheet extends StatelessWidget {
               const SizedBox(width: 15),
               TextButton(
                 onPressed: () {
-                  isar.writeTxnSync(() {
-                    isar.mangas.putSync(
-                      manga
-                        ..customCoverImage = Uint8List.fromList(imageBytes)
-                            .getCoverImage
-                        ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-                    );
-                  });
+                  mangaRepository.save(
+                    manga
+                      ..customCoverImage = Uint8List.fromList(
+                        imageBytes,
+                      ).getCoverImage,
+                  );
                   Navigator.pop(context, "ok");
                 },
                 child: Text(context.l10n.ok),

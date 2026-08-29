@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 
 import 'dart:convert';
 
@@ -476,7 +476,7 @@ class Anilist extends _$Anilist implements BaseTracker {
   }
 
   String _toAnilistScore(int score) {
-    final prefs = isar.trackPreferences.getSync(syncId)!.prefs;
+    final prefs = trackRepository.getPreferenceById(syncId)!.prefs;
     final scoreFormat = jsonDecode(prefs!)['scoreFormat'];
     return switch (scoreFormat) {
       "POINT_10" => (score / 10).toString(),
@@ -557,7 +557,7 @@ class Anilist extends _$Anilist implements BaseTracker {
 
   @override
   String displayScore(int score) {
-    final prefs = isar.trackPreferences.getSync(syncId)!.prefs;
+    final prefs = trackRepository.getPreferenceById(syncId)!.prefs;
     final scoreFormat = jsonDecode(prefs!)['scoreFormat'];
     return switch (scoreFormat) {
       'POINT_5' => switch (score) {
@@ -576,7 +576,7 @@ class Anilist extends _$Anilist implements BaseTracker {
 
   @override
   (int, int) getScoreValue() {
-    final prefs = isar.trackPreferences.getSync(syncId)!.prefs;
+    final prefs = trackRepository.getPreferenceById(syncId)!.prefs;
     String scoreFormat = jsonDecode(prefs!)['scoreFormat'];
     return switch (scoreFormat) {
       'POINT_10' => (100, 10),

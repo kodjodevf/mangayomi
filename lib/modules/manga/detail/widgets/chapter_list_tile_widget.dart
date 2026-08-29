@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/cached_network.dart';
@@ -16,6 +15,7 @@ import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/download/download_page_widget.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -48,22 +48,16 @@ class ChapterListTileWidget extends ConsumerWidget {
         if (direction == DismissDirection.startToEnd) {
           // Swipe right → toggle bookmark
           final chap = chapter;
-          isar.writeTxnSync(() {
-            chap.isBookmarked = !chap.isBookmarked!;
-            chap.updatedAt = DateTime.now().millisecondsSinceEpoch;
-            isar.chapters.putSync(chap);
-          });
+          chap.isBookmarked = !chap.isBookmarked!;
+          chapterRepository.save(chap);
         } else if (direction == DismissDirection.endToStart) {
           // Swipe left → toggle read
           final chap = chapter;
-          isar.writeTxnSync(() {
-            chap.isRead = !chap.isRead!;
-            if (!chap.isRead!) {
-              chap.lastPageRead = "1";
-            }
-            chap.updatedAt = DateTime.now().millisecondsSinceEpoch;
-            isar.chapters.putSync(chap);
-          });
+          chap.isRead = !chap.isRead!;
+          if (!chap.isRead!) {
+            chap.lastPageRead = "1";
+          }
+          chapterRepository.save(chap);
         }
         return false; // Don't dismiss, snap back
       },

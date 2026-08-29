@@ -1,9 +1,10 @@
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 
 /// Shared navigation and history logic used by [ReaderController],
@@ -31,7 +32,7 @@ mixin ChapterControllerMixin {
 
   // Declared as a getter so concrete classes can override with a `final` field
   // (which is more efficient since incognito status never changes mid-session).
-  bool get incognitoMode => isar.settings.getSync(227)!.incognitoMode!;
+  bool get incognitoMode => settingsRepository.current.incognitoMode!;
 
   bool get hasNextChapter {
     final idx = getChapterIndex();
@@ -40,7 +41,7 @@ mixin ChapterControllerMixin {
 
   bool get hasPreviousChapter => getChapterIndex().$1 > 0;
 
-  Settings getIsarSetting() => isar.settings.getSync(227)!;
+  Settings getIsarSetting() => settingsRepository.current;
 
   String getMangaName() => getManga().name!;
   String getSourceName() => getManga().source!;
@@ -102,17 +103,11 @@ mixin ChapterControllerMixin {
     if (incognitoMode) return;
     final manga = getManga();
 
-    isar.writeTxnSync(() {
-      final m = chapter.manga.value!;
-      m.lastRead = DateTime.now().millisecondsSinceEpoch;
-      m.updatedAt = DateTime.now().millisecondsSinceEpoch;
-      isar.mangas.putSync(m);
-    });
+    final m = chapter.manga.value!;
+    m.lastRead = DateTime.now().millisecondsSinceEpoch;
+    mangaRepository.save(m);
 
-    final isEmpty = isar.historys
-        .filter()
-        .mangaIdEqualTo(manga.id)
-        .isEmptySync();
+    final isEmpty = historyRepository.isEmptyForManga(manga.id);
 
     final History history;
     if (isEmpty) {
@@ -123,20 +118,16 @@ mixin ChapterControllerMixin {
         chapterId: chapter.id,
       )..chapter.value = chapter;
     } else {
-      history = isar.historys.filter().mangaIdEqualTo(manga.id).findFirstSync()!
+      history = historyRepository.findFirstByMangaId(manga.id)!
         ..chapterId = chapter.id
         ..chapter.value = chapter
         ..date = DateTime.now().millisecondsSinceEpoch.toString();
     }
 
-    isar.writeTxnSync(() {
-      history.updatedAt = DateTime.now().millisecondsSinceEpoch;
-      if (elapsedSeconds > 0) {
-        history.readingTimeSeconds =
-            (history.readingTimeSeconds ?? 0) + elapsedSeconds;
-      }
-      isar.historys.putSync(history);
-      history.chapter.saveSync();
-    });
+    if (elapsedSeconds > 0) {
+      history.readingTimeSeconds =
+          (history.readingTimeSeconds ?? 0) + elapsedSeconds;
+    }
+    historyRepository.save(history);
   }
 }

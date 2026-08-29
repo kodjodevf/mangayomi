@@ -3,13 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/manga/home/providers/state_provider.dart';
 import 'package:mangayomi/modules/manga/home/widget/filter_widget.dart';
@@ -129,11 +128,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    _mangaStreamSub = isar.mangas
-        .filter()
-        .sourceEqualTo(source.name)
-        .langEqualTo(source.lang)
-        .watch(fireImmediately: true)
+    _mangaStreamSub = mangaRepository
+        .watchBySourceAndLang(source.name, source.lang)
         .listen((mangas) {
           if (mounted) {
             setState(() {

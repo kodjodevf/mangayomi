@@ -5,10 +5,9 @@ import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
@@ -168,11 +167,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         child: StreamBuilder(
-          stream: isar.trackPreferences
-              .filter()
-              .syncIdIsNotNull()
-              .anyOf([false, null], (q, e) => q.refreshingEqualTo(e))
-              .watch(fireImmediately: true),
+          stream: trackRepository.watchAllNotRefreshing(),
           builder: (context, snapshot) {
             _preferences = snapshot.hasData ? snapshot.data ?? [] : [];
             return _preferences.any((p) => p.syncId == trackerProvider.syncId)

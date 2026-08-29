@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'player_decoder_state_provider.g.dart';
@@ -24,7 +24,7 @@ final hwdecs = {
 class HwdecModeState extends _$HwdecModeState {
   @override
   String build({bool rawValue = false}) {
-    final hwdecMode = isar.settings.getSync(227)!.hwdecMode ?? "auto";
+    final hwdecMode = settingsRepository.current.hwdecMode ?? "auto";
     if (rawValue) {
       return hwdecMode;
     }
@@ -37,15 +37,8 @@ class HwdecModeState extends _$HwdecModeState {
   }
 
   void set(String value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..hwdecMode = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.hwdecMode = value);
   }
 }
 
@@ -53,22 +46,15 @@ class HwdecModeState extends _$HwdecModeState {
 class EnableHardwareAccelState extends _$EnableHardwareAccelState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.enableHardwareAcceleration ??
+    return settingsRepository.current.enableHardwareAcceleration ??
             Platform.isMacOS
         ? false
         : true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..enableHardwareAcceleration = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.enableHardwareAcceleration = value);
   }
 }
 
@@ -76,19 +62,12 @@ class EnableHardwareAccelState extends _$EnableHardwareAccelState {
 class DebandingState extends _$DebandingState {
   @override
   DebandingType build() {
-    return isar.settings.getSync(227)!.debandingType;
+    return settingsRepository.current.debandingType;
   }
 
   void set(DebandingType value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..debandingType = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.debandingType = value);
   }
 }
 
@@ -96,19 +75,12 @@ class DebandingState extends _$DebandingState {
 class UseGpuNextState extends _$UseGpuNextState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.enableGpuNext ?? false;
+    return settingsRepository.current.enableGpuNext ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..enableGpuNext = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.enableGpuNext = value);
   }
 }
 
@@ -116,18 +88,11 @@ class UseGpuNextState extends _$UseGpuNextState {
 class UseYUV420PState extends _$UseYUV420PState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.useYUV420P ?? false;
+    return settingsRepository.current.useYUV420P ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..useYUV420P = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.useYUV420P = value);
   }
 }

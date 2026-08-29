@@ -3,13 +3,13 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_main.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -270,13 +270,7 @@ Future<void> pushToMangaReaderDetail({
   bool addToFavourite = false,
 }) async {
   int? mangaId =
-      (await isar.mangas
-              .filter()
-              .isLocalArchiveEqualTo(true)
-              .sourceEqualTo("local")
-              .nameEqualTo(getManga?.name)
-              .findFirst())
-          ?.id;
+      (await mangaRepository.findLocalArchiveByName(getManga?.name))?.id;
 
   if (mangaId == null) {
     if (archiveId == null) {
@@ -297,26 +291,20 @@ Future<void> pushToMangaReaderDetail({
             artist: getManga.artist ?? '',
             sourceId: sourceId,
           );
-      final empty = await isar.mangas
-          .filter()
-          .langEqualTo(lang)
-          .nameEqualTo(manga.name)
-          .sourceEqualTo(manga.source)
-          .isEmpty();
+      final empty = await mangaRepository.isEmptyByLangNameSource(
+        lang,
+        manga.name,
+        manga.source,
+      );
       if (empty) {
-        await isar.writeTxn(() async {
-          await isar.mangas.put(
-            manga..updatedAt = DateTime.now().millisecondsSinceEpoch,
-          );
-        });
+        await mangaRepository.save(manga);
       }
 
-      final foundMangas = await isar.mangas
-          .filter()
-          .langEqualTo(lang)
-          .nameEqualTo(manga.name)
-          .sourceEqualTo(manga.source)
-          .findAll();
+      final foundMangas = await mangaRepository.findAllByLangNameSource(
+        lang,
+        manga.name,
+        manga.source,
+      );
       Manga? matchedManga;
       for (final foundManga in foundMangas) {
         if (foundManga.sourceId == null || foundManga.sourceId == sourceId) {
@@ -325,11 +313,7 @@ Future<void> pushToMangaReaderDetail({
         }
       }
       if (matchedManga == null) {
-        await isar.writeTxn(() async {
-          await isar.mangas.put(
-            manga..updatedAt = DateTime.now().millisecondsSinceEpoch,
-          );
-        });
+        await mangaRepository.save(manga);
         matchedManga = manga;
       }
       mangaId = matchedManga.id!;
@@ -338,18 +322,16 @@ Future<void> pushToMangaReaderDetail({
     }
   }
 
-  final mang = await isar.mangas.get(mangaId);
+  final mang = await mangaRepository.findByIdAsync(mangaId);
   if (mang!.sourceId == null && !(mang.isLocalArchive ?? false)) {
-    await isar.writeTxn(() async {
-      await isar.mangas.put(mang..sourceId = sourceId);
-    });
+    await mangaRepository.save(mang..sourceId = sourceId);
   }
-  final settings = await isar.settings.get(227);
+  final settings = await settingsRepository.currentAsync;
   final exists =
       settings!.sortChapterList?.any((e) => e.mangaId == mangaId) ?? false;
   if (!exists) {
-    await isar.writeTxn(() async {
-      settings
+    await settingsRepository.update(
+      (s) => s
         ..sortChapterList = [
           ...(settings.sortChapterList ?? []),
           SortChapter()..mangaId = mangaId,
@@ -365,11 +347,8 @@ Future<void> pushToMangaReaderDetail({
         ..chapterFilterUnreadList = [
           ...(settings.chapterFilterUnreadList ?? []),
           ChapterFilterUnread()..mangaId = mangaId,
-        ]
-        ..updatedAt = DateTime.now().millisecondsSinceEpoch;
-
-      await isar.settings.put(settings);
-    });
+        ],
+    );
   }
   if (!addToFavourite) {
     if (context.mounted) {
@@ -383,13 +362,7 @@ Future<void> pushToMangaReaderDetail({
       }
     }
   } else {
-    final getManga = await isar.mangas.get(mangaId);
-    await isar.writeTxn(() async {
-      await isar.mangas.put(
-        getManga!
-          ..favorite = !getManga.favorite!
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    final getManga = await mangaRepository.findByIdAsync(mangaId);
+    await mangaRepository.save(getManga!..favorite = !getManga.favorite!);
   }
 }

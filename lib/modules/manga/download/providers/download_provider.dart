@@ -6,12 +6,12 @@ import 'dart:ui';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/page.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/download_repository.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -46,7 +46,7 @@ part 'download_provider.g.dart';
 
 @riverpod
 Future<void> addDownloadToQueue(Ref ref, {required Chapter chapter}) async {
-  final download = isar.downloads.getSync(chapter.id!);
+  final download = downloadRepository.getById(chapter.id!);
   if (download == null) {
     final download = Download(
       id: chapter.id,
@@ -56,9 +56,7 @@ Future<void> addDownloadToQueue(Ref ref, {required Chapter chapter}) async {
       isDownload: false,
       isStartDownload: true,
     );
-    isar.writeTxnSync(() {
-      isar.downloads.putSync(download..chapter.value = chapter);
-    });
+    downloadRepository.save(download..chapter.value = chapter);
   }
 }
 
@@ -74,19 +72,17 @@ Future<void> downloadChapter(
   // Show the chapter as queued straight away, before it waits for a slot, so
   // the download icon reacts to the tap immediately even while it sits in the
   // gate behind other downloads.
-  if (isar.downloads.getSync(chapter.id!) == null) {
-    isar.writeTxnSync(() {
-      isar.downloads.putSync(
-        Download(
-          id: chapter.id,
-          succeeded: 0,
-          failed: 0,
-          total: 100,
-          isDownload: false,
-          isStartDownload: true,
-        )..chapter.value = chapter,
-      );
-    });
+  if (downloadRepository.getById(chapter.id!) == null) {
+    downloadRepository.save(
+      Download(
+        id: chapter.id,
+        succeeded: 0,
+        failed: 0,
+        total: 100,
+        isDownload: false,
+        isStartDownload: true,
+      )..chapter.value = chapter,
+    );
   }
 
   // Every download path funnels through here, so acquiring the shared gate is
@@ -269,7 +265,7 @@ Future<void> downloadChapter(
       }
       lastPersistedPercent = percent;
       lastPersistTime = now;
-      final download = isar.downloads.getSync(chapter.id!);
+      final download = downloadRepository.getById(chapter.id!);
       if (download == null) {
         final download = Download(
           id: chapter.id,
@@ -279,19 +275,15 @@ Future<void> downloadChapter(
           isDownload: progress.isCompleted,
           isStartDownload: true,
         );
-        isar.writeTxnSync(() {
-          isar.downloads.putSync(download..chapter.value = chapter);
-        });
+        downloadRepository.save(download..chapter.value = chapter);
       } else if (progress.total != 0) {
-        isar.writeTxnSync(() {
-          isar.downloads.putSync(
-            download
-              ..succeeded = percent
-              ..total = 100
-              ..failed = 0
-              ..isDownload = progress.isCompleted,
-          );
-        });
+        downloadRepository.save(
+          download
+            ..succeeded = percent
+            ..total = 100
+            ..failed = 0
+            ..isDownload = progress.isCompleted,
+        );
       }
     }
 
@@ -301,9 +293,9 @@ Future<void> downloadChapter(
       // local pages carry no url. Storing those placeholders would leave the
       // chapter unreadable from its source once the download is deleted.
       if (pageUrls.every((pageUrl) => pageUrl.url.isEmpty)) return;
-      final settings = isar.settings.getSync(227)!;
       List<ChapterPageurls>? chapterPageUrls = [];
-      for (var chapterPageUrl in settings.chapterPageUrlsList ?? []) {
+      for (var chapterPageUrl
+          in settingsRepository.current.chapterPageUrlsList ?? []) {
         if (chapterPageUrl.chapterId != chapter.id) {
           chapterPageUrls.add(chapterPageUrl);
         }
@@ -320,13 +312,7 @@ Future<void> downloadChapter(
               ? chapterPageHeaders.map((e) => e.toString()).toList()
               : null,
       );
-      isar.writeTxnSync(
-        () => isar.settings.putSync(
-          settings
-            ..chapterPageUrlsList = chapterPageUrls
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-        ),
-      );
+      settingsRepository.update((s) => s.chapterPageUrlsList = chapterPageUrls);
     }
 
     if (itemType == ItemType.manga) {
@@ -450,7 +436,7 @@ Future<void> downloadChapter(
       // treat it as already downloaded and mark it complete — a truncated but
       // "finished" file. If this chapter's download record is not actually
       // complete, delete any such leftover first so it re-downloads fresh.
-      final downloadRecord = isar.downloads.getSync(chapter.id!);
+      final downloadRecord = downloadRepository.getById(chapter.id!);
       if (!(downloadRecord?.isDownload ?? false)) {
         for (final leftover in [
           File(p.join(mangaMainDirectory.path, "$chapterName.mp4")),
@@ -622,16 +608,14 @@ Duration _downloadStartDelay(int baseSeconds) {
 /// so it shows a retry-able icon instead of a progress bar frozen at its last
 /// value. Any partial file is cleaned up on the next attempt.
 void _markDownloadFailed(Chapter chapter) {
-  final record = isar.downloads.getSync(chapter.id!);
+  final record = downloadRepository.getById(chapter.id!);
   if (record == null || (record.isDownload ?? false)) return;
-  isar.writeTxnSync(() {
-    isar.downloads.putSync(
-      record
-        ..isStartDownload = false
-        ..succeeded = 0
-        ..failed = 1,
-    );
-  });
+  downloadRepository.save(
+    record
+      ..isStartDownload = false
+      ..succeeded = 0
+      ..failed = 1,
+  );
 }
 
 /// True when a download was cancelled while it was queued. cancelDownloads
@@ -640,7 +624,7 @@ void _markDownloadFailed(Chapter chapter) {
 /// because every download is fired up front and then waits in the gate; a
 /// cancel that lands while it waits must actually stop it.
 bool _downloadCancelled(Chapter chapter) =>
-    isar.downloads.getSync(chapter.id!) == null;
+    downloadRepository.getById(chapter.id!) == null;
 
 /// Key identifying the source a chapter belongs to, used to serialize
 /// downloads from the same source. Falls back to a per-chapter unique key when
@@ -757,12 +741,7 @@ Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
     // the highest-priority chapters; the gate then keeps honoring live reorders
     // as later slots free.
     final ongoingDownloads = DownloadQueueOrder.sorted(
-      await isar.downloads
-          .filter()
-          .idIsNotNull()
-          .isDownloadEqualTo(false)
-          .isStartDownloadEqualTo(true)
-          .findAll(),
+      await downloadRepository.getPendingStarted(),
     );
     // Kick off every pending download. The shared _DownloadGate enforces the
     // concurrency limit, per-source serialization (#645), the start delay
