@@ -16,6 +16,7 @@ tokio-util = "0.7.16"
 epub = "2.1.5"
 zip = "8.5.0"
 rars = "0.9.3"
+libc = "0.2"
 # Pinned to what reqwest 0.13 already resolves, so the build has one rustls.
 rustls = { version = "0.23", default-features = false, features = ["std", "tls12", "aws-lc-rs"] }
 webpki-roots = "1"
