@@ -68,9 +68,14 @@ class NovelWebView extends ConsumerStatefulWidget {
 
 class _NovelWebViewState extends ConsumerState<NovelWebView>
     with TickerProviderStateMixin, WidgetsBindingObserver {
-  late final NovelReaderController _readerController = ref.read(
-    novelReaderControllerProvider(chapter: chapter).notifier,
-  );
+  /// Resolved in [initState], not lazily.
+  ///
+  /// As a `late` field with an initialiser this was read for the first time
+  /// by whatever touched it first, and on a reader closed before its first
+  /// build got that far, that was `dispose()`. Riverpod forbids `ref` there:
+  /// it needs the BuildContext, and the element is already deactivated. See
+  /// issue #949, reported from the novel reader on 0.8.9.
+  late final NovelReaderController _readerController;
   final _scrollController = ScrollController(
     initialScrollOffset: 0,
     keepScrollOffset: true,
@@ -138,6 +143,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   @override
   void initState() {
     super.initState();
+    // Before anything that can fail, so the controller dispose() needs is
+    // always there: this is the whole point of not leaving it lazy.
+    _readerController = ref.read(
+      novelReaderControllerProvider(chapter: chapter).notifier,
+    );
     WidgetsBinding.instance.addObserver(this);
     _readingStopwatch.start();
     WidgetsBinding.instance.addPostFrameCallback((_) {
