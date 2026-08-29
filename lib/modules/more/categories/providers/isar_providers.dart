@@ -1,7 +1,6 @@
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/repositories/category_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'isar_providers.g.dart';
 
@@ -10,8 +9,5 @@ Stream<List<Category>> getMangaCategorieStream(
   Ref ref, {
   required ItemType itemType,
 }) async* {
-  yield* isar.categorys
-      .filter()
-      .forItemTypeEqualTo(itemType)
-      .watch(fireImmediately: true);
+  yield* categoryRepository.watchByItemTypeSimple(itemType);
 }

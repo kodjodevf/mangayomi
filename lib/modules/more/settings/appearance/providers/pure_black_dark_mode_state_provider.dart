@@ -1,5 +1,4 @@
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'pure_black_dark_mode_state_provider.g.dart';
 
@@ -7,18 +6,11 @@ part 'pure_black_dark_mode_state_provider.g.dart';
 class PureBlackDarkModeState extends _$PureBlackDarkModeState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.pureBlackDarkMode!;
+    return settingsRepository.current.pureBlackDarkMode!;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..pureBlackDarkMode = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.pureBlackDarkMode = value);
   }
 }

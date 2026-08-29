@@ -7,7 +7,6 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/services/isolate_service.dart';
 import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -16,7 +15,7 @@ import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/downloaded_chapter.dart';
 import 'package:mangayomi/utils/utils.dart';
-import 'package:mangayomi/utils/settings_write.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_chapter_pages.g.dart';
@@ -46,7 +45,7 @@ Future<GetChapterPagesModel> getChapterPages(
     Directory? path;
     List<PageUrl> pageUrls = [];
     List<bool> isLocaleList = [];
-    final settings = isar.settings.getSync(227);
+    final settings = settingsRepository.currentOrNull;
     List<ChapterPageurls>? chapterPageUrlsList =
         settings!.chapterPageUrlsList ?? [];
     final isarPageUrls = chapterPageUrlsList
@@ -178,7 +177,7 @@ Future<GetChapterPagesModel> getChapterPages(
         // this function. Fetching the pages ran several awaits, and writing the
         // row puts all of it back, so the old copy would undo every setting
         // changed while the chapter was loading.
-        updateSettings((settings) {
+        settingsRepository.update((settings) {
           final chapterPageUrls = <ChapterPageurls>[];
           for (final chapterPageUrl in settings.chapterPageUrlsList ?? []) {
             if (chapterPageUrl.chapterId != chapter.id) {

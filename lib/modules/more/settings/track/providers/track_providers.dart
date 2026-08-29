@@ -1,11 +1,8 @@
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'track_providers.g.dart';
 
@@ -13,59 +10,41 @@ part 'track_providers.g.dart';
 class Tracks extends _$Tracks {
   @override
   TrackPreference? build({required int? syncId}) {
-    return isar.trackPreferences.getSync(syncId!);
+    return trackRepository.getPreferenceById(syncId!);
   }
 
   void setRefreshing(bool refreshing) {
     if (state != null) {
       state!.refreshing = refreshing;
-      isar.writeTxnSync(() {
-        isar.trackPreferences.putSync(state!);
-      });
+      trackRepository.savePreference(state!);
     }
   }
 
   void login(TrackPreference trackPreference) {
-    isar.writeTxnSync(() {
-      isar.trackPreferences.putSync(trackPreference);
-    });
+    trackRepository.savePreference(trackPreference);
   }
 
   void logout() {
-    isar.writeTxnSync(() {
-      isar.trackPreferences.deleteSync(syncId!);
-    });
+    trackRepository.deletePreference(syncId!);
   }
 
   void updateTrackManga(Track track, ItemType itemType) {
-    final tra = isar.tracks
-        .filter()
-        .syncIdEqualTo(syncId)
-        .mangaIdEqualTo(track.mangaId)
-        .findAllSync();
+    final tra = trackRepository.getBySyncIdAndMangaId(syncId, track.mangaId);
     if (tra.isNotEmpty) {
       if (tra.first.mediaId != track.mangaId) {
         track.id = tra.first.id;
       }
     }
 
-    isar.writeTxnSync(() {
-      isar.tracks.putSync(
-        track
-          ..syncId = syncId
-          ..itemType = itemType
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    trackRepository.save(
+      track
+        ..syncId = syncId
+        ..itemType = itemType,
+    );
   }
 
   void deleteTrackManga(Track track) {
-    isar.writeTxnSync(() {
-      isar.tracks.deleteSync(track.id!);
-      ref
-          .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(ActionType.removeTrack, track.id, "{}", false);
-    });
+    trackRepository.delete(ref, track);
   }
 }
 
@@ -74,18 +53,11 @@ class UpdateProgressAfterReadingState
     extends _$UpdateProgressAfterReadingState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.updateProgressAfterReading ?? true;
+    return settingsRepository.current.updateProgressAfterReading ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..updateProgressAfterReading = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.updateProgressAfterReading = value);
   }
 }

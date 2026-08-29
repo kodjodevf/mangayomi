@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
@@ -89,12 +88,7 @@ class TrackingTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: isar.tracks
-          .filter()
-          .idIsNotNull()
-          .itemTypeEqualTo(itemType)
-          .syncIdEqualTo(syncId)
-          .watch(fireImmediately: true),
+      stream: trackRepository.watchByItemTypeAndSyncId(itemType, syncId),
       builder: (context, snapshot) {
         List<Track>? trackRes = snapshot.hasData ? snapshot.data : [];
         final mediaIds = trackRes!.map((e) => e.mediaId).toSet().toList();
@@ -145,12 +139,7 @@ class TrackingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: isar.tracks
-          .filter()
-          .idIsNotNull()
-          .mediaIdEqualTo(mediaId)
-          .itemTypeEqualTo(itemType)
-          .watch(fireImmediately: true),
+      stream: trackRepository.watchByMediaIdAndItemType(mediaId, itemType),
       builder: (context, snapshot) {
         List<Track>? trackRes = [];
         List<Track> res = snapshot.data ?? [];

@@ -5,11 +5,9 @@ import 'package:archive/archive_io.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/custom_button.dart';
@@ -34,8 +32,19 @@ import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.da
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/backup_password_storage.dart';
+import 'package:mangayomi/repositories/category_repository.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/custom_button_repository.dart';
+import 'package:mangayomi/repositories/download_repository.dart';
+import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/restore_repository.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/repositories/source_preference_repository.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
+import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/services/sync_server.dart';
-import 'package:mangayomi/utils/isar_txn_retry.dart';
 import 'package:mangayomi/utils/error_toast.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -350,25 +359,22 @@ TachiBkImportPreview? previewTachiBkImport(String path) {
     CodedBufferReader(content, sizeLimit: 250 << 20),
   );
 
-  final existingCategoryNames = isar.categorys
-      .where()
-      .findAllSync()
+  final existingCategoryNames = categoryRepository
+      .getAll()
       .map((c) => c.name)
       .whereType<String>()
       .toSet();
   final categoryNames = <String>{for (var c in backup.backupCategories) c.name};
 
-  final installedSourceNames = isar.sources
-      .where()
-      .findAllSync()
+  final installedSourceNames = sourceRepository
+      .getAll()
       .where((s) => s.isAdded ?? false)
       .map((s) => (s.itemType, s.name?.toLowerCase()))
       .toSet();
   final unmatchedSources = <String, ItemType>{};
 
   final existingMangaByLink = {
-    for (var m
-        in isar.mangas.filter().itemTypeEqualTo(ItemType.manga).findAllSync())
+    for (var m in mangaRepository.getByItemType(ItemType.manga))
       if (m.link != null) m.link!: m,
   };
   int newSeries = 0, updatedSeries = 0, newChapters = 0;
@@ -388,10 +394,8 @@ TachiBkImportPreview? previewTachiBkImport(String path) {
     final existing = existingMangaByLink[m.url];
     if (existing != null) {
       updatedSeries++;
-      final existingUrls = isar.chapters
-          .filter()
-          .mangaIdEqualTo(existing.id)
-          .findAllSync()
+      final existingUrls = chapterRepository
+          .getAllByMangaId(existing.id)
           .map((c) => c.url)
           .whereType<String>()
           .toSet();
@@ -417,8 +421,7 @@ TachiBkImportPreview? previewTachiBkImport(String path) {
         : backupAnime.legacyBackupAnimeSources;
     categoryNames.addAll(animeCategories.map((c) => c.name));
     final existingAnimeByLink = {
-      for (var m
-          in isar.mangas.filter().itemTypeEqualTo(ItemType.anime).findAllSync())
+      for (var m in mangaRepository.getByItemType(ItemType.anime))
         if (m.link != null) m.link!: m,
     };
     for (var a in animeEntries) {
@@ -437,10 +440,8 @@ TachiBkImportPreview? previewTachiBkImport(String path) {
       final existing = existingAnimeByLink[a.url];
       if (existing != null) {
         updatedSeries++;
-        final existingUrls = isar.chapters
-            .filter()
-            .mangaIdEqualTo(existing.id)
-            .findAllSync()
+        final existingUrls = chapterRepository
+            .getAllByMangaId(existing.id)
             .map((c) => c.url)
             .whereType<String>()
             .toSet();
@@ -465,9 +466,8 @@ TachiBkImportPreview? previewTachiBkImport(String path) {
   );
 }
 
-List<Source> installedSourcesFor(ItemType itemType) => isar.sources
-    .where()
-    .findAllSync()
+List<Source> installedSourcesFor(ItemType itemType) => sourceRepository
+    .getAll()
     .where((s) => s.itemType == itemType && (s.isAdded ?? false))
     .toList();
 
@@ -488,9 +488,8 @@ TachiBkImportPreview previewMangayomiBackup(Map<String, dynamic> backup) {
       )
       .toList();
 
-  final existingCategoryNames = isar.categorys
-      .where()
-      .findAllSync()
+  final existingCategoryNames = categoryRepository
+      .getAll()
       .map((c) => c.name)
       .whereType<String>()
       .toSet();
@@ -499,16 +498,15 @@ TachiBkImportPreview previewMangayomiBackup(Map<String, dynamic> backup) {
       if (c.name != null) c.name!,
   };
 
-  final installedSourceNames = isar.sources
-      .where()
-      .findAllSync()
+  final installedSourceNames = sourceRepository
+      .getAll()
       .where((s) => s.isAdded ?? false)
       .map((s) => (s.itemType, s.name?.toLowerCase()))
       .toSet();
   final unmatchedSources = <String, ItemType>{};
 
   final existingMangaByKey = {
-    for (final m in isar.mangas.where().findAllSync())
+    for (final m in mangaRepository.getAll())
       if (m.link != null) '${m.itemType.index}|${m.link}': m,
   };
   final chaptersByMangaId = <int, List<Chapter>>{};
@@ -530,10 +528,8 @@ TachiBkImportPreview previewMangayomiBackup(Map<String, dynamic> backup) {
         : const <Chapter>[];
     if (existing != null) {
       updatedSeries++;
-      final existingUrls = isar.chapters
-          .filter()
-          .mangaIdEqualTo(existing.id)
-          .findAllSync()
+      final existingUrls = chapterRepository
+          .getAllByMangaId(existing.id)
           .map((c) => c.url)
           .whereType<String>()
           .toSet();
@@ -557,8 +553,7 @@ TachiBkImportPreview previewMangayomiBackup(Map<String, dynamic> backup) {
   );
 }
 
-int currentFavoriteMangaCount() =>
-    isar.mangas.filter().favoriteEqualTo(true).countSync();
+int currentFavoriteMangaCount() => mangaRepository.countFavorites();
 
 @riverpod
 Future<void> restoreBackup(
@@ -617,8 +612,8 @@ Future<void> restoreBackup(
           ?.map((e) => CustomButton.fromJson(e))
           .toList();
 
-      final currentSettings = isar.settings.getSync(227);
-      await writeTxnSyncWithRetry(() {
+      final currentSettings = settingsRepository.currentOrNull;
+      await restoreRepository.run(() {
         if (merge) {
           _mergeMangayomiBackup(
             manga: manga,
@@ -631,14 +626,12 @@ Future<void> restoreBackup(
           );
           return;
         }
-        isar.mangas.clearSync();
+        mangaRepository.clearSync();
         if (manga != null) {
-          isar.mangas.putAllSync(manga);
+          mangaRepository.putAllSync(manga);
           if (chapters != null) {
-            isar.chapters.clearSync();
-            final mangaMap = {
-              for (var m in isar.mangas.where().findAllSync()) m.id!: m,
-            };
+            chapterRepository.clearSync();
+            final mangaMap = {for (var m in mangaRepository.getAll()) m.id!: m};
             final chaptersToPut = <Chapter>[];
             for (var chapter in chapters) {
               final manga = mangaMap[chapter.mangaId];
@@ -647,17 +640,17 @@ Future<void> restoreBackup(
                 chaptersToPut.add(chapter);
               }
             }
-            isar.chapters.putAllSync(chaptersToPut);
+            chapterRepository.putAllSync(chaptersToPut);
             for (var chapter in chaptersToPut) {
               chapter.manga.saveSync();
             }
 
             final chapterMap = {
-              for (var c in isar.chapters.where().findAllSync()) c.id!: c,
+              for (var c in chapterRepository.getAll()) c.id!: c,
             };
 
             if (full) {
-              isar.downloads.clearSync();
+              downloadRepository.clearSync();
               if (downloads != null) {
                 final downloadsToPut = <Download>[];
                 for (var download in downloads) {
@@ -667,14 +660,14 @@ Future<void> restoreBackup(
                     downloadsToPut.add(download);
                   }
                 }
-                isar.downloads.putAllSync(downloadsToPut);
+                downloadRepository.putAllSync(downloadsToPut);
                 for (var download in downloadsToPut) {
                   download.chapter.saveSync();
                 }
               }
             }
 
-            isar.historys.clearSync();
+            historyRepository.clearSync();
             if (history != null) {
               final historyToPut = <History>[];
               for (var element in history) {
@@ -684,13 +677,13 @@ Future<void> restoreBackup(
                   historyToPut.add(element);
                 }
               }
-              isar.historys.putAllSync(historyToPut);
+              historyRepository.putAllSync(historyToPut);
               for (var element in historyToPut) {
                 element.chapter.saveSync();
               }
             }
 
-            isar.updates.clearSync();
+            updateRepository.clearSync();
             if (updates != null) {
               final chapterMapByKey = {
                 for (var c in chapterMap.values) "${c.mangaId}_${c.name}": c,
@@ -704,40 +697,40 @@ Future<void> restoreBackup(
                   updatesToPut.add(update);
                 }
               }
-              isar.updates.putAllSync(updatesToPut);
+              updateRepository.putAllSync(updatesToPut);
               for (var update in updatesToPut) {
                 update.chapter.saveSync();
               }
             }
           }
 
-          isar.categorys.clearSync();
+          categoryRepository.clearSync();
           if (categories != null) {
-            isar.categorys.putAllSync(categories);
+            categoryRepository.putAllSync(categories);
           }
         }
 
-        isar.tracks.clearSync();
+        trackRepository.clearSync();
         if (track != null) {
-          isar.tracks.putAllSync(track);
+          trackRepository.putAllSync(track);
         }
 
         if (full) {
           if (trackPreferences != null) {
-            isar.trackPreferences.clearSync();
-            isar.trackPreferences.putAllSync(trackPreferences);
+            trackRepository.clearPreferencesSync();
+            trackRepository.putAllPreferencesSync(trackPreferences);
           }
-          isar.sources.clearSync();
+          sourceRepository.clearSync();
           if (extensions != null) {
-            isar.sources.putAllSync(extensions);
+            sourceRepository.putAllSync(extensions);
           }
-          isar.sourcePreferences.clearSync();
+          sourcePreferenceRepository.clearSync();
           if (sourcesPrefs != null) {
-            isar.sourcePreferences.putAllSync(sourcesPrefs);
+            sourcePreferenceRepository.putAllSync(sourcesPrefs);
           }
-          isar.settings.clearSync();
+          settingsRepository.clearSync();
           if (settings != null) {
-            isar.settings.putAllSync(
+            settingsRepository.putAllSync(
               settings
                   .map(
                     (settings) => currentSettings == null
@@ -750,9 +743,9 @@ Future<void> restoreBackup(
                   .toList(),
             );
           }
-          isar.customButtons.clearSync();
+          customButtonRepository.clearSync();
           if (customButtons != null) {
-            isar.customButtons.putAllSync(customButtons);
+            customButtonRepository.putAllSync(customButtons);
           }
         }
       });
@@ -787,7 +780,7 @@ void _mergeMangayomiBackup({
 }) {
   final oldToNewCategoryId = <int, int>{};
   if (categories != null) {
-    final existingCategories = isar.categorys.where().findAllSync();
+    final existingCategories = categoryRepository.getAll();
     for (final category in categories) {
       final oldId = category.id;
       final existing = existingCategories.firstWhereOrNull(
@@ -799,7 +792,7 @@ void _mergeMangayomiBackup({
       }
       if (categoryDecisions[category.name] == false) continue;
       category.id = null;
-      isar.categorys.putSync(category);
+      categoryRepository.putSync(category);
       if (oldId != null) oldToNewCategoryId[oldId] = category.id!;
     }
   }
@@ -808,7 +801,7 @@ void _mergeMangayomiBackup({
   final newMangaIds = <int>{};
   if (manga != null) {
     final existingMangaByKey = {
-      for (final m in isar.mangas.where().findAllSync())
+      for (final m in mangaRepository.getAll())
         if (m.link != null) '${m.itemType.index}|${m.link}': m,
     };
     for (final tempManga in manga) {
@@ -825,14 +818,14 @@ void _mergeMangayomiBackup({
           ...?existing.categories,
           ...remappedCategories,
         }.toList();
-        isar.mangas.putSync(existing);
+        mangaRepository.putSync(existing);
         if (oldId != null) oldToNewMangaId[oldId] = existing.id!;
         continue;
       }
       final originalSourceName = tempManga.source ?? "Unknown";
       final decidedSourceId = sourceDecisions[originalSourceName];
       final boundSource = decidedSourceId != null
-          ? isar.sources.getSync(decidedSourceId)
+          ? sourceRepository.getById(decidedSourceId)
           : installedSourcesFor(tempManga.itemType).firstWhereOrNull(
               (s) => s.name?.toLowerCase() == originalSourceName.toLowerCase(),
             );
@@ -845,7 +838,7 @@ void _mergeMangayomiBackup({
       } else {
         tempManga.sourceId = null;
       }
-      isar.mangas.putSync(tempManga);
+      mangaRepository.putSync(tempManga);
       if (oldId != null) oldToNewMangaId[oldId] = tempManga.id!;
       newMangaIds.add(tempManga.id!);
     }
@@ -864,10 +857,8 @@ void _mergeMangayomiBackup({
       if (!newMangaIds.contains(newMangaId)) continue;
       final existingUrls = existingUrlsByMangaId.putIfAbsent(
         newMangaId,
-        () => isar.chapters
-            .filter()
-            .mangaIdEqualTo(newMangaId)
-            .findAllSync()
+        () => chapterRepository
+            .getAllByMangaId(newMangaId)
             .map((c) => c.url)
             .whereType<String>()
             .toSet(),
@@ -875,12 +866,12 @@ void _mergeMangayomiBackup({
       if (tempChapter.url != null && existingUrls.contains(tempChapter.url)) {
         continue;
       }
-      final mangaRef = isar.mangas.getSync(newMangaId);
+      final mangaRef = mangaRepository.findById(newMangaId);
       if (mangaRef == null) continue;
       final oldId = tempChapter.id;
       tempChapter.id = null;
       tempChapter.mangaId = newMangaId;
-      isar.chapters.putSync(tempChapter..manga.value = mangaRef);
+      chapterRepository.putSync(tempChapter..manga.value = mangaRef);
       tempChapter.manga.saveSync();
       if (tempChapter.url != null) existingUrls.add(tempChapter.url!);
       if (oldId != null) oldToNewChapterId[oldId] = tempChapter.id!;
@@ -898,12 +889,12 @@ void _mergeMangayomiBackup({
       // Only for chapters we just inserted above - an existing chapter's
       // history already reflects this device's own progress.
       if (newChapterId == null || newMangaId == null) continue;
-      final chapterRef = isar.chapters.getSync(newChapterId);
+      final chapterRef = chapterRepository.findByIdSync(newChapterId);
       if (chapterRef == null) continue;
       tempHistory.id = null;
       tempHistory.mangaId = newMangaId;
       tempHistory.chapterId = newChapterId;
-      isar.historys.putSync(tempHistory..chapter.value = chapterRef);
+      historyRepository.putSync(tempHistory..chapter.value = chapterRef);
       tempHistory.chapter.saveSync();
     }
   }
@@ -914,15 +905,14 @@ void _mergeMangayomiBackup({
           ? oldToNewMangaId[tempUpdate.mangaId]
           : null;
       if (newMangaId == null || !newMangaIds.contains(newMangaId)) continue;
-      final chapter = isar.chapters
-          .filter()
-          .mangaIdEqualTo(newMangaId)
-          .nameEqualTo(tempUpdate.chapterName)
-          .findFirstSync();
+      final chapter = chapterRepository.findByMangaIdAndName(
+        newMangaId,
+        tempUpdate.chapterName,
+      );
       if (chapter == null) continue;
       tempUpdate.id = null;
       tempUpdate.mangaId = newMangaId;
-      isar.updates.putSync(tempUpdate..chapter.value = chapter);
+      updateRepository.putSync(tempUpdate..chapter.value = chapter);
       tempUpdate.chapter.saveSync();
     }
   }
@@ -954,8 +944,8 @@ Future<void> restoreKotatsuBackup(Ref ref, Archive archive) async {
       switch (f.name) {
         case "categories":
           final categories = jsonDecode(utf8.decode(f.content)) as List? ?? [];
-          await writeTxnSyncWithRetry(() {
-            isar.categorys.clearSync();
+          await restoreRepository.run(() {
+            categoryRepository.clearSync();
             for (var category in categories) {
               final cat = Category(
                 id: category["id"],
@@ -963,14 +953,14 @@ Future<void> restoreKotatsuBackup(Ref ref, Archive archive) async {
                 forItemType: ItemType.manga,
                 hide: !(category["show_in_lib"] ?? true),
               );
-              isar.categorys.putSync(cat);
+              categoryRepository.putSync(cat);
               cats.add(cat);
             }
           });
         case "favourites":
           final favourites = jsonDecode(utf8.decode(f.content)) as List? ?? [];
-          await writeTxnSyncWithRetry(() {
-            isar.mangas.clearSync();
+          await restoreRepository.run(() {
+            mangaRepository.clearSync();
             for (var favourite in favourites) {
               final tempManga = favourite["manga"];
               final manga = Manga(
@@ -998,20 +988,20 @@ Future<void> restoreKotatsuBackup(Ref ref, Archive archive) async {
                 favorite: true,
                 sourceId: null,
               );
-              isar.mangas.putSync(manga);
+              mangaRepository.putSync(manga);
             }
           });
         default:
           continue;
       }
     }
-    await writeTxnSyncWithRetry(() {
-      isar.chapters.clearSync();
-      isar.downloads.clearSync();
-      isar.historys.clearSync();
-      isar.updates.clearSync();
-      isar.tracks.clearSync();
-      isar.trackPreferences.clearSync();
+    await restoreRepository.run(() {
+      chapterRepository.clearSync();
+      downloadRepository.clearSync();
+      historyRepository.clearSync();
+      updateRepository.clearSync();
+      trackRepository.clearSync();
+      trackRepository.clearPreferencesSync();
     });
     _invalidateCommonState(ref);
   } catch (e) {
@@ -1038,14 +1028,13 @@ Future<void> restoreTachiBkBackup(
   // sourceCode is never null for a browsed-but-not-installed source (every
   // repo listing path defaults it to '' rather than leaving it null) - isAdded
   // is the only field that actually means "installed".
-  final installedSources = isar.sources
-      .where()
-      .findAllSync()
+  final installedSources = sourceRepository
+      .getAll()
       .where((s) => s.isAdded ?? false)
       .toList();
   Source? resolveSource(String originalName, ItemType itemType) {
     final decision = sourceDecisions[originalName];
-    if (decision != null) return isar.sources.getSync(decision);
+    if (decision != null) return sourceRepository.getById(decision);
     return installedSources.firstWhereOrNull(
       (s) =>
           s.itemType == itemType &&
@@ -1054,18 +1043,15 @@ Future<void> restoreTachiBkBackup(
   }
 
   final categoryByOrder = <int, Category>{};
-  await writeTxnSyncWithRetry(() {
+  await restoreRepository.run(() {
     if (!merge) {
-      isar.categorys.clearSync();
-      isar.mangas.clearSync();
-      isar.chapters.clearSync();
-      isar.historys.clearSync();
+      categoryRepository.clearSync();
+      mangaRepository.clearSync();
+      chapterRepository.clearSync();
+      historyRepository.clearSync();
     }
     final existingCategories = merge
-        ? isar.categorys
-              .filter()
-              .forItemTypeEqualTo(ItemType.manga)
-              .findAllSync()
+        ? categoryRepository.getByItemType(ItemType.manga)
         : <Category>[];
     for (var category in backup.backupCategories) {
       final order = _protoInt(category.order);
@@ -1082,16 +1068,12 @@ Future<void> restoreTachiBkBackup(
         forItemType: ItemType.manga,
         pos: order,
       );
-      isar.categorys.putSync(cat);
+      categoryRepository.putSync(cat);
       categoryByOrder[order] = cat;
     }
     final existingMangaByLink = merge
         ? {
-            for (var m
-                in isar.mangas
-                    .filter()
-                    .itemTypeEqualTo(ItemType.manga)
-                    .findAllSync())
+            for (var m in mangaRepository.getByItemType(ItemType.manga))
               if (m.link != null) m.link!: m,
           }
         : <String, Manga>{};
@@ -1138,14 +1120,10 @@ Future<void> restoreTachiBkBackup(
           manga.source = "MangaDex";
         }
       }
-      isar.mangas.putSync(manga);
+      mangaRepository.putSync(manga);
       final existingChaptersByUrl = merge && !isNewManga
           ? {
-              for (var c
-                  in isar.chapters
-                      .filter()
-                      .mangaIdEqualTo(manga.id)
-                      .findAllSync())
+              for (var c in chapterRepository.getAllByMangaId(manga.id))
                 if (c.url != null) c.url!: c,
             }
           : <String, Chapter>{};
@@ -1166,7 +1144,7 @@ Future<void> restoreTachiBkBackup(
           scanlator: tempChapter.scanlator,
           url: tempChapter.url,
         );
-        isar.chapters.putSync(chapter..manga.value = manga);
+        chapterRepository.putSync(chapter..manga.value = manga);
         chapter.manga.saveSync();
         if ((history == null ||
             int.parse(history.date ?? "0") <
@@ -1182,10 +1160,8 @@ Future<void> restoreTachiBkBackup(
         }
       }
       if (history != null &&
-          (!merge ||
-              isar.historys.filter().mangaIdEqualTo(manga.id).findFirstSync() ==
-                  null)) {
-        isar.historys.putSync(history);
+          (!merge || historyRepository.findFirstByMangaId(manga.id) == null)) {
+        historyRepository.putSync(history);
         history.chapter.saveSync();
       }
     }
@@ -1202,12 +1178,9 @@ Future<void> restoreTachiBkBackup(
         ? backupAnime.backupAnimeSources
         : backupAnime.legacyBackupAnimeSources;
     final categoryByOrder = <int, Category>{};
-    await writeTxnSyncWithRetry(() {
+    await restoreRepository.run(() {
       final existingAnimeCategories = merge
-          ? isar.categorys
-                .filter()
-                .forItemTypeEqualTo(ItemType.anime)
-                .findAllSync()
+          ? categoryRepository.getByItemType(ItemType.anime)
           : <Category>[];
       for (var category in animeCategories) {
         final order = _protoInt(category.order);
@@ -1224,16 +1197,12 @@ Future<void> restoreTachiBkBackup(
           forItemType: ItemType.anime,
           pos: order,
         );
-        isar.categorys.putSync(cat);
+        categoryRepository.putSync(cat);
         categoryByOrder[order] = cat;
       }
       final existingAnimeByLink = merge
           ? {
-              for (var m
-                  in isar.mangas
-                      .filter()
-                      .itemTypeEqualTo(ItemType.anime)
-                      .findAllSync())
+              for (var m in mangaRepository.getByItemType(ItemType.anime))
                 if (m.link != null) m.link!: m,
             }
           : <String, Manga>{};
@@ -1279,14 +1248,10 @@ Future<void> restoreTachiBkBackup(
             sourceId: boundSource?.id,
           );
         }
-        isar.mangas.putSync(anime);
+        mangaRepository.putSync(anime);
         final existingEpisodesByUrl = merge && !isNewAnime
             ? {
-                for (var c
-                    in isar.chapters
-                        .filter()
-                        .mangaIdEqualTo(anime.id)
-                        .findAllSync())
+                for (var c in chapterRepository.getAllByMangaId(anime.id))
                   if (c.url != null) c.url!: c,
               }
             : <String, Chapter>{};
@@ -1305,7 +1270,7 @@ Future<void> restoreTachiBkBackup(
             scanlator: tempEpisode.scanlator,
             url: tempEpisode.url,
           );
-          isar.chapters.putSync(episode..manga.value = anime);
+          chapterRepository.putSync(episode..manga.value = anime);
           episode.manga.saveSync();
           if ((history == null ||
               int.parse(history.date ?? "0") <
@@ -1320,23 +1285,19 @@ Future<void> restoreTachiBkBackup(
         }
         if (history != null &&
             (!merge ||
-                isar.historys
-                        .filter()
-                        .mangaIdEqualTo(anime.id)
-                        .findFirstSync() ==
-                    null)) {
-          isar.historys.putSync(history);
+                historyRepository.findFirstByMangaId(anime.id) == null)) {
+          historyRepository.putSync(history);
           history.chapter.saveSync();
         }
       }
     });
   }
-  await writeTxnSyncWithRetry(() {
+  await restoreRepository.run(() {
     if (!merge) {
-      isar.downloads.clearSync();
-      isar.updates.clearSync();
-      isar.tracks.clearSync();
-      isar.trackPreferences.clearSync();
+      downloadRepository.clearSync();
+      updateRepository.clearSync();
+      trackRepository.clearSync();
+      trackRepository.clearPreferencesSync();
     }
   });
   _invalidateCommonState(ref);

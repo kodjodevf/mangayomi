@@ -1,15 +1,12 @@
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download.dart';
-import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/models/track.dart';
-import 'package:mangayomi/models/update.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
+import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
-import 'package:mangayomi/utils/isar_txn_retry.dart';
 import 'package:mangayomi/utils/utils.dart';
 
 class LibrarySourceGroup {
@@ -31,8 +28,8 @@ class LibrarySourceGroup {
 List<LibrarySourceGroup> librarySourceGroups({bool favoritesOnly = false}) {
   final counts = <String, LibrarySourceGroup>{};
   final mangas = favoritesOnly
-      ? isar.mangas.filter().favoriteEqualTo(true).findAllSync()
-      : isar.mangas.where().findAllSync();
+      ? mangaRepository.getFavorites()
+      : mangaRepository.getAll();
   for (final m in mangas) {
     final key = "${m.sourceId}|${m.source}|${m.lang}|${m.itemType.index}";
     final existing = counts[key];
@@ -64,8 +61,11 @@ List<LibrarySourceGroup> librarySourceGroupsMissingSource() {
   }).toList();
 }
 
-List<Manga> mangaForGroup(LibrarySourceGroup group, {bool favoritesOnly = false}) {
-  return isar.mangas.where().findAllSync().where((m) {
+List<Manga> mangaForGroup(
+  LibrarySourceGroup group, {
+  bool favoritesOnly = false,
+}) {
+  return mangaRepository.getAll().where((m) {
     if (favoritesOnly && !(m.favorite ?? false)) return false;
     if (m.itemType != group.itemType) return false;
     if (group.sourceId != null) return m.sourceId == group.sourceId;
@@ -93,22 +93,13 @@ DeleteSourceCounts previewDeleteSource(List<Manga> mangaList) {
   final mangaIds = mangaList.map((m) => m.id!).toList();
   final chapterCount = mangaIds.isEmpty
       ? 0
-      : isar.chapters
-            .filter()
-            .anyOf(mangaIds, (q, id) => q.mangaIdEqualTo(id))
-            .countSync();
+      : chapterRepository.countByMangaIds(mangaIds);
   final historyCount = mangaIds.isEmpty
       ? 0
-      : isar.historys
-            .filter()
-            .anyOf(mangaIds, (q, id) => q.mangaIdEqualTo(id))
-            .countSync();
+      : historyRepository.countByMangaIds(mangaIds);
   final updateCount = mangaIds.isEmpty
       ? 0
-      : isar.updates
-            .filter()
-            .anyOf(mangaIds, (q, id) => q.mangaIdEqualTo(id))
-            .countSync();
+      : updateRepository.countByMangaIds(mangaIds);
   return DeleteSourceCounts(
     mangaCount: mangaList.length,
     chapterCount: chapterCount,
@@ -126,47 +117,19 @@ Future<void> deleteSourceLibrary(
 }) async {
   if (!keepDownloads) {
     for (final manga in mangaList) {
-      final chapters = isar.chapters
-          .filter()
-          .mangaIdEqualTo(manga.id)
-          .findAllSync();
+      final chapters = chapterRepository.getAllByMangaId(manga.id);
       for (final chapter in chapters) {
         chapter.manga.value = manga;
         await chapter.deleteDownloadedFiles();
       }
     }
   }
-  await writeTxnSyncWithRetry(() {
-    for (final manga in mangaList) {
-      final chapterIds = isar.chapters
-          .filter()
-          .mangaIdEqualTo(manga.id)
-          .findAllSync()
-          .map((c) => c.id!)
-          .toList();
-      if (chapterIds.isNotEmpty) {
-        if (!keepDownloads) isar.downloads.deleteAllSync(chapterIds);
-        isar.chapters.deleteAllSync(chapterIds);
-      }
-    }
-    final mangaIds = mangaList.map((m) => m.id!).toList();
-    if (mangaIds.isNotEmpty) {
-      if (!keepHistory) {
-        isar.historys
-            .filter()
-            .anyOf(mangaIds, (q, id) => q.mangaIdEqualTo(id))
-            .deleteAllSync();
-      }
-      isar.updates
-          .filter()
-          .anyOf(mangaIds, (q, id) => q.mangaIdEqualTo(id))
-          .deleteAllSync();
-      isar.mangas.deleteAllSync(mangaIds);
-    }
-    if (alsoRemoveExtension && group.sourceId != null) {
-      isar.sources.deleteSync(group.sourceId!);
-    }
-  });
+  await mangaRepository.deleteLibrarySourceGroup(
+    mangaList,
+    removeSourceId: alsoRemoveExtension ? group.sourceId : null,
+    keepHistory: keepHistory,
+    keepDownloads: keepDownloads,
+  );
 }
 
 // Groups items into clusters of 2+ using union-find, joining any pair that
@@ -220,9 +183,10 @@ bool _looksLikeSameManga(Manga a, Manga b) {
 }
 
 List<DuplicateMangaCluster> findDuplicateMangaClusters(List<Manga> mangaList) {
-  return _clusterByPairwiseMatch(mangaList, _looksLikeSameManga)
-      .map(DuplicateMangaCluster.new)
-      .toList();
+  return _clusterByPairwiseMatch(
+    mangaList,
+    _looksLikeSameManga,
+  ).map(DuplicateMangaCluster.new).toList();
 }
 
 class MergeMangaPreview {
@@ -244,14 +208,13 @@ String? _chapterDedupKey(Chapter c) =>
 
 MergeMangaPreview previewMergeManga(Manga primary, List<Manga> others) {
   final seenUrlKeys = <String>{
-    for (final c in isar.chapters.filter().mangaIdEqualTo(primary.id).findAllSync())
+    for (final c in chapterRepository.getAllByMangaId(primary.id))
       ?_chapterDedupKey(c),
   };
   var totalChapters = 0;
   var duplicateChapters = 0;
   for (final other in others) {
-    for (final c
-        in isar.chapters.filter().mangaIdEqualTo(other.id).findAllSync()) {
+    for (final c in chapterRepository.getAllByMangaId(other.id)) {
       totalChapters++;
       final key = _chapterDedupKey(c);
       if (key == null) continue;
@@ -260,13 +223,11 @@ MergeMangaPreview previewMergeManga(Manga primary, List<Manga> others) {
   }
 
   final seenSyncIds = <int?>{
-    for (final t in isar.tracks.filter().mangaIdEqualTo(primary.id).findAllSync())
-      t.syncId,
+    for (final t in trackRepository.getAllByMangaId(primary.id)) t.syncId,
   };
   var duplicateTracks = 0;
   for (final other in others) {
-    for (final t
-        in isar.tracks.filter().mangaIdEqualTo(other.id).findAllSync()) {
+    for (final t in trackRepository.getAllByMangaId(other.id)) {
       if (t.syncId != null && !seenSyncIds.add(t.syncId)) duplicateTracks++;
     }
   }
@@ -280,14 +241,11 @@ MergeMangaPreview previewMergeManga(Manga primary, List<Manga> others) {
 
 Future<void> mergeMangaGroup(Manga primary, List<Manga> others) async {
   final primaryUrlKeys = <String>{
-    for (final c in isar.chapters.filter().mangaIdEqualTo(primary.id).findAllSync())
+    for (final c in chapterRepository.getAllByMangaId(primary.id))
       ?_chapterDedupKey(c),
   };
   for (final other in others) {
-    for (final chapter in isar.chapters
-        .filter()
-        .mangaIdEqualTo(other.id)
-        .findAllSync()) {
+    for (final chapter in chapterRepository.getAllByMangaId(other.id)) {
       final key = _chapterDedupKey(chapter);
       if (key != null && primaryUrlKeys.contains(key)) {
         chapter.manga.value = other;
@@ -296,115 +254,5 @@ Future<void> mergeMangaGroup(Manga primary, List<Manga> others) async {
     }
   }
 
-  await writeTxnSyncWithRetry(() {
-    final primaryByUrl = <String, Chapter>{
-      for (final c in isar.chapters
-          .filter()
-          .mangaIdEqualTo(primary.id)
-          .findAllSync())
-        ?_chapterDedupKey(c): c,
-    };
-
-    for (final other in others) {
-      final otherId = other.id!;
-      final otherChapters = isar.chapters
-          .filter()
-          .mangaIdEqualTo(otherId)
-          .findAllSync();
-
-      final remap = <int, Chapter>{};
-      final chaptersToDelete = <int>[];
-      final chaptersToUpdate = <Chapter>[];
-
-      for (final chapter in otherChapters) {
-        final key = _chapterDedupKey(chapter);
-        final existing = key != null ? primaryByUrl[key] : null;
-        if (existing != null) {
-          final otherHasState =
-              (chapter.isRead ?? false) ||
-              (chapter.lastPageRead ?? '').isNotEmpty;
-          final existingHasState =
-              (existing.isRead ?? false) ||
-              (existing.lastPageRead ?? '').isNotEmpty;
-          if (otherHasState && !existingHasState) {
-            existing.isRead = chapter.isRead;
-            existing.lastPageRead = chapter.lastPageRead;
-            chaptersToUpdate.add(existing);
-          }
-          remap[chapter.id!] = existing;
-          chaptersToDelete.add(chapter.id!);
-        } else {
-          chapter.mangaId = primary.id;
-          chapter.manga.value = primary;
-          isar.chapters.putSync(chapter);
-          chapter.manga.saveSync();
-          if (key != null) primaryByUrl[key] = chapter;
-          remap[chapter.id!] = chapter;
-        }
-      }
-      if (chaptersToUpdate.isNotEmpty) {
-        isar.chapters.putAllSync(chaptersToUpdate);
-      }
-
-      final historyEntries = isar.historys
-          .filter()
-          .mangaIdEqualTo(otherId)
-          .findAllSync();
-      for (final h in historyEntries) {
-        final kept = h.chapterId != null ? remap[h.chapterId] : null;
-        if (kept == null) {
-          isar.historys.deleteSync(h.id!);
-          continue;
-        }
-        h.mangaId = primary.id;
-        h.chapterId = kept.id;
-        h.chapter.value = kept;
-        isar.historys.putSync(h);
-        h.chapter.saveSync();
-      }
-
-      final updateEntries = isar.updates
-          .filter()
-          .mangaIdEqualTo(otherId)
-          .findAllSync();
-      for (final u in updateEntries) {
-        u.chapter.loadSync();
-        final oldChapter = u.chapter.value;
-        final kept = oldChapter != null ? remap[oldChapter.id] : null;
-        if (kept == null) {
-          isar.updates.deleteSync(u.id!);
-          continue;
-        }
-        u.mangaId = primary.id;
-        u.chapter.value = kept;
-        isar.updates.putSync(u);
-        u.chapter.saveSync();
-      }
-
-      final primarySyncIds = isar.tracks
-          .filter()
-          .mangaIdEqualTo(primary.id)
-          .findAllSync()
-          .map((t) => t.syncId)
-          .toSet();
-      for (final t in isar.tracks
-          .filter()
-          .mangaIdEqualTo(otherId)
-          .findAllSync()) {
-        if (t.syncId != null && primarySyncIds.contains(t.syncId)) {
-          isar.tracks.deleteSync(t.id!);
-        } else {
-          t.mangaId = primary.id;
-          isar.tracks.putSync(t);
-          primarySyncIds.add(t.syncId);
-        }
-      }
-
-      if (chaptersToDelete.isNotEmpty) {
-        isar.downloads.deleteAllSync(chaptersToDelete);
-        isar.chapters.deleteAllSync(chaptersToDelete);
-      }
-      isar.mangas.deleteSync(otherId);
-    }
-  });
+  await mangaRepository.mergeGroup(primary, others);
 }

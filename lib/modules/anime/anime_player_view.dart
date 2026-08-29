@@ -14,12 +14,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/custom_button_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/custom_button.dart';
-import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
@@ -75,7 +76,7 @@ class AnimePlayerView extends riv.ConsumerStatefulWidget {
 }
 
 class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
-  late final Chapter episode = isar.chapters.getSync(widget.episodeId)!;
+  late final Chapter episode = chapterRepository.getById(widget.episodeId);
   List<String> _infoHashList = [];
   bool desktopFullScreenPlayer = false;
   @override
@@ -667,7 +668,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   Future<void> _initCustomButton() async {
     if (!useMpvConfig) return;
-    final customButtons = isar.customButtons.where().sortByPos().findAllSync();
+    final customButtons = customButtonRepository.getAllSortedByPos();
     if (customButtons.isEmpty) return;
     final primaryButton =
         customButtons.firstWhereOrNull((e) => e.isFavourite ?? false) ??
@@ -2625,16 +2626,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                                             onPressed: () {
                                               final manga =
                                                   episode.manga.value!;
-                                              isar.writeTxnSync(() {
-                                                isar.mangas.putSync(
-                                                  manga
-                                                    ..updatedAt = DateTime.now()
-                                                        .millisecondsSinceEpoch
-                                                    ..customCoverImage =
-                                                        imageBytes
-                                                            ?.getCoverImage,
-                                                );
-                                              });
+                                              mangaRepository.save(
+                                                manga
+                                                  ..customCoverImage =
+                                                      imageBytes?.getCoverImage,
+                                              );
                                               if (context.mounted) {
                                                 Navigator.pop(context, "ok");
                                               }

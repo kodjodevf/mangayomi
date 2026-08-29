@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/models/changed.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/base_library_tab_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -135,13 +133,8 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
     try {
       setState(() => _isLoading = true);
       final itemType = getCurrentItemType();
-      final mangaList = await isar.mangas
-          .filter()
-          .idIsNotNull()
-          .favoriteEqualTo(true)
-          .itemTypeEqualTo(itemType)
-          .isLocalArchiveEqualTo(false)
-          .findAll();
+      final mangaList = await mangaRepository
+          .getFavoritesNonLocalArchiveByItemType(itemType);
       if (!mounted) return;
       await updateLibrary(
         ref: ref,
@@ -155,21 +148,11 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
   }
 
   Future<void> _clearUpdates() async {
-    final List<Id> idsToDelete = await isar.updates
-        .filter()
-        .idIsNotNull()
-        .chapter((q) => q.manga((q) => q.itemTypeEqualTo(getCurrentItemType())))
-        .idProperty()
-        .findAll();
+    final idsToDelete = await updateRepository.getIdsByItemType(
+      getCurrentItemType(),
+    );
     if (idsToDelete.isEmpty) return;
-    isar.writeTxnSync(() {
-      for (var id in idsToDelete) {
-        ref
-            .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(ActionType.removeUpdate, id, "{}", false);
-      }
-    });
-    await isar.writeTxn(() async => await isar.updates.deleteAll(idsToDelete));
+    await updateRepository.deleteAll(ref, idsToDelete);
   }
 }
 
@@ -220,7 +203,8 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
                 .toSet()
                 .toList();
             final mangaById = {
-              for (final m in isar.mangas.getAllSync(mangaIds)) m?.id!: m!,
+              for (final m in mangaRepository.getAllByIds(mangaIds))
+                m?.id!: m!,
             };
 
             // Both maps above skip an entry that no longer resolves, and the
@@ -339,11 +323,7 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
 
 Widget _updateNumbers(WidgetRef ref, ItemType itemType) {
   return StreamBuilder(
-    stream: isar.updates
-        .filter()
-        .idIsNotNull()
-        .chapter((q) => q.manga((q) => q.itemTypeEqualTo(itemType)))
-        .watch(fireImmediately: true),
+    stream: updateRepository.watchByItemType(itemType),
     builder: (context, snapshot) {
       final count = snapshot.data?.length ?? 0;
       if (count == 0) return const SizedBox.shrink();

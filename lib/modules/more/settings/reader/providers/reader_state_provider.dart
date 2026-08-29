@@ -1,5 +1,5 @@
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'reader_state_provider.g.dart';
 
@@ -7,19 +7,12 @@ part 'reader_state_provider.g.dart';
 class DefaultReadingModeState extends _$DefaultReadingModeState {
   @override
   ReaderMode build() {
-    return isar.settings.getSync(227)!.defaultReaderMode;
+    return settingsRepository.current.defaultReaderMode;
   }
 
   void set(ReaderMode value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..defaultReaderMode = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.defaultReaderMode = value);
   }
 }
 
@@ -27,19 +20,12 @@ class DefaultReadingModeState extends _$DefaultReadingModeState {
 class AnimatePageTransitionsState extends _$AnimatePageTransitionsState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.animatePageTransitions!;
+    return settingsRepository.current.animatePageTransitions!;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..animatePageTransitions = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.animatePageTransitions = value);
   }
 }
 
@@ -47,19 +33,12 @@ class AnimatePageTransitionsState extends _$AnimatePageTransitionsState {
 class DoubleTapAnimationSpeedState extends _$DoubleTapAnimationSpeedState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.doubleTapAnimationSpeed!;
+    return settingsRepository.current.doubleTapAnimationSpeed!;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..doubleTapAnimationSpeed = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.doubleTapAnimationSpeed = value);
   }
 }
 
@@ -67,19 +46,12 @@ class DoubleTapAnimationSpeedState extends _$DoubleTapAnimationSpeedState {
 class CropBordersState extends _$CropBordersState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.cropBorders ?? false;
+    return settingsRepository.current.cropBorders ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..cropBorders = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.cropBorders = value);
   }
 }
 
@@ -87,19 +59,12 @@ class CropBordersState extends _$CropBordersState {
 class ScaleTypeState extends _$ScaleTypeState {
   @override
   ScaleType build() {
-    return isar.settings.getSync(227)!.scaleType;
+    return settingsRepository.current.scaleType;
   }
 
   void set(ScaleType value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..scaleType = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.scaleType = value);
   }
 }
 
@@ -107,19 +72,12 @@ class ScaleTypeState extends _$ScaleTypeState {
 class PagePreloadAmountState extends _$PagePreloadAmountState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.pagePreloadAmount ?? 6;
+    return settingsRepository.current.pagePreloadAmount ?? 6;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..pagePreloadAmount = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.pagePreloadAmount = value);
   }
 }
 
@@ -127,19 +85,12 @@ class PagePreloadAmountState extends _$PagePreloadAmountState {
 class BackgroundColorState extends _$BackgroundColorState {
   @override
   BackgroundColor build() {
-    return isar.settings.getSync(227)!.backgroundColor;
+    return settingsRepository.current.backgroundColor;
   }
 
   void set(BackgroundColor value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..backgroundColor = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.backgroundColor = value);
   }
 }
 
@@ -147,19 +98,12 @@ class BackgroundColorState extends _$BackgroundColorState {
 class UsePageTapZonesState extends _$UsePageTapZonesState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.usePageTapZones ?? true;
+    return settingsRepository.current.usePageTapZones ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..usePageTapZones = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.usePageTapZones = value);
   }
 }
 
@@ -167,19 +111,12 @@ class UsePageTapZonesState extends _$UsePageTapZonesState {
 class FullScreenReaderState extends _$FullScreenReaderState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.fullScreenReader ?? true;
+    return settingsRepository.current.fullScreenReader ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..fullScreenReader = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.fullScreenReader = value);
   }
 }
 
@@ -199,7 +136,7 @@ class NavigationOrderState extends _$NavigationOrderState {
   @override
   List<String> build() {
     return _checkMissingItems(
-      isar.settings.getSync(227)!.navigationOrder?.toList() ?? [],
+      settingsRepository.current.navigationOrder?.toList() ?? [],
     );
   }
 
@@ -211,15 +148,8 @@ class NavigationOrderState extends _$NavigationOrderState {
   }
 
   void set(List<String> values) {
-    final settings = isar.settings.getSync(227);
     state = values;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..navigationOrder = values
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.navigationOrder = values);
   }
 }
 
@@ -227,19 +157,12 @@ class NavigationOrderState extends _$NavigationOrderState {
 class HideItemsState extends _$HideItemsState {
   @override
   List<String> build() {
-    return isar.settings.getSync(227)!.hideItems ?? ['/trackerLibrary'];
+    return settingsRepository.current.hideItems ?? ['/trackerLibrary'];
   }
 
   void set(List<String> values) {
-    final settings = isar.settings.getSync(227);
     state = values;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..hideItems = values
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.hideItems = values);
   }
 }
 
@@ -247,19 +170,12 @@ class HideItemsState extends _$HideItemsState {
 class MergeLibraryNavMobileState extends _$MergeLibraryNavMobileState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.mergeLibraryNavMobile ?? false;
+    return settingsRepository.current.mergeLibraryNavMobile ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..mergeLibraryNavMobile = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.mergeLibraryNavMobile = value);
   }
 }
 
@@ -267,19 +183,12 @@ class MergeLibraryNavMobileState extends _$MergeLibraryNavMobileState {
 class NovelFontSizeState extends _$NovelFontSizeState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.novelFontSize ?? 14;
+    return settingsRepository.current.novelFontSize ?? 14;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..novelFontSize = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.novelFontSize = value);
   }
 }
 
@@ -287,19 +196,12 @@ class NovelFontSizeState extends _$NovelFontSizeState {
 class NovelTextAlignState extends _$NovelTextAlignState {
   @override
   NovelTextAlign build() {
-    return isar.settings.getSync(227)!.novelTextAlign;
+    return settingsRepository.current.novelTextAlign;
   }
 
   void set(NovelTextAlign value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..novelTextAlign = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.novelTextAlign = value);
   }
 }
 
@@ -307,19 +209,12 @@ class NovelTextAlignState extends _$NovelTextAlignState {
 class NovelReaderThemeState extends _$NovelReaderThemeState {
   @override
   String build() {
-    return isar.settings.getSync(227)!.novelReaderTheme ?? '#292832';
+    return settingsRepository.current.novelReaderTheme ?? '#292832';
   }
 
   void set(String value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..novelReaderTheme = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.novelReaderTheme = value);
   }
 }
 
@@ -327,19 +222,12 @@ class NovelReaderThemeState extends _$NovelReaderThemeState {
 class NovelReaderTextColorState extends _$NovelReaderTextColorState {
   @override
   String build() {
-    return isar.settings.getSync(227)!.novelReaderTextColor ?? '#CCCCCC';
+    return settingsRepository.current.novelReaderTextColor ?? '#CCCCCC';
   }
 
   void set(String value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..novelReaderTextColor = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.novelReaderTextColor = value);
   }
 }
 
@@ -347,19 +235,12 @@ class NovelReaderTextColorState extends _$NovelReaderTextColorState {
 class NovelReaderPaddingState extends _$NovelReaderPaddingState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.novelReaderPadding ?? 16;
+    return settingsRepository.current.novelReaderPadding ?? 16;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..novelReaderPadding = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.novelReaderPadding = value);
   }
 }
 
@@ -367,19 +248,12 @@ class NovelReaderPaddingState extends _$NovelReaderPaddingState {
 class NovelReaderLineHeightState extends _$NovelReaderLineHeightState {
   @override
   double build() {
-    return isar.settings.getSync(227)!.novelReaderLineHeight ?? 1.5;
+    return settingsRepository.current.novelReaderLineHeight ?? 1.5;
   }
 
   void set(double value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..novelReaderLineHeight = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.novelReaderLineHeight = value);
   }
 }
 
@@ -387,19 +261,12 @@ class NovelReaderLineHeightState extends _$NovelReaderLineHeightState {
 class NovelFontFamilyState extends _$NovelFontFamilyState {
   @override
   String? build() {
-    return isar.settings.getSync(227)!.novelFontFamily;
+    return settingsRepository.current.novelFontFamily;
   }
 
   void set(String? value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..novelFontFamily = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.novelFontFamily = value);
   }
 }
 
@@ -407,19 +274,12 @@ class NovelFontFamilyState extends _$NovelFontFamilyState {
 class NovelShowScrollPercentageState extends _$NovelShowScrollPercentageState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.novelShowScrollPercentage ?? true;
+    return settingsRepository.current.novelShowScrollPercentage ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..novelShowScrollPercentage = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.novelShowScrollPercentage = value);
   }
 }
 
@@ -428,20 +288,13 @@ class NovelRemoveExtraParagraphSpacingState
     extends _$NovelRemoveExtraParagraphSpacingState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.novelRemoveExtraParagraphSpacing ??
+    return settingsRepository.current.novelRemoveExtraParagraphSpacing ??
         false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..novelRemoveExtraParagraphSpacing = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.novelRemoveExtraParagraphSpacing = value);
   }
 }
 
@@ -449,19 +302,12 @@ class NovelRemoveExtraParagraphSpacingState
 class NovelTapToScrollState extends _$NovelTapToScrollState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.novelTapToScroll ?? false;
+    return settingsRepository.current.novelTapToScroll ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..novelTapToScroll = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.novelTapToScroll = value);
   }
 }
 
@@ -469,20 +315,12 @@ class NovelTapToScrollState extends _$NovelTapToScrollState {
 class ShowPagesNumberState extends _$ShowPagesNumberState {
   @override
   build() {
-    return isar.settings.getSync(227)!.showPagesNumber ?? true;
+    return settingsRepository.current.showPagesNumber ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
-
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..showPagesNumber = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.showPagesNumber = value);
   }
 }
 
@@ -490,19 +328,12 @@ class ShowPagesNumberState extends _$ShowPagesNumberState {
 class KeepScreenOnReaderState extends _$KeepScreenOnReaderState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.keepScreenOnReader ?? true;
+    return settingsRepository.current.keepScreenOnReader ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..keepScreenOnReader = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.keepScreenOnReader = value);
   }
 }
 
@@ -510,19 +341,12 @@ class KeepScreenOnReaderState extends _$KeepScreenOnReaderState {
 class WebtoonSidePaddingState extends _$WebtoonSidePaddingState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.webtoonSidePadding ?? 0;
+    return settingsRepository.current.webtoonSidePadding ?? 0;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..webtoonSidePadding = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.webtoonSidePadding = value);
   }
 }
 
@@ -530,19 +354,12 @@ class WebtoonSidePaddingState extends _$WebtoonSidePaddingState {
 class ShowPageGapsState extends _$ShowPageGapsState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.showPageGaps ?? true;
+    return settingsRepository.current.showPageGaps ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..showPageGaps = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.showPageGaps = value);
   }
 }
 
@@ -550,19 +367,12 @@ class ShowPageGapsState extends _$ShowPageGapsState {
 class AutoReadDuplicateChaptersState extends _$AutoReadDuplicateChaptersState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.autoReadDuplicateChapters ?? false;
+    return settingsRepository.current.autoReadDuplicateChapters ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..autoReadDuplicateChapters = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.autoReadDuplicateChapters = value);
   }
 }
 
@@ -570,19 +380,12 @@ class AutoReadDuplicateChaptersState extends _$AutoReadDuplicateChaptersState {
 class InvertColorsState extends _$InvertColorsState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.invertColors ?? false;
+    return settingsRepository.current.invertColors ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..invertColors = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.invertColors = value);
   }
 }
 
@@ -590,19 +393,12 @@ class InvertColorsState extends _$InvertColorsState {
 class GrayscaleState extends _$GrayscaleState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.grayscale ?? false;
+    return settingsRepository.current.grayscale ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..grayscale = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.grayscale = value);
   }
 }
 
@@ -610,19 +406,12 @@ class GrayscaleState extends _$GrayscaleState {
 class ReaderBrightnessState extends _$ReaderBrightnessState {
   @override
   double build() {
-    return isar.settings.getSync(227)!.readerBrightness ?? 0.0;
+    return settingsRepository.current.readerBrightness ?? 0.0;
   }
 
   void set(double value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..readerBrightness = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.readerBrightness = value);
   }
 }
 
@@ -630,19 +419,12 @@ class ReaderBrightnessState extends _$ReaderBrightnessState {
 class ReaderContrastState extends _$ReaderContrastState {
   @override
   double build() {
-    return isar.settings.getSync(227)!.readerContrast ?? 1.0;
+    return settingsRepository.current.readerContrast ?? 1.0;
   }
 
   void set(double value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..readerContrast = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.readerContrast = value);
   }
 }
 
@@ -650,19 +432,12 @@ class ReaderContrastState extends _$ReaderContrastState {
 class ReaderSaturationState extends _$ReaderSaturationState {
   @override
   double build() {
-    return isar.settings.getSync(227)!.readerSaturation ?? 1.0;
+    return settingsRepository.current.readerSaturation ?? 1.0;
   }
 
   void set(double value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..readerSaturation = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.readerSaturation = value);
   }
 }
 
@@ -670,19 +445,12 @@ class ReaderSaturationState extends _$ReaderSaturationState {
 class ReaderNavigationLayoutState extends _$ReaderNavigationLayoutState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.readerNavigationLayout ?? 0;
+    return settingsRepository.current.readerNavigationLayout ?? 0;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..readerNavigationLayout = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.readerNavigationLayout = value);
   }
 }
 
@@ -690,19 +458,12 @@ class ReaderNavigationLayoutState extends _$ReaderNavigationLayoutState {
 class TtsSpeechRateState extends _$TtsSpeechRateState {
   @override
   double build() {
-    return isar.settings.getSync(227)!.ttsSpeechRate ?? 0.5;
+    return settingsRepository.current.ttsSpeechRate ?? 0.5;
   }
 
   void set(double value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..ttsSpeechRate = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.ttsSpeechRate = value);
   }
 }
 
@@ -710,19 +471,12 @@ class TtsSpeechRateState extends _$TtsSpeechRateState {
 class TtsPitchState extends _$TtsPitchState {
   @override
   double build() {
-    return isar.settings.getSync(227)!.ttsPitch ?? 1.0;
+    return settingsRepository.current.ttsPitch ?? 1.0;
   }
 
   void set(double value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..ttsPitch = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.ttsPitch = value);
   }
 }
 
@@ -730,19 +484,12 @@ class TtsPitchState extends _$TtsPitchState {
 class TtsLanguageState extends _$TtsLanguageState {
   @override
   String? build() {
-    return isar.settings.getSync(227)!.ttsLanguage;
+    return settingsRepository.current.ttsLanguage;
   }
 
   void set(String? value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..ttsLanguage = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.ttsLanguage = value);
   }
 }
 
@@ -750,19 +497,12 @@ class TtsLanguageState extends _$TtsLanguageState {
 class TtsVoiceState extends _$TtsVoiceState {
   @override
   String? build() {
-    return isar.settings.getSync(227)!.ttsVoice;
+    return settingsRepository.current.ttsVoice;
   }
 
   void set(String? value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..ttsVoice = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.ttsVoice = value);
   }
 }
 
@@ -770,19 +510,12 @@ class TtsVoiceState extends _$TtsVoiceState {
 class SplitWidePagesState extends _$SplitWidePagesState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.splitWidePages ?? false;
+    return settingsRepository.current.splitWidePages ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..splitWidePages = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.splitWidePages = value);
   }
 }
 
@@ -790,19 +523,12 @@ class SplitWidePagesState extends _$SplitWidePagesState {
 class DualPageInvertState extends _$DualPageInvertState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.dualPageInvert ?? false;
+    return settingsRepository.current.dualPageInvert ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..dualPageInvert = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.dualPageInvert = value);
   }
 }
 
@@ -810,19 +536,12 @@ class DualPageInvertState extends _$DualPageInvertState {
 class DualPageRotateToFitState extends _$DualPageRotateToFitState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.dualPageRotateToFit ?? false;
+    return settingsRepository.current.dualPageRotateToFit ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..dualPageRotateToFit = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.dualPageRotateToFit = value);
   }
 }
 
@@ -830,19 +549,12 @@ class DualPageRotateToFitState extends _$DualPageRotateToFitState {
 class DualPageRotateToFitInvertState extends _$DualPageRotateToFitInvertState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.dualPageRotateToFitInvert ?? false;
+    return settingsRepository.current.dualPageRotateToFitInvert ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..dualPageRotateToFitInvert = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.dualPageRotateToFitInvert = value);
   }
 }
 
@@ -850,19 +562,12 @@ class DualPageRotateToFitInvertState extends _$DualPageRotateToFitInvertState {
 class LandscapeZoomState extends _$LandscapeZoomState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.landscapeZoom ?? false;
+    return settingsRepository.current.landscapeZoom ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..landscapeZoom = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.landscapeZoom = value);
   }
 }
 
@@ -870,19 +575,12 @@ class LandscapeZoomState extends _$LandscapeZoomState {
 class ZoomStartPositionState extends _$ZoomStartPositionState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.zoomStartPosition ?? 1;
+    return settingsRepository.current.zoomStartPosition ?? 1;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..zoomStartPosition = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.zoomStartPosition = value);
   }
 }
 
@@ -890,19 +588,12 @@ class ZoomStartPositionState extends _$ZoomStartPositionState {
 class NavigateToPanState extends _$NavigateToPanState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.navigateToPan ?? true;
+    return settingsRepository.current.navigateToPan ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..navigateToPan = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.navigateToPan = value);
   }
 }
 
@@ -910,19 +601,12 @@ class NavigateToPanState extends _$NavigateToPanState {
 class TappingInversionState extends _$TappingInversionState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.tappingInversion ?? 0;
+    return settingsRepository.current.tappingInversion ?? 0;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..tappingInversion = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.tappingInversion = value);
   }
 }
 
@@ -930,19 +614,12 @@ class TappingInversionState extends _$TappingInversionState {
 class FlashOnPageChangeState extends _$FlashOnPageChangeState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.flashOnPageChange ?? false;
+    return settingsRepository.current.flashOnPageChange ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..flashOnPageChange = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.flashOnPageChange = value);
   }
 }
 
@@ -950,19 +627,12 @@ class FlashOnPageChangeState extends _$FlashOnPageChangeState {
 class FlashDurationState extends _$FlashDurationState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.flashDuration ?? 100;
+    return settingsRepository.current.flashDuration ?? 100;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..flashDuration = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.flashDuration = value);
   }
 }
 
@@ -970,19 +640,12 @@ class FlashDurationState extends _$FlashDurationState {
 class FlashIntervalState extends _$FlashIntervalState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.flashInterval ?? 1;
+    return settingsRepository.current.flashInterval ?? 1;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..flashInterval = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.flashInterval = value);
   }
 }
 
@@ -990,19 +653,12 @@ class FlashIntervalState extends _$FlashIntervalState {
 class FlashColorState extends _$FlashColorState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.flashColor ?? 0;
+    return settingsRepository.current.flashColor ?? 0;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..flashColor = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.flashColor = value);
   }
 }
 
@@ -1011,19 +667,12 @@ class ShowNavigationOverlayOnStartState
     extends _$ShowNavigationOverlayOnStartState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.showNavigationOverlayOnStart ?? false;
+    return settingsRepository.current.showNavigationOverlayOnStart ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..showNavigationOverlayOnStart = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.showNavigationOverlayOnStart = value);
   }
 }
 
@@ -1031,19 +680,12 @@ class ShowNavigationOverlayOnStartState
 class WebtoonDisableZoomOutState extends _$WebtoonDisableZoomOutState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.webtoonDisableZoomOut ?? false;
+    return settingsRepository.current.webtoonDisableZoomOut ?? false;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..webtoonDisableZoomOut = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.webtoonDisableZoomOut = value);
   }
 }
 
@@ -1052,19 +694,12 @@ class WebtoonDoubleTapZoomEnabledState
     extends _$WebtoonDoubleTapZoomEnabledState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.webtoonDoubleTapZoomEnabled ?? true;
+    return settingsRepository.current.webtoonDoubleTapZoomEnabled ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..webtoonDoubleTapZoomEnabled = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.webtoonDoubleTapZoomEnabled = value);
   }
 }
 
@@ -1072,18 +707,11 @@ class WebtoonDoubleTapZoomEnabledState
 class ReaderHideThresholdState extends _$ReaderHideThresholdState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.readerHideThreshold ?? 1;
+    return settingsRepository.current.readerHideThreshold ?? 1;
   }
 
   void set(int value) {
-    final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..readerHideThreshold = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    settingsRepository.update((s) => s.readerHideThreshold = value);
   }
 }

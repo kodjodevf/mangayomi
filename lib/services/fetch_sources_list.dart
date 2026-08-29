@@ -1,10 +1,9 @@
 import 'dart:convert';
 
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -119,7 +118,7 @@ Future<void> fetchSourcesList({
     }
   } else {
     for (var source in sourceList) {
-      final existingSource = await isar.sources.get(source.id!);
+      final existingSource = await sourceRepository.findByIdAsync(source.id!);
       if (existingSource == null) {
         await _addNewSource(source, repo, itemType);
         continue;
@@ -131,9 +130,7 @@ Future<void> fetchSourcesList({
       if (autoUpdateExtensions) {
         await _updateSource(source, androidProxyServer, repo, itemType);
       } else {
-        await isar.writeTxn(() async {
-          isar.sources.put(existingSource..versionLast = source.version);
-        });
+        await sourceRepository.save(existingSource..versionLast = source.version);
       }
     }
   }
@@ -211,7 +208,7 @@ Future<void> _updateSource(
     ..repo = repo
     ..updatedAt = DateTime.now().millisecondsSinceEpoch;
 
-  await isar.writeTxn(() async => isar.sources.put(updatedSource));
+  await sourceRepository.save(updatedSource);
 }
 
 Future<void> _addNewSource(Source source, Repo? repo, ItemType itemType) async {
@@ -239,7 +236,7 @@ Future<void> _addNewSource(Source source, Repo? repo, ItemType itemType) async {
     ..notes = source.notes
     ..repo = repo
     ..updatedAt = DateTime.now().millisecondsSinceEpoch;
-  await isar.writeTxn(() async => isar.sources.put(newSource));
+  await sourceRepository.save(newSource);
 }
 
 Future<void> checkIfSourceIsObsolete(
@@ -249,13 +246,7 @@ Future<void> checkIfSourceIsObsolete(
 ) async {
   if (sourceList.isEmpty) return;
 
-  final sources = await isar.sources
-      .filter()
-      .idIsNotNull()
-      .itemTypeEqualTo(itemType)
-      .and()
-      .isLocalEqualTo(false)
-      .findAll();
+  final sources = await sourceRepository.getNonLocalByItemType(itemType);
 
   if (sources.isEmpty) return;
 
@@ -285,10 +276,10 @@ Future<void> checkIfSourceIsObsolete(
     }
   }
   if (toUpdate.isNotEmpty) {
-    await isar.writeTxn(() => isar.sources.putAll(toUpdate));
+    await sourceRepository.putAll(toUpdate);
   }
   if (toDelete.isNotEmpty) {
-    await isar.writeTxn(() => isar.sources.deleteAll(toDelete));
+    await sourceRepository.deleteAll(toDelete);
   }
 }
 

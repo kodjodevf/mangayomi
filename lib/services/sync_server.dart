@@ -1,7 +1,12 @@
 import 'package:flutter_qjs/quickjs/ffi.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/category_repository.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
+import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -296,21 +301,20 @@ class SyncServer extends _$SyncServer {
             ?.map((e) => Category.fromJson(e))
             .toList() ??
         [];
-    await isar.writeTxn(() async {
-      for (var category
-          in await isar.categorys.filter().idIsNotNull().findAll()) {
+    await categoryRepository.writeTransactionAsync(() async {
+      for (var category in await categoryRepository.getAllAsync()) {
         final temp = categories.firstWhereOrNull((e) => e.id == category.id);
         if (temp != null) {
           if ((category.updatedAt ?? 0) < (temp.updatedAt ?? 1)) {
-            await isar.categorys.put(temp);
+            await categoryRepository.putAsync(temp);
           }
           categories.remove(temp);
         } else {
-          await isar.categorys.delete(category.id!);
+          await categoryRepository.deleteAsync(category.id!);
         }
       }
       for (var category in categories) {
-        await isar.categorys.put(category);
+        await categoryRepository.putAsync(category);
       }
       await syncNotifier.clearChangedParts([ActionType.removeCategory], false);
     });
@@ -323,20 +327,20 @@ class SyncServer extends _$SyncServer {
     final mangas =
         (jsonData["manga"] as List?)?.map((e) => Manga.fromJson(e)).toList() ??
         [];
-    await isar.writeTxn(() async {
-      for (var manga in await isar.mangas.filter().idIsNotNull().findAll()) {
+    await mangaRepository.writeTransactionAsync(() async {
+      for (var manga in await mangaRepository.getAllAsync()) {
         final temp = mangas.firstWhereOrNull((e) => e.id == manga.id);
         if (temp != null) {
           if ((manga.updatedAt ?? 0) < (temp.updatedAt ?? 1)) {
-            await isar.mangas.put(temp);
+            await mangaRepository.putAsync(temp);
           }
           mangas.remove(temp);
         } else {
-          await isar.mangas.delete(manga.id!);
+          await mangaRepository.deleteAsync(manga.id!);
         }
       }
       for (var manga in mangas) {
-        await isar.mangas.put(manga);
+        await mangaRepository.putAsync(manga);
       }
       await syncNotifier.clearChangedParts([ActionType.removeItem], false);
     });
@@ -351,26 +355,25 @@ class SyncServer extends _$SyncServer {
             ?.map((e) => Chapter.fromJson(e))
             .toList() ??
         [];
-    await isar.writeTxn(() async {
-      for (var chapter
-          in await isar.chapters.filter().idIsNotNull().findAll()) {
+    await chapterRepository.writeTransactionAsync(() async {
+      for (var chapter in await chapterRepository.getAllAsync()) {
         final temp = chapters.firstWhereOrNull((e) => e.id == chapter.id);
         if (temp != null) {
-          final manga = await isar.mangas.get(temp.mangaId!);
+          final manga = await mangaRepository.findByIdAsync(temp.mangaId!);
           if (manga != null &&
               (chapter.updatedAt ?? 0) < (temp.updatedAt ?? 1)) {
-            await isar.chapters.put(temp..manga.value = manga);
+            await chapterRepository.putAsync(temp..manga.value = manga);
             await temp.manga.save();
           }
           chapters.remove(temp);
         } else {
-          await isar.chapters.delete(chapter.id!);
+          await chapterRepository.deleteAsync(chapter.id!);
         }
       }
       for (var chapter in chapters) {
-        final manga = await isar.mangas.get(chapter.mangaId!);
+        final manga = await mangaRepository.findByIdAsync(chapter.mangaId!);
         if (manga != null) {
-          await isar.chapters.put(chapter..manga.value = manga);
+          await chapterRepository.putAsync(chapter..manga.value = manga);
           await chapter.manga.save();
         }
       }
@@ -385,20 +388,20 @@ class SyncServer extends _$SyncServer {
     final tracks =
         (jsonData["tracks"] as List?)?.map((e) => Track.fromJson(e)).toList() ??
         [];
-    await isar.writeTxn(() async {
-      for (var track in await isar.tracks.filter().idIsNotNull().findAll()) {
+    await trackRepository.writeTransactionAsync(() async {
+      for (var track in await trackRepository.getAllAsync()) {
         final temp = tracks.firstWhereOrNull((e) => e.id == track.id);
         if (temp != null) {
           if ((track.updatedAt ?? 0) < (temp.updatedAt ?? 1)) {
-            await isar.tracks.put(temp);
+            await trackRepository.putAsync(temp);
           }
           tracks.remove(temp);
         } else {
-          await isar.tracks.delete(track.id!);
+          await trackRepository.deleteAsync(track.id!);
         }
       }
       for (var track in tracks) {
-        await isar.tracks.put(track);
+        await trackRepository.putAsync(track);
       }
       await syncNotifier.clearChangedParts([ActionType.removeTrack], false);
     });
@@ -413,26 +416,25 @@ class SyncServer extends _$SyncServer {
             ?.map((e) => History.fromJson(e))
             .toList() ??
         [];
-    await isar.writeTxn(() async {
-      for (var history
-          in await isar.historys.filter().idIsNotNull().findAll()) {
+    await historyRepository.writeTransactionAsync(() async {
+      for (var history in await historyRepository.getAllAsync()) {
         final temp = histories.firstWhereOrNull((e) => e.id == history.id);
         if (temp != null) {
-          final chapter = await isar.chapters.get(temp.chapterId!);
+          final chapter = await chapterRepository.findById(temp.chapterId!);
           if (chapter != null &&
               (history.updatedAt ?? 0) < (temp.updatedAt ?? 1)) {
-            await isar.historys.put(temp..chapter.value = chapter);
+            await historyRepository.putAsync(temp..chapter.value = chapter);
             await temp.chapter.save();
           }
           histories.remove(temp);
         } else {
-          await isar.historys.delete(history.id!);
+          await historyRepository.deleteAsync(history.id!);
         }
       }
       for (var history in histories) {
-        final chapter = await isar.chapters.get(history.chapterId!);
+        final chapter = await chapterRepository.findById(history.chapterId!);
         if (chapter != null) {
-          await isar.historys.put(history..chapter.value = chapter);
+          await historyRepository.putAsync(history..chapter.value = chapter);
           await history.chapter.save();
         }
       }
@@ -449,33 +451,31 @@ class SyncServer extends _$SyncServer {
             ?.map((e) => Update.fromJson(e))
             .toList() ??
         [];
-    await isar.writeTxn(() async {
-      for (var update in await isar.updates.filter().idIsNotNull().findAll()) {
+    await updateRepository.writeTransactionAsync(() async {
+      for (var update in await updateRepository.getAllAsync()) {
         final temp = updates.firstWhereOrNull((e) => e.id == update.id);
         if (temp != null) {
-          final chapter = await isar.chapters
-              .filter()
-              .mangaIdEqualTo(temp.mangaId)
-              .nameEqualTo(temp.chapterName)
-              .findFirst();
+          final chapter = await chapterRepository.findByMangaIdAndNameAsync(
+            temp.mangaId,
+            temp.chapterName,
+          );
           if (chapter != null &&
               (update.updatedAt ?? 0) < (temp.updatedAt ?? 1)) {
-            await isar.updates.put(temp..chapter.value = chapter);
+            await updateRepository.putAsync(temp..chapter.value = chapter);
             await temp.chapter.save();
           }
           updates.remove(temp);
         } else {
-          await isar.updates.delete(update.id!);
+          await updateRepository.deleteAsync(update.id!);
         }
       }
       for (var update in updates) {
-        final chapter = await isar.chapters
-            .filter()
-            .mangaIdEqualTo(update.mangaId)
-            .nameEqualTo(update.chapterName)
-            .findFirst();
+        final chapter = await chapterRepository.findByMangaIdAndNameAsync(
+          update.mangaId,
+          update.chapterName,
+        );
         if (chapter != null) {
-          await isar.updates.put(update..chapter.value = chapter);
+          await updateRepository.putAsync(update..chapter.value = chapter);
           await update.chapter.save();
         }
       }
@@ -484,14 +484,14 @@ class SyncServer extends _$SyncServer {
   }
 
   Future<void> _upsertSettings(Map<String, dynamic> jsonData) async {
-    final oldSettings = isar.settings.getSync(227)!;
+    final oldSettings = settingsRepository.current;
     final settings = Settings.fromJson(jsonData["settings"]);
-    await isar.writeTxn(() async {
-      await isar.settings.put(
+    await settingsRepository.writeTransactionAsync(
+      () => settingsRepository.putAsync(
         _preserveDeviceLocalSettings(settings, oldSettings)
           ..cookiesList = oldSettings.cookiesList,
-      );
-    });
+      ),
+    );
     ref.invalidate(followSystemThemeStateProvider);
     ref.invalidate(themeModeStateProvider);
     ref.invalidate(blendLevelStateProvider);
@@ -554,7 +554,7 @@ class SyncServer extends _$SyncServer {
   String _getSettingsData({bool download = false}) {
     Map<String, dynamic> data = {};
     if (!download) {
-      final settingsJson = isar.settings.getSync(227)!.toJson();
+      final settingsJson = settingsRepository.current.toJson();
       settingsJson["updatedAt"] ??= DateTime.now().millisecondsSinceEpoch;
       settingsJson["cookiesList"] = [];
       for (final key in _deviceLocalSettingsKeys) {
@@ -575,31 +575,30 @@ class SyncServer extends _$SyncServer {
   }
 
   List<Map<String, dynamic>> _getManga() {
-    return isar.mangas
-        .where()
-        .findAllSync()
+    return mangaRepository
+        .getAll()
         .map((e) => (e..customCoverImage = null).toJson())
         .toList();
   }
 
   List<Map<String, dynamic>> _getCategories() {
-    return isar.categorys.where().findAllSync().map((e) => e.toJson()).toList();
+    return categoryRepository.getAll().map((e) => e.toJson()).toList();
   }
 
   List<Map<String, dynamic>> _getChapters() {
-    return isar.chapters.where().findAllSync().map((e) => e.toJson()).toList();
+    return chapterRepository.getAll().map((e) => e.toJson()).toList();
   }
 
   List<Map<String, dynamic>> _getTracks() {
-    return isar.tracks.where().findAllSync().map((e) => e.toJson()).toList();
+    return trackRepository.getAll().map((e) => e.toJson()).toList();
   }
 
   List<Map<String, dynamic>> _getHistories() {
-    return isar.historys.where().findAllSync().map((e) => e.toJson()).toList();
+    return historyRepository.getAll().map((e) => e.toJson()).toList();
   }
 
   List<Map<String, dynamic>> _getUpdates() {
-    return isar.updates.where().findAllSync().map((e) => e.toJson()).toList();
+    return updateRepository.getAll().map((e) => e.toJson()).toList();
   }
 
   String _getAccessToken() {

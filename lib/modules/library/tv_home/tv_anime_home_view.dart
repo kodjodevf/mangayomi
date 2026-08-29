@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
@@ -27,6 +25,9 @@ import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/modules/widgets/cover_view_widget.dart';
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
+import 'package:mangayomi/repositories/category_repository.dart';
+import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -75,10 +76,7 @@ SliverGridDelegate _gridDelegate(int gridSize) => gridSize <= 0
 /// The episode to resume for [manga] — the last from watch history, else the
 /// first chapter.
 Chapter? _resumeChapter(Manga manga) {
-  final history = isar.historys
-      .filter()
-      .mangaIdEqualTo(manga.id!)
-      .findAllSync();
+  final history = historyRepository.getAllByMangaId(manga.id!);
   if (history.isNotEmpty) {
     history.first.chapter.loadSync();
     final ch = history.first.chapter.value;
@@ -193,13 +191,8 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
 
   /// Synchronous read matching getAllMangaStreamProvider(categoryId: null) —
   /// used to seed the first frame so the spinner never flashes for local data.
-  List<Manga> _favoriteAnimeSync() => isar.mangas
-      .filter()
-      .idIsNotNull()
-      .favoriteEqualTo(true)
-      .and()
-      .itemTypeEqualTo(ItemType.anime)
-      .findAllSync();
+  List<Manga> _favoriteAnimeSync() =>
+      mangaRepository.getFavoritesByItemTypeIdNotNull(ItemType.anime);
 
   @override
   Widget build(BuildContext context) {
@@ -1301,7 +1294,7 @@ class _CategoryPillsState extends State<_CategoryPills> {
   /// titles, matching what hiding does in the library. Unconfirmed, because the
   /// toast that names the way back doubles as the undo prompt.
   void _hide(Category category) {
-    isar.writeTxnSync(() => isar.categorys.putSync(category..hide = true));
+    categoryRepository.setHidden(category, true);
     if (widget.selected == category.id) widget.onSelect(null);
     _focusAll();
     botToast('Hid “${category.name}” · hold OK on “All” to unhide');
@@ -1391,9 +1384,7 @@ void _showHiddenCategoriesDialog(BuildContext context, List<Category> hidden) {
                 title: Text(hidden[i].name ?? ''),
                 trailing: const Icon(Icons.visibility_outlined),
                 onTap: () {
-                  isar.writeTxnSync(
-                    () => isar.categorys.putSync(hidden[i]..hide = false),
-                  );
+                  categoryRepository.setHidden(hidden[i], false);
                   Navigator.pop(dialogContext);
                 },
               ),
@@ -1440,19 +1431,7 @@ void _showAddCategoryDialog(BuildContext context, List<Category> existing) {
                       name: controller.text.trim(),
                       updatedAt: DateTime.now().millisecondsSinceEpoch,
                     );
-                    isar.writeTxnSync(() {
-                      isar.categorys.putSync(category..pos = category.id);
-                      final nulls = isar.categorys
-                          .filter()
-                          .posIsNull()
-                          .findAllSync();
-                      for (final c in nulls) {
-                        c.pos = c.id;
-                      }
-                      if (nulls.isNotEmpty) {
-                        isar.categorys.putAllSync(nulls);
-                      }
-                    });
+                    categoryRepository.create(category);
                     Navigator.pop(context);
                   },
             child: const Text('Add'),

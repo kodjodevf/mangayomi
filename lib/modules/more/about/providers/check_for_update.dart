@@ -3,8 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
@@ -17,21 +16,12 @@ part 'check_for_update.g.dart';
 class CheckForAppUpdates extends _$CheckForAppUpdates {
   @override
   bool build() {
-    return isar.settings.getSync(227)?.checkForAppUpdates ?? true;
+    return settingsRepository.current.checkForAppUpdates ?? true;
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
-
     state = value;
-
-    isar.writeTxnSync(() {
-      isar.settings.putSync(
-        settings!
-          ..checkForAppUpdates = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
+    settingsRepository.update((s) => s.checkForAppUpdates = value);
   }
 }
 

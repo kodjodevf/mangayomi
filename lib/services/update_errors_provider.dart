@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 
 // UpdateError is an @embedded model on the Settings collection; re-export it so
 // existing call sites can keep importing it from this provider.
@@ -17,7 +17,7 @@ final updateErrorsProvider =
 class UpdateErrorsNotifier extends Notifier<List<UpdateError>> {
   @override
   List<UpdateError> build() =>
-      isar.settings.getSync(227)?.updateErrorsList ?? const [];
+      settingsRepository.current.updateErrorsList ?? const [];
 
   /// Replaces the stored failures with the latest update run's results.
   void set(List<UpdateError> errors) {
@@ -37,11 +37,6 @@ class UpdateErrorsNotifier extends Notifier<List<UpdateError>> {
   }
 
   void _persist() {
-    isar.writeTxnSync(() {
-      final settings = isar.settings.getSync(227);
-      if (settings != null) {
-        isar.settings.putSync(settings..updateErrorsList = [...state]);
-      }
-    });
+    settingsRepository.update((s) => s.updateErrorsList = [...state]);
   }
 }

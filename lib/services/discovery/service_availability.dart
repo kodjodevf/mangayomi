@@ -47,7 +47,7 @@ class ServiceAvailability {
     final recorded = _down[service];
     if (recorded == null) return null;
     final until = recorded.retryAfter;
-    if (until != null && DateTime.now().isAfter(until)) {
+    if (until != null && !until.isAfter(DateTime.now())) {
       _down.remove(service);
       return null;
     }

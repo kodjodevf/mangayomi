@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_lang_list_tile_widget.dart';
 import 'package:mangayomi/utils/global_style.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -30,33 +29,25 @@ class ExtensionsLang extends ConsumerWidget {
               ];
             },
             onSelected: (value) {
-              isar.writeTxnSync(() {
-                bool enable = true;
-                if (value == 0) {
-                } else if (value == 1) {
-                  enable = false;
-                }
-                final sources = isar.sources
-                    .filter()
-                    .itemTypeEqualTo(itemType)
-                    .findAllSync();
-                final now = DateTime.now().millisecondsSinceEpoch;
-                for (var source in sources) {
-                  source
-                    ..isActive = enable
-                    ..updatedAt = now;
-                }
-                isar.sources.putAllSync(sources);
-              });
+              bool enable = true;
+              if (value == 0) {
+              } else if (value == 1) {
+                enable = false;
+              }
+              final sources = sourceRepository.getByItemType(itemType);
+              final now = DateTime.now().millisecondsSinceEpoch;
+              for (var source in sources) {
+                source
+                  ..isActive = enable
+                  ..updatedAt = now;
+              }
+              sourceRepository.putAll(sources);
             },
           ),
         ],
       ),
       body: StreamBuilder(
-        stream: isar.sources
-            .filter()
-            .itemTypeEqualTo(itemType)
-            .watch(fireImmediately: true),
+        stream: sourceRepository.watchByItemType(itemType),
         builder: (context, snapshot) {
           List<Source>? entries = snapshot.hasData ? snapshot.data : [];
           final languages = entries!.map((e) => e.lang!).toSet().toList();
@@ -70,17 +61,15 @@ class ExtensionsLang extends ConsumerWidget {
               return ExtensionLangListTileWidget(
                 lang: lang,
                 onChanged: (val) {
-                  isar.writeTxnSync(() {
-                    for (var source in entries) {
-                      if (source.lang!.toLowerCase() == lang.toLowerCase()) {
-                        isar.sources.putSync(
-                          source
-                            ..isActive = val
-                            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-                        );
-                      }
-                    }
-                  });
+                  final now = DateTime.now().millisecondsSinceEpoch;
+                  final toUpdate = entries
+                      .where(
+                        (source) =>
+                            source.lang!.toLowerCase() == lang.toLowerCase(),
+                      )
+                      .map((source) => source..isActive = val..updatedAt = now)
+                      .toList();
+                  sourceRepository.putAll(toUpdate);
                 },
                 value: entries
                     .where(

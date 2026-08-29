@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -356,12 +354,8 @@ final extensionUpdateCountProvider = StreamProvider.family<int, ItemType>((
   ref,
   itemType,
 ) {
-  return isar.sources
-      .where()
-      .isActiveEqualTo(true)
-      .filter()
-      .itemTypeEqualTo(itemType)
-      .watch(fireImmediately: true)
+  return sourceRepository
+      .watchActiveByItemType(itemType)
       .map(
         (list) => list
             .where(

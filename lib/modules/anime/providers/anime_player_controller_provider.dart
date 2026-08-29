@@ -1,9 +1,8 @@
 import 'package:flutter_riverpod/misc.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/chapter_controller_mixin.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
@@ -33,7 +32,7 @@ class AnimeStreamController extends _$AnimeStreamController
 
   // Keep incognitoMode as a final field (read once, not on every access).
   @override
-  final bool incognitoMode = isar.settings.getSync(227)!.incognitoMode!;
+  final bool incognitoMode = settingsRepository.current.incognitoMode!;
 
   // ---------------------------------------------------------------------------
   // Anime-flavoured aliases (preserve the existing public API)
@@ -81,12 +80,9 @@ class AnimeStreamController extends _$AnimeStreamController
         : false;
     if (isWatch || save) {
       final ep = episode;
-      isar.writeTxnSync(() {
-        ep.isRead = isWatch;
-        ep.lastPageRead = (duration.inMilliseconds).toString();
-        ep.updatedAt = DateTime.now().millisecondsSinceEpoch;
-        isar.chapters.putSync(ep);
-      });
+      ep.isRead = isWatch;
+      ep.lastPageRead = (duration.inMilliseconds).toString();
+      chapterRepository.save(ep);
       if (isWatch) {
         episode.updateTrackChapterRead(ref);
       }
@@ -98,18 +94,14 @@ class AnimeStreamController extends _$AnimeStreamController
   // ---------------------------------------------------------------------------
 
   (int, int)? _getTrackId() {
-    final malId = isar.tracks
-        .filter()
-        .syncIdEqualTo(1)
-        .mangaIdEqualTo(episode.manga.value!.id!)
-        .findFirstSync()
-        ?.mediaId;
-    final aniId = isar.tracks
-        .filter()
-        .syncIdEqualTo(2)
-        .mangaIdEqualTo(episode.manga.value!.id!)
-        .findFirstSync()
-        ?.mediaId;
+    final malId = trackRepository.getMediaIdBySyncAndManga(
+      1,
+      episode.manga.value!.id!,
+    );
+    final aniId = trackRepository.getMediaIdBySyncAndManga(
+      2,
+      episode.manga.value!.id!,
+    );
     return switch (malId) {
       != null => (malId, 1),
       == null => switch (aniId) {

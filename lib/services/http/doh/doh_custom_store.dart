@@ -1,5 +1,4 @@
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 
 /// Accessor for the user's custom DNS-over-HTTPS endpoint URL.
 ///
@@ -7,15 +6,10 @@ import 'package:mangayomi/models/settings.dart';
 /// selection, alongside the rest of the app's preferences.
 class DohCustomStore {
   /// The saved custom DoH URL, or an empty string if none.
-  static String get url => isar.settings.getSync(227)?.customDohUrl ?? '';
+  static String get url => settingsRepository.current.customDohUrl ?? '';
 
   /// Persists [value] as the custom DoH URL.
   static void setUrl(String value) {
-    isar.writeTxnSync(() {
-      final settings = isar.settings.getSync(227);
-      if (settings != null) {
-        isar.settings.putSync(settings..customDohUrl = value);
-      }
-    });
+    settingsRepository.update((s) => s.customDohUrl = value);
   }
 }

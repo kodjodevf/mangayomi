@@ -2,13 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/download_repository.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
-import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
@@ -51,16 +49,11 @@ extension ChapterExtension on Chapter {
     // Clean the map for compatibility
     isolateChapsSendPorts.remove('$id');
 
-    isar.writeTxnSync(() {
-      isar.downloads.deleteSync(id!);
-      if (downloadId != null) {
-        isar.downloads.deleteSync(downloadId);
-      }
-    });
+    downloadRepository.deleteAll([id!, ?downloadId]);
   }
 
   Future<void> deleteDownloadedFiles() async {
-    final download = isar.downloads.getSync(id!);
+    final download = downloadRepository.getById(id!);
     if (download == null) return;
 
     final storageProvider = StorageProvider();
@@ -116,17 +109,13 @@ extension ChapterExtension on Chapter {
       name!,
     );
 
-    final tracks = isar.tracks
-        .where()
-        .mangaIdItemTypeEqualTo(manga.id!, manga.itemType)
-        .findAllSync();
+    final tracks = trackRepository.getAllByMangaIdItemType(
+      manga.id!,
+      manga.itemType,
+    );
 
     for (var track in tracks) {
-      final service = isar.trackPreferences
-          .filter()
-          .syncIdIsNotNull()
-          .syncIdEqualTo(track.syncId)
-          .findFirstSync();
+      final service = trackRepository.findPreferenceBySyncId(track.syncId);
       if (!(service == null || chapterNumber <= (track.lastChapterRead ?? 0))) {
         if (track.status != TrackStatus.completed) {
           final isFirstRead = (track.lastChapterRead ?? 0) == 0;

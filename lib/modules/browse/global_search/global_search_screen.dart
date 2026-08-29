@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/migrate_screen.dart';
 import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -46,15 +46,13 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   /// Kept so an empty result can say which of the three reasons it is: none
   /// installed, none pinned, or all of them hidden as NSFW. They need
   /// different things done about them.
-  late final List<Source> _installedSources = isar.sources
-      .where()
-      .itemTypeIsAddedEqualTo(widget.itemType, true)
-      .findAllSync();
+  late final List<Source> _installedSources = sourceRepository
+      .getAddedByItemType(widget.itemType);
 
   late final List<Source> sourceList = () {
     final sources = ref.read(onlyIncludePinnedSourceStateProvider)
-        ? _installedSources.where((e) => e.isPinned ?? false).toList()
-        : _installedSources;
+        ? sourceRepository.getPinnedByItemType(widget.itemType)
+        : sourceRepository.getAddedByItemType(widget.itemType);
     if (_showNSFW) return sources;
     return sources.where((e) => !(e.isNsfw ?? false)).toList();
   }();
@@ -508,12 +506,11 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
           child: GestureDetector(
             onTap: _open,
             child: StreamBuilder(
-              stream: isar.mangas
-                  .filter()
-                  .langEqualTo(widget.source.lang)
-                  .nameEqualTo(getMangaDetail.name)
-                  .sourceEqualTo(widget.source.name)
-                  .watch(fireImmediately: true),
+              stream: mangaRepository.watchByLangNameSource(
+                widget.source.lang,
+                getMangaDetail.name,
+                widget.source.name,
+              ),
               builder: (context, snapshot) {
                 final hasData = snapshot.hasData && snapshot.data!.isNotEmpty;
                 return Stack(

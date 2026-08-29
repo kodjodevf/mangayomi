@@ -9,7 +9,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
-import 'package:mangayomi/utils/settings_write.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 
 /// The appearance settings all live in one Settings row, and each setter reads
 /// the whole row, changes its own field and writes the row back. They also call
@@ -67,6 +67,9 @@ void main() {
     addTearDown(binding.platformDispatcher.clearPlatformBrightnessTestValue);
 
     container.read(followSystemThemeStateProvider.notifier).set(true);
+    // set() queues its writes through settingsRepository without awaiting
+    // them; flush the queue by waiting on a trailing no-op enqueued after them.
+    await settingsRepository.transaction(() {});
 
     expect(container.read(themeModeStateProvider), false, reason: 'in memory');
     expect(stored().followSystemTheme, true);
@@ -79,8 +82,8 @@ void main() {
     );
   });
 
-  group('updateSettings', () {
-    test('keeps a change made after the caller last looked at the row', () {
+  group('settingsRepository.update', () {
+    test('keeps a change made after the caller last looked at the row', () async {
       // What every caller of this used to get wrong: hold the row, let
       // something else write, then write the held copy back over it.
       final stale = isar.settings.getSync(227)!;
@@ -90,17 +93,21 @@ void main() {
         ),
       );
 
-      updateSettings((settings) => settings.followSystemTheme = true);
+      await settingsRepository.update(
+        (settings) => settings.followSystemTheme = true,
+      );
 
       expect(stale.themeIsDark, true, reason: 'the held copy is stale');
       expect(stored().themeIsDark, false, reason: 'the row is not');
       expect(stored().followSystemTheme, true);
     });
 
-    test('stamps updatedAt so a sync sees the change', () {
+    test('stamps updatedAt so a sync sees the change', () async {
       final before = stored().updatedAt ?? 0;
 
-      updateSettings((settings) => settings.flexSchemeColorIndex = 9);
+      await settingsRepository.update(
+        (settings) => settings.flexSchemeColorIndex = 9,
+      );
 
       expect(stored().flexSchemeColorIndex, 9);
       expect(stored().updatedAt, greaterThanOrEqualTo(before));
@@ -109,11 +116,13 @@ void main() {
 
   test(
     'picking a colour scheme does not undo the theme it was picked under',
-    () {
+    () async {
       container.read(themeModeStateProvider.notifier).setLightTheme();
       container
           .read(flexSchemeColorStateProvider.notifier)
           .setTheme(ThemeAA.schemes[7].light, 7);
+      // Flush the queued writes fired above before asserting on the row.
+      await settingsRepository.transaction(() {});
 
       expect(stored().flexSchemeColorIndex, 7);
       expect(stored().themeIsDark, false);

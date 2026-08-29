@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
-import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
@@ -99,14 +97,12 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
       _errorMessage = "";
       if (isSequels) {
         final mediaId = widget.track!.mediaId!.toString();
-        final mal = await isar.trackPreferences
-            .filter()
-            .syncIdEqualTo(TrackerProviders.myAnimeList.syncId)
-            .findFirst();
-        final anilist = await isar.trackPreferences
-            .filter()
-            .syncIdEqualTo(TrackerProviders.anilist.syncId)
-            .findFirst();
+        final mal = await trackRepository.findPreferenceBySyncIdAsync(
+          TrackerProviders.myAnimeList.syncId,
+        );
+        final anilist = await trackRepository.findPreferenceBySyncIdAsync(
+          TrackerProviders.anilist.syncId,
+        );
         // chiaki.site is sent `user=` and looks it up by handle, so AniList
         // has to pass its display name here. Its `username` is a numeric
         // viewer id, which the lookup silently answers nothing for.
@@ -173,13 +169,10 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
         itemBuilder: (context, index) {
           final sequel = sequels![index];
           return StreamBuilder(
-            stream: isar.tracks
-                .filter()
-                .idIsNotNull()
-                .mediaIdEqualTo(int.tryParse(sequel.id))
-                .or()
-                .mediaIdEqualTo(int.tryParse(sequel.anilistId ?? ""))
-                .watch(fireImmediately: true),
+            stream: trackRepository.watchByEitherMediaId(
+              int.tryParse(sequel.id),
+              int.tryParse(sequel.anilistId ?? ""),
+            ),
             builder: (context, snapshot) {
               final hasData = snapshot.hasData && snapshot.data!.isNotEmpty;
               return ListTile(

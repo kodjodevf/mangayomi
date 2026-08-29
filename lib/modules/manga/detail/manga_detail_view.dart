@@ -6,11 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
@@ -29,6 +26,10 @@ import 'package:mangayomi/modules/manga/detail/widgets/readmore.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracking_menu.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/download_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
@@ -262,10 +263,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     List<Chapter> chapters,
   ) async {
     final chaptersToDownload = chapters.where((chapter) {
-      final entry = isar.downloads
-          .filter()
-          .idEqualTo(chapter.id)
-          .findFirstSync();
+      final entry = downloadRepository.getByChapterId(chapter.id);
       return entry == null || !entry.isDownload!;
     }).toList();
     if (chaptersToDownload.isEmpty) return;
@@ -891,9 +889,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         chapter.manga.value = widget.manga;
                         updatedChapters.add(chapter);
                       }
-                      isar.writeTxnSync(() {
-                        isar.chapters.putAllSync(updatedChapters);
-                      });
+                      chapterRepository.putAll(updatedChapters);
                       ref
                           .read(isLongPressedStateProvider.notifier)
                           .update(false);
@@ -933,10 +929,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         }
                       }
                       highestChapter?.updateTrackChapterRead(ref);
-                      isar.writeTxnSync(() {
-                        isar.chapters.putAllSync(updatedChapters);
-                        isar.mangas.putSync(widget.manga!);
-                      });
+                      chapterRepository.putAllWithManga(
+                        updatedChapters,
+                        widget.manga!,
+                      );
                       ref
                           .read(isLongPressedStateProvider.notifier)
                           .update(false);
@@ -974,10 +970,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             updatedChapters.add(chapter);
                           }
                         }
-                        isar.writeTxnSync(() {
-                          isar.chapters.putAllSync(updatedChapters);
-                          isar.mangas.putSync(widget.manga!);
-                        });
+                        chapterRepository.putAllWithManga(
+                          updatedChapters,
+                          widget.manga!,
+                        );
                         ref
                             .read(isLongPressedStateProvider.notifier)
                             .update(false);
@@ -1061,14 +1057,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       onPressed: () async {
                                         final navigator = Navigator.of(context);
                                         if (isLocalArchive) {
-                                          await isar.writeTxn(() async {
-                                            final idsToDelete = selectedChapters
-                                                .map((c) => c.id!)
-                                                .toList();
-                                            await isar.chapters.deleteAll(
-                                              idsToDelete,
-                                            );
-                                          });
+                                          final idsToDelete = selectedChapters
+                                              .map((c) => c.id!)
+                                              .toList();
+                                          await chapterRepository.deleteAll(
+                                            idsToDelete,
+                                          );
                                         }
                                         for (final chapter in isDownloaded) {
                                           await chapter.deleteDownloadedFiles();
@@ -1092,10 +1086,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           Future.delayed(
                                             const Duration(milliseconds: 350),
                                             () {
-                                              isar.writeTxn(
-                                                () => isar.mangas.delete(
-                                                  widget.manga!.id!,
-                                                ),
+                                              mangaRepository.delete(
+                                                widget.manga!.id!,
                                               );
                                             },
                                           );
@@ -1932,9 +1924,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   /// Tracker button
   Widget _action() {
     return StreamBuilder(
-      stream: isar.trackPreferences.filter().syncIdIsNotNull().watch(
-        fireImmediately: true,
-      ),
+      stream: trackRepository.watchAllWithSyncId(),
       builder: (context, snapshot) {
         List<TrackPreference>? entries = snapshot.hasData ? snapshot.data! : [];
         if (entries.isEmpty) {
@@ -1950,11 +1940,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               _trackingDraggableMenu(entries);
             },
             child: StreamBuilder(
-              stream: isar.tracks
-                  .filter()
-                  .idIsNotNull()
-                  .mangaIdEqualTo(widget.manga!.id!)
-                  .watch(fireImmediately: true),
+              stream: trackRepository.watchByMangaId(widget.manga!.id!),
               builder: (context, snapshot) {
                 final l10n = l10nLocalizations(context)!;
                 List<Track>? trackRes = snapshot.hasData ? snapshot.data : [];
@@ -2025,10 +2011,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: StreamBuilder(
-                        stream: isar.trackPreferences
-                            .filter()
-                            .syncIdIsNotNull()
-                            .watch(fireImmediately: true),
+                        stream: trackRepository.watchAllWithSyncId(),
                         builder: (context, snapshot) {
                           List<TrackPreference>? entries = snapshot.hasData
                               ? snapshot.data!
@@ -2058,16 +2041,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                               ),
                                             ) as TrackSearch?;
                                         if (trackSearch != null) {
-                                          isar.writeTxnSync(() {
-                                            isar.mangas.putSync(
-                                              widget.manga!
-                                                ..customCoverImage = null
-                                                ..customCoverFromTracker =
-                                                    trackSearch.coverUrl
-                                                ..updatedAt = DateTime.now()
-                                                    .millisecondsSinceEpoch,
-                                            );
-                                          });
+                                          mangaRepository.save(
+                                            widget.manga!
+                                              ..customCoverImage = null
+                                              ..customCoverFromTracker =
+                                                  trackSearch.coverUrl,
+                                          );
                                           if (context.mounted) {
                                             Navigator.pop(context);
                                             botToast(
@@ -2209,15 +2188,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     onSelected: (value) async {
                                       final manga = widget.manga!;
                                       if (value == 0) {
-                                        isar.writeTxnSync(() {
-                                          isar.mangas.putSync(
-                                            manga
-                                              ..customCoverImage = null
-                                              ..customCoverFromTracker = null
-                                              ..updatedAt = DateTime.now()
-                                                  .millisecondsSinceEpoch,
-                                          );
-                                        });
+                                        mangaRepository.save(
+                                          manga
+                                            ..customCoverImage = null
+                                            ..customCoverFromTracker = null,
+                                        );
                                         Navigator.pop(context);
                                       } else if (value == 1) {
                                         FilePickerResult? result =
@@ -2235,15 +2210,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                             final customCoverImage = File(
                                               result.files.first.path!,
                                             ).readAsBytesSync();
-                                            isar.writeTxnSync(() {
-                                              isar.mangas.putSync(
-                                                manga
-                                                  ..customCoverImage =
-                                                      customCoverImage
-                                                  ..updatedAt = DateTime.now()
-                                                      .millisecondsSinceEpoch,
-                                              );
-                                            });
+                                            mangaRepository.save(
+                                              manga
+                                                ..customCoverImage =
+                                                    customCoverImage,
+                                            );
                                             botToast(
                                               context.l10n.cover_updated,
                                               second: 3,
@@ -2342,13 +2313,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 const SizedBox(width: 15),
                 TextButton(
                   onPressed: () {
-                    isar.writeTxnSync(() {
-                      final manga = widget.manga!;
-                      manga.description = description.text;
-                      manga.name = name.text;
-                      manga.updatedAt = DateTime.now().millisecondsSinceEpoch;
-                      isar.mangas.putSync(manga);
-                    });
+                    final manga = widget.manga!;
+                    manga.description = description.text;
+                    manga.name = name.text;
+                    mangaRepository.save(manga);
                     Navigator.pop(context);
                   },
                   child: Text(l10n.edit),

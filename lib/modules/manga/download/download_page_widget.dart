@@ -3,13 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
+import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/global_style.dart';
@@ -103,10 +101,7 @@ class ChapterPageDownload extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 3),
         child: StreamBuilder(
-          stream: isar.downloads
-              .filter()
-              .idEqualTo(chapter.id)
-              .watch(fireImmediately: true),
+          stream: downloadRepository.watchByChapterId(chapter.id),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
               final entries = snapshot.data!;

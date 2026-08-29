@@ -4,18 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracking_menu.dart';
-import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
+import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
@@ -104,10 +103,7 @@ class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
   /// The episode Play/Continue lands on: the one in watch history, else the
   /// first unwatched, else the first.
   Chapter? _resumeEpisode(List<Chapter> reading) {
-    final history = isar.historys
-        .filter()
-        .mangaIdEqualTo(manga.id!)
-        .findAllSync();
+    final history = historyRepository.getAllByMangaId(manga.id!);
     if (history.isNotEmpty) {
       history.first.chapter.loadSync();
       final ch = history.first.chapter.value;
@@ -278,13 +274,9 @@ class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
 
   void _toggleLibrary() {
     final model = manga;
-    final now = DateTime.now().millisecondsSinceEpoch;
-    isar.writeTxnSync(() {
-      model.favorite = !(model.favorite ?? false);
-      model.dateAdded = model.favorite! ? now : 0;
-      model.updatedAt = now;
-      isar.mangas.putSync(model);
-    });
+    model.favorite = !(model.favorite ?? false);
+    model.dateAdded = model.favorite! ? DateTime.now().millisecondsSinceEpoch : 0;
+    mangaRepository.save(model);
     setState(() {});
   }
 
@@ -292,10 +284,7 @@ class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
   /// logged in there is nothing to track against, so route to the tracking
   /// settings to set one up instead of showing an empty sheet.
   void _openTracking() {
-    final entries = isar.trackPreferences
-        .filter()
-        .syncIdIsNotNull()
-        .findAllSync();
+    final entries = trackRepository.getAllPreferences();
     if (entries.isEmpty) {
       context.push('/track');
       return;

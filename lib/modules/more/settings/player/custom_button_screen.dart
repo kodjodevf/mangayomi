@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/custom_button_repository.dart';
 import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/custom_buttons_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
@@ -78,10 +77,7 @@ class _CustomButtonScreenState extends ConsumerState<CustomButtonScreen> {
                                     button.isFavourite =
                                         button.id == customButton.id;
                                   }
-                                  await isar.writeTxn(
-                                    () async =>
-                                        await isar.customButtons.putAll(data),
-                                  );
+                                  await customButtonRepository.putAll(data);
                                 },
                                 icon: Icon(
                                   (customButton.isFavourite ?? false)
@@ -128,9 +124,7 @@ class _CustomButtonScreenState extends ConsumerState<CustomButtonScreen> {
                   }
                   data[newIndex].pos = draggedItemPos;
                 }
-                await isar.writeTxn(
-                  () async => await isar.customButtons.putAll(data),
-                );
+                await customButtonRepository.putAll(data);
               },
             ),
           );
@@ -260,10 +254,8 @@ class _CustomButtonScreenState extends ConsumerState<CustomButtonScreen> {
                         onPressed: isTitleMissing || isCodePressMissing
                             ? null
                             : () async {
-                                final temp = await isar.customButtons
-                                    .filter()
-                                    .idEqualTo(customButton?.id)
-                                    .findFirst();
+                                final temp = await customButtonRepository
+                                    .findById(customButton?.id);
                                 final button =
                                     temp ??
                                     CustomButton(
@@ -271,19 +263,16 @@ class _CustomButtonScreenState extends ConsumerState<CustomButtonScreen> {
                                       codePress: "",
                                       codeLongPress: "",
                                       codeStartup: "",
-                                      pos: await isar.customButtons.count(),
+                                      pos: await customButtonRepository.count(),
                                     );
-                                await isar.writeTxn(() async {
-                                  await isar.customButtons.put(
-                                    button
-                                      ..title = titleController.text
-                                      ..codePress = codePressController.text
-                                      ..codeLongPress =
-                                          codeLongPressController.text
-                                      ..codeStartup =
-                                          codeStartupController.text,
-                                  );
-                                });
+                                await customButtonRepository.save(
+                                  button
+                                    ..title = titleController.text
+                                    ..codePress = codePressController.text
+                                    ..codeLongPress =
+                                        codeLongPressController.text
+                                    ..codeStartup = codeStartupController.text,
+                                );
                                 if (context.mounted) {
                                   Navigator.pop(context);
                                 }
@@ -328,10 +317,7 @@ class _CustomButtonScreenState extends ConsumerState<CustomButtonScreen> {
                 const SizedBox(width: 15),
                 ElevatedButton(
                   onPressed: () async {
-                    await isar.writeTxn(
-                      () async =>
-                          await isar.customButtons.delete(customButton.id!),
-                    );
+                    await customButtonRepository.delete(customButton.id!);
                     if (context.mounted) {
                       Navigator.pop(context, "ok");
                     }
