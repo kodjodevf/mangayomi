@@ -2429,11 +2429,7 @@ class _DetailActions extends ConsumerWidget {
     // Sequels needs a MyAnimeList or AniList track to look anything up, so it
     // only appears once there is one.
     return StreamBuilder(
-      stream: isar.tracks
-          .filter()
-          .idIsNotNull()
-          .mangaIdEqualTo(manga.id!)
-          .watch(fireImmediately: true),
+      stream: trackRepository.watchByMangaId(manga.id!),
       builder: (context, snapshot) {
         final tracks = snapshot.data ?? const <Track>[];
         final syncId = tracks.firstOrNull?.syncId;
