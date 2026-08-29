@@ -122,6 +122,9 @@ class CustomExtendedNetworkImageProvider
     extends ImageProvider<image_provider.ExtendedNetworkImageProvider>
     with ExtendedImageProvider<image_provider.ExtendedNetworkImageProvider>
     implements image_provider.ExtendedNetworkImageProvider {
+  /// Deduplication map for in-flight image downloads to prevent multiple concurrent HTTP GET requests for the same URL
+  static final Map<String, Future<Uint8List?>> _inFlightRequests = {};
+
   /// Creates an object that fetches the image at the given URL.
   ///
   /// The arguments must not be null.
@@ -283,7 +286,11 @@ class CustomExtendedNetworkImageProvider
 
     if (result == null) {
       try {
-        final Uint8List? data = await _loadNetwork(key, chunkEvents);
+        final Uint8List? data = await _loadNetworkWithDeduplication(
+          key,
+          chunkEvents,
+          md5Key,
+        );
         if (data != null) {
           result = await instantiateImageCodec(data, decode);
         }
@@ -308,7 +315,27 @@ class CustomExtendedNetworkImageProvider
     return result;
   }
 
-  /// Get the image from cache folder.
+  /// Helper to deduplicate in-flight network downloads for non-cached or fallback requests
+  Future<Uint8List?> _loadNetworkWithDeduplication(
+    CustomExtendedNetworkImageProvider key,
+    StreamController<ImageChunkEvent>? chunkEvents,
+    String md5Key,
+  ) async {
+    final existingRequest = _inFlightRequests[md5Key];
+    if (existingRequest != null) {
+      return await existingRequest;
+    }
+
+    final future = _loadNetwork(key, chunkEvents);
+    _inFlightRequests[md5Key] = future;
+    try {
+      return await future;
+    } finally {
+      _inFlightRequests.remove(md5Key);
+    }
+  }
+
+  /// Get the image from cache folder with in-flight deduplication.
   Future<Uint8List?> _loadCache(
     CustomExtendedNetworkImageProvider key,
     StreamController<ImageChunkEvent>? chunkEvents,
@@ -339,17 +366,29 @@ class CustomExtendedNetworkImageProvider
       }
     }
 
-    // load from network
+    // load from network with in-flight request coalescing
     if (data == null) {
-      data = await _loadNetwork(key, chunkEvents);
-      if (data != null) {
-        try {
-          // cache image file
-          await File(join(cacheImagesDirectory.path, md5Key))
-              .writeAsBytes(data);
-          // Evict old cache in background if needed (throttled)
-          _CacheManager.evictOldestIfNeededThrottled(cacheImagesDirectory);
-        } catch (_) {}
+      final existingRequest = _inFlightRequests[md5Key];
+      if (existingRequest != null) {
+        return await existingRequest;
+      }
+
+      final future = _loadNetwork(key, chunkEvents);
+      _inFlightRequests[md5Key] = future;
+
+      try {
+        data = await future;
+        if (data != null) {
+          try {
+            // cache image file
+            await File(join(cacheImagesDirectory.path, md5Key))
+                .writeAsBytes(data);
+            // Evict old cache in background if needed (throttled)
+            _CacheManager.evictOldestIfNeededThrottled(cacheImagesDirectory);
+          } catch (_) {}
+        }
+      } finally {
+        _inFlightRequests.remove(md5Key);
       }
     }
 
@@ -522,7 +561,7 @@ class CustomExtendedNetworkImageProvider
       return await _loadCache(this, chunkEvents, uId);
     }
 
-    return await _loadNetwork(this, chunkEvents);
+    return await _loadNetworkWithDeduplication(this, chunkEvents, uId);
   }
 
   @override
