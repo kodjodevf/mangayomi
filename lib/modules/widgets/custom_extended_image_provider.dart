@@ -1,6 +1,7 @@
 // ignore_for_file: non_nullable_equals_parameter, depend_on_referenced_packages, implementation_imports
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui' as ui show Codec, ImmutableBuffer;
 
 import 'package:extended_image_library/src/extended_image_provider.dart';
@@ -35,51 +36,84 @@ class _CacheMetadata {
 /// Global cache manager
 class _CacheManager {
   static const _maxCacheSize = 500 * 1024 * 1024; // 500MB
+  static final Map<String, DateTime> _lastEvictionCheck = {};
+  static const _evictionThrottleInterval = Duration(minutes: 10);
+  static bool _isEvicting = false;
 
   static Future<int> getCacheSize(Directory cacheDir) async {
     if (!await cacheDir.exists()) return 0;
 
     int totalSize = 0;
-    await for (final entity in cacheDir.list(recursive: true)) {
-      if (entity is File) {
-        totalSize += await entity.length();
+    try {
+      await for (final entity in cacheDir.list(recursive: true)) {
+        if (entity is File) {
+          totalSize += await entity.length();
+        }
       }
-    }
+    } catch (_) {}
     return totalSize;
   }
 
-  static Future<void> evictOldestIfNeeded(Directory cacheDir) async {
-    final size = await getCacheSize(cacheDir);
-    if (size <= _maxCacheSize) return;
-
-    // Collect all cache files with metadata
-    final List<_CacheMetadata> files = [];
-    await for (final entity in cacheDir.list()) {
-      if (entity is File) {
-        final stat = await entity.stat();
-        files.add(
-          _CacheMetadata(
-            path: entity.path,
-            size: stat.size,
-            lastAccessed: stat.accessed,
-          ),
-        );
-      }
+  /// Triggers cache eviction asynchronously in the background without blocking the UI
+  static void evictOldestIfNeededThrottled(Directory cacheDir) {
+    final now = DateTime.now();
+    final lastCheck = _lastEvictionCheck[cacheDir.path];
+    if (lastCheck != null &&
+        now.difference(lastCheck) < _evictionThrottleInterval) {
+      return;
     }
+    _lastEvictionCheck[cacheDir.path] = now;
+    unawaited(evictOldestIfNeeded(cacheDir));
+  }
 
-    // Sort by last accessed (oldest first)
-    files.sort((a, b) => a.lastAccessed.compareTo(b.lastAccessed));
+  static Future<void> evictOldestIfNeeded(Directory cacheDir) async {
+    if (_isEvicting) return;
+    _isEvicting = true;
+    try {
+      final size = await getCacheSize(cacheDir);
+      if (size <= _maxCacheSize) return;
 
-    // Delete until under limit
-    int currentSize = size;
-    for (final file in files) {
-      if (currentSize <= _maxCacheSize) break;
-      try {
-        await File(file.path).delete();
-        currentSize -= file.size;
-      } catch (e) {
-        if (kDebugMode) print('Failed to delete cache file: $e');
+      // Collect all cache files with metadata
+      final List<_CacheMetadata> files = [];
+      await for (final entity in cacheDir.list(recursive: true)) {
+        if (entity is File) {
+          try {
+            final stat = await entity.stat();
+            final lastTime = stat.accessed.isAfter(stat.modified)
+                ? stat.accessed
+                : stat.modified;
+            files.add(
+              _CacheMetadata(
+                path: entity.path,
+                size: stat.size,
+                lastAccessed: lastTime,
+              ),
+            );
+          } catch (_) {}
+        }
       }
+
+      // Sort by last accessed/modified (oldest first)
+      files.sort((a, b) => a.lastAccessed.compareTo(b.lastAccessed));
+
+      // Delete until under limit
+      int currentSize = size;
+      for (final file in files) {
+        if (currentSize <= _maxCacheSize) break;
+        try {
+          final f = File(file.path);
+          if (await f.exists()) {
+            await f.delete();
+            currentSize -= file.size;
+          }
+        } catch (e) {
+          if (kDebugMode) print('Failed to delete cache file: $e');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) print('Error during cache eviction: $e');
+    } finally {
+      _isEvicting = false;
     }
   }
 }
@@ -286,17 +320,22 @@ class CustomExtendedNetworkImageProvider
     final File cacheFile = File(join(cacheImagesDirectory.path, md5Key));
 
     // exist, try to find cache image file
-    if (cacheFile.existsSync()) {
+    if (await cacheFile.exists()) {
       if (key.cacheMaxAge != null) {
         final DateTime now = DateTime.now();
-        final DateTime lastModified = cacheFile.lastModifiedSync();
+        final DateTime lastModified = await cacheFile.lastModified();
         if (now.difference(lastModified) > key.cacheMaxAge!) {
-          cacheFile.deleteSync();
+          try {
+            await cacheFile.delete();
+          } catch (_) {}
         } else {
           data = await cacheFile.readAsBytes();
+          // Update last modified timestamp asynchronously for LRU tracking
+          unawaited(cacheFile.setLastModified(now).catchError((_) {}));
         }
       } else {
         data = await cacheFile.readAsBytes();
+        unawaited(cacheFile.setLastModified(DateTime.now()).catchError((_) {}));
       }
     }
 
@@ -304,11 +343,13 @@ class CustomExtendedNetworkImageProvider
     if (data == null) {
       data = await _loadNetwork(key, chunkEvents);
       if (data != null) {
-        // Evict old cache if needed before writing
-        await _CacheManager.evictOldestIfNeeded(cacheImagesDirectory);
-
-        // cache image file
-        await File(join(cacheImagesDirectory.path, md5Key)).writeAsBytes(data);
+        try {
+          // cache image file
+          await File(join(cacheImagesDirectory.path, md5Key))
+              .writeAsBytes(data);
+          // Evict old cache in background if needed (throttled)
+          _CacheManager.evictOldestIfNeededThrottled(cacheImagesDirectory);
+        } catch (_) {}
       }
     }
 
@@ -328,39 +369,29 @@ class CustomExtendedNetworkImageProvider
         return null;
       }
 
-      // Pre-allocate list if content length is known
       final int total = response.contentLength ?? 0;
-      final List<int> bytes = total > 0
-          ? List<int>.filled(total, 0, growable: true)
-          : [];
+      final BytesBuilder bytesBuilder = BytesBuilder(copy: false);
       int received = 0;
 
-      response.stream.asBroadcastStream();
-      await for (var chunk in response.stream) {
-        if (total > 0 && received + chunk.length <= total) {
-          // Copy directly to pre-allocated list
-          bytes.setRange(received, received + chunk.length, chunk);
-        } else {
-          // Fallback for unknown size
-          bytes.addAll(chunk);
-        }
-
+      await for (final chunk in response.stream) {
+        bytesBuilder.add(chunk);
         received += chunk.length;
         chunkEvents?.add(
           ImageChunkEvent(
             cumulativeBytesLoaded: received,
-            expectedTotalBytes: total,
+            expectedTotalBytes: total > 0 ? total : null,
           ),
         );
       }
 
+      final Uint8List bytes = bytesBuilder.takeBytes();
       if (bytes.isEmpty) {
         return await Future<Uint8List>.error(
           StateError('NetworkImage is an empty file: $resolved'),
         );
       }
 
-      return Uint8List.fromList(bytes);
+      return bytes;
     } on OperationCanceledError catch (_) {
       if (kDebugMode) {
         print('User cancel request $url.');
@@ -377,8 +408,6 @@ class CustomExtendedNetworkImageProvider
   }
 
   Future<StreamedResponse> _getResponse(Uri resolved) async {
-    var request = Request('GET', resolved);
-
     // Optimize headers for better caching and compression
     final optimizedHeaders = {
       ...?headers,
@@ -386,17 +415,21 @@ class CustomExtendedNetworkImageProvider
       'Accept': 'image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
       'Connection': 'keep-alive',
     };
+
+    var request = Request('GET', resolved);
     request.headers.addAll(optimizedHeaders);
 
     StreamedResponse response = await MClient.init(
       showCloudFlareError: showCloudFlareError,
     ).send(request);
 
-    if (response.statusCode != 200) {
+    if (response.statusCode != HttpStatus.ok) {
+      final retryRequest = Request('GET', resolved);
+      retryRequest.headers.addAll(optimizedHeaders);
       final res = await MClient.init(
         reqcopyWith: {'useDartHttpClient': true},
         showCloudFlareError: showCloudFlareError,
-      ).send(response.request!);
+      ).send(retryRequest);
       return res;
     }
 
