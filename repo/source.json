@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.8.9",
-      "versionDate": "2026-08-24T12:56:49Z",
-      "versionDescription": "",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.8.9/Mangayomi-v0.8.9-ios.ipa",
+      "version": "0.9.0",
+      "versionDate": "2026-08-30T11:06:15Z",
+      "versionDescription": "What's Changed\n* fix: say when a JS source fails to load instead of showing it as empty by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/921\n* fix: restore bundled TLS roots so Android stops panicking on HTTPS by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/920\n* fix: track anime on Simkl as anime, not as a TV show by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/932\n* Use correct image extensions by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/926\n* fix: stop the library disposing a TabController the tabs still paint from by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/930\n* fix: say why AniList refused, stop asking, and fall back where we can by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/911\n* fix: only file things that belong in the tracker by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/919\n* fix: stop using the player after the reader has left it by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/931\n* feat: a live memory readout, so the TV questions can be measured by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/929\n* feat: TV is only asked for source and nothing else on the welcome screen cus anime only gate now by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/938\n* feat: show what a title is related to, and open it in your sources by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/939\n* feat: show which account a tracker is signed in to, and fix the id sent as a name by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/940\n* perf(tv): show only the tab the television is on by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/941\n* fix: say why a global search had nothing to search by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/943\n* fix: raise the two things sitting under a minimum by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/945\n* refactor: one definition for the alpha ladder by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/946\n* fix: pure black dark mode was not pure, and not black by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/947\n* refactor: the chapter dialog follows the theme by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/948\n* fix: a season is part of which chapter a chapter is by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/950\n* fix: stop telling Linux to use a resolver it does not have by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/952\n* Add DbWriteQueue + repository layer, migrate all from raws DB logics into Repositories Logic  by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/954\n* refactor: one row of pills on the detail page, not a column of buttons by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/942\n* fix: the novel reader's controller is gone by the time dispose needs it by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/955\n* feat: catch the crashes Dart cannot see by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/913\n\n\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.8.9...v0.9.0",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.0/Mangayomi-v0.9.0-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 108580643,
+      "size": 109850176,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.9.0",
+          "date": "2026-08-30T11:06:15Z",
+          "localizedDescription": "What's Changed\n* fix: say when a JS source fails to load instead of showing it as empty by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/921\n* fix: restore bundled TLS roots so Android stops panicking on HTTPS by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/920\n* fix: track anime on Simkl as anime, not as a TV show by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/932\n* Use correct image extensions by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/926\n* fix: stop the library disposing a TabController the tabs still paint from by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/930\n* fix: say why AniList refused, stop asking, and fall back where we can by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/911\n* fix: only file things that belong in the tracker by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/919\n* fix: stop using the player after the reader has left it by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/931\n* feat: a live memory readout, so the TV questions can be measured by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/929\n* feat: TV is only asked for source and nothing else on the welcome screen cus anime only gate now by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/938\n* feat: show what a title is related to, and open it in your sources by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/939\n* feat: show which account a tracker is signed in to, and fix the id sent as a name by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/940\n* perf(tv): show only the tab the television is on by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/941\n* fix: say why a global search had nothing to search by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/943\n* fix: raise the two things sitting under a minimum by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/945\n* refactor: one definition for the alpha ladder by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/946\n* fix: pure black dark mode was not pure, and not black by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/947\n* refactor: the chapter dialog follows the theme by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/948\n* fix: a season is part of which chapter a chapter is by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/950\n* fix: stop telling Linux to use a resolver it does not have by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/952\n* Add DbWriteQueue + repository layer, migrate all from raws DB logics into Repositories Logic  by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/954\n* refactor: one row of pills on the detail page, not a column of buttons by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/942\n* fix: the novel reader's controller is gone by the time dispose needs it by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/955\n* feat: catch the crashes Dart cannot see by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/913\n\n\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.8.9...v0.9.0",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.0/Mangayomi-v0.9.0-ios.ipa",
+          "size": 109850176
+        },
+        {
           "version": "0.8.9",
           "date": "2026-08-24T12:56:49Z",
-          "localizedDescription": "",
+          "localizedDescription": "What's Changed\r\n* Fix migration screen row overflow by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/884\r\n* Fix History screen scroll lag by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/885\r\n* Fix Updates and chapter list scroll lag by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/886\r\n* Fix warning by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/887\r\n* New feature: backup encryption by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/888\r\n* fix: read downloaded chapters from disk instead of the source by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/889\r\n* Fix chapter sort incorrectly and Added Missing Chapter Header by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/890\r\n* Fix overflow in global search result cards by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/891\r\n* Add live connection status to Sync screen, redesign layout by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/892\r\n* Fixed reader where it launch and causing blank screen by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/893\r\n* Fix Isar nested\u2022transaction crash after backup restore and settings sync by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/894\r\n* Fix blank reader screen on chapter change by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/895\r\n* Surface the real error when an image fails to load by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/896\r\n* Fix overflow in tracker library section screen by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/897\r\n* Fix migration screen lag by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/898\r\n* fix: stop a running update from the updates screen, and a grey box in its list by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/900\r\n* fix: stop dropping decimal chapters and mismatching them on migration (812) by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/899\r\n* feat: a first run for a fresh install by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/901\r\n* fix: stop settings writes putting back what changed in the meantime by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/904\r\n* Cloudflare Issue Fixed by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/910\r\n* Push restored data to sync server after a restore, guarding against r\u2026 by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/905\r\n* Add dyslexia\u2022friendly font options for novel reader text by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/908\r\n* Use correct file extension for images by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/909\r\n* Fix source\u2022installed detection and add mangayomi\u2022backup merge parity by @not\u2022akari in https://github.com/kodjodevf/mangayomi/pull/907\r\n* fix: stop share throwing on Linux, and give it something useful to do by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/903\r\n* feat: keep the errors the app catches, and offer to report them by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/906\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.8.8...v0.8.9",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.8.9/Mangayomi-v0.8.9-ios.ipa",
           "size": 108580643
         },
@@ -231,13 +238,6 @@
           "localizedDescription": "* Fix 601 Format Exception: Missing extension byte (at offset 14740452)\r\n* Fix auto backup not working\r\n* Some optimisations\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.60...v0.6.65",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.65/Mangayomi-v0.6.65-ios.ipa",
           "size": 44359145
-        },
-        {
-          "version": "0.6.60",
-          "date": "2025-11-09T00:27:00Z",
-          "localizedDescription": "What's Changed\r\n* iOS Workflow fix by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/573\r\n* fixed trakt episode numbers by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/575\r\n* reworked local source by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/574\r\n* added support for LNReader plugins by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/587\r\n* fixed migration sourceId issue by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/594\r\n* Refactor and update dependencies for Isar and Riverpod by @kodjodevf in https://github.com/kodjodevf/mangayomi/pull/596\r\n* Standardize Folder Structure on Windows, Linux, iOS & macOS by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/517\r\n* Some optimisations\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.5...v0.6.60",
-          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.60/Mangayomi-v0.6.60-ios.ipa",
-          "size": 44339219
         }
       ],
       "appPermissions": {
@@ -655,6 +655,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.8.9"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.9.0 - 30 Aug",
+      "identifier": "release-0.9.0",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2026-08-30T11:06:15Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.9.0"
     }
   ]
 }
