@@ -1,5 +1,6 @@
 // ignore_for_file: non_nullable_equals_parameter, depend_on_referenced_packages, implementation_imports
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui show Codec, ImmutableBuffer;
@@ -124,6 +125,24 @@ class CustomExtendedNetworkImageProvider
     implements image_provider.ExtendedNetworkImageProvider {
   /// Deduplication map for in-flight image downloads to prevent multiple concurrent HTTP GET requests for the same URL
   static final Map<String, Future<Uint8List?>> _inFlightRequests = {};
+
+  /// Decode Base64 or URL-encoded data URI (e.g. data:image/gif;base64,...)
+  static Uint8List? tryDecodeDataUri(String url) {
+    if (!url.startsWith('data:')) return null;
+    try {
+      final commaIndex = url.indexOf(',');
+      if (commaIndex != -1) {
+        final headerPart = url.substring(0, commaIndex);
+        final dataPart = url.substring(commaIndex + 1);
+        if (headerPart.contains(';base64')) {
+          return base64Decode(dataPart.replaceAll(RegExp(r'\s+'), ''));
+        } else {
+          return Uint8List.fromList(utf8.encode(Uri.decodeComponent(dataPart)));
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
 
   /// Creates an object that fetches the image at the given URL.
   ///
@@ -265,6 +284,19 @@ class CustomExtendedNetworkImageProvider
     ImageDecoderCallback decode,
   ) async {
     assert(key == this);
+    if (key.url.startsWith('data:')) {
+      final dataUriBytes = tryDecodeDataUri(key.url);
+      if (dataUriBytes != null) {
+        try {
+          return await instantiateImageCodec(dataUriBytes, decode);
+        } catch (e) {
+          return Future<ui.Codec>.error(
+            StateError('Failed to load data URI $url: $e'),
+          );
+        }
+      }
+    }
+
     final String md5Key = cacheKey ?? keyToMd5(key.url);
     ui.Codec? result;
     // Kept so the final error, if any, says why instead of just "failed" —
@@ -400,6 +432,9 @@ class CustomExtendedNetworkImageProvider
     CustomExtendedNetworkImageProvider key,
     StreamController<ImageChunkEvent>? chunkEvents,
   ) async {
+    if (key.url.startsWith('data:')) {
+      return tryDecodeDataUri(key.url);
+    }
     try {
       final Uri resolved = Uri.base.resolve(key.url);
       final StreamedResponse? response = await _tryGetResponse(resolved);
@@ -555,6 +590,10 @@ class CustomExtendedNetworkImageProvider
   Future<Uint8List?> getNetworkImageData({
     StreamController<ImageChunkEvent>? chunkEvents,
   }) async {
+    if (url.startsWith('data:')) {
+      return tryDecodeDataUri(url);
+    }
+
     final String uId = cacheKey ?? keyToMd5(url);
 
     if (cache) {
