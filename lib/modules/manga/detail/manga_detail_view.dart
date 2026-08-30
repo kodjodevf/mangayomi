@@ -1650,6 +1650,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             ),
                           ),
                   ),
+                  const SizedBox(height: 15),
                   _DetailActions(manga: widget.manga!),
                   const SizedBox(height: 15),
                   if (!context.isTablet)
