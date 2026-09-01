@@ -87,24 +87,21 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
       return localImagePath;
     }
     if (archiveImage != null) {
-      final tempDir = Directory.systemTemp;
       final sourceKey = [
         chapter?.id?.toString(),
         chapter?.archivePath,
         directory?.path,
         chapter?.url,
       ].whereType<String>().where((value) => value.isNotEmpty).join('|');
-      final chapterKey = keyToMd5(sourceKey);
-      final ext = detectImageExtension(archiveImage!);
-      final tempFile = File(
-        p.join(
-          tempDir.path,
-          'mangayomi_archive_${chapterKey}_${index ?? pageIndex}$ext',
-        ),
+      final baseName =
+          'mangayomi_archive_${keyToMd5(sourceKey)}_${index ?? pageIndex}';
+      final bytes = archiveImage!;
+      final tempFile = await cacheImageBytesToTempFile(
+        tempDir: Directory.systemTemp,
+        baseName: baseName,
+        extension: detectImageExtension(bytes),
+        bytesProvider: () => bytes,
       );
-      if (!await tempFile.exists()) {
-        await tempFile.writeAsBytes(archiveImage!, flush: true);
-      }
       return tempFile.path;
     }
     if (isLocale == true && directory != null && index != null) {

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -100,6 +101,23 @@ File? findMangaCoverFile(Directory directory) {
     if (file.existsSync()) return file;
   }
   return null;
+}
+
+/// Ensures image bytes end up at a stable temp-file path. Skips writing
+/// when the file already exists. Caller supplies [extension] so caching
+/// works without running [bytesProvider] unnecessarily.
+Future<File> cacheImageBytesToTempFile({
+  required Directory tempDir,
+  required String baseName,
+  required String extension,
+  required FutureOr<Uint8List> Function() bytesProvider,
+}) async {
+  final file = File(p.join(tempDir.path, '$baseName$extension'));
+  if (!await file.exists()) {
+    final bytes = await bytesProvider();
+    await file.writeAsBytes(bytes, flush: true);
+  }
+  return file;
 }
 
 /// The single source of truth for "where is page [index] of this chapter on
