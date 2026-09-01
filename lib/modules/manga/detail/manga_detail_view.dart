@@ -2197,12 +2197,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       } else if (value == 1) {
                                         FilePickerResult? result =
                                             await FilePicker.pickFiles(
-                                              type: FileType.custom,
-                                              allowedExtensions: [
-                                                'png',
-                                                'jpg',
-                                                'jpeg',
-                                              ],
+                                              type: FileType.image,
                                             );
                                         if (result != null && context.mounted) {
                                           if (result.files.first.size <
