@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:archive/archive_io.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -19,6 +20,7 @@ import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/services/backup_password_storage.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/share.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -41,10 +43,6 @@ Future<void> doBackUp(
       directory: path,
       compressionLevel: compressionLevel,
     );
-    final assets = [
-      'assets/app_icons/icon-black.png',
-      'assets/app_icons/icon-red.png',
-    ];
     if (context != null && context.mounted) {
       Navigator.pop(context);
       BotToast.showNotification(
@@ -52,7 +50,8 @@ Future<void> doBackUp(
         animationReverseDuration: const Duration(milliseconds: 200),
         duration: const Duration(seconds: 5),
         backButtonBehavior: BackButtonBehavior.none,
-        leading: (_) => Image.asset((assets..shuffle()).first, height: 25),
+        leading: (_) =>
+            Image.asset(appIconAssets[Random().nextInt(2)], height: 25),
         title: (_) => const Text(
           "Backup created!",
           style: TextStyle(fontWeight: FontWeight.bold),

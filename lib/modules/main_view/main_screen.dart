@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1066,7 +1067,7 @@ class _TvRailHeader extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
-            'assets/app_icons/icon.png',
+            appIconAssets[2],
             width: 30,
             height: 30,
             color: accent,

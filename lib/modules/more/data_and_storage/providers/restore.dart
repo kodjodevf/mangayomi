@@ -45,6 +45,7 @@ import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/services/sync_server.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/error_toast.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -275,7 +276,7 @@ void showBotToast(String text) {
     animationReverseDuration: const Duration(milliseconds: 200),
     duration: const Duration(seconds: 5),
     backButtonBehavior: BackButtonBehavior.none,
-    leading: (_) => Image.asset('assets/app_icons/icon-red.png', height: 40),
+    leading: (_) => Image.asset(appIconAssets[1], height: 40),
     title: (_) => Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
     enableSlideOff: true,
     onlyOne: true,

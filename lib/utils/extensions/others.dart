@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
@@ -140,8 +141,7 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
     final data = this;
 
     if (data.isTransitionPage) {
-      return const AssetImage('assets/transparent.png')
-          as ImageProvider<Object>;
+      return const AssetImage(transparentAsset) as ImageProvider<Object>;
     }
 
     final isLocale = data.isLocale!;

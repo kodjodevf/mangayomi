@@ -6,6 +6,7 @@ import 'package:mangayomi/modules/more/widgets/downloaded_only_widget.dart';
 import 'package:mangayomi/modules/more/widgets/incognito_mode_widget.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/models/manga.dart';
 
@@ -30,7 +31,7 @@ class MoreScreenState extends ConsumerState<MoreScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 40),
               child: Image.asset(
-                "assets/app_icons/icon.png",
+                appIconAssets[2],
                 color: Theme.of(context).brightness == Brightness.light
                     ? Colors.black
                     : Colors.white,

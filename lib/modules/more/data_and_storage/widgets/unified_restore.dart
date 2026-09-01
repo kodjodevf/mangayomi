@@ -10,6 +10,7 @@ import 'package:mangayomi/modules/more/data_and_storage/widgets/rollback_last_ch
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/more/widgets/dialog_actions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 /// Whether there's a sync server configured to ask about (regardless of
@@ -613,7 +614,7 @@ void _showImportResultToast(
     animationReverseDuration: const Duration(milliseconds: 200),
     duration: const Duration(seconds: 8),
     backButtonBehavior: BackButtonBehavior.none,
-    leading: (_) => Image.asset('assets/app_icons/icon-red.png', height: 32),
+    leading: (_) => Image.asset(appIconAssets[1], height: 32),
     title: (_) => Text(
       resultDescription,
       style: const TextStyle(fontWeight: FontWeight.bold),
