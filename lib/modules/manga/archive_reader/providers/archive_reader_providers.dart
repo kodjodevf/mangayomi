@@ -193,6 +193,13 @@ Future<LocalArchive> _extractArchive(String path) async {
 }
 
 /// Extract images from a folder
+///
+/// Unlike the archive-file case, these pages already exist as standalone
+/// files on disk - there's no need to read every one of them into memory
+/// just to hand the bytes back to a caller who's only going to write them
+/// back out to a temp file to get a path again. Only the first file (the
+/// cover) is actually read; every other [LocalImage] carries its real [path]
+/// instead of [image], and callers read the file directly when they need it.
 Future<LocalArchive> _extractFromImageFolder(String path) async {
   final dir = Directory(path);
   final imageFiles = await dir
@@ -208,7 +215,7 @@ Future<LocalArchive> _extractFromImageFolder(String path) async {
 
   final images = imageFiles.map((file) {
     return LocalImage()
-      ..image = file.readAsBytesSync()
+      ..path = file.path
       ..name = p.basename(file.path);
   }).toList();
 
@@ -217,7 +224,7 @@ Future<LocalArchive> _extractFromImageFolder(String path) async {
     ..extensionType = LocalExtensionType.folder
     ..name = p.basename(path)
     ..images = images
-    ..coverImage = images.first.image;
+    ..coverImage = imageFiles.first.readAsBytesSync();
 }
 
 /// Extract images from an archive file
