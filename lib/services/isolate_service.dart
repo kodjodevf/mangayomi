@@ -146,6 +146,8 @@ class GetIsolateService {
                         return await service.getVideoList(url!);
                       case 'getPageList':
                         return await service.getPageList(url!);
+                      case 'getHtmlContent':
+                        return await service.getHtmlContent(query ?? '', url!);
                       case 'getHeaders':
                         return Future.value(service.getHeaders());
                       default:
@@ -202,7 +204,8 @@ class GetIsolateService {
     String? androidProxyServer,
     bool? useLogger,
   }) async {
-    if (source?.sourceCodeLanguage != SourceCodeLanguage.lnreader) {
+    if (source?.sourceCodeLanguage != SourceCodeLanguage.lnreader &&
+        source?.sourceCodeLanguage != SourceCodeLanguage.aidoku) {
       return withExtensionService(source!, proxyServer ?? '', (service) async {
         switch (serviceType) {
           case 'getDetail':
@@ -217,6 +220,8 @@ class GetIsolateService {
             return (await service.getVideoList(url!)) as T;
           case 'getPageList':
             return (await service.getPageList(url!)) as T;
+          case 'getHtmlContent':
+            return (await service.getHtmlContent(query ?? '', url!)) as T;
           case 'getHeaders':
             return (service.getHeaders()) as T;
           default:

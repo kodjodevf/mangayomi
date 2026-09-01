@@ -39,6 +39,7 @@ dependencies:
   share_plus: ^13.0.0
   xpath_selector_html_parser: ^3.0.1
   archive: ^4.0.9
+  wasd: ^0.5.0
   external_path: ^2.2.0
   file_picker: 12.0.0-beta.7
   flutter_secure_storage: ^11.0.0
@@ -116,6 +117,7 @@ dependencies:
   hooks: ^2.0.2
   native_toolchain_c: ^0.19.2
   cupertino_ui: ^1.0.0
+  image: ^4.9.2
 
 dependency_overrides:
   protobuf: ^5.0.0

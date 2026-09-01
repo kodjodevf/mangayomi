@@ -4,6 +4,7 @@ import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
+import 'package:mangayomi/eval/aidoku/service.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -36,7 +37,8 @@ Future<void> fetchSourcesList({
         .where(
           (source) =>
               source.itemType == itemType &&
-              (source.appMinVerReq == null ||
+              (source.sourceCodeLanguage == SourceCodeLanguage.aidoku ||
+                  source.appMinVerReq == null ||
                   source.appMinVerReq!.isEmpty ||
                   compareVersions(info.version, source.appMinVerReq!) > -1),
         )
@@ -130,7 +132,9 @@ Future<void> fetchSourcesList({
       if (autoUpdateExtensions) {
         await _updateSource(source, androidProxyServer, repo, itemType);
       } else {
-        await sourceRepository.save(existingSource..versionLast = source.version);
+        await sourceRepository.save(
+          existingSource..versionLast = source.version,
+        );
       }
     }
   }
@@ -146,7 +150,9 @@ Future<void> _updateSource(
 ) async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final req = await http.get(Uri.parse(source.sourceCodeUrl!));
-  final sourceCode = source.sourceCodeLanguage == SourceCodeLanguage.mihon
+  final sourceCode =
+      (source.sourceCodeLanguage == SourceCodeLanguage.mihon ||
+          source.sourceCodeLanguage == SourceCodeLanguage.aidoku)
       ? base64.encode(req.bodyBytes)
       : req.body;
 
@@ -168,6 +174,15 @@ Future<void> _updateSource(
       source,
       androidProxyServer,
     );
+  } else if (source.sourceCodeLanguage == SourceCodeLanguage.aidoku) {
+    final service = AidokuExtensionService(source);
+    try {
+      headers = service.getHeaders();
+      supportLatest = service.supportsLatest;
+      filterList = await service.fetchFilterList();
+    } finally {
+      service.dispose();
+    }
   } else {
     headers = await getIsolateService.get<Map<String, String>>(
       source: source,

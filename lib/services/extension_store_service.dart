@@ -170,6 +170,14 @@ class ExtensionStoreService {
     InterceptedClient client,
   ) async {
     try {
+      // 1. Check if it's an Aidoku format repository index (e.g. index.min.json with "sources": [...])
+      if (jsonMap['sources'] is List) {
+        final aidokuResult = _parseAidokuJsonStore(indexUrl, jsonMap);
+        if (aidokuResult != null && aidokuResult.sources.isNotEmpty) {
+          return aidokuResult;
+        }
+      }
+
       final meta = jsonMap['meta'] as Map<String, dynamic>?;
       final repoName =
           (meta?['name'] as String?) ??
@@ -211,6 +219,90 @@ class ExtensionStoreService {
     }
   }
 
+  static ExtensionStoreFetchResult? _parseAidokuJsonStore(
+    String indexUrl,
+    Map<String, dynamic> jsonMap,
+  ) {
+    try {
+      final rawSources = jsonMap['sources'];
+      if (rawSources is! List) return null;
+
+      final repoName = (jsonMap['name'] as String?) ?? 'Aidoku Sources';
+      final baseUri = Uri.parse(indexUrl);
+      final sources = <Source>[];
+
+      for (final e in rawSources) {
+        if (e is! Map<String, dynamic>) continue;
+        final rawDownloadUrl =
+            (e['downloadURL'] as String?) ?? (e['file'] as String?);
+        final rawIconUrl = (e['iconURL'] as String?) ?? (e['icon'] as String?);
+
+        final downloadUrl = rawDownloadUrl != null && rawDownloadUrl.isNotEmpty
+            ? baseUri.resolve(rawDownloadUrl).toString()
+            : '';
+        final iconUrl = rawIconUrl != null && rawIconUrl.isNotEmpty
+            ? baseUri.resolve(rawIconUrl).toString()
+            : (e['id'] != null
+                  ? baseUri.resolve('icons/${e['id']}.png').toString()
+                  : '');
+
+        final langs =
+            (e['languages'] as List?)?.map((l) => l.toString()).toList() ??
+            [(e['lang'] as String?) ?? 'all'];
+
+        final rating = e['contentRating'] ?? e['nsfw'] ?? 0;
+        final isNsfw = rating is int
+            ? rating >= 2
+            : (rating == true || rating == 1);
+        final baseUrl =
+            (e['baseURL'] as String?) ?? (e['url'] as String?) ?? '';
+        final name = (e['name'] as String?) ?? (e['id'] as String?) ?? 'Source';
+        final version = e['version'] != null ? '${e['version']}.0.0' : '1.0.0';
+
+        for (final lang in langs) {
+          final src = Source()
+            ..apiUrl = ''
+            ..appMinVerReq = ''
+            ..dateFormat = ''
+            ..dateFormatLocale = ''
+            ..hasCloudflare = false
+            ..headers = ''
+            ..isActive = true
+            ..isAdded = false
+            ..isFullData = false
+            ..isNsfw = isNsfw
+            ..isPinned = false
+            ..lastUsed = false
+            ..sourceCode = ''
+            ..typeSource = ''
+            ..version = version
+            ..versionLast = '0.0.1'
+            ..isObsolete = false
+            ..isLocal = false
+            ..name = name
+            ..lang = lang
+            ..baseUrl = baseUrl
+            ..sourceCodeUrl = downloadUrl
+            ..sourceCodeLanguage = SourceCodeLanguage.aidoku
+            ..itemType = ItemType.manga
+            ..iconUrl = iconUrl
+            ..notes = "Performance might be poor due to limited engine";
+          src.id = 'aidoku-${e['id']}-$lang'.hashCode.abs();
+          sources.add(src);
+        }
+      }
+
+      return ExtensionStoreFetchResult(
+        name: repoName,
+        website: indexUrl,
+        indexUrl: indexUrl,
+        sources: sources,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
   static ExtensionStoreFetchResult? _parseLegacyJsonStore(
     String indexUrl,
     List<int> bytes,
@@ -224,6 +316,55 @@ class ExtensionStoreService {
 
       for (final e in jsonList) {
         if (e is! Map<String, dynamic>) continue;
+        if (e['file'] != null && (e['file'] as String).endsWith('.aix')) {
+          final langs =
+              (e['languages'] as List?)?.map((l) => l.toString()).toList() ??
+              [(e['lang'] as String?) ?? 'all'];
+          final isNsfw = (e['nsfw'] ?? 0) != 0;
+          final icon = e['icon'] != null
+              ? (e['icon'] as String).startsWith('http')
+                    ? e['icon'] as String
+                    : '$repoBaseUrl/${e['icon']}'
+              : '$repoBaseUrl/icons/${e['id']}.png';
+          final sourceUrl = (e['file'] as String).startsWith('http')
+              ? e['file'] as String
+              : '$repoBaseUrl/${e['file']}';
+          final urls = (e['urls'] as List?)?.map((u) => u.toString()).toList();
+          final baseUrl = urls?.firstOrNull ?? (e['url'] as String?) ?? '';
+
+          for (final lang in langs) {
+            final src = Source()
+              ..apiUrl = ''
+              ..appMinVerReq = (e['min_app_version'] as String?) ?? ''
+              ..dateFormat = ''
+              ..dateFormatLocale = ''
+              ..hasCloudflare = false
+              ..headers = ''
+              ..isActive = true
+              ..isAdded = false
+              ..isFullData = false
+              ..isNsfw = isNsfw
+              ..isPinned = false
+              ..lastUsed = false
+              ..sourceCode = ''
+              ..typeSource = ''
+              ..version = '${e['version'] ?? 1}.0.0'
+              ..versionLast = '0.0.1'
+              ..isObsolete = false
+              ..isLocal = false
+              ..name = e['name']
+              ..lang = lang
+              ..baseUrl = baseUrl
+              ..sourceCodeUrl = sourceUrl
+              ..sourceCodeLanguage = SourceCodeLanguage.aidoku
+              ..itemType = ItemType.manga
+              ..iconUrl = icon
+              ..notes = "Performance might be poor due to limited engine";
+            src.id = 'aidoku-${e['id']}-$lang'.hashCode;
+            sources.add(src);
+          }
+          continue;
+        }
         if (e['name'] != null &&
             e['pkg'] != null &&
             e['version'] != null &&

@@ -521,12 +521,14 @@ const _SourcesourceCodeLanguageEnumValueMap = {
   'javascript': 1,
   'mihon': 2,
   'lnreader': 3,
+  'aidoku': 4,
 };
 const _SourcesourceCodeLanguageValueEnumMap = {
   0: SourceCodeLanguage.dart,
   1: SourceCodeLanguage.javascript,
   2: SourceCodeLanguage.mihon,
   3: SourceCodeLanguage.lnreader,
+  4: SourceCodeLanguage.aidoku,
 };
 
 Id _sourceGetId(Source object) {
