@@ -82,8 +82,18 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
     if (isTransitionPage) return null;
     if (archiveImage != null) {
       final tempDir = Directory.systemTemp;
+      final sourceKey = [
+        chapter?.id?.toString(),
+        chapter?.archivePath,
+        directory?.path,
+        chapter?.url,
+      ].whereType<String>().where((value) => value.isNotEmpty).join('|');
+      final chapterKey = keyToMd5(sourceKey);
       final tempFile = File(
-        p.join(tempDir.path, 'mangayomi_archive_${index ?? pageIndex}.jpg'),
+        p.join(
+          tempDir.path,
+          'mangayomi_archive_${chapterKey}_${index ?? pageIndex}.jpg',
+        ),
       );
       if (!tempFile.existsSync()) {
         tempFile.writeAsBytesSync(archiveImage!);
