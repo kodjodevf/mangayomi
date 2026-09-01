@@ -40,7 +40,6 @@ import 'package:mangayomi/services/m_extension_server.dart';
 import 'package:mangayomi/services/download_manager/m_downloader.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/discord_rpc.dart';
-import 'package:mangayomi/modules/more/about/widgets/crash_report_banner.dart';
 import 'package:mangayomi/services/crash_native.dart';
 import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/utils/log/logger.dart';
@@ -216,7 +215,6 @@ class _StartupErrorApp extends StatelessWidget {
 
 Future<void> _postLaunchInit(StorageProvider storage) async {
   await AppLogger.init();
-  unawaited(maybeShowCrashBanner());
   unawaited(MDownloader.initializeIsolatePool(poolSize: 6));
   final hivePath = isApple ? "databases" : p.join("Mangayomi", "databases");
   await Hive.initFlutter(Platform.isAndroid ? "" : hivePath);
