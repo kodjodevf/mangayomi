@@ -189,7 +189,12 @@ class MihonExtensionService implements ExtensionService {
       artist: data['artist'],
       author: data['author'],
       description: data['description'],
-      genre: (data['genres'] as List?)?.map((e) => e.toString()).toList() ?? [],
+      genre:
+          (data['genre'] as String?)
+              ?.split(',')
+              .map((e) => e.toString())
+              .toList() ??
+          [],
       status: switch (data['status'] as int?) {
         1 => Status.ongoing,
         2 => Status.completed,
