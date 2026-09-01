@@ -84,7 +84,8 @@ class _ReportTile extends StatelessWidget {
       title: Text(report.summary, maxLines: 3, overflow: TextOverflow.ellipsis),
       subtitle: Text(
         '${report.time.toLocal()}'.split('.').first +
-            (report.screen == null ? '' : '  ·  ${report.screen}'),
+            (report.screen == null ? '' : '  ·  ${report.screen}') +
+            (report.occurrences > 1 ? '  ·  ×${report.occurrences}' : ''),
         style: TextStyle(color: context.secondaryColor, fontSize: 12),
       ),
       childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -144,9 +145,10 @@ class _ReportTile extends StatelessWidget {
         Wrap(
           spacing: 8,
           children: [
-            // An extension bug does not belong in this repository, and a
-            // fault already sent does not need sending twice (#917, #918).
-            if (!isExtensionFailure(report.error))
+            // Network and extension failures do not belong in this
+            // repository, and a fault already sent does not need sending
+            // twice (#917, #918).
+            if (isReportableFailure(report.error))
               FilledButton.icon(
                 onPressed: CrashReports.wasReported(report)
                     ? null

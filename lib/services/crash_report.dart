@@ -17,6 +17,7 @@ class CrashReport {
     required this.error,
     this.stack,
     this.screen,
+    this.occurrences = 1,
   });
 
   /// When it was caught, local time.
@@ -35,6 +36,9 @@ class CrashReport {
   /// navigation.
   final String? screen;
 
+  /// How many identical errors were folded into this entry.
+  final int occurrences;
+
   /// A plain sentence naming the likely cause, or null when the error does not
   /// match anything recognisable.
   String? get likelyCause => describeLikelyCause(error);
@@ -51,6 +55,7 @@ class CrashReport {
     'error': error,
     if (stack != null) 'stack': stack,
     if (screen != null) 'screen': screen,
+    if (occurrences > 1) 'occurrences': occurrences,
   };
 
   static CrashReport? fromJson(Map<String, dynamic> json) {
@@ -63,6 +68,10 @@ class CrashReport {
       error: error,
       stack: json['stack'] as String?,
       screen: json['screen'] as String?,
+      occurrences:
+          (json['occurrences'] is int && (json['occurrences'] as int) > 0)
+          ? json['occurrences'] as int
+          : 1,
     );
   }
 }
@@ -183,6 +192,14 @@ bool isExtensionFailure(Object error) {
       text.contains('returned a novel with no path');
 }
 
+/// Whether this failure belongs in Mangayomi's issue tracker.
+///
+/// Network/image failures need retry or source-specific help, while extension
+/// failures belong to the extension. Offering either a Mangayomi bug button
+/// creates reports that cannot lead to an app fix.
+bool isReportableFailure(Object error) =>
+    !isExpectedFailure(error) && !isExtensionFailure(error);
+
 /// A stable key for "this same thing went wrong again".
 ///
 /// The first line only, with digits flattened, so two runs of the same fault
@@ -290,7 +307,7 @@ class CrashReports {
         for (final entry in entries) {
           if (entry is! Map) continue;
           final report = CrashReport.fromJson(Map<String, dynamic>.from(entry));
-          if (report != null) _reports.add(report);
+          if (report != null) _recordOccurrence(_reports, report);
         }
         if (decoded is Map) {
           for (final f in (decoded['reported'] as List?) ?? const []) {
@@ -304,7 +321,9 @@ class CrashReports {
     }
     _seen = _reports.isEmpty;
     final hadPending = _pending.isNotEmpty;
-    _reports.addAll(_pending);
+    for (final report in _pending) {
+      _recordOccurrence(_reports, report);
+    }
     _pending.clear();
     _loaded = true;
     _trim();
@@ -332,8 +351,8 @@ class CrashReports {
         // has to say where it was rather than where we are now.
         screen: screen ?? _screen,
       );
-      _reports.add(report);
-      if (!_loaded) _pending.add(report);
+      _recordOccurrence(_reports, report);
+      if (!_loaded) _recordOccurrence(_pending, report);
       // Kept, but it does not raise the banner: nothing here needs the
       // reader's attention or a bug report.
       if (!isExpectedFailure(error)) _seen = false;
@@ -383,6 +402,33 @@ class CrashReports {
     if (_reports.length > _max) {
       _reports.removeRange(0, _reports.length - _max);
     }
+  }
+
+  /// Keeps the newest context for a repeated error without letting one noisy
+  /// image or callback occupy the whole ten-entry history.
+  static void _recordOccurrence(List<CrashReport> reports, CrashReport report) {
+    final existingIndex = reports.indexWhere(
+      (existing) =>
+          existing.source == report.source &&
+          existing.screen == report.screen &&
+          existing.error == report.error,
+    );
+    if (existingIndex == -1) {
+      reports.add(report);
+      return;
+    }
+
+    final existing = reports.removeAt(existingIndex);
+    reports.add(
+      CrashReport(
+        time: report.time,
+        source: report.source,
+        error: report.error,
+        stack: report.stack ?? existing.stack,
+        screen: report.screen,
+        occurrences: existing.occurrences + report.occurrences,
+      ),
+    );
   }
 
   static void _flush() {

@@ -118,6 +118,36 @@ void main() {
       },
     );
 
+    test('identical errors are folded into one useful entry', () {
+      for (var i = 0; i < 3; i++) {
+        CrashReports.record(
+          source: 'FlutterError',
+          error: 'Bad state: Failed to load https://example.test/image.jpg',
+          screen: '/browse',
+        );
+      }
+
+      expect(CrashReports.reports, hasLength(1));
+      expect(CrashReports.latest!.occurrences, 3);
+      final stored = jsonDecode(file().readAsStringSync()) as Map;
+      expect((stored['reports'] as List).single['occurrences'], 3);
+    });
+
+    test('the same generic message on different screens stays separate', () {
+      CrashReports.record(
+        source: 'FlutterError',
+        error: 'Null check operator used on a null value',
+        screen: '/library',
+      );
+      CrashReports.record(
+        source: 'FlutterError',
+        error: 'Null check operator used on a null value',
+        screen: '/extensionServer',
+      );
+
+      expect(CrashReports.reports, hasLength(2));
+    });
+
     test('an error is offered once, then stays quiet', () {
       CrashReports.record(source: 'test', error: 'once');
 
@@ -299,6 +329,27 @@ void main() {
     });
   });
 
+  group('a reportable failure', () {
+    test('must be an app failure rather than network or extension noise', () {
+      expect(
+        isReportableFailure('Null check operator used on a null value'),
+        true,
+      );
+      expect(
+        isReportableFailure(
+          'Bad state: Failed to load https://cdn.jsdelivr.net/...',
+        ),
+        false,
+      );
+      expect(
+        isReportableFailure(
+          "Runtime Error: Undefined property or method 'toList'",
+        ),
+        false,
+      );
+    });
+  });
+
   group('reporting the same fault twice', () {
     late Directory directory;
 
@@ -377,6 +428,7 @@ void main() {
       expect(url.queryParameters['mangayomi-version'], '0.8.8');
       expect(url.queryParameters['device'], 'Pixel 5');
       expect(url.queryParameters['title'], contains('SocketException'));
+      expect(url.queryParameters['title'], contains('/browse'));
     });
 
     test('says what happened and what the app thinks caused it', () {
@@ -415,5 +467,28 @@ void main() {
         expect(url.queryParameters['other-details'], contains('truncated'));
       },
     );
+
+    test('the complete encoded link stays within GitHub-safe bounds', () {
+      final huge = CrashReport(
+        time: DateTime.utc(2026),
+        source: 'test',
+        error: List.filled(500, 'failure with punctuation: []').join(' '),
+        stack: List.filled(500, '#0 a very long frame indeed').join('\n'),
+      );
+      final logs = List.filled(
+        500,
+        '[time][source] another long diagnostic line',
+      ).join('\n');
+
+      final url = buildIssueUrl(
+        huge,
+        appVersion: '1',
+        device: 'desktop',
+        logs: logs,
+      );
+
+      expect(url.toString().length, lessThanOrEqualTo(6000));
+      expect(url.queryParameters['actual-behavior'], contains('failure'));
+    });
   });
 }
