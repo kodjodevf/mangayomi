@@ -3,9 +3,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/utils/manga_cover_actions.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -123,38 +122,10 @@ class _ImageActionsSheet extends StatelessWidget {
   }
 
   Future<void> _setAsCover(BuildContext context) async {
-    final res = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Text(context.l10n.use_this_as_cover_art),
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(context.l10n.cancel),
-              ),
-              const SizedBox(width: 15),
-              TextButton(
-                onPressed: () {
-                  mangaRepository.save(
-                    manga..customCoverImage = imageBytes.getCoverImage,
-                  );
-                  Navigator.pop(context, "ok");
-                },
-                child: Text(context.l10n.ok),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-
-    if (res == "ok" && context.mounted) {
-      Navigator.pop(context);
-      botToast(context.l10n.cover_updated, second: 3);
-    }
+    final confirmed = await confirmUseAsMangaCover(context);
+    if (!confirmed || !context.mounted) return;
+    await applyMangaCover(context, manga, imageBytes);
+    if (context.mounted) Navigator.pop(context);
   }
 
   Future<void> _shareImage(BuildContext context) async {

@@ -18,7 +18,6 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/custom_button_repository.dart';
-import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -31,7 +30,7 @@ import 'package:mangayomi/modules/anime/widgets/tv_player_settings_panel.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
-import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/utils/manga_cover_actions.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
@@ -2597,60 +2596,27 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                       ),
                       Row(
                         children: [
-                          button(context.l10n.set_as_cover, Icons.image_outlined, () async {
-                            final imageBytes = await _player.screenshot(
-                              format: "image/png",
-                              includeLibassSubtitles: _includeSubtitles,
-                            );
-                            if (context.mounted) {
-                              final res = await showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return AlertDialog(
-                                    content: Text(
-                                      context.l10n.use_this_as_cover_art,
-                                    ),
-                                    actions: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(context.l10n.cancel),
-                                          ),
-                                          const SizedBox(width: 15),
-                                          TextButton(
-                                            onPressed: () {
-                                              final manga =
-                                                  episode.manga.value!;
-                                              mangaRepository.save(
-                                                manga
-                                                  ..customCoverImage =
-                                                      imageBytes?.getCoverImage,
-                                              );
-                                              if (context.mounted) {
-                                                Navigator.pop(context, "ok");
-                                              }
-                                            },
-                                            child: Text(context.l10n.ok),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  );
-                                },
+                          button(
+                            context.l10n.set_as_cover,
+                            Icons.image_outlined,
+                            () async {
+                              final imageBytes = await _player.screenshot(
+                                format: "image/png",
+                                includeLibassSubtitles: _includeSubtitles,
                               );
-                              if (res != null &&
-                                  res == "ok" &&
-                                  context.mounted) {
-                                Navigator.pop(context);
-                                botToast(context.l10n.cover_updated, second: 3);
-                              }
-                            }
-                          }),
+                              if (!context.mounted) return;
+                              final confirmed = await confirmUseAsMangaCover(
+                                context,
+                              );
+                              if (!confirmed || !context.mounted) return;
+                              await applyMangaCover(
+                                context,
+                                episode.manga.value!,
+                                imageBytes,
+                              );
+                              if (context.mounted) Navigator.pop(context);
+                            },
+                          ),
                           button(
                             context.l10n.share,
                             Icons.share_outlined,

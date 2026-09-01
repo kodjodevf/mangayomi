@@ -45,6 +45,7 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/manga_cover_actions.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
@@ -2195,26 +2196,18 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         );
                                         Navigator.pop(context);
                                       } else if (value == 1) {
-                                        FilePickerResult? result =
-                                            await FilePicker.pickFiles(
-                                              type: FileType.image,
-                                            );
-                                        if (result != null && context.mounted) {
-                                          if (result.files.first.size <
-                                              5000000) {
-                                            final customCoverImage = File(
-                                              result.files.first.path!,
-                                            ).readAsBytesSync();
-                                            mangaRepository.save(
-                                              manga
-                                                ..customCoverImage =
-                                                    customCoverImage,
-                                            );
-                                            botToast(
-                                              context.l10n.cover_updated,
-                                              second: 3,
-                                            );
-                                          }
+                                        final file = await FilePicker.pickFile(
+                                          type: FileType.image,
+                                        );
+                                        if (file?.path != null &&
+                                            context.mounted) {
+                                          final bytes = File(file!.path!)
+                                              .readAsBytesSync();
+                                          await applyMangaCover(
+                                            context,
+                                            manga,
+                                            bytes,
+                                          );
                                         }
                                         if (context.mounted) {
                                           Navigator.pop(context);
