@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:crypto/crypto.dart';
 import 'package:mangayomi/utils/avif.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 
 import 'coordinate_transformer.dart';
 import 'ffi_image_decoder.dart';
@@ -665,7 +666,8 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
         final Uint8List bytes = dynProvider.bytes;
         final tempDir = await getTemporaryDirectory();
         final cacheKey = provider.hashCode.abs();
-        final tempFile = File('${tempDir.path}/ssiv_cache_$cacheKey.png');
+        final ext = detectImageExtension(bytes);
+        final tempFile = File('${tempDir.path}/ssiv_cache_$cacheKey$ext');
         await tempFile.writeAsBytes(bytes, flush: true);
         _resolvedFilePath = tempFile.path;
         await _initImage();
