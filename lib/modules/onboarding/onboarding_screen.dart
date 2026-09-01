@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
@@ -546,7 +547,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
               // icons are drawn on a white tile, which reads as a bright
               // block on a dark theme, so they are not used here.
               Image.asset(
-                'assets/app_icons/icon.png',
+                appIconAssets[2],
                 height: isTv ? 96 : 80,
                 color: theme.brightness == Brightness.light
                     ? Colors.black
