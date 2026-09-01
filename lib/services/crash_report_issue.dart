@@ -21,6 +21,13 @@ Uri buildIssueUrl(
   required String device,
   String? logs,
 }) {
+  if (!isReportableFailure(report)) {
+    throw ArgumentError.value(
+      report,
+      'report',
+      'Only Mangayomi app failures can be filed in this repository',
+    );
+  }
   final cause = report.likelyCause;
 
   final whatHappened = StringBuffer()

@@ -79,6 +79,7 @@ class _ReportTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final cause = report.likelyCause;
+    final scope = crashReportScope(report);
 
     return ExpansionTile(
       title: Text(report.summary, maxLines: 3, overflow: TextOverflow.ellipsis),
@@ -91,7 +92,7 @@ class _ReportTile extends StatelessWidget {
       childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       expandedCrossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (isExtensionFailure(report.error)) ...[
+        if (scope == CrashReportScope.extension) ...[
           // #914 was an extension bug filed here, because the screen offered a
           // Report button pointing at this repository and gave the reader no
           // way to know the difference.
@@ -106,7 +107,7 @@ class _ReportTile extends StatelessWidget {
           ),
           const SizedBox(height: 12),
         ],
-        if (isExpectedFailure(report.error)) ...[
+        if (scope == CrashReportScope.external) ...[
           // #915 and #916 were both filed through this screen for images that
           // failed to load. The likely-cause line was not enough on its own,
           // so say plainly that this one is probably not the app's fault.
@@ -148,7 +149,7 @@ class _ReportTile extends StatelessWidget {
             // Network and extension failures do not belong in this
             // repository, and a fault already sent does not need sending
             // twice (#917, #918).
-            if (isReportableFailure(report.error))
+            if (scope == CrashReportScope.app)
               FilledButton.icon(
                 onPressed: CrashReports.wasReported(report)
                     ? null
