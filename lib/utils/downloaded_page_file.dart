@@ -49,6 +49,19 @@ String detectImageExtension(Uint8List bytes) {
   return knownPageImageExtensions[0];
 }
 
+/// The mime type for an extension from [detectImageExtension]/
+/// [knownPageImageExtensions]. Falls back to 'image/jpeg' for anything else,
+/// matching detectImageExtension's own jpg fallback.
+String mimeTypeForImageExtension(String extension) {
+  return switch (extension.toLowerCase()) {
+    '.png' => 'image/png',
+    '.webp' => 'image/webp',
+    '.gif' => 'image/gif',
+    '.avif' => 'image/avif',
+    _ => 'image/jpeg',
+  };
+}
+
 bool isJpegImage(Uint8List bytes) {
   return bytes.length >= 3 &&
       bytes[0] == 0xFF && // JPEG SOI marker start

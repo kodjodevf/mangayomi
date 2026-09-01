@@ -9,6 +9,7 @@ import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/share.dart';
@@ -57,7 +58,7 @@ class ImageActionsDialog {
 }
 
 class _ImageActionsSheet extends StatelessWidget {
-  final List<int> imageBytes;
+  final Uint8List imageBytes;
   final Manga manga;
   final String fileName;
 
@@ -138,10 +139,7 @@ class _ImageActionsSheet extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   mangaRepository.save(
-                    manga
-                      ..customCoverImage = Uint8List.fromList(
-                        imageBytes,
-                      ).getCoverImage,
+                    manga..customCoverImage = imageBytes.getCoverImage,
                   );
                   Navigator.pop(context, "ok");
                 },
@@ -162,32 +160,30 @@ class _ImageActionsSheet extends StatelessWidget {
   Future<void> _shareImage(BuildContext context) async {
     if (!context.mounted) return;
 
+    final ext = detectImageExtension(imageBytes);
+    final mime = mimeTypeForImageExtension(ext);
+
     final box = context.findRenderObject() as RenderBox?;
     await shareOrCopy(
       ShareParams(
         files: [
-          XFile.fromData(
-            Uint8List.fromList(imageBytes),
-            name: fileName,
-            mimeType: 'image/png',
-          ),
+          XFile.fromData(imageBytes, name: '$fileName$ext', mimeType: mime),
         ],
         sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
       ),
-      fallbackName: fileName,
+      fallbackName: '$fileName$ext',
     );
   }
 
   Future<void> _saveImage(BuildContext context) async {
     final dir = await StorageProvider().getGalleryDirectory();
     if (dir == null) return;
+    final ext = detectImageExtension(imageBytes);
 
-    final file = File(p.join(dir.path, "$fileName.png"));
-    file.writeAsBytesSync(imageBytes);
+    final file = File(p.join(dir.path, "$fileName$ext"));
+    await file.writeAsBytes(imageBytes, flush: true);
 
-    if (context.mounted) {
-      botToast(context.l10n.picture_saved, second: 3);
-    }
+    if (context.mounted) botToast(context.l10n.picture_saved, second: 3);
   }
 }
 
