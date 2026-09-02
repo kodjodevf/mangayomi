@@ -19,7 +19,7 @@ class AndroidProxyServerState extends _$AndroidProxyServerState {
   @override
   String build() {
     String proxyServer =
-        settingsRepository.current.androidProxyServer ??
+        settingsRepository.currentOrNull?.androidProxyServer ??
         "http://127.0.0.1:8080";
     if (!proxyServer.startsWith("http")) {
       proxyServer = "http://$proxyServer";
@@ -44,7 +44,8 @@ class AutoStartExtensionServerOnLaunchState
     extends _$AutoStartExtensionServerOnLaunchState {
   @override
   bool build() {
-    return settingsRepository.current.autoStartExtensionServerOnLaunch ?? false;
+    return settingsRepository.currentOrNull?.autoStartExtensionServerOnLaunch ??
+        false;
   }
 
   void set(bool value) {
