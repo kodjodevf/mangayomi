@@ -5,6 +5,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/services/downloaded_chapter.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
+import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart'
     as ssiv;
@@ -969,6 +970,7 @@ class _MangaChapterPageGalleryState
             page.chapterUrlModel,
             page.pageIndex,
             srcRect: firstRect,
+            localImagePath: page.localImagePath,
           )
           ..loadedWidth = halfWidth
           ..loadedHeight = height;
@@ -984,6 +986,7 @@ class _MangaChapterPageGalleryState
             page.chapterUrlModel,
             page.pageIndex,
             srcRect: secondRect,
+            localImagePath: page.localImagePath,
           )
           ..loadedWidth = halfWidth
           ..loadedHeight = height;
@@ -1334,6 +1337,11 @@ class _MangaChapterPageGalleryState
   /// then scrolled back into it). Re-reads the local `.cbz` archive and
   /// re-populates each page's `archiveImage`.
   ///
+  /// Only applies to archive-backed local chapters (cbz/zip/etc.) - plain
+  /// image-folder chapters carry [UChapDataPreload.localImagePath] pointing
+  /// straight at their real file on disk, so there's nothing to evict or
+  /// reload for them in the first place.
+  ///
   /// Cheap no-op for the common case where [currentChapter] was never
   /// evicted, via [ChapterPreloadManager.isChapterEvicted] - avoids scanning
   /// every page of the chapter on every page-change.
@@ -1346,7 +1354,8 @@ class _MangaChapterPageGalleryState
       if (page.chapter?.id == chapterId &&
           !page.isTransitionPage &&
           page.isLocale == true &&
-          page.archiveImage == null) {
+          page.archiveImage == null &&
+          page.localImagePath == null) {
         needsReload = true;
         break;
       }
@@ -1355,7 +1364,7 @@ class _MangaChapterPageGalleryState
     if (needsReload) {
       final isLocalArchive = (currentChapter.archivePath ?? '').isNotEmpty;
       final archivePath = isLocalArchive
-          ? currentChapter.archivePath
+          ? await resolveLocalArchivePath(currentChapter.archivePath!)
           : (await findDownloadedChapter(currentChapter))?.archive?.path;
 
       if (archivePath != null && await File(archivePath).exists()) {

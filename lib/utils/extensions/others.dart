@@ -81,24 +81,28 @@ extension ImageProviderExtension on ImageProvider {
 extension UChapDataPreloadExtensions on UChapDataPreload {
   Future<String?> get getLocalFilePath async {
     if (isTransitionPage) return null;
+    if (localImagePath != null) {
+      // Local image-folder page: this already IS a real file on disk, so
+      // just hand back its path directly rather than reading it into memory
+      // and writing it back out to a temp file for no reason.
+      return localImagePath;
+    }
     if (archiveImage != null) {
-      final tempDir = Directory.systemTemp;
       final sourceKey = [
         chapter?.id?.toString(),
         chapter?.archivePath,
         directory?.path,
         chapter?.url,
       ].whereType<String>().where((value) => value.isNotEmpty).join('|');
-      final chapterKey = keyToMd5(sourceKey);
-      final tempFile = File(
-        p.join(
-          tempDir.path,
-          'mangayomi_archive_${chapterKey}_${index ?? pageIndex}.jpg',
-        ),
+      final baseName =
+          'mangayomi_archive_${keyToMd5(sourceKey)}_${index ?? pageIndex}';
+      final bytes = archiveImage!;
+      final tempFile = await cacheImageBytesToTempFile(
+        tempDir: Directory.systemTemp,
+        baseName: baseName,
+        extension: detectImageExtension(bytes),
+        bytesProvider: () => bytes,
       );
-      if (!tempFile.existsSync()) {
-        tempFile.writeAsBytesSync(archiveImage!);
-      }
       return tempFile.path;
     }
     if (isLocale == true && directory != null && index != null) {
@@ -117,6 +121,8 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
     Uint8List? imageBytes;
     if (archiveImage != null) {
       imageBytes = archiveImage;
+    } else if (localImagePath != null) {
+      imageBytes = await File(localImagePath!).readAsBytes();
     } else if (isLocale == true && directory != null && index != null) {
       final file = await findDownloadedPageFileAsync(directory!, index!);
       imageBytes = await file?.readAsBytes();
@@ -149,6 +155,8 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
     return isLocale
         ? archiveImage != null
               ? MemoryImage(archiveImage)
+              : data.localImagePath != null
+              ? FileImage(File(data.localImagePath!))
               : FileImage(
                   findDownloadedPageFile(data.directory!, data.index!) ??
                       // Nothing found under any known extension - fall back
