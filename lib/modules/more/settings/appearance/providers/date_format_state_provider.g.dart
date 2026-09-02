@@ -57,7 +57,7 @@ final class SettingsStreamProvider
   }
 }
 
-String _$settingsStreamHash() => r'c868936fe474c9c77cd4709f4963526da39b625a';
+String _$settingsStreamHash() => r'cb522d3257093a056504498dc33dd2dcd9f83fc8';
 
 @ProviderFor(DateFormatState)
 final dateFormatStateProvider = DateFormatStateProvider._();
@@ -91,7 +91,7 @@ final class DateFormatStateProvider
   }
 }
 
-String _$dateFormatStateHash() => r'c585f589b476358c657126e844ce496dea762f2d';
+String _$dateFormatStateHash() => r'48707b62c10a3931c75baaab75ab9b033562043c';
 
 abstract class _$DateFormatState extends $Notifier<String> {
   String build();
@@ -144,7 +144,7 @@ final class RelativeTimesTampsStateProvider
 }
 
 String _$relativeTimesTampsStateHash() =>
-    r'b2246fed868512fdc44a3b403c766a02a1e646d7';
+    r'45567c2d77caa83e059b67492731a2d7ab1fb338';
 
 abstract class _$RelativeTimesTampsState extends $Notifier<int> {
   int build();

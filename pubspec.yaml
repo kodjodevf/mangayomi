@@ -116,6 +116,7 @@ dependencies:
   hooks: ^2.0.2
   native_toolchain_c: ^0.19.2
   cupertino_ui: ^1.0.0
+  image: ^4.9.2
 
 dependency_overrides:
   protobuf: ^5.0.0

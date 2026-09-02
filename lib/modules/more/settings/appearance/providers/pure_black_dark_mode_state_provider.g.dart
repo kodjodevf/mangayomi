@@ -42,7 +42,7 @@ final class PureBlackDarkModeStateProvider
 }
 
 String _$pureBlackDarkModeStateHash() =>
-    r'a597f2ae7d7374fa57fb6c26aed274774d788509';
+    r'e7b45612086e6265d3c1ad464845b122c3f46fb0';
 
 abstract class _$PureBlackDarkModeState extends $Notifier<bool> {
   bool build();

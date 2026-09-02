@@ -41,7 +41,7 @@ final class CustomDnsStateProvider
   }
 }
 
-String _$customDnsStateHash() => r'6061c64d742b3f873e54c1b9ef724b7c0b6350a2';
+String _$customDnsStateHash() => r'0a6832804e4454c5a4cac26853b792f8b3a285cd';
 
 abstract class _$CustomDnsState extends $Notifier<String> {
   String build();
@@ -94,7 +94,7 @@ final class EnableDiscordRpcStateProvider
 }
 
 String _$enableDiscordRpcStateHash() =>
-    r'ab8ce3b29f5d94aedbc88dcb87c7c834648270f5';
+    r'5418804aafecd671892b6d224b568626dd332e6c';
 
 abstract class _$EnableDiscordRpcState extends $Notifier<bool> {
   bool build();
@@ -148,7 +148,7 @@ final class HideDiscordRpcInIncognitoStateProvider
 }
 
 String _$hideDiscordRpcInIncognitoStateHash() =>
-    r'7404a6ef4ae0d831b755c455c51eb3cb7f18f64f';
+    r'e833bc327a904c4be075fa8bd56fe6857e2931db';
 
 abstract class _$HideDiscordRpcInIncognitoState extends $Notifier<bool> {
   bool build();
@@ -204,7 +204,7 @@ final class RpcShowReadingWatchingProgressStateProvider
 }
 
 String _$rpcShowReadingWatchingProgressStateHash() =>
-    r'ce0582267191d4348cfe15f030d60e52c070163e';
+    r'600417beabe737c161b07f84c2f612128c21ad78';
 
 abstract class _$RpcShowReadingWatchingProgressState extends $Notifier<bool> {
   bool build();
@@ -256,7 +256,7 @@ final class RpcShowTitleStateProvider
   }
 }
 
-String _$rpcShowTitleStateHash() => r'b784b58365a72b54cbe46b1582c97c2f9b8057a2';
+String _$rpcShowTitleStateHash() => r'e454bb66349c13c9e88bc255b77756851536ab3d';
 
 abstract class _$RpcShowTitleState extends $Notifier<bool> {
   bool build();
@@ -309,7 +309,7 @@ final class RpcShowCoverImageStateProvider
 }
 
 String _$rpcShowCoverImageStateHash() =>
-    r'85a460d188319f5410ed0d5b0cb201b03c9759e7';
+    r'f172f665d9a956ddadc0efbbf80bc48c12d725e2';
 
 abstract class _$RpcShowCoverImageState extends $Notifier<bool> {
   bool build();
@@ -361,7 +361,7 @@ final class UserAgentStateProvider
   }
 }
 
-String _$userAgentStateHash() => r'e1e9ba333c5dc753813082190da4ee51ad587bb9';
+String _$userAgentStateHash() => r'8b42300ab5d2ea0350db6f3777ec9658fbe94128';
 
 abstract class _$UserAgentState extends $Notifier<String> {
   String build();

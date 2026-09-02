@@ -161,50 +161,80 @@ class CheckForExtensionsUpdateState extends _$CheckForExtensionsUpdateState {
 @riverpod
 Future<Repo?> getRepoInfos(Ref ref, {required String jsonUrl}) async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
+  final cleanUrl = jsonUrl.trim();
 
-  if (['/.min.json', '.pb'].any((suffix) => jsonUrl.endsWith(suffix))) {
-    final result = await ExtensionStoreService.fetchStore(jsonUrl, http);
-    if (result != null) {
-      return Repo(
-        name: result.name,
-        website: result.website,
-        jsonUrl: result.indexUrl,
-      );
-    }
+  // Normalize URLs that don't end with a file name (e.g. https://aidoku-community.github.io/sources)
+  final urlsToTry = <String>[cleanUrl];
+  if (!cleanUrl.endsWith('.json') && !cleanUrl.endsWith('.pb')) {
+    final normalized = cleanUrl.endsWith('/')
+        ? cleanUrl.substring(0, cleanUrl.length - 1)
+        : cleanUrl;
+    urlsToTry.addAll([
+      '$normalized/index.min.json',
+      '$normalized/repo.json',
+      '$normalized/index.json',
+      '$normalized/index_v2.json',
+    ]);
   }
 
-  Map<String, dynamic> infos = {};
-  final match = RegExp(r'^(.*)/[^/]+\.json$').firstMatch(jsonUrl);
-
-  final res = await http.get(Uri.parse(jsonUrl));
-  if (!_checkValidUrl(res)) {
-    return null;
+  // 1. Try ExtensionStoreService (.pb, NetworkExtensionStore JSON, Aidoku JSON index, legacy JSON store)
+  for (final url in urlsToTry) {
+    try {
+      final result = await ExtensionStoreService.fetchStore(url, http);
+      if (result != null &&
+          (result.sources.isNotEmpty || result.name.isNotEmpty)) {
+        return Repo(
+          name: result.name,
+          website: result.website ?? url,
+          jsonUrl: result.indexUrl,
+        );
+      }
+    } catch (_) {}
   }
 
-  if (match != null) {
-    String url = match.group(1)!;
-    final res = await http.get(Uri.parse("$url/repo.json"));
-    if (res.statusCode == 200) {
-      infos.addAll(jsonDecode(res.body));
-    }
+  // 2. Fallback for custom / legacy JSON list format
+  for (final url in urlsToTry) {
+    try {
+      final res = await http.get(Uri.parse(url));
+      if (_checkValidUrl(res)) {
+        Map<String, dynamic> infos = {};
+        final match = RegExp(r'^(.*)/[^/]+\.json$').firstMatch(url);
+        if (match != null) {
+          String baseUrl = match.group(1)!;
+          try {
+            final repoRes = await http.get(Uri.parse("$baseUrl/repo.json"));
+            if (repoRes.statusCode == 200) {
+              final decoded = jsonDecode(repoRes.body);
+              if (decoded is Map<String, dynamic>) {
+                infos.addAll(decoded);
+              }
+            }
+          } catch (_) {}
+        }
+        infos["jsonUrl"] = url;
+        return Repo.fromJson(infos);
+      }
+    } catch (_) {}
   }
 
-  infos["jsonUrl"] = jsonUrl;
-  return Repo.fromJson(infos);
+  return null;
 }
 
 bool _checkValidUrl(Response res) {
   try {
-    final sourceList = (jsonDecode(res.body) as List).map(
-      (e) => Source.fromJson(e),
-    );
-    if (sourceList.firstOrNull?.name == null) {
-      return false;
+    final decoded = jsonDecode(res.body);
+    if (decoded is List) {
+      final sourceList = decoded.map((e) => Source.fromJson(e));
+      if (sourceList.firstOrNull?.name != null) {
+        return true;
+      }
+    } else if (decoded is Map && decoded['sources'] is List) {
+      return true;
     }
   } catch (err) {
     return false;
   }
-  return true;
+  return false;
 }
 
 final isExtensionServerInstalledStreamProvider = StreamProvider<bool>((

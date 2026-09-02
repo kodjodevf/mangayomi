@@ -59,7 +59,7 @@ final class AddDownloadToQueueProvider
 }
 
 String _$addDownloadToQueueHash() =>
-    r'35e8e724755be265a9bf167e4641336630a465d2';
+    r'b9f610e3841eec4e3fadcb08218b1f67b71ebd9e';
 
 final class AddDownloadToQueueFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<void>, Chapter> {
@@ -136,7 +136,7 @@ final class DownloadChapterProvider
   }
 }
 
-String _$downloadChapterHash() => r'c65a3a639c791a9c45baffaecc218c8d013e774a';
+String _$downloadChapterHash() => r'8f5e6508c6a54470c5f60e44ea0d571e05d6820d';
 
 final class DownloadChapterFamily extends $Family
     with
@@ -215,7 +215,7 @@ final class ProcessDownloadsProvider
   }
 }
 
-String _$processDownloadsHash() => r'61cfdcfe76480853d4f2102e4435bd3bdc36c939';
+String _$processDownloadsHash() => r'2db315d4f21665b2283b4dfe9470189aaa78fa9b';
 
 final class ProcessDownloadsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<void>, bool?> {

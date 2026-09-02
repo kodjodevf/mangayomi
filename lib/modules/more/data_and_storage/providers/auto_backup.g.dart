@@ -42,7 +42,7 @@ final class BackupFrequencyStateProvider
 }
 
 String _$backupFrequencyStateHash() =>
-    r'2e73e3fe54456978ff92f49cdc67e84f2af6de7c';
+    r'024555164a32d29b5e4ceea7526fb6eee2b97414';
 
 abstract class _$BackupFrequencyState extends $Notifier<int> {
   int build();
@@ -96,7 +96,7 @@ final class BackupFrequencyOptionsStateProvider
 }
 
 String _$backupFrequencyOptionsStateHash() =>
-    r'9aa31bef65e0e2f20b306ed17ff058df2f24a635';
+    r'8935109dcde30adac4ae1d9ec1b87f2dd3965d00';
 
 abstract class _$BackupFrequencyOptionsState extends $Notifier<List<int>> {
   List<int> build();
@@ -149,7 +149,7 @@ final class AutoBackupLocationStateProvider
 }
 
 String _$autoBackupLocationStateHash() =>
-    r'c189f31917e32ce25ff195641ee449d969326b9b';
+    r'ef65fcd5133f4a5b45f00069b3f7030fe5487c25';
 
 abstract class _$AutoBackupLocationState extends $Notifier<(String, String)> {
   (String, String) build();
@@ -200,4 +200,4 @@ final class CheckAndBackupProvider
   }
 }
 
-String _$checkAndBackupHash() => r'7b1aabd24ab2a523571751df931576608b7f0e89';
+String _$checkAndBackupHash() => r'433c39a082ac1b6a22de555c2f00c331c15a726a';

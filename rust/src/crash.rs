@@ -15,7 +15,7 @@
 //! the hand-rolled integer writing below.
 
 #[cfg(unix)]
-mod imp {
+pub mod imp {
     use std::os::raw::{c_char, c_int};
     use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 

@@ -70,7 +70,7 @@ final class GetArchivesDataFromDirectoryProvider
 }
 
 String _$getArchivesDataFromDirectoryHash() =>
-    r'2f343dfe03bb479e80e6343f389fce8830998f0e';
+    r'05d4703225737ffc2b4ad617f580fc6359e01be0';
 
 final class GetArchivesDataFromDirectoryFamily extends $Family
     with
@@ -154,7 +154,7 @@ final class GetArchiveDataFromDirectoryProvider
 }
 
 String _$getArchiveDataFromDirectoryHash() =>
-    r'81705a8d04d4f4d1454a82b35e55eb2e0397ea6f';
+    r'c6243f207e3aa6e5a8db643780e6d1af42047a12';
 
 final class GetArchiveDataFromDirectoryFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<LocalArchive>>, String> {
@@ -232,7 +232,7 @@ final class GetArchivesDataFromFileProvider
 }
 
 String _$getArchivesDataFromFileHash() =>
-    r'04d8ce722c077a7def61dda20ff18b23090fb646';
+    r'e039e57cf9dc6e15d7261b2adeaef5b769a0b649';
 
 final class GetArchivesDataFromFileFamily extends $Family
     with
@@ -313,7 +313,7 @@ final class GetArchiveDataFromFileProvider
 }
 
 String _$getArchiveDataFromFileHash() =>
-    r'a5d8bf8246bfa250af6a7fd3c09bba6a012e0b2d';
+    r'1c35b08a804e3498f670e588e990acd06769a46c';
 
 final class GetArchiveDataFromFileFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<LocalArchive>, String> {

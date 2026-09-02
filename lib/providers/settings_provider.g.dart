@@ -41,7 +41,7 @@ final class CachedSettingsProvider
   }
 }
 
-String _$cachedSettingsHash() => r'593cb97ba902236c390b36f5d6d47cb96acb7cfa';
+String _$cachedSettingsHash() => r'cca31a701908621a8cdc9b641bb2eb70225a2f7b';
 
 abstract class _$CachedSettings extends $Notifier<Settings> {
   Settings build();
