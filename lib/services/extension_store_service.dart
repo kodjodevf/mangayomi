@@ -286,7 +286,7 @@ class ExtensionStoreService {
             ..sourceCodeLanguage = SourceCodeLanguage.aidoku
             ..itemType = ItemType.manga
             ..iconUrl = iconUrl
-            ..notes = "Performance might be poor due to limited engine";
+            ..notes = null;
           src.id = 'aidoku-${e['id']}-$lang'.hashCode.abs();
           sources.add(src);
         }
@@ -359,7 +359,7 @@ class ExtensionStoreService {
               ..sourceCodeLanguage = SourceCodeLanguage.aidoku
               ..itemType = ItemType.manga
               ..iconUrl = icon
-              ..notes = "Performance might be poor due to limited engine";
+              ..notes = null;
             src.id = 'aidoku-${e['id']}-$lang'.hashCode;
             sources.add(src);
           }
