@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http_client_helper/http_client_helper.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/avif.dart';
 import 'package:path/path.dart';
@@ -492,7 +493,9 @@ class CustomExtendedNetworkImageProvider
 
     var request = Request('GET', resolved);
     request.headers.addAll(optimizedHeaders);
-
+    if (request.headers['User-Agent'] == 'Aidoku') {
+      request.headers['User-Agent'] = settingsRepository.current.userAgent!;
+    }
     StreamedResponse response = await MClient.init(
       showCloudFlareError: showCloudFlareError,
     ).send(request);

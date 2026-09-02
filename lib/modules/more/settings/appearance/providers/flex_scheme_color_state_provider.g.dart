@@ -60,7 +60,7 @@ final class FlexSchemeColorStateProvider
 }
 
 String _$flexSchemeColorStateHash() =>
-    r'dff2511f13a308b2f2a79cfbff3be471c8644c71';
+    r'5e694b88ddc8cda925b9fea6b04d55ce26e985b5';
 
 /// Provides both the selected theme index and the resolved FlexSchemeColor.
 ///

@@ -301,7 +301,7 @@ String toString() {
 
 
 class RhttpError_RhttpStatusCodeError extends RhttpError {
-  const RhttpError_RhttpStatusCodeError(this.field0, List<(String, String)> field1, this.field2): _field1 = field1,super._();
+  const RhttpError_RhttpStatusCodeError(this.field0,  List<(String, String)> field1, this.field2): _field1 = field1,super._();
   
 
  final  int field0;

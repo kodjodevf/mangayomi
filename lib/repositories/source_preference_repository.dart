@@ -8,34 +8,62 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 
 class SourcePreferenceRepository {
-  SourcePreference? findByKey(int? sourceId, String? key) => isar
-      .sourcePreferences
-      .filter()
-      .sourceIdEqualTo(sourceId)
-      .keyEqualTo(key)
-      .findFirstSync();
+  SourcePreference? findByKey(int? sourceId, String? key) {
+    try {
+      return isar.sourcePreferences
+          .filter()
+          .sourceIdEqualTo(sourceId)
+          .keyEqualTo(key)
+          .findFirstSync();
+    } catch (_) {
+      return null;
+    }
+  }
 
-  List<SourcePreference> getAll() =>
-      isar.sourcePreferences.filter().idIsNotNull().findAllSync();
+  List<SourcePreference> getAll() {
+    try {
+      return isar.sourcePreferences.filter().idIsNotNull().findAllSync();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  List<SourcePreference> getAllForSource(int? sourceId) {
+    if (sourceId == null) return [];
+    try {
+      return isar.sourcePreferences
+          .filter()
+          .sourceIdEqualTo(sourceId)
+          .findAllSync();
+    } catch (_) {
+      return [];
+    }
+  }
 
   SourcePreferenceStringValue? findStringValueByKey(
     int? sourceId,
     String? key,
-  ) => isar.sourcePreferenceStringValues
-      .filter()
-      .sourceIdEqualTo(sourceId)
-      .keyEqualTo(key)
-      .findFirstSync();
+  ) {
+    try {
+      return isar.sourcePreferenceStringValues
+          .filter()
+          .sourceIdEqualTo(sourceId)
+          .keyEqualTo(key)
+          .findFirstSync();
+    } catch (_) {
+      return null;
+    }
+  }
 
-  // Also updates the source's embedded preferenceList (mihon sources keep a
-  // JSON copy there) alongside the top-level SourcePreference row.
+  // Also updates the source's embedded preferenceList alongside the top-level SourcePreference row.
   Future<void> save(
     SourcePreference sourcePreference,
     Source source,
     SourcePreference? existing,
   ) => dbWriteQueue.run(
     () => isar.writeTxn(() async {
-      if (source.sourceCodeLanguage == SourceCodeLanguage.mihon &&
+      if ((source.sourceCodeLanguage == SourceCodeLanguage.mihon ||
+              source.sourceCodeLanguage == SourceCodeLanguage.aidoku) &&
           source.preferenceList != null) {
         final prefs = (jsonDecode(source.preferenceList!) as List)
             .map((e) => SourcePreference.fromJson(e))

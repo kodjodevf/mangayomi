@@ -57,7 +57,7 @@ final class TracksProvider extends $NotifierProvider<Tracks, TrackPreference?> {
   }
 }
 
-String _$tracksHash() => r'05f1531a3200b0ad9f1e4bf74cd9eb44301f9f21';
+String _$tracksHash() => r'b4300ea121298efcc206ff3482b7e9f70121e290';
 
 final class TracksFamily extends $Family
     with
@@ -139,7 +139,7 @@ final class UpdateProgressAfterReadingStateProvider
 }
 
 String _$updateProgressAfterReadingStateHash() =>
-    r'ff62bff97327d9c6b2c694fb20ca8df98e5107a0';
+    r'6bfd4540efdac00da9227660e7da9d5e20904f52';
 
 abstract class _$UpdateProgressAfterReadingState extends $Notifier<bool> {
   bool build();

@@ -22,6 +22,7 @@ abstract interface class AidokuRunner {
   Future<MangaPageResult> getMangaList(Listing listing, int page);
   Future<Home> getHome();
   Future<Uint8List?> processPageImage(Response response, {PageContext? context});
+  Future<ImageRequestResult?> getImageRequest(String url, {PageContext? context});
   Future<List<Filter>> getSearchFilters();
   Future<List<Setting>> getSettings();
   Future<List<Listing>> getListings();

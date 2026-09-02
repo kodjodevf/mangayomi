@@ -42,7 +42,7 @@ final class DefaultReadingModeStateProvider
 }
 
 String _$defaultReadingModeStateHash() =>
-    r'6125feb2aff79c017dc55ea2faa2591916af051a';
+    r'e450969aaf4ca328bf835cc75a48fcd6eb025a5b';
 
 abstract class _$DefaultReadingModeState extends $Notifier<ReaderMode> {
   ReaderMode build();
@@ -96,7 +96,7 @@ final class AnimatePageTransitionsStateProvider
 }
 
 String _$animatePageTransitionsStateHash() =>
-    r'b65e7a08d290f4ec6b9616eb70ce2830b51582e6';
+    r'2306d7ca1e417a1148ec4a5550e69fdc76bf6987';
 
 abstract class _$AnimatePageTransitionsState extends $Notifier<bool> {
   bool build();
@@ -150,7 +150,7 @@ final class DoubleTapAnimationSpeedStateProvider
 }
 
 String _$doubleTapAnimationSpeedStateHash() =>
-    r'6b7b88dd088b7c8328960553b3a8fd17066030a6';
+    r'6e1a8f3c19f40f854a93edc10800ca5b07fff1a9';
 
 abstract class _$DoubleTapAnimationSpeedState extends $Notifier<int> {
   int build();
@@ -202,7 +202,7 @@ final class CropBordersStateProvider
   }
 }
 
-String _$cropBordersStateHash() => r'b8a38a59e240909f81a5faad44b54d3ced025de8';
+String _$cropBordersStateHash() => r'f71dc6c6cc1004d5b13c4ee12772d25052f3eb62';
 
 abstract class _$CropBordersState extends $Notifier<bool> {
   bool build();
@@ -254,7 +254,7 @@ final class ScaleTypeStateProvider
   }
 }
 
-String _$scaleTypeStateHash() => r'07f29cba7193242795134b6d37bb393210a191a1';
+String _$scaleTypeStateHash() => r'aed1ea0a2fb9b2a8214dda8ba782a4670a266be9';
 
 abstract class _$ScaleTypeState extends $Notifier<ScaleType> {
   ScaleType build();
@@ -307,7 +307,7 @@ final class PagePreloadAmountStateProvider
 }
 
 String _$pagePreloadAmountStateHash() =>
-    r'45e9810e73e93b7a88a1a3b876da73123024cc71';
+    r'd6d99a681ea3e499ea911040321ebd39bbf117a2';
 
 abstract class _$PagePreloadAmountState extends $Notifier<int> {
   int build();
@@ -360,7 +360,7 @@ final class BackgroundColorStateProvider
 }
 
 String _$backgroundColorStateHash() =>
-    r'4abc4c6b95bf97fe50a3290da94cddf935fa96da';
+    r'47d170fccf6c6ac6abfd9c954cfde34fedfc8082';
 
 abstract class _$BackgroundColorState extends $Notifier<BackgroundColor> {
   BackgroundColor build();
@@ -413,7 +413,7 @@ final class UsePageTapZonesStateProvider
 }
 
 String _$usePageTapZonesStateHash() =>
-    r'8bdfc5d257eeba63bb4f4ff3ceda766bcc58dc37';
+    r'819291e54970fbe0093c62407609a0b037a2a1bf';
 
 abstract class _$UsePageTapZonesState extends $Notifier<bool> {
   bool build();
@@ -466,7 +466,7 @@ final class FullScreenReaderStateProvider
 }
 
 String _$fullScreenReaderStateHash() =>
-    r'6685d29e04c71975c3442a5299299e761ff72997';
+    r'2357c5e29f054b477bd508a9e293b3d4d4e52883';
 
 abstract class _$FullScreenReaderState extends $Notifier<bool> {
   bool build();
@@ -519,7 +519,7 @@ final class NavigationOrderStateProvider
 }
 
 String _$navigationOrderStateHash() =>
-    r'7b40ce1b52f02ebac46ed6d0d5ab9ff9590b6885';
+    r'7d18e3b34cad79446220ed47138d59892896b479';
 
 abstract class _$NavigationOrderState extends $Notifier<List<String>> {
   List<String> build();
@@ -571,7 +571,7 @@ final class HideItemsStateProvider
   }
 }
 
-String _$hideItemsStateHash() => r'3e719a5dfb38c1510214f7bcd8dbd786a13c4566';
+String _$hideItemsStateHash() => r'53a68542706afd8da39af6a574e1a6548f627ef2';
 
 abstract class _$HideItemsState extends $Notifier<List<String>> {
   List<String> build();
@@ -625,7 +625,7 @@ final class MergeLibraryNavMobileStateProvider
 }
 
 String _$mergeLibraryNavMobileStateHash() =>
-    r'9b7979f6fb9082dd48a90447d44715628d312116';
+    r'4db6036c59cb984fce4564a8134a8390122ed112';
 
 abstract class _$MergeLibraryNavMobileState extends $Notifier<bool> {
   bool build();
@@ -678,7 +678,7 @@ final class NovelFontSizeStateProvider
 }
 
 String _$novelFontSizeStateHash() =>
-    r'9e4fa59d8c6b06b36ce485671ee059f8c4a7445e';
+    r'936d26f6f6d4f5db39d5f5b7618ed4de42353432';
 
 abstract class _$NovelFontSizeState extends $Notifier<int> {
   int build();
@@ -731,7 +731,7 @@ final class NovelTextAlignStateProvider
 }
 
 String _$novelTextAlignStateHash() =>
-    r'383ff78e9ce21503e163f13d5b87dd021aef6ab4';
+    r'2e903073dae3dfdce09ab7c4f7b682c5d1ad01d4';
 
 abstract class _$NovelTextAlignState extends $Notifier<NovelTextAlign> {
   NovelTextAlign build();
@@ -784,7 +784,7 @@ final class NovelReaderThemeStateProvider
 }
 
 String _$novelReaderThemeStateHash() =>
-    r'3149f8ea16353f770b57cce9f27f3e63d062ee7b';
+    r'0b9af2ab3115fc1ce64b90c6e8edfd7bb1a9ef5d';
 
 abstract class _$NovelReaderThemeState extends $Notifier<String> {
   String build();
@@ -837,7 +837,7 @@ final class NovelReaderTextColorStateProvider
 }
 
 String _$novelReaderTextColorStateHash() =>
-    r'28a1987b49a9b0a209c4848dfa4c8c730432c75d';
+    r'836dc0e2c49b431b35156ae51ae207c8ea7dc0c6';
 
 abstract class _$NovelReaderTextColorState extends $Notifier<String> {
   String build();
@@ -890,7 +890,7 @@ final class NovelReaderPaddingStateProvider
 }
 
 String _$novelReaderPaddingStateHash() =>
-    r'572f1a7134c499a9a5107d29552beca9a5fd55ea';
+    r'b9017b6741fb725e05a414f3e528f514923538f0';
 
 abstract class _$NovelReaderPaddingState extends $Notifier<int> {
   int build();
@@ -944,7 +944,7 @@ final class NovelReaderLineHeightStateProvider
 }
 
 String _$novelReaderLineHeightStateHash() =>
-    r'cc21fb550eecf8d7869c076ab47647afd2873996';
+    r'8614713b5407d697d200d3d8e14b7653fe5424bf';
 
 abstract class _$NovelReaderLineHeightState extends $Notifier<double> {
   double build();
@@ -997,7 +997,7 @@ final class NovelFontFamilyStateProvider
 }
 
 String _$novelFontFamilyStateHash() =>
-    r'1b069397f08cb43ac011cb6ca99dfeed0083f34f';
+    r'153e6631fecfee6ca5b9d72de00e4aa020a3f78d';
 
 abstract class _$NovelFontFamilyState extends $Notifier<String?> {
   String? build();
@@ -1051,7 +1051,7 @@ final class NovelShowScrollPercentageStateProvider
 }
 
 String _$novelShowScrollPercentageStateHash() =>
-    r'adc9cb5def293fa4ed8b367929e7538f6f056b76';
+    r'5e3a9ce6d113832f0aba70b743ab1822b6d1afda';
 
 abstract class _$NovelShowScrollPercentageState extends $Notifier<bool> {
   bool build();
@@ -1107,7 +1107,7 @@ final class NovelRemoveExtraParagraphSpacingStateProvider
 }
 
 String _$novelRemoveExtraParagraphSpacingStateHash() =>
-    r'5c784a57ce5ee57524317dd00d4b40020e5e0582';
+    r'ba3b09ecbf0d85907fbf23f88469b27aef2d4826';
 
 abstract class _$NovelRemoveExtraParagraphSpacingState extends $Notifier<bool> {
   bool build();
@@ -1160,7 +1160,7 @@ final class NovelTapToScrollStateProvider
 }
 
 String _$novelTapToScrollStateHash() =>
-    r'4ad09be8c324b019bd1d94cd8d77ef6077bd2100';
+    r'01d62665dca6bb284d877b20c53c2034773c8764';
 
 abstract class _$NovelTapToScrollState extends $Notifier<bool> {
   bool build();
@@ -1213,7 +1213,7 @@ final class ShowPagesNumberStateProvider
 }
 
 String _$showPagesNumberStateHash() =>
-    r'c0b72cae1168bc911e0174bd8934842c245eee1b';
+    r'428ad72f71e7400e46299b0d7c549b4975d02410';
 
 abstract class _$ShowPagesNumberState extends $Notifier<dynamic> {
   dynamic build();
@@ -1266,7 +1266,7 @@ final class KeepScreenOnReaderStateProvider
 }
 
 String _$keepScreenOnReaderStateHash() =>
-    r'af1380082a36e449c1c7bed4ea750568362fdf91';
+    r'd37c237f230f873588375066a6061897f939cc12';
 
 abstract class _$KeepScreenOnReaderState extends $Notifier<bool> {
   bool build();
@@ -1319,7 +1319,7 @@ final class WebtoonSidePaddingStateProvider
 }
 
 String _$webtoonSidePaddingStateHash() =>
-    r'18c3373c23ea9a4cd394d61c184e1258ad529e8c';
+    r'2e3551345e1b6b7ba37bc1050a9831e89e6e1781';
 
 abstract class _$WebtoonSidePaddingState extends $Notifier<int> {
   int build();
@@ -1371,7 +1371,7 @@ final class ShowPageGapsStateProvider
   }
 }
 
-String _$showPageGapsStateHash() => r'323f636fb897e977d93159f836ddc5ec707a03d6';
+String _$showPageGapsStateHash() => r'44f93a1aaaa538cae95ccd8ffbe84148e3ae7792';
 
 abstract class _$ShowPageGapsState extends $Notifier<bool> {
   bool build();
@@ -1425,7 +1425,7 @@ final class AutoReadDuplicateChaptersStateProvider
 }
 
 String _$autoReadDuplicateChaptersStateHash() =>
-    r'288816e17fefa753c690cc43a40cfbcf5352b9df';
+    r'556a6f81990bcd0d042edc364933a9f7250dc1cd';
 
 abstract class _$AutoReadDuplicateChaptersState extends $Notifier<bool> {
   bool build();
@@ -1477,7 +1477,7 @@ final class InvertColorsStateProvider
   }
 }
 
-String _$invertColorsStateHash() => r'5ea55fa4eace6cefb7f2a2fcbaada1e7bcd9365d';
+String _$invertColorsStateHash() => r'ee39d6f4e403a0add0b7e7907076e13ce9af7f1a';
 
 abstract class _$InvertColorsState extends $Notifier<bool> {
   bool build();
@@ -1529,7 +1529,7 @@ final class GrayscaleStateProvider
   }
 }
 
-String _$grayscaleStateHash() => r'33f6b38bd7de6fb19d8f4eda1358a6bb674e1d47';
+String _$grayscaleStateHash() => r'71b4ad9f296fe22cb7cfcb625784e2bd692b8072';
 
 abstract class _$GrayscaleState extends $Notifier<bool> {
   bool build();
@@ -1582,7 +1582,7 @@ final class ReaderBrightnessStateProvider
 }
 
 String _$readerBrightnessStateHash() =>
-    r'59be73514f974e078677dad602142edac445689c';
+    r'9a5e298363f4ec6b96f9cf9777fb808fb0052217';
 
 abstract class _$ReaderBrightnessState extends $Notifier<double> {
   double build();
@@ -1635,7 +1635,7 @@ final class ReaderContrastStateProvider
 }
 
 String _$readerContrastStateHash() =>
-    r'b423bd15b635bac656e895a6e3b32bc639969e31';
+    r'8af00e6759e8a0c8db63d9e09b7cdcde21abeab9';
 
 abstract class _$ReaderContrastState extends $Notifier<double> {
   double build();
@@ -1688,7 +1688,7 @@ final class ReaderSaturationStateProvider
 }
 
 String _$readerSaturationStateHash() =>
-    r'a3918acbb99c3a631256553c553c34abff198a18';
+    r'83cc480f8a84dea239902954fb35b133b5b8c20b';
 
 abstract class _$ReaderSaturationState extends $Notifier<double> {
   double build();
@@ -1742,7 +1742,7 @@ final class ReaderNavigationLayoutStateProvider
 }
 
 String _$readerNavigationLayoutStateHash() =>
-    r'680c09d930c2f50a7a949c53196cafa082fe47b8';
+    r'b021ad7bc7e0593149dc0482c88a3fe95bc54319';
 
 abstract class _$ReaderNavigationLayoutState extends $Notifier<int> {
   int build();
@@ -1795,7 +1795,7 @@ final class TtsSpeechRateStateProvider
 }
 
 String _$ttsSpeechRateStateHash() =>
-    r'c59420fd0d1b4435b556b6b93c0ce03bc3b46d2e';
+    r'a6a202fe0e2e43d95704d0df9567043124cb25f4';
 
 abstract class _$TtsSpeechRateState extends $Notifier<double> {
   double build();
@@ -1847,7 +1847,7 @@ final class TtsPitchStateProvider
   }
 }
 
-String _$ttsPitchStateHash() => r'bb784b9ae5ced137678f68918aa5d1430a0d4bc9';
+String _$ttsPitchStateHash() => r'b2d21c6a0a6f082bf217a1cc367e344cdb132017';
 
 abstract class _$TtsPitchState extends $Notifier<double> {
   double build();
@@ -1899,7 +1899,7 @@ final class TtsLanguageStateProvider
   }
 }
 
-String _$ttsLanguageStateHash() => r'5a91ad875c52cb87022e44d11d3db2d68dce9976';
+String _$ttsLanguageStateHash() => r'b5b9a9919fdef04f1f1c8f8c5dd568739bacb5a0';
 
 abstract class _$TtsLanguageState extends $Notifier<String?> {
   String? build();
@@ -1951,7 +1951,7 @@ final class TtsVoiceStateProvider
   }
 }
 
-String _$ttsVoiceStateHash() => r'c132058e15997489fe2ef2712c22688f65aa6b99';
+String _$ttsVoiceStateHash() => r'199b43c16e823e0b1197038e25b8b131e1fcd221';
 
 abstract class _$TtsVoiceState extends $Notifier<String?> {
   String? build();
@@ -2004,7 +2004,7 @@ final class SplitWidePagesStateProvider
 }
 
 String _$splitWidePagesStateHash() =>
-    r'c27b7a965cf7b0f5acbf993689185f3c788d67d6';
+    r'd36cde97af3dd9df15a65ddffce38a81ee2058ef';
 
 abstract class _$SplitWidePagesState extends $Notifier<bool> {
   bool build();
@@ -2057,7 +2057,7 @@ final class DualPageInvertStateProvider
 }
 
 String _$dualPageInvertStateHash() =>
-    r'9ddc66d5b712c5c122e4c264213e24b40a52b5e5';
+    r'966a2d3d38e05852f433c942eb542c6ad5de5edd';
 
 abstract class _$DualPageInvertState extends $Notifier<bool> {
   bool build();
@@ -2110,7 +2110,7 @@ final class DualPageRotateToFitStateProvider
 }
 
 String _$dualPageRotateToFitStateHash() =>
-    r'2fc96d6e7a33113d3a89c738c5df15193ae71b86';
+    r'4058d8217c9c81b2fc0714545ba5407f53dcda48';
 
 abstract class _$DualPageRotateToFitState extends $Notifier<bool> {
   bool build();
@@ -2164,7 +2164,7 @@ final class DualPageRotateToFitInvertStateProvider
 }
 
 String _$dualPageRotateToFitInvertStateHash() =>
-    r'44afe65591b107a15325fea77d36e07a26548021';
+    r'd4001f41ff78e32f67dd3ba4976d4d465cc63304';
 
 abstract class _$DualPageRotateToFitInvertState extends $Notifier<bool> {
   bool build();
@@ -2217,7 +2217,7 @@ final class LandscapeZoomStateProvider
 }
 
 String _$landscapeZoomStateHash() =>
-    r'b345f815068658747c1daee6d9af997ed354efb8';
+    r'3967dc50c83c782194d1dc6fe53a57b46b90088b';
 
 abstract class _$LandscapeZoomState extends $Notifier<bool> {
   bool build();
@@ -2270,7 +2270,7 @@ final class ZoomStartPositionStateProvider
 }
 
 String _$zoomStartPositionStateHash() =>
-    r'4e42aabc355c9c7b879e309e2a7e05db1068a483';
+    r'b1b08fce23f83049c314371812b30722593308e8';
 
 abstract class _$ZoomStartPositionState extends $Notifier<int> {
   int build();
@@ -2323,7 +2323,7 @@ final class NavigateToPanStateProvider
 }
 
 String _$navigateToPanStateHash() =>
-    r'f02ade437b1fe984cb465cd975a0fa0e19f365ca';
+    r'978651685d000c9875e4fc728a64cfd0f2039bda';
 
 abstract class _$NavigateToPanState extends $Notifier<bool> {
   bool build();
@@ -2376,7 +2376,7 @@ final class TappingInversionStateProvider
 }
 
 String _$tappingInversionStateHash() =>
-    r'7dd5f3036fdb18d9063febbb82d86e04fb61de3d';
+    r'd1ad4959b0e9c3af38d0d4ad48d80aaef9ce3060';
 
 abstract class _$TappingInversionState extends $Notifier<int> {
   int build();
@@ -2429,7 +2429,7 @@ final class FlashOnPageChangeStateProvider
 }
 
 String _$flashOnPageChangeStateHash() =>
-    r'528e623f048eb868426b761482765cec0f1a0cad';
+    r'f56332586210e902821cf4c4dd4b1fdc200f9073';
 
 abstract class _$FlashOnPageChangeState extends $Notifier<bool> {
   bool build();
@@ -2482,7 +2482,7 @@ final class FlashDurationStateProvider
 }
 
 String _$flashDurationStateHash() =>
-    r'c267a259b6eef748c6537e4a23f96ad4cd7b25eb';
+    r'dfb8cc81ac37ccf821e7fff309e6b798a5413135';
 
 abstract class _$FlashDurationState extends $Notifier<int> {
   int build();
@@ -2535,7 +2535,7 @@ final class FlashIntervalStateProvider
 }
 
 String _$flashIntervalStateHash() =>
-    r'8cee27191fcfcb703534d7998f7be4f027fae774';
+    r'2bee7e673f9a2f3dad62c6450e9dbe71d342eaa0';
 
 abstract class _$FlashIntervalState extends $Notifier<int> {
   int build();
@@ -2587,7 +2587,7 @@ final class FlashColorStateProvider
   }
 }
 
-String _$flashColorStateHash() => r'75930031561086c021f6069a44af12d68dde7538';
+String _$flashColorStateHash() => r'a04a6604f5fbd72ccb6a82eac0eeacc1c7f9ded5';
 
 abstract class _$FlashColorState extends $Notifier<int> {
   int build();
@@ -2643,7 +2643,7 @@ final class ShowNavigationOverlayOnStartStateProvider
 }
 
 String _$showNavigationOverlayOnStartStateHash() =>
-    r'e847dc6c796d9e807d850ff92b093329607035ac';
+    r'bf6fde876bb3bf0afa71b4793eaffbdeec6b3137';
 
 abstract class _$ShowNavigationOverlayOnStartState extends $Notifier<bool> {
   bool build();
@@ -2697,7 +2697,7 @@ final class WebtoonDisableZoomOutStateProvider
 }
 
 String _$webtoonDisableZoomOutStateHash() =>
-    r'e5a2ad7e4307cfa47607cf9395becc70cf7a47c9';
+    r'663d9a9db77475093a63d9916e7d3d36acf0a29c';
 
 abstract class _$WebtoonDisableZoomOutState extends $Notifier<bool> {
   bool build();
@@ -2752,7 +2752,7 @@ final class WebtoonDoubleTapZoomEnabledStateProvider
 }
 
 String _$webtoonDoubleTapZoomEnabledStateHash() =>
-    r'2d1357a9dd732b7e5b8b99ec3f9d7d913bd70937';
+    r'56bc112f67520acadcb035bd31d8749bd757f54f';
 
 abstract class _$WebtoonDoubleTapZoomEnabledState extends $Notifier<bool> {
   bool build();
@@ -2805,7 +2805,7 @@ final class ReaderHideThresholdStateProvider
 }
 
 String _$readerHideThresholdStateHash() =>
-    r'bf205952490921347c43288678e289686c985f11';
+    r'7bce8198f707777de00cdba98372f3310cf9b862';
 
 abstract class _$ReaderHideThresholdState extends $Notifier<int> {
   int build();

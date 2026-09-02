@@ -6,6 +6,8 @@ import 'package:mangayomi/repositories/source_preference_repository.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/services/get_source_preference.dart';
 
+import 'package:mangayomi/eval/aidoku/aidoku_ext_dart.dart' as aidoku;
+
 void setPreferenceSetting(SourcePreference sourcePreference, Source source) {
   final sourcePref = sourcePreferenceRepository.findByKey(
     source.id,
@@ -16,6 +18,31 @@ void setPreferenceSetting(SourcePreference sourcePreference, Source source) {
         .save(sourcePreference, source, sourcePref)
         .catchError((_) {}),
   );
+
+  if (source.sourceCodeLanguage == SourceCodeLanguage.aidoku &&
+      sourcePreference.key != null) {
+    final key = sourcePreference.key!;
+    dynamic val;
+    if (sourcePreference.listPreference != null) {
+      final p = sourcePreference.listPreference!;
+      val = (p.entryValues != null &&
+              p.valueIndex != null &&
+              p.valueIndex! < p.entryValues!.length)
+          ? p.entryValues![p.valueIndex!]
+          : p.valueIndex;
+    } else if (sourcePreference.checkBoxPreference != null) {
+      val = sourcePreference.checkBoxPreference!.value;
+    } else if (sourcePreference.switchPreferenceCompat != null) {
+      val = sourcePreference.switchPreferenceCompat!.value;
+    } else if (sourcePreference.multiSelectListPreference != null) {
+      val = sourcePreference.multiSelectListPreference!.values;
+    } else if (sourcePreference.editTextPreference != null) {
+      val = sourcePreference.editTextPreference!.value;
+    }
+    if (val != null) {
+      aidoku.SettingsStore.shared.setValue(key, val);
+    }
+  }
 }
 
 dynamic getPreferenceValue(int sourceId, String key) {

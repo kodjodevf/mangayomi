@@ -42,7 +42,7 @@ final class CustomColorFilterStateProvider
 }
 
 String _$customColorFilterStateHash() =>
-    r'e83ed3712f2f69c6ad15b2b3b10ff17cf8bb2898';
+    r'a34dc2b62247cd524df9669c5bed81114461dbd7';
 
 abstract class _$CustomColorFilterState extends $Notifier<CustomColorFilter?> {
   CustomColorFilter? build();
@@ -96,7 +96,7 @@ final class EnableCustomColorFilterStateProvider
 }
 
 String _$enableCustomColorFilterStateHash() =>
-    r'20579f0101c7f64051d63ea85813aeb068fdb3c9';
+    r'4ab62af9770766ff0dff5262ef1c803b43888c6a';
 
 abstract class _$EnableCustomColorFilterState extends $Notifier<bool> {
   bool build();
@@ -149,7 +149,7 @@ final class ColorFilterBlendModeStateProvider
 }
 
 String _$colorFilterBlendModeStateHash() =>
-    r'92e84b352b519dd32d1c418d7477a10a8921bc19';
+    r'2fa0b53e3f73a3e41116e0bc9321590e2a940394';
 
 abstract class _$ColorFilterBlendModeState
     extends $Notifier<ColorFilterBlendMode> {

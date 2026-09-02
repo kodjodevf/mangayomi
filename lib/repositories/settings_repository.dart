@@ -8,7 +8,13 @@ import 'package:mangayomi/repositories/db_write_queue.dart';
 class SettingsRepository {
   Settings get current => isar.settings.getSync(227)!;
 
-  Settings? get currentOrNull => isar.settings.getSync(227);
+  Settings? get currentOrNull {
+    try {
+      return isar.settings.getSync(227);
+    } catch (_) {
+      return null;
+    }
+  }
 
   Future<Settings?> get currentAsync => isar.settings.get(227);
 

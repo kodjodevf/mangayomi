@@ -27,6 +27,7 @@
 
 // Section: imports
 
+use crate::api::aidoku_wasm::*;
 use crate::api::rhttp::client::*;
 use crate::*;
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
@@ -41,7 +42,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1477350731;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -707951366;
 
 // Section: executor
 
@@ -49,6 +50,1077 @@ flutter_rust_bridge::frb_generated_default_handler!();
 
 // Section: wire_funcs
 
+fn wire__crate__api__aidoku_wasm__AidokuSource_create_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_create",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_wasm_bytes = <Vec<u8>>::sse_decode(&mut deserializer);
+            let api_source_key = <String>::sse_decode(&mut deserializer);
+            let api_request_handler =
+                decode_DartFn_Inputs_aidoku_net_request_Output_aidoku_net_response_AnyhowException(
+                    <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
+                );
+            let api_print_handler = decode_DartFn_Inputs_String_Output_unit_AnyhowException(
+                <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
+            );
+            let api_js_handler =
+                decode_DartFn_Inputs_aidoku_js_request_Output_aidoku_js_response_AnyhowException(
+                    <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
+                );
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let output_ok = crate::api::aidoku_wasm::AidokuSource::create(
+                            api_wasm_bytes,
+                            api_source_key,
+                            api_request_handler,
+                            api_print_handler,
+                            api_js_handler,
+                        )
+                        .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_dispose_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_dispose",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, ()>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = Ok::<_, ()>({
+                            crate::api::aidoku_wasm::AidokuSource::dispose(&*api_that_guard).await;
+                        })?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_features_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_features",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, ()>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = Ok::<_, ()>(
+                            crate::api::aidoku_wasm::AidokuSource::features(&*api_that_guard).await,
+                        )?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_get_base_url_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_get_base_url",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok =
+                            crate::api::aidoku_wasm::AidokuSource::get_base_url(&*api_that_guard)
+                                .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_get_filters_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_get_filters",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok =
+                            crate::api::aidoku_wasm::AidokuSource::get_filters(&*api_that_guard)
+                                .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_get_image_request_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_get_image_request",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            let api_url = <String>::sse_decode(&mut deserializer);
+            let api_context = <Option<Vec<(String, String)>>>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = crate::api::aidoku_wasm::AidokuSource::get_image_request(
+                            &*api_that_guard,
+                            api_url,
+                            api_context,
+                        )
+                        .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_get_listings_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_get_listings",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok =
+                            crate::api::aidoku_wasm::AidokuSource::get_listings(&*api_that_guard)
+                                .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_get_manga_list_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_get_manga_list",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            let api_listing_id = <String>::sse_decode(&mut deserializer);
+            let api_listing_name = <String>::sse_decode(&mut deserializer);
+            let api_page = <i32>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = crate::api::aidoku_wasm::AidokuSource::get_manga_list(
+                            &*api_that_guard,
+                            api_listing_id,
+                            api_listing_name,
+                            api_page,
+                        )
+                        .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_get_manga_update_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_get_manga_update",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            let api_manga = <crate::api::aidoku_wasm::AidokuManga>::sse_decode(&mut deserializer);
+            let api_needs_details = <bool>::sse_decode(&mut deserializer);
+            let api_needs_chapters = <bool>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = crate::api::aidoku_wasm::AidokuSource::get_manga_update(
+                            &*api_that_guard,
+                            api_manga,
+                            api_needs_details,
+                            api_needs_chapters,
+                        )
+                        .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_get_page_list_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_get_page_list",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            let api_manga = <crate::api::aidoku_wasm::AidokuManga>::sse_decode(&mut deserializer);
+            let api_chapter =
+                <crate::api::aidoku_wasm::AidokuChapter>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = crate::api::aidoku_wasm::AidokuSource::get_page_list(
+                            &*api_that_guard,
+                            api_manga,
+                            api_chapter,
+                        )
+                        .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_handle_basic_login_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_handle_basic_login",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            let api_key = <String>::sse_decode(&mut deserializer);
+            let api_username = <String>::sse_decode(&mut deserializer);
+            let api_password = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = crate::api::aidoku_wasm::AidokuSource::handle_basic_login(
+                            &*api_that_guard,
+                            api_key,
+                            api_username,
+                            api_password,
+                        )
+                        .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_handle_deep_link_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_handle_deep_link",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            let api_url = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = crate::api::aidoku_wasm::AidokuSource::handle_deep_link(
+                            &*api_that_guard,
+                            api_url,
+                        )
+                        .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_handle_migration_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_handle_migration",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            let api_kind = <i32>::sse_decode(&mut deserializer);
+            let api_manga_key = <String>::sse_decode(&mut deserializer);
+            let api_chapter_key = <Option<String>>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = crate::api::aidoku_wasm::AidokuSource::handle_migration(
+                            &*api_that_guard,
+                            api_kind,
+                            api_manga_key,
+                            api_chapter_key,
+                        )
+                        .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_handle_web_login_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_handle_web_login",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            let api_key = <String>::sse_decode(&mut deserializer);
+            let api_cookies = <Vec<(String, String)>>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = crate::api::aidoku_wasm::AidokuSource::handle_web_login(
+                            &*api_that_guard,
+                            api_key,
+                            api_cookies,
+                        )
+                        .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__AidokuSource_search_manga_list_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::SseCodec, _, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "AidokuSource_search_manga_list",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+            >>::sse_decode(&mut deserializer);
+            let api_query = <Option<String>>::sse_decode(&mut deserializer);
+            let api_page = <i32>::sse_decode(&mut deserializer);
+            let api_filters =
+                <Vec<crate::api::aidoku_wasm::AidokuFilterValue>>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| async move {
+                transform_result_sse::<_, String>(
+                    (move || async move {
+                        let mut api_that_guard = None;
+                        let decode_indices_ =
+                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
+                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                    &api_that, 0, false,
+                                )],
+                            );
+                        for i in decode_indices_ {
+                            match i {
+                                0 => {
+                                    api_that_guard =
+                                        Some(api_that.lockable_decode_async_ref().await)
+                                }
+                                _ => unreachable!(),
+                            }
+                        }
+                        let api_that_guard = api_that_guard.unwrap();
+                        let output_ok = crate::api::aidoku_wasm::AidokuSource::search_manga_list(
+                            &*api_that_guard,
+                            api_query,
+                            api_page,
+                            api_filters,
+                        )
+                        .await?;
+                        std::result::Result::Ok(output_ok)
+                    })()
+                    .await,
+                )
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__aidoku_chapter_default_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "aidoku_chapter_default",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok = Ok::<_, ()>(crate::api::aidoku_wasm::AidokuChapter::default())?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__aidoku_manga_default_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "aidoku_manga_default",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok = Ok::<_, ()>(crate::api::aidoku_wasm::AidokuManga::default())?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__aidoku_manga_page_default_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "aidoku_manga_page_default",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok =
+                        Ok::<_, ()>(crate::api::aidoku_wasm::AidokuMangaPage::default())?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__aidoku_net_response_default_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "aidoku_net_response_default",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok =
+                        Ok::<_, ()>(crate::api::aidoku_wasm::AidokuNetResponse::default())?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__aidoku_wasm__aidoku_source_features_default_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "aidoku_source_features_default",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok =
+                        Ok::<_, ()>(crate::api::aidoku_wasm::AidokuSourceFeatures::default())?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__rhttp__http__cancel_request_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -519,6 +1591,47 @@ fn wire__crate__api__rhttp__http__register_client_sync_impl(
         },
     )
 }
+fn wire__crate__api__aidoku_wasm__set_aidoku_default_setting_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "set_aidoku_default_setting",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_key = <String>::sse_decode(&mut deserializer);
+            let api_value_type = <i32>::sse_decode(&mut deserializer);
+            let api_value = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok = Ok::<_, ()>({
+                        crate::api::aidoku_wasm::set_aidoku_default_setting(
+                            api_key,
+                            api_value_type,
+                            api_value,
+                        );
+                    })?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 
 // Section: related_funcs
 
@@ -580,6 +1693,116 @@ fn decode_DartFn_Inputs_String_Output_list_String_AnyhowException(
     }
 
     move |arg0: String| {
+        flutter_rust_bridge::for_generated::convert_into_dart_fn_future(body(
+            dart_opaque.clone(),
+            arg0,
+        ))
+    }
+}
+fn decode_DartFn_Inputs_String_Output_unit_AnyhowException(
+    dart_opaque: flutter_rust_bridge::DartOpaque,
+) -> impl Fn(String) -> flutter_rust_bridge::DartFnFuture<()> {
+    use flutter_rust_bridge::IntoDart;
+
+    async fn body(dart_opaque: flutter_rust_bridge::DartOpaque, arg0: String) -> () {
+        let args = vec![arg0.into_into_dart().into_dart()];
+        let message = FLUTTER_RUST_BRIDGE_HANDLER
+            .dart_fn_invoke(dart_opaque, args)
+            .await;
+
+        let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+        let action = deserializer.cursor.read_u8().unwrap();
+        let ans = match action {
+            0 => std::result::Result::Ok(<()>::sse_decode(&mut deserializer)),
+            1 => std::result::Result::Err(
+                <flutter_rust_bridge::for_generated::anyhow::Error>::sse_decode(&mut deserializer),
+            ),
+            _ => unreachable!(),
+        };
+        deserializer.end();
+        let ans = ans.expect("Dart throws exception but Rust side assume it is not failable");
+        ans
+    }
+
+    move |arg0: String| {
+        flutter_rust_bridge::for_generated::convert_into_dart_fn_future(body(
+            dart_opaque.clone(),
+            arg0,
+        ))
+    }
+}
+fn decode_DartFn_Inputs_aidoku_js_request_Output_aidoku_js_response_AnyhowException(
+    dart_opaque: flutter_rust_bridge::DartOpaque,
+) -> impl Fn(
+    crate::aidoku_wasm::host_js::AidokuJsRequest,
+) -> flutter_rust_bridge::DartFnFuture<crate::aidoku_wasm::host_js::AidokuJsResponse> {
+    use flutter_rust_bridge::IntoDart;
+
+    async fn body(
+        dart_opaque: flutter_rust_bridge::DartOpaque,
+        arg0: crate::aidoku_wasm::host_js::AidokuJsRequest,
+    ) -> crate::aidoku_wasm::host_js::AidokuJsResponse {
+        let args = vec![arg0.into_into_dart().into_dart()];
+        let message = FLUTTER_RUST_BRIDGE_HANDLER
+            .dart_fn_invoke(dart_opaque, args)
+            .await;
+
+        let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+        let action = deserializer.cursor.read_u8().unwrap();
+        let ans = match action {
+            0 => std::result::Result::Ok(
+                <crate::aidoku_wasm::host_js::AidokuJsResponse>::sse_decode(&mut deserializer),
+            ),
+            1 => std::result::Result::Err(
+                <flutter_rust_bridge::for_generated::anyhow::Error>::sse_decode(&mut deserializer),
+            ),
+            _ => unreachable!(),
+        };
+        deserializer.end();
+        let ans = ans.expect("Dart throws exception but Rust side assume it is not failable");
+        ans
+    }
+
+    move |arg0: crate::aidoku_wasm::host_js::AidokuJsRequest| {
+        flutter_rust_bridge::for_generated::convert_into_dart_fn_future(body(
+            dart_opaque.clone(),
+            arg0,
+        ))
+    }
+}
+fn decode_DartFn_Inputs_aidoku_net_request_Output_aidoku_net_response_AnyhowException(
+    dart_opaque: flutter_rust_bridge::DartOpaque,
+) -> impl Fn(
+    crate::api::aidoku_wasm::AidokuNetRequest,
+) -> flutter_rust_bridge::DartFnFuture<crate::api::aidoku_wasm::AidokuNetResponse> {
+    use flutter_rust_bridge::IntoDart;
+
+    async fn body(
+        dart_opaque: flutter_rust_bridge::DartOpaque,
+        arg0: crate::api::aidoku_wasm::AidokuNetRequest,
+    ) -> crate::api::aidoku_wasm::AidokuNetResponse {
+        let args = vec![arg0.into_into_dart().into_dart()];
+        let message = FLUTTER_RUST_BRIDGE_HANDLER
+            .dart_fn_invoke(dart_opaque, args)
+            .await;
+
+        let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+        let action = deserializer.cursor.read_u8().unwrap();
+        let ans = match action {
+            0 => std::result::Result::Ok(<crate::api::aidoku_wasm::AidokuNetResponse>::sse_decode(
+                &mut deserializer,
+            )),
+            1 => std::result::Result::Err(
+                <flutter_rust_bridge::for_generated::anyhow::Error>::sse_decode(&mut deserializer),
+            ),
+            _ => unreachable!(),
+        };
+        deserializer.end();
+        let ans = ans.expect("Dart throws exception but Rust side assume it is not failable");
+        ans
+    }
+
+    move |arg0: crate::api::aidoku_wasm::AidokuNetRequest| {
         flutter_rust_bridge::for_generated::convert_into_dart_fn_future(body(
             dart_opaque.clone(),
             arg0,
@@ -657,6 +1880,9 @@ fn decode_DartFn_Inputs_rhttp_error_Output_unit_AnyhowException(
     }
 }
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
+    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>
+);
+flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
     flutter_rust_bridge::for_generated::RustAutoOpaqueInner<CancellationToken>
 );
 flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
@@ -683,6 +1909,16 @@ impl SseDecode for RustAutoOpaqueMoi<RequestClient> {
             flutter_rust_bridge::for_generated::RustAutoOpaqueInner<RequestClient>,
         >>::sse_decode(deserializer);
         return flutter_rust_bridge::for_generated::rust_auto_opaque_explicit_decode(inner);
+    }
+}
+
+impl SseDecode for AidokuSource {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <RustOpaqueMoi<
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>,
+        >>::sse_decode(deserializer);
+        return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
     }
 }
 
@@ -749,6 +1985,16 @@ impl SseDecode for std::collections::HashMap<String, Vec<String>> {
 }
 
 impl SseDecode
+    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>>
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <usize>::sse_decode(deserializer);
+        return decode_rust_opaque_moi(inner);
+    }
+}
+
+impl SseDecode
     for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<CancellationToken>>
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -791,6 +2037,371 @@ impl SseDecode for String {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <Vec<u8>>::sse_decode(deserializer);
         return String::from_utf8(inner).unwrap();
+    }
+}
+
+impl SseDecode for crate::api::aidoku_wasm::AidokuChapter {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_key = <String>::sse_decode(deserializer);
+        let mut var_title = <Option<String>>::sse_decode(deserializer);
+        let mut var_chapterNumber = <Option<f32>>::sse_decode(deserializer);
+        let mut var_volumeNumber = <Option<f32>>::sse_decode(deserializer);
+        let mut var_dateUploaded = <Option<i64>>::sse_decode(deserializer);
+        let mut var_scanlators = <Option<Vec<String>>>::sse_decode(deserializer);
+        let mut var_url = <Option<String>>::sse_decode(deserializer);
+        let mut var_language = <Option<String>>::sse_decode(deserializer);
+        let mut var_thumbnail = <Option<String>>::sse_decode(deserializer);
+        let mut var_locked = <bool>::sse_decode(deserializer);
+        return crate::api::aidoku_wasm::AidokuChapter {
+            key: var_key,
+            title: var_title,
+            chapter_number: var_chapterNumber,
+            volume_number: var_volumeNumber,
+            date_uploaded: var_dateUploaded,
+            scanlators: var_scanlators,
+            url: var_url,
+            language: var_language,
+            thumbnail: var_thumbnail,
+            locked: var_locked,
+        };
+    }
+}
+
+impl SseDecode for crate::api::aidoku_wasm::AidokuDeepLink {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_mangaKey = <Option<String>>::sse_decode(deserializer);
+        let mut var_chapterKey = <Option<String>>::sse_decode(deserializer);
+        let mut var_listing =
+            <Option<crate::api::aidoku_wasm::AidokuListing>>::sse_decode(deserializer);
+        return crate::api::aidoku_wasm::AidokuDeepLink {
+            manga_key: var_mangaKey,
+            chapter_key: var_chapterKey,
+            listing: var_listing,
+        };
+    }
+}
+
+impl SseDecode for crate::api::aidoku_wasm::AidokuFilter {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_id = <String>::sse_decode(deserializer);
+        let mut var_title = <Option<String>>::sse_decode(deserializer);
+        let mut var_kind = <String>::sse_decode(deserializer);
+        let mut var_options = <Vec<String>>::sse_decode(deserializer);
+        let mut var_defaultValue = <Option<String>>::sse_decode(deserializer);
+        return crate::api::aidoku_wasm::AidokuFilter {
+            id: var_id,
+            title: var_title,
+            kind: var_kind,
+            options: var_options,
+            default_value: var_defaultValue,
+        };
+    }
+}
+
+impl SseDecode for crate::api::aidoku_wasm::AidokuFilterValue {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_id = <String>::sse_decode(deserializer);
+                let mut var_value = <String>::sse_decode(deserializer);
+                return crate::api::aidoku_wasm::AidokuFilterValue::Text {
+                    id: var_id,
+                    value: var_value,
+                };
+            }
+            1 => {
+                let mut var_id = <String>::sse_decode(deserializer);
+                let mut var_index = <i32>::sse_decode(deserializer);
+                let mut var_ascending = <bool>::sse_decode(deserializer);
+                return crate::api::aidoku_wasm::AidokuFilterValue::Sort {
+                    id: var_id,
+                    index: var_index,
+                    ascending: var_ascending,
+                };
+            }
+            2 => {
+                let mut var_id = <String>::sse_decode(deserializer);
+                let mut var_value = <i64>::sse_decode(deserializer);
+                return crate::api::aidoku_wasm::AidokuFilterValue::Check {
+                    id: var_id,
+                    value: var_value,
+                };
+            }
+            3 => {
+                let mut var_id = <String>::sse_decode(deserializer);
+                let mut var_value = <String>::sse_decode(deserializer);
+                return crate::api::aidoku_wasm::AidokuFilterValue::Select {
+                    id: var_id,
+                    value: var_value,
+                };
+            }
+            4 => {
+                let mut var_id = <String>::sse_decode(deserializer);
+                let mut var_included = <Vec<String>>::sse_decode(deserializer);
+                let mut var_excluded = <Vec<String>>::sse_decode(deserializer);
+                return crate::api::aidoku_wasm::AidokuFilterValue::MultiSelect {
+                    id: var_id,
+                    included: var_included,
+                    excluded: var_excluded,
+                };
+            }
+            5 => {
+                let mut var_id = <String>::sse_decode(deserializer);
+                let mut var_from = <Option<f32>>::sse_decode(deserializer);
+                let mut var_to = <Option<f32>>::sse_decode(deserializer);
+                return crate::api::aidoku_wasm::AidokuFilterValue::Range {
+                    id: var_id,
+                    from: var_from,
+                    to: var_to,
+                };
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::api::aidoku_wasm::AidokuImageRequest {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_url = <String>::sse_decode(deserializer);
+        let mut var_headers = <Vec<(String, String)>>::sse_decode(deserializer);
+        let mut var_body = <Option<Vec<u8>>>::sse_decode(deserializer);
+        return crate::api::aidoku_wasm::AidokuImageRequest {
+            url: var_url,
+            headers: var_headers,
+            body: var_body,
+        };
+    }
+}
+
+impl SseDecode for crate::aidoku_wasm::host_js::AidokuJsAction {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::aidoku_wasm::host_js::AidokuJsAction::CreateContext,
+            1 => crate::aidoku_wasm::host_js::AidokuJsAction::Evaluate,
+            2 => crate::aidoku_wasm::host_js::AidokuJsAction::EvaluateAsync,
+            3 => crate::aidoku_wasm::host_js::AidokuJsAction::GetProperty,
+            4 => crate::aidoku_wasm::host_js::AidokuJsAction::DestroyContext,
+            5 => crate::aidoku_wasm::host_js::AidokuJsAction::WebviewCreate,
+            6 => crate::aidoku_wasm::host_js::AidokuJsAction::WebviewSetRuleList,
+            7 => crate::aidoku_wasm::host_js::AidokuJsAction::WebviewLoad,
+            8 => crate::aidoku_wasm::host_js::AidokuJsAction::WebviewLoadHtml,
+            9 => crate::aidoku_wasm::host_js::AidokuJsAction::WebviewWaitForLoad,
+            10 => crate::aidoku_wasm::host_js::AidokuJsAction::WebviewEval,
+            11 => crate::aidoku_wasm::host_js::AidokuJsAction::WebviewEvalAsync,
+            12 => crate::aidoku_wasm::host_js::AidokuJsAction::WebviewAddUserScript,
+            13 => crate::aidoku_wasm::host_js::AidokuJsAction::WebviewGetCookies,
+            14 => crate::aidoku_wasm::host_js::AidokuJsAction::WebviewDeleteCookie,
+            15 => crate::aidoku_wasm::host_js::AidokuJsAction::WebviewDestroy,
+            _ => unreachable!("Invalid variant for AidokuJsAction: {}", inner),
+        };
+    }
+}
+
+impl SseDecode for crate::aidoku_wasm::host_js::AidokuJsRequest {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_contextId = <i32>::sse_decode(deserializer);
+        let mut var_action =
+            <crate::aidoku_wasm::host_js::AidokuJsAction>::sse_decode(deserializer);
+        let mut var_script = <String>::sse_decode(deserializer);
+        let mut var_extra = <Option<String>>::sse_decode(deserializer);
+        return crate::aidoku_wasm::host_js::AidokuJsRequest {
+            context_id: var_contextId,
+            action: var_action,
+            script: var_script,
+            extra: var_extra,
+        };
+    }
+}
+
+impl SseDecode for crate::aidoku_wasm::host_js::AidokuJsResponse {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_success = <bool>::sse_decode(deserializer);
+        let mut var_result = <Option<String>>::sse_decode(deserializer);
+        let mut var_error = <Option<String>>::sse_decode(deserializer);
+        return crate::aidoku_wasm::host_js::AidokuJsResponse {
+            success: var_success,
+            result: var_result,
+            error: var_error,
+        };
+    }
+}
+
+impl SseDecode for crate::api::aidoku_wasm::AidokuListing {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_id = <String>::sse_decode(deserializer);
+        let mut var_name = <String>::sse_decode(deserializer);
+        let mut var_isList = <bool>::sse_decode(deserializer);
+        return crate::api::aidoku_wasm::AidokuListing {
+            id: var_id,
+            name: var_name,
+            is_list: var_isList,
+        };
+    }
+}
+
+impl SseDecode for crate::api::aidoku_wasm::AidokuManga {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_sourceKey = <String>::sse_decode(deserializer);
+        let mut var_key = <String>::sse_decode(deserializer);
+        let mut var_title = <String>::sse_decode(deserializer);
+        let mut var_cover = <Option<String>>::sse_decode(deserializer);
+        let mut var_artists = <Option<Vec<String>>>::sse_decode(deserializer);
+        let mut var_authors = <Option<Vec<String>>>::sse_decode(deserializer);
+        let mut var_description = <Option<String>>::sse_decode(deserializer);
+        let mut var_url = <Option<String>>::sse_decode(deserializer);
+        let mut var_tags = <Option<Vec<String>>>::sse_decode(deserializer);
+        let mut var_status = <u8>::sse_decode(deserializer);
+        let mut var_contentRating = <u8>::sse_decode(deserializer);
+        let mut var_viewer = <u8>::sse_decode(deserializer);
+        let mut var_updateStrategy = <u8>::sse_decode(deserializer);
+        let mut var_nextUpdateTime = <Option<i64>>::sse_decode(deserializer);
+        let mut var_chapters =
+            <Option<Vec<crate::api::aidoku_wasm::AidokuChapter>>>::sse_decode(deserializer);
+        return crate::api::aidoku_wasm::AidokuManga {
+            source_key: var_sourceKey,
+            key: var_key,
+            title: var_title,
+            cover: var_cover,
+            artists: var_artists,
+            authors: var_authors,
+            description: var_description,
+            url: var_url,
+            tags: var_tags,
+            status: var_status,
+            content_rating: var_contentRating,
+            viewer: var_viewer,
+            update_strategy: var_updateStrategy,
+            next_update_time: var_nextUpdateTime,
+            chapters: var_chapters,
+        };
+    }
+}
+
+impl SseDecode for crate::api::aidoku_wasm::AidokuMangaPage {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_entries = <Vec<crate::api::aidoku_wasm::AidokuManga>>::sse_decode(deserializer);
+        let mut var_hasNextPage = <bool>::sse_decode(deserializer);
+        return crate::api::aidoku_wasm::AidokuMangaPage {
+            entries: var_entries,
+            has_next_page: var_hasNextPage,
+        };
+    }
+}
+
+impl SseDecode for crate::api::aidoku_wasm::AidokuNetRequest {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_method = <String>::sse_decode(deserializer);
+        let mut var_url = <String>::sse_decode(deserializer);
+        let mut var_headers = <Vec<(String, String)>>::sse_decode(deserializer);
+        let mut var_body = <Option<Vec<u8>>>::sse_decode(deserializer);
+        let mut var_timeoutMs = <u64>::sse_decode(deserializer);
+        return crate::api::aidoku_wasm::AidokuNetRequest {
+            method: var_method,
+            url: var_url,
+            headers: var_headers,
+            body: var_body,
+            timeout_ms: var_timeoutMs,
+        };
+    }
+}
+
+impl SseDecode for crate::api::aidoku_wasm::AidokuNetResponse {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_statusCode = <u16>::sse_decode(deserializer);
+        let mut var_headers = <Vec<(String, String)>>::sse_decode(deserializer);
+        let mut var_body = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_error = <Option<String>>::sse_decode(deserializer);
+        return crate::api::aidoku_wasm::AidokuNetResponse {
+            status_code: var_statusCode,
+            headers: var_headers,
+            body: var_body,
+            error: var_error,
+        };
+    }
+}
+
+impl SseDecode for crate::api::aidoku_wasm::AidokuPage {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut tag_ = <i32>::sse_decode(deserializer);
+        match tag_ {
+            0 => {
+                let mut var_url = <String>::sse_decode(deserializer);
+                let mut var_context = <Vec<(String, String)>>::sse_decode(deserializer);
+                return crate::api::aidoku_wasm::AidokuPage::Url {
+                    url: var_url,
+                    context: var_context,
+                };
+            }
+            1 => {
+                let mut var_field0 = <String>::sse_decode(deserializer);
+                return crate::api::aidoku_wasm::AidokuPage::Text(var_field0);
+            }
+            2 => {
+                let mut var_data = <Option<Vec<u8>>>::sse_decode(deserializer);
+                return crate::api::aidoku_wasm::AidokuPage::Image { data: var_data };
+            }
+            3 => {
+                let mut var_url = <String>::sse_decode(deserializer);
+                let mut var_filePath = <String>::sse_decode(deserializer);
+                return crate::api::aidoku_wasm::AidokuPage::ZipFile {
+                    url: var_url,
+                    file_path: var_filePath,
+                };
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseDecode for crate::api::aidoku_wasm::AidokuSourceFeatures {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_providesListings = <bool>::sse_decode(deserializer);
+        let mut var_providesHome = <bool>::sse_decode(deserializer);
+        let mut var_dynamicFilters = <bool>::sse_decode(deserializer);
+        let mut var_dynamicSettings = <bool>::sse_decode(deserializer);
+        let mut var_dynamicListings = <bool>::sse_decode(deserializer);
+        let mut var_processesPages = <bool>::sse_decode(deserializer);
+        let mut var_providesImageRequests = <bool>::sse_decode(deserializer);
+        let mut var_providesBaseUrl = <bool>::sse_decode(deserializer);
+        let mut var_handlesDeepLinks = <bool>::sse_decode(deserializer);
+        let mut var_handlesBasicLogin = <bool>::sse_decode(deserializer);
+        let mut var_handlesWebLogin = <bool>::sse_decode(deserializer);
+        let mut var_handlesMigration = <bool>::sse_decode(deserializer);
+        return crate::api::aidoku_wasm::AidokuSourceFeatures {
+            provides_listings: var_providesListings,
+            provides_home: var_providesHome,
+            dynamic_filters: var_dynamicFilters,
+            dynamic_settings: var_dynamicSettings,
+            dynamic_listings: var_dynamicListings,
+            processes_pages: var_processesPages,
+            provides_image_requests: var_providesImageRequests,
+            provides_base_url: var_providesBaseUrl,
+            handles_deep_links: var_handlesDeepLinks,
+            handles_basic_login: var_handlesBasicLogin,
+            handles_web_login: var_handlesWebLogin,
+            handles_migration: var_handlesMigration,
+        };
     }
 }
 
@@ -897,6 +2508,13 @@ impl SseDecode for crate::api::epub::EpubResource {
             name: var_name,
             content: var_content,
         };
+    }
+}
+
+impl SseDecode for f32 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        deserializer.cursor.read_f32::<NativeEndian>().unwrap()
     }
 }
 
@@ -1021,6 +2639,90 @@ impl SseDecode for Vec<String> {
         let mut ans_ = Vec::with_capacity(len_ as usize);
         for idx_ in 0..len_ {
             ans_.push(<String>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::aidoku_wasm::AidokuChapter> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::aidoku_wasm::AidokuChapter>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::aidoku_wasm::AidokuFilter> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::aidoku_wasm::AidokuFilter>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::aidoku_wasm::AidokuFilterValue> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::aidoku_wasm::AidokuFilterValue>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::aidoku_wasm::AidokuListing> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::aidoku_wasm::AidokuListing>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::aidoku_wasm::AidokuManga> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::aidoku_wasm::AidokuManga>::sse_decode(
+                deserializer,
+            ));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::aidoku_wasm::AidokuPage> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::aidoku_wasm::AidokuPage>::sse_decode(
+                deserializer,
+            ));
         }
         return ans_;
     }
@@ -1210,6 +2912,45 @@ impl SseDecode for Option<chrono::Duration> {
     }
 }
 
+impl SseDecode for Option<crate::api::aidoku_wasm::AidokuDeepLink> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::aidoku_wasm::AidokuDeepLink>::sse_decode(
+                deserializer,
+            ));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::aidoku_wasm::AidokuImageRequest> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::aidoku_wasm::AidokuImageRequest>::sse_decode(
+                deserializer,
+            ));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::aidoku_wasm::AidokuListing> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::aidoku_wasm::AidokuListing>::sse_decode(
+                deserializer,
+            ));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<crate::api::rhttp::client::ClientCertificate> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1236,6 +2977,17 @@ impl SseDecode for Option<crate::api::rhttp::client::ClientSettings> {
     }
 }
 
+impl SseDecode for Option<f32> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<f32>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for Option<crate::api::rhttp::http::HttpHeaders> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1243,6 +2995,17 @@ impl SseDecode for Option<crate::api::rhttp::http::HttpHeaders> {
             return Some(<crate::api::rhttp::http::HttpHeaders>::sse_decode(
                 deserializer,
             ));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<i64> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<i64>::sse_decode(deserializer));
         } else {
             return None;
         }
@@ -1306,6 +3069,30 @@ impl SseDecode for Option<crate::api::rhttp::client::TlsVersion> {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
             return Some(<crate::api::rhttp::client::TlsVersion>::sse_decode(
+                deserializer,
+            ));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<Vec<String>> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<Vec<String>>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<Vec<crate::api::aidoku_wasm::AidokuChapter>> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<Vec<crate::api::aidoku_wasm::AidokuChapter>>::sse_decode(
                 deserializer,
             ));
         } else {
@@ -1521,6 +3308,13 @@ impl SseDecode for u16 {
     }
 }
 
+impl SseDecode for u64 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        deserializer.cursor.read_u64::<NativeEndian>().unwrap()
+    }
+}
+
 impl SseDecode for u8 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1549,33 +3343,159 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        2 => wire__crate__api__rhttp__http__cancel_request_impl(port, ptr, rust_vec_len, data_len),
-        3 => wire__crate__api__rhttp__http__cancel_running_requests_impl(
+        1 => wire__crate__api__aidoku_wasm__AidokuSource_create_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        4 => wire__crate__api__rhttp__client__client_settings_default_impl(
+        2 => wire__crate__api__aidoku_wasm__AidokuSource_dispose_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        7 => wire__crate__api__rar__extract_rar_archive_impl(port, ptr, rust_vec_len, data_len),
-        8 => wire__crate__api__rar__extract_rar_metadata_impl(port, ptr, rust_vec_len, data_len),
-        9 => wire__crate__api__epub__get_chapter_content_impl(port, ptr, rust_vec_len, data_len),
-        10 => wire__crate__api__rhttp__http__make_http_request_receive_stream_impl(
+        3 => wire__crate__api__aidoku_wasm__AidokuSource_features_impl(
             port,
             ptr,
             rust_vec_len,
             data_len,
         ),
-        11 => wire__crate__api__epub__parse_epub_from_bytes_impl(port, ptr, rust_vec_len, data_len),
-        12 => wire__crate__api__epub__parse_epub_from_path_impl(port, ptr, rust_vec_len, data_len),
-        13 => {
+        4 => wire__crate__api__aidoku_wasm__AidokuSource_get_base_url_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        5 => wire__crate__api__aidoku_wasm__AidokuSource_get_filters_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        6 => wire__crate__api__aidoku_wasm__AidokuSource_get_image_request_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        7 => wire__crate__api__aidoku_wasm__AidokuSource_get_listings_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        8 => wire__crate__api__aidoku_wasm__AidokuSource_get_manga_list_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        9 => wire__crate__api__aidoku_wasm__AidokuSource_get_manga_update_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        10 => wire__crate__api__aidoku_wasm__AidokuSource_get_page_list_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        11 => wire__crate__api__aidoku_wasm__AidokuSource_handle_basic_login_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        12 => wire__crate__api__aidoku_wasm__AidokuSource_handle_deep_link_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        13 => wire__crate__api__aidoku_wasm__AidokuSource_handle_migration_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        14 => wire__crate__api__aidoku_wasm__AidokuSource_handle_web_login_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        15 => wire__crate__api__aidoku_wasm__AidokuSource_search_manga_list_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        17 => wire__crate__api__aidoku_wasm__aidoku_chapter_default_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        18 => wire__crate__api__aidoku_wasm__aidoku_manga_default_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        19 => wire__crate__api__aidoku_wasm__aidoku_manga_page_default_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        20 => wire__crate__api__aidoku_wasm__aidoku_net_response_default_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        21 => wire__crate__api__aidoku_wasm__aidoku_source_features_default_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        22 => wire__crate__api__rhttp__http__cancel_request_impl(port, ptr, rust_vec_len, data_len),
+        23 => wire__crate__api__rhttp__http__cancel_running_requests_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        24 => wire__crate__api__rhttp__client__client_settings_default_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        27 => wire__crate__api__rar__extract_rar_archive_impl(port, ptr, rust_vec_len, data_len),
+        28 => wire__crate__api__rar__extract_rar_metadata_impl(port, ptr, rust_vec_len, data_len),
+        29 => wire__crate__api__epub__get_chapter_content_impl(port, ptr, rust_vec_len, data_len),
+        30 => wire__crate__api__rhttp__http__make_http_request_receive_stream_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        31 => wire__crate__api__epub__parse_epub_from_bytes_impl(port, ptr, rust_vec_len, data_len),
+        32 => wire__crate__api__epub__parse_epub_from_path_impl(port, ptr, rust_vec_len, data_len),
+        33 => {
             wire__crate__api__rhttp__http__register_client_impl(port, ptr, rust_vec_len, data_len)
         }
+        35 => wire__crate__api__aidoku_wasm__set_aidoku_default_setting_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
         _ => unreachable!(),
     }
 }
@@ -1588,22 +3508,37 @@ fn pde_ffi_dispatcher_sync_impl(
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        5 => wire__crate__api__rhttp__client__create_dynamic_resolver_sync_impl(
+        25 => wire__crate__api__rhttp__client__create_dynamic_resolver_sync_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        6 => wire__crate__api__rhttp__client__create_static_resolver_sync_impl(
+        26 => wire__crate__api__rhttp__client__create_static_resolver_sync_impl(
             ptr,
             rust_vec_len,
             data_len,
         ),
-        14 => wire__crate__api__rhttp__http__register_client_sync_impl(ptr, rust_vec_len, data_len),
+        34 => wire__crate__api__rhttp__http__register_client_sync_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
 
 // Section: rust2dart
+
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<AidokuSource> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self.0)
+            .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<AidokuSource> {}
+
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<AidokuSource>> for AidokuSource {
+    fn into_into_dart(self) -> FrbWrapper<AidokuSource> {
+        self.into()
+    }
+}
 
 // Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for FrbWrapper<CancellationToken> {
@@ -1650,6 +3585,445 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<RequestClient>> for RequestCli
     }
 }
 
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::aidoku_wasm::AidokuChapter {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.key.into_into_dart().into_dart(),
+            self.title.into_into_dart().into_dart(),
+            self.chapter_number.into_into_dart().into_dart(),
+            self.volume_number.into_into_dart().into_dart(),
+            self.date_uploaded.into_into_dart().into_dart(),
+            self.scanlators.into_into_dart().into_dart(),
+            self.url.into_into_dart().into_dart(),
+            self.language.into_into_dart().into_dart(),
+            self.thumbnail.into_into_dart().into_dart(),
+            self.locked.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::aidoku_wasm::AidokuChapter
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::aidoku_wasm::AidokuChapter>
+    for crate::api::aidoku_wasm::AidokuChapter
+{
+    fn into_into_dart(self) -> crate::api::aidoku_wasm::AidokuChapter {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::aidoku_wasm::AidokuDeepLink {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.manga_key.into_into_dart().into_dart(),
+            self.chapter_key.into_into_dart().into_dart(),
+            self.listing.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::aidoku_wasm::AidokuDeepLink
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::aidoku_wasm::AidokuDeepLink>
+    for crate::api::aidoku_wasm::AidokuDeepLink
+{
+    fn into_into_dart(self) -> crate::api::aidoku_wasm::AidokuDeepLink {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::aidoku_wasm::AidokuFilter {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.id.into_into_dart().into_dart(),
+            self.title.into_into_dart().into_dart(),
+            self.kind.into_into_dart().into_dart(),
+            self.options.into_into_dart().into_dart(),
+            self.default_value.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::aidoku_wasm::AidokuFilter
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::aidoku_wasm::AidokuFilter>
+    for crate::api::aidoku_wasm::AidokuFilter
+{
+    fn into_into_dart(self) -> crate::api::aidoku_wasm::AidokuFilter {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::aidoku_wasm::AidokuFilterValue {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::aidoku_wasm::AidokuFilterValue::Text { id, value } => [
+                0.into_dart(),
+                id.into_into_dart().into_dart(),
+                value.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::aidoku_wasm::AidokuFilterValue::Sort {
+                id,
+                index,
+                ascending,
+            } => [
+                1.into_dart(),
+                id.into_into_dart().into_dart(),
+                index.into_into_dart().into_dart(),
+                ascending.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::aidoku_wasm::AidokuFilterValue::Check { id, value } => [
+                2.into_dart(),
+                id.into_into_dart().into_dart(),
+                value.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::aidoku_wasm::AidokuFilterValue::Select { id, value } => [
+                3.into_dart(),
+                id.into_into_dart().into_dart(),
+                value.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::aidoku_wasm::AidokuFilterValue::MultiSelect {
+                id,
+                included,
+                excluded,
+            } => [
+                4.into_dart(),
+                id.into_into_dart().into_dart(),
+                included.into_into_dart().into_dart(),
+                excluded.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::aidoku_wasm::AidokuFilterValue::Range { id, from, to } => [
+                5.into_dart(),
+                id.into_into_dart().into_dart(),
+                from.into_into_dart().into_dart(),
+                to.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::aidoku_wasm::AidokuFilterValue
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::aidoku_wasm::AidokuFilterValue>
+    for crate::api::aidoku_wasm::AidokuFilterValue
+{
+    fn into_into_dart(self) -> crate::api::aidoku_wasm::AidokuFilterValue {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::aidoku_wasm::AidokuImageRequest {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.url.into_into_dart().into_dart(),
+            self.headers.into_into_dart().into_dart(),
+            self.body.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::aidoku_wasm::AidokuImageRequest
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::aidoku_wasm::AidokuImageRequest>
+    for crate::api::aidoku_wasm::AidokuImageRequest
+{
+    fn into_into_dart(self) -> crate::api::aidoku_wasm::AidokuImageRequest {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::aidoku_wasm::host_js::AidokuJsAction {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::CreateContext => 0.into_dart(),
+            Self::Evaluate => 1.into_dart(),
+            Self::EvaluateAsync => 2.into_dart(),
+            Self::GetProperty => 3.into_dart(),
+            Self::DestroyContext => 4.into_dart(),
+            Self::WebviewCreate => 5.into_dart(),
+            Self::WebviewSetRuleList => 6.into_dart(),
+            Self::WebviewLoad => 7.into_dart(),
+            Self::WebviewLoadHtml => 8.into_dart(),
+            Self::WebviewWaitForLoad => 9.into_dart(),
+            Self::WebviewEval => 10.into_dart(),
+            Self::WebviewEvalAsync => 11.into_dart(),
+            Self::WebviewAddUserScript => 12.into_dart(),
+            Self::WebviewGetCookies => 13.into_dart(),
+            Self::WebviewDeleteCookie => 14.into_dart(),
+            Self::WebviewDestroy => 15.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::aidoku_wasm::host_js::AidokuJsAction
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::aidoku_wasm::host_js::AidokuJsAction>
+    for crate::aidoku_wasm::host_js::AidokuJsAction
+{
+    fn into_into_dart(self) -> crate::aidoku_wasm::host_js::AidokuJsAction {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::aidoku_wasm::host_js::AidokuJsRequest {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.context_id.into_into_dart().into_dart(),
+            self.action.into_into_dart().into_dart(),
+            self.script.into_into_dart().into_dart(),
+            self.extra.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::aidoku_wasm::host_js::AidokuJsRequest
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::aidoku_wasm::host_js::AidokuJsRequest>
+    for crate::aidoku_wasm::host_js::AidokuJsRequest
+{
+    fn into_into_dart(self) -> crate::aidoku_wasm::host_js::AidokuJsRequest {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::aidoku_wasm::host_js::AidokuJsResponse {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.success.into_into_dart().into_dart(),
+            self.result.into_into_dart().into_dart(),
+            self.error.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::aidoku_wasm::host_js::AidokuJsResponse
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::aidoku_wasm::host_js::AidokuJsResponse>
+    for crate::aidoku_wasm::host_js::AidokuJsResponse
+{
+    fn into_into_dart(self) -> crate::aidoku_wasm::host_js::AidokuJsResponse {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::aidoku_wasm::AidokuListing {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.id.into_into_dart().into_dart(),
+            self.name.into_into_dart().into_dart(),
+            self.is_list.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::aidoku_wasm::AidokuListing
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::aidoku_wasm::AidokuListing>
+    for crate::api::aidoku_wasm::AidokuListing
+{
+    fn into_into_dart(self) -> crate::api::aidoku_wasm::AidokuListing {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::aidoku_wasm::AidokuManga {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.source_key.into_into_dart().into_dart(),
+            self.key.into_into_dart().into_dart(),
+            self.title.into_into_dart().into_dart(),
+            self.cover.into_into_dart().into_dart(),
+            self.artists.into_into_dart().into_dart(),
+            self.authors.into_into_dart().into_dart(),
+            self.description.into_into_dart().into_dart(),
+            self.url.into_into_dart().into_dart(),
+            self.tags.into_into_dart().into_dart(),
+            self.status.into_into_dart().into_dart(),
+            self.content_rating.into_into_dart().into_dart(),
+            self.viewer.into_into_dart().into_dart(),
+            self.update_strategy.into_into_dart().into_dart(),
+            self.next_update_time.into_into_dart().into_dart(),
+            self.chapters.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::aidoku_wasm::AidokuManga
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::aidoku_wasm::AidokuManga>
+    for crate::api::aidoku_wasm::AidokuManga
+{
+    fn into_into_dart(self) -> crate::api::aidoku_wasm::AidokuManga {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::aidoku_wasm::AidokuMangaPage {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.entries.into_into_dart().into_dart(),
+            self.has_next_page.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::aidoku_wasm::AidokuMangaPage
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::aidoku_wasm::AidokuMangaPage>
+    for crate::api::aidoku_wasm::AidokuMangaPage
+{
+    fn into_into_dart(self) -> crate::api::aidoku_wasm::AidokuMangaPage {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::aidoku_wasm::AidokuNetRequest {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.method.into_into_dart().into_dart(),
+            self.url.into_into_dart().into_dart(),
+            self.headers.into_into_dart().into_dart(),
+            self.body.into_into_dart().into_dart(),
+            self.timeout_ms.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::aidoku_wasm::AidokuNetRequest
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::aidoku_wasm::AidokuNetRequest>
+    for crate::api::aidoku_wasm::AidokuNetRequest
+{
+    fn into_into_dart(self) -> crate::api::aidoku_wasm::AidokuNetRequest {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::aidoku_wasm::AidokuNetResponse {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.status_code.into_into_dart().into_dart(),
+            self.headers.into_into_dart().into_dart(),
+            self.body.into_into_dart().into_dart(),
+            self.error.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::aidoku_wasm::AidokuNetResponse
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::aidoku_wasm::AidokuNetResponse>
+    for crate::api::aidoku_wasm::AidokuNetResponse
+{
+    fn into_into_dart(self) -> crate::api::aidoku_wasm::AidokuNetResponse {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::aidoku_wasm::AidokuPage {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            crate::api::aidoku_wasm::AidokuPage::Url { url, context } => [
+                0.into_dart(),
+                url.into_into_dart().into_dart(),
+                context.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            crate::api::aidoku_wasm::AidokuPage::Text(field0) => {
+                [1.into_dart(), field0.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::aidoku_wasm::AidokuPage::Image { data } => {
+                [2.into_dart(), data.into_into_dart().into_dart()].into_dart()
+            }
+            crate::api::aidoku_wasm::AidokuPage::ZipFile { url, file_path } => [
+                3.into_dart(),
+                url.into_into_dart().into_dart(),
+                file_path.into_into_dart().into_dart(),
+            ]
+            .into_dart(),
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::aidoku_wasm::AidokuPage
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::aidoku_wasm::AidokuPage>
+    for crate::api::aidoku_wasm::AidokuPage
+{
+    fn into_into_dart(self) -> crate::api::aidoku_wasm::AidokuPage {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::aidoku_wasm::AidokuSourceFeatures {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.provides_listings.into_into_dart().into_dart(),
+            self.provides_home.into_into_dart().into_dart(),
+            self.dynamic_filters.into_into_dart().into_dart(),
+            self.dynamic_settings.into_into_dart().into_dart(),
+            self.dynamic_listings.into_into_dart().into_dart(),
+            self.processes_pages.into_into_dart().into_dart(),
+            self.provides_image_requests.into_into_dart().into_dart(),
+            self.provides_base_url.into_into_dart().into_dart(),
+            self.handles_deep_links.into_into_dart().into_dart(),
+            self.handles_basic_login.into_into_dart().into_dart(),
+            self.handles_web_login.into_into_dart().into_dart(),
+            self.handles_migration.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::aidoku_wasm::AidokuSourceFeatures
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::aidoku_wasm::AidokuSourceFeatures>
+    for crate::api::aidoku_wasm::AidokuSourceFeatures
+{
+    fn into_into_dart(self) -> crate::api::aidoku_wasm::AidokuSourceFeatures {
+        self
+    }
+}
 // Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::rhttp::client::ClientCertificate {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
@@ -2193,6 +4567,13 @@ impl SseEncode for RustAutoOpaqueMoi<RequestClient> {
     }
 }
 
+impl SseEncode for AidokuSource {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>>>::sse_encode(flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self), serializer);
+    }
+}
+
 impl SseEncode for CancellationToken {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2247,6 +4628,17 @@ impl SseEncode for std::collections::HashMap<String, Vec<String>> {
 }
 
 impl SseEncode
+    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>>
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        let (ptr, size) = self.sse_encode_raw();
+        <usize>::sse_encode(ptr, serializer);
+        <i32>::sse_encode(size, serializer);
+    }
+}
+
+impl SseEncode
     for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<CancellationToken>>
 {
     // Codec=Sse (Serialization based), see doc to use other codecs
@@ -2290,6 +4682,261 @@ impl SseEncode for String {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<u8>>::sse_encode(self.into_bytes(), serializer);
+    }
+}
+
+impl SseEncode for crate::api::aidoku_wasm::AidokuChapter {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.key, serializer);
+        <Option<String>>::sse_encode(self.title, serializer);
+        <Option<f32>>::sse_encode(self.chapter_number, serializer);
+        <Option<f32>>::sse_encode(self.volume_number, serializer);
+        <Option<i64>>::sse_encode(self.date_uploaded, serializer);
+        <Option<Vec<String>>>::sse_encode(self.scanlators, serializer);
+        <Option<String>>::sse_encode(self.url, serializer);
+        <Option<String>>::sse_encode(self.language, serializer);
+        <Option<String>>::sse_encode(self.thumbnail, serializer);
+        <bool>::sse_encode(self.locked, serializer);
+    }
+}
+
+impl SseEncode for crate::api::aidoku_wasm::AidokuDeepLink {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Option<String>>::sse_encode(self.manga_key, serializer);
+        <Option<String>>::sse_encode(self.chapter_key, serializer);
+        <Option<crate::api::aidoku_wasm::AidokuListing>>::sse_encode(self.listing, serializer);
+    }
+}
+
+impl SseEncode for crate::api::aidoku_wasm::AidokuFilter {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.id, serializer);
+        <Option<String>>::sse_encode(self.title, serializer);
+        <String>::sse_encode(self.kind, serializer);
+        <Vec<String>>::sse_encode(self.options, serializer);
+        <Option<String>>::sse_encode(self.default_value, serializer);
+    }
+}
+
+impl SseEncode for crate::api::aidoku_wasm::AidokuFilterValue {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::aidoku_wasm::AidokuFilterValue::Text { id, value } => {
+                <i32>::sse_encode(0, serializer);
+                <String>::sse_encode(id, serializer);
+                <String>::sse_encode(value, serializer);
+            }
+            crate::api::aidoku_wasm::AidokuFilterValue::Sort {
+                id,
+                index,
+                ascending,
+            } => {
+                <i32>::sse_encode(1, serializer);
+                <String>::sse_encode(id, serializer);
+                <i32>::sse_encode(index, serializer);
+                <bool>::sse_encode(ascending, serializer);
+            }
+            crate::api::aidoku_wasm::AidokuFilterValue::Check { id, value } => {
+                <i32>::sse_encode(2, serializer);
+                <String>::sse_encode(id, serializer);
+                <i64>::sse_encode(value, serializer);
+            }
+            crate::api::aidoku_wasm::AidokuFilterValue::Select { id, value } => {
+                <i32>::sse_encode(3, serializer);
+                <String>::sse_encode(id, serializer);
+                <String>::sse_encode(value, serializer);
+            }
+            crate::api::aidoku_wasm::AidokuFilterValue::MultiSelect {
+                id,
+                included,
+                excluded,
+            } => {
+                <i32>::sse_encode(4, serializer);
+                <String>::sse_encode(id, serializer);
+                <Vec<String>>::sse_encode(included, serializer);
+                <Vec<String>>::sse_encode(excluded, serializer);
+            }
+            crate::api::aidoku_wasm::AidokuFilterValue::Range { id, from, to } => {
+                <i32>::sse_encode(5, serializer);
+                <String>::sse_encode(id, serializer);
+                <Option<f32>>::sse_encode(from, serializer);
+                <Option<f32>>::sse_encode(to, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::api::aidoku_wasm::AidokuImageRequest {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.url, serializer);
+        <Vec<(String, String)>>::sse_encode(self.headers, serializer);
+        <Option<Vec<u8>>>::sse_encode(self.body, serializer);
+    }
+}
+
+impl SseEncode for crate::aidoku_wasm::host_js::AidokuJsAction {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::aidoku_wasm::host_js::AidokuJsAction::CreateContext => 0,
+                crate::aidoku_wasm::host_js::AidokuJsAction::Evaluate => 1,
+                crate::aidoku_wasm::host_js::AidokuJsAction::EvaluateAsync => 2,
+                crate::aidoku_wasm::host_js::AidokuJsAction::GetProperty => 3,
+                crate::aidoku_wasm::host_js::AidokuJsAction::DestroyContext => 4,
+                crate::aidoku_wasm::host_js::AidokuJsAction::WebviewCreate => 5,
+                crate::aidoku_wasm::host_js::AidokuJsAction::WebviewSetRuleList => 6,
+                crate::aidoku_wasm::host_js::AidokuJsAction::WebviewLoad => 7,
+                crate::aidoku_wasm::host_js::AidokuJsAction::WebviewLoadHtml => 8,
+                crate::aidoku_wasm::host_js::AidokuJsAction::WebviewWaitForLoad => 9,
+                crate::aidoku_wasm::host_js::AidokuJsAction::WebviewEval => 10,
+                crate::aidoku_wasm::host_js::AidokuJsAction::WebviewEvalAsync => 11,
+                crate::aidoku_wasm::host_js::AidokuJsAction::WebviewAddUserScript => 12,
+                crate::aidoku_wasm::host_js::AidokuJsAction::WebviewGetCookies => 13,
+                crate::aidoku_wasm::host_js::AidokuJsAction::WebviewDeleteCookie => 14,
+                crate::aidoku_wasm::host_js::AidokuJsAction::WebviewDestroy => 15,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::aidoku_wasm::host_js::AidokuJsRequest {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.context_id, serializer);
+        <crate::aidoku_wasm::host_js::AidokuJsAction>::sse_encode(self.action, serializer);
+        <String>::sse_encode(self.script, serializer);
+        <Option<String>>::sse_encode(self.extra, serializer);
+    }
+}
+
+impl SseEncode for crate::aidoku_wasm::host_js::AidokuJsResponse {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.success, serializer);
+        <Option<String>>::sse_encode(self.result, serializer);
+        <Option<String>>::sse_encode(self.error, serializer);
+    }
+}
+
+impl SseEncode for crate::api::aidoku_wasm::AidokuListing {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.id, serializer);
+        <String>::sse_encode(self.name, serializer);
+        <bool>::sse_encode(self.is_list, serializer);
+    }
+}
+
+impl SseEncode for crate::api::aidoku_wasm::AidokuManga {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.source_key, serializer);
+        <String>::sse_encode(self.key, serializer);
+        <String>::sse_encode(self.title, serializer);
+        <Option<String>>::sse_encode(self.cover, serializer);
+        <Option<Vec<String>>>::sse_encode(self.artists, serializer);
+        <Option<Vec<String>>>::sse_encode(self.authors, serializer);
+        <Option<String>>::sse_encode(self.description, serializer);
+        <Option<String>>::sse_encode(self.url, serializer);
+        <Option<Vec<String>>>::sse_encode(self.tags, serializer);
+        <u8>::sse_encode(self.status, serializer);
+        <u8>::sse_encode(self.content_rating, serializer);
+        <u8>::sse_encode(self.viewer, serializer);
+        <u8>::sse_encode(self.update_strategy, serializer);
+        <Option<i64>>::sse_encode(self.next_update_time, serializer);
+        <Option<Vec<crate::api::aidoku_wasm::AidokuChapter>>>::sse_encode(
+            self.chapters,
+            serializer,
+        );
+    }
+}
+
+impl SseEncode for crate::api::aidoku_wasm::AidokuMangaPage {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<crate::api::aidoku_wasm::AidokuManga>>::sse_encode(self.entries, serializer);
+        <bool>::sse_encode(self.has_next_page, serializer);
+    }
+}
+
+impl SseEncode for crate::api::aidoku_wasm::AidokuNetRequest {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.method, serializer);
+        <String>::sse_encode(self.url, serializer);
+        <Vec<(String, String)>>::sse_encode(self.headers, serializer);
+        <Option<Vec<u8>>>::sse_encode(self.body, serializer);
+        <u64>::sse_encode(self.timeout_ms, serializer);
+    }
+}
+
+impl SseEncode for crate::api::aidoku_wasm::AidokuNetResponse {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <u16>::sse_encode(self.status_code, serializer);
+        <Vec<(String, String)>>::sse_encode(self.headers, serializer);
+        <Vec<u8>>::sse_encode(self.body, serializer);
+        <Option<String>>::sse_encode(self.error, serializer);
+    }
+}
+
+impl SseEncode for crate::api::aidoku_wasm::AidokuPage {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        match self {
+            crate::api::aidoku_wasm::AidokuPage::Url { url, context } => {
+                <i32>::sse_encode(0, serializer);
+                <String>::sse_encode(url, serializer);
+                <Vec<(String, String)>>::sse_encode(context, serializer);
+            }
+            crate::api::aidoku_wasm::AidokuPage::Text(field0) => {
+                <i32>::sse_encode(1, serializer);
+                <String>::sse_encode(field0, serializer);
+            }
+            crate::api::aidoku_wasm::AidokuPage::Image { data } => {
+                <i32>::sse_encode(2, serializer);
+                <Option<Vec<u8>>>::sse_encode(data, serializer);
+            }
+            crate::api::aidoku_wasm::AidokuPage::ZipFile { url, file_path } => {
+                <i32>::sse_encode(3, serializer);
+                <String>::sse_encode(url, serializer);
+                <String>::sse_encode(file_path, serializer);
+            }
+            _ => {
+                unimplemented!("");
+            }
+        }
+    }
+}
+
+impl SseEncode for crate::api::aidoku_wasm::AidokuSourceFeatures {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.provides_listings, serializer);
+        <bool>::sse_encode(self.provides_home, serializer);
+        <bool>::sse_encode(self.dynamic_filters, serializer);
+        <bool>::sse_encode(self.dynamic_settings, serializer);
+        <bool>::sse_encode(self.dynamic_listings, serializer);
+        <bool>::sse_encode(self.processes_pages, serializer);
+        <bool>::sse_encode(self.provides_image_requests, serializer);
+        <bool>::sse_encode(self.provides_base_url, serializer);
+        <bool>::sse_encode(self.handles_deep_links, serializer);
+        <bool>::sse_encode(self.handles_basic_login, serializer);
+        <bool>::sse_encode(self.handles_web_login, serializer);
+        <bool>::sse_encode(self.handles_migration, serializer);
     }
 }
 
@@ -2365,6 +5012,13 @@ impl SseEncode for crate::api::epub::EpubResource {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.name, serializer);
         <Vec<u8>>::sse_encode(self.content, serializer);
+    }
+}
+
+impl SseEncode for f32 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        serializer.cursor.write_f32::<NativeEndian>(self).unwrap();
     }
 }
 
@@ -2490,6 +5144,66 @@ impl SseEncode for Vec<String> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <String>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::aidoku_wasm::AidokuChapter> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::aidoku_wasm::AidokuChapter>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::aidoku_wasm::AidokuFilter> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::aidoku_wasm::AidokuFilter>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::aidoku_wasm::AidokuFilterValue> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::aidoku_wasm::AidokuFilterValue>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::aidoku_wasm::AidokuListing> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::aidoku_wasm::AidokuListing>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::aidoku_wasm::AidokuManga> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::aidoku_wasm::AidokuManga>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::aidoku_wasm::AidokuPage> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::aidoku_wasm::AidokuPage>::sse_encode(item, serializer);
         }
     }
 }
@@ -2641,6 +5355,36 @@ impl SseEncode for Option<chrono::Duration> {
     }
 }
 
+impl SseEncode for Option<crate::api::aidoku_wasm::AidokuDeepLink> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::aidoku_wasm::AidokuDeepLink>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::aidoku_wasm::AidokuImageRequest> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::aidoku_wasm::AidokuImageRequest>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::aidoku_wasm::AidokuListing> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::aidoku_wasm::AidokuListing>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<crate::api::rhttp::client::ClientCertificate> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2661,12 +5405,32 @@ impl SseEncode for Option<crate::api::rhttp::client::ClientSettings> {
     }
 }
 
+impl SseEncode for Option<f32> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <f32>::sse_encode(value, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<crate::api::rhttp::http::HttpHeaders> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <crate::api::rhttp::http::HttpHeaders>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<i64> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <i64>::sse_encode(value, serializer);
         }
     }
 }
@@ -2717,6 +5481,26 @@ impl SseEncode for Option<crate::api::rhttp::client::TlsVersion> {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <crate::api::rhttp::client::TlsVersion>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<Vec<String>> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <Vec<String>>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<Vec<crate::api::aidoku_wasm::AidokuChapter>> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <Vec<crate::api::aidoku_wasm::AidokuChapter>>::sse_encode(value, serializer);
         }
     }
 }
@@ -2910,6 +5694,13 @@ impl SseEncode for u16 {
     }
 }
 
+impl SseEncode for u64 {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        serializer.cursor.write_u64::<NativeEndian>(self).unwrap();
+    }
+}
+
 impl SseEncode for u8 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2940,6 +5731,7 @@ mod io {
     // Section: imports
 
     use super::*;
+    use crate::api::aidoku_wasm::*;
     use crate::api::rhttp::client::*;
     use crate::*;
     use flutter_rust_bridge::for_generated::byteorder::{
@@ -2951,6 +5743,20 @@ mod io {
     // Section: boilerplate
 
     flutter_rust_bridge::frb_generated_boilerplate_io!();
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_mangayomi_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>>::increment_strong_count(ptr as _);
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_mangayomi_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>>::decrement_strong_count(ptr as _);
+    }
 
     #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_mangayomi_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
@@ -3006,6 +5812,7 @@ mod web {
     // Section: imports
 
     use super::*;
+    use crate::api::aidoku_wasm::*;
     use crate::api::rhttp::client::*;
     use crate::*;
     use flutter_rust_bridge::for_generated::byteorder::{
@@ -3019,6 +5826,20 @@ mod web {
     // Section: boilerplate
 
     flutter_rust_bridge::frb_generated_boilerplate_web!();
+
+    #[wasm_bindgen]
+    pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>>::increment_strong_count(ptr as _);
+    }
+
+    #[wasm_bindgen]
+    pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<AidokuSource>>::decrement_strong_count(ptr as _);
+    }
 
     #[wasm_bindgen]
     pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(

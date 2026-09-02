@@ -2026,14 +2026,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.6.0"
-  wasd:
-    dependency: "direct main"
-    description:
-      name: wasd
-      sha256: e40fdf1be12c6dd0c38f41e81ad987e3121296ea1964500e7f9f24454ed8b419
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.0"
   watcher:
     dependency: transitive
     description:

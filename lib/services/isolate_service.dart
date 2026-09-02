@@ -204,8 +204,7 @@ class GetIsolateService {
     String? androidProxyServer,
     bool? useLogger,
   }) async {
-    if (source?.sourceCodeLanguage != SourceCodeLanguage.lnreader &&
-        source?.sourceCodeLanguage != SourceCodeLanguage.aidoku) {
+    if (source?.sourceCodeLanguage != SourceCodeLanguage.lnreader) {
       return withExtensionService(source!, proxyServer ?? '', (service) async {
         switch (serviceType) {
           case 'getDetail':

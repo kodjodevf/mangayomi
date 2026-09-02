@@ -2056,7 +2056,7 @@ final class MangasSetIsReadStateProvider
 }
 
 String _$mangasSetIsReadStateHash() =>
-    r'7bd5ede4ee9932ca30740fda7b4ae5257f3bcdb0';
+    r'06defa0ca5ca63076c1e92d143bcbab0848558c0';
 
 final class MangasSetIsReadStateFamily extends $Family
     with

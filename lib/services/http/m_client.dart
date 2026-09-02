@@ -117,7 +117,7 @@ class MClient {
   }
 
   static Map<String, String> getCookiesPref(String url) {
-    final cookiesList = settingsRepository.current.cookiesList ?? [];
+    final cookiesList = settingsRepository.currentOrNull?.cookiesList ?? [];
     if (cookiesList.isEmpty) return {};
     final host = Uri.parse(url).host;
     final cookies = cookiesList
@@ -197,11 +197,13 @@ class MCookieManager extends InterceptorContract {
     final cookie = MClient.getCookiesPref(request.url.toString());
     if (cookie.isNotEmpty) {
       final settings = await settingsRepository.currentAsync;
-      final userAgent = settings!.userAgent!;
+      final userAgent = settings?.userAgent;
       if (request.headers[HttpHeaders.cookieHeader] == null) {
         request.headers.addAll(cookie);
       }
-      if (request.headers[HttpHeaders.userAgentHeader] == null) {
+      if (userAgent != null &&
+          userAgent.isNotEmpty &&
+          request.headers[HttpHeaders.userAgentHeader] == null) {
         request.headers[HttpHeaders.userAgentHeader] = userAgent;
       }
     }

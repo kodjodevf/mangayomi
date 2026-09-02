@@ -3,6 +3,8 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
+import 'aidoku_wasm/host_js.dart';
+import 'api/aidoku_wasm.dart';
 import 'api/epub.dart';
 import 'api/rar.dart';
 import 'api/rhttp/client.dart';
@@ -72,7 +74,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0';
 
   @override
-  int get rustContentHash => -1477350731;
+  int get rustContentHash => -707951366;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -84,6 +86,103 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
+  Future<AidokuSource> crateApiAidokuWasmAidokuSourceCreate({
+    required List<int> wasmBytes,
+    required String sourceKey,
+    required FutureOr<AidokuNetResponse> Function(AidokuNetRequest)
+    requestHandler,
+    required FutureOr<void> Function(String) printHandler,
+    required FutureOr<AidokuJsResponse> Function(AidokuJsRequest) jsHandler,
+  });
+
+  Future<void> crateApiAidokuWasmAidokuSourceDispose({
+    required AidokuSource that,
+  });
+
+  Future<AidokuSourceFeatures> crateApiAidokuWasmAidokuSourceFeatures({
+    required AidokuSource that,
+  });
+
+  Future<String?> crateApiAidokuWasmAidokuSourceGetBaseUrl({
+    required AidokuSource that,
+  });
+
+  Future<List<AidokuFilter>> crateApiAidokuWasmAidokuSourceGetFilters({
+    required AidokuSource that,
+  });
+
+  Future<AidokuImageRequest?> crateApiAidokuWasmAidokuSourceGetImageRequest({
+    required AidokuSource that,
+    required String url,
+    List<(String, String)>? context,
+  });
+
+  Future<List<AidokuListing>> crateApiAidokuWasmAidokuSourceGetListings({
+    required AidokuSource that,
+  });
+
+  Future<AidokuMangaPage> crateApiAidokuWasmAidokuSourceGetMangaList({
+    required AidokuSource that,
+    required String listingId,
+    required String listingName,
+    required int page,
+  });
+
+  Future<AidokuManga> crateApiAidokuWasmAidokuSourceGetMangaUpdate({
+    required AidokuSource that,
+    required AidokuManga manga,
+    required bool needsDetails,
+    required bool needsChapters,
+  });
+
+  Future<List<AidokuPage>> crateApiAidokuWasmAidokuSourceGetPageList({
+    required AidokuSource that,
+    required AidokuManga manga,
+    required AidokuChapter chapter,
+  });
+
+  Future<bool> crateApiAidokuWasmAidokuSourceHandleBasicLogin({
+    required AidokuSource that,
+    required String key,
+    required String username,
+    required String password,
+  });
+
+  Future<AidokuDeepLink?> crateApiAidokuWasmAidokuSourceHandleDeepLink({
+    required AidokuSource that,
+    required String url,
+  });
+
+  Future<String> crateApiAidokuWasmAidokuSourceHandleMigration({
+    required AidokuSource that,
+    required int kind,
+    required String mangaKey,
+    String? chapterKey,
+  });
+
+  Future<bool> crateApiAidokuWasmAidokuSourceHandleWebLogin({
+    required AidokuSource that,
+    required String key,
+    required List<(String, String)> cookies,
+  });
+
+  Future<AidokuMangaPage> crateApiAidokuWasmAidokuSourceSearchMangaList({
+    required AidokuSource that,
+    String? query,
+    required int page,
+    required List<AidokuFilterValue> filters,
+  });
+
+  Future<AidokuChapter> crateApiAidokuWasmAidokuChapterDefault();
+
+  Future<AidokuManga> crateApiAidokuWasmAidokuMangaDefault();
+
+  Future<AidokuMangaPage> crateApiAidokuWasmAidokuMangaPageDefault();
+
+  Future<AidokuNetResponse> crateApiAidokuWasmAidokuNetResponseDefault();
+
+  Future<AidokuSourceFeatures> crateApiAidokuWasmAidokuSourceFeaturesDefault();
+
   Future<void> crateApiRhttpHttpCancelRequest({
     required CancellationToken token,
   });
@@ -147,6 +246,20 @@ abstract class RustLibApi extends BaseApi {
     required ClientSettings settings,
   });
 
+  Future<void> crateApiAidokuWasmSetAidokuDefaultSetting({
+    required String key,
+    required int valueType,
+    required String value,
+  });
+
+  RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_AidokuSource;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_AidokuSource;
+
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_AidokuSourcePtr;
+
   RustArcIncrementStrongCountFnType
   get rust_arc_increment_strong_count_CancellationToken;
 
@@ -183,6 +296,759 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
+  Future<AidokuSource> crateApiAidokuWasmAidokuSourceCreate({
+    required List<int> wasmBytes,
+    required String sourceKey,
+    required FutureOr<AidokuNetResponse> Function(AidokuNetRequest)
+    requestHandler,
+    required FutureOr<void> Function(String) printHandler,
+    required FutureOr<AidokuJsResponse> Function(AidokuJsRequest) jsHandler,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_list_prim_u_8_loose(wasmBytes, serializer);
+          sse_encode_String(sourceKey, serializer);
+          sse_encode_DartFn_Inputs_aidoku_net_request_Output_aidoku_net_response_AnyhowException(
+            requestHandler,
+            serializer,
+          );
+          sse_encode_DartFn_Inputs_String_Output_unit_AnyhowException(
+            printHandler,
+            serializer,
+          );
+          sse_encode_DartFn_Inputs_aidoku_js_request_Output_aidoku_js_response_AnyhowException(
+            jsHandler,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 1,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceCreateConstMeta,
+        argValues: [
+          wasmBytes,
+          sourceKey,
+          requestHandler,
+          printHandler,
+          jsHandler,
+        ],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceCreateConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_create",
+        argNames: [
+          "wasmBytes",
+          "sourceKey",
+          "requestHandler",
+          "printHandler",
+          "jsHandler",
+        ],
+      );
+
+  @override
+  Future<void> crateApiAidokuWasmAidokuSourceDispose({
+    required AidokuSource that,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 2,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceDisposeConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceDisposeConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_dispose",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<AidokuSourceFeatures> crateApiAidokuWasmAidokuSourceFeatures({
+    required AidokuSource that,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 3,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_aidoku_source_features,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceFeaturesConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceFeaturesConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_features",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<String?> crateApiAidokuWasmAidokuSourceGetBaseUrl({
+    required AidokuSource that,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 4,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_String,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceGetBaseUrlConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceGetBaseUrlConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_get_base_url",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<List<AidokuFilter>> crateApiAidokuWasmAidokuSourceGetFilters({
+    required AidokuSource that,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 5,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_aidoku_filter,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceGetFiltersConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceGetFiltersConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_get_filters",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<AidokuImageRequest?> crateApiAidokuWasmAidokuSourceGetImageRequest({
+    required AidokuSource that,
+    required String url,
+    List<(String, String)>? context,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          sse_encode_String(url, serializer);
+          sse_encode_opt_list_record_string_string(context, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 6,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_box_autoadd_aidoku_image_request,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceGetImageRequestConstMeta,
+        argValues: [that, url, context],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceGetImageRequestConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_get_image_request",
+        argNames: ["that", "url", "context"],
+      );
+
+  @override
+  Future<List<AidokuListing>> crateApiAidokuWasmAidokuSourceGetListings({
+    required AidokuSource that,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 7,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_aidoku_listing,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceGetListingsConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceGetListingsConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_get_listings",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<AidokuMangaPage> crateApiAidokuWasmAidokuSourceGetMangaList({
+    required AidokuSource that,
+    required String listingId,
+    required String listingName,
+    required int page,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          sse_encode_String(listingId, serializer);
+          sse_encode_String(listingName, serializer);
+          sse_encode_i_32(page, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 8,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_aidoku_manga_page,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceGetMangaListConstMeta,
+        argValues: [that, listingId, listingName, page],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceGetMangaListConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_get_manga_list",
+        argNames: ["that", "listingId", "listingName", "page"],
+      );
+
+  @override
+  Future<AidokuManga> crateApiAidokuWasmAidokuSourceGetMangaUpdate({
+    required AidokuSource that,
+    required AidokuManga manga,
+    required bool needsDetails,
+    required bool needsChapters,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          sse_encode_box_autoadd_aidoku_manga(manga, serializer);
+          sse_encode_bool(needsDetails, serializer);
+          sse_encode_bool(needsChapters, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 9,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_aidoku_manga,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceGetMangaUpdateConstMeta,
+        argValues: [that, manga, needsDetails, needsChapters],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceGetMangaUpdateConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_get_manga_update",
+        argNames: ["that", "manga", "needsDetails", "needsChapters"],
+      );
+
+  @override
+  Future<List<AidokuPage>> crateApiAidokuWasmAidokuSourceGetPageList({
+    required AidokuSource that,
+    required AidokuManga manga,
+    required AidokuChapter chapter,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          sse_encode_box_autoadd_aidoku_manga(manga, serializer);
+          sse_encode_box_autoadd_aidoku_chapter(chapter, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 10,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_aidoku_page,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceGetPageListConstMeta,
+        argValues: [that, manga, chapter],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceGetPageListConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_get_page_list",
+        argNames: ["that", "manga", "chapter"],
+      );
+
+  @override
+  Future<bool> crateApiAidokuWasmAidokuSourceHandleBasicLogin({
+    required AidokuSource that,
+    required String key,
+    required String username,
+    required String password,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          sse_encode_String(key, serializer);
+          sse_encode_String(username, serializer);
+          sse_encode_String(password, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 11,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceHandleBasicLoginConstMeta,
+        argValues: [that, key, username, password],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceHandleBasicLoginConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_handle_basic_login",
+        argNames: ["that", "key", "username", "password"],
+      );
+
+  @override
+  Future<AidokuDeepLink?> crateApiAidokuWasmAidokuSourceHandleDeepLink({
+    required AidokuSource that,
+    required String url,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          sse_encode_String(url, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 12,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_box_autoadd_aidoku_deep_link,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceHandleDeepLinkConstMeta,
+        argValues: [that, url],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceHandleDeepLinkConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_handle_deep_link",
+        argNames: ["that", "url"],
+      );
+
+  @override
+  Future<String> crateApiAidokuWasmAidokuSourceHandleMigration({
+    required AidokuSource that,
+    required int kind,
+    required String mangaKey,
+    String? chapterKey,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          sse_encode_i_32(kind, serializer);
+          sse_encode_String(mangaKey, serializer);
+          sse_encode_opt_String(chapterKey, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 13,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceHandleMigrationConstMeta,
+        argValues: [that, kind, mangaKey, chapterKey],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceHandleMigrationConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_handle_migration",
+        argNames: ["that", "kind", "mangaKey", "chapterKey"],
+      );
+
+  @override
+  Future<bool> crateApiAidokuWasmAidokuSourceHandleWebLogin({
+    required AidokuSource that,
+    required String key,
+    required List<(String, String)> cookies,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          sse_encode_String(key, serializer);
+          sse_encode_list_record_string_string(cookies, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 14,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceHandleWebLoginConstMeta,
+        argValues: [that, key, cookies],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceHandleWebLoginConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_handle_web_login",
+        argNames: ["that", "key", "cookies"],
+      );
+
+  @override
+  Future<AidokuMangaPage> crateApiAidokuWasmAidokuSourceSearchMangaList({
+    required AidokuSource that,
+    String? query,
+    required int page,
+    required List<AidokuFilterValue> filters,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+            that,
+            serializer,
+          );
+          sse_encode_opt_String(query, serializer);
+          sse_encode_i_32(page, serializer);
+          sse_encode_list_aidoku_filter_value(filters, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 15,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_aidoku_manga_page,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceSearchMangaListConstMeta,
+        argValues: [that, query, page, filters],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceSearchMangaListConstMeta =>
+      const TaskConstMeta(
+        debugName: "AidokuSource_search_manga_list",
+        argNames: ["that", "query", "page", "filters"],
+      );
+
+  @override
+  Future<AidokuChapter> crateApiAidokuWasmAidokuChapterDefault() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 17,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_aidoku_chapter,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuChapterDefaultConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuChapterDefaultConstMeta =>
+      const TaskConstMeta(debugName: "aidoku_chapter_default", argNames: []);
+
+  @override
+  Future<AidokuManga> crateApiAidokuWasmAidokuMangaDefault() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 18,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_aidoku_manga,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuMangaDefaultConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuMangaDefaultConstMeta =>
+      const TaskConstMeta(debugName: "aidoku_manga_default", argNames: []);
+
+  @override
+  Future<AidokuMangaPage> crateApiAidokuWasmAidokuMangaPageDefault() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 19,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_aidoku_manga_page,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuMangaPageDefaultConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuMangaPageDefaultConstMeta =>
+      const TaskConstMeta(debugName: "aidoku_manga_page_default", argNames: []);
+
+  @override
+  Future<AidokuNetResponse> crateApiAidokuWasmAidokuNetResponseDefault() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 20,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_aidoku_net_response,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuNetResponseDefaultConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuNetResponseDefaultConstMeta =>
+      const TaskConstMeta(
+        debugName: "aidoku_net_response_default",
+        argNames: [],
+      );
+
+  @override
+  Future<AidokuSourceFeatures> crateApiAidokuWasmAidokuSourceFeaturesDefault() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 21,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_aidoku_source_features,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiAidokuWasmAidokuSourceFeaturesDefaultConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmAidokuSourceFeaturesDefaultConstMeta =>
+      const TaskConstMeta(
+        debugName: "aidoku_source_features_default",
+        argNames: [],
+      );
+
+  @override
   Future<void> crateApiRhttpHttpCancelRequest({
     required CancellationToken token,
   }) {
@@ -197,7 +1063,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 2,
+            funcId: 22,
             port: port_,
           );
         },
@@ -230,7 +1096,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 3,
+            funcId: 23,
             port: port_,
           );
         },
@@ -260,7 +1126,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 4,
+            funcId: 24,
             port: port_,
           );
         },
@@ -290,7 +1156,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             resolver,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 5)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -319,7 +1185,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_box_autoadd_static_dns_settings(settings, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 26)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -351,7 +1217,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 27,
             port: port_,
           );
         },
@@ -384,7 +1250,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 8,
+            funcId: 28,
             port: port_,
           );
         },
@@ -419,7 +1285,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 9,
+            funcId: 29,
             port: port_,
           );
         },
@@ -490,7 +1356,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 10,
+              funcId: 30,
               port: port_,
             );
           },
@@ -553,7 +1419,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 11,
+            funcId: 31,
             port: port_,
           );
         },
@@ -588,7 +1454,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 12,
+            funcId: 32,
             port: port_,
           );
         },
@@ -621,7 +1487,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 13,
+            funcId: 33,
             port: port_,
           );
         },
@@ -649,7 +1515,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_box_autoadd_client_settings(settings, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 34)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -667,6 +1533,43 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(
         debugName: "register_client_sync",
         argNames: ["settings"],
+      );
+
+  @override
+  Future<void> crateApiAidokuWasmSetAidokuDefaultSetting({
+    required String key,
+    required int valueType,
+    required String value,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(key, serializer);
+          sse_encode_i_32(valueType, serializer);
+          sse_encode_String(value, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 35,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiAidokuWasmSetAidokuDefaultSettingConstMeta,
+        argValues: [key, valueType, value],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiAidokuWasmSetAidokuDefaultSettingConstMeta =>
+      const TaskConstMeta(
+        debugName: "set_aidoku_default_setting",
+        argNames: ["key", "valueType", "value"],
       );
 
   Future<void> Function(int, dynamic)
@@ -727,6 +1630,111 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       if (rawOutput != null) {
         serializer.buffer.putUint8(0);
         sse_encode_list_String(rawOutput.value, serializer);
+      } else {
+        serializer.buffer.putUint8(1);
+        sse_encode_AnyhowException(rawError!.value, serializer);
+      }
+      final output = serializer.intoRaw();
+
+      generalizedFrbRustBinding.dartFnDeliverOutput(
+        callId: callId,
+        ptr: output.ptr,
+        rustVecLen: output.rustVecLen,
+        dataLen: output.dataLen,
+      );
+    };
+  }
+
+  Future<void> Function(int, dynamic)
+  encode_DartFn_Inputs_String_Output_unit_AnyhowException(
+    FutureOr<void> Function(String) raw,
+  ) {
+    return (callId, rawArg0) async {
+      final arg0 = dco_decode_String(rawArg0);
+
+      Box<void>? rawOutput;
+      Box<AnyhowException>? rawError;
+      try {
+        rawOutput = Box(await raw(arg0));
+      } catch (e, s) {
+        rawError = Box(AnyhowException("$e\n\n$s"));
+      }
+
+      final serializer = SseSerializer(generalizedFrbRustBinding);
+      assert((rawOutput != null) ^ (rawError != null));
+      if (rawOutput != null) {
+        serializer.buffer.putUint8(0);
+        sse_encode_unit(rawOutput.value, serializer);
+      } else {
+        serializer.buffer.putUint8(1);
+        sse_encode_AnyhowException(rawError!.value, serializer);
+      }
+      final output = serializer.intoRaw();
+
+      generalizedFrbRustBinding.dartFnDeliverOutput(
+        callId: callId,
+        ptr: output.ptr,
+        rustVecLen: output.rustVecLen,
+        dataLen: output.dataLen,
+      );
+    };
+  }
+
+  Future<void> Function(int, dynamic)
+  encode_DartFn_Inputs_aidoku_js_request_Output_aidoku_js_response_AnyhowException(
+    FutureOr<AidokuJsResponse> Function(AidokuJsRequest) raw,
+  ) {
+    return (callId, rawArg0) async {
+      final arg0 = dco_decode_aidoku_js_request(rawArg0);
+
+      Box<AidokuJsResponse>? rawOutput;
+      Box<AnyhowException>? rawError;
+      try {
+        rawOutput = Box(await raw(arg0));
+      } catch (e, s) {
+        rawError = Box(AnyhowException("$e\n\n$s"));
+      }
+
+      final serializer = SseSerializer(generalizedFrbRustBinding);
+      assert((rawOutput != null) ^ (rawError != null));
+      if (rawOutput != null) {
+        serializer.buffer.putUint8(0);
+        sse_encode_aidoku_js_response(rawOutput.value, serializer);
+      } else {
+        serializer.buffer.putUint8(1);
+        sse_encode_AnyhowException(rawError!.value, serializer);
+      }
+      final output = serializer.intoRaw();
+
+      generalizedFrbRustBinding.dartFnDeliverOutput(
+        callId: callId,
+        ptr: output.ptr,
+        rustVecLen: output.rustVecLen,
+        dataLen: output.dataLen,
+      );
+    };
+  }
+
+  Future<void> Function(int, dynamic)
+  encode_DartFn_Inputs_aidoku_net_request_Output_aidoku_net_response_AnyhowException(
+    FutureOr<AidokuNetResponse> Function(AidokuNetRequest) raw,
+  ) {
+    return (callId, rawArg0) async {
+      final arg0 = dco_decode_aidoku_net_request(rawArg0);
+
+      Box<AidokuNetResponse>? rawOutput;
+      Box<AnyhowException>? rawError;
+      try {
+        rawOutput = Box(await raw(arg0));
+      } catch (e, s) {
+        rawError = Box(AnyhowException("$e\n\n$s"));
+      }
+
+      final serializer = SseSerializer(generalizedFrbRustBinding);
+      assert((rawOutput != null) ^ (rawError != null));
+      if (rawOutput != null) {
+        serializer.buffer.putUint8(0);
+        sse_encode_aidoku_net_response(rawOutput.value, serializer);
       } else {
         serializer.buffer.putUint8(1);
         sse_encode_AnyhowException(rawError!.value, serializer);
@@ -813,6 +1821,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_AidokuSource => wire
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_AidokuSource => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource;
+
+  RustArcIncrementStrongCountFnType
   get rust_arc_increment_strong_count_CancellationToken => wire
       .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken;
 
@@ -854,6 +1870,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AidokuSource
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AidokuSourceImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
   CancellationToken
   dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
     dynamic raw,
@@ -878,6 +1903,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return RequestClientImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  AidokuSource
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AidokuSourceImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -916,6 +1950,31 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   @protected
   FutureOr<List<String>> Function(String)
   dco_decode_DartFn_Inputs_String_Output_list_String_AnyhowException(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    throw UnimplementedError('');
+  }
+
+  @protected
+  FutureOr<void> Function(String)
+  dco_decode_DartFn_Inputs_String_Output_unit_AnyhowException(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    throw UnimplementedError('');
+  }
+
+  @protected
+  FutureOr<AidokuJsResponse> Function(AidokuJsRequest)
+  dco_decode_DartFn_Inputs_aidoku_js_request_Output_aidoku_js_response_AnyhowException(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    throw UnimplementedError('');
+  }
+
+  @protected
+  FutureOr<AidokuNetResponse> Function(AidokuNetRequest)
+  dco_decode_DartFn_Inputs_aidoku_net_request_Output_aidoku_net_response_AnyhowException(
     dynamic raw,
   ) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -967,6 +2026,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AidokuSource
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AidokuSourceImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
   CancellationToken
   dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
     dynamic raw,
@@ -1014,6 +2082,268 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AidokuChapter dco_decode_aidoku_chapter(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 10)
+      throw Exception('unexpected arr length: expect 10 but see ${arr.length}');
+    return AidokuChapter(
+      key: dco_decode_String(arr[0]),
+      title: dco_decode_opt_String(arr[1]),
+      chapterNumber: dco_decode_opt_box_autoadd_f_32(arr[2]),
+      volumeNumber: dco_decode_opt_box_autoadd_f_32(arr[3]),
+      dateUploaded: dco_decode_opt_box_autoadd_i_64(arr[4]),
+      scanlators: dco_decode_opt_list_String(arr[5]),
+      url: dco_decode_opt_String(arr[6]),
+      language: dco_decode_opt_String(arr[7]),
+      thumbnail: dco_decode_opt_String(arr[8]),
+      locked: dco_decode_bool(arr[9]),
+    );
+  }
+
+  @protected
+  AidokuDeepLink dco_decode_aidoku_deep_link(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return AidokuDeepLink(
+      mangaKey: dco_decode_opt_String(arr[0]),
+      chapterKey: dco_decode_opt_String(arr[1]),
+      listing: dco_decode_opt_box_autoadd_aidoku_listing(arr[2]),
+    );
+  }
+
+  @protected
+  AidokuFilter dco_decode_aidoku_filter(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    return AidokuFilter(
+      id: dco_decode_String(arr[0]),
+      title: dco_decode_opt_String(arr[1]),
+      kind: dco_decode_String(arr[2]),
+      options: dco_decode_list_String(arr[3]),
+      defaultValue: dco_decode_opt_String(arr[4]),
+    );
+  }
+
+  @protected
+  AidokuFilterValue dco_decode_aidoku_filter_value(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return AidokuFilterValue_Text(
+          id: dco_decode_String(raw[1]),
+          value: dco_decode_String(raw[2]),
+        );
+      case 1:
+        return AidokuFilterValue_Sort(
+          id: dco_decode_String(raw[1]),
+          index: dco_decode_i_32(raw[2]),
+          ascending: dco_decode_bool(raw[3]),
+        );
+      case 2:
+        return AidokuFilterValue_Check(
+          id: dco_decode_String(raw[1]),
+          value: dco_decode_i_64(raw[2]),
+        );
+      case 3:
+        return AidokuFilterValue_Select(
+          id: dco_decode_String(raw[1]),
+          value: dco_decode_String(raw[2]),
+        );
+      case 4:
+        return AidokuFilterValue_MultiSelect(
+          id: dco_decode_String(raw[1]),
+          included: dco_decode_list_String(raw[2]),
+          excluded: dco_decode_list_String(raw[3]),
+        );
+      case 5:
+        return AidokuFilterValue_Range(
+          id: dco_decode_String(raw[1]),
+          from: dco_decode_opt_box_autoadd_f_32(raw[2]),
+          to: dco_decode_opt_box_autoadd_f_32(raw[3]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  AidokuImageRequest dco_decode_aidoku_image_request(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return AidokuImageRequest(
+      url: dco_decode_String(arr[0]),
+      headers: dco_decode_list_record_string_string(arr[1]),
+      body: dco_decode_opt_list_prim_u_8_strict(arr[2]),
+    );
+  }
+
+  @protected
+  AidokuJsAction dco_decode_aidoku_js_action(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return AidokuJsAction.values[raw as int];
+  }
+
+  @protected
+  AidokuJsRequest dco_decode_aidoku_js_request(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return AidokuJsRequest(
+      contextId: dco_decode_i_32(arr[0]),
+      action: dco_decode_aidoku_js_action(arr[1]),
+      script: dco_decode_String(arr[2]),
+      extra: dco_decode_opt_String(arr[3]),
+    );
+  }
+
+  @protected
+  AidokuJsResponse dco_decode_aidoku_js_response(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return AidokuJsResponse(
+      success: dco_decode_bool(arr[0]),
+      result: dco_decode_opt_String(arr[1]),
+      error: dco_decode_opt_String(arr[2]),
+    );
+  }
+
+  @protected
+  AidokuListing dco_decode_aidoku_listing(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return AidokuListing(
+      id: dco_decode_String(arr[0]),
+      name: dco_decode_String(arr[1]),
+      isList: dco_decode_bool(arr[2]),
+    );
+  }
+
+  @protected
+  AidokuManga dco_decode_aidoku_manga(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 15)
+      throw Exception('unexpected arr length: expect 15 but see ${arr.length}');
+    return AidokuManga(
+      sourceKey: dco_decode_String(arr[0]),
+      key: dco_decode_String(arr[1]),
+      title: dco_decode_String(arr[2]),
+      cover: dco_decode_opt_String(arr[3]),
+      artists: dco_decode_opt_list_String(arr[4]),
+      authors: dco_decode_opt_list_String(arr[5]),
+      description: dco_decode_opt_String(arr[6]),
+      url: dco_decode_opt_String(arr[7]),
+      tags: dco_decode_opt_list_String(arr[8]),
+      status: dco_decode_u_8(arr[9]),
+      contentRating: dco_decode_u_8(arr[10]),
+      viewer: dco_decode_u_8(arr[11]),
+      updateStrategy: dco_decode_u_8(arr[12]),
+      nextUpdateTime: dco_decode_opt_box_autoadd_i_64(arr[13]),
+      chapters: dco_decode_opt_list_aidoku_chapter(arr[14]),
+    );
+  }
+
+  @protected
+  AidokuMangaPage dco_decode_aidoku_manga_page(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return AidokuMangaPage(
+      entries: dco_decode_list_aidoku_manga(arr[0]),
+      hasNextPage: dco_decode_bool(arr[1]),
+    );
+  }
+
+  @protected
+  AidokuNetRequest dco_decode_aidoku_net_request(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    return AidokuNetRequest(
+      method: dco_decode_String(arr[0]),
+      url: dco_decode_String(arr[1]),
+      headers: dco_decode_list_record_string_string(arr[2]),
+      body: dco_decode_opt_list_prim_u_8_strict(arr[3]),
+      timeoutMs: dco_decode_u_64(arr[4]),
+    );
+  }
+
+  @protected
+  AidokuNetResponse dco_decode_aidoku_net_response(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return AidokuNetResponse(
+      statusCode: dco_decode_u_16(arr[0]),
+      headers: dco_decode_list_record_string_string(arr[1]),
+      body: dco_decode_list_prim_u_8_strict(arr[2]),
+      error: dco_decode_opt_String(arr[3]),
+    );
+  }
+
+  @protected
+  AidokuPage dco_decode_aidoku_page(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    switch (raw[0]) {
+      case 0:
+        return AidokuPage_Url(
+          url: dco_decode_String(raw[1]),
+          context: dco_decode_list_record_string_string(raw[2]),
+        );
+      case 1:
+        return AidokuPage_Text(dco_decode_String(raw[1]));
+      case 2:
+        return AidokuPage_Image(
+          data: dco_decode_opt_list_prim_u_8_strict(raw[1]),
+        );
+      case 3:
+        return AidokuPage_ZipFile(
+          url: dco_decode_String(raw[1]),
+          filePath: dco_decode_String(raw[2]),
+        );
+      default:
+        throw Exception("unreachable");
+    }
+  }
+
+  @protected
+  AidokuSourceFeatures dco_decode_aidoku_source_features(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 12)
+      throw Exception('unexpected arr length: expect 12 but see ${arr.length}');
+    return AidokuSourceFeatures(
+      providesListings: dco_decode_bool(arr[0]),
+      providesHome: dco_decode_bool(arr[1]),
+      dynamicFilters: dco_decode_bool(arr[2]),
+      dynamicSettings: dco_decode_bool(arr[3]),
+      dynamicListings: dco_decode_bool(arr[4]),
+      processesPages: dco_decode_bool(arr[5]),
+      providesImageRequests: dco_decode_bool(arr[6]),
+      providesBaseUrl: dco_decode_bool(arr[7]),
+      handlesDeepLinks: dco_decode_bool(arr[8]),
+      handlesBasicLogin: dco_decode_bool(arr[9]),
+      handlesWebLogin: dco_decode_bool(arr[10]),
+      handlesMigration: dco_decode_bool(arr[11]),
+    );
+  }
+
+  @protected
   bool dco_decode_bool(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as bool;
@@ -1037,6 +2367,36 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AidokuChapter dco_decode_box_autoadd_aidoku_chapter(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_aidoku_chapter(raw);
+  }
+
+  @protected
+  AidokuDeepLink dco_decode_box_autoadd_aidoku_deep_link(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_aidoku_deep_link(raw);
+  }
+
+  @protected
+  AidokuImageRequest dco_decode_box_autoadd_aidoku_image_request(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_aidoku_image_request(raw);
+  }
+
+  @protected
+  AidokuListing dco_decode_box_autoadd_aidoku_listing(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_aidoku_listing(raw);
+  }
+
+  @protected
+  AidokuManga dco_decode_box_autoadd_aidoku_manga(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_aidoku_manga(raw);
+  }
+
+  @protected
   ClientCertificate dco_decode_box_autoadd_client_certificate(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_client_certificate(raw);
@@ -1049,6 +2409,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  double dco_decode_box_autoadd_f_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as double;
+  }
+
+  @protected
   HttpHeaders dco_decode_box_autoadd_http_headers(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_http_headers(raw);
@@ -1058,6 +2424,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   HttpResponseBody dco_decode_box_autoadd_http_response_body(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_http_response_body(raw);
+  }
+
+  @protected
+  PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_i_64(raw);
   }
 
   @protected
@@ -1183,6 +2555,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  double dco_decode_f_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as double;
+  }
+
+  @protected
   HttpHeaders dco_decode_http_headers(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
@@ -1258,6 +2636,42 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   List<String> dco_decode_list_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_String).toList();
+  }
+
+  @protected
+  List<AidokuChapter> dco_decode_list_aidoku_chapter(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_aidoku_chapter).toList();
+  }
+
+  @protected
+  List<AidokuFilter> dco_decode_list_aidoku_filter(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_aidoku_filter).toList();
+  }
+
+  @protected
+  List<AidokuFilterValue> dco_decode_list_aidoku_filter_value(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_aidoku_filter_value).toList();
+  }
+
+  @protected
+  List<AidokuListing> dco_decode_list_aidoku_listing(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_aidoku_listing).toList();
+  }
+
+  @protected
+  List<AidokuManga> dco_decode_list_aidoku_manga(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_aidoku_manga).toList();
+  }
+
+  @protected
+  List<AidokuPage> dco_decode_list_aidoku_page(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_aidoku_page).toList();
   }
 
   @protected
@@ -1396,6 +2810,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AidokuDeepLink? dco_decode_opt_box_autoadd_aidoku_deep_link(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_aidoku_deep_link(raw);
+  }
+
+  @protected
+  AidokuImageRequest? dco_decode_opt_box_autoadd_aidoku_image_request(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null
+        ? null
+        : dco_decode_box_autoadd_aidoku_image_request(raw);
+  }
+
+  @protected
+  AidokuListing? dco_decode_opt_box_autoadd_aidoku_listing(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_aidoku_listing(raw);
+  }
+
+  @protected
   ClientCertificate? dco_decode_opt_box_autoadd_client_certificate(
     dynamic raw,
   ) {
@@ -1410,9 +2846,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  double? dco_decode_opt_box_autoadd_f_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_f_32(raw);
+  }
+
+  @protected
   HttpHeaders? dco_decode_opt_box_autoadd_http_headers(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_http_headers(raw);
+  }
+
+  @protected
+  PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_i_64(raw);
   }
 
   @protected
@@ -1443,6 +2891,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TlsVersion? dco_decode_opt_box_autoadd_tls_version(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_tls_version(raw);
+  }
+
+  @protected
+  List<String>? dco_decode_opt_list_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_list_String(raw);
+  }
+
+  @protected
+  List<AidokuChapter>? dco_decode_opt_list_aidoku_chapter(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_list_aidoku_chapter(raw);
   }
 
   @protected
@@ -1597,6 +3057,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  BigInt dco_decode_u_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeU64(raw);
+  }
+
+  @protected
   int dco_decode_u_8(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as int;
@@ -1635,6 +3101,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AidokuSource
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return AidokuSourceImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
   CancellationToken
   sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
     SseDeserializer deserializer,
@@ -1665,6 +3143,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return RequestClientImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  AidokuSource
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return AidokuSourceImpl.frbInternalSseDecode(
       sse_decode_usize(deserializer),
       sse_decode_i_32(deserializer),
     );
@@ -1727,6 +3217,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AidokuSource
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return AidokuSourceImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
   CancellationToken
   sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
     SseDeserializer deserializer,
@@ -1778,6 +3280,307 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AidokuChapter sse_decode_aidoku_chapter(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_key = sse_decode_String(deserializer);
+    var var_title = sse_decode_opt_String(deserializer);
+    var var_chapterNumber = sse_decode_opt_box_autoadd_f_32(deserializer);
+    var var_volumeNumber = sse_decode_opt_box_autoadd_f_32(deserializer);
+    var var_dateUploaded = sse_decode_opt_box_autoadd_i_64(deserializer);
+    var var_scanlators = sse_decode_opt_list_String(deserializer);
+    var var_url = sse_decode_opt_String(deserializer);
+    var var_language = sse_decode_opt_String(deserializer);
+    var var_thumbnail = sse_decode_opt_String(deserializer);
+    var var_locked = sse_decode_bool(deserializer);
+    return AidokuChapter(
+      key: var_key,
+      title: var_title,
+      chapterNumber: var_chapterNumber,
+      volumeNumber: var_volumeNumber,
+      dateUploaded: var_dateUploaded,
+      scanlators: var_scanlators,
+      url: var_url,
+      language: var_language,
+      thumbnail: var_thumbnail,
+      locked: var_locked,
+    );
+  }
+
+  @protected
+  AidokuDeepLink sse_decode_aidoku_deep_link(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_mangaKey = sse_decode_opt_String(deserializer);
+    var var_chapterKey = sse_decode_opt_String(deserializer);
+    var var_listing = sse_decode_opt_box_autoadd_aidoku_listing(deserializer);
+    return AidokuDeepLink(
+      mangaKey: var_mangaKey,
+      chapterKey: var_chapterKey,
+      listing: var_listing,
+    );
+  }
+
+  @protected
+  AidokuFilter sse_decode_aidoku_filter(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_title = sse_decode_opt_String(deserializer);
+    var var_kind = sse_decode_String(deserializer);
+    var var_options = sse_decode_list_String(deserializer);
+    var var_defaultValue = sse_decode_opt_String(deserializer);
+    return AidokuFilter(
+      id: var_id,
+      title: var_title,
+      kind: var_kind,
+      options: var_options,
+      defaultValue: var_defaultValue,
+    );
+  }
+
+  @protected
+  AidokuFilterValue sse_decode_aidoku_filter_value(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_id = sse_decode_String(deserializer);
+        var var_value = sse_decode_String(deserializer);
+        return AidokuFilterValue_Text(id: var_id, value: var_value);
+      case 1:
+        var var_id = sse_decode_String(deserializer);
+        var var_index = sse_decode_i_32(deserializer);
+        var var_ascending = sse_decode_bool(deserializer);
+        return AidokuFilterValue_Sort(
+          id: var_id,
+          index: var_index,
+          ascending: var_ascending,
+        );
+      case 2:
+        var var_id = sse_decode_String(deserializer);
+        var var_value = sse_decode_i_64(deserializer);
+        return AidokuFilterValue_Check(id: var_id, value: var_value);
+      case 3:
+        var var_id = sse_decode_String(deserializer);
+        var var_value = sse_decode_String(deserializer);
+        return AidokuFilterValue_Select(id: var_id, value: var_value);
+      case 4:
+        var var_id = sse_decode_String(deserializer);
+        var var_included = sse_decode_list_String(deserializer);
+        var var_excluded = sse_decode_list_String(deserializer);
+        return AidokuFilterValue_MultiSelect(
+          id: var_id,
+          included: var_included,
+          excluded: var_excluded,
+        );
+      case 5:
+        var var_id = sse_decode_String(deserializer);
+        var var_from = sse_decode_opt_box_autoadd_f_32(deserializer);
+        var var_to = sse_decode_opt_box_autoadd_f_32(deserializer);
+        return AidokuFilterValue_Range(id: var_id, from: var_from, to: var_to);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  AidokuImageRequest sse_decode_aidoku_image_request(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_url = sse_decode_String(deserializer);
+    var var_headers = sse_decode_list_record_string_string(deserializer);
+    var var_body = sse_decode_opt_list_prim_u_8_strict(deserializer);
+    return AidokuImageRequest(
+      url: var_url,
+      headers: var_headers,
+      body: var_body,
+    );
+  }
+
+  @protected
+  AidokuJsAction sse_decode_aidoku_js_action(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var inner = sse_decode_i_32(deserializer);
+    return AidokuJsAction.values[inner];
+  }
+
+  @protected
+  AidokuJsRequest sse_decode_aidoku_js_request(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_contextId = sse_decode_i_32(deserializer);
+    var var_action = sse_decode_aidoku_js_action(deserializer);
+    var var_script = sse_decode_String(deserializer);
+    var var_extra = sse_decode_opt_String(deserializer);
+    return AidokuJsRequest(
+      contextId: var_contextId,
+      action: var_action,
+      script: var_script,
+      extra: var_extra,
+    );
+  }
+
+  @protected
+  AidokuJsResponse sse_decode_aidoku_js_response(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_success = sse_decode_bool(deserializer);
+    var var_result = sse_decode_opt_String(deserializer);
+    var var_error = sse_decode_opt_String(deserializer);
+    return AidokuJsResponse(
+      success: var_success,
+      result: var_result,
+      error: var_error,
+    );
+  }
+
+  @protected
+  AidokuListing sse_decode_aidoku_listing(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_name = sse_decode_String(deserializer);
+    var var_isList = sse_decode_bool(deserializer);
+    return AidokuListing(id: var_id, name: var_name, isList: var_isList);
+  }
+
+  @protected
+  AidokuManga sse_decode_aidoku_manga(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_sourceKey = sse_decode_String(deserializer);
+    var var_key = sse_decode_String(deserializer);
+    var var_title = sse_decode_String(deserializer);
+    var var_cover = sse_decode_opt_String(deserializer);
+    var var_artists = sse_decode_opt_list_String(deserializer);
+    var var_authors = sse_decode_opt_list_String(deserializer);
+    var var_description = sse_decode_opt_String(deserializer);
+    var var_url = sse_decode_opt_String(deserializer);
+    var var_tags = sse_decode_opt_list_String(deserializer);
+    var var_status = sse_decode_u_8(deserializer);
+    var var_contentRating = sse_decode_u_8(deserializer);
+    var var_viewer = sse_decode_u_8(deserializer);
+    var var_updateStrategy = sse_decode_u_8(deserializer);
+    var var_nextUpdateTime = sse_decode_opt_box_autoadd_i_64(deserializer);
+    var var_chapters = sse_decode_opt_list_aidoku_chapter(deserializer);
+    return AidokuManga(
+      sourceKey: var_sourceKey,
+      key: var_key,
+      title: var_title,
+      cover: var_cover,
+      artists: var_artists,
+      authors: var_authors,
+      description: var_description,
+      url: var_url,
+      tags: var_tags,
+      status: var_status,
+      contentRating: var_contentRating,
+      viewer: var_viewer,
+      updateStrategy: var_updateStrategy,
+      nextUpdateTime: var_nextUpdateTime,
+      chapters: var_chapters,
+    );
+  }
+
+  @protected
+  AidokuMangaPage sse_decode_aidoku_manga_page(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_entries = sse_decode_list_aidoku_manga(deserializer);
+    var var_hasNextPage = sse_decode_bool(deserializer);
+    return AidokuMangaPage(entries: var_entries, hasNextPage: var_hasNextPage);
+  }
+
+  @protected
+  AidokuNetRequest sse_decode_aidoku_net_request(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_method = sse_decode_String(deserializer);
+    var var_url = sse_decode_String(deserializer);
+    var var_headers = sse_decode_list_record_string_string(deserializer);
+    var var_body = sse_decode_opt_list_prim_u_8_strict(deserializer);
+    var var_timeoutMs = sse_decode_u_64(deserializer);
+    return AidokuNetRequest(
+      method: var_method,
+      url: var_url,
+      headers: var_headers,
+      body: var_body,
+      timeoutMs: var_timeoutMs,
+    );
+  }
+
+  @protected
+  AidokuNetResponse sse_decode_aidoku_net_response(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_statusCode = sse_decode_u_16(deserializer);
+    var var_headers = sse_decode_list_record_string_string(deserializer);
+    var var_body = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_error = sse_decode_opt_String(deserializer);
+    return AidokuNetResponse(
+      statusCode: var_statusCode,
+      headers: var_headers,
+      body: var_body,
+      error: var_error,
+    );
+  }
+
+  @protected
+  AidokuPage sse_decode_aidoku_page(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var tag_ = sse_decode_i_32(deserializer);
+    switch (tag_) {
+      case 0:
+        var var_url = sse_decode_String(deserializer);
+        var var_context = sse_decode_list_record_string_string(deserializer);
+        return AidokuPage_Url(url: var_url, context: var_context);
+      case 1:
+        var var_field0 = sse_decode_String(deserializer);
+        return AidokuPage_Text(var_field0);
+      case 2:
+        var var_data = sse_decode_opt_list_prim_u_8_strict(deserializer);
+        return AidokuPage_Image(data: var_data);
+      case 3:
+        var var_url = sse_decode_String(deserializer);
+        var var_filePath = sse_decode_String(deserializer);
+        return AidokuPage_ZipFile(url: var_url, filePath: var_filePath);
+      default:
+        throw UnimplementedError('');
+    }
+  }
+
+  @protected
+  AidokuSourceFeatures sse_decode_aidoku_source_features(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_providesListings = sse_decode_bool(deserializer);
+    var var_providesHome = sse_decode_bool(deserializer);
+    var var_dynamicFilters = sse_decode_bool(deserializer);
+    var var_dynamicSettings = sse_decode_bool(deserializer);
+    var var_dynamicListings = sse_decode_bool(deserializer);
+    var var_processesPages = sse_decode_bool(deserializer);
+    var var_providesImageRequests = sse_decode_bool(deserializer);
+    var var_providesBaseUrl = sse_decode_bool(deserializer);
+    var var_handlesDeepLinks = sse_decode_bool(deserializer);
+    var var_handlesBasicLogin = sse_decode_bool(deserializer);
+    var var_handlesWebLogin = sse_decode_bool(deserializer);
+    var var_handlesMigration = sse_decode_bool(deserializer);
+    return AidokuSourceFeatures(
+      providesListings: var_providesListings,
+      providesHome: var_providesHome,
+      dynamicFilters: var_dynamicFilters,
+      dynamicSettings: var_dynamicSettings,
+      dynamicListings: var_dynamicListings,
+      processesPages: var_processesPages,
+      providesImageRequests: var_providesImageRequests,
+      providesBaseUrl: var_providesBaseUrl,
+      handlesDeepLinks: var_handlesDeepLinks,
+      handlesBasicLogin: var_handlesBasicLogin,
+      handlesWebLogin: var_handlesWebLogin,
+      handlesMigration: var_handlesMigration,
+    );
+  }
+
+  @protected
   bool sse_decode_bool(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint8() != 0;
@@ -1803,6 +3606,46 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AidokuChapter sse_decode_box_autoadd_aidoku_chapter(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_aidoku_chapter(deserializer));
+  }
+
+  @protected
+  AidokuDeepLink sse_decode_box_autoadd_aidoku_deep_link(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_aidoku_deep_link(deserializer));
+  }
+
+  @protected
+  AidokuImageRequest sse_decode_box_autoadd_aidoku_image_request(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_aidoku_image_request(deserializer));
+  }
+
+  @protected
+  AidokuListing sse_decode_box_autoadd_aidoku_listing(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_aidoku_listing(deserializer));
+  }
+
+  @protected
+  AidokuManga sse_decode_box_autoadd_aidoku_manga(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_aidoku_manga(deserializer));
+  }
+
+  @protected
   ClientCertificate sse_decode_box_autoadd_client_certificate(
     SseDeserializer deserializer,
   ) {
@@ -1819,6 +3662,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  double sse_decode_box_autoadd_f_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_f_32(deserializer));
+  }
+
+  @protected
   HttpHeaders sse_decode_box_autoadd_http_headers(
     SseDeserializer deserializer,
   ) {
@@ -1832,6 +3681,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_http_response_body(deserializer));
+  }
+
+  @protected
+  PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_i_64(deserializer));
   }
 
   @protected
@@ -1970,6 +3825,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  double sse_decode_f_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getFloat32();
+  }
+
+  @protected
   HttpHeaders sse_decode_http_headers(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -2060,6 +3921,86 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var ans_ = <String>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
       ans_.add(sse_decode_String(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<AidokuChapter> sse_decode_list_aidoku_chapter(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <AidokuChapter>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_aidoku_chapter(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<AidokuFilter> sse_decode_list_aidoku_filter(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <AidokuFilter>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_aidoku_filter(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<AidokuFilterValue> sse_decode_list_aidoku_filter_value(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <AidokuFilterValue>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_aidoku_filter_value(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<AidokuListing> sse_decode_list_aidoku_listing(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <AidokuListing>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_aidoku_listing(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<AidokuManga> sse_decode_list_aidoku_manga(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <AidokuManga>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_aidoku_manga(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<AidokuPage> sse_decode_list_aidoku_page(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <AidokuPage>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_aidoku_page(deserializer));
     }
     return ans_;
   }
@@ -2265,6 +4206,45 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  AidokuDeepLink? sse_decode_opt_box_autoadd_aidoku_deep_link(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_aidoku_deep_link(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  AidokuImageRequest? sse_decode_opt_box_autoadd_aidoku_image_request(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_aidoku_image_request(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  AidokuListing? sse_decode_opt_box_autoadd_aidoku_listing(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_aidoku_listing(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   ClientCertificate? sse_decode_opt_box_autoadd_client_certificate(
     SseDeserializer deserializer,
   ) {
@@ -2291,6 +4271,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  double? sse_decode_opt_box_autoadd_f_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_f_32(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   HttpHeaders? sse_decode_opt_box_autoadd_http_headers(
     SseDeserializer deserializer,
   ) {
@@ -2298,6 +4289,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
     if (sse_decode_bool(deserializer)) {
       return (sse_decode_box_autoadd_http_headers(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_i_64(deserializer));
     } else {
       return null;
     }
@@ -2363,6 +4365,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
     if (sse_decode_bool(deserializer)) {
       return (sse_decode_box_autoadd_tls_version(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  List<String>? sse_decode_opt_list_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_list_String(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  List<AidokuChapter>? sse_decode_opt_list_aidoku_chapter(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_list_aidoku_chapter(deserializer));
     } else {
       return null;
     }
@@ -2560,6 +4586,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  BigInt sse_decode_u_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getBigUint64();
+  }
+
+  @protected
   int sse_decode_u_8(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint8();
@@ -2600,6 +4632,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+    AidokuSource self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as AidokuSourceImpl).frbInternalSseEncode(move: true),
+      serializer,
+    );
+  }
+
+  @protected
+  void
   sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
     CancellationToken self,
     SseSerializer serializer,
@@ -2633,6 +4678,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_usize(
       (self as RequestClientImpl).frbInternalSseEncode(move: true),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+    AidokuSource self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as AidokuSourceImpl).frbInternalSseEncode(move: false),
       serializer,
     );
   }
@@ -2692,6 +4750,48 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_DartOpaque(
       encode_DartFn_Inputs_String_Output_list_String_AnyhowException(self),
+      serializer,
+    );
+  }
+
+  @protected
+  void sse_encode_DartFn_Inputs_String_Output_unit_AnyhowException(
+    FutureOr<void> Function(String) self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_DartOpaque(
+      encode_DartFn_Inputs_String_Output_unit_AnyhowException(self),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_DartFn_Inputs_aidoku_js_request_Output_aidoku_js_response_AnyhowException(
+    FutureOr<AidokuJsResponse> Function(AidokuJsRequest) self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_DartOpaque(
+      encode_DartFn_Inputs_aidoku_js_request_Output_aidoku_js_response_AnyhowException(
+        self,
+      ),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_DartFn_Inputs_aidoku_net_request_Output_aidoku_net_response_AnyhowException(
+    FutureOr<AidokuNetResponse> Function(AidokuNetRequest) self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_DartOpaque(
+      encode_DartFn_Inputs_aidoku_net_request_Output_aidoku_net_response_AnyhowException(
+        self,
+      ),
       serializer,
     );
   }
@@ -2761,6 +4861,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   @protected
   void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerAidokuSource(
+    AidokuSource self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as AidokuSourceImpl).frbInternalSseEncode(move: null),
+      serializer,
+    );
+  }
+
+  @protected
+  void
   sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken(
     CancellationToken self,
     SseSerializer serializer,
@@ -2822,6 +4935,238 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_aidoku_chapter(AidokuChapter self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.key, serializer);
+    sse_encode_opt_String(self.title, serializer);
+    sse_encode_opt_box_autoadd_f_32(self.chapterNumber, serializer);
+    sse_encode_opt_box_autoadd_f_32(self.volumeNumber, serializer);
+    sse_encode_opt_box_autoadd_i_64(self.dateUploaded, serializer);
+    sse_encode_opt_list_String(self.scanlators, serializer);
+    sse_encode_opt_String(self.url, serializer);
+    sse_encode_opt_String(self.language, serializer);
+    sse_encode_opt_String(self.thumbnail, serializer);
+    sse_encode_bool(self.locked, serializer);
+  }
+
+  @protected
+  void sse_encode_aidoku_deep_link(
+    AidokuDeepLink self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_opt_String(self.mangaKey, serializer);
+    sse_encode_opt_String(self.chapterKey, serializer);
+    sse_encode_opt_box_autoadd_aidoku_listing(self.listing, serializer);
+  }
+
+  @protected
+  void sse_encode_aidoku_filter(AidokuFilter self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_opt_String(self.title, serializer);
+    sse_encode_String(self.kind, serializer);
+    sse_encode_list_String(self.options, serializer);
+    sse_encode_opt_String(self.defaultValue, serializer);
+  }
+
+  @protected
+  void sse_encode_aidoku_filter_value(
+    AidokuFilterValue self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case AidokuFilterValue_Text(id: final id, value: final value):
+        sse_encode_i_32(0, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_String(value, serializer);
+      case AidokuFilterValue_Sort(
+        id: final id,
+        index: final index,
+        ascending: final ascending,
+      ):
+        sse_encode_i_32(1, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_i_32(index, serializer);
+        sse_encode_bool(ascending, serializer);
+      case AidokuFilterValue_Check(id: final id, value: final value):
+        sse_encode_i_32(2, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_i_64(value, serializer);
+      case AidokuFilterValue_Select(id: final id, value: final value):
+        sse_encode_i_32(3, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_String(value, serializer);
+      case AidokuFilterValue_MultiSelect(
+        id: final id,
+        included: final included,
+        excluded: final excluded,
+      ):
+        sse_encode_i_32(4, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_list_String(included, serializer);
+        sse_encode_list_String(excluded, serializer);
+      case AidokuFilterValue_Range(
+        id: final id,
+        from: final from,
+        to: final to,
+      ):
+        sse_encode_i_32(5, serializer);
+        sse_encode_String(id, serializer);
+        sse_encode_opt_box_autoadd_f_32(from, serializer);
+        sse_encode_opt_box_autoadd_f_32(to, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_aidoku_image_request(
+    AidokuImageRequest self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.url, serializer);
+    sse_encode_list_record_string_string(self.headers, serializer);
+    sse_encode_opt_list_prim_u_8_strict(self.body, serializer);
+  }
+
+  @protected
+  void sse_encode_aidoku_js_action(
+    AidokuJsAction self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_aidoku_js_request(
+    AidokuJsRequest self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.contextId, serializer);
+    sse_encode_aidoku_js_action(self.action, serializer);
+    sse_encode_String(self.script, serializer);
+    sse_encode_opt_String(self.extra, serializer);
+  }
+
+  @protected
+  void sse_encode_aidoku_js_response(
+    AidokuJsResponse self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_bool(self.success, serializer);
+    sse_encode_opt_String(self.result, serializer);
+    sse_encode_opt_String(self.error, serializer);
+  }
+
+  @protected
+  void sse_encode_aidoku_listing(AidokuListing self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.name, serializer);
+    sse_encode_bool(self.isList, serializer);
+  }
+
+  @protected
+  void sse_encode_aidoku_manga(AidokuManga self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.sourceKey, serializer);
+    sse_encode_String(self.key, serializer);
+    sse_encode_String(self.title, serializer);
+    sse_encode_opt_String(self.cover, serializer);
+    sse_encode_opt_list_String(self.artists, serializer);
+    sse_encode_opt_list_String(self.authors, serializer);
+    sse_encode_opt_String(self.description, serializer);
+    sse_encode_opt_String(self.url, serializer);
+    sse_encode_opt_list_String(self.tags, serializer);
+    sse_encode_u_8(self.status, serializer);
+    sse_encode_u_8(self.contentRating, serializer);
+    sse_encode_u_8(self.viewer, serializer);
+    sse_encode_u_8(self.updateStrategy, serializer);
+    sse_encode_opt_box_autoadd_i_64(self.nextUpdateTime, serializer);
+    sse_encode_opt_list_aidoku_chapter(self.chapters, serializer);
+  }
+
+  @protected
+  void sse_encode_aidoku_manga_page(
+    AidokuMangaPage self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_aidoku_manga(self.entries, serializer);
+    sse_encode_bool(self.hasNextPage, serializer);
+  }
+
+  @protected
+  void sse_encode_aidoku_net_request(
+    AidokuNetRequest self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.method, serializer);
+    sse_encode_String(self.url, serializer);
+    sse_encode_list_record_string_string(self.headers, serializer);
+    sse_encode_opt_list_prim_u_8_strict(self.body, serializer);
+    sse_encode_u_64(self.timeoutMs, serializer);
+  }
+
+  @protected
+  void sse_encode_aidoku_net_response(
+    AidokuNetResponse self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_16(self.statusCode, serializer);
+    sse_encode_list_record_string_string(self.headers, serializer);
+    sse_encode_list_prim_u_8_strict(self.body, serializer);
+    sse_encode_opt_String(self.error, serializer);
+  }
+
+  @protected
+  void sse_encode_aidoku_page(AidokuPage self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    switch (self) {
+      case AidokuPage_Url(url: final url, context: final context):
+        sse_encode_i_32(0, serializer);
+        sse_encode_String(url, serializer);
+        sse_encode_list_record_string_string(context, serializer);
+      case AidokuPage_Text(field0: final field0):
+        sse_encode_i_32(1, serializer);
+        sse_encode_String(field0, serializer);
+      case AidokuPage_Image(data: final data):
+        sse_encode_i_32(2, serializer);
+        sse_encode_opt_list_prim_u_8_strict(data, serializer);
+      case AidokuPage_ZipFile(url: final url, filePath: final filePath):
+        sse_encode_i_32(3, serializer);
+        sse_encode_String(url, serializer);
+        sse_encode_String(filePath, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_aidoku_source_features(
+    AidokuSourceFeatures self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_bool(self.providesListings, serializer);
+    sse_encode_bool(self.providesHome, serializer);
+    sse_encode_bool(self.dynamicFilters, serializer);
+    sse_encode_bool(self.dynamicSettings, serializer);
+    sse_encode_bool(self.dynamicListings, serializer);
+    sse_encode_bool(self.processesPages, serializer);
+    sse_encode_bool(self.providesImageRequests, serializer);
+    sse_encode_bool(self.providesBaseUrl, serializer);
+    sse_encode_bool(self.handlesDeepLinks, serializer);
+    sse_encode_bool(self.handlesBasicLogin, serializer);
+    sse_encode_bool(self.handlesWebLogin, serializer);
+    sse_encode_bool(self.handlesMigration, serializer);
+  }
+
+  @protected
   void sse_encode_bool(bool self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self ? 1 : 0);
@@ -2850,6 +5195,51 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_aidoku_chapter(
+    AidokuChapter self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_aidoku_chapter(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_aidoku_deep_link(
+    AidokuDeepLink self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_aidoku_deep_link(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_aidoku_image_request(
+    AidokuImageRequest self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_aidoku_image_request(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_aidoku_listing(
+    AidokuListing self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_aidoku_listing(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_aidoku_manga(
+    AidokuManga self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_aidoku_manga(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_client_certificate(
     ClientCertificate self,
     SseSerializer serializer,
@@ -2868,6 +5258,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_f_32(double self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_f_32(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_http_headers(
     HttpHeaders self,
     SseSerializer serializer,
@@ -2883,6 +5279,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_http_response_body(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_i_64(
+    PlatformInt64 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_64(self, serializer);
   }
 
   @protected
@@ -3008,6 +5413,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_f_32(double self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putFloat32(self);
+  }
+
+  @protected
   void sse_encode_http_headers(HttpHeaders self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     switch (self) {
@@ -3083,6 +5494,78 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_String(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_aidoku_chapter(
+    List<AidokuChapter> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_aidoku_chapter(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_aidoku_filter(
+    List<AidokuFilter> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_aidoku_filter(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_aidoku_filter_value(
+    List<AidokuFilterValue> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_aidoku_filter_value(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_aidoku_listing(
+    List<AidokuListing> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_aidoku_listing(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_aidoku_manga(
+    List<AidokuManga> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_aidoku_manga(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_aidoku_page(
+    List<AidokuPage> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_aidoku_page(item, serializer);
     }
   }
 
@@ -3283,6 +5766,45 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_box_autoadd_aidoku_deep_link(
+    AidokuDeepLink? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_aidoku_deep_link(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_aidoku_image_request(
+    AidokuImageRequest? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_aidoku_image_request(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_aidoku_listing(
+    AidokuListing? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_aidoku_listing(self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_opt_box_autoadd_client_certificate(
     ClientCertificate? self,
     SseSerializer serializer,
@@ -3309,6 +5831,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_opt_box_autoadd_f_32(double? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_f_32(self, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_opt_box_autoadd_http_headers(
     HttpHeaders? self,
     SseSerializer serializer,
@@ -3318,6 +5850,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self != null, serializer);
     if (self != null) {
       sse_encode_box_autoadd_http_headers(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_i_64(
+    PlatformInt64? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_i_64(self, serializer);
     }
   }
 
@@ -3383,6 +5928,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self != null, serializer);
     if (self != null) {
       sse_encode_box_autoadd_tls_version(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_list_String(
+    List<String>? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_list_String(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_list_aidoku_chapter(
+    List<AidokuChapter>? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_list_aidoku_chapter(self, serializer);
     }
   }
 
@@ -3554,6 +6125,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_u_64(BigInt self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putBigUint64(self);
+  }
+
+  @protected
   void sse_encode_u_8(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self);
@@ -3569,6 +6146,128 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putBigUint64(self);
   }
+}
+
+@sealed
+class AidokuSourceImpl extends RustOpaque implements AidokuSource {
+  // Not to be used by end users
+  AidokuSourceImpl.frbInternalDcoDecode(List<dynamic> wire)
+    : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  AidokuSourceImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
+    : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount:
+        RustLib.instance.api.rust_arc_increment_strong_count_AidokuSource,
+    rustArcDecrementStrongCount:
+        RustLib.instance.api.rust_arc_decrement_strong_count_AidokuSource,
+    rustArcDecrementStrongCountPtr:
+        RustLib.instance.api.rust_arc_decrement_strong_count_AidokuSourcePtr,
+  );
+
+  Future<void> dispose() =>
+      RustLib.instance.api.crateApiAidokuWasmAidokuSourceDispose(that: this);
+
+  Future<AidokuSourceFeatures> features() =>
+      RustLib.instance.api.crateApiAidokuWasmAidokuSourceFeatures(that: this);
+
+  Future<String?> getBaseUrl() =>
+      RustLib.instance.api.crateApiAidokuWasmAidokuSourceGetBaseUrl(that: this);
+
+  Future<List<AidokuFilter>> getFilters() =>
+      RustLib.instance.api.crateApiAidokuWasmAidokuSourceGetFilters(that: this);
+
+  Future<AidokuImageRequest?> getImageRequest({
+    required String url,
+    List<(String, String)>? context,
+  }) => RustLib.instance.api.crateApiAidokuWasmAidokuSourceGetImageRequest(
+    that: this,
+    url: url,
+    context: context,
+  );
+
+  Future<List<AidokuListing>> getListings() => RustLib.instance.api
+      .crateApiAidokuWasmAidokuSourceGetListings(that: this);
+
+  Future<AidokuMangaPage> getMangaList({
+    required String listingId,
+    required String listingName,
+    required int page,
+  }) => RustLib.instance.api.crateApiAidokuWasmAidokuSourceGetMangaList(
+    that: this,
+    listingId: listingId,
+    listingName: listingName,
+    page: page,
+  );
+
+  Future<AidokuManga> getMangaUpdate({
+    required AidokuManga manga,
+    required bool needsDetails,
+    required bool needsChapters,
+  }) => RustLib.instance.api.crateApiAidokuWasmAidokuSourceGetMangaUpdate(
+    that: this,
+    manga: manga,
+    needsDetails: needsDetails,
+    needsChapters: needsChapters,
+  );
+
+  Future<List<AidokuPage>> getPageList({
+    required AidokuManga manga,
+    required AidokuChapter chapter,
+  }) => RustLib.instance.api.crateApiAidokuWasmAidokuSourceGetPageList(
+    that: this,
+    manga: manga,
+    chapter: chapter,
+  );
+
+  Future<bool> handleBasicLogin({
+    required String key,
+    required String username,
+    required String password,
+  }) => RustLib.instance.api.crateApiAidokuWasmAidokuSourceHandleBasicLogin(
+    that: this,
+    key: key,
+    username: username,
+    password: password,
+  );
+
+  Future<AidokuDeepLink?> handleDeepLink({required String url}) => RustLib
+      .instance
+      .api
+      .crateApiAidokuWasmAidokuSourceHandleDeepLink(that: this, url: url);
+
+  Future<String> handleMigration({
+    required int kind,
+    required String mangaKey,
+    String? chapterKey,
+  }) => RustLib.instance.api.crateApiAidokuWasmAidokuSourceHandleMigration(
+    that: this,
+    kind: kind,
+    mangaKey: mangaKey,
+    chapterKey: chapterKey,
+  );
+
+  Future<bool> handleWebLogin({
+    required String key,
+    required List<(String, String)> cookies,
+  }) => RustLib.instance.api.crateApiAidokuWasmAidokuSourceHandleWebLogin(
+    that: this,
+    key: key,
+    cookies: cookies,
+  );
+
+  Future<AidokuMangaPage> searchMangaList({
+    String? query,
+    required int page,
+    required List<AidokuFilterValue> filters,
+  }) => RustLib.instance.api.crateApiAidokuWasmAidokuSourceSearchMangaList(
+    that: this,
+    query: query,
+    page: page,
+    filters: filters,
+  );
 }
 
 @sealed
