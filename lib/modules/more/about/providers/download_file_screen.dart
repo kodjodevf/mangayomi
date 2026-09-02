@@ -11,6 +11,7 @@ import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -93,16 +94,52 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
                             final deviceInfo = DeviceInfoPlugin();
                             final androidInfo = await deviceInfo.androidInfo;
                             String apkUrl = "";
+                            final apks = updateAvailable.$4
+                                .whereType<String>()
+                                .where(
+                                  (apk) => apk.toLowerCase().endsWith('.apk'),
+                                )
+                                .toList();
+
+                            final filteredApks = isTv
+                                ? apks
+                                      .where(
+                                        (apk) => apk.toLowerCase().contains(
+                                          'android-tv',
+                                        ),
+                                      )
+                                      .toList()
+                                : apks
+                                      .where(
+                                        (apk) => !apk.toLowerCase().contains(
+                                          'android-tv',
+                                        ),
+                                      )
+                                      .toList();
+
+                            final candidateApks = filteredApks.isNotEmpty
+                                ? filteredApks
+                                : apks;
+
                             for (String abi in androidInfo.supportedAbis) {
-                              final url = updateAvailable.$4.firstWhereOrNull(
-                                (apk) => (apk as String).contains(abi),
+                              final url = candidateApks.firstWhereOrNull(
+                                (apk) => apk.toLowerCase().contains(
+                                  abi.toLowerCase(),
+                                ),
                               );
                               if (url != null) {
                                 apkUrl = url;
                                 break;
                               }
                             }
-                            await _downloadApk(apkUrl);
+                            if (apkUrl.isEmpty && candidateApks.isNotEmpty) {
+                              apkUrl = candidateApks.first;
+                            }
+                            if (apkUrl.isNotEmpty) {
+                              await _downloadApk(apkUrl);
+                            } else {
+                              _launchInBrowser(Uri.parse(updateAvailable.$3));
+                            }
                           } else {
                             _launchInBrowser(Uri.parse(updateAvailable.$3));
                           }

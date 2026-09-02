@@ -299,21 +299,32 @@ Future<void> checkIfSourceIsObsolete(
 }
 
 int compareVersions(String version1, String version2) {
-  final v1Parts = version1.split('.');
-  final v2Parts = version2.split('.');
-  final minLength = v1Parts.length < v2Parts.length
+  final clean1 = version1
+      .trim()
+      .replaceFirst(RegExp(r'^[vV]'), '')
+      .split(RegExp(r'[-+]'))
+      .first;
+  final clean2 = version2
+      .trim()
+      .replaceFirst(RegExp(r'^[vV]'), '')
+      .split(RegExp(r'[-+]'))
+      .first;
+
+  final v1Parts = clean1.split('.');
+  final v2Parts = clean2.split('.');
+  final maxLength = v1Parts.length > v2Parts.length
       ? v1Parts.length
       : v2Parts.length;
 
-  for (var i = 0; i < minLength; i++) {
-    final v1Value = int.parse(v1Parts[i].padRight(2, '0'));
-    final v2Value = int.parse(v2Parts[i].padRight(2, '0'));
+  for (var i = 0; i < maxLength; i++) {
+    final v1Value = i < v1Parts.length ? (int.tryParse(v1Parts[i]) ?? 0) : 0;
+    final v2Value = i < v2Parts.length ? (int.tryParse(v2Parts[i]) ?? 0) : 0;
 
     final comparison = v1Value.compareTo(v2Value);
     if (comparison != 0) return comparison;
   }
 
-  return v1Parts.length.compareTo(v2Parts.length);
+  return 0;
 }
 
 Future<Map<String, String>> fetchHeadersDalvik(
