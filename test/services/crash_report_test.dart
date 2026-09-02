@@ -118,6 +118,36 @@ void main() {
       },
     );
 
+    test('identical errors are folded into one useful entry', () {
+      for (var i = 0; i < 3; i++) {
+        CrashReports.record(
+          source: 'FlutterError',
+          error: 'Bad state: Failed to load https://example.test/image.jpg',
+          screen: '/browse',
+        );
+      }
+
+      expect(CrashReports.reports, hasLength(1));
+      expect(CrashReports.latest!.occurrences, 3);
+      final stored = jsonDecode(file().readAsStringSync()) as Map;
+      expect((stored['reports'] as List).single['occurrences'], 3);
+    });
+
+    test('the same generic message on different screens stays separate', () {
+      CrashReports.record(
+        source: 'FlutterError',
+        error: 'Null check operator used on a null value',
+        screen: '/library',
+      );
+      CrashReports.record(
+        source: 'FlutterError',
+        error: 'Null check operator used on a null value',
+        screen: '/extensionServer',
+      );
+
+      expect(CrashReports.reports, hasLength(2));
+    });
+
     test('an error is offered once, then stays quiet', () {
       CrashReports.record(source: 'test', error: 'once');
 
@@ -175,7 +205,27 @@ void main() {
         isExpectedFailure("SocketException: Failed host lookup: 'x.test'"),
         true,
       );
+      expect(
+        isExpectedFailure('No such host is known (mangapill.comhttps)'),
+        true,
+      );
+      expect(
+        isExpectedFailure('Bad state: Failed to load data:image/gif;base64,x'),
+        true,
+      );
     });
+
+    test(
+      'source challenges and HTTP responses stay out of the app tracker',
+      () {
+        expect(isExpectedFailure('Cloudflare challenge did not pass'), true);
+        expect(isExpectedFailure('Request failed\nstatusCode: 403'), true);
+        expect(
+          isExpectedFailure('Request failed\nHTTP status code = 500'),
+          true,
+        );
+      },
+    );
 
     test('the Rust http stack failing is the same network failure', () {
       // #933, a transport error one layer below SocketException.
@@ -238,6 +288,23 @@ void main() {
 
       expect(CrashReports.hasUnseen, true);
     });
+
+    test(
+      'an extension failure is kept without becoming an unseen app bug',
+      () async {
+        final directory = Directory.systemTemp.createTempSync('extension');
+        addTearDown(() => directory.deleteSync(recursive: true));
+        await CrashReports.init(directory);
+
+        CrashReports.record(
+          source: 'updateMangaDetail',
+          error: 'FormatException: malformed source payload',
+        );
+
+        expect(CrashReports.reports, hasLength(1));
+        expect(CrashReports.hasUnseen, false);
+      },
+    );
   });
 
   group('an extension failure', () {
@@ -283,6 +350,29 @@ void main() {
       );
     });
 
+    test('uses the recorder source when the exception text is generic', () {
+      // #961: the message itself is a normal FormatException. The source tag
+      // is what proves the malformed value came back from an extension.
+      expect(
+        isExtensionFailure(
+          'FormatException: Scheme not starting with alphabetic character',
+          source: 'updateMangaDetail',
+        ),
+        true,
+      );
+    });
+
+    test('recognises interpreter frames caught by a global handler', () {
+      expect(
+        isExtensionFailure(
+          'Bad state: no element',
+          source: 'FlutterError',
+          stack: '#0 package:mangayomi/eval/javascript/service.dart:10',
+        ),
+        true,
+      );
+    });
+
     test('an app bug is not one', () {
       expect(
         isExtensionFailure('Null check operator used on a null value'),
@@ -297,6 +387,135 @@ void main() {
         false,
       );
     });
+  });
+
+  group('a reportable failure', () {
+    test('must be an app failure rather than network or extension noise', () {
+      expect(
+        isReportableFailure(
+          CrashReport(
+            time: DateTime.utc(2026),
+            source: 'FlutterError',
+            error: 'Null check operator used on a null value',
+          ),
+        ),
+        true,
+      );
+      expect(
+        isReportableFailure(
+          CrashReport(
+            time: DateTime.utc(2026),
+            source: 'FlutterError',
+            error: 'Bad state: Failed to load https://cdn.jsdelivr.net/...',
+          ),
+        ),
+        false,
+      );
+      expect(
+        isReportableFailure(
+          CrashReport(
+            time: DateTime.utc(2026),
+            source: 'updateMangaDetail',
+            error: 'FormatException: malformed source payload',
+          ),
+        ),
+        false,
+      );
+    });
+
+    test('extension context wins over a generic HTTP classification', () {
+      final report = CrashReport(
+        time: DateTime.utc(2026),
+        source: 'updateMangaDetail',
+        error: 'Source response failed\nstatusCode: 500',
+      );
+
+      expect(crashReportScope(report), CrashReportScope.extension);
+    });
+  });
+
+  group('recent tracker regressions', () {
+    final cases =
+        <({int issue, String source, String error, CrashReportScope scope})>[
+          (
+            issue: 966,
+            source: 'FlutterError',
+            error:
+                'IsarError: An async write transaction is already in progress',
+            scope: CrashReportScope.app,
+          ),
+          (
+            issue: 964,
+            source: 'runZonedGuarded',
+            error: 'Null check operator used on a null value',
+            scope: CrashReportScope.app,
+          ),
+          (
+            issue: 963,
+            source: 'updateMangaDetail',
+            error:
+                'No such host is known (mangapill.comhttps)\nstatusCode: 500',
+            scope: CrashReportScope.extension,
+          ),
+          (
+            issue: 962,
+            source: 'updateMangaDetail',
+            error: "Runtime Error: Undefined property or method 'toList'",
+            scope: CrashReportScope.extension,
+          ),
+          (
+            issue: 961,
+            source: 'updateMangaDetail',
+            error: 'FormatException: Scheme not starting with alphabetic character',
+            scope: CrashReportScope.extension,
+          ),
+          (
+            issue: 960,
+            source: 'FlutterError',
+            error: 'Bad state: Failed to load https://raw.githubusercontent.com/...',
+            scope: CrashReportScope.external,
+          ),
+          (
+            issue: 953,
+            source: 'FlutterError',
+            error: 'Bad state: Failed to load data:image/gif;base64,x',
+            scope: CrashReportScope.external,
+          ),
+          (
+            issue: 935,
+            source: 'updateMangaDetail',
+            error: "Field 'largeImage' is required for type with serial name",
+            scope: CrashReportScope.extension,
+          ),
+          (
+            issue: 933,
+            source: 'FlutterError',
+            error: '[RhttpUnknownException] hyper_util::client::legacy::Error',
+            scope: CrashReportScope.external,
+          ),
+          (
+            issue: 927,
+            source: 'FlutterError',
+            error: 'Exception: Could not decompress image.',
+            scope: CrashReportScope.external,
+          ),
+        ];
+
+    for (final sample in cases) {
+      test('#${sample.issue} is ${sample.scope.name}', () {
+        final report = CrashReport(
+          time: DateTime.utc(2026),
+          source: sample.source,
+          error: sample.error,
+        );
+
+        expect(crashReportScope(report), sample.scope);
+        expect(
+          isReportableFailure(report),
+          sample.scope == CrashReportScope.app,
+        );
+      });
+    }
   });
 
   group('reporting the same fault twice', () {
@@ -363,7 +582,7 @@ void main() {
     final report = CrashReport(
       time: DateTime.utc(2026, 8, 22, 21, 35),
       source: 'PlatformDispatcher',
-      error: "SocketException: Failed host lookup: 'example.test'",
+      error: 'RangeError: index 4 is outside a list of length 2',
       stack: '#0 somewhere\n#1 elsewhere',
       screen: '/browse',
     );
@@ -376,17 +595,15 @@ void main() {
       expect(url.queryParameters['template'], 'report_issue.yml');
       expect(url.queryParameters['mangayomi-version'], '0.8.8');
       expect(url.queryParameters['device'], 'Pixel 5');
-      expect(url.queryParameters['title'], contains('SocketException'));
+      expect(url.queryParameters['title'], contains('RangeError'));
+      expect(url.queryParameters['title'], contains('/browse'));
     });
 
     test('says what happened and what the app thinks caused it', () {
       final url = buildIssueUrl(report, appVersion: '0.8.8', device: 'Pixel 5');
 
       expect(url.queryParameters['reproduce-steps'], contains('/browse'));
-      expect(
-        url.queryParameters['actual-behavior'],
-        contains('Failed host lookup'),
-      );
+      expect(url.queryParameters['actual-behavior'], contains('RangeError'));
       expect(url.queryParameters['actual-behavior'], contains('Likely cause'));
       expect(url.queryParameters['other-details'], contains('#0 somewhere'));
     });
@@ -397,6 +614,28 @@ void main() {
       // Everything travels as query parameters on a page the reader lands on
       // and can read before submitting.
       expect(url.queryParameters.keys, contains('actual-behavior'));
+    });
+
+    test('refuses to build links for external and extension failures', () {
+      final external = CrashReport(
+        time: DateTime.utc(2026),
+        source: 'FlutterError',
+        error: 'Bad state: Failed to load https://cdn.example/...',
+      );
+      final extension = CrashReport(
+        time: DateTime.utc(2026),
+        source: 'updateMangaDetail',
+        error: 'FormatException: malformed source payload',
+      );
+
+      expect(
+        () => buildIssueUrl(external, appVersion: '1', device: 'x'),
+        throwsArgumentError,
+      );
+      expect(
+        () => buildIssueUrl(extension, appVersion: '1', device: 'x'),
+        throwsArgumentError,
+      );
     });
 
     test(
@@ -415,5 +654,28 @@ void main() {
         expect(url.queryParameters['other-details'], contains('truncated'));
       },
     );
+
+    test('the complete encoded link stays within GitHub-safe bounds', () {
+      final huge = CrashReport(
+        time: DateTime.utc(2026),
+        source: 'test',
+        error: List.filled(500, 'failure with punctuation: []').join(' '),
+        stack: List.filled(500, '#0 a very long frame indeed').join('\n'),
+      );
+      final logs = List.filled(
+        500,
+        '[time][source] another long diagnostic line',
+      ).join('\n');
+
+      final url = buildIssueUrl(
+        huge,
+        appVersion: '1',
+        device: 'desktop',
+        logs: logs,
+      );
+
+      expect(url.toString().length, lessThanOrEqualTo(6000));
+      expect(url.queryParameters['actual-behavior'], contains('failure'));
+    });
   });
 }

@@ -291,12 +291,12 @@ class MangaRepository {
 
   // Stamps updatedAt for callers that just want to persist a mutated Manga
   // they already hold, without setting the timestamp themselves.
-  Future<void> save(Manga manga) => dbWriteQueue.run(() {
-    isar.writeTxnSync(() {
+  Future<void> save(Manga manga) => dbWriteQueue.run(
+    () => isar.writeTxn(() async {
       manga.updatedAt = DateTime.now().millisecondsSinceEpoch;
-      isar.mangas.putSync(manga);
-    });
-  });
+      await isar.mangas.put(manga);
+    }),
+  );
 
   // Plain put, no updatedAt stamping — for callers that already set it (or
   // deliberately don't) and need the generated id back.

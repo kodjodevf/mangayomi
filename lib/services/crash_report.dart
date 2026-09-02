@@ -17,6 +17,7 @@ class CrashReport {
     required this.error,
     this.stack,
     this.screen,
+    this.occurrences = 1,
   });
 
   /// When it was caught, local time.
@@ -35,6 +36,9 @@ class CrashReport {
   /// navigation.
   final String? screen;
 
+  /// How many identical errors were folded into this entry.
+  final int occurrences;
+
   /// A plain sentence naming the likely cause, or null when the error does not
   /// match anything recognisable.
   String? get likelyCause => describeLikelyCause(error);
@@ -51,6 +55,7 @@ class CrashReport {
     'error': error,
     if (stack != null) 'stack': stack,
     if (screen != null) 'screen': screen,
+    if (occurrences > 1) 'occurrences': occurrences,
   };
 
   static CrashReport? fromJson(Map<String, dynamic> json) {
@@ -63,6 +68,10 @@ class CrashReport {
       error: error,
       stack: json['stack'] as String?,
       screen: json['screen'] as String?,
+      occurrences:
+          (json['occurrences'] is int && (json['occurrences'] as int) > 0)
+          ? json['occurrences'] as int
+          : 1,
     );
   }
 }
@@ -133,24 +142,38 @@ String? describeLikelyCause(String error) {
 bool isExpectedFailure(Object error) {
   final text = error.toString().toLowerCase();
   return text.contains('failed to load http') ||
+      text.contains('failed to load data:image') ||
+      text.contains('networkimageloadexception') ||
       text.contains('socketexception') ||
       text.contains('failed host lookup') ||
+      text.contains('no such host is known') ||
+      text.contains('name or service not known') ||
+      text.contains('temporary failure in name resolution') ||
+      text.contains('network is unreachable') ||
       text.contains('connection closed') ||
       text.contains('connection reset') ||
       text.contains('connection refused') ||
+      text.contains('connection aborted') ||
+      text.contains('broken pipe') ||
       text.contains('timeoutexception') ||
+      text.contains('timed out') ||
       text.contains('handshakeexception') ||
+      text.contains('cloudflare') ||
+      text.contains('ddos-guard') ||
       // What a half-downloaded or non-image response decodes to. #927 shows
       // the sequence plainly in its own recent-errors block: two failed
       // MangaDex page loads, then this, seconds apart. It is the same failure
       // one step further along, not a separate bug.
       text.contains('could not decompress image') ||
       text.contains('invalid image data') ||
+      text.contains('could not instantiate image codec') ||
+      text.contains('imagecodecexception') ||
       // The Rust HTTP stack's transport errors, which are the same network
       // failures one layer down. #933 is one of these.
       text.contains('rhttpunknownexception') ||
       text.contains('hyper_util') ||
-      text.contains('statuscode: 5');
+      RegExp(r'(?:http\s*)?status(?:\s*code)?\s*[:=]?\s*[45]\d\d')
+          .hasMatch(text);
 }
 
 /// Whether [error] came from an extension rather than from the app.
@@ -163,12 +186,18 @@ bool isExpectedFailure(Object error) {
 /// d4rt prefixes everything it raises with "Runtime Error:", and wraps
 /// failures inside bridged calls with a recognisable phrase, so this can be
 /// told apart from an app bug with reasonable confidence.
-bool isExtensionFailure(Object error) {
+bool isExtensionFailure(Object error, {String? source, String? stack}) {
   final text = error.toString();
-  return
-  // d4rt, the Dart interpreter
-  text.startsWith('Runtime Error:') ||
+  final stackText = stack ?? '';
+  return source == 'updateMangaDetail' ||
+      stackText.contains('package:mangayomi/eval/') ||
+      stackText.contains('package:d4rt/') ||
+      stackText.contains('package:flutter_qjs/') ||
+      // d4rt, the Dart interpreter
+      text.startsWith('Runtime Error:') ||
       text.startsWith('SourceCodeException:') ||
+      text.startsWith('JavaScriptError:') ||
+      text.startsWith('JSException:') ||
       text.contains('Native error during bridged method call') ||
       text.contains('Undefined property or method') ||
       // Mihon extensions, which are Kotlin and fail their own way. #935 is a
@@ -182,6 +211,34 @@ bool isExtensionFailure(Object error) {
       text.contains('path is null') ||
       text.contains('returned a novel with no path');
 }
+
+enum CrashReportScope { app, extension, external }
+
+/// Decides who can act on a report using all the context the recorder kept.
+///
+/// Text alone is not enough: #961 is a generic [FormatException], but its
+/// `updateMangaDetail` source tag says it came from extension output. Stack
+/// markers cover interpreter failures that reach a global error handler and
+/// therefore have a generic source tag.
+CrashReportScope crashReportScope(CrashReport report) {
+  if (isExtensionFailure(
+    report.error,
+    source: report.source,
+    stack: report.stack,
+  )) {
+    return CrashReportScope.extension;
+  }
+  if (isExpectedFailure(report.error)) return CrashReportScope.external;
+  return CrashReportScope.app;
+}
+
+/// Whether this report belongs in Mangayomi's issue tracker.
+///
+/// Network/image failures need retry or source-specific help, while extension
+/// failures belong to the extension. Offering either a Mangayomi bug button
+/// creates reports that cannot lead to an app fix.
+bool isReportableFailure(CrashReport report) =>
+    crashReportScope(report) == CrashReportScope.app;
 
 /// A stable key for "this same thing went wrong again".
 ///
@@ -290,7 +347,7 @@ class CrashReports {
         for (final entry in entries) {
           if (entry is! Map) continue;
           final report = CrashReport.fromJson(Map<String, dynamic>.from(entry));
-          if (report != null) _reports.add(report);
+          if (report != null) _recordOccurrence(_reports, report);
         }
         if (decoded is Map) {
           for (final f in (decoded['reported'] as List?) ?? const []) {
@@ -304,7 +361,9 @@ class CrashReports {
     }
     _seen = _reports.isEmpty;
     final hadPending = _pending.isNotEmpty;
-    _reports.addAll(_pending);
+    for (final report in _pending) {
+      _recordOccurrence(_reports, report);
+    }
     _pending.clear();
     _loaded = true;
     _trim();
@@ -332,11 +391,11 @@ class CrashReports {
         // has to say where it was rather than where we are now.
         screen: screen ?? _screen,
       );
-      _reports.add(report);
-      if (!_loaded) _pending.add(report);
-      // Kept, but it does not raise the banner: nothing here needs the
-      // reader's attention or a bug report.
-      if (!isExpectedFailure(error)) _seen = false;
+      _recordOccurrence(_reports, report);
+      if (!_loaded) _recordOccurrence(_pending, report);
+      // Kept for diagnostics, but only an app failure can raise a future
+      // notice or be offered to the app's issue tracker.
+      if (isReportableFailure(report)) _seen = false;
       _trim();
       _flush();
     } catch (_) {}
@@ -383,6 +442,33 @@ class CrashReports {
     if (_reports.length > _max) {
       _reports.removeRange(0, _reports.length - _max);
     }
+  }
+
+  /// Keeps the newest context for a repeated error without letting one noisy
+  /// image or callback occupy the whole ten-entry history.
+  static void _recordOccurrence(List<CrashReport> reports, CrashReport report) {
+    final existingIndex = reports.indexWhere(
+      (existing) =>
+          existing.source == report.source &&
+          existing.screen == report.screen &&
+          existing.error == report.error,
+    );
+    if (existingIndex == -1) {
+      reports.add(report);
+      return;
+    }
+
+    final existing = reports.removeAt(existingIndex);
+    reports.add(
+      CrashReport(
+        time: report.time,
+        source: report.source,
+        error: report.error,
+        stack: report.stack ?? existing.stack,
+        screen: report.screen,
+        occurrences: existing.occurrences + report.occurrences,
+      ),
+    );
   }
 
   static void _flush() {

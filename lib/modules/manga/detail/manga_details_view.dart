@@ -153,11 +153,11 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     elevation: 0,
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     final model = widget.manga;
                     model.favorite = false;
                     model.dateAdded = 0;
-                    mangaRepository.save(model);
+                    await mangaRepository.save(model);
                   },
                   child: Column(
                     children: [
@@ -177,7 +177,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   elevation: 0,
                 ),
-                onPressed: () {
+                onPressed: () async {
                   final model = widget.manga;
                   final checkCategoryList = categoryRepository
                       .isNotEmptyByItemType(model.itemType);
@@ -191,7 +191,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                   } else {
                     model.favorite = true;
                     model.dateAdded = DateTime.now().millisecondsSinceEpoch;
-                    mangaRepository.save(model);
+                    await mangaRepository.save(model);
                   }
                 },
                 child: Column(

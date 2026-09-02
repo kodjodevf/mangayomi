@@ -79,9 +79,12 @@ class StorageProvider {
     return await dir.exists() ? dir : null;
   }
 
-  Future<Directory?> getExtensionServerDirectory() async {
+  Future<Directory> getExtensionServerDirectory() async {
     final defaultDirectory = await getDefaultDirectory();
-    String dbDir = path.join(defaultDirectory!.path, 'extension_server');
+    if (defaultDirectory == null) {
+      throw StateError('The app storage directory is unavailable');
+    }
+    String dbDir = path.join(defaultDirectory.path, 'extension_server');
     await Directory(dbDir).create(recursive: true);
     return Directory(dbDir);
   }

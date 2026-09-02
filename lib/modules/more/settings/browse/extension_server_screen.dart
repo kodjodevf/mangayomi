@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -14,6 +15,7 @@ import 'package:mangayomi/modules/more/settings/browse/extension_server/extensio
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/m_extension_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -52,8 +54,8 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _refreshStatus();
-      _refreshRuntimeStatus();
+      unawaited(_refreshStatus());
+      unawaited(_refreshRuntimeStatus());
     });
   }
 
@@ -405,24 +407,50 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     }
     final l10n = l10nLocalizations(context)!;
     _setCheckingState(true);
-    final configuredPaths = _readConfiguredPaths();
-    final fileState = await _resolveFileState(configuredPaths);
-    final releaseState = await _resolveLatestReleaseState(l10n, fileState);
+    try {
+      final configuredPaths = _readConfiguredPaths();
+      final fileState = await _resolveFileState(configuredPaths);
+      final releaseState = await _resolveLatestReleaseState(l10n, fileState);
+      if (!mounted) return;
+      final selectedInstallDirectory = await _resolveSelectedInstallDirectory(
+        configuredPaths,
+      );
+      _applyStatusState(
+        selectedInstallDirectory: selectedInstallDirectory,
+        configuredPaths: configuredPaths,
+        fileState: fileState,
+        releaseState: releaseState,
+      );
+    } on FileSystemException {
+      _applyStatusFailure(l10n.could_not_check_proxy_server_updates);
+    } catch (error, stack) {
+      // Expected storage failures are handled above. Anything else is still a
+      // genuine app failure and should remain actionable in the reporter.
+      CrashReports.record(
+        source: 'ExtensionServerStatus',
+        error: error,
+        stack: stack,
+      );
+      _applyStatusFailure(l10n.could_not_check_proxy_server_updates);
+    }
+  }
+
+  void _applyStatusFailure(String message) {
     if (!mounted) return;
-    final selectedInstallDirectory = await _resolveSelectedInstallDirectory(
-      configuredPaths,
-    );
-    _applyStatusState(
-      selectedInstallDirectory: selectedInstallDirectory,
-      configuredPaths: configuredPaths,
-      fileState: fileState,
-      releaseState: releaseState,
-    );
+    setState(() {
+      _isChecking = false;
+      _releaseCheckMessage = message;
+    });
   }
 
   Future<void> _refreshRuntimeStatus() async {
     if (!Platform.isIOS) return;
-    final running = await MExtensionServerPlatform(ref).checkLocalServer();
+    var running = false;
+    try {
+      running = await MExtensionServerPlatform(ref).checkLocalServer();
+    } catch (_) {
+      // A missing local runtime is a stopped server, not a global app crash.
+    }
     if (mounted) setState(() => _runtimeRunning = running);
   }
 
@@ -589,8 +617,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
 
   Future<Directory> _defaultInstallDirectory() async {
     final provider = StorageProvider();
-    final serverDirectory = await provider.getExtensionServerDirectory();
-    return serverDirectory!;
+    return provider.getExtensionServerDirectory();
   }
 
   Future<ExtensionServerRelease?> _fetchLatestRelease() async {
@@ -641,10 +668,10 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   }
 
   _ConfiguredPaths _readConfiguredPaths() {
-    final settings = settingsRepository.current;
+    final settings = settingsRepository.currentOrNull;
     return _ConfiguredPaths(
-      jrePath: settings.jrePath ?? '',
-      extensionServerPath: settings.extensionServerPath ?? '',
+      jrePath: settings?.jrePath ?? '',
+      extensionServerPath: settings?.extensionServerPath ?? '',
     );
   }
 
