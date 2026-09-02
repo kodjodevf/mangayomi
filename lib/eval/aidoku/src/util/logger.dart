@@ -5,7 +5,7 @@ import 'dart:developer' as dev;
 /// Central logger for Aidoku extension execution.
 class AidokuLogger {
   /// Whether logging to stdout / debug print is enabled.
-  static bool enabled = true;
+  static bool enabled = false;
 
   /// Optional custom log listener.
   static void Function(
