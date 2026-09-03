@@ -47,6 +47,7 @@ abstract class AidokuSource implements RustOpaqueInterface {
     jsHandler: jsHandler,
   );
 
+  @override
   Future<void> dispose();
 
   Future<AidokuSourceFeatures> features();
