@@ -10,6 +10,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/doh_provider_notifier.dart';
 import 'package:mangayomi/services/http/doh/doh_custom_store.dart';
 import 'package:mangayomi/services/http/cf_proxy_store.dart';
+import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/services/http/doh/doh_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -54,6 +55,12 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
     );
     final rpcShowTitleState = ref.watch(rpcShowTitleStateProvider);
     final rpcShowCoverImage = ref.watch(rpcShowCoverImageStateProvider);
+    final autoUpdateInterval = ref.watch(
+      autoLibraryUpdateIntervalStateProvider,
+    );
+    final autoUpdateWifiOnly = ref.watch(
+      autoLibraryUpdateWifiOnlyStateProvider,
+    );
     final doHState = ref.watch(doHProviderStateProvider);
     final availableProviders = ref.watch(availableDoHProvidersProvider);
     return Scaffold(
@@ -61,6 +68,34 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            ListTile(
+              onTap: () => _showAutoLibraryUpdateDialog(
+                context,
+                ref,
+                autoUpdateInterval,
+              ),
+              title: Text(l10n.auto_library_update),
+              subtitle: Text(
+                // When it's off, say what the setting does; the word "Never"
+                // on its own doesn't explain what would otherwise happen.
+                autoUpdateInterval == 0
+                    ? l10n.auto_library_update_subtitle
+                    : _autoLibraryUpdateLabel(context, autoUpdateInterval),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ),
+            ),
+            if (autoUpdateInterval > 0)
+              SwitchListTile(
+                value: autoUpdateWifiOnly,
+                title: Text(l10n.auto_library_update_wifi_only),
+                subtitle: Text(
+                  l10n.auto_library_update_wifi_only_subtitle,
+                  style: TextStyle(fontSize: 11, color: context.secondaryColor),
+                ),
+                onChanged: (value) => ref
+                    .read(autoLibraryUpdateWifiOnlyStateProvider.notifier)
+                    .set(value),
+              ),
             ExpansionTile(
               title: Text(l10n.dns_over_https),
               initiallyExpanded: doHState.enabled,
@@ -516,6 +551,62 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// The label for one of [libraryUpdateIntervals], in hours.
+  String _autoLibraryUpdateLabel(BuildContext context, int hours) {
+    final l10n = context.l10n;
+    return switch (hours) {
+      12 => l10n.auto_library_update_12_hours,
+      24 => l10n.auto_library_update_daily,
+      48 => l10n.auto_library_update_2_days,
+      168 => l10n.auto_library_update_weekly,
+      _ => l10n.auto_library_update_never,
+    };
+  }
+
+  void _showAutoLibraryUpdateDialog(
+    BuildContext context,
+    WidgetRef ref,
+    int current,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.auto_library_update),
+        content: SizedBox(
+          width: context.width(0.8),
+          child: RadioGroup(
+            groupValue: current,
+            onChanged: (value) {
+              Navigator.pop(context);
+              if (value == null) return;
+              ref
+                  .read(autoLibraryUpdateIntervalStateProvider.notifier)
+                  .set(value);
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final hours in libraryUpdateIntervals)
+                  RadioListTile(
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    value: hours,
+                    title: Text(_autoLibraryUpdateLabel(context, hours)),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.l10n.cancel),
+          ),
+        ],
       ),
     );
   }

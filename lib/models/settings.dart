@@ -82,6 +82,19 @@ class Settings {
   /// The last library update's failures, kept so they can be reviewed later.
   List<UpdateError>? updateErrorsList;
 
+  /// How often the library refreshes itself, in hours. 0 (the default) means
+  /// never: the library only updates when the user asks it to.
+  int? autoLibraryUpdateInterval;
+
+  /// When the last automatic refresh started, as epoch milliseconds. Compared
+  /// against [autoLibraryUpdateInterval] to decide whether another one is due.
+  int? lastAutoLibraryUpdate;
+
+  /// Skip the automatic refresh when the device is on a metered connection.
+  /// Defaults to on: unlike a download, this run is unattended, so it should
+  /// not spend mobile data without being asked.
+  bool? autoLibraryUpdateWifiOnly;
+
   /// User's saved searches (per source; each entry carries its sourceId).
   List<SavedSearch>? savedSearchesList;
 
@@ -480,6 +493,9 @@ class Settings {
     this.cropBorders = false,
     this.libraryLocalSource,
     this.autoExtensionsUpdates = false,
+    this.autoLibraryUpdateInterval = 0,
+    this.lastAutoLibraryUpdate,
+    this.autoLibraryUpdateWifiOnly = true,
     this.animeDisplayType = DisplayType.compactGrid,
     this.libraryFilterAnimeDownloadType = 0,
     this.libraryFilterAnimeUnreadType = 0,
@@ -650,6 +666,9 @@ class Settings {
     animeLibraryShowLanguage = json['animeLibraryShowLanguage'];
     animeLibraryShowNumbersOfItems = json['animeLibraryShowNumbersOfItems'];
     autoExtensionsUpdates = json['autoExtensionsUpdates'];
+    autoLibraryUpdateInterval = json['autoLibraryUpdateInterval'];
+    lastAutoLibraryUpdate = json['lastAutoLibraryUpdate'];
+    autoLibraryUpdateWifiOnly = json['autoLibraryUpdateWifiOnly'];
     backgroundColor = BackgroundColor
         .values[json['backgroundColor'] ?? BackgroundColor.black.index];
     if (json['chapterFilterBookmarkedList'] != null) {
@@ -991,6 +1010,9 @@ class Settings {
     'animeLibraryShowLanguage': animeLibraryShowLanguage,
     'animeLibraryShowNumbersOfItems': animeLibraryShowNumbersOfItems,
     'autoExtensionsUpdates': autoExtensionsUpdates,
+    'autoLibraryUpdateInterval': autoLibraryUpdateInterval,
+    'lastAutoLibraryUpdate': lastAutoLibraryUpdate,
+    'autoLibraryUpdateWifiOnly': autoLibraryUpdateWifiOnly,
     'backgroundColor': backgroundColor.index,
     'chapterFilterBookmarkedList': chapterFilterBookmarkedList
         ?.map((v) => v.toJson())

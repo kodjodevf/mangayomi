@@ -51,9 +51,7 @@ class RpcShowReadingWatchingProgressState
 
   void set(bool value) {
     state = value;
-    settingsRepository.update(
-      (s) => s.rpcShowReadingWatchingProgress = value,
-    );
+    settingsRepository.update((s) => s.rpcShowReadingWatchingProgress = value);
   }
 }
 
@@ -93,5 +91,31 @@ class UserAgentState extends _$UserAgentState {
   void set(String value) {
     state = value;
     settingsRepository.update((s) => s.userAgent = value);
+  }
+}
+
+@riverpod
+class AutoLibraryUpdateIntervalState extends _$AutoLibraryUpdateIntervalState {
+  @override
+  int build() {
+    return settingsRepository.current.autoLibraryUpdateInterval ?? 0;
+  }
+
+  void set(int value) {
+    state = value;
+    settingsRepository.update((s) => s.autoLibraryUpdateInterval = value);
+  }
+}
+
+@riverpod
+class AutoLibraryUpdateWifiOnlyState extends _$AutoLibraryUpdateWifiOnlyState {
+  @override
+  bool build() {
+    return settingsRepository.current.autoLibraryUpdateWifiOnly ?? true;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.autoLibraryUpdateWifiOnly = value);
   }
 }
