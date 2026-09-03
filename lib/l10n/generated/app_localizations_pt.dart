@@ -1969,6 +1969,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get repo_added => 'Repositório de fontes adicionado!';
 
   @override
+  String get repo_already_exists => 'Repository already exists!';
+
+  @override
   String get add_repo => 'Adicionar repositório?';
 
   @override

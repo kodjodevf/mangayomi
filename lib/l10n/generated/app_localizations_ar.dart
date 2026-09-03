@@ -1964,6 +1964,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get repo_added => 'تمت إضافة مستودع المصدر!';
 
   @override
+  String get repo_already_exists => 'Repository already exists!';
+
+  @override
   String get add_repo => 'إضافة مستودع؟';
 
   @override

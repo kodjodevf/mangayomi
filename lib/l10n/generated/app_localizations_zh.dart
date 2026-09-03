@@ -1898,6 +1898,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get repo_added => '库已添加';
 
   @override
+  String get repo_already_exists => 'Repository already exists!';
+
+  @override
   String get add_repo => '添加库';
 
   @override

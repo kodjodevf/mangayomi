@@ -1982,6 +1982,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get repo_added => 'Репозиторий источников добавлен!';
 
   @override
+  String get repo_already_exists => 'Repository already exists!';
+
+  @override
   String get add_repo => 'Добавить репозиторий?';
 
   @override

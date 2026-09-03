@@ -3617,6 +3617,12 @@ abstract class AppLocalizations {
   /// **'Source repository added!'**
   String get repo_added;
 
+  /// No description provided for @repo_already_exists.
+  ///
+  /// In en, this message translates to:
+  /// **'Repository already exists!'**
+  String get repo_already_exists;
+
   /// No description provided for @add_repo.
   ///
   /// In en, this message translates to:

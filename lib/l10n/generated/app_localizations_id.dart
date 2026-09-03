@@ -1956,6 +1956,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get repo_added => 'Repositori sumber ditambahkan!';
 
   @override
+  String get repo_already_exists => 'Repository already exists!';
+
+  @override
   String get add_repo => 'Tambahkan repositori?';
 
   @override

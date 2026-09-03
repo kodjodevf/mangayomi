@@ -1967,6 +1967,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get repo_added => 'Erweiterungs-Repository hinzugefügt!';
 
   @override
+  String get repo_already_exists => 'Repository already exists!';
+
+  @override
   String get add_repo => 'Repository hinzufügen?';
 
   @override

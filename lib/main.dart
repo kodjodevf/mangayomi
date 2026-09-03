@@ -477,16 +477,29 @@ class _MyAppState extends ConsumerState<MyApp>
                         final current = ref.read(
                           extensionsRepoStateProvider(type),
                         );
-                        final updated = [
-                          ...current,
-                          ...urls.map(
-                            (e) => Repo(
-                              name: repoName,
-                              jsonUrl: e,
-                              website: repoUrl,
-                            ),
-                          ),
-                        ];
+                        final existingUrls = current
+                            .map((r) => r.jsonUrl?.trim().toLowerCase())
+                            .whereType<String>()
+                            .toSet();
+                        final newRepos = urls
+                            .where((e) {
+                              final clean = e.trim().toLowerCase();
+                              return !existingUrls.contains(clean) &&
+                                  !existingUrls.contains('$clean/') &&
+                                  !existingUrls.contains(clean.endsWith('/')
+                                      ? clean.substring(0, clean.length - 1)
+                                      : clean);
+                            })
+                            .map(
+                              (e) => Repo(
+                                name: repoName,
+                                jsonUrl: e,
+                                website: repoUrl,
+                              ),
+                            )
+                            .toList();
+                        if (newRepos.isEmpty) return;
+                        final updated = [...current, ...newRepos];
                         ref
                             .read(extensionsRepoStateProvider(type).notifier)
                             .set(updated);

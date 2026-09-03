@@ -158,9 +158,21 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
-                                  repo.name ??
-                                      repo.jsonUrl ??
-                                      "Invalid source - remove it",
+                                  (repo.name != null &&
+                                          repo.name!.isNotEmpty &&
+                                          !repo.name!.endsWith('.json'))
+                                      ? repo.name!
+                                      : (repo.jsonUrl != null
+                                          ? (repo.jsonUrl!
+                                                  .replaceAll(
+                                                    RegExp(r'/[^/]+\.json$'),
+                                                    '',
+                                                  )
+                                                  .split('/')
+                                                  .where((s) => s.isNotEmpty)
+                                                  .lastOrNull ??
+                                              repo.jsonUrl!)
+                                          : "Invalid source - remove it"),
                                   style: TextStyle(
                                     decoration: isHidden
                                         ? TextDecoration.lineThrough
@@ -370,6 +382,17 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                           (uri.scheme != 'http' && uri.scheme != 'https')) {
                         return l10n.invalid_url_format;
                       }
+                      final clean = value.trim().toLowerCase();
+                      final alreadyExists = _entries.any((r) {
+                        final rUrl = r.jsonUrl?.trim().toLowerCase();
+                        if (rUrl == null) return false;
+                        return rUrl == clean ||
+                            rUrl == '$clean/' ||
+                            '$rUrl/' == clean;
+                      });
+                      if (alreadyExists) {
+                        return l10n.repo_already_exists;
+                      }
                       return null;
                     } catch (e) {
                       return l10n.invalid_url_format;
@@ -408,8 +431,17 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                       StatefulBuilder(
                         builder: (context, setState) {
                           final text = controller.text.trim();
+                          final clean = text.toLowerCase();
+                          final alreadyExists = _entries.any((r) {
+                            final rUrl = r.jsonUrl?.trim().toLowerCase();
+                            if (rUrl == null) return false;
+                            return rUrl == clean ||
+                                rUrl == '$clean/' ||
+                                '$rUrl/' == clean;
+                          });
                           final isValid =
                               text.isNotEmpty &&
+                              !alreadyExists &&
                               Uri.tryParse(text)?.isAbsolute == true;
                           return TextButton(
                             onPressed: !isValid
@@ -417,29 +449,45 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                 : () async {
                                     setState(() => isLoading = true);
                                     try {
-                                      final mangaRepos = ref
-                                          .read(
-                                            extensionsRepoStateProvider(
-                                              widget.itemType,
-                                            ),
-                                          )
-                                          .toList();
+                                      final repoNotifier = ref.read(
+                                        extensionsRepoStateProvider(
+                                          widget.itemType,
+                                        ).notifier,
+                                      );
+                                      final currentRepos = ref.read(
+                                        extensionsRepoStateProvider(
+                                          widget.itemType,
+                                        ),
+                                      );
                                       final repo = await ref.read(
                                         getRepoInfosProvider(jsonUrl: text)
                                             .future,
                                       );
                                       if (repo == null) {
+                                        setState(() => isLoading = false);
                                         botToast(l10n.unsupported_repo);
                                         return;
                                       }
-                                      mangaRepos.add(repo);
-                                      ref
-                                          .read(
-                                            extensionsRepoStateProvider(
-                                              widget.itemType,
-                                            ).notifier,
-                                          )
-                                          .set(mangaRepos);
+                                      final repoUrl = repo.jsonUrl?.trim().toLowerCase();
+                                      final isDuplicate = currentRepos.any((r) {
+                                        final rUrl = r.jsonUrl?.trim().toLowerCase();
+                                        return (rUrl != null &&
+                                                (rUrl == repoUrl ||
+                                                    rUrl == clean ||
+                                                    rUrl == '$clean/' ||
+                                                    '$rUrl/' == clean ||
+                                                    (repoUrl != null &&
+                                                        (rUrl == '$repoUrl/' ||
+                                                            '$rUrl/' == repoUrl)))) ||
+                                            r == repo;
+                                      });
+                                      if (isDuplicate) {
+                                        setState(() => isLoading = false);
+                                        botToast(l10n.repo_already_exists);
+                                        return;
+                                      }
+                                      repoNotifier.set([...currentRepos, repo]);
+                                      botToast(l10n.repo_added);
                                     } catch (e, s) {
                                       setState(() => isLoading = false);
                                       toastError(e, stack: s, source: 'sourceRepositories');

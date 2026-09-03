@@ -737,6 +737,7 @@
   "clear_all_sources_msg": "This will completely erase all sources of the application. Are you sure you want to continue?",
   "sources_cleared": "Sources cleared!!!",
   "repo_added": "Source repository added!",
+  "repo_already_exists": "Repository already exists!",
   "add_repo": "Add Repository?",
   "genre_search_library": "Search genre in library",
   "genre_search_source": "Browse in source",

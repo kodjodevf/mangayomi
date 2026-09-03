@@ -1955,6 +1955,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get repo_added => 'स्रोत रिपोजिटरी जोड़ी गई!';
 
   @override
+  String get repo_already_exists => 'Repository already exists!';
+
+  @override
   String get add_repo => 'रिपोजिटरी जोड़ें?';
 
   @override

@@ -1960,6 +1960,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get repo_added => 'Kaynak deposu eklendi!';
 
   @override
+  String get repo_already_exists => 'Repository already exists!';
+
+  @override
   String get add_repo => 'Depo ekle?';
 
   @override

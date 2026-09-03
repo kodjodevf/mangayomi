@@ -1973,6 +1973,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get repo_added => 'Repository delle fonti aggiunto!';
 
   @override
+  String get repo_already_exists => 'Repository already exists!';
+
+  @override
   String get add_repo => 'Aggiungere repository?';
 
   @override

@@ -1974,6 +1974,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get repo_added => '¡Repositorio de fuentes agregado!';
 
   @override
+  String get repo_already_exists => 'Repository already exists!';
+
+  @override
   String get add_repo => '¿Agregar repositorio?';
 
   @override

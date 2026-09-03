@@ -1919,6 +1919,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get repo_added => 'ソースリポジトリが追加されました！';
 
   @override
+  String get repo_already_exists => 'Repository already exists!';
+
+  @override
   String get add_repo => 'リポジトリを追加しますか？';
 
   @override

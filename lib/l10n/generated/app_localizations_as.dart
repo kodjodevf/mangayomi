@@ -1951,6 +1951,9 @@ class AppLocalizationsAs extends AppLocalizations {
   String get repo_added => 'উৎস ৰিপজিটৰী যোগ কৰা হ\'ল!';
 
   @override
+  String get repo_already_exists => 'Repository already exists!';
+
+  @override
   String get add_repo => 'ৰিপজিটৰী যোগ কৰিবনে?';
 
   @override

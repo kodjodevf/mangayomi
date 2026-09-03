@@ -440,6 +440,7 @@
   "clear_all_sources_msg": "Cela effacera complètement toutes les sources de l'application. Êtes-vous sûr de vouloir continuer ?",
   "sources_cleared": "Sources effacées !",
   "repo_added": "Dépôt de sources ajouté !",
+  "repo_already_exists": "Le dépôt existe déjà !",
   "add_repo": "Ajouter un dépôt ?",
   "genre_search_library": "Rechercher un genre dans la bibliothèque",
   "genre_search_source": "Explorer dans la source",

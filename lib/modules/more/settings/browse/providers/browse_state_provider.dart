@@ -84,15 +84,41 @@ class ShowNSFWState extends _$ShowNSFWState {
 
 @riverpod
 class ExtensionsRepoState extends _$ExtensionsRepoState {
+  static List<Repo> _deduplicate(List<Repo> repos) {
+    final seen = <String>{};
+    final result = <Repo>[];
+    for (final repo in repos) {
+      final key = repo.jsonUrl?.trim().toLowerCase();
+      if (key != null && key.isNotEmpty) {
+        if (seen.add(key)) {
+          result.add(repo);
+        }
+      } else {
+        result.add(repo);
+      }
+    }
+    return result;
+  }
+
   @override
   List<Repo> build(ItemType itemType) {
     final settings = settingsRepository.current;
-    return switch (itemType) {
+    final list = switch (itemType) {
           ItemType.manga => settings.mangaExtensionsRepo,
           ItemType.anime => settings.animeExtensionsRepo,
           _ => settings.novelExtensionsRepo,
         } ??
         [];
+    return _deduplicate(list);
+  }
+
+  bool containsRepo(String url) {
+    final clean = url.trim().toLowerCase();
+    return state.any((r) {
+      final rUrl = r.jsonUrl?.trim().toLowerCase();
+      if (rUrl == null) return false;
+      return rUrl == clean || rUrl == '$clean/' || '$rUrl/' == clean;
+    });
   }
 
   void setVisibility(Repo repo, bool hidden) {
@@ -106,17 +132,18 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
   }
 
   void set(List<Repo> value) {
-    state = value;
+    final deduplicated = _deduplicate(value);
+    state = deduplicated;
     settingsRepository.update((s) {
       switch (itemType) {
         case ItemType.manga:
-          s.mangaExtensionsRepo = value;
+          s.mangaExtensionsRepo = deduplicated;
           break;
         case ItemType.anime:
-          s.animeExtensionsRepo = value;
+          s.animeExtensionsRepo = deduplicated;
           break;
         default:
-          s.novelExtensionsRepo = value;
+          s.novelExtensionsRepo = deduplicated;
       }
     });
     try {
@@ -183,8 +210,16 @@ Future<Repo?> getRepoInfos(Ref ref, {required String jsonUrl}) async {
       final result = await ExtensionStoreService.fetchStore(url, http);
       if (result != null &&
           (result.sources.isNotEmpty || result.name.isNotEmpty)) {
+        String repoName = result.name;
+        if (repoName.isEmpty || repoName.endsWith('.json')) {
+          final uri = Uri.parse(url);
+          final segments = uri.pathSegments
+              .where((s) => s.isNotEmpty && !s.endsWith('.json'))
+              .toList();
+          repoName = segments.lastOrNull ?? uri.host;
+        }
         return Repo(
-          name: result.name,
+          name: repoName,
           website: result.website ?? url,
           jsonUrl: result.indexUrl,
         );
@@ -212,7 +247,17 @@ Future<Repo?> getRepoInfos(Ref ref, {required String jsonUrl}) async {
           } catch (_) {}
         }
         infos["jsonUrl"] = url;
-        return Repo.fromJson(infos);
+        final repo = Repo.fromJson(infos);
+        if (repo.name == null ||
+            repo.name!.isEmpty ||
+            repo.name!.endsWith('.json')) {
+          final uri = Uri.parse(url);
+          final segments = uri.pathSegments
+              .where((s) => s.isNotEmpty && !s.endsWith('.json'))
+              .toList();
+          repo.name = segments.lastOrNull ?? uri.host;
+        }
+        return repo;
       }
     } catch (_) {}
   }

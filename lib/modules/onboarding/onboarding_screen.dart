@@ -445,9 +445,19 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
         setState(() => _error = l10n.unsupported_repo);
         return;
       }
-      final repos = ref.read(extensionsRepoStateProvider(_repoType)).toList()
-        ..add(repo);
-      ref.read(extensionsRepoStateProvider(_repoType).notifier).set(repos);
+      final currentRepos = ref.read(extensionsRepoStateProvider(_repoType));
+      final alreadyExists = currentRepos.any((r) {
+        final rUrl = r.jsonUrl?.trim().toLowerCase();
+        final newUrl = repo.jsonUrl?.trim().toLowerCase();
+        return (rUrl != null &&
+                (rUrl == newUrl ||
+                    rUrl == '$newUrl/' ||
+                    '$rUrl/' == newUrl)) ||
+            r == repo;
+      });
+      if (!alreadyExists) {
+        ref.read(extensionsRepoStateProvider(_repoType).notifier).set([...currentRepos, repo]);
+      }
       setState(() {
         _added = repo;
         _addedFor = _repoType;

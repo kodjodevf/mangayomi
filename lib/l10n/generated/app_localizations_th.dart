@@ -1950,6 +1950,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get repo_added => 'เพิ่มที่เก็บข้อมูลแล้ว!';
 
   @override
+  String get repo_already_exists => 'Repository already exists!';
+
+  @override
   String get add_repo => 'เพิ่มที่เก็บข้อมูล?';
 
   @override

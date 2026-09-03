@@ -56,32 +56,44 @@ class ExtensionStoreService {
 
       // 1. Legacy JSON array: Starts with '[' (0x5B)
       if (firstByte == 0x5B) {
-        if (currentUrl.endsWith('/index.min.json')) {
-          final repoUrl = currentUrl.replaceAll(
-            '/index.min.json',
-            '/repo.json',
-          );
-          try {
-            final repoRes = await client.get(Uri.parse(repoUrl));
-            if (repoRes.statusCode == 200) {
-              final repoJson = jsonDecode(repoRes.body);
-              if (repoJson is Map &&
-                  repoJson['index_v2'] != null &&
+        String? repoName;
+        String? repoWebsite;
+        final baseUrlMatch = RegExp(
+          r'^(.*)/[^/]+\.json$',
+        ).firstMatch(currentUrl);
+        final baseUrl =
+            baseUrlMatch != null ? baseUrlMatch.group(1)! : currentUrl;
+        try {
+          final repoRes = await client.get(Uri.parse('$baseUrl/repo.json'));
+          if (repoRes.statusCode == 200) {
+            final repoJson = jsonDecode(repoRes.body);
+            if (repoJson is Map) {
+              if (repoJson['index_v2'] != null &&
                   (repoJson['index_v2'] as String).isNotEmpty) {
                 // Redirect to V2 index (.pb or JSON store)
                 return await fetchStore(repoJson['index_v2'] as String, client);
               }
+              repoName =
+                  (repoJson['meta']?['name'] ?? repoJson['name']) as String?;
+              repoWebsite =
+                  (repoJson['meta']?['website'] ?? repoJson['website'])
+                      as String?;
             }
-          } catch (e, st) {
-            // Falls through to the legacy parser, so a broken v2 redirect just
-            // looks like an empty repo.
-            AppLogger.log(
-              'fetchStore: index_v2 redirect failed: $e\n$st',
-              logLevel: LogLevel.error,
-            );
           }
+        } catch (e, st) {
+          // Falls through to the legacy parser, so a broken v2 redirect or repo.json
+          // lookup just falls back to default inference.
+          AppLogger.log(
+            'fetchStore: repo.json check failed: $e\n$st',
+            logLevel: LogLevel.error,
+          );
         }
-        return _parseLegacyJsonStore(currentUrl, bytes);
+        return _parseLegacyJsonStore(
+          currentUrl,
+          bytes,
+          name: repoName,
+          website: repoWebsite,
+        );
       }
 
       // 2. JSON object: Starts with '{' (0x7B)
@@ -305,13 +317,15 @@ class ExtensionStoreService {
 
   static ExtensionStoreFetchResult? _parseLegacyJsonStore(
     String indexUrl,
-    List<int> bytes,
-  ) {
+    List<int> bytes, {
+    String? name,
+    String? website,
+  }) {
     try {
       final jsonList = jsonDecode(utf8.decode(bytes));
       if (jsonList is! List) return null;
 
-      final repoBaseUrl = indexUrl.replaceAll('/index.min.json', '');
+      final repoBaseUrl = indexUrl.replaceAll(RegExp(r'/[^/]+\.json$'), '');
       final sources = <Source>[];
 
       for (final e in jsonList) {
@@ -409,16 +423,34 @@ class ExtensionStoreService {
             src.id = 'mihon-${source['id']}'.hashCode;
             sources.add(src);
           }
+          continue;
         }
+
+        // Native Mangayomi source or other supported JSON source
+        try {
+          final src = Source.fromJson(e);
+          if (src.name != null && src.name!.isNotEmpty) {
+            sources.add(src);
+          }
+        } catch (_) {}
       }
 
-      final repoName =
-          repoBaseUrl.split('/').where((s) => s.isNotEmpty).lastOrNull ??
+      final defaultRepoName =
+          repoBaseUrl
+              .split('/')
+              .where((s) => s.isNotEmpty && !s.endsWith('.json'))
+              .lastOrNull ??
           'Mihon Repo';
+      final repoName =
+          (name != null && name.isNotEmpty && !name.endsWith('.json'))
+              ? name
+              : defaultRepoName;
+      final repoWebsite =
+          (website != null && website.isNotEmpty) ? website : repoBaseUrl;
 
       return ExtensionStoreFetchResult(
         name: repoName,
-        website: repoBaseUrl,
+        website: repoWebsite,
         indexUrl: indexUrl,
         sources: sources,
       );

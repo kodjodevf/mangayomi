@@ -1974,6 +1974,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get repo_added => 'Dépôt de sources ajouté !';
 
   @override
+  String get repo_already_exists => 'Le dépôt existe déjà !';
+
+  @override
   String get add_repo => 'Ajouter un dépôt ?';
 
   @override
