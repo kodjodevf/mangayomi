@@ -380,3 +380,111 @@ abstract class _$UserAgentState extends $Notifier<String> {
     element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(AutoLibraryUpdateIntervalState)
+final autoLibraryUpdateIntervalStateProvider =
+    AutoLibraryUpdateIntervalStateProvider._();
+
+final class AutoLibraryUpdateIntervalStateProvider
+    extends $NotifierProvider<AutoLibraryUpdateIntervalState, int> {
+  AutoLibraryUpdateIntervalStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'autoLibraryUpdateIntervalStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$autoLibraryUpdateIntervalStateHash();
+
+  @$internal
+  @override
+  AutoLibraryUpdateIntervalState create() => AutoLibraryUpdateIntervalState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$autoLibraryUpdateIntervalStateHash() =>
+    r'ef59570f9a759cf9eac7a20ea7aa153f435cbfec';
+
+abstract class _$AutoLibraryUpdateIntervalState extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(AutoLibraryUpdateWifiOnlyState)
+final autoLibraryUpdateWifiOnlyStateProvider =
+    AutoLibraryUpdateWifiOnlyStateProvider._();
+
+final class AutoLibraryUpdateWifiOnlyStateProvider
+    extends $NotifierProvider<AutoLibraryUpdateWifiOnlyState, bool> {
+  AutoLibraryUpdateWifiOnlyStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'autoLibraryUpdateWifiOnlyStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$autoLibraryUpdateWifiOnlyStateHash();
+
+  @$internal
+  @override
+  AutoLibraryUpdateWifiOnlyState create() => AutoLibraryUpdateWifiOnlyState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$autoLibraryUpdateWifiOnlyStateHash() =>
+    r'c76e781b056bac7f9413daa61c0be777727c10af';
+
+abstract class _$AutoLibraryUpdateWifiOnlyState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}

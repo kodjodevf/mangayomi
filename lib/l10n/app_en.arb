@@ -1300,5 +1300,14 @@
   "relation_parent": "Parent story",
   "relation_side_story": "Side story",
   "relation_spin_off": "Spin-off",
-  "relation_alternative": "Alternative version"
+  "relation_alternative": "Alternative version",
+  "auto_library_update": "Automatic library updates",
+  "auto_library_update_subtitle": "Check every entry in your library for new chapters when the app starts.",
+  "auto_library_update_never": "Never",
+  "auto_library_update_12_hours": "Every 12 hours",
+  "auto_library_update_daily": "Daily",
+  "auto_library_update_2_days": "Every 2 days",
+  "auto_library_update_weekly": "Weekly",
+  "auto_library_update_wifi_only": "Only on Wi-Fi",
+  "auto_library_update_wifi_only_subtitle": "Skip the scheduled update while on mobile data."
 }

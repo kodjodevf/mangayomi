@@ -35,6 +35,7 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/m_extension_server.dart';
 import 'package:mangayomi/services/download_manager/m_downloader.dart';
@@ -260,6 +261,15 @@ class _MyAppState extends ConsumerState<MyApp>
       });
     });
 
+    // The scheduled library refresh, when one is due. It goes last and stays
+    // quiet: launch is already busy, and this walks the whole library.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(seconds: 5), () {
+        if (!mounted) return;
+        unawaited(autoUpdateLibraryIfDue(ref));
+      });
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!Platform.isIOS ||
           ref.read(autoStartExtensionServerOnLaunchStateProvider)) {
@@ -288,6 +298,12 @@ class _MyAppState extends ConsumerState<MyApp>
       if (lockEnabled) {
         ref.read(appUnlockedStateProvider.notifier).lock();
       }
+    } else if (state == AppLifecycleState.resumed) {
+      // Launch is the other trigger for the scheduled refresh, so without this
+      // a session that stays open for days - a desktop one, typically - would
+      // never run one. The interval check makes this a no-op the rest of the
+      // time.
+      unawaited(autoUpdateLibraryIfDue(ref));
     }
   }
 
