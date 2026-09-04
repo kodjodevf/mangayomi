@@ -62,21 +62,79 @@ List<String> _mergeTorrentFallbacks(
   return _normalizeHttpUrls([...base, ...discovered]);
 }
 
+String _normalizeInfoHash(String hash) =>
+    MTorrentServer.normalizeInfoHash(hash);
+
 class MTorrentServer {
-  final http = MClient.init();
+  static String normalizeInfoHash(String hash) {
+    final clean = hash.trim();
+    if (clean.length == 40) return clean.toLowerCase();
+    if (clean.length == 32) {
+      const base32Chars = 'abcdefghijklmnopqrstuvwxyz234567';
+      final lower = clean.toLowerCase();
+      int buffer = 0;
+      int bitsLeft = 0;
+      final bytes = <int>[];
+      for (int i = 0; i < lower.length; i++) {
+        final val = base32Chars.indexOf(lower[i]);
+        if (val < 0) return clean;
+        buffer = (buffer << 5) | val;
+        bitsLeft += 5;
+        if (bitsLeft >= 8) {
+          bitsLeft -= 8;
+          bytes.add((buffer >> bitsLeft) & 0xFF);
+        }
+      }
+      if (bytes.length == 20) {
+        return bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+      }
+    }
+    return clean;
+  }
+
+  final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   Future<bool> removeTorrent(String? inforHash) async {
     if (inforHash == null || inforHash.isEmpty) return false;
+    final cleanHash = normalizeInfoHash(inforHash);
     try {
       final res = await http.delete(
-        Uri.parse("$_baseUrl/torrent/remove?infohash=$inforHash"),
+        Uri.parse("$_baseUrl/torrent/remove?infohash=$cleanHash"),
       );
-      if (res.statusCode == 200) {
+      if (res.statusCode == 200 || res.statusCode == 202) {
         return true;
       }
       return false;
     } catch (_) {
       return false;
     }
+  }
+
+  Future<List<String>> getActiveTorrents() async {
+    try {
+      final res = await http.get(Uri.parse("$_baseUrl/torrent/torrents"));
+      if (res.statusCode == 200) {
+        final decoded = jsonDecode(res.body);
+        if (decoded is List) {
+          return decoded
+              .map((e) => e['infoHash']?.toString())
+              .whereType<String>()
+              .map(_normalizeInfoHash)
+              .toList();
+        }
+      }
+      return [];
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<void> removeAllTorrents() async {
+    try {
+      final torrents = await getActiveTorrents();
+      for (final hash in torrents) {
+        await removeTorrent(hash);
+      }
+    } catch (_) {}
   }
 
   Future<bool> check() async {
@@ -193,6 +251,22 @@ class MTorrentServer {
         if (fileName.isMediaVideo()) {
           var videoUrl = e.substringAfter("\n").substringBefore("\n");
           videoList.add(Video(videoUrl, fileName, videoUrl));
+          if (infohash == null || infohash.isEmpty) {
+            final h = Uri.tryParse(videoUrl)?.queryParameters['infohash'];
+            if (h != null && h.isNotEmpty) {
+              infohash = _normalizeInfoHash(h);
+            }
+          }
+        }
+      }
+
+      if (infohash == null || infohash.isEmpty) {
+        final match = RegExp(
+          r'urn:btih:([a-zA-Z0-9]+)',
+          caseSensitive: false,
+        ).firstMatch(url);
+        if (match != null) {
+          infohash = _normalizeInfoHash(match.group(1)!);
         }
       }
 

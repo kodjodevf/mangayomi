@@ -109,7 +109,17 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
           episode.archivePath,
         );
         keepAlive.close();
-        return (videos, false, [infohash ?? ""], mpvDirectory);
+        final hashes = <String>{};
+        if (infohash != null && infohash.isNotEmpty) {
+          hashes.add(infohash);
+        }
+        for (var video in videos) {
+          final h = Uri.tryParse(video.url)?.queryParameters['infohash'];
+          if (h != null && h.isNotEmpty) {
+            hashes.add(h);
+          }
+        }
+        return (videos, false, hashes.toList(), mpvDirectory);
       }
 
       try {
@@ -128,12 +138,21 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
           v.url,
           episode.archivePath,
         );
+        if (infohash != null &&
+            infohash.isNotEmpty &&
+            !infoHashes.contains(infohash)) {
+          infoHashes.add(infohash);
+        }
         for (var video in videos) {
           torrentList.add(
             video..quality = video.quality.substringBeforeLast("."),
           );
-          if (infohash != null) {
-            infoHashes.add(infohash);
+          final videoHash =
+              Uri.tryParse(video.url)?.queryParameters['infohash'];
+          if (videoHash != null &&
+              videoHash.isNotEmpty &&
+              !infoHashes.contains(videoHash)) {
+            infoHashes.add(videoHash);
           }
         }
       }

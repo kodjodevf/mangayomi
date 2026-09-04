@@ -115,6 +115,17 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   @override
   Widget build(BuildContext context) {
     final defaultSubtitleLang = ref.watch(defaultSubtitleLangStateProvider);
+    ref.listen(getVideoListProvider(episode: episode), (previous, next) {
+      if (next is riv.AsyncData) {
+        final infoHashes = next.value?.$3 ?? [];
+        _infoHashList = infoHashes;
+        if (!mounted) {
+          for (var infoHash in infoHashes) {
+            MTorrentServer().removeTorrent(infoHash);
+          }
+        }
+      }
+    });
     final serversData = ref.watch(getVideoListProvider(episode: episode));
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return serversData.when(
@@ -144,6 +155,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
           videos: videos,
           isLocal: isLocal,
           isTorrent: infoHashList.isNotEmpty,
+          infoHashList: infoHashList,
           desktopFullScreenPlayer: (value) {
             desktopFullScreenPlayer = value;
           },
@@ -192,6 +204,7 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   final String defaultSubtitle;
   final bool isLocal;
   final bool isTorrent;
+  final List<String> infoHashList;
   final Directory? mpvDirectory;
   final void Function(bool) desktopFullScreenPlayer;
   const AnimeStreamPage({
@@ -201,6 +214,7 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
     required this.videos,
     required this.episode,
     required this.isTorrent,
+    this.infoHashList = const [],
     required this.desktopFullScreenPlayer,
     required this.mpvDirectory,
   });
@@ -1060,6 +1074,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     discordRpc?.showOriginalTimestamp();
     _streamController.keepAliveLink?.close();
     _player.dispose();
+    if (widget.isTorrent) {
+      for (final hash in widget.infoHashList) {
+        MTorrentServer().removeTorrent(hash);
+      }
+    }
     super.dispose();
   }
 
