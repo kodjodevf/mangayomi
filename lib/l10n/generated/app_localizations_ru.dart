@@ -2066,6 +2066,13 @@ class AppLocalizationsRu extends AppLocalizations {
       'Объединить навигацию библиотеки на мобильном';
 
   @override
+  String get swipe_between_tabs => 'Swipe between tabs';
+
+  @override
+  String get swipe_between_tabs_subtitle =>
+      'Drag sideways on a page to move to the next tab';
+
+  @override
   String get enable_discord_rpc => 'Включить Discord RPC';
 
   @override

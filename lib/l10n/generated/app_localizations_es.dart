@@ -2058,6 +2058,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'Fusionar navegación de biblioteca en móvil';
 
   @override
+  String get swipe_between_tabs => 'Swipe between tabs';
+
+  @override
+  String get swipe_between_tabs_subtitle =>
+      'Drag sideways on a page to move to the next tab';
+
+  @override
   String get enable_discord_rpc => 'Activar Discord RPC';
 
   @override

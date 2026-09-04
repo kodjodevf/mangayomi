@@ -3,6 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/modules/main_view/nav_shell_container.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -134,16 +135,18 @@ class RouterNotifier extends ChangeNotifier {
     // on a Fire TV: every branch left mounted holds roughly 14 MB of GPU
     // surfaces, three tabs took Graphics from 27 MB to 69 MB, and the box has
     // around 300 MB free with most of its swap already spent. Off TV the
-    // trade is the other way round and IndexedStack stays.
+    // trade is the other way round and the branches stay mounted.
     StatefulShellRoute(
       builder: (context, state, navigationShell) =>
           MainScreen(child: navigationShell),
+      // Off TV the branches are laid out by hand rather than by an
+      // IndexedStack, so a swipe can hold two of them on screen at once and a
+      // tab change can arrive from the side its tab sits on. A television has
+      // neither a swipe nor the memory for the layout, so it keeps the single
+      // visible child it was given.
       navigatorContainerBuilder: (context, navigationShell, children) => isTv
           ? children[navigationShell.currentIndex]
-          : IndexedStack(
-              index: navigationShell.currentIndex,
-              children: children,
-            ),
+          : NavShellContainer(shell: navigationShell, children: children),
       branches: [
         _branch(
           _genericRoute<String?>(

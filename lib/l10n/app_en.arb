@@ -762,6 +762,8 @@
   "track_library_switch": "Switch to another tracker",
   "go_back": "Go back",
   "merge_library_nav_mobile": "Merge library navigation on mobile",
+  "swipe_between_tabs": "Swipe between tabs",
+  "swipe_between_tabs_subtitle": "Drag sideways on a page to move to the next tab",
   "enable_discord_rpc": "Enable Discord RPC",
   "hide_discord_rpc_incognito": "Hide Discord RPC while in Incognito",
   "rpc_show_reading_watching_progress": "Show current chapter in Discord (requires a restart)",

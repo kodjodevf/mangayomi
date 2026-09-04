@@ -2052,6 +2052,13 @@ class AppLocalizationsPt extends AppLocalizations {
       'Mesclar navegação da biblioteca no celular';
 
   @override
+  String get swipe_between_tabs => 'Swipe between tabs';
+
+  @override
+  String get swipe_between_tabs_subtitle =>
+      'Drag sideways on a page to move to the next tab';
+
+  @override
   String get enable_discord_rpc => 'Ativar Discord RPC';
 
   @override

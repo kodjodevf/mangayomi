@@ -2038,6 +2038,13 @@ class AppLocalizationsHi extends AppLocalizations {
       'मोबाइल पर लाइब्रेरी नेविगेशन मर्ज करें';
 
   @override
+  String get swipe_between_tabs => 'Swipe between tabs';
+
+  @override
+  String get swipe_between_tabs_subtitle =>
+      'Drag sideways on a page to move to the next tab';
+
+  @override
   String get enable_discord_rpc => 'Discord RPC सक्षम करें';
 
   @override
