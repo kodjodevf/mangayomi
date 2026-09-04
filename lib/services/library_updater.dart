@@ -4,6 +4,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/log/logger.dart';
@@ -199,6 +200,11 @@ bool isLibraryUpdateDue({
 /// the same Stop button the manual update uses, and its failures land in the
 /// Updates tab's error screen like any other run's.
 Future<void> autoUpdateLibraryIfDue(WidgetRef ref) async {
+  // Behind the app lock, nothing should be happening yet. Checked before the
+  // timestamp below is written, so a launch that stops at the lock screen
+  // leaves the refresh due rather than burning the interval on it.
+  if (!ref.read(appUnlockedStateProvider)) return;
+
   final settings = settingsRepository.current;
   if (!isLibraryUpdateDue(
     intervalHours: settings.autoLibraryUpdateInterval ?? 0,
@@ -208,48 +214,54 @@ Future<void> autoUpdateLibraryIfDue(WidgetRef ref) async {
     return;
   }
 
-  // Never fight a run the user started themselves.
+  // Never fight a run the user started themselves. Claimed here, before the
+  // first await, so that a launch and a resume arriving together can't both
+  // get past this check and start a run each.
   if (ref.read(libraryUpdateProvider).running) return;
-
-  if (settings.autoLibraryUpdateWifiOnly ?? true) {
-    final connectivity = await Connectivity().checkConnectivity();
-    final unmetered =
-        connectivity.contains(ConnectivityResult.wifi) ||
-        connectivity.contains(ConnectivityResult.ethernet);
-    if (!unmetered) {
-      AppLogger.log("Scheduled library update skipped: metered connection.");
-      return;
-    }
-  }
-
-  // Local archives have no source to refresh from, so they're left out.
-  final entries = <Manga>[];
-  for (final itemType in ItemType.values) {
-    entries.addAll(
-      await mangaRepository.getFavoritesNonLocalArchiveByItemType(itemType),
-    );
-  }
-  if (entries.isEmpty) return;
-
-  // Stamped before the run rather than after: a run cut short by the app
-  // closing shouldn't make every following launch start over.
-  await settingsRepository.update(
-    (s) => s.lastAutoLibraryUpdate = DateTime.now().millisecondsSinceEpoch,
-  );
-
-  AppLogger.log(
-    "Starting scheduled library update (${entries.length} entries)...",
-  );
   ref.read(libraryUpdateProvider.notifier).begin();
-  final failures = await _runUpdate(
-    ref: ref,
-    mangaList: entries,
-    itemtype: "Library",
-  );
-  ref.read(libraryUpdateProvider.notifier).end();
-  ref.read(updateErrorsProvider.notifier).set(failures);
-  AppLogger.log(
-    "Scheduled library update finished, ${failures.length} of "
-    "${entries.length} failed.",
-  );
+
+  try {
+    if (settings.autoLibraryUpdateWifiOnly ?? true) {
+      final connectivity = await Connectivity().checkConnectivity();
+      final unmetered =
+          connectivity.contains(ConnectivityResult.wifi) ||
+          connectivity.contains(ConnectivityResult.ethernet);
+      if (!unmetered) {
+        AppLogger.log("Scheduled library update skipped: metered connection.");
+        return;
+      }
+    }
+
+    // Local archives have no source to refresh from, so they're left out.
+    final entries = <Manga>[];
+    for (final itemType in ItemType.values) {
+      entries.addAll(
+        await mangaRepository.getFavoritesNonLocalArchiveByItemType(itemType),
+      );
+    }
+    if (entries.isEmpty) return;
+
+    // Stamped before the run rather than after: a run cut short by the app
+    // closing shouldn't make every following launch start over. Nothing above
+    // stamps, so a run that never starts stays due.
+    await settingsRepository.update(
+      (s) => s.lastAutoLibraryUpdate = DateTime.now().millisecondsSinceEpoch,
+    );
+
+    AppLogger.log(
+      "Starting scheduled library update (${entries.length} entries)...",
+    );
+    final failures = await _runUpdate(
+      ref: ref,
+      mangaList: entries,
+      itemtype: "Library",
+    );
+    ref.read(updateErrorsProvider.notifier).set(failures);
+    AppLogger.log(
+      "Scheduled library update finished, ${failures.length} of "
+      "${entries.length} failed.",
+    );
+  } finally {
+    ref.read(libraryUpdateProvider.notifier).end();
+  }
 }
