@@ -46,13 +46,15 @@ class TrackRepository {
           .syncIdEqualTo(syncId)
           .watch(fireImmediately: true);
 
-  Stream<List<Track>> watchByMediaIdAndItemType(int mediaId, ItemType itemType) =>
-      isar.tracks
-          .filter()
-          .idIsNotNull()
-          .mediaIdEqualTo(mediaId)
-          .itemTypeEqualTo(itemType)
-          .watch(fireImmediately: true);
+  Stream<List<Track>> watchByMediaIdAndItemType(
+    int mediaId,
+    ItemType itemType,
+  ) => isar.tracks
+      .filter()
+      .idIsNotNull()
+      .mediaIdEqualTo(mediaId)
+      .itemTypeEqualTo(itemType)
+      .watch(fireImmediately: true);
 
   Stream<List<Track>> watchBySyncIdAndMangaId(int? syncId, int mangaId) => isar
       .tracks
@@ -97,12 +99,31 @@ class TrackRepository {
 
   List<Track> getAll() => isar.tracks.filter().idIsNotNull().findAllSync();
 
+  List<Track> getChangedSince(int since) => isar.tracks
+      .filter()
+      .updatedAtGreaterThan(since, include: true)
+      .findAllSync();
+
+  Track? getByClientId(int clientId) => isar.tracks
+      .filter()
+      .clientIdEqualTo(clientId)
+      .or()
+      .idEqualTo(clientId)
+      .findFirstSync();
+
+  Track? findBySyncIdAndMangaId(int? syncId, int? mangaId) => isar.tracks
+      .filter()
+      .syncIdEqualTo(syncId)
+      .mangaIdEqualTo(mangaId)
+      .findFirstSync();
+
   // Async twin, for callers already inside an async writeTxn/writeTransactionAsync
   // — Isar rejects a sync findAllSync() call from inside an async transaction.
   Future<List<Track>> getAllAsync() =>
       isar.tracks.filter().idIsNotNull().findAll();
 
-  Stream<List<Track>> watchAll() => isar.tracks.where().watch(fireImmediately: true);
+  Stream<List<Track>> watchAll() =>
+      isar.tracks.where().watch(fireImmediately: true);
 
   List<TrackPreference> getAllPreferences() =>
       isar.trackPreferences.filter().syncIdIsNotNull().findAllSync();
@@ -144,7 +165,13 @@ class TrackRepository {
       isar.tracks.deleteSync(track.id!);
       ref
           .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(ActionType.removeTrack, track.id, "{}", false);
+          .addChangedPart(
+            ActionType.removeTrack,
+            track.id,
+            "{}",
+            false,
+            clientId: track.clientId,
+          );
     });
   });
 
@@ -167,6 +194,9 @@ class TrackRepository {
   // Escape hatch for track-rooted transactions too specific to name.
   Future<T> transaction<T>(FutureOr<T> Function() body) =>
       dbWriteQueue.run(body);
+
+  Future<T> writeTransaction<T>(T Function() body) =>
+      dbWriteQueue.run(() => isar.writeTxnSync(body));
 
   Future<T> writeTransactionAsync<T>(Future<T> Function() body) =>
       dbWriteQueue.run(() => isar.writeTxn(body));

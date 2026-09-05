@@ -26,7 +26,13 @@ class ChangedPartRepository {
     return query.findAllSync();
   }
 
-  void add(ActionType action, int? isarId, Object data, bool writeTxn) {
+  void add(
+    ActionType action,
+    int? isarId,
+    Object data,
+    bool writeTxn, {
+    int? clientId,
+  }) {
     final changedPart = isar.changedParts
         .filter()
         .actionTypeEqualTo(action)
@@ -36,6 +42,7 @@ class ChangedPartRepository {
       if (changedPart != null) {
         isar.changedParts.putSync(
           changedPart
+            ..clientId = clientId ?? changedPart.clientId
             ..data = jsonEncode(data)
             ..clientDate = DateTime.now().millisecondsSinceEpoch,
         );
@@ -44,6 +51,7 @@ class ChangedPartRepository {
           ChangedPart(
             actionType: action,
             isarId: isarId,
+            clientId: clientId,
             data: jsonEncode(data),
             clientDate: DateTime.now().millisecondsSinceEpoch,
           ),
@@ -62,8 +70,9 @@ class ChangedPartRepository {
     ActionType action,
     int? isarId,
     Object data,
-    bool writeTxn,
-  ) async {
+    bool writeTxn, {
+    int? clientId,
+  }) async {
     final changedPart = isar.changedParts
         .filter()
         .actionTypeEqualTo(action)
@@ -73,6 +82,7 @@ class ChangedPartRepository {
       if (changedPart != null) {
         await isar.changedParts.put(
           changedPart
+            ..clientId = clientId ?? changedPart.clientId
             ..data = jsonEncode(data)
             ..clientDate = DateTime.now().millisecondsSinceEpoch,
         );
@@ -81,6 +91,7 @@ class ChangedPartRepository {
           ChangedPart(
             actionType: action,
             isarId: isarId,
+            clientId: clientId,
             data: jsonEncode(data),
             clientDate: DateTime.now().millisecondsSinceEpoch,
           ),

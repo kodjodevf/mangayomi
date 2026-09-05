@@ -1045,9 +1045,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get syncing => 'Synchronisierung';
 
   @override
-  String get sync_password => 'Passwort (mind. 8 Zeichen)';
-
-  @override
   String get sync_logged => 'Login erfolgreich!';
 
   @override
@@ -1055,19 +1052,13 @@ class AppLocalizationsDe extends AppLocalizations {
       'Synchronisiere deinen Fortschritt über mehrere Geräte mithilfe \neines selbstgehosteten Servers. Mehr Info gibt es bei unserem Discord Server!';
 
   @override
-  String get last_sync_manga => 'Manga zuletzt synchronisiert: ';
+  String get last_sync => 'Last sync at: ';
 
   @override
-  String get last_sync_history => 'Verlauf zuletzt synchronisiert: ';
-
-  @override
-  String get last_sync_update => 'Update zuletzt synchronisiert: ';
+  String get sync_login_browser => 'Log in with browser';
 
   @override
   String get sync_server => 'Sync Server IP Adresse / Domain';
-
-  @override
-  String get sync_login_invalid_creds => 'Ungültiger Email oder Passwort';
 
   @override
   String get sync_starting => 'Sync gestartet...';
@@ -1081,6 +1072,14 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get sync_restore_in_progress =>
       'Synchronisierung übersprungen – Wiederherstellung läuft';
+
+  @override
+  String sync_progress_percent(Object percent) {
+    return 'Syncing… $percent%';
+  }
+
+  @override
+  String get sync_progress_indeterminate => 'Syncing…';
 
   @override
   String get sync_button_sync => 'Jetzt synchronisieren';
@@ -1117,9 +1116,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get sync_section_general => 'Allgemein';
-
-  @override
-  String get sync_section_data_types => 'Zu synchronisierende Daten';
 
   @override
   String get sync_on => 'Sync aktivieren';
@@ -2066,15 +2062,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rpc_show_cover_image => 'Aktuelles Cover-Bild in Discord anzeigen';
-
-  @override
-  String get sync_enable_histories => 'Verlaufsdaten synchronisieren';
-
-  @override
-  String get sync_enable_updates => 'Aktualisierungsdaten synchronisieren';
-
-  @override
-  String get sync_enable_settings => 'Einstellungen synchronisieren';
 
   @override
   String get enable_mpv => 'mpv Shader / Skripte aktivieren';

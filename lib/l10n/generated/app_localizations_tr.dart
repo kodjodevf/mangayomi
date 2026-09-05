@@ -1041,9 +1041,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get syncing => 'Senkrone etme';
 
   @override
-  String get sync_password => 'Şifre (en az 8 karakter)';
-
-  @override
   String get sync_logged => 'Giriş başarılı';
 
   @override
@@ -1051,19 +1048,13 @@ class AppLocalizationsTr extends AppLocalizations {
       'İlerlemenizi kendi barındırdığınız bir \nserver aracılığıyla birden fazla cihaz arasında senkronize edin. Daha fazla bilgi için discord sunucumuza göz atın!';
 
   @override
-  String get last_sync_manga => 'Son manga senkronizasyonu:';
+  String get last_sync => 'Last sync at: ';
 
   @override
-  String get last_sync_history => 'Son tarih senkronizasyonu:';
-
-  @override
-  String get last_sync_update => 'Son güncelleme senkronizasyonu:';
+  String get sync_login_browser => 'Log in with browser';
 
   @override
   String get sync_server => 'Senkronizasyon Sunucu Adresi';
-
-  @override
-  String get sync_login_invalid_creds => 'Geçersiz e-posta veya şifre';
 
   @override
   String get sync_starting => 'Senkronizasyonu başlatıyorum.';
@@ -1077,6 +1068,14 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get sync_restore_in_progress =>
       'Senkronizasyon atlandı — geri yükleme sürüyor';
+
+  @override
+  String sync_progress_percent(Object percent) {
+    return 'Syncing… $percent%';
+  }
+
+  @override
+  String get sync_progress_indeterminate => 'Syncing…';
 
   @override
   String get sync_button_sync => 'İlerlemeyi senkronize et';
@@ -1113,9 +1112,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get sync_section_general => 'Genel';
-
-  @override
-  String get sync_section_data_types => 'Senkronize edilecekler';
 
   @override
   String get sync_on => 'Senkronizasyonu etkinleştir';
@@ -2057,15 +2053,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get rpc_show_cover_image => 'Discord\'da mevcut kapak resmini göster';
-
-  @override
-  String get sync_enable_histories => 'Geçmiş verilerini senkronize et';
-
-  @override
-  String get sync_enable_updates => 'Güncelleme verilerini senkronize et';
-
-  @override
-  String get sync_enable_settings => 'Ayarları senkronize et';
 
   @override
   String get enable_mpv => 'mpv gölgelendiricilerini / betiklerini etkinleştir';

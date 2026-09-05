@@ -393,7 +393,8 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab>
                     SizedBox(width: 10),
                     IconButton(
                       onPressed: () async {
-                        category.shouldUpdate = !(category.shouldUpdate ?? true);
+                        category.shouldUpdate =
+                            !(category.shouldUpdate ?? true);
                         await categoryRepository.save(category);
                       },
                       icon: Icon(
@@ -478,6 +479,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab>
           category.id,
           "{}",
           true,
+          clientId: category.clientId,
         );
     if (context.mounted) {
       Navigator.pop(context);

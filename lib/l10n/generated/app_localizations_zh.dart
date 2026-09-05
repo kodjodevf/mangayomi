@@ -1024,9 +1024,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get syncing => '同步';
 
   @override
-  String get sync_password => '密码（至少8个字符）';
-
-  @override
   String get sync_logged => '登录成功';
 
   @override
@@ -1034,19 +1031,13 @@ class AppLocalizationsZh extends AppLocalizations {
       '通过自托管的 \n服务器在多个设备上同步你的进度。查看我们的 discord 服务器，了解更多信息！';
 
   @override
-  String get last_sync_manga => '最新漫画同步于: ';
+  String get last_sync => 'Last sync at: ';
 
   @override
-  String get last_sync_history => '最后历史同步时间：';
-
-  @override
-  String get last_sync_update => '最后更新同步于: ';
+  String get sync_login_browser => 'Log in with browser';
 
   @override
   String get sync_server => '同步服务器地址';
-
-  @override
-  String get sync_login_invalid_creds => '无效的电子邮件或密码';
 
   @override
   String get sync_starting => '开始同步...';
@@ -1059,6 +1050,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get sync_restore_in_progress => '已跳过同步 — 正在恢复中';
+
+  @override
+  String sync_progress_percent(Object percent) {
+    return 'Syncing… $percent%';
+  }
+
+  @override
+  String get sync_progress_indeterminate => 'Syncing…';
 
   @override
   String get sync_button_sync => '同步进度';
@@ -1092,9 +1091,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get sync_section_general => '通用';
-
-  @override
-  String get sync_section_data_types => '同步内容';
 
   @override
   String get sync_on => '启用同步';
@@ -1988,15 +1984,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get rpc_show_cover_image => '在 Discord 中显示当前封面图片';
-
-  @override
-  String get sync_enable_histories => '同步历史记录数据';
-
-  @override
-  String get sync_enable_updates => '同步更新数据';
-
-  @override
-  String get sync_enable_settings => '同步设置';
 
   @override
   String get enable_mpv => '启用 mpv 着色器/脚本';

@@ -24,69 +24,70 @@ const MangaSchema = CollectionSchema(
       name: r'categories',
       type: IsarType.longList,
     ),
+    r'clientId': PropertySchema(id: 3, name: r'clientId', type: IsarType.long),
     r'customCoverFromTracker': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'customCoverFromTracker',
       type: IsarType.string,
     ),
     r'customCoverImage': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'customCoverImage',
       type: IsarType.byteList,
     ),
     r'dateAdded': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'dateAdded',
       type: IsarType.long,
     ),
     r'description': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'description',
       type: IsarType.string,
     ),
-    r'favorite': PropertySchema(id: 7, name: r'favorite', type: IsarType.bool),
-    r'genre': PropertySchema(id: 8, name: r'genre', type: IsarType.stringList),
+    r'favorite': PropertySchema(id: 8, name: r'favorite', type: IsarType.bool),
+    r'genre': PropertySchema(id: 9, name: r'genre', type: IsarType.stringList),
     r'imageUrl': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'imageUrl',
       type: IsarType.string,
     ),
     r'isLocalArchive': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'isLocalArchive',
       type: IsarType.bool,
     ),
-    r'isManga': PropertySchema(id: 11, name: r'isManga', type: IsarType.bool),
+    r'isManga': PropertySchema(id: 12, name: r'isManga', type: IsarType.bool),
     r'itemType': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'itemType',
       type: IsarType.byte,
       enumMap: _MangaitemTypeEnumValueMap,
     ),
-    r'lang': PropertySchema(id: 13, name: r'lang', type: IsarType.string),
-    r'lastRead': PropertySchema(id: 14, name: r'lastRead', type: IsarType.long),
+    r'lang': PropertySchema(id: 14, name: r'lang', type: IsarType.string),
+    r'lastRead': PropertySchema(id: 15, name: r'lastRead', type: IsarType.long),
     r'lastUpdate': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'lastUpdate',
       type: IsarType.long,
     ),
-    r'link': PropertySchema(id: 16, name: r'link', type: IsarType.string),
-    r'name': PropertySchema(id: 17, name: r'name', type: IsarType.string),
+    r'link': PropertySchema(id: 17, name: r'link', type: IsarType.string),
+    r'name': PropertySchema(id: 18, name: r'name', type: IsarType.string),
     r'smartUpdateDays': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'smartUpdateDays',
       type: IsarType.long,
     ),
-    r'source': PropertySchema(id: 19, name: r'source', type: IsarType.string),
-    r'sourceId': PropertySchema(id: 20, name: r'sourceId', type: IsarType.long),
+    r'source': PropertySchema(id: 20, name: r'source', type: IsarType.string),
+    r'sourceId': PropertySchema(id: 21, name: r'sourceId', type: IsarType.long),
     r'status': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'status',
       type: IsarType.byte,
       enumMap: _MangastatusEnumValueMap,
     ),
     r'updatedAt': PropertySchema(
-      id: 22,
+      id: 23,
       name: r'updatedAt',
       type: IsarType.long,
     ),
@@ -98,6 +99,19 @@ const MangaSchema = CollectionSchema(
   deserializeProp: _mangaDeserializeProp,
   idName: r'id',
   indexes: {
+    r'clientId': IndexSchema(
+      id: 2639372232964765565,
+      name: r'clientId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'clientId',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
     r'itemType': IndexSchema(
       id: 4177129349728551858,
       name: r'itemType',
@@ -256,26 +270,27 @@ void _mangaSerialize(
   writer.writeString(offsets[0], object.artist);
   writer.writeString(offsets[1], object.author);
   writer.writeLongList(offsets[2], object.categories);
-  writer.writeString(offsets[3], object.customCoverFromTracker);
-  writer.writeByteList(offsets[4], object.customCoverImage);
-  writer.writeLong(offsets[5], object.dateAdded);
-  writer.writeString(offsets[6], object.description);
-  writer.writeBool(offsets[7], object.favorite);
-  writer.writeStringList(offsets[8], object.genre);
-  writer.writeString(offsets[9], object.imageUrl);
-  writer.writeBool(offsets[10], object.isLocalArchive);
-  writer.writeBool(offsets[11], object.isManga);
-  writer.writeByte(offsets[12], object.itemType.index);
-  writer.writeString(offsets[13], object.lang);
-  writer.writeLong(offsets[14], object.lastRead);
-  writer.writeLong(offsets[15], object.lastUpdate);
-  writer.writeString(offsets[16], object.link);
-  writer.writeString(offsets[17], object.name);
-  writer.writeLong(offsets[18], object.smartUpdateDays);
-  writer.writeString(offsets[19], object.source);
-  writer.writeLong(offsets[20], object.sourceId);
-  writer.writeByte(offsets[21], object.status.index);
-  writer.writeLong(offsets[22], object.updatedAt);
+  writer.writeLong(offsets[3], object.clientId);
+  writer.writeString(offsets[4], object.customCoverFromTracker);
+  writer.writeByteList(offsets[5], object.customCoverImage);
+  writer.writeLong(offsets[6], object.dateAdded);
+  writer.writeString(offsets[7], object.description);
+  writer.writeBool(offsets[8], object.favorite);
+  writer.writeStringList(offsets[9], object.genre);
+  writer.writeString(offsets[10], object.imageUrl);
+  writer.writeBool(offsets[11], object.isLocalArchive);
+  writer.writeBool(offsets[12], object.isManga);
+  writer.writeByte(offsets[13], object.itemType.index);
+  writer.writeString(offsets[14], object.lang);
+  writer.writeLong(offsets[15], object.lastRead);
+  writer.writeLong(offsets[16], object.lastUpdate);
+  writer.writeString(offsets[17], object.link);
+  writer.writeString(offsets[18], object.name);
+  writer.writeLong(offsets[19], object.smartUpdateDays);
+  writer.writeString(offsets[20], object.source);
+  writer.writeLong(offsets[21], object.sourceId);
+  writer.writeByte(offsets[22], object.status.index);
+  writer.writeLong(offsets[23], object.updatedAt);
 }
 
 Manga _mangaDeserialize(
@@ -288,31 +303,32 @@ Manga _mangaDeserialize(
     artist: reader.readStringOrNull(offsets[0]),
     author: reader.readStringOrNull(offsets[1]),
     categories: reader.readLongList(offsets[2]),
-    customCoverFromTracker: reader.readStringOrNull(offsets[3]),
-    customCoverImage: reader.readByteList(offsets[4]),
-    dateAdded: reader.readLongOrNull(offsets[5]),
-    description: reader.readStringOrNull(offsets[6]),
-    favorite: reader.readBoolOrNull(offsets[7]),
-    genre: reader.readStringList(offsets[8]),
+    clientId: reader.readLongOrNull(offsets[3]),
+    customCoverFromTracker: reader.readStringOrNull(offsets[4]),
+    customCoverImage: reader.readByteList(offsets[5]),
+    dateAdded: reader.readLongOrNull(offsets[6]),
+    description: reader.readStringOrNull(offsets[7]),
+    favorite: reader.readBoolOrNull(offsets[8]),
+    genre: reader.readStringList(offsets[9]),
     id: id,
-    imageUrl: reader.readStringOrNull(offsets[9]),
-    isLocalArchive: reader.readBoolOrNull(offsets[10]),
-    isManga: reader.readBoolOrNull(offsets[11]),
+    imageUrl: reader.readStringOrNull(offsets[10]),
+    isLocalArchive: reader.readBoolOrNull(offsets[11]),
+    isManga: reader.readBoolOrNull(offsets[12]),
     itemType:
-        _MangaitemTypeValueEnumMap[reader.readByteOrNull(offsets[12])] ??
+        _MangaitemTypeValueEnumMap[reader.readByteOrNull(offsets[13])] ??
         ItemType.manga,
-    lang: reader.readStringOrNull(offsets[13]),
-    lastRead: reader.readLongOrNull(offsets[14]),
-    lastUpdate: reader.readLongOrNull(offsets[15]),
-    link: reader.readStringOrNull(offsets[16]),
-    name: reader.readStringOrNull(offsets[17]),
-    smartUpdateDays: reader.readLongOrNull(offsets[18]),
-    source: reader.readStringOrNull(offsets[19]),
-    sourceId: reader.readLongOrNull(offsets[20]),
+    lang: reader.readStringOrNull(offsets[14]),
+    lastRead: reader.readLongOrNull(offsets[15]),
+    lastUpdate: reader.readLongOrNull(offsets[16]),
+    link: reader.readStringOrNull(offsets[17]),
+    name: reader.readStringOrNull(offsets[18]),
+    smartUpdateDays: reader.readLongOrNull(offsets[19]),
+    source: reader.readStringOrNull(offsets[20]),
+    sourceId: reader.readLongOrNull(offsets[21]),
     status:
-        _MangastatusValueEnumMap[reader.readByteOrNull(offsets[21])] ??
+        _MangastatusValueEnumMap[reader.readByteOrNull(offsets[22])] ??
         Status.ongoing,
-    updatedAt: reader.readLongOrNull(offsets[22]),
+    updatedAt: reader.readLongOrNull(offsets[23]),
   );
   return object;
 }
@@ -331,48 +347,50 @@ P _mangaDeserializeProp<P>(
     case 2:
       return (reader.readLongList(offset)) as P;
     case 3:
-      return (reader.readStringOrNull(offset)) as P;
-    case 4:
-      return (reader.readByteList(offset)) as P;
-    case 5:
       return (reader.readLongOrNull(offset)) as P;
+    case 4:
+      return (reader.readStringOrNull(offset)) as P;
+    case 5:
+      return (reader.readByteList(offset)) as P;
     case 6:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 7:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 8:
-      return (reader.readStringList(offset)) as P;
-    case 9:
       return (reader.readStringOrNull(offset)) as P;
-    case 10:
+    case 8:
       return (reader.readBoolOrNull(offset)) as P;
+    case 9:
+      return (reader.readStringList(offset)) as P;
+    case 10:
+      return (reader.readStringOrNull(offset)) as P;
     case 11:
       return (reader.readBoolOrNull(offset)) as P;
     case 12:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 13:
       return (_MangaitemTypeValueEnumMap[reader.readByteOrNull(offset)] ??
               ItemType.manga)
           as P;
-    case 13:
-      return (reader.readStringOrNull(offset)) as P;
     case 14:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 15:
       return (reader.readLongOrNull(offset)) as P;
     case 16:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 17:
       return (reader.readStringOrNull(offset)) as P;
     case 18:
-      return (reader.readLongOrNull(offset)) as P;
-    case 19:
       return (reader.readStringOrNull(offset)) as P;
-    case 20:
+    case 19:
       return (reader.readLongOrNull(offset)) as P;
+    case 20:
+      return (reader.readStringOrNull(offset)) as P;
     case 21:
+      return (reader.readLongOrNull(offset)) as P;
+    case 22:
       return (_MangastatusValueEnumMap[reader.readByteOrNull(offset)] ??
               Status.ongoing)
           as P;
-    case 22:
+    case 23:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -419,6 +437,14 @@ extension MangaQueryWhereSort on QueryBuilder<Manga, Manga, QWhere> {
   QueryBuilder<Manga, Manga, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhere> anyClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'clientId'),
+      );
     });
   }
 
@@ -502,6 +528,130 @@ extension MangaQueryWhere on QueryBuilder<Manga, Manga, QWhereClause> {
           lower: lowerId,
           includeLower: includeLower,
           upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> clientIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'clientId', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> clientIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> clientIdEqualTo(int? clientId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'clientId', value: [clientId]),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> clientIdNotEqualTo(
+    int? clientId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [],
+                upper: [clientId],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [clientId],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [clientId],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [],
+                upper: [clientId],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> clientIdGreaterThan(
+    int? clientId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [clientId],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> clientIdLessThan(
+    int? clientId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [],
+          upper: [clientId],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> clientIdBetween(
+    int? lowerClientId,
+    int? upperClientId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [lowerClientId],
+          includeLower: includeLower,
+          upper: [upperClientId],
           includeUpper: includeUpper,
         ),
       );
@@ -1329,6 +1479,81 @@ extension MangaQueryFilter on QueryBuilder<Manga, Manga, QFilterCondition> {
         includeLower,
         upper,
         includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> clientIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'clientId'),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> clientIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'clientId'),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> clientIdEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'clientId', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> clientIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'clientId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> clientIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'clientId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> clientIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'clientId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
       );
     });
   }
@@ -3626,6 +3851,18 @@ extension MangaQuerySortBy on QueryBuilder<Manga, Manga, QSortBy> {
     });
   }
 
+  QueryBuilder<Manga, Manga, QAfterSortBy> sortByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> sortByClientIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Manga, Manga, QAfterSortBy> sortByCustomCoverFromTracker() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'customCoverFromTracker', Sort.asc);
@@ -3865,6 +4102,18 @@ extension MangaQuerySortThenBy on QueryBuilder<Manga, Manga, QSortThenBy> {
   QueryBuilder<Manga, Manga, QAfterSortBy> thenByAuthorDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'author', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> thenByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> thenByClientIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.desc);
     });
   }
 
@@ -4120,6 +4369,12 @@ extension MangaQueryWhereDistinct on QueryBuilder<Manga, Manga, QDistinct> {
     });
   }
 
+  QueryBuilder<Manga, Manga, QDistinct> distinctByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'clientId');
+    });
+  }
+
   QueryBuilder<Manga, Manga, QDistinct> distinctByCustomCoverFromTracker({
     bool caseSensitive = true,
   }) {
@@ -4280,6 +4535,12 @@ extension MangaQueryProperty on QueryBuilder<Manga, Manga, QQueryProperty> {
   QueryBuilder<Manga, List<int>?, QQueryOperations> categoriesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'categories');
+    });
+  }
+
+  QueryBuilder<Manga, int?, QQueryOperations> clientIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'clientId');
     });
   }
 

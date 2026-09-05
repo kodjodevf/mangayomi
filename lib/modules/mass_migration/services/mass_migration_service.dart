@@ -89,7 +89,13 @@ Future<_MigrationSnapshot> _captureMigrationSnapshot({
       historyRepository.deleteSync(history.id!);
       ref
           .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(ActionType.removeHistory, history.id, '{}', false);
+          .addChangedPart(
+            ActionType.removeHistory,
+            history.id,
+            '{}',
+            false,
+            clientId: history.clientId,
+          );
     }
     // Batch delete all updates for oldManga via mangaId index
     updateRepository.deleteAllByMangaIdSync(oldManga.id);
@@ -99,7 +105,13 @@ Future<_MigrationSnapshot> _captureMigrationSnapshot({
       chapterRepository.deleteSync(chapter.id!);
       ref
           .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(ActionType.removeChapter, chapter.id, '{}', false);
+          .addChangedPart(
+            ActionType.removeChapter,
+            chapter.id,
+            '{}',
+            false,
+            clientId: chapter.clientId,
+          );
     }
   });
 
@@ -209,9 +221,7 @@ Future<void> _restoreMigrationProgress({
     // progress could land on a chapter the reader had never opened.
     final destinationTitle = oldManga.name ?? '';
     final byNumber = <double, Chapter>{};
-    for (final chapter in chapterRepository.getAllByMangaIdIndex(
-      oldManga.id,
-    )) {
+    for (final chapter in chapterRepository.getAllByMangaIdIndex(oldManga.id)) {
       final number = _chapterNumber(destinationTitle, chapter.name);
       if (number != null) byNumber.putIfAbsent(number, () => chapter);
     }
