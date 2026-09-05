@@ -33,13 +33,16 @@ class MangaRepository {
       .nameEqualTo(name)
       .findFirst();
 
-  Future<bool> isEmptyByLangNameSource(String? lang, String? name, String? source) =>
-      isar.mangas
-          .filter()
-          .langEqualTo(lang)
-          .nameEqualTo(name)
-          .sourceEqualTo(source)
-          .isEmpty();
+  Future<bool> isEmptyByLangNameSource(
+    String? lang,
+    String? name,
+    String? source,
+  ) => isar.mangas
+      .filter()
+      .langEqualTo(lang)
+      .nameEqualTo(name)
+      .sourceEqualTo(source)
+      .isEmpty();
 
   Future<List<Manga>> findAllByLangNameSource(
     String? lang,
@@ -53,6 +56,25 @@ class MangaRepository {
       .findAll();
 
   List<Manga> getAll() => isar.mangas.where().findAllSync();
+
+  List<Manga> getChangedSince(int since) => isar.mangas
+      .filter()
+      .updatedAtGreaterThan(since, include: true)
+      .findAllSync();
+
+  Manga? getByClientId(int clientId) => isar.mangas
+      .filter()
+      .clientIdEqualTo(clientId)
+      .or()
+      .idEqualTo(clientId)
+      .findFirstSync();
+
+  Manga? findByLinkAndItemType(String link, ItemType itemType) => isar.mangas
+      .filter()
+      .linkEqualTo(link)
+      .and()
+      .itemTypeEqualTo(itemType)
+      .findFirstSync();
 
   // Async twin, for callers already inside an async writeTxn/writeTransactionAsync
   // — Isar rejects a sync findAllSync() call from inside an async transaction.
@@ -240,12 +262,12 @@ class MangaRepository {
       .sourceEqualTo(source)
       .watch(fireImmediately: true);
 
-  Stream<List<Manga>> watchBySourceAndLang(String? source, String? lang) =>
-      isar.mangas
-          .filter()
-          .sourceEqualTo(source)
-          .langEqualTo(lang)
-          .watch(fireImmediately: true);
+  Stream<List<Manga>> watchBySourceAndLang(String? source, String? lang) => isar
+      .mangas
+      .filter()
+      .sourceEqualTo(source)
+      .langEqualTo(lang)
+      .watch(fireImmediately: true);
 
   Stream<Manga?> watchById(int id) =>
       isar.mangas.watchObject(id, fireImmediately: true);
@@ -366,13 +388,20 @@ class MangaRepository {
         history.id,
         "{}",
         false,
+        clientId: history.clientId,
       );
     }
 
     final updates = isar.updates.where().mangaIdEqualTo(manga.id).findAllSync();
     for (var update in updates) {
       isar.updates.deleteSync(update.id!);
-      provider.addChangedPart(ActionType.removeUpdate, update.id, "{}", false);
+      provider.addChangedPart(
+        ActionType.removeUpdate,
+        update.id,
+        "{}",
+        false,
+        clientId: update.clientId,
+      );
     }
 
     for (var chapter in manga.chapters) {
@@ -383,10 +412,17 @@ class MangaRepository {
         chapter.id,
         "{}",
         false,
+        clientId: chapter.clientId,
       );
     }
     isar.mangas.deleteSync(manga.id!);
-    provider.addChangedPart(ActionType.removeItem, manga.id, "{}", false);
+    provider.addChangedPart(
+      ActionType.removeItem,
+      manga.id,
+      "{}",
+      false,
+      clientId: manga.clientId,
+    );
   }
 
   // Bulk-drops every manga in mangaList along with their chapters, and

@@ -13,6 +13,18 @@ class CategoryRepository {
   List<Category> getAll() =>
       isar.categorys.filter().idIsNotNull().findAllSync();
 
+  List<Category> getChangedSince(int since) => isar.categorys
+      .filter()
+      .updatedAtGreaterThan(since, include: true)
+      .findAllSync();
+
+  Category? getByClientId(int clientId) => isar.categorys
+      .filter()
+      .clientIdEqualTo(clientId)
+      .or()
+      .idEqualTo(clientId)
+      .findFirstSync();
+
   // Async twin, for callers already inside an async writeTxn/writeTransactionAsync
   // — Isar rejects a sync findAllSync() call from inside an async transaction.
   Future<List<Category>> getAllAsync() =>
@@ -108,6 +120,9 @@ class CategoryRepository {
   // Escape hatch for category-rooted transactions too specific to name.
   Future<T> transaction<T>(FutureOr<T> Function() body) =>
       dbWriteQueue.run(body);
+
+  Future<T> writeTransaction<T>(T Function() body) =>
+      dbWriteQueue.run(() => isar.writeTxnSync(body));
 
   Future<T> writeTransactionAsync<T>(Future<T> Function() body) =>
       dbWriteQueue.run(() => isar.writeTxn(body));

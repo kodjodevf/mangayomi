@@ -1045,9 +1045,6 @@ class AppLocalizationsAs extends AppLocalizations {
   String get syncing => 'সমন্বয় কৰি আছে';
 
   @override
-  String get sync_password => 'পাছৱৰ্ড (কমেও ৮টা আখৰ)';
-
-  @override
   String get sync_logged => 'লগইন সফল';
 
   @override
@@ -1055,19 +1052,13 @@ class AppLocalizationsAs extends AppLocalizations {
       'স্ব-হোষ্ট কৰা চাৰ্ভাৰৰ জৰিয়তে একাধিক ডিভাইচত আপোনাৰ প্ৰগতি সমন্বয় কৰক। অধিক তথ্যৰ বাবে আমাৰ ডিস্ক\'ৰ্ড চাৰ্ভাৰ চাওক!';
 
   @override
-  String get last_sync_manga => 'শেহতীয়া মাংগা সিংক: ';
+  String get last_sync => 'Last sync at: ';
 
   @override
-  String get last_sync_history => 'শেহতীয়া ইতিহাস সিংক: ';
-
-  @override
-  String get last_sync_update => 'শেহতীয়া আপডেট সিংক: ';
+  String get sync_login_browser => 'Log in with browser';
 
   @override
   String get sync_server => 'সিংক চাৰ্ভাৰ ঠিকনা';
-
-  @override
-  String get sync_login_invalid_creds => 'অবৈধ ইমেইল বা পাছৱৰ্ড';
 
   @override
   String get sync_starting => 'সিংক আৰম্ভ হৈছে...';
@@ -1081,6 +1072,14 @@ class AppLocalizationsAs extends AppLocalizations {
   @override
   String get sync_restore_in_progress =>
       'চিঙ্ক এৰাই চলা হ\'ল — পুনৰুদ্ধাৰ চলি আছে';
+
+  @override
+  String sync_progress_percent(Object percent) {
+    return 'Syncing… $percent%';
+  }
+
+  @override
+  String get sync_progress_indeterminate => 'Syncing…';
 
   @override
   String get sync_button_sync => 'প্ৰগতি সিংক কৰক';
@@ -1117,9 +1116,6 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get sync_section_general => 'সাধাৰণ';
-
-  @override
-  String get sync_section_data_types => 'কি চিঙ্ক কৰিব';
 
   @override
   String get sync_on => 'সিংক সক্ষম কৰক';
@@ -2050,15 +2046,6 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get rpc_show_cover_image => 'Discordত বৰ্তমান কভাৰ ছবি দেখুৱাওক';
-
-  @override
-  String get sync_enable_histories => 'ইতিহাস ডাটা সিংক কৰক';
-
-  @override
-  String get sync_enable_updates => 'আপডেট ডাটা সিংক কৰক';
-
-  @override
-  String get sync_enable_settings => 'ছেটিংছ সিংক কৰক';
 
   @override
   String get enable_mpv => 'mpv ছেডাৰ / স্ক্ৰিপ্ট সক্ষম কৰক';

@@ -22,22 +22,23 @@ const HistorySchema = CollectionSchema(
       name: r'chapterId',
       type: IsarType.long,
     ),
-    r'date': PropertySchema(id: 1, name: r'date', type: IsarType.string),
-    r'isManga': PropertySchema(id: 2, name: r'isManga', type: IsarType.bool),
+    r'clientId': PropertySchema(id: 1, name: r'clientId', type: IsarType.long),
+    r'date': PropertySchema(id: 2, name: r'date', type: IsarType.string),
+    r'isManga': PropertySchema(id: 3, name: r'isManga', type: IsarType.bool),
     r'itemType': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'itemType',
       type: IsarType.byte,
       enumMap: _HistoryitemTypeEnumValueMap,
     ),
-    r'mangaId': PropertySchema(id: 4, name: r'mangaId', type: IsarType.long),
+    r'mangaId': PropertySchema(id: 5, name: r'mangaId', type: IsarType.long),
     r'readingTimeSeconds': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'readingTimeSeconds',
       type: IsarType.long,
     ),
     r'updatedAt': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'updatedAt',
       type: IsarType.long,
     ),
@@ -49,6 +50,19 @@ const HistorySchema = CollectionSchema(
   deserializeProp: _historyDeserializeProp,
   idName: r'id',
   indexes: {
+    r'clientId': IndexSchema(
+      id: 2639372232964765565,
+      name: r'clientId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'clientId',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
     r'mangaId': IndexSchema(
       id: 7466570075891278896,
       name: r'mangaId',
@@ -127,12 +141,13 @@ void _historySerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLong(offsets[0], object.chapterId);
-  writer.writeString(offsets[1], object.date);
-  writer.writeBool(offsets[2], object.isManga);
-  writer.writeByte(offsets[3], object.itemType.index);
-  writer.writeLong(offsets[4], object.mangaId);
-  writer.writeLong(offsets[5], object.readingTimeSeconds);
-  writer.writeLong(offsets[6], object.updatedAt);
+  writer.writeLong(offsets[1], object.clientId);
+  writer.writeString(offsets[2], object.date);
+  writer.writeBool(offsets[3], object.isManga);
+  writer.writeByte(offsets[4], object.itemType.index);
+  writer.writeLong(offsets[5], object.mangaId);
+  writer.writeLong(offsets[6], object.readingTimeSeconds);
+  writer.writeLong(offsets[7], object.updatedAt);
 }
 
 History _historyDeserialize(
@@ -143,15 +158,16 @@ History _historyDeserialize(
 ) {
   final object = History(
     chapterId: reader.readLongOrNull(offsets[0]),
-    date: reader.readStringOrNull(offsets[1]),
+    clientId: reader.readLongOrNull(offsets[1]),
+    date: reader.readStringOrNull(offsets[2]),
     id: id,
-    isManga: reader.readBoolOrNull(offsets[2]),
+    isManga: reader.readBoolOrNull(offsets[3]),
     itemType:
-        _HistoryitemTypeValueEnumMap[reader.readByteOrNull(offsets[3])] ??
+        _HistoryitemTypeValueEnumMap[reader.readByteOrNull(offsets[4])] ??
         ItemType.manga,
-    mangaId: reader.readLongOrNull(offsets[4]),
-    readingTimeSeconds: reader.readLongOrNull(offsets[5]),
-    updatedAt: reader.readLongOrNull(offsets[6]),
+    mangaId: reader.readLongOrNull(offsets[5]),
+    readingTimeSeconds: reader.readLongOrNull(offsets[6]),
+    updatedAt: reader.readLongOrNull(offsets[7]),
   );
   return object;
 }
@@ -166,18 +182,20 @@ P _historyDeserializeProp<P>(
     case 0:
       return (reader.readLongOrNull(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 2:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 4:
       return (_HistoryitemTypeValueEnumMap[reader.readByteOrNull(offset)] ??
               ItemType.manga)
           as P;
-    case 4:
-      return (reader.readLongOrNull(offset)) as P;
     case 5:
       return (reader.readLongOrNull(offset)) as P;
     case 6:
+      return (reader.readLongOrNull(offset)) as P;
+    case 7:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -208,6 +226,14 @@ extension HistoryQueryWhereSort on QueryBuilder<History, History, QWhere> {
   QueryBuilder<History, History, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<History, History, QAfterWhere> anyClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'clientId'),
+      );
     });
   }
 
@@ -299,6 +325,132 @@ extension HistoryQueryWhere on QueryBuilder<History, History, QWhereClause> {
           lower: lowerId,
           includeLower: includeLower,
           upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterWhereClause> clientIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'clientId', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterWhereClause> clientIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterWhereClause> clientIdEqualTo(
+    int? clientId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'clientId', value: [clientId]),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterWhereClause> clientIdNotEqualTo(
+    int? clientId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [],
+                upper: [clientId],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [clientId],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [clientId],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [],
+                upper: [clientId],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<History, History, QAfterWhereClause> clientIdGreaterThan(
+    int? clientId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [clientId],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterWhereClause> clientIdLessThan(
+    int? clientId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [],
+          upper: [clientId],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterWhereClause> clientIdBetween(
+    int? lowerClientId,
+    int? upperClientId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [lowerClientId],
+          includeLower: includeLower,
+          upper: [upperClientId],
           includeUpper: includeUpper,
         ),
       );
@@ -731,6 +883,81 @@ extension HistoryQueryFilter
       return query.addFilterCondition(
         FilterCondition.between(
           property: r'chapterId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> clientIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'clientId'),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> clientIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'clientId'),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> clientIdEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'clientId', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> clientIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'clientId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> clientIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'clientId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition> clientIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'clientId',
           lower: lower,
           includeLower: includeLower,
           upper: upper,
@@ -1317,6 +1544,18 @@ extension HistoryQuerySortBy on QueryBuilder<History, History, QSortBy> {
     });
   }
 
+  QueryBuilder<History, History, QAfterSortBy> sortByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> sortByClientIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.desc);
+    });
+  }
+
   QueryBuilder<History, History, QAfterSortBy> sortByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.asc);
@@ -1401,6 +1640,18 @@ extension HistoryQuerySortThenBy
   QueryBuilder<History, History, QAfterSortBy> thenByChapterIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'chapterId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> thenByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> thenByClientIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.desc);
     });
   }
 
@@ -1497,6 +1748,12 @@ extension HistoryQueryWhereDistinct
     });
   }
 
+  QueryBuilder<History, History, QDistinct> distinctByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'clientId');
+    });
+  }
+
   QueryBuilder<History, History, QDistinct> distinctByDate({
     bool caseSensitive = true,
   }) {
@@ -1547,6 +1804,12 @@ extension HistoryQueryProperty
   QueryBuilder<History, int?, QQueryOperations> chapterIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'chapterId');
+    });
+  }
+
+  QueryBuilder<History, int?, QQueryOperations> clientIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'clientId');
     });
   }
 
