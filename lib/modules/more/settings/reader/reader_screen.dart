@@ -44,6 +44,9 @@ class ReaderScreen extends ConsumerWidget {
     final dualPageRotateToFitInvert = ref.watch(
       dualPageRotateToFitInvertStateProvider,
     );
+    final doublePageSingleFirstPage = ref.watch(
+      doublePageSingleFirstPageStateProvider,
+    );
     final landscapeZoom = ref.watch(landscapeZoomStateProvider);
     final zoomStartPosition = ref.watch(zoomStartPositionStateProvider);
 
@@ -575,6 +578,19 @@ class ReaderScreen extends ConsumerWidget {
                       .set(value);
                 },
               ),
+
+            SwitchListTile(
+              value: doublePageSingleFirstPage,
+              title: Text(context.l10n.double_page_single_first_page),
+              subtitle: Text(
+                context.l10n.double_page_single_first_page_subtitle,
+              ),
+              onChanged: (value) {
+                ref
+                    .read(doublePageSingleFirstPageStateProvider.notifier)
+                    .set(value);
+              },
+            ),
 
             SwitchListTile(
               value: landscapeZoom,

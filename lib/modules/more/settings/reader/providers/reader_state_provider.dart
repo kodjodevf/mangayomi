@@ -559,6 +559,19 @@ class DualPageRotateToFitInvertState extends _$DualPageRotateToFitInvertState {
 }
 
 @riverpod
+class DoublePageSingleFirstPageState extends _$DoublePageSingleFirstPageState {
+  @override
+  bool build() {
+    return settingsRepository.current.doublePageSingleFirstPage ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.doublePageSingleFirstPage = value);
+  }
+}
+
+@riverpod
 class LandscapeZoomState extends _$LandscapeZoomState {
   @override
   bool build() {

@@ -2184,6 +2184,60 @@ abstract class _$DualPageRotateToFitInvertState extends $Notifier<bool> {
   }
 }
 
+@ProviderFor(DoublePageSingleFirstPageState)
+final doublePageSingleFirstPageStateProvider =
+    DoublePageSingleFirstPageStateProvider._();
+
+final class DoublePageSingleFirstPageStateProvider
+    extends $NotifierProvider<DoublePageSingleFirstPageState, bool> {
+  DoublePageSingleFirstPageStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'doublePageSingleFirstPageStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$doublePageSingleFirstPageStateHash();
+
+  @$internal
+  @override
+  DoublePageSingleFirstPageState create() => DoublePageSingleFirstPageState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$doublePageSingleFirstPageStateHash() =>
+    r'a5dd791ed8050e465b7f30130c42ce059c2fccf6';
+
+abstract class _$DoublePageSingleFirstPageState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(LandscapeZoomState)
 final landscapeZoomStateProvider = LandscapeZoomStateProvider._();
 

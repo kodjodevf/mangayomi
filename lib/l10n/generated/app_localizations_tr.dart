@@ -2726,6 +2726,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dual_page_rotate_to_fit_invert => 'Döndürme yönünü tersine çevir';
 
   @override
+  String get double_page_single_first_page => 'Single first page';
+
+  @override
+  String get double_page_single_first_page_subtitle =>
+      'Display the first page alone in double page mode';
+
+  @override
   String get landscape_zoom => 'Otomatik yatay yakınlaştırma';
 
   @override

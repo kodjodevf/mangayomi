@@ -2736,6 +2736,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dual_page_rotate_to_fit_invert => 'Drehrichtung umkehren';
 
   @override
+  String get double_page_single_first_page => 'Single first page';
+
+  @override
+  String get double_page_single_first_page_subtitle =>
+      'Display the first page alone in double page mode';
+
+  @override
   String get landscape_zoom => 'Automatischer Querformat-Zoom';
 
   @override

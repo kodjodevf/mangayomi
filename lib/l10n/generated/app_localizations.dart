@@ -4967,6 +4967,18 @@ abstract class AppLocalizations {
   /// **'Invert rotation direction'**
   String get dual_page_rotate_to_fit_invert;
 
+  /// No description provided for @double_page_single_first_page.
+  ///
+  /// In en, this message translates to:
+  /// **'Single first page'**
+  String get double_page_single_first_page;
+
+  /// No description provided for @double_page_single_first_page_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Display the first page alone in double page mode'**
+  String get double_page_single_first_page_subtitle;
+
   /// No description provided for @landscape_zoom.
   ///
   /// In en, this message translates to:

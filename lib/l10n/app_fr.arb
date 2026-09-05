@@ -748,6 +748,8 @@
   "dual_page_invert": "Inverser les demi-pages découpées",
   "dual_page_rotate_to_fit": "Faire pivoter pour adapter",
   "dual_page_rotate_to_fit_invert": "Inverser le sens de rotation",
+  "double_page_single_first_page": "Première page seule",
+  "double_page_single_first_page_subtitle": "Afficher la première page isolée en mode double page",
   "landscape_zoom": "Zoom paysage automatique",
   "zoom_start_position": "Position de départ du zoom",
   "zoom_start_left": "Gauche",

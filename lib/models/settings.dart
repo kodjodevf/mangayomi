@@ -441,6 +441,8 @@ class Settings {
   bool? tvHomeStyle;
   bool? tvHomeGenreRows;
 
+  bool? doublePageSingleFirstPage;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -651,6 +653,7 @@ class Settings {
     this.tvPlayerStyle,
     this.tvHomeStyle,
     this.tvHomeGenreRows,
+    this.doublePageSingleFirstPage = false,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -996,6 +999,7 @@ class Settings {
     tvPlayerStyle = json['tvPlayerStyle'];
     tvHomeStyle = json['tvHomeStyle'];
     tvHomeGenreRows = json['tvHomeGenreRows'];
+    doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -1230,6 +1234,7 @@ class Settings {
     'tvPlayerStyle': tvPlayerStyle,
     'tvHomeStyle': tvHomeStyle,
     'tvHomeGenreRows': tvHomeGenreRows,
+    'doublePageSingleFirstPage': doublePageSingleFirstPage,
   };
 }
 

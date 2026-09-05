@@ -1034,6 +1034,8 @@
   "dual_page_invert": "Invert cut half pages",
   "dual_page_rotate_to_fit": "Rotate to fit",
   "dual_page_rotate_to_fit_invert": "Invert rotation direction",
+  "double_page_single_first_page": "Single first page",
+  "double_page_single_first_page_subtitle": "Display the first page alone in double page mode",
   "landscape_zoom": "Automatic landscape zoom",
   "zoom_start_position": "Zoom start position",
   "zoom_start_left": "Left",

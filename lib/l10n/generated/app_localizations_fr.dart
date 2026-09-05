@@ -2748,6 +2748,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get dual_page_rotate_to_fit_invert => 'Inverser le sens de rotation';
 
   @override
+  String get double_page_single_first_page => 'Première page seule';
+
+  @override
+  String get double_page_single_first_page_subtitle =>
+      'Afficher la première page isolée en mode double page';
+
+  @override
   String get landscape_zoom => 'Zoom paysage automatique';
 
   @override
