@@ -394,7 +394,9 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
       } catch (e) {
         if (attempts >= 3) {
           AppLogger.log("Request retries failed", logLevel: LogLevel.error);
+          rethrow;
         }
+        await Future.delayed(Duration(milliseconds: 300 * attempts));
       }
     }
   }
