@@ -175,6 +175,7 @@ class _MangaChapterPageGalleryState
   );
 
   final Stopwatch _readingStopwatch = Stopwatch();
+  int? _discordReaderSession;
 
   /// Flag to prevent fullscreen from being disabled when navigating between
   /// chapters via pushReplacement. The old widget's dispose runs after the new
@@ -207,7 +208,10 @@ class _MangaChapterPageGalleryState
     } else {
       restoreSystemUI();
     }
-    discordRpc?.showIdleText();
+    final discordReaderSession = _discordReaderSession;
+    if (discordReaderSession != null) {
+      unawaited(discordRpc?.endReaderSession(discordReaderSession));
+    }
     final actualIdx = _pageViewToActualIndexSync(_currentIndex!);
     final index = pages[actualIdx].index;
     if (index != null) {
@@ -302,6 +306,7 @@ class _MangaChapterPageGalleryState
       extendedController: _extendedController,
     );
     _initCurrentIndex();
+    _discordReaderSession = discordRpc?.beginReaderSession();
     discordRpc?.showChapterDetails(ref, chapter);
     WidgetsBinding.instance.addObserver(this);
     _initWakelock();
