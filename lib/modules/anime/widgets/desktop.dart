@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
+import 'package:mangayomi/modules/anime/utils/player_focus.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
@@ -67,6 +68,9 @@ class _DesktopControllerWidgetState
   final controlsHoverDuration = const Duration(seconds: 3);
   double buttonBarHeight = 100;
   final bottomButtonBarMargin = const EdgeInsets.only(left: 16.0, right: 8.0);
+  final FocusNode _playerFocusNode = FocusNode(
+    debugLabel: 'desktopPlayerShortcuts',
+  );
 
   final List<StreamSubscription> subscriptions = [];
   DateTime last = DateTime.now();
@@ -122,7 +126,18 @@ class _DesktopControllerWidgetState
     subscriptions.clear();
     _timer?.cancel();
     _tapTimer?.cancel();
+    _playerFocusNode.dispose();
     super.dispose();
+  }
+
+  void _unmountHiddenControls() {
+    if (visible) return;
+
+    // A focused control is about to leave the tree. Move focus to the
+    // persistent player node first; otherwise Flutter can fall back to the
+    // root focus scope and CallbackShortcuts stops receiving hotkeys.
+    restorePlayerFocusBeforeUnmount(_playerFocusNode);
+    setState(() => mount = false);
   }
 
   void onHover() {
@@ -300,6 +315,7 @@ class _DesktopControllerWidgetState
           ),
           Focus(
             autofocus: true,
+            focusNode: _playerFocusNode,
             child: Listener(
               onPointerSignal: modifyVolumeOnScroll
                   ? (e) {
@@ -392,11 +408,7 @@ class _DesktopControllerWidgetState
                         opacity: visible ? 1.0 : 0.0,
                         duration: controlsTransitionDuration,
                         onEnd: () {
-                          if (!visible) {
-                            setState(() {
-                              mount = false;
-                            });
-                          }
+                          _unmountHiddenControls();
                         },
                         child: Stack(
                           clipBehavior: Clip.none,
