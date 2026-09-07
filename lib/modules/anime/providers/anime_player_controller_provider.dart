@@ -82,11 +82,30 @@ class AnimeStreamController extends _$AnimeStreamController
       final ep = episode;
       ep.isRead = isWatch;
       ep.lastPageRead = (duration.inMilliseconds).toString();
+      if (totalDuration != null && totalDuration > Duration.zero) {
+        ep.duration = totalDuration.inMilliseconds.toString();
+      }
+      ep.updatedAt = DateTime.now().millisecondsSinceEpoch;
       chapterRepository.save(ep);
       if (isWatch) {
         episode.updateTrackChapterRead(ref);
       }
     }
+  }
+
+  /// Persists the terminal playback state before the player route is replaced.
+  /// Some backends emit `completed` before their final position event, so the
+  /// known total duration is the deterministic terminal position.
+  Future<void> completeEpisode(
+    Duration totalDuration, {
+    int elapsedSeconds = 0,
+  }) async {
+    if (incognitoMode) return;
+    final completedPosition = totalDuration > Duration.zero
+        ? totalDuration
+        : Duration(milliseconds: int.tryParse(episode.lastPageRead ?? '') ?? 0);
+    setCurrentPosition(completedPosition, totalDuration, save: true);
+    await setHistoryUpdate(elapsedSeconds: elapsedSeconds);
   }
 
   // ---------------------------------------------------------------------------

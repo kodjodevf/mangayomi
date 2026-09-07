@@ -29,7 +29,7 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
       // No explicit sort: the natural (insertion) id order is the stable base
       // the manual queue order is applied on top of, so rows don't reshuffle as
       // download progress ticks.
-      stream: downloadRepository.watchPendingStarted(),
+      stream: downloadRepository.watchPending(),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Scaffold(
@@ -119,7 +119,15 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
           floatingActionButton: CustomFloatingActionBtn(
             isExtended: false,
             label: l10n.download_queue,
-            onPressed: () {
+            onPressed: () async {
+              for (final entry in entries) {
+                final chapter = entry.chapter.value;
+                if (chapter != null) {
+                  await downloadRepository.enqueue(chapter);
+                }
+              }
+              if (!mounted) return;
+              ref.invalidate(processDownloadsProvider());
               ref.read(processDownloadsProvider());
             },
           ),
@@ -160,7 +168,9 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
                       style: const TextStyle(fontSize: 16),
                     ),
                     Text(
-                      "${element.succeeded}/${element.total}",
+                      (element.failed ?? 0) > 0
+                          ? 'Failed — retry'
+                          : '${element.succeeded ?? 0}%',
                       style: const TextStyle(fontSize: 10),
                     ),
                   ],
