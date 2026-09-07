@@ -88,6 +88,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   bool get _ttsSupported => !Platform.isLinux;
 
   final Stopwatch _readingStopwatch = Stopwatch();
+  int? _discordReaderSession;
 
   void onScroll() {
     if (_scrollController.hasClients) {
@@ -122,7 +123,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     } else {
       restoreSystemUI();
     }
-    discordRpc?.showIdleText();
+    final discordReaderSession = _discordReaderSession;
+    if (discordReaderSession != null) {
+      unawaited(discordRpc?.endReaderSession(discordReaderSession));
+    }
     super.dispose();
   }
 
@@ -159,6 +163,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       });
     });
     if (!isDesktop) SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    _discordReaderSession = discordRpc?.beginReaderSession();
     discordRpc?.showChapterDetails(ref, chapter);
 
     _ttsIndexSub = NovelTtsService.instance.paragraphIndexStream.listen((i) {
