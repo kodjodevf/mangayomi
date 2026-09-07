@@ -1846,7 +1846,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 );
               }),
             ),
-            const SettingsSectionLabel('Pistes'),
+            SettingsSectionLabel(context.l10n.tracks),
             ...videoSubtitleLast.toSet().toList().map((sub) {
               final title =
                   sub.title ??

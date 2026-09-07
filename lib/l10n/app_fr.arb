@@ -537,6 +537,7 @@
   "subtitle_delay_text": "Délai des sous-titres",
   "subtitle_delay": "Délai (ms)",
   "subtitle_speed": "Vitesse",
+  "tracks": "Pistes",
   "calendar": "Calendrier",
   "calendar_no_data": "Aucune donnée pour l'instant.",
   "calendar_info": "Le calendrier ne peut prédire le prochain téléversement de chapitre que sur la base des téléversements précédents. Certaines données peuvent ne pas être précises à 100% !",

@@ -382,15 +382,43 @@ class _SettingsHomeRow extends StatelessWidget {
   }
 }
 
+/// Fast exit curve: old page fades out cleanly between t = 1.0 and 0.45,
+/// ensuring text never overlaps or creates double-exposure artifacts.
+class _FastExitFadeCurve extends Curve {
+  const _FastExitFadeCurve();
+
+  @override
+  double transformInternal(double t) {
+    if (t <= 0.45) return 0.0;
+    final p = (t - 0.45) / 0.55;
+    return Curves.easeInQuad.transform(p);
+  }
+}
+
+/// Smooth entrance curve: new page begins fading in at t = 0.15 with easeOutCubic
+/// to crystallize gracefully as it finishes sliding into place.
+class _SmoothEnterFadeCurve extends Curve {
+  const _SmoothEnterFadeCurve();
+
+  @override
+  double transformInternal(double t) {
+    if (t <= 0.15) return 0.0;
+    final p = (t - 0.15) / 0.85;
+    return Curves.easeOutCubic.transform(p);
+  }
+}
+
 class _DrilldownHeader extends StatelessWidget {
   final String title;
   final bool showBack;
+  final bool forward;
   final VoidCallback onBack;
   final VoidCallback onClose;
 
   const _DrilldownHeader({
     required this.title,
     required this.showBack,
+    required this.forward,
     required this.onBack,
     required this.onClose,
   });
@@ -399,36 +427,124 @@ class _DrilldownHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final onSurface = Theme.of(context).colorScheme.onSurface;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(6, 6, 8, 4),
-      child: Row(
-        children: [
-          if (showBack)
-            IconButton(
-              onPressed: onBack,
-              icon: Icon(Icons.arrow_back, color: onSurface, size: 18),
-            )
-          else
-            const SizedBox(width: 12),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(left: showBack ? 0 : 8),
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 14.5,
-                  fontWeight: FontWeight.w700,
-                  color: onSurface,
+      padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
+      child: SizedBox(
+        height: 44,
+        child: Row(
+          children: [
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeOutCubic,
+              transitionBuilder: (child, animation) {
+                return SizeTransition(
+                  axis: Axis.horizontal,
+                  axisAlignment: -1.0,
+                  sizeFactor: animation,
+                  child: FadeTransition(
+                    opacity: animation,
+                    child: ScaleTransition(
+                      scale: Tween<double>(begin: 0.8, end: 1.0).animate(animation),
+                      child: child,
+                    ),
+                  ),
+                );
+              },
+              child: showBack
+                  ? IconButton(
+                      key: const ValueKey('back-button'),
+                      onPressed: onBack,
+                      icon: Icon(Icons.arrow_back, color: onSurface, size: 20),
+                      splashRadius: 20,
+                      padding: const EdgeInsets.all(10),
+                      constraints: const BoxConstraints(
+                        minWidth: 40,
+                        minHeight: 40,
+                      ),
+                    )
+                  : const SizedBox.shrink(key: ValueKey('no-back')),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeOutCubic,
+                layoutBuilder: (currentChild, previousChildren) {
+                  return Stack(
+                    alignment: Alignment.centerLeft,
+                    children: [
+                      ...previousChildren,
+                      if (currentChild != null) currentChild,
+                    ],
+                  );
+                },
+                transitionBuilder: (child, animation) {
+                  final isIncoming = child.key == ValueKey(title);
+                  final offsetTween = isIncoming
+                      ? (forward
+                          ? Tween<Offset>(
+                              begin: const Offset(0.16, 0.0),
+                              end: Offset.zero,
+                            )
+                          : Tween<Offset>(
+                              begin: const Offset(-0.16, 0.0),
+                              end: Offset.zero,
+                            ))
+                      : (forward
+                          ? Tween<Offset>(
+                              begin: const Offset(-0.16, 0.0),
+                              end: Offset.zero,
+                            )
+                          : Tween<Offset>(
+                              begin: const Offset(0.16, 0.0),
+                              end: Offset.zero,
+                            ));
+
+                  final opacity = isIncoming
+                      ? CurvedAnimation(
+                          parent: animation,
+                          curve: const _SmoothEnterFadeCurve(),
+                        )
+                      : CurvedAnimation(
+                          parent: animation,
+                          curve: const _FastExitFadeCurve(),
+                          reverseCurve: const _FastExitFadeCurve(),
+                        );
+
+                  return SlideTransition(
+                    position: offsetTween.animate(animation),
+                    child: FadeTransition(
+                      opacity: opacity,
+                      child: child,
+                    ),
+                  );
+                },
+                child: Text(
+                  title,
+                  key: ValueKey(title),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: onSurface,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ),
-          ),
-          IconButton(
-            onPressed: onClose,
-            icon: Icon(Icons.close, color: onSurface, size: 20),
-          ),
-        ],
+            IconButton(
+              onPressed: onClose,
+              icon: Icon(Icons.close, color: onSurface, size: 20),
+              splashRadius: 20,
+              padding: const EdgeInsets.all(10),
+              constraints: const BoxConstraints(
+                minWidth: 40,
+                minHeight: 40,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -483,6 +599,7 @@ class SettingsDrilldown extends StatefulWidget {
 
 class _SettingsDrilldownState extends State<SettingsDrilldown> {
   late int? _active = _clampActive(widget.initialIndex);
+  bool _forward = true;
 
   int? _clampActive(int index) =>
       index >= 0 && index < widget.entries.length ? index : null;
@@ -494,75 +611,154 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
     // to a different section (the speed pill, the chapter label...) while
     // already open has to move the selection itself.
     if (widget.initialIndex != oldWidget.initialIndex) {
-      _active = _clampActive(widget.initialIndex);
+      final next = _clampActive(widget.initialIndex);
+      if (next != _active) {
+        _forward = next != null;
+        _active = next;
+      }
     }
   }
 
-  void _goHome() => setState(() => _active = null);
-  void _open(int index) => setState(() => _active = index);
+  void _goHome() {
+    if (_active != null) {
+      setState(() {
+        _forward = false;
+        _active = null;
+      });
+    }
+  }
+
+  void _open(int index) {
+    if (_active != index) {
+      setState(() {
+        _forward = true;
+        _active = index;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final active = _active;
+    final currentKey =
+        active == null ? const ValueKey('home') : ValueKey('section-$active');
+
+    final screenHeight = MediaQuery.of(context).size.height;
+    final maxBodyHeight = screenHeight * 0.72;
+
     return SettingsDrilldownScope(
       goHome: _goHome,
       close: widget.onClose,
-      child: ClipRect(
-        child: AnimatedSize(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-          alignment: Alignment.topCenter,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _DrilldownHeader(
-                title: active == null
-                    ? widget.title
-                    : widget.entries[active].label,
-                showBack: active != null,
-                onBack: _goHome,
-                onClose: widget.onClose,
-              ),
-              Divider(
-                height: 1,
-                color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
-              ),
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 220),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _DrilldownHeader(
+            title: active == null
+                ? widget.title
+                : widget.entries[active].label,
+            showBack: active != null,
+            forward: _forward,
+            onBack: _goHome,
+            onClose: widget.onClose,
+          ),
+          Divider(
+            height: 1,
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
+          ),
+          ClipRect(
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
+              alignment: Alignment.topCenter,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
                 switchInCurve: Curves.easeOutCubic,
-                switchOutCurve: Curves.easeInCubic,
-                transitionBuilder: (child, animation) {
-                  final isHome = child.key == const ValueKey('home');
-                  return SlideTransition(
-                    position: Tween<Offset>(
-                      begin: Offset(isHome ? -1 : 1, 0),
-                      end: Offset.zero,
-                    ).animate(animation),
-                    child: child,
+                switchOutCurve: Curves.easeOutCubic,
+                layoutBuilder: (currentChild, previousChildren) {
+                  return Stack(
+                    alignment: Alignment.topCenter,
+                    clipBehavior: Clip.hardEdge,
+                    children: <Widget>[
+                      ...previousChildren.map(
+                        (child) => Positioned(
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          child: child,
+                        ),
+                      ),
+                      if (currentChild != null) currentChild,
+                    ],
                   );
                 },
-                child: active == null
-                    ? Column(
-                        key: const ValueKey('home'),
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          for (var i = 0; i < widget.entries.length; i++)
-                            _SettingsHomeRow(
-                              entry: widget.entries[i],
-                              onTap: () => _open(i),
-                            ),
-                          const SizedBox(height: 4),
-                        ],
-                      )
-                    : Padding(
-                        key: ValueKey('section-$active'),
-                        padding: const EdgeInsets.only(bottom: 6),
-                        child: widget.entries[active].contentBuilder(context),
-                      ),
+                transitionBuilder: (child, animation) {
+                  final isIncoming = child.key == currentKey;
+                  final offsetTween = isIncoming
+                      ? (_forward
+                          ? Tween<Offset>(
+                              begin: const Offset(0.20, 0.0),
+                              end: Offset.zero,
+                            )
+                          : Tween<Offset>(
+                              begin: const Offset(-0.20, 0.0),
+                              end: Offset.zero,
+                            ))
+                      : (_forward
+                          ? Tween<Offset>(
+                              begin: const Offset(-0.20, 0.0),
+                              end: Offset.zero,
+                            )
+                          : Tween<Offset>(
+                              begin: const Offset(0.20, 0.0),
+                              end: Offset.zero,
+                            ));
+
+                  final opacity = isIncoming
+                      ? CurvedAnimation(
+                          parent: animation,
+                          curve: const _SmoothEnterFadeCurve(),
+                        )
+                      : CurvedAnimation(
+                          parent: animation,
+                          curve: const _FastExitFadeCurve(),
+                          reverseCurve: const _FastExitFadeCurve(),
+                        );
+
+                  return SlideTransition(
+                    position: offsetTween.animate(animation),
+                    child: FadeTransition(
+                      opacity: opacity,
+                      child: child,
+                    ),
+                  );
+                },
+                child: ConstrainedBox(
+                  key: currentKey,
+                  constraints: BoxConstraints(maxHeight: maxBodyHeight),
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: active == null
+                        ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              for (var i = 0; i < widget.entries.length; i++)
+                                _SettingsHomeRow(
+                                  entry: widget.entries[i],
+                                  onTap: () => _open(i),
+                                ),
+                              const SizedBox(height: 4),
+                            ],
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: widget.entries[active].contentBuilder(context),
+                          ),
+                  ),
+                ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -588,42 +784,33 @@ class UnifiedSettingsSheet extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.only(bottom: bottomInset),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.86,
+      child: Container(
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
         ),
-        child: Container(
-          decoration: BoxDecoration(
-            color: colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
-          ),
-          child: SafeArea(
-            top: false,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 9),
-                Container(
-                  width: 34,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: colorScheme.onSurface.withValues(alpha: 0.18),
-                    borderRadius: BorderRadius.circular(99),
-                  ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 9),
+              Container(
+                width: 34,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: colorScheme.onSurface.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(99),
                 ),
-                Flexible(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(bottom: 18),
-                    child: SettingsDrilldown(
-                      title: title,
-                      entries: entries,
-                      initialIndex: initialIndex,
-                      onClose: () => Navigator.pop(context),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 4),
+              SettingsDrilldown(
+                title: title,
+                entries: entries,
+                initialIndex: initialIndex,
+                onClose: () => Navigator.pop(context),
+              ),
+            ],
           ),
         ),
       ),

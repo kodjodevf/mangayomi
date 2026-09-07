@@ -4031,6 +4031,12 @@ abstract class AppLocalizations {
   /// **'Speed'**
   String get subtitle_speed;
 
+  /// No description provided for @tracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracks'**
+  String get tracks;
+
   /// No description provided for @playback_speed.
   ///
   /// In en, this message translates to:

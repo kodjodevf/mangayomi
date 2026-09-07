@@ -2110,6 +2110,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get subtitle_speed => '速度';
 
   @override
+  String get tracks => 'Tracks';
+
+  @override
   String get playback_speed => 'Playback speed';
 
   @override

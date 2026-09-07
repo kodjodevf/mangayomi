@@ -806,6 +806,7 @@
   "subtitle_delay_text": "Subtitle delay",
   "subtitle_delay": "Delay (ms)",
   "subtitle_speed": "Speed",
+  "tracks": "Tracks",
   "playback_speed": "Playback speed",
   "shaders": "Shaders",
   "video_fit": "Fit",

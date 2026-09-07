@@ -2184,6 +2184,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get subtitle_speed => 'Hız';
 
   @override
+  String get tracks => 'Tracks';
+
+  @override
   String get playback_speed => 'Playback speed';
 
   @override

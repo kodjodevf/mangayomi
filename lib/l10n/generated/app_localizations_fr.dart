@@ -2203,6 +2203,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get subtitle_speed => 'Vitesse';
 
   @override
+  String get tracks => 'Pistes';
+
+  @override
   String get playback_speed => 'Playback speed';
 
   @override
