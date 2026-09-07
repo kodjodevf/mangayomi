@@ -16,7 +16,7 @@ const List<String> _kArchiveExtensions = [
   '.cbt',
   '.tar',
   '.cbr',
-  '.rar'
+  '.rar',
 ];
 
 @riverpod
@@ -144,6 +144,83 @@ bool _isImageFile(String path) {
   return isRecognizedImageFile(path);
 }
 
+/// Compares archive paths in the order a person expects numbered pages to
+/// appear. This keeps unpadded names such as `2.webp` before `10.webp`.
+@visibleForTesting
+int compareArchiveReaderPaths(String left, String right) {
+  final leftLower = left.toLowerCase();
+  final rightLower = right.toLowerCase();
+  var leftIndex = 0;
+  var rightIndex = 0;
+
+  while (leftIndex < leftLower.length && rightIndex < rightLower.length) {
+    final leftIsDigit = _isAsciiDigit(leftLower.codeUnitAt(leftIndex));
+    final rightIsDigit = _isAsciiDigit(rightLower.codeUnitAt(rightIndex));
+
+    if (leftIsDigit && rightIsDigit) {
+      final leftEnd = _digitRunEnd(leftLower, leftIndex);
+      final rightEnd = _digitRunEnd(rightLower, rightIndex);
+      final leftSignificant = _firstSignificantDigit(
+        leftLower,
+        leftIndex,
+        leftEnd,
+      );
+      final rightSignificant = _firstSignificantDigit(
+        rightLower,
+        rightIndex,
+        rightEnd,
+      );
+      final leftLength = leftEnd - leftSignificant;
+      final rightLength = rightEnd - rightSignificant;
+
+      if (leftLength != rightLength) return leftLength.compareTo(rightLength);
+
+      final numberComparison = leftLower
+          .substring(leftSignificant, leftEnd)
+          .compareTo(rightLower.substring(rightSignificant, rightEnd));
+      if (numberComparison != 0) return numberComparison;
+
+      final runLengthComparison = (leftEnd - leftIndex).compareTo(
+        rightEnd - rightIndex,
+      );
+      if (runLengthComparison != 0) return runLengthComparison;
+
+      leftIndex = leftEnd;
+      rightIndex = rightEnd;
+      continue;
+    }
+
+    final characterComparison = leftLower
+        .codeUnitAt(leftIndex)
+        .compareTo(rightLower.codeUnitAt(rightIndex));
+    if (characterComparison != 0) return characterComparison;
+    leftIndex++;
+    rightIndex++;
+  }
+
+  final lengthComparison = leftLower.length.compareTo(rightLower.length);
+  if (lengthComparison != 0) return lengthComparison;
+  return left.compareTo(right);
+}
+
+bool _isAsciiDigit(int codeUnit) => codeUnit >= 0x30 && codeUnit <= 0x39;
+
+int _digitRunEnd(String value, int start) {
+  var end = start;
+  while (end < value.length && _isAsciiDigit(value.codeUnitAt(end))) {
+    end++;
+  }
+  return end;
+}
+
+int _firstSignificantDigit(String value, int start, int end) {
+  var index = start;
+  while (index < end - 1 && value.codeUnitAt(index) == 0x30) {
+    index++;
+  }
+  return index;
+}
+
 /// Check if a file is a supported archive based on extension
 bool _isArchiveFile(String path) {
   if (_isHiddenSystemFile(path)) return false;
@@ -202,12 +279,13 @@ Future<LocalArchive> _extractArchive(String path) async {
 /// instead of [image], and callers read the file directly when they need it.
 Future<LocalArchive> _extractFromImageFolder(String path) async {
   final dir = Directory(path);
-  final imageFiles = await dir
-      .list()
-      .where((entity) => entity is File && _isImageFile(entity.path))
-      .cast<File>()
-      .toList()
-    ..sort((a, b) => a.path.compareTo(b.path));
+  final imageFiles =
+      await dir
+            .list()
+            .where((entity) => entity is File && _isImageFile(entity.path))
+            .cast<File>()
+            .toList()
+        ..sort((a, b) => compareArchiveReaderPaths(a.path, b.path));
 
   if (imageFiles.isEmpty) {
     throw Exception('No images found in folder: $path');
@@ -242,10 +320,11 @@ LocalArchive _extractFromArchiveFile(String path) {
     inputStream = InputFileStream(path);
     final archive = _decodeArchive(inputStream, extensionType);
 
-    final imageFiles = archive.files
-        .where((file) => file.isFile && _isImageFile(file.name))
-        .toList()
-      ..sort((a, b) => a.name.compareTo(b.name));
+    final imageFiles =
+        archive.files
+            .where((file) => file.isFile && _isImageFile(file.name))
+            .toList()
+          ..sort((a, b) => compareArchiveReaderPaths(a.name, b.name));
 
     if (imageFiles.isEmpty) {
       throw Exception('No images found in archive: $path');
@@ -307,12 +386,13 @@ Future<(String, LocalExtensionType, Uint8List, String)> _extractArchiveMetadata(
 Future<(String, LocalExtensionType, Uint8List, String)>
 _extractMetadataFromImageFolder(String path) async {
   final dir = Directory(path);
-  final images = await dir
-      .list()
-      .where((entity) => entity is File && _isImageFile(entity.path))
-      .cast<File>()
-      .toList()
-    ..sort((a, b) => a.path.compareTo(b.path));
+  final images =
+      await dir
+            .list()
+            .where((entity) => entity is File && _isImageFile(entity.path))
+            .cast<File>()
+            .toList()
+        ..sort((a, b) => compareArchiveReaderPaths(a.path, b.path));
 
   if (images.isEmpty) {
     throw Exception('No images found in folder: $path');
@@ -343,10 +423,11 @@ _extractMetadataFromImageFolder(String path) async {
           file.name.toLowerCase().contains('cover'),
       orElse: () {
         // If no cover, get first image alphabetically
-        final imageFiles = archive.files
-            .where((file) => file.isFile && _isImageFile(file.name))
-            .toList()
-          ..sort((a, b) => a.name.compareTo(b.name));
+        final imageFiles =
+            archive.files
+                .where((file) => file.isFile && _isImageFile(file.name))
+                .toList()
+              ..sort((a, b) => compareArchiveReaderPaths(a.name, b.name));
 
         if (imageFiles.isEmpty) {
           throw Exception('No images found in archive: $path');
