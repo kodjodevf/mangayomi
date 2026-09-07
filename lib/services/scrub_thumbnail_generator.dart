@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:typed_data';
 
 import 'package:media_kit/media_kit.dart';
@@ -38,6 +39,7 @@ class ScrubThumbnailGenerator {
     width: 320,
     height: 180,
   );
+  static const _maxCacheEntries = 30;
 
   Player? _player;
   // Never read again after _ensureOpen — kept only so this VideoController
@@ -49,6 +51,12 @@ class ScrubThumbnailGenerator {
   String? _openedUrl;
   Future<void>? _opening;
   int _requestId = 0;
+  bool _disposed = false;
+
+  /// Fast in-memory LRU cache of recently generated thumbnails bucketed by
+  /// 2-second intervals, avoiding redundant MPV seeks and decoding when the
+  /// user scrubs back and forth.
+  final LinkedHashMap<int, Uint8List> _cache = LinkedHashMap();
 
   /// Opens the source ahead of the first actual scrub, so that latency —
   /// creating the native texture, then buffering the stream enough to open
@@ -56,14 +64,17 @@ class ScrubThumbnailGenerator {
   /// first touch the seekbar. Safe to call speculatively; failures are
   /// swallowed the same way [thumbnailAt] swallows them.
   Future<void> prewarm({required String url, Map<String, String>? headers}) {
+    if (_disposed) return Future.value();
     return _ensureOpen(url, headers).catchError((_) {});
   }
 
   Future<void> _ensureOpen(String url, Map<String, String>? headers) async {
+    if (_disposed) return;
     if (_player != null && _openedUrl == url) {
       await _opening;
       return;
     }
+    _cache.clear();
     final previousPlayer = _player;
     final player = Player(
       configuration: const PlayerConfiguration(
@@ -83,9 +94,14 @@ class ScrubThumbnailGenerator {
       // to have taken effect — screenshot() before this point just returns
       // whatever an un-decoded player has, which is nothing.
       await controller.platform.future;
+      if (_disposed) return;
       await player.open(Media(url, httpHeaders: headers), play: false);
     }();
     await _opening;
+    if (_disposed) {
+      unawaited(player.dispose());
+      return;
+    }
     unawaited(previousPlayer?.dispose());
   }
 
@@ -142,24 +158,43 @@ class ScrubThumbnailGenerator {
     Map<String, String>? headers,
     bool isLocal = false,
   }) async {
+    if (_disposed) return null;
+
+    final bucket = position.inMilliseconds ~/ 2000;
+    final cached = _cache[bucket];
+    if (cached != null) {
+      _cache.remove(bucket);
+      _cache[bucket] = cached;
+      return cached;
+    }
+
     final id = ++_requestId;
     try {
       await _ensureOpen(url, headers);
-      if (id != _requestId) return null;
+      if (_disposed || id != _requestId) return null;
       final player = _player;
       if (player == null) return null;
       await player.seek(position);
-      if (id != _requestId) return null;
+      if (_disposed || id != _requestId) return null;
       await _waitForSeekSettle(player, position, isLocal: isLocal);
-      if (id != _requestId) return null;
-      return await player.screenshot(format: 'image/jpeg');
+      if (_disposed || id != _requestId) return null;
+      final image = await player.screenshot(format: 'image/jpeg');
+      if (image != null && !_disposed && id == _requestId) {
+        if (_cache.length >= _maxCacheEntries) {
+          _cache.remove(_cache.keys.first);
+        }
+        _cache[bucket] = image;
+      }
+      return image;
     } catch (_) {
       return null;
     }
   }
 
   void dispose() {
+    _disposed = true;
     _requestId++;
+    _cache.clear();
     _player?.dispose();
     _player = null;
     _controller = null;

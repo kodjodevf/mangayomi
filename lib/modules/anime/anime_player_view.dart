@@ -355,7 +355,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   // rather than on the viewer's first scrub, so that open latency overlaps
   // with normal playback startup instead of stacking in front of the first
   // preview they ask for.
+  // Only prewarmed on desktop where mouse-hover scrub previews are supported.
+  // On mobile and TV, scrubbing uses the primary player's on-screen frame directly,
+  // so spinning up a second headless decoder over the network would waste
+  // bandwidth, memory, and hardware decoders for no reason.
   void _prewarmScrubThumbnails() {
+    if (!isDesktop) return;
     final source = _scrubSource();
     if (source == null) return;
     _thumbGenerator ??= ScrubThumbnailGenerator();
@@ -423,10 +428,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         reportedDuration != null && reportedDuration > Duration.zero
         ? reportedDuration
         : _player.state.duration;
-    await _streamController.completeEpisode(
-      totalDuration,
-      elapsedSeconds: _watchStopwatch.elapsed.inSeconds,
-    );
+    try {
+      await _streamController.completeEpisode(
+        totalDuration,
+        elapsedSeconds: _watchStopwatch.elapsed.inSeconds,
+      );
+    } catch (_) {}
     _watchStopwatch.reset();
     if (!mounted) return;
 
@@ -838,11 +845,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         try {
           _player.setSubtitleTrack(_activeSubtitleTrack!);
         } catch (_) {}
-        if (_activeAudioTrack != null) {
-          try {
-            _player.setAudioTrack(_activeAudioTrack!);
-          } catch (_) {}
-        }
       } else if (_firstVid.subtitles?.isNotEmpty ?? false) {
         try {
           final defaultTrack = _firstVid.subtitles!.firstWhere(
@@ -857,18 +859,23 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           _activeSubtitleTrack = track;
           _player.setSubtitleTrack(track);
         } catch (_) {}
-        if (_firstVid.audios?.isNotEmpty ?? false) {
-          try {
-            final at = _firstVid.audios!.first;
-            final track = AudioTrack.uri(
-              at.file ?? "",
-              title: at.label,
-              language: at.label,
-            );
-            _activeAudioTrack = track;
-            _player.setAudioTrack(track);
-          } catch (_) {}
-        }
+      }
+
+      if (_activeAudioTrack != null) {
+        try {
+          _player.setAudioTrack(_activeAudioTrack!);
+        } catch (_) {}
+      } else if (_firstVid.audios?.isNotEmpty ?? false) {
+        try {
+          final at = _firstVid.audios!.first;
+          final track = AudioTrack.uri(
+            at.file ?? "",
+            title: at.label,
+            language: at.label,
+          );
+          _activeAudioTrack = track;
+          _player.setAudioTrack(track);
+        } catch (_) {}
       }
     }
   }
