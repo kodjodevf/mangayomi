@@ -76,113 +76,146 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
     return Material(
       color: Theme.of(context).scaffoldBackgroundColor,
       borderRadius: const BorderRadius.only(
-        bottomLeft: Radius.circular(20),
-        bottomRight: Radius.circular(20),
+        topLeft: Radius.circular(20),
+        topRight: Radius.circular(20),
       ),
       clipBehavior: Clip.antiAlias,
-      child: _isLoading
-          ? SizedBox(
-              height: context.height(0.3),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: const ProgressCenter(),
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: SizedBox(
-                height: context.height(0.8),
-                child: Column(
-                  mainAxisAlignment: _errorMsg != null
-                      ? MainAxisAlignment.center
-                      : MainAxisAlignment.start,
-                  children: [
-                    if (subtitles != null || episodes != null)
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (subtitles != null) {
-                              subtitles = null;
-                            } else if (episodes != null) {
-                              episodes = null;
-                            }
-                          });
-                        },
-                        icon: const Icon(Icons.keyboard_arrow_left),
-                      ),
-                    if (_errorMsg != null)
-                      Padding(
-                        padding: const EdgeInsets.all(30),
-                        child: ErrorText(_errorMsg!),
-                      ),
-                    if (_errorMsg == null && !hide)
-                      Flexible(child: _showImdbList(context)),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: TextFormField(
-                        onTap: () {
-                          if (isMobile) {
-                            setState(() {
-                              hide = true;
-                            });
-                          }
-                        },
-                        controller: _controller,
-                        keyboardType: TextInputType.text,
-                        onChanged: (d) {
-                          setState(() {
-                            query = d;
-                          });
-                        },
-                        onFieldSubmitted: (d) async {
-                          setState(() {
-                            _isLoading = true;
-                            _errorMsg = null;
-                            subtitles = null;
-                            episodes = null;
-                          });
-                          try {
-                            titles = await fetchImdbTitles(query);
-                          } catch (e) {
-                            _errorMsg = e.toString();
-                            hide = false;
-                          }
-
-                          if (mounted) {
-                            setState(() {
-                              _isLoading = false;
-                              hide = false;
-                            });
-                          }
-                        },
-                        decoration: InputDecoration(
-                          isDense: true,
-                          filled: true,
-                          fillColor: Colors.transparent,
-                          suffixIcon: query.isEmpty
-                              ? null
-                              : IconButton(
-                                  onPressed: () {
-                                    _controller.clear();
-                                  },
-                                  icon: const Icon(Icons.clear),
-                                ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: context.primaryColor),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: context.primaryColor),
-                          ),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: context.primaryColor),
-                          ),
+      child: SafeArea(
+        top: false,
+        child: _isLoading
+            ? SizedBox(
+                height: context.height(0.3),
+                child: const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: ProgressCenter(),
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: SizedBox(
+                  height: context.height(0.85),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      Container(
+                        width: 34,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: context.primaryColor.withValues(alpha: 0.35),
+                          borderRadius: BorderRadius.circular(99),
                         ),
                       ),
-                    ),
-                  ],
+                      // Pinned at the top, like any other search field —
+                      // it used to sit below the results, forcing a scroll
+                      // back down every time the user wanted to search again.
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Row(
+                          children: [
+                            if (subtitles != null || episodes != null)
+                              IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    if (subtitles != null) {
+                                      subtitles = null;
+                                    } else if (episodes != null) {
+                                      episodes = null;
+                                    }
+                                  });
+                                },
+                                icon: const Icon(Icons.keyboard_arrow_left),
+                              ),
+                            Expanded(
+                              child: TextFormField(
+                                onTap: () {
+                                  if (isMobile) {
+                                    setState(() {
+                                      hide = true;
+                                    });
+                                  }
+                                },
+                                controller: _controller,
+                                keyboardType: TextInputType.text,
+                                onChanged: (d) {
+                                  setState(() {
+                                    query = d;
+                                  });
+                                },
+                                onFieldSubmitted: (d) async {
+                                  setState(() {
+                                    _isLoading = true;
+                                    _errorMsg = null;
+                                    subtitles = null;
+                                    episodes = null;
+                                  });
+                                  try {
+                                    titles = await fetchImdbTitles(query);
+                                  } catch (e) {
+                                    _errorMsg = e.toString();
+                                    hide = false;
+                                  }
+
+                                  if (mounted) {
+                                    setState(() {
+                                      _isLoading = false;
+                                      hide = false;
+                                    });
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  filled: true,
+                                  fillColor: Colors.transparent,
+                                  prefixIcon: const Icon(Icons.search),
+                                  suffixIcon: query.isEmpty
+                                      ? null
+                                      : IconButton(
+                                          onPressed: () {
+                                            _controller.clear();
+                                          },
+                                          icon: const Icon(Icons.clear),
+                                        ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: context.primaryColor,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: context.primaryColor,
+                                    ),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: context.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () => Navigator.pop(context),
+                              icon: const Icon(Icons.close),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (_errorMsg != null)
+                        Expanded(
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(30),
+                              child: ErrorText(_errorMsg!),
+                            ),
+                          ),
+                        ),
+                      if (_errorMsg == null && !hide)
+                        Flexible(child: _showImdbList(context)),
+                    ],
+                  ),
                 ),
               ),
-            ),
+      ),
     );
   }
 
@@ -405,49 +438,11 @@ Future<dynamic> subtitlesSearchraggableMenu(
   required Chapter chapter,
   required bool isLocal,
 }) async {
-  var padding = MediaQuery.of(context).padding;
-  return await showDialog(
+  return await showModalBottomSheet(
     context: context,
-    builder: (context) => Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: context.height(1) - padding.top - padding.bottom,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(Icons.clear),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SubtitlesWidgetSearch(chapter: chapter, isLocal: isLocal),
-            ],
-          ),
-        ),
-      ),
-    ),
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) =>
+        SubtitlesWidgetSearch(chapter: chapter, isLocal: isLocal),
   );
 }

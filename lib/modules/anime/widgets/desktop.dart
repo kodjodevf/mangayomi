@@ -7,7 +7,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
+import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
+import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
+import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -29,6 +32,7 @@ class DesktopControllerWidget extends ConsumerStatefulWidget {
   // Bumped by the player on each d-pad key so the desktop controls can reveal on
   // a TV remote — they otherwise only appear on mouse hover. Null off-TV.
   final ValueNotifier<int>? revealControls;
+  final Future<Uint8List?> Function(Duration position)? getThumbnail;
   const DesktopControllerWidget({
     super.key,
     required this.videoController,
@@ -43,6 +47,7 @@ class DesktopControllerWidget extends ConsumerStatefulWidget {
     required this.desktopFullScreenPlayer,
     required this.chapterMarks,
     this.revealControls,
+    this.getThumbnail,
   });
 
   @override
@@ -71,6 +76,62 @@ class _DesktopControllerWidgetState
   final List<StreamSubscription> subscriptions = [];
   DateTime last = DateTime.now();
   Timer? _tapTimer;
+
+  final ValueNotifier<double> _volumeValue = ValueNotifier(0.0);
+  final ValueNotifier<bool> _volumeIndicator = ValueNotifier(false);
+  Timer? _volumeTimer;
+  double _lastNonZeroVolume = 100.0;
+
+  // While the cursor sits on the seekbar (reading a scrub preview, say), the
+  // bar must never auto-hide out from under it — only once it's no longer
+  // over the track does the normal hover countdown resume.
+  bool _hoveringSeekbar = false;
+
+  void _onSeekbarHoverChanged(bool hovering) {
+    setState(() => _hoveringSeekbar = hovering);
+    _timer?.cancel();
+    if (!hovering) {
+      _timer = Timer(controlsHoverDuration, () {
+        if (mounted) {
+          setState(() {
+            visible = false;
+            cursorVisible = false;
+          });
+        }
+      });
+    }
+  }
+
+  void _changeVolume(double delta) {
+    final current = widget.videoController.player.state.volume;
+    final newVolume = (current + delta).clamp(0.0, 100.0);
+    widget.videoController.player.setVolume(newVolume);
+    _showVolumeIndicator(newVolume);
+  }
+
+  void _toggleMute() {
+    final current = widget.videoController.player.state.volume;
+    if (current > 0.0) {
+      _lastNonZeroVolume = current;
+      widget.videoController.player.setVolume(0.0);
+      _showVolumeIndicator(0.0);
+    } else {
+      final restore = _lastNonZeroVolume > 0 ? _lastNonZeroVolume : 100.0;
+      widget.videoController.player.setVolume(restore);
+      _showVolumeIndicator(restore);
+    }
+  }
+
+  void _showVolumeIndicator(double volume) {
+    _volumeValue.value = (volume / 100.0).clamp(0.0, 1.0);
+    _volumeIndicator.value = true;
+    _volumeTimer?.cancel();
+    _volumeTimer = Timer(const Duration(milliseconds: 1500), () {
+      if (mounted) {
+        _volumeIndicator.value = false;
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -122,6 +183,9 @@ class _DesktopControllerWidgetState
     subscriptions.clear();
     _timer?.cancel();
     _tapTimer?.cancel();
+    _volumeTimer?.cancel();
+    _volumeValue.dispose();
+    _volumeIndicator.dispose();
     super.dispose();
   }
 
@@ -133,6 +197,11 @@ class _DesktopControllerWidgetState
     });
 
     _timer?.cancel();
+    // The seekbar's own hover callback owns the timer while the cursor is on
+    // it — general movement over the rest of the bar (which this also fires
+    // for, hover regions don't exclude each other) must not re-arm it out
+    // from under that.
+    if (_hoveringSeekbar) return;
     _timer = Timer(controlsHoverDuration, () {
       if (mounted) {
         setState(() {
@@ -151,6 +220,7 @@ class _DesktopControllerWidgetState
     });
 
     _timer?.cancel();
+    if (_hoveringSeekbar) return;
     _timer = Timer(controlsHoverDuration, () {
       if (mounted) {
         setState(() {
@@ -170,8 +240,6 @@ class _DesktopControllerWidgetState
     _timer?.cancel();
   }
 
-  final bool modifyVolumeOnScroll = true; // TODO. The variable is never changed
-  final bool toggleFullscreenOnDoublePress = true; // TODO. variable not changed
   @override
   Widget build(BuildContext context) {
     return CallbackShortcuts(
@@ -184,10 +252,39 @@ class _DesktopControllerWidgetState
             widget.videoController.player.pause(),
         const SingleActivator(LogicalKeyboardKey.mediaPlayPause): () =>
             widget.videoController.player.playOrPause(),
-        const SingleActivator(LogicalKeyboardKey.mediaTrackNext): () =>
-            widget.videoController.player.next(),
-        const SingleActivator(LogicalKeyboardKey.mediaTrackPrevious): () =>
-            widget.videoController.player.previous(),
+        const SingleActivator(LogicalKeyboardKey.mediaTrackNext): () {
+          if (widget.streamController.hasNextEpisode) {
+            pushReplacementMangaReaderView(
+              context: context,
+              chapter: widget.streamController.getNextEpisode(),
+            );
+          }
+        },
+        const SingleActivator(LogicalKeyboardKey.keyN): () {
+          if (widget.streamController.hasNextEpisode) {
+            pushReplacementMangaReaderView(
+              context: context,
+              chapter: widget.streamController.getNextEpisode(),
+            );
+          }
+        },
+        const SingleActivator(LogicalKeyboardKey.mediaTrackPrevious): () {
+          if (widget.streamController.hasPreviousEpisode) {
+            pushReplacementMangaReaderView(
+              context: context,
+              chapter: widget.streamController.getPrevEpisode(),
+            );
+          }
+        },
+        const SingleActivator(LogicalKeyboardKey.keyP): () {
+          if (widget.streamController.hasPreviousEpisode) {
+            pushReplacementMangaReaderView(
+              context: context,
+              chapter: widget.streamController.getPrevEpisode(),
+            );
+          }
+        },
+        const SingleActivator(LogicalKeyboardKey.keyM): () => _toggleMute(),
         const SingleActivator(LogicalKeyboardKey.space): () =>
             widget.videoController.player.playOrPause(),
         const SingleActivator(LogicalKeyboardKey.keyJ): () {
@@ -226,14 +323,10 @@ class _DesktopControllerWidgetState
               const Duration(seconds: 5);
           widget.videoController.player.seek(rate);
         },
-        const SingleActivator(LogicalKeyboardKey.arrowUp): () {
-          final volume = widget.videoController.player.state.volume + 5.0;
-          widget.videoController.player.setVolume(volume.clamp(0.0, 100.0));
-        },
-        const SingleActivator(LogicalKeyboardKey.arrowDown): () {
-          final volume = widget.videoController.player.state.volume - 5.0;
-          widget.videoController.player.setVolume(volume.clamp(0.0, 100.0));
-        },
+        const SingleActivator(LogicalKeyboardKey.arrowUp): () =>
+            _changeVolume(5.0),
+        const SingleActivator(LogicalKeyboardKey.arrowDown): () =>
+            _changeVolume(-5.0),
         const SingleActivator(LogicalKeyboardKey.keyF): () async {
           await _changeFullScreen(ref, widget.desktopFullScreenPlayer);
         },
@@ -301,32 +394,19 @@ class _DesktopControllerWidgetState
           Focus(
             autofocus: true,
             child: Listener(
-              onPointerSignal: modifyVolumeOnScroll
-                  ? (e) {
-                      if (e is PointerScrollEvent) {
-                        if (e.delta.dy > 0) {
-                          final volume =
-                              widget.videoController.player.state.volume - 5.0;
-                          widget.videoController.player.setVolume(
-                            volume.clamp(0.0, 100.0),
-                          );
-                        }
-                        if (e.delta.dy < 0) {
-                          final volume =
-                              widget.videoController.player.state.volume + 5.0;
-                          widget.videoController.player.setVolume(
-                            volume.clamp(0.0, 100.0),
-                          );
-                        }
-                      }
-                    }
-                  : null,
+              onPointerSignal: (e) {
+                if (e is PointerScrollEvent) {
+                  if (e.delta.dy > 0) {
+                    _changeVolume(-5.0);
+                  } else if (e.delta.dy < 0) {
+                    _changeVolume(5.0);
+                  }
+                }
+              },
               child: GestureDetector(
                 onTap: () {
-                  // use own timer with onTapUp instead of onDoubleTap.
-                  // onDoubleTap uses 300ms which feels laggy when pausing
-                  // https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/gestures/constants.dart#L35
-                  _tapTimer = Timer(const Duration(milliseconds: 100), () {
+                  _tapTimer?.cancel();
+                  _tapTimer = Timer(const Duration(milliseconds: 250), () {
                     widget.videoController.player.playOrPause();
                   });
                 },
@@ -347,37 +427,17 @@ class _DesktopControllerWidgetState
                     widget.doubleSpeed(false);
                   }
                 },
-                onTapUp: !toggleFullscreenOnDoublePress
-                    ? null
-                    : (e) async {
-                        final now = DateTime.now();
-                        final difference = now.difference(last);
-                        last = now;
-                        if (difference < const Duration(milliseconds: 400)) {
-                          _tapTimer?.cancel();
-                          _tapTimer = null;
-                          final fullScreen = widget.desktopFullScreenPlayer;
-                          await _changeFullScreen(ref, fullScreen);
-                        }
-                      },
-                onPanUpdate: modifyVolumeOnScroll
-                    ? (e) {
-                        if (e.delta.dy > 0) {
-                          final volume =
-                              widget.videoController.player.state.volume - 5.0;
-                          widget.videoController.player.setVolume(
-                            volume.clamp(0.0, 100.0),
-                          );
-                        }
-                        if (e.delta.dy < 0) {
-                          final volume =
-                              widget.videoController.player.state.volume + 5.0;
-                          widget.videoController.player.setVolume(
-                            volume.clamp(0.0, 100.0),
-                          );
-                        }
-                      }
-                    : null,
+                onTapUp: (e) async {
+                  final now = DateTime.now();
+                  final difference = now.difference(last);
+                  last = now;
+                  if (difference < const Duration(milliseconds: 350)) {
+                    _tapTimer?.cancel();
+                    _tapTimer = null;
+                    final fullScreen = widget.desktopFullScreenPlayer;
+                    await _changeFullScreen(ref, fullScreen);
+                  }
+                },
                 child: MouseRegion(
                   onHover: (_) => onHover(),
                   onEnter: (_) => onEnter(),
@@ -508,6 +568,9 @@ class _DesktopControllerWidgetState
                                           },
                                           player: widget.videoController.player,
                                           chapterMarks: widget.chapterMarks,
+                                          getThumbnail: widget.getThumbnail,
+                                          onHoverChanged:
+                                              _onSeekbarHoverChanged,
                                         ),
                                       ),
                                     ),
@@ -565,6 +628,21 @@ class _DesktopControllerWidgetState
                                 margin: bottomButtonBarMargin,
                               ),
                             ],
+                          ),
+                        ),
+                      ),
+                      // Volume Indicator
+                      IgnorePointer(
+                        child: ValueListenableBuilder<bool>(
+                          valueListenable: _volumeIndicator,
+                          builder: (context, value, child) => AnimatedOpacity(
+                            curve: Curves.easeInOut,
+                            opacity: value ? 1.0 : 0.0,
+                            duration: controlsTransitionDuration,
+                            child: MediaIndicatorBuilder(
+                              value: _volumeValue,
+                              isVolumeIndicator: true,
+                            ),
                           ),
                         ),
                       ),
@@ -672,43 +750,56 @@ class CustomMaterialDesktopVolumeButtonState
         child: Row(
           children: [
             const SizedBox(width: 4.0),
-            IconButton(
-              onPressed: () async {
-                if (mute) {
-                  await widget.controller.player.setVolume(_volume);
-                  mute = !mute;
-                }
-                // https://github.com/media-kit/media-kit/pull/250#issuecomment-1605588306
-                else if (volume == 0.0) {
-                  _volume = 100.0;
-                  await widget.controller.player.setVolume(100.0);
-                  mute = false;
-                } else {
-                  _volume = volume;
-                  await widget.controller.player.setVolume(0.0);
-                  mute = !mute;
-                }
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: hover
+                    ? PlayerTheme.chipBackdropHover
+                    : Colors.transparent,
+              ),
+              child: IconButton(
+                onPressed: () async {
+                  if (mute) {
+                    await widget.controller.player.setVolume(_volume);
+                    mute = !mute;
+                  }
+                  // https://github.com/media-kit/media-kit/pull/250#issuecomment-1605588306
+                  else if (volume == 0.0) {
+                    _volume = 100.0;
+                    await widget.controller.player.setVolume(100.0);
+                    mute = false;
+                  } else {
+                    _volume = volume;
+                    await widget.controller.player.setVolume(0.0);
+                    mute = !mute;
+                  }
 
-                setState(() {});
-              },
-              iconSize: 25,
-              color: Colors.white,
-              icon: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 150),
-                child: volume == 0.0
-                    ? const Icon(
-                        Icons.volume_off,
-                        key: ValueKey(Icons.volume_off),
-                      )
-                    : volume < 50.0
-                    ? const Icon(
-                        Icons.volume_down,
-                        key: ValueKey(Icons.volume_down),
-                      )
-                    : const Icon(
-                        Icons.volume_up,
-                        key: ValueKey(Icons.volume_up),
-                      ),
+                  setState(() {});
+                },
+                iconSize: 18,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(minWidth: 34, minHeight: 34),
+                color: Colors.white,
+                icon: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 150),
+                  child: volume == 0.0
+                      ? const Icon(
+                          Icons.volume_off,
+                          key: ValueKey(Icons.volume_off),
+                        )
+                      : volume < 50.0
+                      ? const Icon(
+                          Icons.volume_down,
+                          key: ValueKey(Icons.volume_down),
+                        )
+                      : const Icon(
+                          Icons.volume_up,
+                          key: ValueKey(Icons.volume_up),
+                        ),
+                ),
               ),
             ),
             AnimatedOpacity(
@@ -830,7 +921,7 @@ class CustomMaterialDesktopPositionIndicatorState
     );
     return Text(
       '${clampedPosition.label(reference: duration)} / ${duration.label(reference: duration)}',
-      style: const TextStyle(height: 1.0, fontSize: 12.0, color: Colors.white),
+      style: PlayerTheme.timecode,
     );
   }
 }
@@ -869,18 +960,35 @@ class CustomMaterialDesktopFullscreenButton extends ConsumerStatefulWidget {
 
 class _CustomMaterialDesktopFullscreenButtonState
     extends ConsumerState<CustomMaterialDesktopFullscreenButton> {
+  bool _hover = false;
+
   @override
   Widget build(BuildContext context) {
     final isFullScreen = ref.watch(fullscreenProvider);
-    return IconButton(
-      icon: isFullScreen
-          ? const Icon(Icons.fullscreen_exit)
-          : const Icon(Icons.fullscreen),
-      iconSize: 25,
-      color: Colors.white,
-      onPressed: () async {
-        await _changeFullScreen(ref, widget.desktopFullScreenPlayer);
-      },
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hover = true),
+      onExit: (_) => setState(() => _hover = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        width: 34,
+        height: 34,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: _hover ? PlayerTheme.chipBackdropHover : Colors.transparent,
+        ),
+        child: IconButton(
+          icon: isFullScreen
+              ? const Icon(Icons.fullscreen_exit)
+              : const Icon(Icons.fullscreen),
+          iconSize: 18,
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(minWidth: 34, minHeight: 34),
+          color: Colors.white,
+          onPressed: () async {
+            await _changeFullScreen(ref, widget.desktopFullScreenPlayer);
+          },
+        ),
+      ),
     );
   }
 }

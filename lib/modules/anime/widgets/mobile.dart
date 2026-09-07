@@ -28,6 +28,7 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
   final ValueNotifier<List<(String, int)>> chapterMarks;
   // Bumped by the player on each d-pad key so the controls reveal on a TV remote.
   final ValueNotifier<int> revealControls;
+  final Future<Uint8List?> Function(Duration position)? getThumbnail;
   const MobileControllerWidget({
     super.key,
     required this.videoController,
@@ -38,6 +39,7 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
     required this.doubleSpeed,
     required this.chapterMarks,
     required this.revealControls,
+    this.getThumbnail,
   });
 
   @override
@@ -388,7 +390,13 @@ class _MobileControllerWidgetState
                   clipBehavior: Clip.none,
                   alignment: Alignment.center,
                   children: [
-                    Positioned.fill(child: Container(color: backdropColor)),
+                    Positioned.fill(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: onTap,
+                        child: Container(color: backdropColor),
+                      ),
+                    ),
                     // We are adding 16.0 boundary around the actual controls (which contain the vertical drag gesture detectors).
                     // This will make the hit-test on edges (e.g. swiping to: show status-bar, show navigation-bar, go back in navigation) not activate the swipe gesture annoyingly.
                     Positioned.fill(
@@ -535,6 +543,7 @@ class _MobileControllerWidgetState
                                     },
                                     player: widget.videoController.player,
                                     chapterMarks: widget.chapterMarks,
+                                    getThumbnail: widget.getThumbnail,
                                   ),
                                 ),
                                 widget.bottomButtonBarWidget,
@@ -1004,7 +1013,7 @@ List<Widget> mobilePrimaryButtonBar(
       icon: Icon(
         Icons.skip_next,
         size: 35,
-        color: hasPrevEpisode ? Colors.white : Colors.grey,
+        color: hasNextEpisode ? Colors.white : Colors.grey,
       ),
     ),
     const Spacer(flex: 3),

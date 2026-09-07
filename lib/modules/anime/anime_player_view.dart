@@ -33,13 +33,14 @@ import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
 import 'package:mangayomi/utils/manga_cover_actions.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
+import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_setting_widget.dart';
+import 'package:mangayomi/modules/anime/widgets/unified_settings_sheet.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_audio_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_decoder_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
-import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -47,6 +48,7 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/services/fetch_subtitles.dart';
 import 'package:mangayomi/services/get_video_list.dart';
+import 'package:mangayomi/services/scrub_thumbnail_generator.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
@@ -313,6 +315,55 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       headers: _firstVid.headers,
     ),
   );
+  // Built lazily on the first scrub — most sessions never drag the seekbar,
+  // so there's no reason to pay for a second decoder until one actually does.
+  ScrubThumbnailGenerator? _thumbGenerator;
+
+  // A torrent source is already a single download being read from one
+  // place; a second reader competing for pieces just to draw a preview isn't
+  // worth straining that pipeline for. Track ids on a local source are
+  // mpv-internal (e.g. "1", "2"), not reopenable paths — the file that was
+  // actually opened is the stable reference there, regardless of which
+  // embedded quality track is live.
+  ({String url, Map<String, String>? headers, bool isLocal})? _scrubSource() {
+    if (widget.isTorrent) return null;
+    if (widget.isLocal) {
+      return (
+        url: _firstVid.originalUrl,
+        headers: _firstVid.headers,
+        isLocal: true,
+      );
+    }
+    final trackUrl = _video.value?.videoTrack?.id;
+    if (trackUrl == null || trackUrl.isEmpty) return null;
+    return (url: trackUrl, headers: _video.value?.headers, isLocal: false);
+  }
+
+  Future<Uint8List?> _getScrubThumbnail(Duration position) async {
+    final source = _scrubSource();
+    if (source == null) return null;
+    _thumbGenerator ??= ScrubThumbnailGenerator();
+    return _thumbGenerator!.thumbnailAt(
+      position,
+      url: source.url,
+      headers: source.headers,
+      isLocal: source.isLocal,
+    );
+  }
+
+  // Opens the hidden thumbnail player as soon as the episode starts loading
+  // rather than on the viewer's first scrub, so that open latency overlaps
+  // with normal playback startup instead of stacking in front of the first
+  // preview they ask for.
+  void _prewarmScrubThumbnails() {
+    final source = _scrubSource();
+    if (source == null) return;
+    _thumbGenerator ??= ScrubThumbnailGenerator();
+    unawaited(
+      _thumbGenerator!.prewarm(url: source.url, headers: source.headers),
+    );
+  }
+
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   final ValueNotifier<bool> _isDoubleSpeed = ValueNotifier(false);
   late final ValueNotifier<Duration> _currentPosition = ValueNotifier(
@@ -933,6 +984,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       // down already checked for this; the path everyone takes did not.
       if (!mounted) return;
       _openMedia(_video.value!, _streamController.getCurrentPosition());
+      _prewarmScrubThumbnails();
       if (widget.isTorrent) {
         Future.delayed(const Duration(seconds: 10)).then((_) {
           if (mounted) {
@@ -1044,6 +1096,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   @override
   void dispose() {
+    _thumbGenerator?.dispose();
     _revealControls.dispose();
     _tvVideoFocus.dispose();
     _tvPanelFocus.dispose();
@@ -1109,28 +1162,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     }
   }
 
-  Widget textWidget(String text, bool selected) => Row(
-    children: [
-      Flexible(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).padding.top,
-          ),
-          child: Text(
-            text,
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-              fontSize: 16,
-              fontStyle: selected ? FontStyle.italic : null,
-              color: selected ? context.primaryColor : null,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ),
-    ],
-  );
-
   Widget _videoQualityWidget(BuildContext context) {
     List<VideoPrefs> videoQuality = _player.state.tracks.video
         .where(
@@ -1153,20 +1184,20 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
       child: Column(
         children: videoQuality.map((quality) {
           final selected =
               _video.value!.videoTrack!.title == quality.videoTrack!.title ||
               widget.isLocal;
-          return GestureDetector(
-            child: textWidget(
-              widget.isLocal ? _firstVid.quality : quality.videoTrack!.title!,
-              selected,
-            ),
+          return SettingsOptionRow(
+            label: widget.isLocal
+                ? _firstVid.quality
+                : quality.videoTrack!.title!,
+            selected: selected,
             onTap: () async {
               if (_video.value?.videoTrack?.id == quality.videoTrack?.id) {
-                Navigator.pop(context);
+                _popSettings(context);
                 return;
               }
               _video.value = quality;
@@ -1181,7 +1212,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 _openMedia(quality);
               }
               _initSubtitleAndAudio = true;
-              Navigator.pop(context);
+              _popSettings(context);
             },
           );
         }).toList(),
@@ -1189,62 +1220,401 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
-  void _videoSettingDraggableMenu(BuildContext context) async {
-    final l10n = l10nLocalizations(context)!;
-    bool hasSubtitleTrack = false;
-    _player.pause();
-    await customDraggableTabBar(
-      tabs: [
-        Tab(text: l10n.video_quality),
-        Tab(text: l10n.video_subtitle),
-        Tab(text: l10n.video_audio),
-      ],
-      children: [
-        _videoQualityWidget(context),
-        _videoSubtitle(context, (value) => hasSubtitleTrack = value),
-        _videoAudios(context),
-      ],
-      context: context,
-      vsync: this,
-      fullWidth: true,
-      moreWidget: IconButton(
-        onPressed: () async {
-          if (useLibass) {
-            BotToast.showText(
-              contentColor: Colors.white,
-              textStyle: const TextStyle(color: Colors.black, fontSize: 20),
-              onlyOne: true,
-              align: const Alignment(0, 0.90),
-              duration: const Duration(seconds: 2),
-              text: context.l10n.libass_not_disable_message,
-            );
-          } else {
-            await customDraggableTabBar(
-              tabs: [
-                Tab(text: l10n.font),
-                Tab(text: l10n.color),
-              ],
-              children: [
-                FontSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
-                ColorSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
-              ],
-              context: context,
-              vsync: this,
-              fullWidth: true,
-            );
-            if (context.mounted) {
-              Navigator.pop(context);
-            }
-          }
-        },
-        icon: const Icon(Icons.settings_outlined),
+  // Both the mobile bottom sheet and the desktop popup are proper routes now
+  // (showModalBottomSheet / showMenu), so a row's onTap can always just pop —
+  // that no longer depends on which platform opened it.
+  void _popSettings(BuildContext context) {
+    Navigator.pop(context);
+  }
+
+  // The settings home list — YouTube's pattern instead of the segmented tabs
+  // this used to be: each entry shows its current value inline, and tapping
+  // one drills into that section's content, reusing the exact same widgets
+  // the old tabs used. Computed fresh on every open, so the current-value
+  // previews always reflect the latest player state.
+  List<SettingsEntry> _buildSettingsEntries(BuildContext context) {
+    final hasSubtitleTrack = _computeHasSubtitleTrack();
+    return [
+      SettingsEntry(
+        label: context.l10n.video_quality,
+        icon: Icons.high_quality_outlined,
+        valueBuilder: (context) => ValueListenableBuilder<VideoPrefs?>(
+          valueListenable: _video,
+          builder: (context, v, _) => Text(
+            widget.isLocal ? _firstVid.quality : (v?.videoTrack?.title ?? ''),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        contentBuilder: (context) => _videoQualityWidget(context),
       ),
+      SettingsEntry(
+        label: context.l10n.video_audio,
+        icon: Icons.audiotrack_outlined,
+        valueBuilder: (context) => StreamBuilder<Track>(
+          stream: _player.stream.track,
+          initialData: _player.state.track,
+          builder: (context, snapshot) {
+            final audio = snapshot.data?.audio;
+            final label =
+                audio?.title ?? audio?.language ?? audio?.channels ?? '';
+            return Text(
+              (label.isEmpty || audio?.id == 'no') ? context.l10n.off : label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            );
+          },
+        ),
+        contentBuilder: (context) => _videoAudios(context),
+      ),
+      SettingsEntry(
+        label: context.l10n.video_subtitle,
+        icon: Icons.subtitles_outlined,
+        valueBuilder: (context) => StreamBuilder<Track>(
+          stream: _player.stream.track,
+          initialData: _player.state.track,
+          builder: (context, snapshot) {
+            final subtitle = snapshot.data?.subtitle;
+            final label =
+                subtitle?.title ??
+                subtitle?.language ??
+                subtitle?.channels ??
+                '';
+            return Text(
+              (label.isEmpty || subtitle?.id == 'no')
+                  ? context.l10n.off
+                  : label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            );
+          },
+        ),
+        contentBuilder: (context) => _videoSubtitle(context),
+      ),
+      SettingsEntry(
+        label: context.l10n.appearance,
+        icon: Icons.palette_outlined,
+        contentBuilder: (context) =>
+            _appearanceSectionWidget(context, hasSubtitleTrack),
+      ),
+      if (_chapterMarks.value.isNotEmpty)
+        SettingsEntry(
+          label: context.l10n.chapters,
+          icon: Icons.list_outlined,
+          valueBuilder: (context) => ValueListenableBuilder<int?>(
+            valueListenable: _currentChapterMark,
+            builder: (context, i, _) => Text(
+              i != null ? _chapterMarks.value[i].$1 : '',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          contentBuilder: (context) => _chaptersSectionWidget(context),
+        ),
+      SettingsEntry(
+        label: context.l10n.playback_speed,
+        icon: Icons.speed_outlined,
+        valueBuilder: (context) => ValueListenableBuilder<double>(
+          valueListenable: _playbackSpeed,
+          builder: (context, v, _) => Text('${v}x'),
+        ),
+        contentBuilder: (context) => _speedSectionWidget(context),
+      ),
+      SettingsEntry(
+        label: context.l10n.video_fit,
+        icon: Icons.fit_screen_outlined,
+        valueBuilder: (context) => ValueListenableBuilder<BoxFit>(
+          valueListenable: _fit,
+          builder: (context, fit, _) => Text(_fitShortLabel(fit)),
+        ),
+        contentBuilder: (context) => _fitSectionWidget(context),
+      ),
+      // Each its own entry rather than grouped under one "Advanced" umbrella
+      // — shaders, stats and custom buttons are unrelated to each other, and
+      // burying three unrelated lists behind a shared label just adds a
+      // pointless extra tap to reach any one of them.
+      if (useMpvConfig)
+        SettingsEntry(
+          label: context.l10n.shaders,
+          icon: Icons.auto_awesome_outlined,
+          valueBuilder: (context) => ValueListenableBuilder<String>(
+            valueListenable: _selectedShader,
+            builder: (context, shader, _) => Text(
+              shader.isEmpty ? context.l10n.off : shader,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          contentBuilder: (context) => _shadersSectionWidget(context),
+        ),
+      if (useMpvConfig)
+        SettingsEntry(
+          label: context.l10n.statistics,
+          icon: Icons.query_stats_outlined,
+          contentBuilder: (context) => _statsSectionWidget(context),
+        ),
+      if (useMpvConfig && (_customButtons.value?.isNotEmpty ?? false))
+        SettingsEntry(
+          label: context.l10n.custom_buttons,
+          icon: Icons.terminal_outlined,
+          contentBuilder: (context) => _customButtonsSectionWidget(context),
+        ),
+    ];
+  }
+
+  // Every player setting lives behind this one entry point instead of the
+  // old two-level stack (a draggable tab bar for quality/subtitle/audio,
+  // opening a *second* nested tab bar for font/color, plus separate
+  // PopupMenuButtons elsewhere for speed/chapters/shaders/stats).
+  // `initialIndex` lets a caller (the speed pill, the chapter label) jump
+  // straight into a section; -1 (the default, from the gear icon) opens the
+  // home list first, same as YouTube's gear menu.
+  //
+  // Desktop opens a small popup anchored to `context` — the widget the
+  // caller itself is built from (a Builder around the gear icon, the pill...)
+  // — matching YouTube's own settings gear there, and it doesn't pause
+  // playback for the same reason YouTube doesn't. Mobile keeps the modal
+  // bottom sheet, where a phone's screen has no room to spare, and does
+  // pause — a full-screen sheet already blocks watching anyway.
+  void _openPlayerSettings(
+    BuildContext context, {
+    int initialIndex = -1,
+  }) async {
+    final entries = _buildSettingsEntries(context);
+    if (isDesktop) {
+      await showDesktopPlayerSettingsMenu(
+        context,
+        title: context.l10n.settings,
+        entries: entries,
+        initialIndex: initialIndex,
+      );
+      setState(() {});
+      return;
+    }
+    _player.pause();
+    await showUnifiedPlayerSettings(
+      context,
+      title: context.l10n.settings,
+      entries: entries,
+      initialIndex: initialIndex,
     );
     setState(() {});
     _player.play();
   }
 
-  Widget _videoSubtitle(BuildContext context, Function(bool) hasSubtitleTrack) {
+  bool _computeHasSubtitleTrack() {
+    final realPlayerTracks = _player.state.tracks.subtitle.where(
+      (e) => (e.title ?? e.language ?? e.channels ?? '').isNotEmpty,
+    );
+    final hasSourceTracks = widget.videos.any(
+      (v) => (v.subtitles?.isNotEmpty ?? false),
+    );
+    return realPlayerTracks.isNotEmpty || hasSourceTracks;
+  }
+
+  Widget _appearanceSectionWidget(BuildContext context, bool hasSubtitleTrack) {
+    if (useLibass) {
+      return Padding(
+        padding: const EdgeInsets.all(20),
+        child: Text(
+          context.l10n.libass_not_disable_message,
+          style: TextStyle(color: Colors.white.withValues(alpha: 0.75)),
+        ),
+      );
+    }
+    // FontSettingWidget/ColorSettingWidget style themselves from the ambient
+    // Theme, not from PlayerTheme — they used to open inside their own
+    // draggable menu, which inherited whatever theme was live at the time.
+    // Forced dark here so they stay legible against this sheet's dark ground
+    // even when the app itself runs in light mode.
+    return Theme(
+      data: ThemeData.dark(useMaterial3: true),
+      child: Column(
+        children: [
+          FontSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
+          const Divider(height: 1, color: Color(0x14FFFFFF)),
+          ColorSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
+        ],
+      ),
+    );
+  }
+
+  Widget _chaptersSectionWidget(BuildContext context) {
+    return ValueListenableBuilder<int?>(
+      valueListenable: _currentChapterMark,
+      builder: (context, current, _) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+        child: Column(
+          children: _chapterMarks.value.asMap().entries.map((entry) {
+            final index = entry.key;
+            final mark = entry.value;
+            return SettingsOptionRow(
+              label: mark.$1,
+              hint: Duration(milliseconds: mark.$2).label(),
+              selected: current == index,
+              onTap: () {
+                _player.seek(Duration(milliseconds: mark.$2));
+                _popSettings(context);
+              },
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _speedSectionWidget(BuildContext context) {
+    const speeds = [0.25, 0.5, 0.75, 1.0, 1.25, 1.50, 1.75, 2.0];
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      child: Column(
+        children: speeds.map((speed) {
+          return ValueListenableBuilder<double>(
+            valueListenable: _playbackSpeed,
+            builder: (context, current, _) => SettingsOptionRow(
+              label: '${speed}x',
+              selected: current == speed,
+              onTap: () {
+                _setPlaybackSpeed(speed);
+                _popSettings(context);
+              },
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _fitSectionWidget(BuildContext context) {
+    const fits = [
+      BoxFit.contain,
+      BoxFit.cover,
+      BoxFit.fill,
+      BoxFit.fitHeight,
+      BoxFit.fitWidth,
+      BoxFit.scaleDown,
+      BoxFit.none,
+    ];
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      child: Column(
+        children: fits.map((fit) {
+          return ValueListenableBuilder<BoxFit>(
+            valueListenable: _fit,
+            builder: (context, current, _) => SettingsOptionRow(
+              label: _fitShortLabel(fit),
+              selected: current == fit,
+              onTap: () {
+                _fit.value = fit;
+                _key.currentState?.update(fit: fit);
+                _popSettings(context);
+              },
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  static const _shaderModes = [
+    ("Anime4K: Mode A (Fast)", "set_anime_a"),
+    ("Anime4K: Mode B (Fast)", "set_anime_b"),
+    ("Anime4K: Mode C (Fast)", "set_anime_c"),
+    ("Anime4K: Mode A+A (Fast)", "set_anime_aa"),
+    ("Anime4K: Mode B+B (Fast)", "set_anime_bb"),
+    ("Anime4K: Mode C+A (Fast)", "set_anime_ca"),
+    ("Anime4K: Mode A (HQ)", "set_anime_hq_a"),
+    ("Anime4K: Mode B (HQ)", "set_anime_hq_b"),
+    ("Anime4K: Mode C (HQ)", "set_anime_hq_c"),
+    ("Anime4K: Mode A+A (HQ)", "set_anime_hq_aa"),
+    ("Anime4K: Mode B+B (HQ)", "set_anime_hq_bb"),
+    ("Anime4K: Mode C+A (HQ)", "set_anime_hq_ca"),
+    ("AMD FSR", "set_fsr"),
+    ("Luma Upscaling", "set_luma"),
+    ("Qualcomm Snapdragon GSR", "set_snapdragon"),
+    ("NVIDIA Image Scaling", "set_nvidia"),
+    ("Clear GLSL shaders", "clear_anime"),
+  ];
+
+  Widget _shadersSectionWidget(BuildContext context) {
+    return ValueListenableBuilder<String>(
+      valueListenable: _selectedShader,
+      builder: (context, selectedShader, _) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+        child: Column(
+          children: _shaderModes.map((mode) {
+            return SettingsOptionRow(
+              label: mode.$1,
+              selected: selectedShader == mode.$1,
+              onTap: () {
+                (_player.platform as NativePlayer).command([
+                  "script-message",
+                  mode.$2,
+                ]);
+                _popSettings(context);
+              },
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  static const _statsModes = [
+    ("Stats Toggle", "stats/display-stats-toggle"),
+    ("Stats Page 1", "stats/display-page-1"),
+    ("Stats Page 2", "stats/display-page-2"),
+    ("Stats Page 3", "stats/display-page-3"),
+    ("Stats Page 4", "stats/display-page-4"),
+    ("Stats Page 5", "stats/display-page-5"),
+  ];
+
+  Widget _statsSectionWidget(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      child: Column(
+        children: _statsModes.map((mode) {
+          return SettingsOptionRow(
+            label: mode.$1,
+            selected: false,
+            onTap: () {
+              (_player.platform as NativePlayer).command([
+                "script-binding",
+                mode.$2,
+              ]);
+              _popSettings(context);
+            },
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _customButtonsSectionWidget(BuildContext context) {
+    return ValueListenableBuilder<List<CustomButton>?>(
+      valueListenable: _customButtons,
+      builder: (context, buttons, _) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+        child: Column(
+          children: (buttons ?? []).map((btn) {
+            return SettingsOptionRow(
+              label: btn.title!,
+              selected: false,
+              onTap: () {
+                (_player.platform as NativePlayer).command([
+                  "script-message",
+                  "call_button_${btn.id}",
+                ]);
+                _popSettings(context);
+              },
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _videoSubtitle(BuildContext context) {
     List<VideoPrefs> videoSubtitle = _player.state.tracks.subtitle
         .toList()
         .map((e) => VideoPrefs(isLocal: true, subtitle: e))
@@ -1285,189 +1655,165 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         .where((element) => element.title!.isNotEmpty)
         .toList();
     videoSubtitle.sort((a, b) => a.title!.compareTo(b.title!));
-    hasSubtitleTrack.call(videoSubtitle.isNotEmpty);
     videoSubtitle.insert(
       0,
       VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()),
     );
-    List<VideoPrefs> videoSubtitleLast = [];
+    final seenTitles = <String>{};
+    final List<VideoPrefs> videoSubtitleLast = [];
     for (var element in videoSubtitle) {
-      final contains = videoSubtitleLast.any((sub) {
-        return (sub.title ??
-                sub.subtitle?.title ??
-                sub.subtitle?.language ??
-                sub.subtitle?.channels ??
-                "None") ==
-            (element.title ??
-                element.subtitle?.title ??
-                element.subtitle?.language ??
-                element.subtitle?.channels ??
-                "None");
-      });
-      if (!contains) {
+      final key =
+          element.title ??
+          element.subtitle?.title ??
+          element.subtitle?.language ??
+          element.subtitle?.channels ??
+          "None";
+      if (seenTitles.add(key)) {
         videoSubtitleLast.add(element);
       }
     }
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(context.l10n.subtitle_delay_text),
-              IconButton(
-                onPressed: () {
-                  _subDelay = 0;
-                  _subDelayController.value = TextEditingValue(
-                    text: "$_subDelay",
-                  );
-                  _subSpeed = 1;
-                  _subSpeedController.value = TextEditingValue(
-                    text: _subSpeed.toStringAsFixed(2),
-                  );
-                },
-                icon: const Icon(Icons.refresh),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {
-                  _subDelay -= 50;
-                  _subDelayController.value = TextEditingValue(
-                    text: "$_subDelay",
-                  );
-                },
-                icon: const Icon(Icons.remove_circle),
-              ),
-              Expanded(
-                child: TextFormField(
-                  controller: _subDelayController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    label: Text(context.l10n.subtitle_delay),
-                  ),
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  _subDelay += 50;
-                  _subDelayController.value = TextEditingValue(
-                    text: "$_subDelay",
-                  );
-                },
-                icon: const Icon(Icons.add_circle),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {
-                  _subSpeed -= 0.01;
-                  _subSpeedController.value = TextEditingValue(
-                    text: _subSpeed.toStringAsFixed(2),
-                  );
-                },
-                icon: const Icon(Icons.remove_circle),
-              ),
-              Expanded(
-                child: TextFormField(
-                  controller: _subSpeedController,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    label: Text(context.l10n.subtitle_speed),
-                  ),
-                ),
-              ),
-              IconButton(
-                onPressed: () {
-                  _subSpeed += 0.01;
-                  _subSpeedController.value = TextEditingValue(
-                    text: _subSpeed.toStringAsFixed(2),
-                  );
-                },
-                icon: const Icon(Icons.add_circle),
-              ),
-            ],
-          ),
-          const SizedBox(height: 30),
-          ...videoSubtitleLast.toSet().toList().map((sub) {
-            final title =
-                sub.title ??
-                sub.subtitle?.title ??
-                sub.subtitle?.language ??
-                sub.subtitle?.channels ??
-                "None";
-
-            final selected =
-                (title ==
-                    (subtitle.title ??
-                        subtitle.language ??
-                        subtitle.channels ??
-                        "None")) ||
-                (subtitle.id == "no" && title == "None");
-            return GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-                try {
-                  _player.setSubtitleTrack(sub.subtitle!);
-                } catch (_) {}
-              },
-              child: textWidget(title, selected),
-            );
-          }),
-          const SizedBox(height: 30),
-          GestureDetector(
-            onTap: () async {
-              try {
-                final file = await FilePicker.pickFile();
-
-                if (file != null && context.mounted) {
-                  _player.setSubtitleTrack(SubtitleTrack.uri(file.path!));
-                }
-                if (!context.mounted) return;
-                Navigator.pop(context);
-              } catch (e) {
-                botToast(context.l10n.error_with_message(e));
-                Navigator.pop(context);
-              }
-            },
-            child: textWidget(context.l10n.load_own_subtitles, false),
-          ),
-          const SizedBox(height: 30),
-          GestureDetector(
-            onTap: () async {
-              try {
-                final subtitle = await subtitlesSearchraggableMenu(
-                  context,
-                  chapter: widget.episode,
-                  isLocal: widget.isLocal,
-                ) as ImdbSubtitle?;
-                if (subtitle != null && context.mounted) {
-                  _player.setSubtitleTrack(
-                    SubtitleTrack.uri(
-                      subtitle.url!,
-                      title: subtitle.language,
-                      language: subtitle.language,
+    return StatefulBuilder(
+      builder: (context, setSectionState) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    context.l10n.subtitle_delay_text,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.75),
                     ),
-                  );
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    setSectionState(() {
+                      _subDelay = 0;
+                      _subDelayController.value = TextEditingValue(
+                        text: "$_subDelay",
+                      );
+                      _subSpeed = 1;
+                      _subSpeedController.value = TextEditingValue(
+                        text: _subSpeed.toStringAsFixed(2),
+                      );
+                    });
+                  },
+                  icon: const Icon(
+                    Icons.refresh,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+              ],
+            ),
+            SettingsStepperRow(
+              label: context.l10n.subtitle_delay,
+              value: '${_subDelay > 0 ? '+' : ''}$_subDelay ms',
+              onDecrement: () => setSectionState(() {
+                _subDelay -= 50;
+                _subDelayController.value = TextEditingValue(
+                  text: "$_subDelay",
+                );
+              }),
+              onIncrement: () => setSectionState(() {
+                _subDelay += 50;
+                _subDelayController.value = TextEditingValue(
+                  text: "$_subDelay",
+                );
+              }),
+            ),
+            SettingsStepperRow(
+              label: context.l10n.subtitle_speed,
+              value: '${_subSpeed.toStringAsFixed(2)}x',
+              onDecrement: () => setSectionState(() {
+                _subSpeed = (_subSpeed - 0.01).clamp(0.1, 10.0);
+                _subSpeedController.value = TextEditingValue(
+                  text: _subSpeed.toStringAsFixed(2),
+                );
+              }),
+              onIncrement: () => setSectionState(() {
+                _subSpeed = (_subSpeed + 0.01).clamp(0.1, 10.0);
+                _subSpeedController.value = TextEditingValue(
+                  text: _subSpeed.toStringAsFixed(2),
+                );
+              }),
+            ),
+            const SettingsSectionLabel('Pistes'),
+            ...videoSubtitleLast.toSet().toList().map((sub) {
+              final title =
+                  sub.title ??
+                  sub.subtitle?.title ??
+                  sub.subtitle?.language ??
+                  sub.subtitle?.channels ??
+                  "None";
+
+              final selected =
+                  (title ==
+                      (subtitle.title ??
+                          subtitle.language ??
+                          subtitle.channels ??
+                          "None")) ||
+                  (subtitle.id == "no" && title == "None");
+              return SettingsOptionRow(
+                label: title,
+                selected: selected,
+                onTap: () {
+                  _popSettings(context);
+                  try {
+                    _player.setSubtitleTrack(sub.subtitle!);
+                  } catch (_) {}
+                },
+              );
+            }),
+            SettingsActionRow(
+              label: context.l10n.load_own_subtitles,
+              icon: Icons.file_open_outlined,
+              onTap: () async {
+                try {
+                  final file = await FilePicker.pickFile();
+
+                  if (file != null && context.mounted) {
+                    _player.setSubtitleTrack(SubtitleTrack.uri(file.path!));
+                  }
+                  if (!context.mounted) return;
+                  _popSettings(context);
+                } catch (e) {
+                  botToast(context.l10n.error_with_message(e));
+                  _popSettings(context);
                 }
-                if (!context.mounted) return;
-                Navigator.pop(context);
-              } catch (_) {
-                botToast(context.l10n.error);
-                Navigator.pop(context);
-              }
-            },
-            child: textWidget(context.l10n.search_subtitles, false),
-          ),
-        ],
+              },
+            ),
+            SettingsActionRow(
+              label: context.l10n.search_subtitles,
+              icon: Icons.search,
+              onTap: () async {
+                try {
+                  final subtitle = await subtitlesSearchraggableMenu(
+                    context,
+                    chapter: widget.episode,
+                    isLocal: widget.isLocal,
+                  ) as ImdbSubtitle?;
+                  if (subtitle != null && context.mounted) {
+                    _player.setSubtitleTrack(
+                      SubtitleTrack.uri(
+                        subtitle.url!,
+                        title: subtitle.language,
+                        language: subtitle.language,
+                      ),
+                    );
+                  }
+                  if (!context.mounted) return;
+                  _popSettings(context);
+                } catch (_) {
+                  botToast(context.l10n.error);
+                  _popSettings(context);
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1515,7 +1861,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     videoAudio.sort((a, b) => a.title!.compareTo(b.title!));
     videoAudio.insert(0, VideoPrefs(isLocal: false, audio: AudioTrack.no()));
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
       child: Column(
         children: videoAudio.toSet().toList().map((aud) {
           final title =
@@ -1526,14 +1872,15 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               "None";
           final selected =
               (aud.audio == audio) || (audio.id == "no" && title == "None");
-          return GestureDetector(
+          return SettingsOptionRow(
+            label: title,
+            selected: selected,
             onTap: () {
-              Navigator.pop(context);
+              _popSettings(context);
               try {
                 _player.setAudioTrack(aud.audio!);
               } catch (_) {}
             },
-            child: textWidget(title, selected),
           );
         }).toList(),
       ),
@@ -1800,6 +2147,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
+  // Sections are only added to the unified sheet when relevant (e.g. no
+  // "Chapitres" tab without chapter marks), so the fixed positions below stay
+  // valid: quality(0)/audio(1)/subtitles(2)/appearance(3), then chapters(4)
+  // when present, then speed right after.
+  int get _chaptersSectionIndex => 4;
+  int get _speedSectionIndex => _chapterMarks.value.isNotEmpty ? 5 : 4;
+
   Widget _chapterMarkWidget() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
@@ -1808,28 +2162,23 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         child: ValueListenableBuilder(
           valueListenable: _currentChapterMark,
           builder: (context, value, child) => value != null
-              ? PopupMenuButton<int>(
-                  tooltip: '',
-                  itemBuilder: (context) => _chapterMarks.value
-                      .map(
-                        (mark) => PopupMenuItem<int>(
-                          value: mark.$2,
-                          child: Text(
-                            "${mark.$1} - ${Duration(milliseconds: mark.$2).label()}",
-                          ),
-                          onTap: () =>
-                              _player.seek(Duration(milliseconds: mark.$2)),
+              ? Material(
+                  type: MaterialType.transparency,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: () => _openPlayerSettings(
+                      context,
+                      initialIndex: _chaptersSectionIndex,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "${_chapterMarks.value[value].$1} - ${Duration(milliseconds: _chapterMarks.value[value].$2).label()}",
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
-                      )
-                      .toList(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "${_chapterMarks.value[value].$1} - ${Duration(milliseconds: _chapterMarks.value[value].$2).label()}",
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -1860,7 +2209,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             if (mounted) _tvPanelFocus.requestFocus();
           });
         } else {
-          _videoSettingDraggableMenu(context);
+          _openPlayerSettings(context);
         }
       },
       hasNext: hasNextEpisode,
@@ -1930,7 +2279,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    reverse: true,
+                    // Not reverse: the gear — the only way to reach every
+                    // other setting now — must be the thing visible by
+                    // default, never the item a cramped phone screen has to
+                    // scroll to find.
                     child: _buildSettingsButtons(context),
                   ),
                 ),
@@ -1957,6 +2309,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   children: [
                     if (_streamController.hasPreviousEpisode)
                       IconButton(
+                        tooltip: 'Previous episode',
                         onPressed: () {
                           pushToNewEpisode(
                             context,
@@ -1971,6 +2324,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     CustomPlayOrPauseButton(controller: _controller),
                     if (hasNextEpisode)
                       IconButton(
+                        tooltip: 'Next episode',
                         onPressed: () async {
                           pushToNewEpisode(
                             context,
@@ -1983,6 +2337,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                       height: 50,
                       width: 50,
                       child: IconButton(
+                        tooltip: '-$skipDuration seconds',
                         onPressed: () async => await _seekBy(-skipDuration),
                         icon: Stack(
                           children: [
@@ -2015,6 +2370,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                       height: 50,
                       width: 50,
                       child: IconButton(
+                        tooltip: '+$skipDuration seconds',
                         onPressed: () async => await _seekBy(skipDuration),
                         icon: Stack(
                           children: [
@@ -2070,138 +2426,169 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
-  List<Widget> _buildMpvSettingsButton(BuildContext context) {
-    return [
-      PopupMenuButton<String>(
-        tooltip: 'Shaders',
-        icon: const Icon(Icons.high_quality, color: Colors.white),
-        itemBuilder: (context) =>
-            [
-                  ("Anime4K: Mode A (Fast)", "set_anime_a"),
-                  ("Anime4K: Mode B (Fast)", "set_anime_b"),
-                  ("Anime4K: Mode C (Fast)", "set_anime_c"),
-                  ("Anime4K: Mode A+A (Fast)", "set_anime_aa"),
-                  ("Anime4K: Mode B+B (Fast)", "set_anime_bb"),
-                  ("Anime4K: Mode C+A (Fast)", "set_anime_ca"),
-                  ("Anime4K: Mode A (HQ)", "set_anime_hq_a"),
-                  ("Anime4K: Mode B (HQ)", "set_anime_hq_b"),
-                  ("Anime4K: Mode C (HQ)", "set_anime_hq_c"),
-                  ("Anime4K: Mode A+A (HQ)", "set_anime_hq_aa"),
-                  ("Anime4K: Mode B+B (HQ)", "set_anime_hq_bb"),
-                  ("Anime4K: Mode C+A (HQ)", "set_anime_hq_ca"),
-                  ("AMD FSR", "set_fsr"),
-                  ("Luma Upscaling", "set_luma"),
-                  ("Qualcomm Snapdragon GSR", "set_snapdragon"),
-                  ("NVIDIA Image Scaling", "set_nvidia"),
-                  ("Clear GLSL shaders", "clear_anime"),
-                ]
-                .map(
-                  (mode) => PopupMenuItem<String>(
-                    value: mode.$1,
-                    child: Text(
-                      mode.$1,
-                      style: TextStyle(
-                        fontWeight: _selectedShader.value == mode.$1
-                            ? FontWeight.w900
-                            : FontWeight.normal,
-                      ),
-                    ),
-                    onTap: () {
-                      (_player.platform as NativePlayer).command([
-                        "script-message",
-                        mode.$2,
-                      ]);
-                    },
-                  ),
-                )
-                .toList(),
-      ),
-      PopupMenuButton<String>(
-        tooltip: 'Stats',
-        icon: const Icon(Icons.memory, color: Colors.white),
-        itemBuilder: (context) =>
-            [
-                  ("Stats Toggle", "stats/display-stats-toggle"),
-                  ("Stats Page 1", "stats/display-page-1"),
-                  ("Stats Page 2", "stats/display-page-2"),
-                  ("Stats Page 3", "stats/display-page-3"),
-                  ("Stats Page 4", "stats/display-page-4"),
-                  ("Stats Page 5", "stats/display-page-5"),
-                ]
-                .map(
-                  (mode) => PopupMenuItem<String>(
-                    value: mode.$1,
-                    child: Text(
-                      mode.$1,
-                      style: TextStyle(
-                        fontWeight: _selectedShader.value == mode.$1
-                            ? FontWeight.w900
-                            : FontWeight.normal,
-                      ),
-                    ),
-                    onTap: () {
-                      (_player.platform as NativePlayer).command([
-                        "script-binding",
-                        mode.$2,
-                      ]);
-                    },
-                  ),
-                )
-                .toList(),
-      ),
-      ValueListenableBuilder(
-        valueListenable: _customButtons,
-        builder: (context, value, child) => value != null
-            ? PopupMenuButton<String>(
-                tooltip: context.l10n.custom_buttons,
-                icon: const Icon(Icons.terminal, color: Colors.white),
-                itemBuilder: (context) => value
-                    .map(
-                      (btn) => PopupMenuItem<String>(
-                        value: btn.title!,
-                        child: Text(btn.title!),
-                        onTap: () {
-                          (_player.platform as NativePlayer).command([
-                            "script-message",
-                            "call_button_${btn.id}",
-                          ]);
-                        },
-                      ),
-                    )
-                    .toList(),
-              )
-            : Container(),
-      ),
+  // The shader bindings (Ctrl+0..6) previously had no on-screen trace at all
+  // — they only worked if you already knew they existed. This puts every
+  // desktop shortcut, that group included, one click away instead of secret.
+  void _showKeyboardShortcuts(BuildContext context) {
+    final entries = <(String, String)>[
+      ('Space / Media play-pause', 'Play / pause'),
+      ('← / →', 'Seek 5s'),
+      ('J / L', 'Seek 10s'),
+      ('↑ / ↓', 'Volume ±5'),
+      ('M', 'Mute'),
+      ('Enter / S', 'Skip intro'),
+      ('N / P', 'Next / previous episode'),
+      ('F', 'Toggle fullscreen'),
+      ('Esc', 'Exit fullscreen'),
+      if (useMpvConfig) ('Ctrl+0', 'Clear shader'),
+      if (useMpvConfig)
+        ('Ctrl+1…6', 'Anime4K modes A / B / C / A+A / B+B / C+A'),
     ];
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: const Color(0xFF171310),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 380),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Keyboard shortcuts',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                ...entries.map(
+                  (entry) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 130,
+                          child: Text(
+                            entry.$1,
+                            style: const TextStyle(
+                              fontSize: 12.5,
+                              fontFeatures: [FontFeature.tabularFigures()],
+                              color: PlayerTheme.accent,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            entry.$2,
+                            style: TextStyle(
+                              fontSize: 12.5,
+                              color: Colors.white.withValues(alpha: 0.8),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      context.l10n.ok,
+                      style: const TextStyle(color: PlayerTheme.accent),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
+
+  String _fitShortLabel(BoxFit fit) => switch (fit) {
+    BoxFit.contain => 'Contain',
+    BoxFit.cover => 'Cover',
+    BoxFit.fill => 'Fill',
+    BoxFit.fitHeight => 'Height',
+    BoxFit.fitWidth => 'Width',
+    BoxFit.scaleDown => 'Scale',
+    BoxFit.none => 'None',
+  };
 
   /// helper method for _mobileBottomButtonBar() and _desktopBottomButtonBar()
   Widget _buildSettingsButtons(BuildContext context) {
     final isFullscreen = ref.watch(fullscreenProvider);
     return Row(
       children: [
-        IconButton(
-          padding: isDesktop ? EdgeInsets.zero : const EdgeInsets.all(5),
-          onPressed: () => _videoSettingDraggableMenu(context),
-          icon: const Icon(Icons.video_settings, color: Colors.white),
+        // Builder: the desktop popup anchors to whichever context calls
+        // _openPlayerSettings, so this needs its own — the outer `context`
+        // this method receives points at the player page, not this icon.
+        Builder(
+          builder: (context) => IconButton(
+            tooltip: context.l10n.settings,
+            padding: isDesktop ? EdgeInsets.zero : const EdgeInsets.all(5),
+            onPressed: () => _openPlayerSettings(context),
+            icon: const Icon(Icons.video_settings, color: Colors.white),
+          ),
         ),
-        if (useMpvConfig) ..._buildMpvSettingsButton(context),
-        PopupMenuButton<double>(
-          tooltip: '', // Remove default tooltip "Show menu" for consistency
-          icon: const Icon(Icons.speed, color: Colors.white),
-          itemBuilder: (context) =>
-              [0.25, 0.5, 0.75, 1.0, 1.25, 1.50, 1.75, 2.0]
-                  .map(
-                    (speed) => PopupMenuItem<double>(
-                      value: speed,
-                      child: Text("${speed}x"),
-                      onTap: () {
-                        _setPlaybackSpeed(speed);
-                      },
-                    ),
-                  )
-                  .toList(),
-        ),
+        if (isDesktop)
+          IconButton(
+            tooltip: 'Keyboard shortcuts',
+            padding: EdgeInsets.zero,
+            onPressed: () => _showKeyboardShortcuts(context),
+            icon: const Icon(
+              Icons.keyboard_outlined,
+              color: Colors.white,
+              size: 20,
+            ),
+          ),
+        // These pills duplicate what the gear menu already shows inline
+        // (Vitesse/Fit rows carry their current value too), so on a phone's
+        // narrow control bar they aren't worth the horizontal room — they
+        // used to push the gear itself out of the visible scroll area.
+        // Desktop has room to spare and mouse users benefit from the
+        // one-tap shortcut, so they stay there.
+        if (!isMobile) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3),
+            child: Builder(
+              builder: (context) => ValueListenableBuilder<double>(
+                valueListenable: _playbackSpeed,
+                builder: (context, speed, _) => PlayerPillButton(
+                  icon: Icons.speed,
+                  label: '${speed}x',
+                  tooltip: context.l10n.playback_speed,
+                  onTap: () => _openPlayerSettings(
+                    context,
+                    initialIndex: _speedSectionIndex,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3),
+            child: ValueListenableBuilder<BoxFit>(
+              valueListenable: _fit,
+              builder: (context, fit, _) => PlayerPillButton(
+                icon: Icons.fit_screen_outlined,
+                label: _fitShortLabel(fit),
+                tooltip: 'Fit screen',
+                onTap: () => _changeFitLabel(ref),
+              ),
+            ),
+          ),
+        ],
         // PiP button stays off. The UIScene crash that originally disabled it
         // is fixed, but the media_kit fork moved the API; see the note on
         // pictureInPicture above and closed #757.
@@ -2214,12 +2601,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         //     ),
         //     onPressed: () => _controller.enterPictureInPicture(),
         //   ),
-        IconButton(
-          icon: const Icon(Icons.fit_screen_outlined, color: Colors.white),
-          onPressed: () async {
-            _changeFitLabel(ref);
-          },
-        ),
         if (isDesktop)
           CustomMaterialDesktopFullscreenButton(
             controller: _controller,
@@ -2270,28 +2651,22 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           Flexible(
             child: ListTile(
               dense: true,
-              title: SizedBox(
-                width: context.width(0.8),
-                child: Text(
-                  widget.episode.manga.value!.name!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  overflow: TextOverflow.ellipsis,
+              title: Text(
+                widget.episode.manga.value?.name ?? '',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
-              subtitle: SizedBox(
-                width: context.width(0.8),
-                child: Text(
-                  widget.episode.name!,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.white.withValues(alpha: 0.7),
-                  ),
-                  overflow: TextOverflow.ellipsis,
+              subtitle: Text(
+                widget.episode.name ?? '',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white.withValues(alpha: 0.7),
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
@@ -2388,7 +2763,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     final enableAutoSkip = ref.read(enableAutoSkipStateProvider);
     final aniSkipTimeoutLength = ref.read(aniSkipTimeoutLengthStateProvider);
     final skipIntroLength = ref.read(defaultSkipIntroLengthStateProvider);
-    final splitSettings = isTv && _tvSettingsOpen;
+    final splitSettingsTv = isTv && _tvSettingsOpen;
+    final docked = splitSettingsTv;
     final Widget player = Stack(
       children: [
         Video(
@@ -2399,7 +2775,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           ),
           // Docked in the split view, always contain so the whole frame shows
           // at its true aspect ratio rather than cropping to the narrower slot.
-          fit: splitSettings ? BoxFit.contain : fit,
+          fit: docked ? BoxFit.contain : fit,
           key: _key,
           controls: (state) => (isTv && ref.read(tvPlayerStyleProvider))
               ? (_tvSettingsOpen ? const SizedBox.shrink() : _tvControls())
@@ -2424,6 +2800,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
                   chapterMarks: _chapterMarks,
                   revealControls: _revealControls,
+                  getThumbnail: _getScrubThumbnail,
                 )
               : MobileControllerWidget(
                   videoController: _controller,
@@ -2436,12 +2813,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     _isDoubleSpeed.value = value ?? false;
                   },
                   chapterMarks: _chapterMarks,
+                  getThumbnail: _getScrubThumbnail,
                 ),
           controller: _controller,
           // When docked left for the settings panel, fill the (narrower) slot
           // the Row gives us rather than forcing full-screen width.
-          width: splitSettings ? null : context.width(1),
-          height: splitSettings ? null : context.height(1),
+          width: docked ? null : context.width(1),
+          height: docked ? null : context.height(1),
           resumeUponEnteringForegroundMode: true,
         ),
         Stack(
@@ -2510,7 +2888,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           ),
       ],
     );
-    if (!splitSettings) return player;
+    if (!docked) return player;
     // YouTube-style split: video docks left (a single focusable unit — Left
     // from the panel focuses it, Select toggles play/pause), a gap, then the
     // settings panel on the right.
@@ -2807,26 +3185,39 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 Widget seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
   final swipeDuration = duration.inSeconds;
   final value = currentPosition.inSeconds + swipeDuration;
-  return Column(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Text(
-        Duration(seconds: value).label(),
-        style: const TextStyle(
-          fontSize: 65.0,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+    decoration: BoxDecoration(
+      color: PlayerTheme.glassStrong,
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
+    ),
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          Duration(seconds: value).label(),
+          style: const TextStyle(
+            fontSize: 44.0,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+            fontFeatures: [FontFeature.tabularFigures()],
+          ),
         ),
-      ),
-      Text(
-        "[${swipeDuration > 0 ? "+${Duration(seconds: swipeDuration).label()}" : "-${Duration(seconds: swipeDuration).label()}"}]",
-        style: const TextStyle(
-          fontSize: 40.0,
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
+        Text(
+          swipeDuration > 0
+              ? "+${Duration(seconds: swipeDuration).label()}"
+              : "-${Duration(seconds: swipeDuration).label()}",
+          style: const TextStyle(
+            fontSize: 20.0,
+            color: PlayerTheme.accent,
+            fontWeight: FontWeight.w600,
+            fontFeatures: [FontFeature.tabularFigures()],
+          ),
         ),
-      ),
-    ],
+      ],
+    ),
   );
 }
 

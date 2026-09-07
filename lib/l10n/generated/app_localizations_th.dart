@@ -2170,6 +2170,15 @@ class AppLocalizationsTh extends AppLocalizations {
   String get subtitle_speed => 'ความเร็ว';
 
   @override
+  String get playback_speed => 'Playback speed';
+
+  @override
+  String get shaders => 'Shaders';
+
+  @override
+  String get video_fit => 'Fit';
+
+  @override
   String get calendar => 'ปฏิทิน';
 
   @override

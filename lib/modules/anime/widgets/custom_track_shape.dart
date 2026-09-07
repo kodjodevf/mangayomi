@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
 
 class CustomTrackShape extends SliderTrackShape {
   final double maxValue;
@@ -180,17 +181,19 @@ class CustomTrackShape extends SliderTrackShape {
     Rect trackRect,
     double markPositionWidth,
   ) {
+    // Amber, distinct from the white position thumb, so chapter marks read as
+    // their own signal on the track instead of blending with the scrub handle.
     final Paint borderPaint = Paint()
-      ..color = Colors.white
+      ..color = PlayerTheme.accent
       ..style = PaintingStyle.fill;
 
     final pathSegmentSelected = Path()
       ..addRect(
         Rect.fromPoints(
-          Offset(trackRect.left + markPositionWidth, trackRect.top),
+          Offset(trackRect.left + markPositionWidth, trackRect.top - 3),
           Offset(
             trackRect.left + markPositionWidth + chapterMarkWidth,
-            trackRect.bottom,
+            trackRect.bottom + 3,
           ),
         ),
       );

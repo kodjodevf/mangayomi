@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
 
 class MediaIndicatorBuilder extends StatelessWidget {
   final bool isVolumeIndicator;
@@ -23,8 +24,9 @@ class MediaIndicatorBuilder extends StatelessWidget {
             Container(
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
-                color: Colors.black54,
+                color: PlayerTheme.glassStrong,
                 borderRadius: BorderRadius.circular(100),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
               ),
               width: 30,
               child: UnconstrainedBox(
@@ -34,7 +36,12 @@ class MediaIndicatorBuilder extends StatelessWidget {
                     children: [
                       Text(
                         (value * 100).ceil().toString(),
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(
+                          color: PlayerTheme.ink,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(5),
@@ -50,7 +57,8 @@ class MediaIndicatorBuilder extends StatelessWidget {
                               size: const Size(130, 20),
                               child: LinearProgressIndicator(
                                 value: value,
-                                backgroundColor: Colors.transparent,
+                                color: PlayerTheme.accent,
+                                backgroundColor: PlayerTheme.trackIdle,
                               ),
                             ),
                           ),
@@ -68,7 +76,8 @@ class MediaIndicatorBuilder extends StatelessWidget {
                                 < 2.0 / 3.0 => Icons.brightness_medium,
                                 _ => Icons.brightness_high,
                               },
-                        color: Colors.white,
+                        size: 16,
+                        color: PlayerTheme.ink,
                       ),
                     ],
                   ),

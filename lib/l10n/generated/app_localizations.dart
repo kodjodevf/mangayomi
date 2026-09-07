@@ -4031,6 +4031,24 @@ abstract class AppLocalizations {
   /// **'Speed'**
   String get subtitle_speed;
 
+  /// No description provided for @playback_speed.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback speed'**
+  String get playback_speed;
+
+  /// No description provided for @shaders.
+  ///
+  /// In en, this message translates to:
+  /// **'Shaders'**
+  String get shaders;
+
+  /// No description provided for @video_fit.
+  ///
+  /// In en, this message translates to:
+  /// **'Fit'**
+  String get video_fit;
+
   /// No description provided for @calendar.
   ///
   /// In en, this message translates to:

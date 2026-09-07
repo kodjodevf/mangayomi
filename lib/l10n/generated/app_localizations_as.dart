@@ -2176,6 +2176,15 @@ class AppLocalizationsAs extends AppLocalizations {
   String get subtitle_speed => 'গতি';
 
   @override
+  String get playback_speed => 'Playback speed';
+
+  @override
+  String get shaders => 'Shaders';
+
+  @override
+  String get video_fit => 'Fit';
+
+  @override
   String get calendar => 'কেলেণ্ডাৰ';
 
   @override

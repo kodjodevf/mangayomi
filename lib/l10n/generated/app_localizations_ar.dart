@@ -2184,6 +2184,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get subtitle_speed => 'السرعة';
 
   @override
+  String get playback_speed => 'Playback speed';
+
+  @override
+  String get shaders => 'Shaders';
+
+  @override
+  String get video_fit => 'Fit';
+
+  @override
   String get calendar => 'التقويم';
 
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
 import 'package:mangayomi/services/aniskip.dart';
 import 'package:media_kit/media_kit.dart';
 
@@ -70,82 +71,75 @@ class _AniSkipCountDownButtonState extends ConsumerState<AniSkipCountDownButton>
 
   @override
   Widget build(BuildContext context) {
-    return widget.active && !widget.autoSkip
-        ? _isCompleted
-              ? const SizedBox.shrink()
-              : AnimatedBuilder(
-                  animation: _controller,
-                  builder: (context, child) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40),
-                      child: MaterialButton(
-                        padding: const EdgeInsets.all(0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        onPressed: () {
-                          _seekTo();
-                        },
-                        child: Container(
-                          clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(
-                            color: Colors.black54,
-                            borderRadius: BorderRadius.circular(5),
+    if (!widget.active || widget.autoSkip || _isCompleted) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(999),
+          onTap: _seekTo,
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final remaining =
+                  widget.timeoutLength -
+                  (_controller.duration! * _controller.value).inSeconds;
+              return Container(
+                padding: const EdgeInsets.fromLTRB(6, 6, 14, 6),
+                decoration: BoxDecoration(
+                  color: PlayerTheme.glassStrong,
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.12),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            value: 1 - _controller.value,
+                            strokeWidth: 2.4,
+                            color: PlayerTheme.semantic,
+                            backgroundColor: Colors.white.withValues(
+                              alpha: 0.18,
+                            ),
                           ),
-                          width: 200,
-                          child: Stack(
-                            children: [
-                              RotatedBox(
-                                quarterTurns: 0,
-                                child: Container(
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: SizedBox.fromSize(
-                                    size: const Size(200, 40),
-                                    child: LinearProgressIndicator(
-                                      color: Colors.red,
-                                      value: 1 - _controller.value,
-                                      backgroundColor: Colors.transparent,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned.fill(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Text(
-                                        widget.skipTypeText.toUpperCase(),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        (widget.timeoutLength -
-                                                (_controller.duration! *
-                                                        _controller.value)
-                                                    .inSeconds)
-                                            .toString(),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                          Text(
+                            '$remaining',
+                            style: const TextStyle(
+                              fontSize: 8.5,
+                              fontWeight: FontWeight.w600,
+                              color: PlayerTheme.ink,
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    );
-                  },
-                )
-        : const SizedBox.shrink();
+                    ),
+                    const SizedBox(width: 9),
+                    Text(
+                      widget.skipTypeText,
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: PlayerTheme.ink,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
   }
 }

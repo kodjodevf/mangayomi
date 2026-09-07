@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
@@ -31,7 +32,10 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
 
   StreamSubscription<bool>? subscription;
 
-  double get iconSize => isDesktop ? 25 : 65;
+  // The tappable disc behind the glyph — this is what gives the button
+  // contrast on bright scenes, where a bare white icon used to disappear.
+  double get discSize => isDesktop ? 46.0 : 76.0;
+  double get glyphSize => isDesktop ? 22.0 : 34.0;
 
   @override
   void setState(VoidCallback fn) {
@@ -64,14 +68,26 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
     return IconButton(
       focusNode: widget.focusNode,
       onPressed: widget.controller.player.playOrPause,
-      iconSize: iconSize,
+      iconSize: discSize,
+      padding: EdgeInsets.zero,
       color: Colors.white,
       icon: IgnorePointer(
-        child: AnimatedIcon(
-          progress: animation,
-          icon: AnimatedIcons.play_pause,
-          size: iconSize,
-          color: Colors.white,
+        child: Container(
+          width: discSize,
+          height: discSize,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: PlayerTheme.chipBackdrop,
+            border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+          ),
+          child: Center(
+            child: AnimatedIcon(
+              progress: animation,
+              icon: AnimatedIcons.play_pause,
+              size: glyphSize,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );
