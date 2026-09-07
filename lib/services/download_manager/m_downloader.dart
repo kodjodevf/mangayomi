@@ -64,7 +64,7 @@ class MDownloader {
     while (true) {
       try {
         attempts++;
-        return await operation();
+        return await operation().timeout(const Duration(seconds: 30));
       } catch (e) {
         if (attempts >= maxRetries) {
           throw MDownloaderException(
