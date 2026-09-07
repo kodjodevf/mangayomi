@@ -12,6 +12,7 @@ import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/library_updater.dart';
+import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 
 /// Displays the library body content for a given category (or uncategorized).
 ///
@@ -119,7 +120,16 @@ class LibraryBody extends ConsumerWidget {
           return Center(child: Text(l10n.empty_library));
         }
 
-        final entriesManga = reverse ? entries.reversed.toList() : entries;
+        final entriesManga = reverse
+            ? sortType == 3
+                  ? sortByUnreadCount(
+                      entries,
+                      unreadCountOf: (manga) =>
+                          manga.unreadChaptersCount(settings),
+                      descending: true,
+                    )
+                  : entries.reversed.toList()
+            : entries;
         return RefreshIndicator(
           onRefresh: () async {
             await updateLibrary(
