@@ -1,6 +1,7 @@
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/manga/detail/chapter_bulk_actions.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
@@ -328,8 +329,9 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
   void set() {
     final allChapters = <Chapter>[];
     final chapters = ref.watch(chaptersListStateProvider);
+    final markAsRead = bulkChapterTargetReadState(chapters);
     for (var chapter in chapters) {
-      chapter.isRead = !chapter.isRead!;
+      chapter.isRead = markAsRead;
       chapter.updatedAt = DateTime.now().millisecondsSinceEpoch;
       chapter.manga.value = manga;
       allChapters.add(chapter);
@@ -409,7 +411,9 @@ class ScanlatorsFilterState extends _$ScanlatorsFilterState {
       }
     }
     filterScanlatorList.add(value);
-    settingsRepository.save(settings..filterScanlatorList = filterScanlatorList);
+    settingsRepository.save(
+      settings..filterScanlatorList = filterScanlatorList,
+    );
     state = (_getScanlators(), _getFilterScanlator()!, filterScanlators);
   }
 

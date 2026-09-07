@@ -15,6 +15,7 @@ import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/library/library_screen.dart';
 import 'package:mangayomi/modules/library/providers/library_filter_provider.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/modules/manga/detail/chapter_bulk_actions.dart';
 import 'package:mangayomi/modules/manga/detail/providers/export_metadata.dart';
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
@@ -906,6 +907,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     ),
                     onPressed: () {
                       final chapters = ref.watch(chaptersListStateProvider);
+                      final markAsRead = bulkChapterTargetReadState(chapters);
                       final List<Chapter> updatedChapters = [];
                       final now = DateTime.now().millisecondsSinceEpoch;
                       Chapter? highestChapter;
@@ -913,7 +915,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       final recognition = ChapterRecognition();
                       final mangaTitle = widget.manga!.name ?? '';
                       for (var chapter in chapters) {
-                        chapter.isRead = !chapter.isRead!;
+                        chapter.isRead = markAsRead;
                         if (!chapter.isRead!) chapter.lastPageRead = "1";
                         chapter.updatedAt = now;
                         chapter.manga.value = widget.manga;
