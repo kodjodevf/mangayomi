@@ -7,6 +7,7 @@ import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_track_shape.dart';
 import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 
@@ -243,10 +244,10 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         trackHeight: isDesktop ? null : 3,
-                        activeTrackColor: PlayerTheme.accent,
+                        activeTrackColor: context.primaryColor,
                         inactiveTrackColor: PlayerTheme.trackIdle,
                         secondaryActiveTrackColor: PlayerTheme.trackBuffer,
-                        overlayColor: PlayerTheme.accent.withValues(
+                        overlayColor: context.primaryColor.withValues(
                           alpha: 0.16,
                         ),
                         thumbShape: const _CapsuleThumbShape(),
@@ -421,7 +422,7 @@ class _ScrubPreviewBubble extends StatelessWidget {
                 chapterLabel!,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 10.5, color: PlayerTheme.accent),
+                style: TextStyle(fontSize: 10.5, color: context.primaryColor),
               ),
             ),
         ],
@@ -464,9 +465,10 @@ class _CapsuleThumbShape extends SliderComponentShape {
       Rect.fromCenter(center: center, width: _width + 6, height: _height + 6),
       const Radius.circular(5),
     );
+    final accentColor = sliderTheme.activeTrackColor ?? PlayerTheme.accent;
     canvas.drawRRect(
       haloRect,
-      Paint()..color = PlayerTheme.accent.withValues(alpha: 0.28),
+      Paint()..color = accentColor.withValues(alpha: 0.28),
     );
     final thumbRect = RRect.fromRectAndRadius(
       Rect.fromCenter(center: center, width: _width, height: _height),

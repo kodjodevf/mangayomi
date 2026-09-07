@@ -184,7 +184,7 @@ class CustomTrackShape extends SliderTrackShape {
     // Amber, distinct from the white position thumb, so chapter marks read as
     // their own signal on the track instead of blending with the scrub handle.
     final Paint borderPaint = Paint()
-      ..color = PlayerTheme.accent
+      ..color = sliderTheme.activeTrackColor ?? PlayerTheme.accent
       ..style = PaintingStyle.fill;
 
     final pathSegmentSelected = Path()

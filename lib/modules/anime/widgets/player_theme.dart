@@ -29,4 +29,13 @@ class PlayerTheme {
     color: Colors.white,
     fontFeatures: [FontFeature.tabularFigures()],
   );
+
+  /// Dynamic colors derived from the ambient theme.
+  static Color accentOf(BuildContext context) => Theme.of(context).primaryColor;
+  static Color onAccentOf(BuildContext context) =>
+      Theme.of(context).colorScheme.onPrimary;
+  static Color surfaceOf(BuildContext context) =>
+      Theme.of(context).colorScheme.surface;
+  static Color onSurfaceOf(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
 }

@@ -89,20 +89,31 @@ class ScrubThumbnailGenerator {
     _player = player;
     _controller = controller;
     _openedUrl = url;
-    _opening = () async {
-      // Waits for the native texture to actually exist, i.e. for --vid=auto
-      // to have taken effect — screenshot() before this point just returns
-      // whatever an un-decoded player has, which is nothing.
+    final openCompleter = Completer<void>();
+    _opening = openCompleter.future;
+
+    try {
       await controller.platform.future;
-      if (_disposed) return;
+      if (_disposed) {
+        unawaited(player.dispose());
+        openCompleter.complete();
+        return;
+      }
       await player.open(Media(url, httpHeaders: headers), play: false);
-    }();
-    await _opening;
-    if (_disposed) {
+      openCompleter.complete();
+      unawaited(previousPlayer?.dispose());
+    } catch (e) {
+      openCompleter.completeError(e);
+      // Clean up failed decoder and reset state so later thumbnail requests can retry
+      if (_player == player) {
+        _player = null;
+        _controller = null;
+        _openedUrl = null;
+        _opening = null;
+      }
       unawaited(player.dispose());
-      return;
+      rethrow;
     }
-    unawaited(previousPlayer?.dispose());
   }
 
   /// Waits until mpv actually reports being at (or very near) [target] *and*
@@ -199,5 +210,6 @@ class ScrubThumbnailGenerator {
     _player = null;
     _controller = null;
     _openedUrl = null;
+    _opening = null;
   }
 }

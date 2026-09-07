@@ -832,7 +832,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   Future<void> pushToNewEpisode(BuildContext context, Chapter episode) async {
     if (_routeExitInProgress) return;
     _routeExitInProgress = true;
-    bool _hasPushedToNewEpisode = false;
     widget.desktopFullScreenPlayer.call(ref.read(fullscreenProvider));
     widget.onEpisodeReplacement();
     await _retireVideoTexture();
@@ -1321,11 +1320,17 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
-  // Both the mobile bottom sheet and the desktop popup are proper routes now
-  // (showModalBottomSheet / showMenu), so a row's onTap can always just pop —
-  // that no longer depends on which platform opened it.
+  // When opened inside a SettingsDrilldown (mobile bottom sheet or desktop
+  // popup), an option selection navigates back to the settings home list so the
+  // user can see the new choice inline and adjust other options without having
+  // to reopen the menu from scratch.
   void _popSettings(BuildContext context) {
-    Navigator.pop(context);
+    final scope = SettingsDrilldownScope.of(context);
+    if (scope != null) {
+      scope.goHome();
+    } else {
+      Navigator.pop(context);
+    }
   }
 
   // The settings home list — YouTube's pattern instead of the segmented tabs
@@ -2582,10 +2587,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                           width: 130,
                           child: Text(
                             entry.$1,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12.5,
-                              fontFeatures: [FontFeature.tabularFigures()],
-                              color: PlayerTheme.accent,
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                              ],
+                              color: context.primaryColor,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -2610,7 +2617,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     onPressed: () => Navigator.pop(context),
                     child: Text(
                       context.l10n.ok,
-                      style: const TextStyle(color: PlayerTheme.accent),
+                      style: TextStyle(color: context.primaryColor),
                     ),
                   ),
                 ),
@@ -3281,39 +3288,44 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 Widget seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
   final swipeDuration = duration.inSeconds;
   final value = currentPosition.inSeconds + swipeDuration;
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-    decoration: BoxDecoration(
-      color: PlayerTheme.glassStrong,
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          Duration(seconds: value).label(),
-          style: const TextStyle(
-            fontSize: 44.0,
-            fontWeight: FontWeight.w700,
-            color: Colors.white,
-            fontFeatures: [FontFeature.tabularFigures()],
-          ),
+  return Builder(
+    builder: (ctx) {
+      final accent = ctx.primaryColor;
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+        decoration: BoxDecoration(
+          color: PlayerTheme.glassStrong,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
         ),
-        Text(
-          swipeDuration > 0
-              ? "+${Duration(seconds: swipeDuration).label()}"
-              : "-${Duration(seconds: swipeDuration).label()}",
-          style: const TextStyle(
-            fontSize: 20.0,
-            color: PlayerTheme.accent,
-            fontWeight: FontWeight.w600,
-            fontFeatures: [FontFeature.tabularFigures()],
-          ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              Duration(seconds: value).label(),
+              style: const TextStyle(
+                fontSize: 44.0,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                fontFeatures: [FontFeature.tabularFigures()],
+              ),
+            ),
+            Text(
+              swipeDuration > 0
+                  ? "+${Duration(seconds: swipeDuration).label()}"
+                  : "-${Duration(seconds: swipeDuration).label()}",
+              style: TextStyle(
+                fontSize: 20.0,
+                color: accent,
+                fontWeight: FontWeight.w600,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+            ),
+          ],
         ),
-      ],
-    ),
+      );
+    },
   );
 }
 

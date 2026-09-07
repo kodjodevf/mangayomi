@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 /// One selectable row inside a [UnifiedSettingsSheet] section: a label, an
 /// optional trailing hint (codec, keyboard shortcut...) and a filled
@@ -23,6 +24,9 @@ class SettingsOptionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final accent = context.primaryColor;
+    final onSurface = theme.colorScheme.onSurface;
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
@@ -33,7 +37,7 @@ class SettingsOptionRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: selected
-                ? PlayerTheme.accent.withValues(alpha: 0.12)
+                ? accent.withValues(alpha: 0.12)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),
@@ -44,19 +48,19 @@ class SettingsOptionRow extends StatelessWidget {
                 height: 18,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: selected ? PlayerTheme.accent : Colors.transparent,
+                  color: selected ? accent : Colors.transparent,
                   border: Border.all(
                     color: selected
-                        ? PlayerTheme.accent
-                        : Colors.white.withValues(alpha: 0.28),
+                        ? accent
+                        : onSurface.withValues(alpha: 0.28),
                     width: 1.4,
                   ),
                 ),
                 child: selected
-                    ? const Icon(
+                    ? Icon(
                         Icons.check,
                         size: 12,
-                        color: PlayerTheme.accentInk,
+                        color: theme.colorScheme.onPrimary,
                       )
                     : null,
               ),
@@ -67,8 +71,8 @@ class SettingsOptionRow extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13.5,
                     color: selected
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: 0.85),
+                        ? accent
+                        : onSurface.withValues(alpha: 0.85),
                     fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                   ),
                   maxLines: 1,
@@ -82,7 +86,7 @@ class SettingsOptionRow extends StatelessWidget {
                     hint!,
                     style: TextStyle(
                       fontSize: 10.5,
-                      color: Colors.white.withValues(alpha: 0.4),
+                      color: onSurface.withValues(alpha: 0.45),
                       fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
@@ -113,6 +117,7 @@ class SettingsActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
@@ -122,21 +127,21 @@ class SettingsActionRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(
             children: [
-              Icon(icon, size: 17, color: Colors.white.withValues(alpha: 0.75)),
+              Icon(icon, size: 17, color: onSurface.withValues(alpha: 0.75)),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   label,
                   style: TextStyle(
                     fontSize: 13.5,
-                    color: Colors.white.withValues(alpha: 0.9),
+                    color: onSurface.withValues(alpha: 0.9),
                   ),
                 ),
               ),
               Icon(
                 Icons.chevron_right,
                 size: 16,
-                color: Colors.white.withValues(alpha: 0.35),
+                color: onSurface.withValues(alpha: 0.35),
               ),
             ],
           ),
@@ -153,6 +158,7 @@ class SettingsSectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 14, 12, 6),
       child: Text(
@@ -161,7 +167,7 @@ class SettingsSectionLabel extends StatelessWidget {
           fontSize: 10.5,
           letterSpacing: 0.8,
           fontWeight: FontWeight.w600,
-          color: Colors.white.withValues(alpha: 0.4),
+          color: onSurface.withValues(alpha: 0.45),
         ),
       ),
     );
@@ -185,6 +191,7 @@ class SettingsStepperRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: Row(
@@ -194,13 +201,13 @@ class SettingsStepperRow extends StatelessWidget {
               label,
               style: TextStyle(
                 fontSize: 13,
-                color: Colors.white.withValues(alpha: 0.75),
+                color: onSurface.withValues(alpha: 0.75),
               ),
             ),
           ),
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.06),
+              color: onSurface.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -212,10 +219,10 @@ class SettingsStepperRow extends StatelessWidget {
                   child: Text(
                     value,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: Colors.white,
-                      fontFeatures: [FontFeature.tabularFigures()],
+                      color: onSurface,
+                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
                 ),
@@ -236,12 +243,13 @@ class _StepperButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     return InkWell(
       borderRadius: BorderRadius.circular(8),
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.all(6),
-        child: Icon(icon, size: 15, color: Colors.white),
+        child: Icon(icon, size: 15, color: onSurface),
       ),
     );
   }
@@ -326,6 +334,9 @@ class _SettingsHomeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+    final accent = theme.primaryColor;
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
@@ -334,18 +345,14 @@ class _SettingsHomeRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
           child: Row(
             children: [
-              Icon(
-                entry.icon,
-                size: 18,
-                color: Colors.white.withValues(alpha: 0.8),
-              ),
+              Icon(entry.icon, size: 18, color: accent),
               const SizedBox(width: 14),
               Expanded(
                 child: Text(
                   entry.label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13.5,
-                    color: Colors.white,
+                    color: onSurface,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -356,7 +363,7 @@ class _SettingsHomeRow extends StatelessWidget {
                   child: DefaultTextStyle.merge(
                     style: TextStyle(
                       fontSize: 12.5,
-                      color: Colors.white.withValues(alpha: 0.5),
+                      color: onSurface.withValues(alpha: 0.55),
                     ),
                     child: entry.valueBuilder!(context),
                   ),
@@ -365,7 +372,7 @@ class _SettingsHomeRow extends StatelessWidget {
               Icon(
                 Icons.chevron_right,
                 size: 18,
-                color: Colors.white.withValues(alpha: 0.35),
+                color: onSurface.withValues(alpha: 0.35),
               ),
             ],
           ),
@@ -390,6 +397,7 @@ class _DrilldownHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     return Padding(
       padding: const EdgeInsets.fromLTRB(6, 6, 8, 4),
       child: Row(
@@ -397,7 +405,7 @@ class _DrilldownHeader extends StatelessWidget {
           if (showBack)
             IconButton(
               onPressed: onBack,
-              icon: const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+              icon: Icon(Icons.arrow_back, color: onSurface, size: 18),
             )
           else
             const SizedBox(width: 12),
@@ -406,10 +414,10 @@ class _DrilldownHeader extends StatelessWidget {
               padding: EdgeInsets.only(left: showBack ? 0 : 8),
               child: Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14.5,
                   fontWeight: FontWeight.w700,
-                  color: Colors.white,
+                  color: onSurface,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -418,12 +426,35 @@ class _DrilldownHeader extends StatelessWidget {
           ),
           IconButton(
             onPressed: onClose,
-            icon: const Icon(Icons.close, color: Colors.white, size: 20),
+            icon: Icon(Icons.close, color: onSurface, size: 20),
           ),
         ],
       ),
     );
   }
+}
+
+/// An inherited widget that exposes navigation actions for the active
+/// [SettingsDrilldown], allowing options inside a section (e.g. playback speed,
+/// fit, video track) to navigate back to the settings home list rather than
+/// dismissing the whole sheet or popup menu.
+class SettingsDrilldownScope extends InheritedWidget {
+  final VoidCallback goHome;
+  final VoidCallback close;
+
+  const SettingsDrilldownScope({
+    super.key,
+    required this.goHome,
+    required this.close,
+    required super.child,
+  });
+
+  static SettingsDrilldownScope? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<SettingsDrilldownScope>();
+  }
+
+  @override
+  bool updateShouldNotify(covariant SettingsDrilldownScope oldWidget) => false;
 }
 
 /// Player settings as a single browsable list — YouTube's pattern instead of
@@ -473,57 +504,64 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
   @override
   Widget build(BuildContext context) {
     final active = _active;
-    return ClipRect(
-      child: AnimatedSize(
-        duration: const Duration(milliseconds: 220),
-        curve: Curves.easeOutCubic,
-        alignment: Alignment.topCenter,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _DrilldownHeader(
-              title: active == null
-                  ? widget.title
-                  : widget.entries[active].label,
-              showBack: active != null,
-              onBack: _goHome,
-              onClose: widget.onClose,
-            ),
-            const Divider(height: 1, color: Color(0x14FFFFFF)),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 220),
-              switchInCurve: Curves.easeOutCubic,
-              switchOutCurve: Curves.easeInCubic,
-              transitionBuilder: (child, animation) {
-                final isHome = child.key == const ValueKey('home');
-                return SlideTransition(
-                  position: Tween<Offset>(
-                    begin: Offset(isHome ? -1 : 1, 0),
-                    end: Offset.zero,
-                  ).animate(animation),
-                  child: child,
-                );
-              },
-              child: active == null
-                  ? Column(
-                      key: const ValueKey('home'),
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        for (var i = 0; i < widget.entries.length; i++)
-                          _SettingsHomeRow(
-                            entry: widget.entries[i],
-                            onTap: () => _open(i),
-                          ),
-                        const SizedBox(height: 4),
-                      ],
-                    )
-                  : Padding(
-                      key: ValueKey('section-$active'),
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: widget.entries[active].contentBuilder(context),
-                    ),
-            ),
-          ],
+    return SettingsDrilldownScope(
+      goHome: _goHome,
+      close: widget.onClose,
+      child: ClipRect(
+        child: AnimatedSize(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          alignment: Alignment.topCenter,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _DrilldownHeader(
+                title: active == null
+                    ? widget.title
+                    : widget.entries[active].label,
+                showBack: active != null,
+                onBack: _goHome,
+                onClose: widget.onClose,
+              ),
+              Divider(
+                height: 1,
+                color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
+              ),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                transitionBuilder: (child, animation) {
+                  final isHome = child.key == const ValueKey('home');
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: Offset(isHome ? -1 : 1, 0),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: child,
+                  );
+                },
+                child: active == null
+                    ? Column(
+                        key: const ValueKey('home'),
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          for (var i = 0; i < widget.entries.length; i++)
+                            _SettingsHomeRow(
+                              entry: widget.entries[i],
+                              onTap: () => _open(i),
+                            ),
+                          const SizedBox(height: 4),
+                        ],
+                      )
+                    : Padding(
+                        key: ValueKey('section-$active'),
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: widget.entries[active].contentBuilder(context),
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -547,6 +585,7 @@ class UnifiedSettingsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.only(bottom: bottomInset),
       child: ConstrainedBox(
@@ -554,9 +593,9 @@ class UnifiedSettingsSheet extends StatelessWidget {
           maxHeight: MediaQuery.of(context).size.height * 0.86,
         ),
         child: Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFF171310),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
           ),
           child: SafeArea(
             top: false,
@@ -568,7 +607,7 @@ class UnifiedSettingsSheet extends StatelessWidget {
                   width: 34,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.18),
+                    color: colorScheme.onSurface.withValues(alpha: 0.18),
                     borderRadius: BorderRadius.circular(99),
                   ),
                 ),
@@ -622,8 +661,8 @@ Future<void> showDesktopPlayerSettingsMenu(
   required List<SettingsEntry> entries,
   int initialIndex = -1,
 }) {
-  final overlay =
-      Navigator.of(anchor).overlay!.context.findRenderObject() as RenderBox;
+  final navigator = Navigator.of(anchor);
+  final overlay = navigator.overlay!.context.findRenderObject() as RenderBox;
   final button = anchor.findRenderObject() as RenderBox;
   // Anchored to the button's own rect — showMenu grows the popup from it,
   // flipping above when (as here, a bottom control bar) there's no room
@@ -641,7 +680,7 @@ Future<void> showDesktopPlayerSettingsMenu(
   return showMenu<void>(
     context: anchor,
     position: position,
-    color: const Color(0xFF171310),
+    color: Theme.of(anchor).colorScheme.surface,
     surfaceTintColor: Colors.transparent,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
     menuPadding: EdgeInsets.zero,
@@ -650,11 +689,19 @@ Future<void> showDesktopPlayerSettingsMenu(
       PopupMenuItem<void>(
         enabled: false,
         padding: EdgeInsets.zero,
-        child: SettingsDrilldown(
-          title: title,
-          entries: entries,
-          initialIndex: initialIndex,
-          onClose: () => Navigator.of(anchor).pop(),
+        child: Builder(
+          builder: (menuContext) => SettingsDrilldown(
+            title: title,
+            entries: entries,
+            initialIndex: initialIndex,
+            onClose: () {
+              if (menuContext.mounted) {
+                Navigator.of(menuContext).pop();
+              } else if (navigator.mounted) {
+                navigator.pop();
+              }
+            },
+          ),
         ),
       ),
     ],
