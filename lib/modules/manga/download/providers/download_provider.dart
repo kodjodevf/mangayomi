@@ -13,7 +13,6 @@ import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
@@ -34,7 +33,6 @@ import 'package:mangayomi/services/download_manager/m3u8/m3u8_downloader.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/utils/downloaded_page_file.dart';
-import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/localized_message.dart';
@@ -46,19 +44,12 @@ part 'download_provider.g.dart';
 
 @riverpod
 Future<void> addDownloadToQueue(Ref ref, {required Chapter chapter}) async {
-  final download = downloadRepository.getById(chapter.id!);
-  if (download == null) {
-    final download = Download(
-      id: chapter.id,
-      succeeded: 0,
-      failed: 0,
-      total: 100,
-      isDownload: false,
-      isStartDownload: true,
-    );
-    downloadRepository.save(download..chapter.value = chapter);
-  }
+  await downloadRepository.enqueue(chapter);
 }
+
+final _scheduledDownloadIds = <int>{};
+
+bool isDownloadScheduled(int? id) => _scheduledDownloadIds.contains(id);
 
 @riverpod
 Future<void> downloadChapter(
@@ -67,40 +58,28 @@ Future<void> downloadChapter(
   bool? useWifi,
   VoidCallback? callback,
 }) async {
+  if (!_scheduledDownloadIds.add(chapter.id!)) return;
   final keepAlive = ref.keepAlive();
-
-  // Show the chapter as queued straight away, before it waits for a slot, so
-  // the download icon reacts to the tap immediately even while it sits in the
-  // gate behind other downloads.
-  if (downloadRepository.getById(chapter.id!) == null) {
-    downloadRepository.save(
-      Download(
-        id: chapter.id,
-        succeeded: 0,
-        failed: 0,
-        total: 100,
-        isDownload: false,
-        isStartDownload: true,
-      )..chapter.value = chapter,
-    );
-  }
 
   // Every download path funnels through here, so acquiring the shared gate is
   // what makes the concurrency limit, per-source serialization (#645) and the
   // start delay/jitter (#621) apply no matter how the download was started.
   final sourceKey = _chapterSourceKey(chapter);
-  final maxConcurrent = ref.read(allowConcurrentDownloadsStateProvider)
-      ? ref.read(concurrentDownloadsStateProvider)
-      : 1;
-  final delaySeconds = ref.read(downloadDelaySecondsStateProvider);
-  await _DownloadGate.instance.acquire(
-    id: chapter.id!,
-    sourceKey: sourceKey,
-    maxConcurrent: maxConcurrent,
-    delaySeconds: delaySeconds,
-  );
-
+  var acquired = false;
   try {
+    final maxConcurrent = ref.read(allowConcurrentDownloadsStateProvider)
+        ? ref.read(concurrentDownloadsStateProvider)
+        : 1;
+    final delaySeconds = ref.read(downloadDelaySecondsStateProvider);
+    await downloadRepository.enqueue(chapter);
+    if (downloadRepository.getById(chapter.id!)?.isDownload == true) return;
+    await _DownloadGate.instance.acquire(
+      id: chapter.id!,
+      sourceKey: sourceKey,
+      maxConcurrent: maxConcurrent,
+      delaySeconds: delaySeconds,
+    );
+    acquired = true;
     // Cancelled while it waited for a slot in the gate? Its record was deleted,
     // so don't resurrect it.
     if (_downloadCancelled(chapter)) {
@@ -266,18 +245,10 @@ Future<void> downloadChapter(
       lastPersistedPercent = percent;
       lastPersistTime = now;
       final download = downloadRepository.getById(chapter.id!);
-      if (download == null) {
-        final download = Download(
-          id: chapter.id,
-          succeeded: percent,
-          failed: 0,
-          total: 100,
-          isDownload: progress.isCompleted,
-          isStartDownload: true,
-        );
-        downloadRepository.save(download..chapter.value = chapter);
-      } else if (progress.total != 0) {
-        downloadRepository.save(
+      // Cancellation deletes the queue record. A late progress callback must
+      // not recreate it and make a cancelled item reappear.
+      if (download != null && progress.total != 0) {
+        await downloadRepository.save(
           download
             ..succeeded = percent
             ..total = 100
@@ -418,7 +389,7 @@ Future<void> downloadChapter(
 
     if (!isOk) {
       botToast(startFailure ?? "Couldn't start the download");
-      _markDownloadFailed(chapter);
+      await _markDownloadFailed(chapter);
       if (callback != null) callback();
       keepAlive.close();
       return;
@@ -582,12 +553,14 @@ Future<void> downloadChapter(
   } catch (e) {
     // Surface the failure instead of swallowing it — a silent catch here is
     // exactly how "downloads just don't start" stays invisible.
-    botToast("Download failed: $e");
-    _markDownloadFailed(chapter);
+    if (!_downloadCancelled(chapter)) botToast("Download failed: $e");
+    await _markDownloadFailed(chapter);
     if (callback != null) callback();
     keepAlive.close();
   } finally {
-    _DownloadGate.instance.release(sourceKey);
+    if (acquired) _DownloadGate.instance.release(sourceKey);
+    _scheduledDownloadIds.remove(chapter.id);
+    keepAlive.close();
   }
 }
 
@@ -607,10 +580,10 @@ Duration _downloadStartDelay(int baseSeconds) {
 /// Reset a failed/aborted download to a plain, tappable "not downloaded" state
 /// so it shows a retry-able icon instead of a progress bar frozen at its last
 /// value. Any partial file is cleaned up on the next attempt.
-void _markDownloadFailed(Chapter chapter) {
+Future<void> _markDownloadFailed(Chapter chapter) async {
   final record = downloadRepository.getById(chapter.id!);
   if (record == null || (record.isDownload ?? false)) return;
-  downloadRepository.save(
+  await downloadRepository.save(
     record
       ..isStartDownload = false
       ..succeeded = 0
@@ -743,6 +716,7 @@ Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
     final ongoingDownloads = DownloadQueueOrder.sorted(
       await downloadRepository.getPendingStarted(),
     );
+    if (!ref.mounted) return;
     // Kick off every pending download. The shared _DownloadGate enforces the
     // concurrency limit, per-source serialization (#645), the start delay
     // (#621) and the manual order (#514), so they can all be fired at once and
@@ -756,10 +730,16 @@ Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
       }
       final chapter = downloadItem.chapter.value;
       if (chapter == null) continue;
-      chapter.cancelDownloads(downloadItem.id);
-      ref.read(downloadChapterProvider(chapter: chapter, useWifi: useWifi));
+      if (_scheduledDownloadIds.contains(chapter.id)) continue;
+      final provider = downloadChapterProvider(
+        chapter: chapter,
+        useWifi: useWifi,
+      );
+      ref.invalidate(provider);
+      ref.read(provider);
     }
-  } catch (_) {
+  } catch (error) {
+    botToast('Could not start download queue: $error');
   } finally {
     keepAlive.close();
   }
