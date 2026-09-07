@@ -70,7 +70,9 @@ class PageNavigationService {
     if (index < 0) return;
 
     if (readerMode.isContinuous) {
-      itemScrollController.jumpTo(index: index);
+      if (itemScrollController.isAttached) {
+        itemScrollController.jumpTo(index: index);
+      }
     } else {
       if (extendedController.hasClients) {
         extendedController.jumpToPage(index);
@@ -79,6 +81,8 @@ class PageNavigationService {
   }
 
   void _navigateContinuous(int index, bool animate) {
+    if (!itemScrollController.isAttached) return;
+
     if (animate) {
       itemScrollController.scrollTo(
         curve: Curves.ease,

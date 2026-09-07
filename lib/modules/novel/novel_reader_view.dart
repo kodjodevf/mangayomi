@@ -81,12 +81,14 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     keepScrollOffset: true,
   );
   bool scrolled = false;
+  bool _scrollRestoreScheduled = false;
   double offset = 0;
   double maxOffset = 0;
   int fontSize = 14;
   bool get _ttsSupported => !Platform.isLinux;
 
   final Stopwatch _readingStopwatch = Stopwatch();
+  int? _discordReaderSession;
 
   void onScroll() {
     if (_scrollController.hasClients) {
@@ -121,7 +123,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     } else {
       restoreSystemUI();
     }
-    discordRpc?.showIdleText();
+    final discordReaderSession = _discordReaderSession;
+    if (discordReaderSession != null) {
+      unawaited(discordRpc?.endReaderSession(discordReaderSession));
+    }
     super.dispose();
   }
 
@@ -158,6 +163,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       });
     });
     if (!isDesktop) SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    _discordReaderSession = discordRpc?.beginReaderSession();
     discordRpc?.showChapterDetails(ref, chapter);
 
     _ttsIndexSub = NovelTtsService.instance.paragraphIndexStream.listen((i) {
@@ -359,30 +365,35 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                 }
                               }
 
-                              Future.delayed(
-                                const Duration(milliseconds: 100),
-                                () {
-                                  if (!scrolled &&
-                                      _scrollController.hasClients) {
-                                    _scrollController
-                                        .animateTo(
-                                          _scrollController
-                                                  .position
-                                                  .maxScrollExtent *
-                                              (double.tryParse(
-                                                    chapter.lastPageRead!,
-                                                  ) ??
-                                                  0),
-                                          duration: Duration(seconds: 1),
-                                          curve: Curves.fastOutSlowIn,
-                                        )
-                                        .then((value) {
-                                          _autoPagescroll();
-                                          scrolled = true;
-                                        });
-                                  }
-                                },
-                              );
+                              if (!_scrollRestoreScheduled) {
+                                _scrollRestoreScheduled = true;
+                                Future.delayed(
+                                  const Duration(milliseconds: 100),
+                                  () {
+                                    if (!scrolled &&
+                                        mounted &&
+                                        _scrollController.hasClients) {
+                                      _scrollController
+                                          .animateTo(
+                                            _scrollController
+                                                    .position
+                                                    .maxScrollExtent *
+                                                (double.tryParse(
+                                                      chapter.lastPageRead!,
+                                                    ) ??
+                                                    0),
+                                            duration: Duration(seconds: 1),
+                                            curve: Curves.fastOutSlowIn,
+                                          )
+                                          .then((value) {
+                                            if (!mounted) return;
+                                            _autoPagescroll();
+                                            scrolled = true;
+                                          });
+                                    }
+                                  },
+                                );
+                              }
                               return Consumer(
                                 builder: (context, ref, _) {
                                   final fontSize = ref.read(

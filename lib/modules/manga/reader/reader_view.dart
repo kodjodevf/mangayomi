@@ -67,9 +67,8 @@ class _MangaReaderViewState extends ConsumerState<MangaReaderView> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.invalidate(mangaReaderProvider(widget.chapterId));
-    });
+    // Runs before build()'s watch() so it invalidates any old instance instead of duplicating the fetch that watch() is about to start.
+    ref.invalidate(mangaReaderProvider(widget.chapterId));
   }
 
   @override
@@ -176,6 +175,7 @@ class _MangaChapterPageGalleryState
   );
 
   final Stopwatch _readingStopwatch = Stopwatch();
+  int? _discordReaderSession;
 
   /// Flag to prevent fullscreen from being disabled when navigating between
   /// chapters via pushReplacement. The old widget's dispose runs after the new
@@ -208,7 +208,10 @@ class _MangaChapterPageGalleryState
     } else {
       restoreSystemUI();
     }
-    discordRpc?.showIdleText();
+    final discordReaderSession = _discordReaderSession;
+    if (discordReaderSession != null) {
+      unawaited(discordRpc?.endReaderSession(discordReaderSession));
+    }
     final actualIdx = _pageViewToActualIndexSync(_currentIndex!);
     final index = pages[actualIdx].index;
     if (index != null) {
@@ -303,6 +306,7 @@ class _MangaChapterPageGalleryState
       extendedController: _extendedController,
     );
     _initCurrentIndex();
+    _discordReaderSession = discordRpc?.beginReaderSession();
     discordRpc?.showChapterDetails(ref, chapter);
     WidgetsBinding.instance.addObserver(this);
     _initWakelock();
@@ -509,12 +513,18 @@ class _MangaChapterPageGalleryState
     if (next && !_readerController.hasNextChapter) return;
     if (!next && !_readerController.hasPreviousChapter) return;
     _isNavigatingToChapter = true;
-    pushReplacementMangaReaderView(
-      context: context,
-      chapter: next
-          ? _readerController.getNextChapter()
-          : _readerController.getPrevChapter(),
-    );
+    try {
+      pushReplacementMangaReaderView(
+        context: context,
+        chapter: next
+            ? _readerController.getNextChapter()
+            : _readerController.getPrevChapter(),
+      );
+    } catch (_) {
+      // If the replacement fails, dispose() never runs to reset this flag, so reset it here instead.
+      _isNavigatingToChapter = false;
+      rethrow;
+    }
   }
 
   @override
@@ -1596,6 +1606,8 @@ class _MangaChapterPageGalleryState
 
     if (!mounted) return;
 
+    final previousController = _readerController;
+
     setState(() {
       _readerController = ref.read(
         readerControllerProvider(chapter: newChapter).notifier,
@@ -1609,6 +1621,9 @@ class _MangaChapterPageGalleryState
 
       _isBookmarked = _readerController.getChapterBookmarked();
     });
+
+    // dispose() only closes the last controller, so this releases every chapter crossed during continuous scrolling.
+    previousController.keepAliveLink?.close();
   }
 
   /// Updates the user-facing page index (e.g., "Page 5 of 32") and syncs
