@@ -24,6 +24,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
+import 'package:mangayomi/modules/anime/utils/linux_video_output.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_controls.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_settings_panel.dart';
@@ -50,6 +51,7 @@ import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/share.dart';
 import 'package:mangayomi/utils/system_ui.dart';
@@ -234,6 +236,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         _AlwaysOnTopStateMixin,
         TickerProviderStateMixin,
         WidgetsBindingObserver {
+  ({double width, double height})? _linuxVideoViewport;
+  ({int width, int height})? _linuxVideoOutputSize;
+  bool _linuxVideoResizeScheduled = false;
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
   late final useLibass = ref.read(useLibassStateProvider);
   late final useMpvConfig = ref.read(useMpvConfigStateProvider);
@@ -967,6 +972,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     await _player.open(
       Media(prefs.videoTrack!.id, httpHeaders: prefs.headers, start: start),
     );
+    _scheduleLinuxVideoOutputResize();
     if (start > Duration.zero) {
       // media_kit's Media(start:) is unreliable for some sources — playback can
       // begin at 0 even though the resume position was passed. Seek explicitly
@@ -2510,7 +2516,17 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           ),
       ],
     );
-    if (!splitSettings) return player;
+    final sizedPlayer = LayoutBuilder(
+      builder: (context, constraints) {
+        _linuxVideoViewport = (
+          width: constraints.maxWidth,
+          height: constraints.maxHeight,
+        );
+        _scheduleLinuxVideoOutputResize();
+        return player;
+      },
+    );
+    if (!splitSettings) return sizedPlayer;
     // YouTube-style split: video docks left (a single focusable unit — Left
     // from the panel focuses it, Select toggles play/pause), a gap, then the
     // settings panel on the right.
@@ -2528,7 +2544,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 focusNode: _tvVideoFocus,
                 onSelect: () => _player.playOrPause(),
                 onExitRight: () => _tvPanelFocus.requestFocus(),
-                child: player,
+                child: sizedPlayer,
               ),
             ),
           ),
@@ -2547,6 +2563,39 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         ],
       ),
     );
+  }
+
+  void _scheduleLinuxVideoOutputResize() {
+    if (!Platform.isLinux ||
+        _linuxVideoResizeScheduled ||
+        _linuxVideoViewport == null) {
+      return;
+    }
+    _linuxVideoResizeScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _linuxVideoResizeScheduled = false;
+      if (!mounted) return;
+      final viewport = _linuxVideoViewport;
+      if (viewport == null) return;
+      final outputSize = linuxVideoOutputSize(
+        logicalWidth: viewport.width,
+        logicalHeight: viewport.height,
+        devicePixelRatio: MediaQuery.devicePixelRatioOf(context),
+      );
+      if (outputSize == null || outputSize == _linuxVideoOutputSize) return;
+      try {
+        await _controller.setSize(
+          width: outputSize.width,
+          height: outputSize.height,
+        );
+        _linuxVideoOutputSize = outputSize;
+      } catch (error, stackTrace) {
+        AppLogger.log(
+          'Failed to resize Linux video output: $error\n$stackTrace',
+          logLevel: LogLevel.warning,
+        );
+      }
+    });
   }
 
   Widget btnToShowShareScreenshot(
