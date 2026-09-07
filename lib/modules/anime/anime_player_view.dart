@@ -24,6 +24,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
+import 'package:mangayomi/modules/anime/utils/player_lifecycle.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_controls.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_settings_panel.dart';
@@ -78,10 +79,15 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   late final Chapter episode = chapterRepository.getById(widget.episodeId);
   List<String> _infoHashList = [];
   bool desktopFullScreenPlayer = false;
+  bool _episodeReplacementInProgress = false;
   @override
   void dispose() {
-    if (isDesktop) {
-      setFullScreen(value: desktopFullScreenPlayer);
+    if (shouldExitDesktopFullscreenOnDispose(
+      isDesktop: isDesktop,
+      isFullscreen: desktopFullScreenPlayer,
+      isEpisodeReplacement: _episodeReplacementInProgress,
+    )) {
+      unawaited(setFullScreen(value: false));
     }
     for (var infoHash in _infoHashList) {
       MTorrentServer().removeTorrent(infoHash);
@@ -159,6 +165,9 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
           desktopFullScreenPlayer: (value) {
             desktopFullScreenPlayer = value;
           },
+          onEpisodeReplacement: () {
+            _episodeReplacementInProgress = true;
+          },
           mpvDirectory: mpvDirectory,
         );
       },
@@ -207,6 +216,7 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   final List<String> infoHashList;
   final Directory? mpvDirectory;
   final void Function(bool) desktopFullScreenPlayer;
+  final VoidCallback onEpisodeReplacement;
   const AnimeStreamPage({
     super.key,
     required this.defaultSubtitle,
@@ -216,6 +226,7 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
     required this.isTorrent,
     this.infoHashList = const [],
     required this.desktopFullScreenPlayer,
+    required this.onEpisodeReplacement,
     required this.mpvDirectory,
   });
 
@@ -234,6 +245,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         _AlwaysOnTopStateMixin,
         TickerProviderStateMixin,
         WidgetsBindingObserver {
+  bool _routeExitInProgress = false;
+  bool _videoTextureVisible = true;
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
   late final useLibass = ref.read(useLibassStateProvider);
   late final useMpvConfig = ref.read(useMpvConfigStateProvider);
@@ -757,18 +770,47 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _customButtons.value = customButtons;
   }
 
-  bool _hasPushedToNewEpisode = false;
 
-  void pushToNewEpisode(BuildContext context, Chapter episode) {
-    // Guards against a double call (fast double-press on a TV remote,
-    // autoplay racing a manual tap) issuing two navigations before the
-    // first one replaces this route.
-    if (_hasPushedToNewEpisode) return;
-    _hasPushedToNewEpisode = true;
+  Future<void> pushToNewEpisode(BuildContext context, Chapter episode) async {
+    if (_routeExitInProgress) return;
+    _routeExitInProgress = true;
+    bool _hasPushedToNewEpisode = false;
     widget.desktopFullScreenPlayer.call(ref.read(fullscreenProvider));
+    widget.onEpisodeReplacement();
+    await _retireVideoTexture();
     if (context.mounted) {
       pushReplacementMangaReaderView(context: context, chapter: episode);
     }
+  }
+
+  Future<void> _retireVideoTexture() async {
+    if (!_videoTextureVisible || !mounted) return;
+    await retirePlaybackSurface(
+      hideSurface: () {
+        if (mounted) setState(() => _videoTextureVisible = false);
+      },
+      waitForFrame: () => WidgetsBinding.instance.endOfFrame,
+    );
+  }
+
+  Future<void> _exitDesktopFullScreen() async {
+    final isFullScreen = await setFullScreen(value: false);
+    if (!mounted) return;
+    ref.read(fullscreenProvider.notifier).state = isFullScreen;
+    widget.desktopFullScreenPlayer.call(isFullScreen);
+  }
+
+  Future<void> _goBackToDetail() async {
+    if (_routeExitInProgress) return;
+    _routeExitInProgress = true;
+    if (isDesktop && ref.read(fullscreenProvider)) {
+      await _exitDesktopFullScreen();
+    }
+    restoreSystemUI();
+    await _retireVideoTexture();
+    if (!mounted) return;
+    _firstTime = true;
+    Navigator.pop(context);
   }
 
   void _unifiedPositionHandler(Duration position) {
@@ -900,7 +942,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       _player,
       configuration: VideoControllerConfiguration(
         hwdec: hwdecMode,
-        enableHardwareAcceleration: enableHardwareAccel,
+        enableHardwareAcceleration: shouldUseHardwareAcceleratedVideoOutput(
+          userEnabled: enableHardwareAccel,
+          isWindows: Platform.isWindows,
+        ),
         vo: Platform.isAndroid
             ? useGpuNext
                   ? "gpu-next"
@@ -936,17 +981,19 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         "$defaultSkipIntroLength",
       );
     } catch (_) {}
-    if (isDesktop && _firstTime) {
-      final globalFullscreen = ref.read(fullScreenPlayerStateProvider);
-      // Delay fullscreen until after the first frame so the window is ready.
-      // On Windows, calling setFullScreen before the widget tree is built
-      // can silently fail, leaving the title bar visible.
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setFullScreen(value: globalFullscreen);
-        ref.read(fullscreenProvider.notifier).state = globalFullscreen;
-        widget.desktopFullScreenPlayer.call(globalFullscreen);
-      });
-      _firstTime = false;
+    if (isDesktop) {
+      if (_firstTime) {
+        final globalFullscreen = ref.read(fullScreenPlayerStateProvider);
+        // Delay fullscreen until after the first frame so the window is ready.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setFullScreen(value: globalFullscreen);
+          ref.read(fullscreenProvider.notifier).state = globalFullscreen;
+          widget.desktopFullScreenPlayer.call(globalFullscreen);
+        });
+        _firstTime = false;
+      } else {
+        widget.desktopFullScreenPlayer.call(ref.read(fullscreenProvider));
+      }
     }
     if (!isDesktop) {
       final forceLandscape = ref.read(forceLandscapePlayerStateProvider);
@@ -1093,10 +1140,18 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _subSpeedController.removeListener(_onSubSpeedChanged);
     WidgetsBinding.instance.removeObserver(this);
     _setCurrentPosition(true, saveWatchTime: true);
-    _player.stop();
-    _completed.cancel();
-    _currentPositionSub.cancel();
-    _currentTotalDurationSub.cancel();
+    final playerCleanup = disposePlaybackSession(
+      listenerCancellations: [
+        _completed.cancel(),
+        _currentPositionSub.cancel(),
+        _currentTotalDurationSub.cancel(),
+      ],
+      beforeDisposePlayer: Platform.isWindows
+          ? () => Future<void>.delayed(const Duration(milliseconds: 250))
+          : null,
+      disposePlayer: _player.dispose,
+    );
+    unawaited(playerCleanup.catchError((_) {}));
     _currentPosition.dispose();
     _currentTotalDuration.dispose();
     _video.dispose();
@@ -1113,7 +1168,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     discordRpc?.showIdleText();
     discordRpc?.showOriginalTimestamp();
     _streamController.keepAliveLink?.close();
-    _player.dispose();
     if (widget.isTorrent) {
       for (final hash in widget.infoHashList) {
         MTorrentServer().removeTorrent(hash);
@@ -1895,7 +1949,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       // Direct pop, not maybePop: the on-screen back arrow always exits the
       // player, bypassing the PopScope that makes the remote Back hide the
       // panel first.
-      onBack: () => Navigator.pop(context),
+      onBack: _goBackToDetail,
       onRestart: () => _player.seek(Duration.zero),
       onSettings: () {
         // On TV the settings open as the docked side panel; phones/desktop keep
@@ -2297,21 +2351,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         children: [
           BackButton(
             color: Colors.white,
-            onPressed: () {
-              if (isDesktop && fullScreen) {
-                setFullScreen(value: !fullScreen);
-                ref.read(fullscreenProvider.notifier).state = !fullScreen;
-                widget.desktopFullScreenPlayer.call(!fullScreen);
-              } else {
-                restoreSystemUI();
-              }
-              if (mounted) {
-                // Set variable to true, so the player uses the global
-                // "Use Fullscreen" setting again.
-                _firstTime = true;
-                Navigator.pop(context);
-              }
-            },
+            onPressed: _goBackToDetail,
           ),
           Flexible(
             child: ListTile(
@@ -2437,7 +2477,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     final splitSettings = isTv && _tvSettingsOpen;
     final Widget player = Stack(
       children: [
-        Video(
+        if (_videoTextureVisible)
+          Video(
           pip: const PipConfig(autoEnter: true),
           subtitleViewConfiguration: SubtitleViewConfiguration(
             visible: false,
@@ -2489,7 +2530,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           width: splitSettings ? null : context.width(1),
           height: splitSettings ? null : context.height(1),
           resumeUponEnteringForegroundMode: true,
-        ),
+          )
+        else
+          const SizedBox.expand(),
         Stack(
           alignment: AlignmentDirectional.center,
           children: [
