@@ -336,6 +336,11 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool _hasOpeningSkip = false;
   bool _hasEndingSkip = false;
   bool _initSubtitleAndAudio = true;
+  // Whatever subtitle/audio track is actually active right now, whether
+  // picked by the user or applied as the default - so a quality change can
+  // restore it instead of always falling back to the default track.
+  SubtitleTrack? _activeSubtitleTrack;
+  AudioTrack? _activeAudioTrack;
   bool _includeSubtitles = false;
   int _subDelay = 0;
   final _subDelayController = TextEditingController(text: "0");
@@ -752,7 +757,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _customButtons.value = customButtons;
   }
 
+  bool _hasPushedToNewEpisode = false;
+
   void pushToNewEpisode(BuildContext context, Chapter episode) {
+    // Guards against a double call (fast double-press on a TV remote,
+    // autoplay racing a manual tap) issuing two navigations before the
+    // first one replaces this route.
+    if (_hasPushedToNewEpisode) return;
+    _hasPushedToNewEpisode = true;
     widget.desktopFullScreenPlayer.call(ref.read(fullscreenProvider));
     if (context.mounted) {
       pushReplacementMangaReaderView(context: context, chapter: episode);
@@ -771,7 +783,16 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _currentPosition.value = position;
     if (_initSubtitleAndAudio) {
       _initSubtitleAndAudio = false;
-      if (_firstVid.subtitles?.isNotEmpty ?? false) {
+      if (_activeSubtitleTrack != null) {
+        try {
+          _player.setSubtitleTrack(_activeSubtitleTrack!);
+        } catch (_) {}
+        if (_activeAudioTrack != null) {
+          try {
+            _player.setAudioTrack(_activeAudioTrack!);
+          } catch (_) {}
+        }
+      } else if (_firstVid.subtitles?.isNotEmpty ?? false) {
         try {
           final defaultTrack = _firstVid.subtitles!.firstWhere(
             (sub) => sub.label == widget.defaultSubtitle,
@@ -782,18 +803,19 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           final track = (file.startsWith("http") || file.startsWith("file"))
               ? SubtitleTrack.uri(file, title: label, language: label)
               : SubtitleTrack.data(file, title: label, language: label);
+          _activeSubtitleTrack = track;
           _player.setSubtitleTrack(track);
         } catch (_) {}
         if (_firstVid.audios?.isNotEmpty ?? false) {
           try {
             final at = _firstVid.audios!.first;
-            _player.setAudioTrack(
-              AudioTrack.uri(
-                at.file ?? "",
-                title: at.label,
-                language: at.label,
-              ),
+            final track = AudioTrack.uri(
+              at.file ?? "",
+              title: at.label,
+              language: at.label,
             );
+            _activeAudioTrack = track;
+            _player.setAudioTrack(track);
           } catch (_) {}
         }
       }
@@ -1434,6 +1456,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               onTap: () {
                 Navigator.pop(context);
                 try {
+                  _activeSubtitleTrack = sub.subtitle!;
                   _player.setSubtitleTrack(sub.subtitle!);
                 } catch (_) {}
               },
@@ -1447,7 +1470,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 final file = await FilePicker.pickFile();
 
                 if (file != null && context.mounted) {
-                  _player.setSubtitleTrack(SubtitleTrack.uri(file.path!));
+                  final track = SubtitleTrack.uri(file.path!);
+                  _activeSubtitleTrack = track;
+                  _player.setSubtitleTrack(track);
                 }
                 if (!context.mounted) return;
                 Navigator.pop(context);
@@ -1468,13 +1493,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   isLocal: widget.isLocal,
                 ) as ImdbSubtitle?;
                 if (subtitle != null && context.mounted) {
-                  _player.setSubtitleTrack(
-                    SubtitleTrack.uri(
-                      subtitle.url!,
-                      title: subtitle.language,
-                      language: subtitle.language,
-                    ),
+                  final track = SubtitleTrack.uri(
+                    subtitle.url!,
+                    title: subtitle.language,
+                    language: subtitle.language,
                   );
+                  _activeSubtitleTrack = track;
+                  _player.setSubtitleTrack(track);
                 }
                 if (!context.mounted) return;
                 Navigator.pop(context);
@@ -1548,6 +1573,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             onTap: () {
               Navigator.pop(context);
               try {
+                _activeAudioTrack = aud.audio!;
                 _player.setAudioTrack(aud.audio!);
               } catch (_) {}
             },
@@ -1689,6 +1715,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         selected: selected,
         onTap: () {
           try {
+            _activeSubtitleTrack = sub.subtitle!;
             _player.setSubtitleTrack(sub.subtitle!);
           } catch (_) {}
         },
@@ -1747,6 +1774,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         selected: selected,
         onTap: () {
           try {
+            _activeAudioTrack = aud.audio!;
             _player.setAudioTrack(aud.audio!);
           } catch (_) {}
         },
