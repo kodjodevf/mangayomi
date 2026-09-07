@@ -53,6 +53,12 @@ class DownloadRepository {
       .isStartDownloadEqualTo(true)
       .watch(fireImmediately: true);
 
+  Stream<List<Download>> watchPending() => isar.downloads
+      .filter()
+      .idIsNotNull()
+      .isDownloadEqualTo(false)
+      .watch(fireImmediately: true);
+
   Future<List<Download>> getPendingStarted() => isar.downloads
       .filter()
       .idIsNotNull()
@@ -61,6 +67,36 @@ class DownloadRepository {
       .findAll();
 
   // No updatedAt stamping - Download has no such field.
+  /// Atomically appends a chapter to the queue. Repeated requests preserve
+  /// completed and active entries, while failed entries become retryable.
+  Future<void> enqueue(Chapter chapter) => dbWriteQueue.run(() {
+    isar.writeTxnSync(() {
+      final existing = isar.downloads.getSync(chapter.id!);
+      if (existing?.isDownload == true || existing?.isStartDownload == true) {
+        return;
+      }
+      final download =
+          existing ??
+          Download(
+            id: chapter.id,
+            total: 100,
+            succeeded: 0,
+            failed: 0,
+            isDownload: false,
+            isStartDownload: true,
+          );
+      download
+        ..succeeded = 0
+        ..failed = 0
+        ..total = 100
+        ..isDownload = false
+        ..isStartDownload = true
+        ..chapter.value = chapter;
+      isar.downloads.putSync(download);
+      download.chapter.saveSync();
+    });
+  });
+
   Future<void> save(Download download) => dbWriteQueue.run(
     () => isar.writeTxnSync(() => isar.downloads.putSync(download)),
   );

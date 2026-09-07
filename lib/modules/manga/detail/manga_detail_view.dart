@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:mangayomi/services/download_manager/next_downloads.dart';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -270,8 +272,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     if (chaptersToDownload.isEmpty) return;
 
     for (final chapter in chaptersToDownload) {
-      await ref.read(addDownloadToQueueProvider(chapter: chapter).future);
+      await downloadRepository.enqueue(chapter);
     }
+    if (!mounted) return;
+    ref.invalidate(processDownloadsProvider());
     ref.read(processDownloadsProvider());
   }
 
@@ -512,49 +516,20 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               },
                               onSelected: (value) async {
                                 final chapters = widget.manga!
-                                    .getSortedFilteredChapters();
-                                final chaptersToDownload = <Chapter>[];
-                                if (value == 0 ||
-                                    value == 1 ||
-                                    value == 2 ||
-                                    value == 3) {
-                                  final lastChapterReadIndex = chapters
-                                      .lastIndexWhere(
-                                        (element) => element.isRead == true,
-                                      );
-                                  if (lastChapterReadIndex == -1 ||
-                                      chapters.length == 1) {
-                                    if (chapters.isNotEmpty) {
-                                      chaptersToDownload.add(chapters.first);
-                                    }
-                                  } else {
-                                    final length = switch (value) {
-                                      0 => 1,
-                                      1 => 5,
-                                      2 => 10,
-                                      _ => 25,
-                                    };
-                                    for (var i = 1; i < length + 1; i++) {
-                                      if (chapters.length > 1 &&
-                                          chapters.elementAtOrNull(
-                                                lastChapterReadIndex + i,
-                                              ) !=
-                                              null) {
-                                        final chapter =
-                                            chapters[lastChapterReadIndex + i];
-                                        chaptersToDownload.add(chapter);
-                                      }
-                                    }
-                                  }
-                                } else if (value == 4) {
-                                  chaptersToDownload.addAll(
-                                    chapters.where(
-                                      (element) => !(element.isRead ?? false),
-                                    ),
-                                  );
-                                } else if (value == 5) {
-                                  chaptersToDownload.addAll(chapters);
-                                }
+                                    .getFilteredChapters();
+                                final chaptersToDownload = value <= 3
+                                    ? selectNextDownloads(
+                                        chapters,
+                                        count: [1, 5, 10, 25][value],
+                                        downloads: downloadRepository.getAll(),
+                                      )
+                                    : chapters
+                                          .where(
+                                            (chapter) =>
+                                                value == 5 ||
+                                                chapter.isRead != true,
+                                          )
+                                          .toList();
                                 await _downloadChaptersWithDestination(
                                   context,
                                   chaptersToDownload,
