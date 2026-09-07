@@ -356,20 +356,38 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool get hasNextEpisode => _streamController.hasNextEpisode;
 
   late final StreamSubscription<bool> _completed = _player.stream.completed
-      .listen((val) {
-        if (hasNextEpisode && val && ref.read(autoPlayNextEpisodeProvider)) {
-          if (mounted) {
-            pushToNewEpisode(context, _streamController.getNextEpisode());
-          }
-        }
-        // If the last episode of an Anime has ended, exit fullscreen mode
-        final isFullScreen = ref.read(fullscreenProvider);
-        if (!hasNextEpisode && val && isDesktop && isFullScreen) {
-          setFullScreen(value: false);
-          ref.read(fullscreenProvider.notifier).state = false;
-          widget.desktopFullScreenPlayer.call(false);
-        }
-      });
+      .listen(_handlePlaybackCompleted);
+
+  Future<void> _handlePlaybackCompleted(bool completed) async {
+    if (!completed || !mounted) return;
+
+    _watchStopwatch.stop();
+    final reportedDuration = _currentTotalDuration.value;
+    final totalDuration =
+        reportedDuration != null && reportedDuration > Duration.zero
+        ? reportedDuration
+        : _player.state.duration;
+    await _streamController.completeEpisode(
+      totalDuration,
+      elapsedSeconds: _watchStopwatch.elapsed.inSeconds,
+    );
+    _watchStopwatch.reset();
+    if (!mounted) return;
+
+    final hasNext = hasNextEpisode;
+    if (hasNext && ref.read(autoPlayNextEpisodeProvider)) {
+      pushToNewEpisode(context, _streamController.getNextEpisode());
+      return;
+    }
+
+    // If the last episode of an Anime has ended, exit fullscreen mode.
+    final isFullScreen = ref.read(fullscreenProvider);
+    if (!hasNext && isDesktop && isFullScreen) {
+      setFullScreen(value: false);
+      ref.read(fullscreenProvider.notifier).state = false;
+      widget.desktopFullScreenPlayer.call(false);
+    }
+  }
 
   Future<void> _handleMpvEvents(Pointer<generated.mpv_event> event) async {
     try {
