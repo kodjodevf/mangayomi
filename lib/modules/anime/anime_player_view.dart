@@ -359,7 +359,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   int _subDelay = 0;
   final _subDelayController = TextEditingController(text: "0");
   double _subSpeed = 1;
-  final _subSpeedController = TextEditingController(text: "1");
+  final _subSpeedController = TextEditingController(text: "1.00");
   int lastRpcTimestampUpdate = DateTime.now().millisecondsSinceEpoch;
 
   late final StreamSubscription<Duration> _currentPositionSub;
@@ -1741,18 +1741,20 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   onPressed: () {
                     setSectionState(() {
                       _subDelay = 0;
-                      _subDelayController.value = TextEditingValue(
-                        text: "$_subDelay",
+                      _subDelayController.value = const TextEditingValue(
+                        text: "0",
+                        selection: TextSelection.collapsed(offset: 1),
                       );
                       _subSpeed = 1;
-                      _subSpeedController.value = TextEditingValue(
-                        text: _subSpeed.toStringAsFixed(2),
+                      _subSpeedController.value = const TextEditingValue(
+                        text: "1.00",
+                        selection: TextSelection.collapsed(offset: 4),
                       );
                     });
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.refresh,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onSurface,
                     size: 18,
                   ),
                 ),
@@ -1760,35 +1762,87 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             ),
             SettingsStepperRow(
               label: context.l10n.subtitle_delay,
-              value: '${_subDelay > 0 ? '+' : ''}$_subDelay ms',
+              controller: _subDelayController,
+              suffix: ' ms',
+              keyboardType: const TextInputType.numberWithOptions(signed: true),
               onDecrement: () => setSectionState(() {
                 _subDelay -= 50;
+                final text = "$_subDelay";
                 _subDelayController.value = TextEditingValue(
-                  text: "$_subDelay",
+                  text: text,
+                  selection: TextSelection.collapsed(offset: text.length),
                 );
               }),
               onIncrement: () => setSectionState(() {
                 _subDelay += 50;
+                final text = "$_subDelay";
                 _subDelayController.value = TextEditingValue(
-                  text: "$_subDelay",
+                  text: text,
+                  selection: TextSelection.collapsed(offset: text.length),
                 );
               }),
+              onSubmitted: (text) {
+                final val = int.tryParse(text);
+                if (val != null) {
+                  setSectionState(() {
+                    _subDelay = val;
+                    final str = "$val";
+                    _subDelayController.value = TextEditingValue(
+                      text: str,
+                      selection: TextSelection.collapsed(offset: str.length),
+                    );
+                  });
+                } else {
+                  final str = "$_subDelay";
+                  _subDelayController.value = TextEditingValue(
+                    text: str,
+                    selection: TextSelection.collapsed(offset: str.length),
+                  );
+                }
+              },
             ),
             SettingsStepperRow(
               label: context.l10n.subtitle_speed,
-              value: '${_subSpeed.toStringAsFixed(2)}x',
+              controller: _subSpeedController,
+              suffix: 'x',
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               onDecrement: () => setSectionState(() {
                 _subSpeed = (_subSpeed - 0.01).clamp(0.1, 10.0);
+                final text = _subSpeed.toStringAsFixed(2);
                 _subSpeedController.value = TextEditingValue(
-                  text: _subSpeed.toStringAsFixed(2),
+                  text: text,
+                  selection: TextSelection.collapsed(offset: text.length),
                 );
               }),
               onIncrement: () => setSectionState(() {
                 _subSpeed = (_subSpeed + 0.01).clamp(0.1, 10.0);
+                final text = _subSpeed.toStringAsFixed(2);
                 _subSpeedController.value = TextEditingValue(
-                  text: _subSpeed.toStringAsFixed(2),
+                  text: text,
+                  selection: TextSelection.collapsed(offset: text.length),
                 );
               }),
+              onSubmitted: (text) {
+                final val = double.tryParse(text);
+                if (val != null) {
+                  setSectionState(() {
+                    _subSpeed = val.clamp(0.1, 10.0);
+                    final str = _subSpeed.toStringAsFixed(2);
+                    _subSpeedController.value = TextEditingValue(
+                      text: str,
+                      selection: TextSelection.collapsed(offset: str.length),
+                    );
+                  });
+                } else {
+                  final str = _subSpeed.toStringAsFixed(2);
+                  _subSpeedController.value = TextEditingValue(
+                    text: str,
+                    selection: TextSelection.collapsed(offset: str.length),
+                  );
+                }
+              },
             ),
             SettingsSectionLabel(context.l10n.tracks),
             ...videoSubtitleLast.toSet().toList().map((sub) {
@@ -2651,12 +2705,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2.5),
-          child: PlayerPillButton(
-            icon: Icons.video_settings,
-            active: false,
-            tooltip: context.l10n.settings,
-            isCompact: isMobile,
-            onTap: () => _openPlayerSettings(context),
+          child: Builder(
+            builder: (btnContext) => PlayerPillButton(
+              icon: Icons.video_settings,
+              active: false,
+              tooltip: context.l10n.settings,
+              isCompact: isMobile,
+              onTap: () => _openPlayerSettings(btnContext),
+            ),
           ),
         ),
 

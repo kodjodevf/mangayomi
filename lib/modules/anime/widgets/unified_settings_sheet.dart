@@ -170,20 +170,30 @@ class SettingsSectionLabel extends StatelessWidget {
   }
 }
 
-/// A "-"/"+" stepper row (subtitle delay, subtitle speed...).
+/// A "-"/"+" stepper row (subtitle delay, subtitle speed...) supporting optional manual text editing.
 class SettingsStepperRow extends StatelessWidget {
   final String label;
-  final String value;
+  final String? value;
+  final TextEditingController? controller;
+  final String? suffix;
+  final TextInputType? keyboardType;
   final VoidCallback onDecrement;
   final VoidCallback onIncrement;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
 
   const SettingsStepperRow({
     super.key,
     required this.label,
-    required this.value,
+    this.value,
+    this.controller,
+    this.suffix,
+    this.keyboardType,
     required this.onDecrement,
     required this.onIncrement,
-  });
+    this.onChanged,
+    this.onSubmitted,
+  }) : assert(value != null || controller != null, 'Must provide value or controller');
 
   @override
   Widget build(BuildContext context) {
@@ -218,20 +228,55 @@ class SettingsStepperRow extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _StepperButton(icon: Icons.remove, onTap: onDecrement),
-                SizedBox(
-                  width: 64,
-                  child: Text(
-                    value,
-                    textAlign: TextAlign.center,
-                    style: (textTheme.labelMedium ?? const TextStyle())
-                        .copyWith(
-                          fontSize: 12,
-                          color: onSurface,
-                          fontFeatures: const [FontFeature.tabularFigures()],
-                          fontWeight: FontWeight.w600,
+                if (controller != null)
+                  SizedBox(
+                    width: 78,
+                    child: TextField(
+                      controller: controller,
+                      keyboardType: keyboardType,
+                      textAlign: TextAlign.center,
+                      cursorHeight: 14,
+                      style: (textTheme.labelMedium ?? const TextStyle())
+                          .copyWith(
+                            fontSize: 12,
+                            color: onSurface,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                            fontWeight: FontWeight.w600,
+                          ),
+                      decoration: InputDecoration(
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 4,
                         ),
+                        border: InputBorder.none,
+                        suffixText: suffix,
+                        suffixStyle: (textTheme.labelMedium ?? const TextStyle())
+                            .copyWith(
+                              fontSize: 11,
+                              color: colorScheme.onSurfaceVariant,
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                      onChanged: onChanged,
+                      onSubmitted: onSubmitted,
+                    ),
+                  )
+                else
+                  SizedBox(
+                    width: 64,
+                    child: Text(
+                      value ?? '',
+                      textAlign: TextAlign.center,
+                      style: (textTheme.labelMedium ?? const TextStyle())
+                          .copyWith(
+                            fontSize: 12,
+                            color: onSurface,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
                   ),
-                ),
                 _StepperButton(icon: Icons.add, onTap: onIncrement),
               ],
             ),
@@ -680,17 +725,11 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
     final screenHeight = MediaQuery.of(context).size.height;
     final maxBodyHeight = screenHeight * 0.72;
 
-    return PopScope(
-      canPop: active == null || isDirectShortcut,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
-        _goHome();
-      },
-      child: SettingsDrilldownScope(
-        goHome: _goHome,
-        close: widget.onClose,
-        isDirectShortcut: isDirectShortcut,
-        child: Column(
+    return SettingsDrilldownScope(
+      goHome: _goHome,
+      close: widget.onClose,
+      isDirectShortcut: isDirectShortcut,
+      child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             _DrilldownHeader(
@@ -800,8 +839,7 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }
 
@@ -891,20 +929,38 @@ Future<void> showDesktopPlayerSettingsMenu(
 }) {
   final navigator = Navigator.of(anchor);
   final overlay = navigator.overlay!.context.findRenderObject() as RenderBox;
-  final button = anchor.findRenderObject() as RenderBox;
+  final renderObject = anchor.findRenderObject();
+  final button = renderObject is RenderBox ? renderObject : null;
+
   // Anchored to the button's own rect — showMenu grows the popup from it,
   // flipping above when (as here, a bottom control bar) there's no room
   // below, exactly like YouTube's gear menu growing upward from the bar.
-  final position = RelativeRect.fromRect(
-    Rect.fromPoints(
-      button.localToGlobal(Offset.zero, ancestor: overlay),
-      button.localToGlobal(
-        button.size.bottomRight(Offset.zero),
-        ancestor: overlay,
+  final RelativeRect position;
+  if (button != null &&
+      button.attached &&
+      button.hasSize &&
+      button.size != overlay.size) {
+    position = RelativeRect.fromRect(
+      Rect.fromPoints(
+        button.localToGlobal(Offset.zero, ancestor: overlay),
+        button.localToGlobal(
+          button.size.bottomRight(Offset.zero),
+          ancestor: overlay,
+        ),
       ),
-    ),
-    Offset.zero & overlay.size,
-  );
+      Offset.zero & overlay.size,
+    );
+  } else {
+    // Fallback if anchor is the full screen or unmeasured: anchor to bottom-right corner
+    final right = 16.0;
+    final bottom = 64.0;
+    position = RelativeRect.fromLTRB(
+      overlay.size.width - right - 40,
+      overlay.size.height - bottom - 40,
+      right,
+      bottom,
+    );
+  }
   return showMenu<void>(
     context: anchor,
     position: position,
