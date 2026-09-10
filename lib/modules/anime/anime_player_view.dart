@@ -1265,11 +1265,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   // When opened inside a SettingsDrilldown (mobile bottom sheet or desktop
   // popup), an option selection navigates back to the settings home list so the
   // user can see the new choice inline and adjust other options without having
-  // to reopen the menu from scratch.
+  // to reopen the menu from scratch. If opened directly via a shortcut, it
+  // closes the settings instead.
   void _popSettings(BuildContext context) {
     final scope = SettingsDrilldownScope.of(context);
-    if (scope != null) {
+    if (scope != null && !scope.isDirectShortcut) {
       scope.goHome();
+    } else if (scope != null) {
+      scope.close();
     } else {
       Navigator.pop(context);
     }
@@ -2200,10 +2203,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
-  // Sections are only added to the unified sheet when relevant (e.g. no
-  // "Chapitres" tab without chapter marks), so the fixed positions below stay
-  // valid: quality(0)/audio(1)/subtitles(2)/appearance(3), then chapters(4)
-  // when present, then speed right after.
+  // Sections in the unified sheet: quality(0), audio(1), subtitles(2), appearance(3),
+  // then chapters(4) when present, then speed, then fit.
+  int get _qualitySectionIndex => 0;
+  int get _audioSectionIndex => 1;
+  int get _subtitleSectionIndex => 2;
   int get _chaptersSectionIndex => 4;
   int get _speedSectionIndex => _chapterMarks.value.isNotEmpty ? 5 : 4;
 
@@ -2317,6 +2321,16 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     return raw;
   }
 
+  String _shortTrackLabel(String raw) {
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty) return '';
+    final clean = trimmed.split(RegExp(r'[\(\[\-]')).first.trim();
+    if (clean.length > 7) {
+      return clean.substring(0, 6);
+    }
+    return clean;
+  }
+
   Widget _mobileBottomButtonBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
@@ -2332,10 +2346,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    // Not reverse: the gear — the only way to reach every
-                    // other setting now — must be the thing visible by
-                    // default, never the item a cramped phone screen has to
-                    // scroll to find.
+                    reverse: true,
                     child: _buildSettingsButtons(context),
                   ),
                 ),
@@ -2479,99 +2490,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
-  // The shader bindings (Ctrl+0..6) previously had no on-screen trace at all
-  // — they only worked if you already knew they existed. This puts every
-  // desktop shortcut, that group included, one click away instead of secret.
-  void _showKeyboardShortcuts(BuildContext context) {
-    final entries = <(String, String)>[
-      ('Space / Media play-pause', 'Play / pause'),
-      ('← / →', 'Seek 5s'),
-      ('J / L', 'Seek 10s'),
-      ('↑ / ↓', 'Volume ±5'),
-      ('M', 'Mute'),
-      ('Enter / S', 'Skip intro'),
-      ('N / P', 'Next / previous episode'),
-      ('F', 'Toggle fullscreen'),
-      ('Esc', 'Exit fullscreen'),
-      if (useMpvConfig) ('Ctrl+0', 'Clear shader'),
-      if (useMpvConfig)
-        ('Ctrl+1…6', 'Anime4K modes A / B / C / A+A / B+B / C+A'),
-    ];
-    showDialog(
-      context: context,
-      builder: (context) {
-        final colorScheme = Theme.of(context).colorScheme;
-        final textTheme = Theme.of(context).textTheme;
-
-        return AlertDialog(
-          backgroundColor: colorScheme.surfaceContainerHigh,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-          ),
-          title: Text(
-            'Keyboard shortcuts',
-            style: (textTheme.titleLarge ?? const TextStyle()).copyWith(
-              color: colorScheme.onSurface,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          content: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 380),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ...entries.map(
-                    (entry) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 130,
-                            child: Text(
-                              entry.$1,
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontFeatures: const [
-                                  FontFeature.tabularFigures(),
-                                ],
-                                color: colorScheme.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              entry.$2,
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                context.l10n.ok,
-                style: TextStyle(color: colorScheme.primary),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   String _fitShortLabel(BoxFit fit) => switch (fit) {
     BoxFit.contain => 'Contain',
     BoxFit.cover => 'Cover',
@@ -2585,95 +2503,185 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   /// helper method for _mobileBottomButtonBar() and _desktopBottomButtonBar()
   Widget _buildSettingsButtons(BuildContext context) {
     final isFullscreen = ref.watch(fullscreenProvider);
+    final hasMultipleVideos = widget.videos.length > 1;
+
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // Builder: the desktop popup anchors to whichever context calls
-        // _openPlayerSettings, so this needs its own — the outer `context`
-        // this method receives points at the player page, not this icon.
-        Builder(
-          builder: (context) => IconButton(
-            tooltip: context.l10n.settings,
-            padding: isDesktop ? EdgeInsets.zero : const EdgeInsets.all(5),
-            onPressed: () => _openPlayerSettings(context),
-            icon: const Icon(Icons.video_settings, color: Colors.white),
-          ),
-        ),
-        if (isDesktop)
-          IconButton(
-            tooltip: 'Keyboard shortcuts',
-            padding: EdgeInsets.zero,
-            onPressed: () => _showKeyboardShortcuts(context),
-            icon: const Icon(
-              Icons.keyboard_outlined,
-              color: Colors.white,
-              size: 20,
+        // Quality shortcut pill
+        if (hasMultipleVideos)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.5),
+            child: Builder(
+              builder: (context) => ValueListenableBuilder<VideoPrefs?>(
+                valueListenable: _video,
+                builder: (context, videoPrefs, _) {
+                  final rawQuality =
+                      videoPrefs?.videoTrack?.title ??
+                      (widget.videos.isNotEmpty
+                          ? widget.videos.first.quality
+                          : '');
+                  final qualityLabel = _shortQuality(rawQuality);
+                  return PlayerPillButton(
+                    icon: Icons.high_quality,
+                    label: qualityLabel.isNotEmpty ? qualityLabel : null,
+                    tooltip: context.l10n.video_quality,
+                    isCompact: isMobile,
+                    onTap: () => _openPlayerSettings(
+                      context,
+                      initialIndex: _qualitySectionIndex,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
-        // These pills duplicate what the gear menu already shows inline
-        // (Vitesse/Fit rows carry their current value too), so on a phone's
-        // narrow control bar they aren't worth the horizontal room — they
-        // used to push the gear itself out of the visible scroll area.
-        // Desktop has room to spare and mouse users benefit from the
-        // one-tap shortcut, so they stay there.
-        if (!isMobile) ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 3),
-            child: Builder(
-              builder: (context) => ValueListenableBuilder<double>(
-                valueListenable: _playbackSpeed,
-                builder: (context, speed, _) => PlayerPillButton(
-                  icon: Icons.speed,
-                  label: '${speed}x',
-                  tooltip: context.l10n.playback_speed,
+
+        // Subtitles CC shortcut pill
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2.5),
+          child: Builder(
+            builder: (context) => StreamBuilder<Track>(
+              stream: _player.stream.track,
+              builder: (context, snapshot) {
+                final subTrack = _player.state.track.subtitle;
+                final isSubOff =
+                    subTrack.id == 'no' ||
+                    (subTrack.title == null &&
+                        subTrack.language == null &&
+                        subTrack.channels == null);
+                final rawName =
+                    subTrack.title ??
+                    subTrack.language ??
+                    subTrack.channels ??
+                    '';
+                final shortLabel = _shortTrackLabel(rawName);
+
+                return PlayerPillButton(
+                  icon: Icons.subtitles_outlined,
+                  label: !isSubOff && shortLabel.isNotEmpty
+                      ? shortLabel
+                      : 'Off',
+                  active: false,
+                  tooltip: context.l10n.video_subtitle,
+                  isCompact: isMobile,
                   onTap: () => _openPlayerSettings(
                     context,
-                    initialIndex: _speedSectionIndex,
+                    initialIndex: _subtitleSectionIndex,
                   ),
+                );
+              },
+            ),
+          ),
+        ),
+
+        // Audio track shortcut pill (if multiple audio tracks or explicitly set)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2.5),
+          child: Builder(
+            builder: (context) => StreamBuilder<Track>(
+              stream: _player.stream.track,
+              builder: (context, snapshot) {
+                final audioTrack = _player.state.track.audio;
+                final rawName =
+                    audioTrack.title ??
+                    audioTrack.language ??
+                    audioTrack.channels ??
+                    '';
+                final shortLabel = _shortTrackLabel(rawName);
+                final hasMultipleAudios =
+                    _player.state.tracks.audio.length > 1 ||
+                    widget.videos.any((v) => (v.audios?.length ?? 0) > 1);
+
+                if (!hasMultipleAudios && shortLabel.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
+                return PlayerPillButton(
+                  icon: Icons.audiotrack_outlined,
+                  label: shortLabel.isNotEmpty ? shortLabel : null,
+                  tooltip: context.l10n.video_audio,
+                  isCompact: isMobile,
+                  onTap: () => _openPlayerSettings(
+                    context,
+                    initialIndex: _audioSectionIndex,
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+
+        // Playback speed pill
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2.5),
+          child: Builder(
+            builder: (context) => ValueListenableBuilder<double>(
+              valueListenable: _playbackSpeed,
+              builder: (context, speed, _) => PlayerPillButton(
+                icon: Icons.speed,
+                label: '${speed}x',
+                active: false,
+                tooltip: context.l10n.playback_speed,
+                isCompact: isMobile,
+                onTap: () => _openPlayerSettings(
+                  context,
+                  initialIndex: _speedSectionIndex,
                 ),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 3),
-            child: ValueListenableBuilder<BoxFit>(
-              valueListenable: _fit,
-              builder: (context, fit, _) => PlayerPillButton(
-                icon: Icons.fit_screen_outlined,
-                label: _fitShortLabel(fit),
-                tooltip: 'Fit screen',
-                onTap: () => _changeFitLabel(ref),
-              ),
+        ),
+
+        // Fit screen pill
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2.5),
+          child: ValueListenableBuilder<BoxFit>(
+            valueListenable: _fit,
+            builder: (context, fit, _) => PlayerPillButton(
+              icon: Icons.fit_screen_outlined,
+              label: _fitShortLabel(fit),
+              active: false,
+              tooltip: 'Fit screen',
+              isCompact: isMobile,
+              onTap: () => _changeFitLabel(ref),
             ),
           ),
-        ],
-        // PiP button stays off. The UIScene crash that originally disabled it
-        // is fixed, but the media_kit fork moved the API; see the note on
-        // pictureInPicture above and closed #757.
-        // if (Platform.isIOS && _controller.isPictureInPictureAvailable())
-        //   IconButton(
-        //     tooltip: 'Picture in Picture',
-        //     icon: const Icon(
-        //       Icons.picture_in_picture_alt,
-        //       color: Colors.white,
-        //     ),
-        //     onPressed: () => _controller.enterPictureInPicture(),
-        //   ),
-        if (isDesktop)
-          CustomMaterialDesktopFullscreenButton(
-            controller: _controller,
-            desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
-          )
-        // A TV is always fullscreen, so the toggle is useless there — hide it.
-        else if (!isTv)
-          IconButton(
-            icon: Icon(isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen),
-            iconSize: 25,
-            color: Colors.white,
-            onPressed: () {
-              _setLandscapeMode(!isFullscreen);
-              ref.read(fullscreenProvider.notifier).state = !isFullscreen;
-              widget.desktopFullScreenPlayer.call(!isFullscreen);
-            },
+        ),
+
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2.5),
+          child: PlayerPillButton(
+            icon: Icons.video_settings,
+            active: false,
+            tooltip: context.l10n.settings,
+            isCompact: isMobile,
+            onTap: () => _openPlayerSettings(context),
+          ),
+        ),
+
+        if (!isTv)
+          Padding(
+            padding: const EdgeInsets.only(left: 2.5, right: 5),
+            child: PlayerPillButton(
+              icon: isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
+              active: false,
+              tooltip: context.l10n.fullscreen,
+              isCompact: isMobile,
+              onTap: () async {
+                if (isDesktop) {
+                  final isFullScreen = await setFullScreen(
+                    value: !isFullscreen,
+                  );
+                  ref.read(fullscreenProvider.notifier).state = !isFullScreen;
+                  widget.desktopFullScreenPlayer.call(!isFullscreen);
+                } else {
+                  _setLandscapeMode(!isFullscreen);
+                  ref.read(fullscreenProvider.notifier).state = !isFullscreen;
+                  widget.desktopFullScreenPlayer.call(!isFullscreen);
+                }
+              },
+            ),
           ),
       ],
     );

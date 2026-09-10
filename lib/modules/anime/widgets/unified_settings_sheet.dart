@@ -270,23 +270,38 @@ class _StepperButton extends StatelessWidget {
 /// mode...) so the value stays glanceable without opening a menu — replacing
 /// icons that either cycled silently or only surfaced their value in a toast.
 class PlayerPillButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
+  final IconData? icon;
+  final String? label;
   final VoidCallback onTap;
   final String? tooltip;
+  final bool active;
+  final bool isCompact;
 
   const PlayerPillButton({
     super.key,
-    required this.icon,
-    required this.label,
     required this.onTap,
+    this.icon,
+    this.label,
     this.tooltip,
-  });
+    this.active = false,
+    this.isCompact = false,
+  }) : assert(icon != null || label != null, 'Must provide icon or label');
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+
+    final bgColor = active
+        ? colorScheme.primaryContainer.withValues(alpha: 0.85)
+        : colorScheme.surfaceContainerHighest.withValues(alpha: 0.70);
+    final borderColor = active
+        ? colorScheme.primary.withValues(alpha: 0.60)
+        : colorScheme.outlineVariant.withValues(alpha: 0.35);
+    final fgColor = active ? colorScheme.onPrimaryContainer : Colors.white;
+
+    final padH = isCompact ? 8.0 : 10.0;
+    final padV = isCompact ? 4.5 : 6.0;
 
     final button = Material(
       color: Colors.transparent,
@@ -294,27 +309,29 @@ class PlayerPillButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          padding: EdgeInsets.symmetric(horizontal: padH, vertical: padV),
           decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.70),
+            color: bgColor,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.35),
-            ),
+            border: Border.all(color: borderColor),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 15, color: Colors.white),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: (textTheme.labelMedium ?? const TextStyle()).copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  fontFeatures: const [FontFeature.tabularFigures()],
+              if (icon != null) ...[
+                Icon(icon, size: isCompact ? 14 : 15, color: fgColor),
+                if (label != null) SizedBox(width: isCompact ? 4 : 6),
+              ],
+              if (label != null)
+                Text(
+                  label!,
+                  style: (textTheme.labelMedium ?? const TextStyle()).copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: fgColor,
+                    fontSize: isCompact ? 11 : null,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
                 ),
-              ),
             ],
           ),
         ),
@@ -569,11 +586,13 @@ class _DrilldownHeader extends StatelessWidget {
 class SettingsDrilldownScope extends InheritedWidget {
   final VoidCallback goHome;
   final VoidCallback close;
+  final bool isDirectShortcut;
 
   const SettingsDrilldownScope({
     super.key,
     required this.goHome,
     required this.close,
+    this.isDirectShortcut = false,
     required super.child,
   });
 
@@ -582,7 +601,8 @@ class SettingsDrilldownScope extends InheritedWidget {
   }
 
   @override
-  bool updateShouldNotify(covariant SettingsDrilldownScope oldWidget) => false;
+  bool updateShouldNotify(covariant SettingsDrilldownScope oldWidget) =>
+      oldWidget.isDirectShortcut != isDirectShortcut;
 }
 
 /// Player settings as a single browsable list — YouTube's pattern instead of
@@ -652,6 +672,7 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
   @override
   Widget build(BuildContext context) {
     final active = _active;
+    final isDirectShortcut = widget.initialIndex >= 0;
     final currentKey = active == null
         ? const ValueKey('home')
         : ValueKey('section-$active');
@@ -660,7 +681,7 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
     final maxBodyHeight = screenHeight * 0.72;
 
     return PopScope(
-      canPop: active == null,
+      canPop: active == null || isDirectShortcut,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
         _goHome();
@@ -668,6 +689,7 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
       child: SettingsDrilldownScope(
         goHome: _goHome,
         close: widget.onClose,
+        isDirectShortcut: isDirectShortcut,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -675,7 +697,7 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
               title: active == null
                   ? widget.title
                   : widget.entries[active].label,
-              showBack: active != null,
+              showBack: !isDirectShortcut && active != null,
               forward: _forward,
               onBack: _goHome,
               onClose: widget.onClose,
