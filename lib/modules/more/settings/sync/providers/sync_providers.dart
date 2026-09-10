@@ -32,16 +32,12 @@ class Synching extends _$Synching {
     ref.invalidate(syncServerProvider(syncId: syncId!));
   }
 
-  void setLastSyncManga(int timestamp) {
-    syncPreferenceRepository.save(state..lastSyncManga = timestamp);
+  void setSince(int timestamp) {
+    syncPreferenceRepository.save(state..since = timestamp);
   }
 
-  void setLastSyncHistory(int timestamp) {
-    syncPreferenceRepository.save(state..lastSyncHistory = timestamp);
-  }
-
-  void setLastSyncUpdate(int timestamp) {
-    syncPreferenceRepository.save(state..lastSyncUpdate = timestamp);
+  void setLastSync(int timestamp) {
+    syncPreferenceRepository.save(state..lastSync = timestamp);
   }
 
   void setServer(String? server) {
@@ -57,21 +53,6 @@ class Synching extends _$Synching {
     ref.invalidateSelf();
   }
 
-  void setSyncHistories(bool value) {
-    syncPreferenceRepository.save(state..syncHistories = value);
-    ref.invalidateSelf();
-  }
-
-  void setSyncUpdates(bool value) {
-    syncPreferenceRepository.save(state..syncUpdates = value);
-    ref.invalidateSelf();
-  }
-
-  void setSyncSettings(bool value) {
-    syncPreferenceRepository.save(state..syncSettings = value);
-    ref.invalidateSelf();
-  }
-
   List<ChangedPart> getAllChangedParts() => changedPartRepository.getAll();
 
   List<ChangedPart> getChangedParts(List<ActionType> actionTypes) =>
@@ -81,20 +62,34 @@ class Synching extends _$Synching {
     ActionType action,
     int? isarId,
     Object data,
-    bool writeTxn,
-  ) {
+    bool writeTxn, {
+    int? clientId,
+  }) {
     if (!state.syncOn) return;
-    changedPartRepository.add(action, isarId, data, writeTxn);
+    changedPartRepository.add(
+      action,
+      isarId,
+      data,
+      writeTxn,
+      clientId: clientId,
+    );
   }
 
   Future<void> addChangedPartAsync(
     ActionType action,
     int? isarId,
     Object data,
-    bool writeTxn,
-  ) async {
+    bool writeTxn, {
+    int? clientId,
+  }) async {
     if (!state.syncOn) return;
-    await changedPartRepository.addAsync(action, isarId, data, writeTxn);
+    await changedPartRepository.addAsync(
+      action,
+      isarId,
+      data,
+      writeTxn,
+      clientId: clientId,
+    );
   }
 
   Future<void> clearChangedParts(List<ActionType> actions, bool txn) =>

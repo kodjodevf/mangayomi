@@ -1043,9 +1043,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get syncing => 'समन्वयित हो रहा है';
 
   @override
-  String get sync_password => 'पासवर्ड (कम से कम 8 अक्षर)';
-
-  @override
   String get sync_logged => 'लॉगिन सफल';
 
   @override
@@ -1053,19 +1050,13 @@ class AppLocalizationsHi extends AppLocalizations {
       'स्व-होस्ट किए गए सर्वर के माध्यम से कई उपकरणों में अपनी प्रगति को समन्वयित करें। अधिक जानकारी के लिए हमारे डिस्कॉर्ड सर्वर देखें!';
 
   @override
-  String get last_sync_manga => 'अंतिम मंगा सिंक: ';
+  String get last_sync => 'Last sync at: ';
 
   @override
-  String get last_sync_history => 'अंतिम इतिहास सिंक: ';
-
-  @override
-  String get last_sync_update => 'अंतिम अपडेट सिंक: ';
+  String get sync_login_browser => 'Log in with browser';
 
   @override
   String get sync_server => 'सिंक सर्वर पता';
-
-  @override
-  String get sync_login_invalid_creds => 'अमान्य ईमेल या पासवर्ड';
 
   @override
   String get sync_starting => 'सिंक शुरू हो रहा है...';
@@ -1079,6 +1070,14 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get sync_restore_in_progress =>
       'सिंक छोड़ दिया गया — पुनर्स्थापना जारी है';
+
+  @override
+  String sync_progress_percent(Object percent) {
+    return 'Syncing… $percent%';
+  }
+
+  @override
+  String get sync_progress_indeterminate => 'Syncing…';
 
   @override
   String get sync_button_sync => 'प्रगति सिंक करें';
@@ -1115,9 +1114,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get sync_section_general => 'सामान्य';
-
-  @override
-  String get sync_section_data_types => 'क्या सिंक करना है';
 
   @override
   String get sync_on => 'सिंक सक्षम करें';
@@ -2052,15 +2048,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get rpc_show_cover_image => 'Discord में वर्तमान कवर छवि दिखाएं';
-
-  @override
-  String get sync_enable_histories => 'इतिहास डेटा सिंक करें';
-
-  @override
-  String get sync_enable_updates => 'अपडेट डेटा सिंक करें';
-
-  @override
-  String get sync_enable_settings => 'सेटिंग्स सिंक करें';
 
   @override
   String get enable_mpv => 'mpv शेडर्स / स्क्रिप्ट सक्षम करें';

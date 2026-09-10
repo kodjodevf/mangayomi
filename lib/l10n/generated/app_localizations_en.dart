@@ -1043,9 +1043,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncing => 'Sync';
 
   @override
-  String get sync_password => 'Password (at least 8 characters)';
-
-  @override
   String get sync_logged => 'Login successful';
 
   @override
@@ -1053,19 +1050,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sync your progress across multiple devices via a self-hosted \nserver. Check out our discord server for more info!';
 
   @override
-  String get last_sync_manga => 'Last manga sync at: ';
+  String get last_sync => 'Last sync at: ';
 
   @override
-  String get last_sync_history => 'Last history sync at: ';
-
-  @override
-  String get last_sync_update => 'Last update sync at: ';
+  String get sync_login_browser => 'Log in with browser';
 
   @override
   String get sync_server => 'Sync Server Address';
-
-  @override
-  String get sync_login_invalid_creds => 'Invalid email or password';
 
   @override
   String get sync_starting => 'Starting sync...';
@@ -1080,6 +1071,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sync_restore_in_progress => 'Sync skipped — restore in progress';
 
   @override
+  String sync_progress_percent(Object percent) {
+    return 'Syncing… $percent%';
+  }
+
+  @override
+  String get sync_progress_indeterminate => 'Syncing…';
+
+  @override
   String get sync_button_sync => 'Sync progress';
 
   @override
@@ -1087,14 +1086,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sync_button_upload_info =>
-      'This operation will fully replace the remote data with local data!';
+      'This device\'s data will overwrite the server\'s for anything it also has. Nothing on the server gets deleted.';
 
   @override
   String get sync_button_download => 'Download only';
 
   @override
   String get sync_button_download_info =>
-      'This operation will fully replace the local data with remote data!';
+      'Pulls in everything from the server. Nothing on this device gets deleted.';
 
   @override
   String get sync_status_not_configured => 'Not connected';
@@ -1113,9 +1112,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sync_section_general => 'General';
-
-  @override
-  String get sync_section_data_types => 'What to sync';
 
   @override
   String get sync_on => 'Enable sync';
@@ -2045,15 +2041,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rpc_show_cover_image => 'Show current cover image in Discord';
-
-  @override
-  String get sync_enable_histories => 'Sync history data';
-
-  @override
-  String get sync_enable_updates => 'Sync update data';
-
-  @override
-  String get sync_enable_settings => 'Sync settings';
 
   @override
   String get enable_mpv => 'Enable mpv shaders / scripts';

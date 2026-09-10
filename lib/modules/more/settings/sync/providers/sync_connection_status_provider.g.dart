@@ -59,7 +59,7 @@ final class SyncConnectionStateProvider
 }
 
 String _$syncConnectionStateHash() =>
-    r'86be06f7b64785a3e4ec09a80b7c183c91c3a0af';
+    r'b4ad27b30466087f303df1a8bb111a4000dd765f';
 
 final class SyncConnectionStateFamily extends $Family
     with
