@@ -44,6 +44,7 @@ import 'package:mangayomi/utils/discord_rpc.dart';
 import 'package:mangayomi/services/crash_native.dart';
 import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/utils/log/logger.dart';
+import 'package:mangayomi/utils/client_id.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
@@ -216,6 +217,10 @@ class _StartupErrorApp extends StatelessWidget {
 
 Future<void> _postLaunchInit(StorageProvider storage) async {
   await AppLogger.init();
+  // Backfills clientId on rows saved before that field existed. Runs on every
+  // launch rather than gating on a version check - once caught up it's just
+  // six empty indexed lookups, so there's no real cost to checking again.
+  unawaited(backfillMissingClientIds());
   unawaited(MDownloader.initializeIsolatePool(poolSize: 6));
   final hivePath = isApple ? "databases" : p.join("Mangayomi", "databases");
   await Hive.initFlutter(Platform.isAndroid ? "" : hivePath);
@@ -502,9 +507,11 @@ class _MyAppState extends ConsumerState<MyApp>
                               final clean = e.trim().toLowerCase();
                               return !existingUrls.contains(clean) &&
                                   !existingUrls.contains('$clean/') &&
-                                  !existingUrls.contains(clean.endsWith('/')
-                                      ? clean.substring(0, clean.length - 1)
-                                      : clean);
+                                  !existingUrls.contains(
+                                    clean.endsWith('/')
+                                        ? clean.substring(0, clean.length - 1)
+                                        : clean,
+                                  );
                             })
                             .map(
                               (e) => Repo(

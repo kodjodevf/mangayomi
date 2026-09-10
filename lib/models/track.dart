@@ -7,6 +7,9 @@ part 'track.g.dart';
 class Track {
   Id? id;
 
+  @Index()
+  int? clientId;
+
   int? libraryId;
 
   int? mediaId;
@@ -43,6 +46,7 @@ class Track {
 
   Track({
     this.id = Isar.autoIncrement,
+    this.clientId,
     this.libraryId,
     this.mediaId,
     this.mangaId,
@@ -60,6 +64,7 @@ class Track {
     this.updatedAt = 0,
   });
   Track.fromJson(Map<String, dynamic> json) {
+    clientId = json['clientId'];
     finishedReadingDate = json['finishedReadingDate'];
     id = json['id'];
     lastChapterRead = json['lastChapterRead'];
@@ -81,6 +86,7 @@ class Track {
   }
 
   Map<String, dynamic> toJson() => {
+    'clientId': clientId,
     'finishedReadingDate': finishedReadingDate,
     'id': id,
     'lastChapterRead': lastChapterRead,
