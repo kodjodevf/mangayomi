@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 /// One selectable row inside a [UnifiedSettingsSheet] section: a label, an
 /// optional trailing hint (codec, keyboard shortcut...) and a filled
@@ -25,43 +23,40 @@ class SettingsOptionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final accent = context.primaryColor;
-    final onSurface = theme.colorScheme.onSurface;
+    final colorScheme = theme.colorScheme;
+    final accent = colorScheme.primary;
+    final onSurface = colorScheme.onSurface;
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(12),
         onTap: onTap,
         child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 1),
+          margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: selected
-                ? accent.withValues(alpha: 0.12)
+                ? colorScheme.primaryContainer.withValues(alpha: 0.45)
                 : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
               Container(
-                width: 18,
-                height: 18,
+                width: 20,
+                height: 20,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: selected ? accent : Colors.transparent,
                   border: Border.all(
                     color: selected
                         ? accent
-                        : onSurface.withValues(alpha: 0.28),
-                    width: 1.4,
+                        : colorScheme.outline.withValues(alpha: 0.50),
+                    width: 1.5,
                   ),
                 ),
                 child: selected
-                    ? Icon(
-                        Icons.check,
-                        size: 12,
-                        color: theme.colorScheme.onPrimary,
-                      )
+                    ? Icon(Icons.check, size: 13, color: colorScheme.onPrimary)
                     : null,
               ),
               const SizedBox(width: 12),
@@ -274,29 +269,34 @@ class PlayerPillButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     final button = Material(
-      type: MaterialType.transparency,
+      color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(8),
         onTap: onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: PlayerTheme.chipBackdrop,
-            borderRadius: BorderRadius.circular(999),
+            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.70),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: colorScheme.outlineVariant.withValues(alpha: 0.35),
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 14, color: Colors.white),
-              const SizedBox(width: 5),
+              Icon(icon, size: 15, color: Colors.white),
+              const SizedBox(width: 6),
               Text(
                 label,
-                style: const TextStyle(
-                  fontSize: 11.5,
+                style: (textTheme.labelMedium ?? const TextStyle()).copyWith(
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
-                  fontFeatures: [FontFeature.tabularFigures()],
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
               ),
             ],
@@ -774,24 +774,24 @@ class UnifiedSettingsSheet extends StatelessWidget {
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Container(
         decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
+          color: colorScheme.surfaceContainerLow,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         child: SafeArea(
           top: false,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 9),
+              const SizedBox(height: 12),
               Container(
-                width: 34,
+                width: 32,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: colorScheme.onSurface.withValues(alpha: 0.18),
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.40),
                   borderRadius: BorderRadius.circular(99),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               SettingsDrilldown(
                 title: title,
                 entries: entries,
@@ -855,9 +855,9 @@ Future<void> showDesktopPlayerSettingsMenu(
   return showMenu<void>(
     context: anchor,
     position: position,
-    color: Theme.of(anchor).colorScheme.surface,
+    color: Theme.of(anchor).colorScheme.surfaceContainerHigh,
     surfaceTintColor: Colors.transparent,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     menuPadding: EdgeInsets.zero,
     constraints: const BoxConstraints(minWidth: 300, maxWidth: 320),
     items: [

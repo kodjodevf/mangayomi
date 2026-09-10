@@ -5,8 +5,6 @@ import 'package:mangayomi/utils/platform_utils.dart';
 
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_track_shape.dart';
-import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 
@@ -155,7 +153,11 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                   (widget.delta ?? tempPosition ?? position).label(
                     reference: duration,
                   ),
-                  style: PlayerTheme.timecode,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: Colors.white,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -174,14 +176,17 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                   children: [
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
-                        trackHeight: isDesktop ? null : 3,
-                        activeTrackColor: context.primaryColor,
-                        inactiveTrackColor: PlayerTheme.trackIdle,
-                        secondaryActiveTrackColor: PlayerTheme.trackBuffer,
-                        overlayColor: context.primaryColor.withValues(
-                          alpha: 0.16,
+                        trackHeight: 4.0,
+                        activeTrackColor: Theme.of(context).colorScheme.primary,
+                        inactiveTrackColor: Colors.white.withValues(
+                          alpha: 0.22,
                         ),
-                        thumbShape: const _CapsuleThumbShape(),
+                        secondaryActiveTrackColor: Colors.white.withValues(
+                          alpha: 0.45,
+                        ),
+                        overlayColor: Theme.of(context).colorScheme.primary
+                            .withValues(alpha: 0.20),
+                        thumbShape: const _M3SliderThumbShape(),
                         trackShape: CustomTrackShape(
                           currentPosition: clampedValue,
                           bufferPosition: max(
@@ -191,7 +196,7 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                           maxValue: maxValue < 1 ? 1 : maxValue,
                           minValue: 0,
                           chapterMarks: widget.chapterMarks.value,
-                          chapterMarkWidth: 10,
+                          chapterMarkWidth: 2.5,
                         ),
                       ),
                       child: Slider(
@@ -266,7 +271,11 @@ class CustomSeekBarState extends State<CustomSeekBar> {
               child: Center(
                 child: Text(
                   duration.label(reference: duration),
-                  style: PlayerTheme.timecode,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: Colors.white,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
@@ -277,7 +286,7 @@ class CustomSeekBarState extends State<CustomSeekBar> {
 }
 
 /// The floating bubble shown above the thumb while scrubbing: shows the
-/// target timecode (and the chapter it falls in, if any).
+/// target timecode (and the chapter it falls in, if any) styled as an M3 Tooltip.
 class _ScrubPreviewBubble extends StatelessWidget {
   final String label;
   final String? chapterLabel;
@@ -286,17 +295,23 @@ class _ScrubPreviewBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: PlayerTheme.glassStrong,
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
-        boxShadow: const [
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.35),
+          width: 1.0,
+        ),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x66000000),
-            blurRadius: 14,
-            offset: Offset(0, 6),
+            color: Colors.black.withValues(alpha: 0.30),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -305,16 +320,24 @@ class _ScrubPreviewBubble extends StatelessWidget {
         children: [
           Text(
             label,
-            style: PlayerTheme.timecode.copyWith(fontWeight: FontWeight.w600),
+            style: (textTheme.labelMedium ?? const TextStyle()).copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
           ),
           if (chapterLabel != null)
             Padding(
-              padding: const EdgeInsets.only(top: 1),
+              padding: const EdgeInsets.only(top: 2),
               child: Text(
                 chapterLabel!,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 10.5, color: context.primaryColor),
+                style: TextStyle(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w500,
+                  color: colorScheme.primary,
+                ),
               ),
             ),
         ],
@@ -323,18 +346,15 @@ class _ScrubPreviewBubble extends StatelessWidget {
   }
 }
 
-/// A slim white capsule with a soft amber halo, replacing the default round
-/// Material thumb — it reads as one object with the richly-painted
-/// [CustomTrackShape] instead of a generic slider blob dropped on top of it.
-class _CapsuleThumbShape extends SliderComponentShape {
-  const _CapsuleThumbShape();
+/// Material Design 3 thumb with smooth activation halo.
+class _M3SliderThumbShape extends SliderComponentShape {
+  const _M3SliderThumbShape();
 
-  static const double _width = 4.0;
-  static const double _height = 14.0;
+  static const double _thumbRadius = 5.0;
 
   @override
   Size getPreferredSize(bool isEnabled, bool isDiscrete) {
-    return const Size(_width, _height);
+    return const Size(_thumbRadius * 2, _thumbRadius * 2);
   }
 
   @override
@@ -353,19 +373,22 @@ class _CapsuleThumbShape extends SliderComponentShape {
     required Size sizeWithOverflow,
   }) {
     final canvas = context.canvas;
-    final haloRect = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: center, width: _width + 6, height: _height + 6),
-      const Radius.circular(5),
-    );
-    final accentColor = sliderTheme.activeTrackColor ?? PlayerTheme.accent;
-    canvas.drawRRect(
-      haloRect,
-      Paint()..color = accentColor.withValues(alpha: 0.28),
-    );
-    final thumbRect = RRect.fromRectAndRadius(
-      Rect.fromCenter(center: center, width: _width, height: _height),
-      const Radius.circular(2),
-    );
-    canvas.drawRRect(thumbRect, Paint()..color = Colors.white);
+    final accentColor = sliderTheme.activeTrackColor ?? Colors.white;
+
+    // Interaction halo on drag / focus
+    final double haloRadius = _thumbRadius + (6.0 * activationAnimation.value);
+    if (activationAnimation.value > 0.05) {
+      canvas.drawCircle(
+        center,
+        haloRadius,
+        Paint()
+          ..color = accentColor.withValues(
+            alpha: 0.28 * activationAnimation.value,
+          ),
+      );
+    }
+
+    // Thumb core
+    canvas.drawCircle(center, _thumbRadius, Paint()..color = Colors.white);
   }
 }

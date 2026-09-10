@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
@@ -65,20 +64,33 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      focusNode: widget.focusNode,
-      onPressed: widget.controller.player.playOrPause,
-      iconSize: discSize,
-      padding: EdgeInsets.zero,
-      color: Colors.white,
-      icon: IgnorePointer(
+    final colorScheme = Theme.of(context).colorScheme;
+    final bg = colorScheme.surfaceContainerHighest.withValues(alpha: 0.75);
+    final border = colorScheme.outlineVariant.withValues(alpha: 0.35);
+
+    return Material(
+      color: Colors.transparent,
+      shape: const CircleBorder(),
+      child: InkWell(
+        focusNode: widget.focusNode,
+        customBorder: const CircleBorder(),
+        splashColor: colorScheme.primary.withValues(alpha: 0.24),
+        highlightColor: colorScheme.primary.withValues(alpha: 0.12),
+        onTap: widget.controller.player.playOrPause,
         child: Container(
           width: discSize,
           height: discSize,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: PlayerTheme.chipBackdrop,
-            border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+            color: bg,
+            border: Border.all(color: border, width: 1.2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.30),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
           child: Center(
             child: AnimatedIcon(

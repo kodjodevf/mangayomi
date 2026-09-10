@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class MediaIndicatorBuilder extends StatelessWidget {
   final bool isVolumeIndicator;
@@ -13,6 +11,8 @@ class MediaIndicatorBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return ValueListenableBuilder(
       valueListenable: value,
       builder: (context, value, child) => Visibility(
@@ -23,14 +23,30 @@ class MediaIndicatorBuilder extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(top: 80),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(12),
                 child: Container(
-                  height: 40,
-                  width: 200,
-                  color: PlayerTheme.glassStrong,
+                  height: 42,
+                  width: 210,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.92,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.35),
+                      width: 1.0,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colorScheme.shadow.withValues(alpha: 0.25),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -46,24 +62,26 @@ class MediaIndicatorBuilder extends StatelessWidget {
                                     < 2.0 / 3.0 => Icons.brightness_medium,
                                     _ => Icons.brightness_high,
                                   },
-                            color: PlayerTheme.ink,
+                            color: colorScheme.onSurface,
+                            size: 20,
                           ),
                           Expanded(
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
                               child: Container(
                                 clipBehavior: Clip.antiAlias,
                                 decoration: BoxDecoration(
-                                  color: Colors.transparent,
                                   borderRadius: BorderRadius.circular(100),
                                 ),
-                                child: SizedBox.fromSize(
-                                  size: const Size(130, 20),
+                                child: SizedBox(
+                                  height: 6,
                                   child: LinearProgressIndicator(
                                     value: value,
-                                    color: context.primaryColor,
-                                    backgroundColor: PlayerTheme.trackIdle,
+                                    color: colorScheme.primary,
+                                    backgroundColor: colorScheme.onSurface
+                                        .withValues(alpha: 0.18),
                                   ),
                                 ),
                               ),
@@ -82,7 +100,7 @@ class MediaIndicatorBuilder extends StatelessWidget {
                                     _ => Icons.brightness_high,
                                   },
                             size: 16,
-                            color: PlayerTheme.ink,
+                            color: colorScheme.onSurfaceVariant,
                           ),
                         ],
                       ),

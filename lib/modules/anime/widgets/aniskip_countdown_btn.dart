@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
 import 'package:mangayomi/services/aniskip.dart';
 import 'package:media_kit/media_kit.dart';
 
@@ -74,10 +73,13 @@ class _AniSkipCountDownButtonState extends ConsumerState<AniSkipCountDownButton>
     if (!widget.active || widget.autoSkip || _isCompleted) {
       return const SizedBox.shrink();
     }
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40),
       child: Material(
-        type: MaterialType.transparency,
+        color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(999),
           onTap: _seekTo,
@@ -88,13 +90,21 @@ class _AniSkipCountDownButtonState extends ConsumerState<AniSkipCountDownButton>
                   widget.timeoutLength -
                   (_controller.duration! * _controller.value).inSeconds;
               return Container(
-                padding: const EdgeInsets.fromLTRB(6, 6, 14, 6),
+                padding: const EdgeInsets.fromLTRB(8, 6, 16, 6),
                 decoration: BoxDecoration(
-                  color: PlayerTheme.glassStrong,
+                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.90),
                   borderRadius: BorderRadius.circular(999),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.12),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.40),
+                    width: 1.0,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.28),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -107,30 +117,30 @@ class _AniSkipCountDownButtonState extends ConsumerState<AniSkipCountDownButton>
                         children: [
                           CircularProgressIndicator(
                             value: 1 - _controller.value,
-                            strokeWidth: 2.4,
-                            color: PlayerTheme.semantic,
-                            backgroundColor: Colors.white.withValues(
-                              alpha: 0.18,
+                            strokeWidth: 2.5,
+                            color: colorScheme.primary,
+                            backgroundColor: colorScheme.onSurface.withValues(
+                              alpha: 0.16,
                             ),
                           ),
                           Text(
                             '$remaining',
-                            style: const TextStyle(
-                              fontSize: 8.5,
-                              fontWeight: FontWeight.w600,
-                              color: PlayerTheme.ink,
+                            style: textTheme.labelSmall?.copyWith(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.onSurface,
+                              fontFeatures: const [FontFeature.tabularFigures()],
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 9),
+                    const SizedBox(width: 10),
                     Text(
                       widget.skipTypeText,
-                      style: const TextStyle(
-                        fontSize: 12.5,
+                      style: (textTheme.labelLarge ?? const TextStyle()).copyWith(
+                        color: colorScheme.onSurface,
                         fontWeight: FontWeight.w600,
-                        color: PlayerTheme.ink,
                       ),
                     ),
                   ],

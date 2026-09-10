@@ -34,7 +34,6 @@ import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
 import 'package:mangayomi/utils/manga_cover_actions.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
-import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_setting_widget.dart';
 import 'package:mangayomi/modules/anime/widgets/unified_settings_sheet.dart';
@@ -1472,8 +1471,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       );
     }
     // FontSettingWidget/ColorSettingWidget style themselves from the ambient
-    // Theme, not from PlayerTheme — they used to open inside their own
-    // draggable menu, which inherited whatever theme was live at the time.
+    // Theme — they used to open inside their own draggable menu.
     // Forced dark here so they stay legible against this sheet's dark ground
     // even when the app itself runs in light mode.
     return Theme(
@@ -2501,74 +2499,76 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     ];
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: const Color(0xFF171310),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 380),
-          child: Padding(
-            padding: const EdgeInsets.all(18),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Keyboard shortcuts',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                ...entries.map(
-                  (entry) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: 130,
-                          child: Text(
-                            entry.$1,
-                            style: TextStyle(
-                              fontSize: 12.5,
-                              fontFeatures: const [
-                                FontFeature.tabularFigures(),
-                              ],
-                              color: context.primaryColor,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            entry.$2,
-                            style: TextStyle(
-                              fontSize: 12.5,
-                              color: Colors.white.withValues(alpha: 0.8),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      context.l10n.ok,
-                      style: TextStyle(color: context.primaryColor),
-                    ),
-                  ),
-                ),
-              ],
+      builder: (context) {
+        final colorScheme = Theme.of(context).colorScheme;
+        final textTheme = Theme.of(context).textTheme;
+
+        return AlertDialog(
+          backgroundColor: colorScheme.surfaceContainerHigh,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+          title: Text(
+            'Keyboard shortcuts',
+            style: (textTheme.titleLarge ?? const TextStyle()).copyWith(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w700,
             ),
           ),
-        ),
-      ),
+          content: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 380),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...entries.map(
+                    (entry) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 130,
+                            child: Text(
+                              entry.$1,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures(),
+                                ],
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              entry.$2,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                context.l10n.ok,
+                style: TextStyle(color: colorScheme.primary),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -3229,12 +3229,15 @@ Widget seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
   return Builder(
     builder: (ctx) {
       final accent = ctx.primaryColor;
+      final colorScheme = Theme.of(ctx).colorScheme;
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
         decoration: BoxDecoration(
-          color: PlayerTheme.glassStrong,
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.90),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
+          border: Border.all(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.35),
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

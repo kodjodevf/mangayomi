@@ -9,7 +9,6 @@ import 'package:mangayomi/modules/anime/providers/anime_player_controller_provid
 import 'package:mangayomi/modules/anime/utils/player_focus.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
-import 'package:mangayomi/modules/anime/widgets/player_theme.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
@@ -472,32 +471,47 @@ class _DesktopControllerWidgetState
                           clipBehavior: Clip.none,
                           alignment: Alignment.bottomCenter,
                           children: [
-                            // Top gradient.
-                            Container(
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  stops: [0.0, 0.2],
-                                  colors: [
-                                    Color(0x61000000),
-                                    Color(0x00000000),
-                                  ],
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              height: 140,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Theme.of(context).colorScheme.scrim
+                                          .withValues(alpha: 0.75),
+                                      Theme.of(context).colorScheme.scrim
+                                          .withValues(alpha: 0.35),
+                                      Colors.transparent,
+                                    ],
+                                    stops: const [0.0, 0.65, 1.0],
+                                  ),
                                 ),
                               ),
                             ),
-
-                            // Bottom gradient.
-                            Container(
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  stops: [0.5, 1.0],
-                                  colors: [
-                                    Color(0x00000000),
-                                    Color(0x61000000),
-                                  ],
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              height: 180,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    colors: [
+                                      Theme.of(context).colorScheme.scrim
+                                          .withValues(alpha: 0.85),
+                                      Theme.of(context).colorScheme.scrim
+                                          .withValues(alpha: 0.40),
+                                      Colors.transparent,
+                                    ],
+                                    stops: const [0.0, 0.70, 1.0],
+                                  ),
                                 ),
                               ),
                             ),
@@ -766,7 +780,8 @@ class CustomMaterialDesktopVolumeButtonState
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: hover
-                    ? PlayerTheme.chipBackdropHover
+                    ? Theme.of(context).colorScheme.surfaceContainerHighest
+                          .withValues(alpha: 0.75)
                     : Colors.transparent,
               ),
               child: IconButton(
@@ -930,7 +945,11 @@ class CustomMaterialDesktopPositionIndicatorState
     );
     return Text(
       '${clampedPosition.label(reference: duration)} / ${duration.label(reference: duration)}',
-      style: PlayerTheme.timecode,
+      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+        color: Colors.white,
+        fontFeatures: const [FontFeature.tabularFigures()],
+        fontWeight: FontWeight.w600,
+      ),
     );
   }
 }
@@ -983,7 +1002,10 @@ class _CustomMaterialDesktopFullscreenButtonState
         height: 34,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: _hover ? PlayerTheme.chipBackdropHover : Colors.transparent,
+          color: _hover
+              ? Theme.of(context).colorScheme.surfaceContainerHighest
+                    .withValues(alpha: 0.75)
+              : Colors.transparent,
         ),
         child: IconButton(
           icon: isFullScreen
