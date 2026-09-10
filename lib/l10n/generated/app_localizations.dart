@@ -2327,6 +2327,36 @@ abstract class AppLocalizations {
   /// **'Uninstall {ext} extension?'**
   String uninstall_extension(Object ext);
 
+  /// No description provided for @double_tap_search_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Double-tap to search all {type}'**
+  String double_tap_search_hint(Object type);
+
+  /// No description provided for @show_nav_double_tap_tooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show double-tap search hint'**
+  String get show_nav_double_tap_tooltip;
+
+  /// No description provided for @show_nav_double_tap_tooltip_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.'**
+  String get show_nav_double_tap_tooltip_subtitle;
+
+  /// No description provided for @already_in_library.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{title}\" is already in your library via {source}.'**
+  String already_in_library(Object source, Object title);
+
+  /// No description provided for @add_anyway.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Anyway'**
+  String get add_anyway;
+
   /// No description provided for @langauage.
   ///
   /// In en, this message translates to:

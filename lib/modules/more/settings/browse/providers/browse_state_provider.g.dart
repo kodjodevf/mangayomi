@@ -224,6 +224,60 @@ abstract class _$ShowNSFWState extends $Notifier<bool> {
   }
 }
 
+@ProviderFor(ShowNavDoubleTapTooltipState)
+final showNavDoubleTapTooltipStateProvider =
+    ShowNavDoubleTapTooltipStateProvider._();
+
+final class ShowNavDoubleTapTooltipStateProvider
+    extends $NotifierProvider<ShowNavDoubleTapTooltipState, bool> {
+  ShowNavDoubleTapTooltipStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'showNavDoubleTapTooltipStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$showNavDoubleTapTooltipStateHash();
+
+  @$internal
+  @override
+  ShowNavDoubleTapTooltipState create() => ShowNavDoubleTapTooltipState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$showNavDoubleTapTooltipStateHash() =>
+    r'e0c10c8c89933775a5a7e29d68ccb044eda11a90';
+
+abstract class _$ShowNavDoubleTapTooltipState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(ExtensionsRepoState)
 final extensionsRepoStateProvider = ExtensionsRepoStateFamily._();
 

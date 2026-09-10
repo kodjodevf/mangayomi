@@ -1,3 +1,45 @@
+import 'package:country_flags/country_flags.dart';
+import 'package:flutter/material.dart';
+
+/// Explicit language -> country overrides for codes where the "primary
+/// subtag" lookup below would pick the wrong flag (e.g. pt-br should show
+/// Brazil, not Portugal).
+const _languageCountryOverrides = {
+  'pt-br': 'BR',
+  'zh-hk': 'HK',
+  'zh-tw': 'TW',
+  'en-us': 'US',
+  'en-gb': 'GB',
+  'es-419': 'MX',
+  'es-la': 'MX',
+  'pt-pt': 'PT',
+  'nb-no': 'NO',
+};
+
+/// A small flag icon for a source/extension language code, or null when no
+/// flag makes sense (e.g. "all") or the package has no match for it.
+Widget? languageFlag(String lang, {double width = 18, double height = 12}) {
+  final normalized = lang.trim().toLowerCase();
+  if (normalized.isEmpty || normalized == 'all') return null;
+
+  final theme = ImageTheme(
+    width: width,
+    height: height,
+    shape: const RoundedRectangle(2),
+  );
+
+  final countryOverride = _languageCountryOverrides[normalized];
+  if (countryOverride != null) {
+    return CountryFlag.fromCountryCode(countryOverride, theme: theme);
+  }
+
+  // Fall back to the primary subtag (e.g. "es" out of "es-419") so regional
+  // variants without an explicit override above still get a flag.
+  final primarySubtag = normalized.split('-').first;
+  if (FlagCode.fromLanguageCode(primarySubtag) == null) return null;
+  return CountryFlag.fromLanguageCode(primarySubtag, theme: theme);
+}
+
 String completeLanguageName(String lang) {
   lang = lang.toLowerCase();
   for (var element in languagesMap.entries) {

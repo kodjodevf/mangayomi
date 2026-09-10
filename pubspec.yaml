@@ -15,6 +15,7 @@ dependencies:
   go_router: ^17.2.0
   flutter_riverpod: ^3.1.0
   riverpod_annotation: ^4.0.0
+  collection: ^1.19.1
   html: ^0.15.6
   font_awesome_flutter: ^11.0.0
   flex_color_scheme: ^8.3.1
@@ -117,6 +118,7 @@ dependencies:
   native_toolchain_c: ^0.19.2
   cupertino_ui: ^1.0.0
   image: ^4.9.2
+  country_flags: ^4.1.2
 
 dependency_overrides:
   protobuf: ^5.0.0

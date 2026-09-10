@@ -81,36 +81,7 @@ class _ExtensionListTileWidgetState
   }
 
   void _openUninstallDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: Text(widget.source.name!),
-          content: Text(ctx.l10n.uninstall_extension(widget.source.name!)),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                  },
-                  child: Text(ctx.l10n.cancel),
-                ),
-                const SizedBox(width: 15),
-                TextButton(
-                  onPressed: () {
-                    sourceRepository.uninstall(ref, widget.source);
-                    Navigator.pop(ctx);
-                  },
-                  child: Text(ctx.l10n.ok),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
+    showUninstallSourceDialog(context, ref, widget.source);
   }
 
   Widget _icon() {
@@ -145,10 +116,13 @@ class _ExtensionListTileWidgetState
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(
-            completeLanguageName(widget.source.lang!.toLowerCase()),
-            style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
-          ),
+          if (languageFlag(widget.source.lang!) case final flag?)
+            flag
+          else
+            Text(
+              completeLanguageName(widget.source.lang!.toLowerCase()),
+              style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
+            ),
           const SizedBox(width: 4),
           Text(
             widget.source.version!,
@@ -160,7 +134,7 @@ class _ExtensionListTileWidgetState
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                 decoration: BoxDecoration(
-                  color: Colors.red.withValues(alpha: 0.8),
+                  color: Colors.red,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Text(
@@ -308,4 +282,43 @@ class _ExtensionListTileWidgetState
       trailing: _buildTrailingButton(context, buttonLabel),
     );
   }
+}
+
+/// Shared by [ExtensionListTileWidget] and [SourceListTile], since an
+/// already-installed source is uninstalled the same way from either row.
+void showUninstallSourceDialog(
+  BuildContext context,
+  WidgetRef ref,
+  Source source,
+) {
+  showDialog(
+    context: context,
+    builder: (ctx) {
+      return AlertDialog(
+        title: Text(source.name!),
+        content: Text(ctx.l10n.uninstall_extension(source.name!)),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                },
+                child: Text(ctx.l10n.cancel),
+              ),
+              const SizedBox(width: 15),
+              TextButton(
+                onPressed: () {
+                  sourceRepository.uninstall(ref, source);
+                  Navigator.pop(ctx);
+                },
+                child: Text(ctx.l10n.ok),
+              ),
+            ],
+          ),
+        ],
+      );
+    },
+  );
 }

@@ -83,6 +83,19 @@ class ShowNSFWState extends _$ShowNSFWState {
 }
 
 @riverpod
+class ShowNavDoubleTapTooltipState extends _$ShowNavDoubleTapTooltipState {
+  @override
+  bool build() {
+    return settingsRepository.current.showNavDoubleTapTooltip ?? true;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.showNavDoubleTapTooltip = value);
+  }
+}
+
+@riverpod
 class ExtensionsRepoState extends _$ExtensionsRepoState {
   static List<Repo> _deduplicate(List<Repo> repos) {
     final seen = <String>{};

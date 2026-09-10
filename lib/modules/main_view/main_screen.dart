@@ -21,6 +21,7 @@ import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/auto_backup.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -37,6 +38,31 @@ final libLocationRegex = RegExp(r"^/(Manga|Anime|Novel)Library$");
 /// libraries). True means "keep this destination".
 bool _isNotHiddenLibOnTv(String nav) =>
     nav != "/MangaLibrary" && nav != "/NovelLibrary";
+
+/// The ItemType a nav destination maps to, or null for destinations with no
+/// single content type to scope a global search to (Updates, History,
+/// Browse, More, ...). Shared by the desktop rail and mobile bottom bar's
+/// double-tap-for-global-search handling.
+ItemType? _itemTypeForNavDest(String dest) => switch (dest) {
+  "/MangaLibrary" => ItemType.manga,
+  "/AnimeLibrary" => ItemType.anime,
+  "/NovelLibrary" => ItemType.novel,
+  _ => null,
+};
+
+/// How close together two taps on the same nav destination need to land to
+/// count as a double-tap/double-click, rather than two separate single taps.
+const _navDoubleTapWindow = Duration(milliseconds: 450);
+
+/// Whether tapping [current] counts as a double-tap on [last], given when
+/// [last] landed. Shared by the desktop rail and mobile bottom bar, which
+/// each track their own last-tap state (an index vs. a route string) but
+/// apply the same timing check to it.
+bool _isDoubleTap<T>(T current, T? last, DateTime? lastTapTime, DateTime now) {
+  return current == last &&
+      lastTapTime != null &&
+      now.difference(lastTapTime) < _navDoubleTapWindow;
+}
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key, required this.child});
@@ -59,6 +85,13 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   final Map<String, List<NavigationRailDestination>> _desktopDestinationsCache =
       {};
+
+  // Double-tapping a Manga/Anime/Novel destination on the mobile bottom bar
+  // opens Global Search scoped to that type, mirroring the desktop rail's
+  // double-click. Keyed by destination string since the bottom bar callback
+  // only hands back the route, not an index.
+  String? _lastMobileNavDest;
+  DateTime? _lastMobileNavTapTime;
   final Map<String, List<Widget>> _mobileDestinationsCache = {};
   void _clearCache() {
     _hyphenatedLabelsCache.clear();
@@ -223,6 +256,13 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       _clearCache();
       setState(() {});
     });
+    // Destinations are cached by route list alone, so a toggle that only
+    // changes what's baked into those same widgets (the tooltip) needs its
+    // own cache-busting listener, same as the locale above.
+    ref.listen<bool>(showNavDoubleTapTooltipStateProvider, (previous, next) {
+      _clearCache();
+      setState(() {});
+    });
 
     final l10n = context.l10n;
     final route = GoRouter.of(context);
@@ -343,6 +383,27 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                     isLibSwitch = false;
                                   });
                                 } else {
+                                  final now = DateTime.now();
+                                  final isDoubleTap = _isDoubleTap(
+                                    destination,
+                                    _lastMobileNavDest,
+                                    _lastMobileNavTapTime,
+                                    now,
+                                  );
+                                  final itemType = _itemTypeForNavDest(
+                                    destination,
+                                  );
+                                  if (isDoubleTap && itemType != null) {
+                                    _lastMobileNavDest = null;
+                                    _lastMobileNavTapTime = null;
+                                    context.push(
+                                      '/globalSearch',
+                                      extra: (null, itemType),
+                                    );
+                                    return;
+                                  }
+                                  _lastMobileNavDest = destination;
+                                  _lastMobileNavTapTime = now;
                                   route.go(destination);
                                 }
                               },
@@ -373,6 +434,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         location == '/novelReaderView';
   }
 
+  /// Wraps [icon] in a [Tooltip] with [message] unless the user turned the
+  /// nav double-tap hint off in Settings, in which case it's the bare icon.
+  Widget _navTooltipIcon(bool showTooltip, String message, Widget icon) {
+    return showTooltip ? Tooltip(message: message, child: icon) : icon;
+  }
+
   List<NavigationRailDestination> _buildNavigationWidgetsDesktop(
     WidgetRef ref,
     List<String> dest,
@@ -384,6 +451,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
 
     final l10n = context.l10n;
+    final showTooltip = ref.read(showNavDoubleTapTooltipStateProvider);
     final destinations = List<NavigationRailDestination?>.filled(
       dest.length,
       null,
@@ -393,8 +461,16 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/MangaLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.collections_bookmark),
-        icon: const Icon(Icons.collections_bookmark_outlined),
+        selectedIcon: _navTooltipIcon(
+          showTooltip,
+          l10n.double_tap_search_hint(l10n.manga),
+          const Icon(Icons.collections_bookmark),
+        ),
+        icon: _navTooltipIcon(
+          showTooltip,
+          l10n.double_tap_search_hint(l10n.manga),
+          const Icon(Icons.collections_bookmark_outlined),
+        ),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
           child: Text(l10n.manga),
@@ -405,8 +481,16 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/AnimeLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.video_collection),
-        icon: const Icon(Icons.video_collection_outlined),
+        selectedIcon: _navTooltipIcon(
+          showTooltip,
+          l10n.double_tap_search_hint(l10n.anime),
+          const Icon(Icons.video_collection),
+        ),
+        icon: _navTooltipIcon(
+          showTooltip,
+          l10n.double_tap_search_hint(l10n.anime),
+          const Icon(Icons.video_collection_outlined),
+        ),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
           child: Text(l10n.anime),
@@ -417,8 +501,16 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/NovelLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.local_library),
-        icon: const Icon(Icons.local_library_outlined),
+        selectedIcon: _navTooltipIcon(
+          showTooltip,
+          l10n.double_tap_search_hint(l10n.novel),
+          const Icon(Icons.local_library),
+        ),
+        icon: _navTooltipIcon(
+          showTooltip,
+          l10n.double_tap_search_hint(l10n.novel),
+          const Icon(Icons.local_library_outlined),
+        ),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
           child: Text(l10n.novel),
@@ -520,6 +612,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
 
     final l10n = context.l10n;
+    final showTooltip = ref.read(showNavDoubleTapTooltipStateProvider);
     final destinations = List<Widget>.filled(
       dest.length,
       const SizedBox.shrink(),
@@ -544,6 +637,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         selectedIcon: const Icon(Icons.collections_bookmark),
         icon: const Icon(Icons.collections_bookmark_outlined),
         label: l10n.manga,
+        tooltip: showTooltip ? l10n.double_tap_search_hint(l10n.manga) : '',
       );
     }
     if (dest.contains("/AnimeLibrary")) {
@@ -551,6 +645,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         selectedIcon: const Icon(Icons.video_collection),
         icon: const Icon(Icons.video_collection_outlined),
         label: l10n.anime,
+        tooltip: showTooltip ? l10n.double_tap_search_hint(l10n.anime) : '',
       );
     }
     if (dest.contains("/NovelLibrary")) {
@@ -558,6 +653,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         selectedIcon: const Icon(Icons.local_library),
         icon: const Icon(Icons.local_library_outlined),
         label: l10n.novel,
+        tooltip: showTooltip ? l10n.double_tap_search_hint(l10n.novel) : '',
       );
     }
     if (dest.contains("/updates")) {
@@ -738,6 +834,36 @@ class _TabletLayoutState extends State<_TabletLayout> {
   );
   bool _didAutofocusRail = false;
 
+  // Double-clicking a Manga/Anime/Novel rail destination opens Global Search
+  // scoped to that type, instead of just re-selecting the already-active tab.
+  // Tracked here rather than via a nested GestureDetector because
+  // NavigationRail handles taps itself; onDestinationSelected still fires on
+  // a repeat tap, so a same-index-within-a-window check is all this needs.
+  int? _lastNavTapIndex;
+  DateTime? _lastNavTapTime;
+
+  void _onDestinationTapped(BuildContext context, int newIndex) {
+    final now = DateTime.now();
+    final isDoubleTap = _isDoubleTap(
+      newIndex,
+      _lastNavTapIndex,
+      _lastNavTapTime,
+      now,
+    );
+
+    final itemType = _itemTypeForNavDest(widget.dest[newIndex]);
+    if (isDoubleTap && itemType != null) {
+      _lastNavTapIndex = null;
+      _lastNavTapTime = null;
+      context.push('/globalSearch', extra: (null, itemType));
+      return;
+    }
+
+    _lastNavTapIndex = newIndex;
+    _lastNavTapTime = now;
+    widget.route.go(widget.dest[newIndex]);
+  }
+
   @override
   void dispose() {
     _railScope.dispose();
@@ -831,9 +957,8 @@ class _TabletLayoutState extends State<_TabletLayout> {
               widget.currentIndex < destinations.length)
           ? widget.currentIndex
           : 0,
-      onDestinationSelected: (newIndex) {
-        widget.route.go(widget.dest[newIndex]);
-      },
+      onDestinationSelected: (newIndex) =>
+          _onDestinationTapped(context, newIndex),
     );
     if (isTv) {
       navRail = FocusScope(node: _railScope, child: navRail);
