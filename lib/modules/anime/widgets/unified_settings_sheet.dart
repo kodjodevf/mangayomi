@@ -24,6 +24,7 @@ class SettingsOptionRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     final accent = colorScheme.primary;
     final onSurface = colorScheme.onSurface;
     return Material(
@@ -63,11 +64,9 @@ class SettingsOptionRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(
+                  style: (textTheme.bodyMedium ?? const TextStyle()).copyWith(
                     fontSize: 13.5,
-                    color: selected
-                        ? accent
-                        : onSurface.withValues(alpha: 0.85),
+                    color: selected ? accent : onSurface,
                     fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                   ),
                   maxLines: 1,
@@ -79,9 +78,8 @@ class SettingsOptionRow extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 8),
                   child: Text(
                     hint!,
-                    style: TextStyle(
-                      fontSize: 10.5,
-                      color: onSurface.withValues(alpha: 0.45),
+                    style: (textTheme.labelSmall ?? const TextStyle()).copyWith(
+                      color: colorScheme.onSurfaceVariant,
                       fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
@@ -112,7 +110,9 @@ class SettingsActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
@@ -122,21 +122,21 @@ class SettingsActionRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(
             children: [
-              Icon(icon, size: 17, color: onSurface.withValues(alpha: 0.75)),
+              Icon(icon, size: 18, color: colorScheme.onSurfaceVariant),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(
+                  style: (textTheme.bodyMedium ?? const TextStyle()).copyWith(
                     fontSize: 13.5,
-                    color: onSurface.withValues(alpha: 0.9),
+                    color: colorScheme.onSurface,
                   ),
                 ),
               ),
               Icon(
                 Icons.chevron_right,
-                size: 16,
-                color: onSurface.withValues(alpha: 0.35),
+                size: 18,
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.70),
               ),
             ],
           ),
@@ -153,16 +153,17 @@ class SettingsSectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 14, 12, 6),
       child: Text(
         text.toUpperCase(),
-        style: TextStyle(
-          fontSize: 10.5,
+        style: (textTheme.labelSmall ?? const TextStyle()).copyWith(
           letterSpacing: 0.8,
           fontWeight: FontWeight.w600,
-          color: onSurface.withValues(alpha: 0.45),
+          color: colorScheme.onSurfaceVariant,
         ),
       ),
     );
@@ -186,7 +187,10 @@ class SettingsStepperRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    final onSurface = colorScheme.onSurface;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: Row(
@@ -194,16 +198,21 @@ class SettingsStepperRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: TextStyle(
+              style: (textTheme.bodyMedium ?? const TextStyle()).copyWith(
                 fontSize: 13,
-                color: onSurface.withValues(alpha: 0.75),
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ),
           Container(
             decoration: BoxDecoration(
-              color: onSurface.withValues(alpha: 0.06),
+              color: colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.60,
+              ),
               borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.30),
+              ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -214,11 +223,13 @@ class SettingsStepperRow extends StatelessWidget {
                   child: Text(
                     value,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: onSurface,
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
+                    style: (textTheme.labelMedium ?? const TextStyle())
+                        .copyWith(
+                          fontSize: 12,
+                          color: onSurface,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ),
                 _StepperButton(icon: Icons.add, onTap: onIncrement),
@@ -238,13 +249,18 @@ class _StepperButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
-    return InkWell(
-      borderRadius: BorderRadius.circular(8),
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.all(6),
-        child: Icon(icon, size: 15, color: onSurface),
+    final colorScheme = Theme.of(context).colorScheme;
+    return Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: onTap,
+        child: Container(
+          width: 36,
+          height: 36,
+          alignment: Alignment.center,
+          child: Icon(icon, size: 16, color: colorScheme.onSurface),
+        ),
       ),
     );
   }
@@ -335,8 +351,10 @@ class _SettingsHomeRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final onSurface = theme.colorScheme.onSurface;
-    final accent = theme.primaryColor;
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    final onSurface = colorScheme.onSurface;
+    final accent = colorScheme.primary;
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
@@ -350,7 +368,7 @@ class _SettingsHomeRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   entry.label,
-                  style: TextStyle(
+                  style: (textTheme.bodyMedium ?? const TextStyle()).copyWith(
                     fontSize: 13.5,
                     color: onSurface,
                     fontWeight: FontWeight.w500,
@@ -361,9 +379,8 @@ class _SettingsHomeRow extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: 8),
                   child: DefaultTextStyle.merge(
-                    style: TextStyle(
-                      fontSize: 12.5,
-                      color: onSurface.withValues(alpha: 0.55),
+                    style: (textTheme.bodySmall ?? const TextStyle()).copyWith(
+                      color: colorScheme.onSurfaceVariant,
                     ),
                     child: entry.valueBuilder!(context),
                   ),
@@ -372,7 +389,7 @@ class _SettingsHomeRow extends StatelessWidget {
               Icon(
                 Icons.chevron_right,
                 size: 18,
-                color: onSurface.withValues(alpha: 0.35),
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.70),
               ),
             ],
           ),
@@ -425,7 +442,9 @@ class _DrilldownHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+    final textTheme = theme.textTheme;
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
       child: SizedBox(
@@ -520,8 +539,7 @@ class _DrilldownHeader extends StatelessWidget {
                 child: Text(
                   title,
                   key: ValueKey(title),
-                  style: TextStyle(
-                    fontSize: 15,
+                  style: (textTheme.titleMedium ?? const TextStyle()).copyWith(
                     fontWeight: FontWeight.w700,
                     color: onSurface,
                   ),
@@ -641,112 +659,125 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
     final screenHeight = MediaQuery.of(context).size.height;
     final maxBodyHeight = screenHeight * 0.72;
 
-    return SettingsDrilldownScope(
-      goHome: _goHome,
-      close: widget.onClose,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _DrilldownHeader(
-            title: active == null ? widget.title : widget.entries[active].label,
-            showBack: active != null,
-            forward: _forward,
-            onBack: _goHome,
-            onClose: widget.onClose,
-          ),
-          Divider(
-            height: 1,
-            color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
-          ),
-          ClipRect(
-            child: AnimatedSize(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutCubic,
-              alignment: Alignment.topCenter,
-              child: AnimatedSwitcher(
+    return PopScope(
+      canPop: active == null,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _goHome();
+      },
+      child: SettingsDrilldownScope(
+        goHome: _goHome,
+        close: widget.onClose,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _DrilldownHeader(
+              title: active == null
+                  ? widget.title
+                  : widget.entries[active].label,
+              showBack: active != null,
+              forward: _forward,
+              onBack: _goHome,
+              onClose: widget.onClose,
+            ),
+            Divider(
+              height: 1,
+              color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
+            ),
+            ClipRect(
+              child: AnimatedSize(
                 duration: const Duration(milliseconds: 300),
-                switchInCurve: Curves.easeOutCubic,
-                switchOutCurve: Curves.easeOutCubic,
-                layoutBuilder: (currentChild, previousChildren) {
-                  return Stack(
-                    alignment: Alignment.topCenter,
-                    clipBehavior: Clip.hardEdge,
-                    children: <Widget>[
-                      ...previousChildren.map(
-                        (child) =>
-                            Positioned(top: 0, left: 0, right: 0, child: child),
-                      ),
-                      ?currentChild,
-                    ],
-                  );
-                },
-                transitionBuilder: (child, animation) {
-                  final isIncoming = child.key == currentKey;
-                  final offsetTween = isIncoming
-                      ? (_forward
-                            ? Tween<Offset>(
-                                begin: const Offset(0.20, 0.0),
-                                end: Offset.zero,
-                              )
-                            : Tween<Offset>(
-                                begin: const Offset(-0.20, 0.0),
-                                end: Offset.zero,
-                              ))
-                      : (_forward
-                            ? Tween<Offset>(
-                                begin: const Offset(-0.20, 0.0),
-                                end: Offset.zero,
-                              )
-                            : Tween<Offset>(
-                                begin: const Offset(0.20, 0.0),
-                                end: Offset.zero,
-                              ));
-
-                  final opacity = isIncoming
-                      ? CurvedAnimation(
-                          parent: animation,
-                          curve: const _SmoothEnterFadeCurve(),
-                        )
-                      : CurvedAnimation(
-                          parent: animation,
-                          curve: const _FastExitFadeCurve(),
-                          reverseCurve: const _FastExitFadeCurve(),
-                        );
-
-                  return SlideTransition(
-                    position: offsetTween.animate(animation),
-                    child: FadeTransition(opacity: opacity, child: child),
-                  );
-                },
-                child: ConstrainedBox(
-                  key: currentKey,
-                  constraints: BoxConstraints(maxHeight: maxBodyHeight),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: active == null
-                        ? Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              for (var i = 0; i < widget.entries.length; i++)
-                                _SettingsHomeRow(
-                                  entry: widget.entries[i],
-                                  onTap: () => _open(i),
-                                ),
-                              const SizedBox(height: 4),
-                            ],
-                          )
-                        : Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
-                            child: widget.entries[active].contentBuilder(
-                              context,
-                            ),
+                curve: Curves.easeOutCubic,
+                alignment: Alignment.topCenter,
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeOutCubic,
+                  layoutBuilder: (currentChild, previousChildren) {
+                    return Stack(
+                      alignment: Alignment.topCenter,
+                      clipBehavior: Clip.hardEdge,
+                      children: <Widget>[
+                        ...previousChildren.map(
+                          (child) => Positioned(
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            child: child,
                           ),
+                        ),
+                        ?currentChild,
+                      ],
+                    );
+                  },
+                  transitionBuilder: (child, animation) {
+                    final isIncoming = child.key == currentKey;
+                    final offsetTween = isIncoming
+                        ? (_forward
+                              ? Tween<Offset>(
+                                  begin: const Offset(0.20, 0.0),
+                                  end: Offset.zero,
+                                )
+                              : Tween<Offset>(
+                                  begin: const Offset(-0.20, 0.0),
+                                  end: Offset.zero,
+                                ))
+                        : (_forward
+                              ? Tween<Offset>(
+                                  begin: const Offset(-0.20, 0.0),
+                                  end: Offset.zero,
+                                )
+                              : Tween<Offset>(
+                                  begin: const Offset(0.20, 0.0),
+                                  end: Offset.zero,
+                                ));
+
+                    final opacity = isIncoming
+                        ? CurvedAnimation(
+                            parent: animation,
+                            curve: const _SmoothEnterFadeCurve(),
+                          )
+                        : CurvedAnimation(
+                            parent: animation,
+                            curve: const _FastExitFadeCurve(),
+                            reverseCurve: const _FastExitFadeCurve(),
+                          );
+
+                    return SlideTransition(
+                      position: offsetTween.animate(animation),
+                      child: FadeTransition(opacity: opacity, child: child),
+                    );
+                  },
+                  child: ConstrainedBox(
+                    key: currentKey,
+                    constraints: BoxConstraints(maxHeight: maxBodyHeight),
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: active == null
+                          ? Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                for (var i = 0; i < widget.entries.length; i++)
+                                  _SettingsHomeRow(
+                                    entry: widget.entries[i],
+                                    onTap: () => _open(i),
+                                  ),
+                                const SizedBox(height: 4),
+                              ],
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.only(bottom: 6),
+                              child: widget.entries[active].contentBuilder(
+                                context,
+                              ),
+                            ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -859,7 +890,7 @@ Future<void> showDesktopPlayerSettingsMenu(
     surfaceTintColor: Colors.transparent,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     menuPadding: EdgeInsets.zero,
-    constraints: const BoxConstraints(minWidth: 300, maxWidth: 320),
+    constraints: const BoxConstraints(minWidth: 300, maxWidth: 360),
     items: [
       PopupMenuItem<void>(
         enabled: false,
