@@ -31,10 +31,7 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
 
   StreamSubscription<bool>? subscription;
 
-  // The tappable disc behind the glyph — this is what gives the button
-  // contrast on bright scenes, where a bare white icon used to disappear.
-  double get discSize => isDesktop ? 46.0 : 76.0;
-  double get glyphSize => isDesktop ? 22.0 : 34.0;
+  double get iconSize => isDesktop ? 25 : 65;
 
   @override
   void setState(VoidCallback fn) {
@@ -64,42 +61,17 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final bg = colorScheme.surfaceContainerHighest.withValues(alpha: 0.75);
-    final border = colorScheme.outlineVariant.withValues(alpha: 0.35);
-
-    return Material(
-      color: Colors.transparent,
-      shape: const CircleBorder(),
-      child: InkWell(
-        focusNode: widget.focusNode,
-        customBorder: const CircleBorder(),
-        splashColor: colorScheme.primary.withValues(alpha: 0.24),
-        highlightColor: colorScheme.primary.withValues(alpha: 0.12),
-        onTap: widget.controller.player.playOrPause,
-        child: Container(
-          width: discSize,
-          height: discSize,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: bg,
-            border: Border.all(color: border, width: 1.2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.30),
-                blurRadius: 10,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: Center(
-            child: AnimatedIcon(
-              progress: animation,
-              icon: AnimatedIcons.play_pause,
-              size: glyphSize,
-              color: Colors.white,
-            ),
-          ),
+    return IconButton(
+      focusNode: widget.focusNode,
+      onPressed: widget.controller.player.playOrPause,
+      iconSize: iconSize,
+      color: Colors.white,
+      icon: IgnorePointer(
+        child: AnimatedIcon(
+          progress: animation,
+          icon: AnimatedIcons.play_pause,
+          size: iconSize,
+          color: Colors.white,
         ),
       ),
     );
