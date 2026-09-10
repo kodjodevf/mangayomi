@@ -2556,7 +2556,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   /// helper method for _mobileBottomButtonBar() and _desktopBottomButtonBar()
   Widget _buildSettingsButtons(BuildContext context) {
-    final isFullscreen = ref.watch(fullscreenProvider);
     final hasMultipleVideos = widget.videos.length > 1;
 
     return Row(
@@ -2717,27 +2716,34 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         ),
 
         if (!isTv)
-          Padding(
-            padding: const EdgeInsets.only(left: 2.5, right: 5),
-            child: PlayerPillButton(
-              icon: isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
-              active: false,
-              tooltip: context.l10n.fullscreen,
-              isCompact: isMobile,
-              onTap: () async {
-                if (isDesktop) {
-                  final isFullScreen = await setFullScreen(
-                    value: !isFullscreen,
-                  );
-                  ref.read(fullscreenProvider.notifier).state = !isFullScreen;
-                  widget.desktopFullScreenPlayer.call(!isFullscreen);
-                } else {
-                  _setLandscapeMode(!isFullscreen);
-                  ref.read(fullscreenProvider.notifier).state = !isFullscreen;
-                  widget.desktopFullScreenPlayer.call(!isFullscreen);
-                }
-              },
-            ),
+          Consumer(
+            builder: (context, ref, _) {
+              final isFullscreen = ref.watch(fullscreenProvider);
+              return Padding(
+                padding: const EdgeInsets.only(left: 2.5, right: 5),
+                child: PlayerPillButton(
+                  icon: isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
+                  active: false,
+                  tooltip: context.l10n.fullscreen,
+                  isCompact: isMobile,
+                  onTap: () async {
+                    if (isDesktop) {
+                      final isFullScreen = await setFullScreen(
+                        value: !isFullscreen,
+                      );
+                      ref.read(fullscreenProvider.notifier).state =
+                          isFullScreen;
+                      widget.desktopFullScreenPlayer.call(isFullScreen);
+                    } else {
+                      _setLandscapeMode(!isFullscreen);
+                      ref.read(fullscreenProvider.notifier).state =
+                          !isFullscreen;
+                      widget.desktopFullScreenPlayer.call(!isFullscreen);
+                    }
+                  },
+                ),
+              );
+            },
           ),
       ],
     );
