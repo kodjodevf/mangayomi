@@ -55,26 +55,14 @@ import 'package:window_manager/window_manager.dart';
 
 typedef DoubleClickAnimationListener = void Function();
 
-class MangaReaderView extends ConsumerStatefulWidget {
+class MangaReaderView extends ConsumerWidget {
   final int chapterId;
   const MangaReaderView({super.key, required this.chapterId});
 
   @override
-  ConsumerState<MangaReaderView> createState() => _MangaReaderViewState();
-}
-
-class _MangaReaderViewState extends ConsumerState<MangaReaderView> {
-  @override
-  void initState() {
-    super.initState();
-    // Runs before build()'s watch() so it invalidates any old instance instead of duplicating the fetch that watch() is about to start.
-    ref.invalidate(mangaReaderProvider(widget.chapterId));
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;
-    final chapterData = ref.watch(mangaReaderProvider(widget.chapterId));
+    final chapterData = ref.watch(mangaReaderProvider(chapterId));
 
     return chapterData.when(
       loading: () => scaffoldWith(context, const ProgressCenter()),
@@ -86,8 +74,7 @@ class _MangaReaderViewState extends ConsumerState<MangaReaderView> {
           context,
           ErrorState(
             detail: error.toString(),
-            onRetry: () =>
-                ref.invalidate(mangaReaderProvider(widget.chapterId)),
+            onRetry: () => ref.invalidate(mangaReaderProvider(chapterId)),
           ),
         );
       },
