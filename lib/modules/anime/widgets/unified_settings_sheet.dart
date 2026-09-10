@@ -439,12 +439,15 @@ class _DrilldownHeader extends StatelessWidget {
               transitionBuilder: (child, animation) {
                 return SizeTransition(
                   axis: Axis.horizontal,
-                  axisAlignment: -1.0,
+                  alignment: Alignment.centerLeft,
                   sizeFactor: animation,
                   child: FadeTransition(
                     opacity: animation,
                     child: ScaleTransition(
-                      scale: Tween<double>(begin: 0.8, end: 1.0).animate(animation),
+                      scale: Tween<double>(
+                        begin: 0.8,
+                        end: 1.0,
+                      ).animate(animation),
                       child: child,
                     ),
                   ),
@@ -473,33 +476,30 @@ class _DrilldownHeader extends StatelessWidget {
                 layoutBuilder: (currentChild, previousChildren) {
                   return Stack(
                     alignment: Alignment.centerLeft,
-                    children: [
-                      ...previousChildren,
-                      if (currentChild != null) currentChild,
-                    ],
+                    children: [...previousChildren, ?currentChild],
                   );
                 },
                 transitionBuilder: (child, animation) {
                   final isIncoming = child.key == ValueKey(title);
                   final offsetTween = isIncoming
                       ? (forward
-                          ? Tween<Offset>(
-                              begin: const Offset(0.16, 0.0),
-                              end: Offset.zero,
-                            )
-                          : Tween<Offset>(
-                              begin: const Offset(-0.16, 0.0),
-                              end: Offset.zero,
-                            ))
+                            ? Tween<Offset>(
+                                begin: const Offset(0.16, 0.0),
+                                end: Offset.zero,
+                              )
+                            : Tween<Offset>(
+                                begin: const Offset(-0.16, 0.0),
+                                end: Offset.zero,
+                              ))
                       : (forward
-                          ? Tween<Offset>(
-                              begin: const Offset(-0.16, 0.0),
-                              end: Offset.zero,
-                            )
-                          : Tween<Offset>(
-                              begin: const Offset(0.16, 0.0),
-                              end: Offset.zero,
-                            ));
+                            ? Tween<Offset>(
+                                begin: const Offset(-0.16, 0.0),
+                                end: Offset.zero,
+                              )
+                            : Tween<Offset>(
+                                begin: const Offset(0.16, 0.0),
+                                end: Offset.zero,
+                              ));
 
                   final opacity = isIncoming
                       ? CurvedAnimation(
@@ -514,10 +514,7 @@ class _DrilldownHeader extends StatelessWidget {
 
                   return SlideTransition(
                     position: offsetTween.animate(animation),
-                    child: FadeTransition(
-                      opacity: opacity,
-                      child: child,
-                    ),
+                    child: FadeTransition(opacity: opacity, child: child),
                   );
                 },
                 child: Text(
@@ -538,10 +535,7 @@ class _DrilldownHeader extends StatelessWidget {
               icon: Icon(Icons.close, color: onSurface, size: 20),
               splashRadius: 20,
               padding: const EdgeInsets.all(10),
-              constraints: const BoxConstraints(
-                minWidth: 40,
-                minHeight: 40,
-              ),
+              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
             ),
           ],
         ),
@@ -640,8 +634,9 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
   @override
   Widget build(BuildContext context) {
     final active = _active;
-    final currentKey =
-        active == null ? const ValueKey('home') : ValueKey('section-$active');
+    final currentKey = active == null
+        ? const ValueKey('home')
+        : ValueKey('section-$active');
 
     final screenHeight = MediaQuery.of(context).size.height;
     final maxBodyHeight = screenHeight * 0.72;
@@ -653,9 +648,7 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _DrilldownHeader(
-            title: active == null
-                ? widget.title
-                : widget.entries[active].label,
+            title: active == null ? widget.title : widget.entries[active].label,
             showBack: active != null,
             forward: _forward,
             onBack: _goHome,
@@ -680,14 +673,10 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
                     clipBehavior: Clip.hardEdge,
                     children: <Widget>[
                       ...previousChildren.map(
-                        (child) => Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: child,
-                        ),
+                        (child) =>
+                            Positioned(top: 0, left: 0, right: 0, child: child),
                       ),
-                      if (currentChild != null) currentChild,
+                      ?currentChild,
                     ],
                   );
                 },
@@ -695,23 +684,23 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
                   final isIncoming = child.key == currentKey;
                   final offsetTween = isIncoming
                       ? (_forward
-                          ? Tween<Offset>(
-                              begin: const Offset(0.20, 0.0),
-                              end: Offset.zero,
-                            )
-                          : Tween<Offset>(
-                              begin: const Offset(-0.20, 0.0),
-                              end: Offset.zero,
-                            ))
+                            ? Tween<Offset>(
+                                begin: const Offset(0.20, 0.0),
+                                end: Offset.zero,
+                              )
+                            : Tween<Offset>(
+                                begin: const Offset(-0.20, 0.0),
+                                end: Offset.zero,
+                              ))
                       : (_forward
-                          ? Tween<Offset>(
-                              begin: const Offset(-0.20, 0.0),
-                              end: Offset.zero,
-                            )
-                          : Tween<Offset>(
-                              begin: const Offset(0.20, 0.0),
-                              end: Offset.zero,
-                            ));
+                            ? Tween<Offset>(
+                                begin: const Offset(-0.20, 0.0),
+                                end: Offset.zero,
+                              )
+                            : Tween<Offset>(
+                                begin: const Offset(0.20, 0.0),
+                                end: Offset.zero,
+                              ));
 
                   final opacity = isIncoming
                       ? CurvedAnimation(
@@ -726,10 +715,7 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
 
                   return SlideTransition(
                     position: offsetTween.animate(animation),
-                    child: FadeTransition(
-                      opacity: opacity,
-                      child: child,
-                    ),
+                    child: FadeTransition(opacity: opacity, child: child),
                   );
                 },
                 child: ConstrainedBox(
@@ -751,7 +737,9 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
                           )
                         : Padding(
                             padding: const EdgeInsets.only(bottom: 6),
-                            child: widget.entries[active].contentBuilder(context),
+                            child: widget.entries[active].contentBuilder(
+                              context,
+                            ),
                           ),
                   ),
                 ),

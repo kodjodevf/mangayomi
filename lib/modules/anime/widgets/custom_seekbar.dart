@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -17,12 +16,6 @@ class CustomSeekBar extends StatefulWidget {
   final Function(Duration)? onSeekStart;
   final Function(Duration)? onSeekEnd;
   final ValueNotifier<List<(String, int)>> chapterMarks;
-  // Fetches a scrub-preview frame near a position. Optional: without it the
-  // bubble falls back to timecode + chapter label only, no image.
-  final Future<Uint8List?> Function(Duration position)? getThumbnail;
-  // Mouse-only: whether the cursor is currently over the track, so the
-  // parent controller can keep the whole control bar visible while the
-  // viewer is reading a scrub preview instead of auto-hiding it mid-look.
   final ValueChanged<bool>? onHoverChanged;
 
   const CustomSeekBar({
@@ -32,7 +25,6 @@ class CustomSeekBar extends StatefulWidget {
     required this.player,
     this.delta,
     required this.chapterMarks,
-    this.getThumbnail,
     this.onHoverChanged,
   });
 
@@ -48,14 +40,11 @@ class CustomSeekBarState extends State<CustomSeekBar> {
   Duration buffer = Duration.zero;
 
   bool _dragging = false;
-  // Mouse-only: moving the cursor over the track previews a frame there
+  // Mouse-only: moving the cursor over the track previews the timecode there
   // without touching playback, same as dragging does — just without a seek.
   bool _hovering = false;
   double? _hoverFraction;
   Duration? _hoverPosition;
-  Uint8List? _thumbBytes;
-  Timer? _thumbDebounce;
-  int _thumbRequestId = 0;
 
   StreamSubscription<Duration>? _positionSubscription;
   StreamSubscription<Duration>? _durationSubscription;
@@ -93,69 +82,10 @@ class CustomSeekBarState extends State<CustomSeekBar> {
   @override
   void dispose() {
     if (_hovering) widget.onHoverChanged?.call(false);
-    _thumbDebounce?.cancel();
     _positionSubscription?.cancel();
     _durationSubscription?.cancel();
     _bufferSubscription?.cancel();
     super.dispose();
-  }
-
-  // Dragging already seeks the *real* player to follow the thumb — that's
-  // how scrubbing has always worked here — so the frame this needs is
-  // already the one on screen. Reading it back with the real player's own
-  // screenshot() is instant and needs no second decoder, unlike hovering
-  // (see below), and sidesteps the network-seek timing issues a hidden
-  // player can hit entirely, since nothing here is seeking blind.
-  Future<void> _fetchDragThumbnail() async {
-    final id = ++_thumbRequestId;
-    try {
-      final bytes = await widget.player.screenshot(format: 'image/jpeg');
-      if (!mounted || id != _thumbRequestId) return;
-      setState(() => _thumbBytes = bytes);
-    } catch (_) {}
-  }
-
-  void _requestDragThumbnail({bool immediate = false}) {
-    _thumbDebounce?.cancel();
-    if (immediate) {
-      _fetchDragThumbnail();
-      return;
-    }
-    _thumbDebounce = Timer(
-      const Duration(milliseconds: 80),
-      _fetchDragThumbnail,
-    );
-  }
-
-  // Hovering (no button down) must *not* touch the real player — seeking it
-  // just to preview a frame under the cursor would visibly and audibly jump
-  // the actual playback around on every mouse move. That's what the hidden
-  // player from ScrubThumbnailGenerator is for: it previews a position
-  // without the real one ever moving.
-  Future<void> _fetchHoverThumbnail(Duration at) async {
-    final getThumbnail = widget.getThumbnail;
-    if (getThumbnail == null) return;
-    final id = ++_thumbRequestId;
-    final bytes = await getThumbnail(at);
-    if (!mounted || id != _thumbRequestId) return;
-    setState(() => _thumbBytes = bytes);
-  }
-
-  // [immediate] skips the debounce for the first request of a hover session
-  // — nothing to coalesce with yet, and that's the request whose latency the
-  // viewer actually notices. Continued movement still debounces, since
-  // onHover fires on every pixel.
-  void _requestHoverThumbnail(Duration at, {bool immediate = false}) {
-    if (widget.getThumbnail == null) return;
-    _thumbDebounce?.cancel();
-    if (immediate) {
-      _fetchHoverThumbnail(at);
-      return;
-    }
-    _thumbDebounce = Timer(
-      const Duration(milliseconds: 100),
-      () => _fetchHoverThumbnail(at),
-    );
   }
 
   void _onTrackHover(double localDx, double trackWidth) {
@@ -171,18 +101,15 @@ class CustomSeekBarState extends State<CustomSeekBar> {
       _hoverFraction = fraction;
       _hoverPosition = target;
     });
-    _requestHoverThumbnail(target, immediate: !wasHovering);
   }
 
   void _onTrackHoverExit() {
-    _thumbDebounce?.cancel();
     if (_hovering) widget.onHoverChanged?.call(false);
     if (!mounted) return;
     setState(() {
       _hovering = false;
       _hoverFraction = null;
       _hoverPosition = null;
-      _thumbBytes = null;
     });
   }
 
@@ -235,9 +162,13 @@ class CustomSeekBarState extends State<CustomSeekBar> {
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) => MouseRegion(
+                opaque: true,
+                hitTestBehavior: HitTestBehavior.opaque,
                 onHover: (event) =>
                     _onTrackHover(event.localPosition.dx, constraints.maxWidth),
-                onExit: (_) => _onTrackHoverExit(),
+                onExit: (_) {
+                  _onTrackHoverExit();
+                },
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -272,7 +203,6 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                         ),
                         onChangeStart: (value) {
                           setState(() => _dragging = true);
-                          _requestDragThumbnail(immediate: true);
                         },
                         onChanged: (value) {
                           widget.onSeekStart?.call(
@@ -281,10 +211,6 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                                   value.toInt() - position.inMilliseconds,
                             ),
                           );
-                          widget.player.seek(
-                            Duration(milliseconds: value.toInt()),
-                          );
-                          _requestDragThumbnail();
                           if (mounted) {
                             setState(() {
                               tempPosition = Duration(
@@ -303,10 +229,8 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                           widget.player.seek(
                             Duration(milliseconds: value.toInt()),
                           );
-                          _thumbDebounce?.cancel();
                           setState(() {
                             _dragging = false;
-                            _thumbBytes = null;
                           });
                         },
                       ),
@@ -323,7 +247,6 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                               0,
                             ),
                             child: _ScrubPreviewBubble(
-                              thumbnail: _thumbBytes,
                               label: bubblePosition.label(reference: duration),
                               chapterLabel: _chapterLabelAt(
                                 bubblePosition.inMilliseconds,
@@ -353,27 +276,21 @@ class CustomSeekBarState extends State<CustomSeekBar> {
   }
 }
 
-/// The floating bubble shown above the thumb while scrubbing: a real decoded
-/// frame near the drag position when one is available, always the target
-/// timecode (and the chapter it falls in, if any) even before it is.
+/// The floating bubble shown above the thumb while scrubbing: shows the
+/// target timecode (and the chapter it falls in, if any).
 class _ScrubPreviewBubble extends StatelessWidget {
-  final Uint8List? thumbnail;
   final String label;
   final String? chapterLabel;
 
-  const _ScrubPreviewBubble({
-    required this.thumbnail,
-    required this.label,
-    this.chapterLabel,
-  });
+  const _ScrubPreviewBubble({required this.label, this.chapterLabel});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(5),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: PlayerTheme.glassStrong,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
         boxShadow: const [
           BoxShadow(
@@ -386,31 +303,6 @@ class _ScrubPreviewBubble extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 120),
-            child: thumbnail != null
-                ? ClipRRect(
-                    key: const ValueKey('thumb'),
-                    borderRadius: BorderRadius.circular(6),
-                    child: Image.memory(
-                      thumbnail!,
-                      width: 128,
-                      height: 72,
-                      fit: BoxFit.cover,
-                      gaplessPlayback: true,
-                    ),
-                  )
-                : Container(
-                    key: const ValueKey('placeholder'),
-                    width: 128,
-                    height: 72,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.06),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-          ),
-          const SizedBox(height: 4),
           Text(
             label,
             style: PlayerTheme.timecode.copyWith(fontWeight: FontWeight.w600),

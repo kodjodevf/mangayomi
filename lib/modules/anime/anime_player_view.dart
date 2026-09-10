@@ -49,7 +49,6 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/services/fetch_subtitles.dart';
 import 'package:mangayomi/services/get_video_list.dart';
-import 'package:mangayomi/services/scrub_thumbnail_generator.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
@@ -321,66 +320,13 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   late final ValueNotifier<VideoPrefs?> _video = ValueNotifier(
     VideoPrefs(
       videoTrack: VideoTrack(
-        _firstVid.originalUrl,
+        widget.isLocal ? _firstVid.originalUrl : _firstVid.url,
         _firstVid.quality,
         _firstVid.quality,
       ),
       headers: _firstVid.headers,
     ),
   );
-  // Built lazily on the first scrub — most sessions never drag the seekbar,
-  // so there's no reason to pay for a second decoder until one actually does.
-  ScrubThumbnailGenerator? _thumbGenerator;
-
-  // A torrent source is already a single download being read from one
-  // place; a second reader competing for pieces just to draw a preview isn't
-  // worth straining that pipeline for. Track ids on a local source are
-  // mpv-internal (e.g. "1", "2"), not reopenable paths — the file that was
-  // actually opened is the stable reference there, regardless of which
-  // embedded quality track is live.
-  ({String url, Map<String, String>? headers, bool isLocal})? _scrubSource() {
-    if (widget.isTorrent) return null;
-    if (widget.isLocal) {
-      return (
-        url: _firstVid.originalUrl,
-        headers: _firstVid.headers,
-        isLocal: true,
-      );
-    }
-    final trackUrl = _video.value?.videoTrack?.id;
-    if (trackUrl == null || trackUrl.isEmpty) return null;
-    return (url: trackUrl, headers: _video.value?.headers, isLocal: false);
-  }
-
-  Future<Uint8List?> _getScrubThumbnail(Duration position) async {
-    final source = _scrubSource();
-    if (source == null) return null;
-    _thumbGenerator ??= ScrubThumbnailGenerator();
-    return _thumbGenerator!.thumbnailAt(
-      position,
-      url: source.url,
-      headers: source.headers,
-      isLocal: source.isLocal,
-    );
-  }
-
-  // Opens the hidden thumbnail player as soon as the episode starts loading
-  // rather than on the viewer's first scrub, so that open latency overlaps
-  // with normal playback startup instead of stacking in front of the first
-  // preview they ask for.
-  // Only prewarmed on desktop where mouse-hover scrub previews are supported.
-  // On mobile and TV, scrubbing uses the primary player's on-screen frame directly,
-  // so spinning up a second headless decoder over the network would waste
-  // bandwidth, memory, and hardware decoders for no reason.
-  void _prewarmScrubThumbnails() {
-    if (!isDesktop) return;
-    final source = _scrubSource();
-    if (source == null) return;
-    _thumbGenerator ??= ScrubThumbnailGenerator();
-    unawaited(
-      _thumbGenerator!.prewarm(url: source.url, headers: source.headers),
-    );
-  }
 
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   final ValueNotifier<bool> _isDoubleSpeed = ValueNotifier(false);
@@ -828,7 +774,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _customButtons.value = customButtons;
   }
 
-
   Future<void> pushToNewEpisode(BuildContext context, Chapter episode) async {
     if (_routeExitInProgress) return;
     _routeExitInProgress = true;
@@ -1077,7 +1022,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       // down already checked for this; the path everyone takes did not.
       if (!mounted) return;
       _openMedia(_video.value!, _streamController.getCurrentPosition());
-      _prewarmScrubThumbnails();
       if (widget.isTorrent) {
         Future.delayed(const Duration(seconds: 10)).then((_) {
           if (mounted) {
@@ -1189,7 +1133,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   @override
   void dispose() {
-    _thumbGenerator?.dispose();
     _revealControls.dispose();
     _tvVideoFocus.dispose();
     _tvPanelFocus.dispose();
@@ -2744,10 +2687,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       ),
       child: Row(
         children: [
-          BackButton(
-            color: Colors.white,
-            onPressed: _goBackToDetail,
-          ),
+          BackButton(color: Colors.white, onPressed: _goBackToDetail),
           Flexible(
             child: ListTile(
               dense: true,
@@ -2869,59 +2809,57 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       children: [
         if (_videoTextureVisible)
           Video(
-          pip: const PipConfig(autoEnter: true),
-          subtitleViewConfiguration: SubtitleViewConfiguration(
-            visible: false,
-            style: subtileTextStyle(ref),
-          ),
-          // Docked in the split view, always contain so the whole frame shows
-          // at its true aspect ratio rather than cropping to the narrower slot.
-          fit: docked ? BoxFit.contain : fit,
-          key: _key,
-          controls: (state) => (isTv && ref.read(tvPlayerStyleProvider))
-              ? (_tvSettingsOpen ? const SizedBox.shrink() : _tvControls())
-              : (isDesktop || isTv)
-              ? DesktopControllerWidget(
-                  videoController: _controller,
-                  topButtonBarWidget: _topButtonBar(context),
-                  videoStatekey: _key,
-                  bottomButtonBarWidget: _desktopBottomButtonBar(context),
-                  streamController: _streamController,
-                  seekToWidget: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Row(children: [_seekToWidget()]),
+            pip: const PipConfig(autoEnter: true),
+            subtitleViewConfiguration: SubtitleViewConfiguration(
+              visible: false,
+              style: subtileTextStyle(ref),
+            ),
+            // Docked in the split view, always contain so the whole frame shows
+            // at its true aspect ratio rather than cropping to the narrower slot.
+            fit: docked ? BoxFit.contain : fit,
+            key: _key,
+            controls: (state) => (isTv && ref.read(tvPlayerStyleProvider))
+                ? (_tvSettingsOpen ? const SizedBox.shrink() : _tvControls())
+                : (isDesktop || isTv)
+                ? DesktopControllerWidget(
+                    videoController: _controller,
+                    topButtonBarWidget: _topButtonBar(context),
+                    videoStatekey: _key,
+                    bottomButtonBarWidget: _desktopBottomButtonBar(context),
+                    streamController: _streamController,
+                    seekToWidget: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Row(children: [_seekToWidget()]),
+                    ),
+                    tempDuration: (value) {
+                      _tempPosition.value = value;
+                    },
+                    doubleSpeed: (value) {
+                      _isDoubleSpeed.value = value ?? false;
+                    },
+                    defaultSkipIntroLength: skipIntroLength,
+                    desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
+                    chapterMarks: _chapterMarks,
+                    revealControls: _revealControls,
+                  )
+                : MobileControllerWidget(
+                    videoController: _controller,
+                    topButtonBarWidget: _topButtonBar(context),
+                    videoStatekey: _key,
+                    bottomButtonBarWidget: _mobileBottomButtonBar(context),
+                    streamController: _streamController,
+                    revealControls: _revealControls,
+                    doubleSpeed: (value) {
+                      _isDoubleSpeed.value = value ?? false;
+                    },
+                    chapterMarks: _chapterMarks,
                   ),
-                  tempDuration: (value) {
-                    _tempPosition.value = value;
-                  },
-                  doubleSpeed: (value) {
-                    _isDoubleSpeed.value = value ?? false;
-                  },
-                  defaultSkipIntroLength: skipIntroLength,
-                  desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
-                  chapterMarks: _chapterMarks,
-                  revealControls: _revealControls,
-                  getThumbnail: _getScrubThumbnail,
-                )
-              : MobileControllerWidget(
-                  videoController: _controller,
-                  topButtonBarWidget: _topButtonBar(context),
-                  videoStatekey: _key,
-                  bottomButtonBarWidget: _mobileBottomButtonBar(context),
-                  streamController: _streamController,
-                  revealControls: _revealControls,
-                  doubleSpeed: (value) {
-                    _isDoubleSpeed.value = value ?? false;
-                  },
-                  chapterMarks: _chapterMarks,
-                  getThumbnail: _getScrubThumbnail,
-                ),
-          controller: _controller,
-          // When docked left for the settings panel, fill the (narrower) slot
-          // the Row gives us rather than forcing full-screen width.
-          width: docked ? null : context.width(1),
-          height: docked ? null : context.height(1),
-          resumeUponEnteringForegroundMode: true,
+            controller: _controller,
+            // When docked left for the settings panel, fill the (narrower) slot
+            // the Row gives us rather than forcing full-screen width.
+            width: docked ? null : context.width(1),
+            height: docked ? null : context.height(1),
+            resumeUponEnteringForegroundMode: true,
           )
         else
           const SizedBox.expand(),

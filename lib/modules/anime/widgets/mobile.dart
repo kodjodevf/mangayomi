@@ -28,7 +28,6 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
   final ValueNotifier<List<(String, int)>> chapterMarks;
   // Bumped by the player on each d-pad key so the controls reveal on a TV remote.
   final ValueNotifier<int> revealControls;
-  final Future<Uint8List?> Function(Duration position)? getThumbnail;
   const MobileControllerWidget({
     super.key,
     required this.videoController,
@@ -39,7 +38,6 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
     required this.doubleSpeed,
     required this.chapterMarks,
     required this.revealControls,
-    this.getThumbnail,
   });
 
   @override
@@ -543,7 +541,6 @@ class _MobileControllerWidgetState
                                     },
                                     player: widget.videoController.player,
                                     chapterMarks: widget.chapterMarks,
-                                    getThumbnail: widget.getThumbnail,
                                   ),
                                 ),
                                 widget.bottomButtonBarWidget,

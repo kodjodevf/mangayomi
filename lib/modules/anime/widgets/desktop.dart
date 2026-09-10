@@ -33,7 +33,6 @@ class DesktopControllerWidget extends ConsumerStatefulWidget {
   // Bumped by the player on each d-pad key so the desktop controls can reveal on
   // a TV remote — they otherwise only appear on mouse hover. Null off-TV.
   final ValueNotifier<int>? revealControls;
-  final Future<Uint8List?> Function(Duration position)? getThumbnail;
   const DesktopControllerWidget({
     super.key,
     required this.videoController,
@@ -48,7 +47,6 @@ class DesktopControllerWidget extends ConsumerStatefulWidget {
     required this.desktopFullScreenPlayer,
     required this.chapterMarks,
     this.revealControls,
-    this.getThumbnail,
   });
 
   @override
@@ -580,7 +578,6 @@ class _DesktopControllerWidgetState
                                           },
                                           player: widget.videoController.player,
                                           chapterMarks: widget.chapterMarks,
-                                          getThumbnail: widget.getThumbnail,
                                           onHoverChanged:
                                               _onSeekbarHoverChanged,
                                         ),
