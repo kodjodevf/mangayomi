@@ -684,6 +684,8 @@
   "use_libass": "Enable libass",
   "use_libass_info": "Use libass based subtitle rendering for native backend.",
   "libass_not_disable_message": "Disable `use libass` in player settings to be able to customize the subtitles.",
+  "override_ass_subtitles": "Override ASS subtitles",
+  "override_ass_subtitles_info": "Apply custom styling to ASS/SSA subtitles",
   "torrent_stream": "Torrent Stream",
   "add_torrent": "Add torrent",
   "enter_torrent_hint_text": "Enter magnet or torrent file url",

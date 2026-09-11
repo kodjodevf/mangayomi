@@ -1713,6 +1713,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get libass_not_disable_message => '在播放器设置中禁用 `use libass` 以便自定义字幕。';
 
   @override
+  String get override_ass_subtitles => 'Override ASS subtitles';
+
+  @override
+  String get override_ass_subtitles_info =>
+      'Apply custom styling to ASS/SSA subtitles';
+
+  @override
   String get torrent_stream => '种子流';
 
   @override

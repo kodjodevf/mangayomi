@@ -3269,6 +3269,18 @@ abstract class AppLocalizations {
   /// **'Disable `use libass` in player settings to be able to customize the subtitles.'**
   String get libass_not_disable_message;
 
+  /// No description provided for @override_ass_subtitles.
+  ///
+  /// In en, this message translates to:
+  /// **'Override ASS subtitles'**
+  String get override_ass_subtitles;
+
+  /// No description provided for @override_ass_subtitles_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply custom styling to ASS/SSA subtitles'**
+  String get override_ass_subtitles_info;
+
   /// No description provided for @torrent_stream.
   ///
   /// In en, this message translates to:

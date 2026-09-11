@@ -1773,6 +1773,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'عطل `استخدام libass` في إعدادات المشغل لتتمكن من تخصيص الترجمة.';
 
   @override
+  String get override_ass_subtitles => 'Override ASS subtitles';
+
+  @override
+  String get override_ass_subtitles_info =>
+      'Apply custom styling to ASS/SSA subtitles';
+
+  @override
   String get torrent_stream => 'بث التورنت';
 
   @override

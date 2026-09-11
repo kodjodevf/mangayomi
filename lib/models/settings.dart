@@ -1625,6 +1625,7 @@ class PlayerSubtitleSettings {
   int? backgroundColorR;
   int? backgroundColorG;
   int? backgroundColorB;
+  bool? overrideAssSubtitles;
   PlayerSubtitleSettings({
     this.fontSize = 45,
     this.useBold = true,
@@ -1641,6 +1642,7 @@ class PlayerSubtitleSettings {
     this.backgroundColorR = 0,
     this.backgroundColorG = 0,
     this.backgroundColorB = 0,
+    this.overrideAssSubtitles = false,
   });
   PlayerSubtitleSettings.fromJson(Map<String, dynamic> json) {
     fontSize = json['fontSize'];
@@ -1658,6 +1660,7 @@ class PlayerSubtitleSettings {
     backgroundColorR = json['backgroundColorR'];
     backgroundColorG = json['backgroundColorG'];
     backgroundColorB = json['backgroundColorB'];
+    overrideAssSubtitles = json['overrideAssSubtitles'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -1676,6 +1679,7 @@ class PlayerSubtitleSettings {
     'backgroundColorR': backgroundColorR,
     'backgroundColorG': backgroundColorG,
     'backgroundColorB': backgroundColorB,
+    'overrideAssSubtitles': overrideAssSubtitles,
   };
 }
 

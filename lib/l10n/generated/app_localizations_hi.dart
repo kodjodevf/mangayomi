@@ -1761,6 +1761,13 @@ class AppLocalizationsHi extends AppLocalizations {
       'उपशीर्षकों को अनुकूलित करने में सक्षम होने के लिए प्लेयर सेटिंग्स में `libass उपयोग करें` को अक्षम करें।';
 
   @override
+  String get override_ass_subtitles => 'Override ASS subtitles';
+
+  @override
+  String get override_ass_subtitles_info =>
+      'Apply custom styling to ASS/SSA subtitles';
+
+  @override
   String get torrent_stream => 'टॉरेंट स्ट्रीम';
 
   @override

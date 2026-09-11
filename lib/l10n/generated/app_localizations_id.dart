@@ -1763,6 +1763,13 @@ class AppLocalizationsId extends AppLocalizations {
       'Nonaktifkan `gunakan libass` di pengaturan pemutar untuk dapat menyesuaikan subtitle.';
 
   @override
+  String get override_ass_subtitles => 'Override ASS subtitles';
+
+  @override
+  String get override_ass_subtitles_info =>
+      'Apply custom styling to ASS/SSA subtitles';
+
+  @override
   String get torrent_stream => 'Aliran Torrent';
 
   @override

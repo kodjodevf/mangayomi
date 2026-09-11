@@ -1771,6 +1771,13 @@ class AppLocalizationsPt extends AppLocalizations {
       'Desative `use libass` nas configurações do player para poder personalizar as legendas.';
 
   @override
+  String get override_ass_subtitles => 'Override ASS subtitles';
+
+  @override
+  String get override_ass_subtitles_info =>
+      'Apply custom styling to ASS/SSA subtitles';
+
+  @override
   String get torrent_stream => 'Stream de Torrent';
 
   @override

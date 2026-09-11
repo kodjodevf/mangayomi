@@ -1784,6 +1784,13 @@ class AppLocalizationsRu extends AppLocalizations {
       'Отключите `use libass` в настройках плеера, чтобы иметь возможность настраивать субтитры.';
 
   @override
+  String get override_ass_subtitles => 'Override ASS subtitles';
+
+  @override
+  String get override_ass_subtitles_info =>
+      'Apply custom styling to ASS/SSA subtitles';
+
+  @override
   String get torrent_stream => 'Торрент-стрим';
 
   @override

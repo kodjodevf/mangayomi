@@ -340,6 +340,8 @@
   "use_libass": "Activer libass",
   "use_libass_info": "Utilisez le rendu des sous-titres basé sur libass pour le backend natif.",
   "libass_not_disable_message": "Désactivez `use libass` dans les paramètres du lecteur pour pouvoir personnaliser les sous-titres.",
+  "override_ass_subtitles": "Forcer le style sur les sous-titres ASS",
+  "override_ass_subtitles_info": "Appliquer le style personnalisé aux sous-titres ASS/SSA",
   "torrent_stream": "Flux Torrent",
   "add_torrent": "Ajouter un torrent",
   "enter_torrent_hint_text": "Entrez l'URL du fichier magnet ou torrent",

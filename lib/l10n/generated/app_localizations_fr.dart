@@ -1777,6 +1777,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'Désactivez `use libass` dans les paramètres du lecteur pour pouvoir personnaliser les sous-titres.';
 
   @override
+  String get override_ass_subtitles =>
+      'Forcer le style sur les sous-titres ASS';
+
+  @override
+  String get override_ass_subtitles_info =>
+      'Appliquer le style personnalisé aux sous-titres ASS/SSA';
+
+  @override
   String get torrent_stream => 'Flux Torrent';
 
   @override

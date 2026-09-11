@@ -24,6 +24,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
+import 'package:mangayomi/modules/anime/providers/state_provider.dart';
 import 'package:mangayomi/modules/anime/utils/player_lifecycle.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_controls.dart';
@@ -257,6 +258,102 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   late final enableAudioPitchCorrection = ref.read(
     enableAudioPitchCorrectionStateProvider,
   );
+  riv.ProviderSubscription<PlayerSubtitleSettings>? _subSettingsSub;
+
+  static String _toMpvColor(int a, int r, int g, int b) {
+    final hex =
+        ((a & 0xFF) << 24) |
+        ((r & 0xFF) << 16) |
+        ((g & 0xFF) << 8) |
+        (b & 0xFF);
+    return '#${hex.toRadixString(16).padLeft(8, '0').toUpperCase()}';
+  }
+
+  Map<String, String> _getInitialSubtitleOptions() {
+    final subSettings = ref.read(subtitleSettingsStateProvider);
+    final overrideAss = subSettings.overrideAssSubtitles ?? false;
+    return {
+      "sub-font-size": "${subSettings.fontSize ?? 45}",
+      "sub-bold": (subSettings.useBold ?? true) ? "yes" : "no",
+      "sub-italic": (subSettings.useItalic ?? false) ? "yes" : "no",
+      "sub-color": _toMpvColor(
+        subSettings.textColorA ?? 255,
+        subSettings.textColorR ?? 255,
+        subSettings.textColorG ?? 255,
+        subSettings.textColorB ?? 255,
+      ),
+      "sub-border-color": _toMpvColor(
+        subSettings.borderColorA ?? 255,
+        subSettings.borderColorR ?? 0,
+        subSettings.borderColorG ?? 0,
+        subSettings.borderColorB ?? 0,
+      ),
+      "sub-border-size": "3",
+      "sub-back-color": _toMpvColor(
+        subSettings.backgroundColorA ?? 0,
+        subSettings.backgroundColorR ?? 0,
+        subSettings.backgroundColorG ?? 0,
+        subSettings.backgroundColorB ?? 0,
+      ),
+      "sub-shadow-offset": "0",
+      "sub-pos": "100",
+      "sub-scale": "1.0",
+      "sub-ass-override": overrideAss ? "force" : "scale",
+      if (overrideAss) "sub-ass-justify": "yes",
+    };
+  }
+
+  void _applySubtitleSettingsToMpv(PlayerSubtitleSettings settings) {
+    if (!useLibass) return;
+    try {
+      final nativePlayer = _player.platform as NativePlayer;
+      nativePlayer.setProperty("sub-font-size", "${settings.fontSize ?? 45}");
+      nativePlayer.setProperty(
+        "sub-bold",
+        (settings.useBold ?? true) ? "yes" : "no",
+      );
+      nativePlayer.setProperty(
+        "sub-italic",
+        (settings.useItalic ?? false) ? "yes" : "no",
+      );
+      nativePlayer.setProperty(
+        "sub-color",
+        _toMpvColor(
+          settings.textColorA ?? 255,
+          settings.textColorR ?? 255,
+          settings.textColorG ?? 255,
+          settings.textColorB ?? 255,
+        ),
+      );
+      nativePlayer.setProperty(
+        "sub-border-color",
+        _toMpvColor(
+          settings.borderColorA ?? 255,
+          settings.borderColorR ?? 0,
+          settings.borderColorG ?? 0,
+          settings.borderColorB ?? 0,
+        ),
+      );
+      nativePlayer.setProperty(
+        "sub-back-color",
+        _toMpvColor(
+          settings.backgroundColorA ?? 0,
+          settings.backgroundColorR ?? 0,
+          settings.backgroundColorG ?? 0,
+          settings.backgroundColorB ?? 0,
+        ),
+      );
+      final overrideAss = settings.overrideAssSubtitles ?? false;
+      nativePlayer.setProperty(
+        "sub-ass-override",
+        overrideAss ? "force" : "scale",
+      );
+      if (overrideAss) {
+        nativePlayer.setProperty("sub-ass-justify", "yes");
+      }
+    } catch (_) {}
+  }
+
   late final audioChannel = ref.read(audioChannelStateProvider);
   late final volumeBoostCap = ref.read(volumeBoostCapStateProvider);
   late final Player _player = Player(
@@ -275,6 +372,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           "audio-channels": audioChannel.mpvName,
         if (audioChannel == AudioChannel.reverseStereo)
           "af": audioChannel.mpvName,
+        if (useLibass) ..._getInitialSubtitleOptions(),
       },
       observeProperties: {
         "user-data/aniyomi/show_text": generated.mpv_format.MPV_FORMAT_NODE,
@@ -1036,6 +1134,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _currentPosition.addListener(_updateRpcTimestamp);
     _subDelayController.addListener(_onSubDelayChanged);
     _subSpeedController.addListener(_onSubSpeedChanged);
+    if (useLibass) {
+      _subSettingsSub = ref.listenManual(subtitleSettingsStateProvider, (
+        previous,
+        next,
+      ) {
+        _applySubtitleSettingsToMpv(next);
+      });
+    }
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -1139,6 +1245,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _currentPosition.removeListener(_updateRpcTimestamp);
     _subDelayController.removeListener(_onSubDelayChanged);
     _subSpeedController.removeListener(_onSubSpeedChanged);
+    _subSettingsSub?.close();
     WidgetsBinding.instance.removeObserver(this);
     _setCurrentPosition(true, saveWatchTime: true);
     final playerCleanup = disposePlaybackSession(
@@ -1465,15 +1572,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   Widget _appearanceSectionWidget(BuildContext context, bool hasSubtitleTrack) {
-    if (useLibass) {
-      return Padding(
-        padding: const EdgeInsets.all(20),
-        child: Text(
-          context.l10n.libass_not_disable_message,
-          style: TextStyle(color: Colors.white.withValues(alpha: 0.75)),
-        ),
-      );
-    }
     // FontSettingWidget/ColorSettingWidget style themselves from the ambient
     // Theme — they used to open inside their own draggable menu.
     // Forced dark here so they stay legible against this sheet's dark ground
@@ -1482,9 +1580,40 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       data: ThemeData.dark(useMaterial3: true),
       child: Column(
         children: [
-          FontSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
-          const Divider(height: 1, color: Color(0x14FFFFFF)),
-          ColorSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
+          if (useLibass) ...[
+            Consumer(
+              builder: (context, ref, _) {
+                final overrideAss = ref.watch(
+                  overrideAssSubtitlesStateProvider,
+                );
+                return SwitchListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                  value: overrideAss,
+                  title: Text(
+                    context.l10n.override_ass_subtitles,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  subtitle: Text(
+                    context.l10n.override_ass_subtitles_info,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  onChanged: (val) {
+                    ref
+                        .read(subtitleSettingsStateProvider.notifier)
+                        .setOverrideAss(val);
+                  },
+                );
+              },
+            ),
+            const Divider(height: 1, color: Color(0x14FFFFFF)),
+          ],
+          SubtitleAppearanceWidget(hasSubtitleTrack: hasSubtitleTrack),
         ],
       ),
     );
