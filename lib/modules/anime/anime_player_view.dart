@@ -1432,6 +1432,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     int initialIndex = -1,
   }) async {
     final entries = _buildSettingsEntries(context);
+    _player.pause();
     if (isDesktop) {
       await showDesktopPlayerSettingsMenu(
         context,
@@ -1440,9 +1441,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         initialIndex: initialIndex,
       );
       setState(() {});
+      _player.play();
       return;
     }
-    _player.pause();
     await showUnifiedPlayerSettings(
       context,
       title: context.l10n.settings,
