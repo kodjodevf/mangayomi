@@ -1274,6 +1274,26 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String double_tap_search_hint(Object type) {
+    return 'Double-tap to search all $type';
+  }
+
+  @override
+  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+
+  @override
+  String get show_nav_double_tap_tooltip_subtitle =>
+      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+
+  @override
+  String already_in_library(Object source, Object title) {
+    return '\"$title\" is already in your library via $source.';
+  }
+
+  @override
+  String get add_anyway => 'Add Anyway';
+
+  @override
   String get langauage => 'Язык';
 
   @override

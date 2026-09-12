@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/custom_floating_action_btn.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/mass_migration/services/mass_migration_service.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/repositories/category_repository.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/source_repository.dart';
+import 'package:mangayomi/services/get_detail.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_view.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
+
+/// What the user picked in the "already in your library" dialog.
+enum _DuplicateLibraryAction { addAnyway, migrate }
 
 class MangaDetailsView extends ConsumerStatefulWidget {
   final Manga manga;
@@ -30,6 +37,123 @@ class MangaDetailsView extends ConsumerStatefulWidget {
 }
 
 class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
+  /// "Add to library" entry point: checks whether this exact title is
+  /// already favorited under a different source first, so the same manga
+  /// can't end up as two separate library entries by accident. Only warns —
+  /// the underlying add still runs unchanged when there's no duplicate, or
+  /// once the user picks Add Anyway.
+  Future<void> _onAddToLibraryPressed(BuildContext context) async {
+    final model = widget.manga;
+    final duplicates =
+        (await mangaRepository.findFavoritesByItemTypeAndName(
+          model.itemType,
+          model.name,
+        )).where((m) => m.id != model.id).toList();
+
+    if (duplicates.isNotEmpty) {
+      final oldManga = duplicates.first;
+      final oldSource = oldManga.sourceId != null
+          ? sourceRepository.getById(oldManga.sourceId!)
+          : null;
+      if (!context.mounted) return;
+      final action = await _showAlreadyInLibraryDialog(
+        context,
+        model,
+        oldSource?.name ?? '',
+      );
+      if (action == null) return;
+      if (!context.mounted) return;
+      if (action == _DuplicateLibraryAction.migrate) {
+        await _migrateExistingToThisSource(context, oldManga, model);
+        return;
+      }
+      // addAnyway falls through to the normal add below.
+    }
+    if (context.mounted) await _addToLibrary(context, model);
+  }
+
+  Future<void> _addToLibrary(BuildContext context, Manga model) async {
+    final checkCategoryList = categoryRepository.isNotEmptyByItemType(
+      model.itemType,
+    );
+    if (checkCategoryList) {
+      showCategorySelectionDialog(
+        context: context,
+        ref: ref,
+        itemType: model.itemType,
+        singleManga: model,
+      );
+    } else {
+      model.favorite = true;
+      model.dateAdded = DateTime.now().millisecondsSinceEpoch;
+      await mangaRepository.save(model);
+    }
+  }
+
+  Future<_DuplicateLibraryAction?> _showAlreadyInLibraryDialog(
+    BuildContext context,
+    Manga model,
+    String oldSourceName,
+  ) {
+    final l10n = l10nLocalizations(context)!;
+    return showDialog<_DuplicateLibraryAction>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(model.name ?? ''),
+        content: Text(l10n.already_in_library(oldSourceName, model.name ?? '')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(ctx, _DuplicateLibraryAction.addAnyway),
+            child: Text(l10n.add_anyway),
+          ),
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(ctx, _DuplicateLibraryAction.migrate),
+            child: Text(l10n.migrate),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Rewrites [oldManga] (the existing library entry) to track this source
+  /// instead, folding in its chapters/progress via the same path the manual
+  /// Migrate screen uses, then drops [newManga] — the row for the page
+  /// currently open — since its data is now redundant with the migrated
+  /// [oldManga].
+  Future<void> _migrateExistingToThisSource(
+    BuildContext context,
+    Manga oldManga,
+    Manga newManga,
+  ) async {
+    if (newManga.sourceId == null || newManga.link == null) return;
+    final destinationSource = sourceRepository.getById(newManga.sourceId!);
+    if (destinationSource == null) return;
+
+    final selectedManga = MManga(
+      name: newManga.name,
+      link: newManga.link,
+      imageUrl: newManga.imageUrl,
+    );
+    final preview = await ref.read(
+      getDetailProvider(url: newManga.link!, source: destinationSource).future,
+    );
+    await migrateLibraryItem(
+      ref: ref,
+      oldManga: oldManga,
+      selectedManga: selectedManga,
+      preview: preview,
+      destinationSource: destinationSource,
+    );
+    await mangaRepository.deleteLibrarySourceGroup([newManga]);
+    if (context.mounted) Navigator.pop(context);
+  }
+
   Size measureText(String text, TextStyle style) {
     final TextPainter textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
@@ -177,23 +301,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   elevation: 0,
                 ),
-                onPressed: () async {
-                  final model = widget.manga;
-                  final checkCategoryList = categoryRepository
-                      .isNotEmptyByItemType(model.itemType);
-                  if (checkCategoryList) {
-                    showCategorySelectionDialog(
-                      context: context,
-                      ref: ref,
-                      itemType: model.itemType,
-                      singleManga: model,
-                    );
-                  } else {
-                    model.favorite = true;
-                    model.dateAdded = DateTime.now().millisecondsSinceEpoch;
-                    await mangaRepository.save(model);
-                  }
-                },
+                onPressed: () => _onAddToLibraryPressed(context),
                 child: Column(
                   children: [
                     Icon(

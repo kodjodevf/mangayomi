@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/modules/browse/extension/widgets/extension_list_tile_widget.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
@@ -58,10 +59,16 @@ class SourceListTile extends StatelessWidget {
         ),
         subtitle: Row(
           children: [
-            Text(
-              completeLanguageName(source.lang!.toLowerCase()),
-              style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
-            ),
+            if (languageFlag(source.lang!) case final flag?)
+              flag
+            else
+              Text(
+                completeLanguageName(source.lang!.toLowerCase()),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: 12,
+                ),
+              ),
             if (source.isNsfw ?? false)
               Padding(
                 padding: const EdgeInsets.only(left: 4),
@@ -71,7 +78,7 @@ class SourceListTile extends StatelessWidget {
                     vertical: 1,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.red.withValues(alpha: 0.8),
+                    color: Colors.red,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: const Text(
@@ -91,41 +98,43 @@ class SourceListTile extends StatelessWidget {
               ? source.name!
               : "${context.l10n.local_source} ${source.itemType.localized(context.l10n)}",
         ),
-        trailing: SizedBox(
-          width: 150,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Consumer(
-                builder: (context, ref, child) {
-                  // final supportsLatest =  ref.watch(supportsLatestProvider(source: source));
-                  // if (supportsLatest) {
-                  return TextButton(
-                    style: const ButtonStyle(
-                      padding: WidgetStatePropertyAll(EdgeInsets.all(10)),
-                    ),
-                    onPressed: () =>
-                        context.push('/mangaHome', extra: (source, true)),
-                    child: Text(context.l10n.latest),
-                  );
-                  // }
-                  // return const SizedBox.shrink();
-                },
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextButton(
+              style: const ButtonStyle(
+                padding: WidgetStatePropertyAll(EdgeInsets.all(10)),
               ),
-              const SizedBox(width: 10),
-              if (!isLocal)
-                IconButton(
-                  padding: const EdgeInsets.all(0),
-                  onPressed: () {
-                    sourceRepository.save(source..isPinned = !source.isPinned!);
-                  },
-                  icon: Icon(
-                    Icons.push_pin_outlined,
-                    color: source.isPinned! ? context.primaryColor : null,
-                  ),
+              onPressed: () =>
+                  context.push('/mangaHome', extra: (source, true)),
+              child: Text(context.l10n.latest),
+            ),
+            if (!isLocal) ...[
+              IconButton(
+                padding: const EdgeInsets.all(0),
+                onPressed: () {
+                  sourceRepository.save(source..isPinned = !source.isPinned!);
+                },
+                icon: Icon(
+                  Icons.push_pin_outlined,
+                  color: source.isPinned! ? context.primaryColor : null,
                 ),
+              ),
+              IconButton(
+                padding: const EdgeInsets.all(0),
+                onPressed: () => context.push('/extension_detail', extra: source),
+                icon: const Icon(Icons.settings_outlined),
+              ),
+              Consumer(
+                builder: (context, ref, child) => IconButton(
+                  padding: const EdgeInsets.all(0),
+                  onPressed: () =>
+                      showUninstallSourceDialog(context, ref, source),
+                  icon: const Icon(Icons.delete_outline),
+                ),
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );
@@ -242,7 +251,7 @@ class TvSourceRow extends StatelessWidget {
                                       vertical: 1,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.red.withValues(alpha: 0.8),
+                                      color: Colors.red,
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: const Text(

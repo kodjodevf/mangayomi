@@ -47,29 +47,53 @@ class MExtensionServerPlatform {
     try {
       final isRunning = baseUrl == null ? await check() : await _check(baseUrl);
       if (!isRunning) {
-        final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
-        final port = server.port;
-        await server.close();
-        if (isDesktop) {
-          final settings = settingsRepository.currentOrNull;
-          final jrePath = settings?.jrePath;
-          final serverJarPath = settings?.extensionServerPath;
-          if ((jrePath?.isEmpty ?? true) || (serverJarPath?.isEmpty ?? true)) {
-            return;
-          }
-          if (!await File(jrePath!).exists() ||
-              !await File(serverJarPath!).exists()) {
-            return;
-          }
-          await MExtensionServer().startServer(
-            port,
-            jvmPath: jrePath,
-            serverJarPath: serverJarPath,
+        // Binding then immediately closing just to learn a free port number
+        // is inherently racy: JVM startup takes real time, and on Windows
+        // especially, another process can grab that exact port before our
+        // server finishes binding to it. When that happens every request
+        // silently goes to whatever unrelated service ended up on the port
+        // instead - which has no idea what "/dalvik" means and answers with
+        // something like a bare error, uniformly breaking every extension.
+        // Verify the server that comes up is actually ours before trusting
+        // the port, retrying with a fresh one a few times otherwise.
+        String? localBaseUrl;
+        for (var attempt = 0; attempt < 3 && localBaseUrl == null; attempt++) {
+          final probe = await HttpServer.bind(
+            InternetAddress.loopbackIPv4,
+            0,
           );
-        } else {
-          await MExtensionServer().startServer(port);
+          final port = probe.port;
+          await probe.close();
+          if (isDesktop) {
+            final settings = settingsRepository.currentOrNull;
+            final jrePath = settings?.jrePath;
+            final serverJarPath = settings?.extensionServerPath;
+            if ((jrePath?.isEmpty ?? true) ||
+                (serverJarPath?.isEmpty ?? true)) {
+              return;
+            }
+            if (!await File(jrePath!).exists() ||
+                !await File(serverJarPath!).exists()) {
+              return;
+            }
+            await MExtensionServer().startServer(
+              port,
+              jvmPath: jrePath,
+              serverJarPath: serverJarPath,
+            );
+          } else {
+            await MExtensionServer().startServer(port);
+          }
+          final candidateUrl = "http://127.0.0.1:$port";
+          if (await _isOurServer(candidateUrl)) {
+            localBaseUrl = candidateUrl;
+          } else {
+            try {
+              await MExtensionServer().stopServer();
+            } catch (_) {}
+          }
         }
-        final localBaseUrl = "http://127.0.0.1:$port";
+        if (localBaseUrl == null) return;
         if (Platform.isIOS) _iosActiveBaseUrl = localBaseUrl;
         ref.read(androidProxyServerStateProvider.notifier).set(localBaseUrl);
       }
@@ -78,6 +102,25 @@ class MExtensionServerPlatform {
         print(e);
       }
     }
+  }
+
+  /// Confirms [baseUrl] is actually our extension server rather than some
+  /// other service that happened to be handed the same port, by polling for
+  /// the "/capabilities" marker unique to it while the JVM finishes starting.
+  Future<bool> _isOurServer(String baseUrl) async {
+    for (var i = 0; i < 20; i++) {
+      try {
+        final res = await http
+            .get(Uri.parse("$baseUrl/capabilities"))
+            .timeout(const Duration(milliseconds: 500));
+        if (res.statusCode == 200 &&
+            res.body.contains('"mangayomiMihonBridge"')) {
+          return true;
+        }
+      } catch (_) {}
+      await Future.delayed(const Duration(milliseconds: 250));
+    }
+    return false;
   }
 
   Future<void> stopServer() async {

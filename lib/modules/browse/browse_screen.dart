@@ -7,6 +7,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/modules/browse/browse_content_screen.dart';
 import 'package:mangayomi/modules/browse/extension/extension_screen.dart';
 import 'package:mangayomi/modules/browse/sources/sources_screen.dart';
 import 'package:mangayomi/modules/widgets/tv_row_button.dart';
@@ -46,6 +47,11 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   late TabController _tabBarController;
   late List<BrowseTab> _tabList;
 
+  // Normal (non-TV) layout: Sources + Extensions are merged into one page
+  // per content type, so this only needs to track the type, not the kind.
+  late TabController _normalTabController;
+  late List<ItemType> _itemTypes;
+
   // Hide manga & novel from Browse (sources + extensions) on the anime-only TV
   // layout so only anime shows. Recomputed live so toggling "Anime only" updates
   // the tabs without a restart. Defaults to isTv, user-overridable. See #729.
@@ -64,6 +70,12 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
       BrowseTab(ItemType.novel, BrowseTabKind.extensions),
   ];
 
+  List<ItemType> _computeItemTypes(bool animeOnly) => [
+    if (!animeOnly && !hideItems.contains("/MangaLibrary")) ItemType.manga,
+    if (!hideItems.contains("/AnimeLibrary")) ItemType.anime,
+    if (!animeOnly && !hideItems.contains("/NovelLibrary")) ItemType.novel,
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -73,7 +85,11 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
       initialIndex: _takeRequestedTabIndex(),
       vsync: this,
     );
-    _tabBarController.addListener(_onTabChanged);
+    _tabBarController.addListener(_onTabSwitched);
+
+    _itemTypes = _computeItemTypes(ref.read(animeOnlyTvModeProvider));
+    _normalTabController = TabController(length: _itemTypes.length, vsync: this);
+    _normalTabController.addListener(_onTabSwitched);
   }
 
   /// The index of the tab somebody asked us to open on, or zero.
@@ -93,7 +109,10 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     return index < 0 ? 0 : index;
   }
 
-  void _onTabChanged() {
+  // TV and normal tab switches both reset the same search state; the
+  // controllers themselves stay separate since TV and normal disagree on tab
+  // count and what a "tab" even is (kind+type vs. type alone).
+  void _onTabSwitched() {
     _chekPermission();
     setState(() {
       _textEditingController.clear();
@@ -109,6 +128,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   void dispose() {
     _tvActiveRow.dispose();
     _tabBarController.dispose();
+    _normalTabController.dispose();
     _textEditingController.dispose();
     super.dispose();
   }
@@ -191,6 +211,109 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
           !isExtensionTab ? Icons.filter_list_sharp : Icons.translate_rounded,
           color: Theme.of(context).hintColor,
         ),
+      ),
+    ];
+  }
+
+  /// Top-bar actions for the normal (non-TV) layout, where Sources and
+  /// Extensions are merged onto one page per type, so every action that
+  /// used to live on only one of the two tabs is shown together here.
+  List<Widget> _mergedActions(BuildContext context, ItemType tabType) {
+    return [
+      _isSearch
+          ? SeachFormTextField(
+              onChanged: (value) {
+                setState(() {});
+              },
+              onSuffixPressed: () {
+                _textEditingController.clear();
+                setState(() {});
+              },
+              onPressed: () {
+                setState(() {
+                  _isSearch = false;
+                });
+                _textEditingController.clear();
+              },
+              controller: _textEditingController,
+            )
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PopupMenuButton<VoidCallback>(
+                  tooltip: '',
+                  icon: Icon(
+                    Icons.add_outlined,
+                    color: Theme.of(context).hintColor,
+                  ),
+                  onSelected: (action) => action(),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: () =>
+                          context.push('/SourceRepositories', extra: tabType),
+                      child: Text(context.l10n.add_extensions_repo),
+                    ),
+                    PopupMenuItem(
+                      value: () => context.push('/createExtension'),
+                      child: Text(context.l10n.create_extension),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  splashRadius: 20,
+                  focusColor: Theme.of(context).colorScheme.primary
+                      .withValues(alpha: 0.4),
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = true;
+                    });
+                  },
+                  icon: Icon(
+                    Icons.search_rounded,
+                    color: Theme.of(context).hintColor,
+                  ),
+                ),
+              ],
+            ),
+      PopupMenuButton<VoidCallback>(
+        tooltip: '',
+        icon: Icon(
+          Icons.more_vert_rounded,
+          color: Theme.of(context).hintColor,
+        ),
+        onSelected: (action) => action(),
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            value: () => context.push('/globalSearch', extra: (null, tabType)),
+            child: Row(
+              children: [
+                const Icon(Icons.travel_explore_rounded, size: 20),
+                const SizedBox(width: 12),
+                Text(context.l10n.global_search),
+              ],
+            ),
+          ),
+          PopupMenuItem(
+            value: () => context.push('/ExtensionLang', extra: tabType),
+            child: Row(
+              children: [
+                const Icon(Icons.translate_rounded, size: 20),
+                const SizedBox(width: 12),
+                Text(context.l10n.language),
+              ],
+            ),
+          ),
+          PopupMenuItem(
+            value: () => context.push('/sourceFilter', extra: tabType),
+            child: Row(
+              children: [
+                const Icon(Icons.filter_list_sharp, size: 20),
+                const SizedBox(width: 12),
+                Text(context.l10n.filter),
+              ],
+            ),
+          ),
+        ],
       ),
     ];
   }
@@ -286,13 +409,14 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   Widget build(BuildContext context) {
     // Recompute the tab list live when "Anime only" flips; recreate the
     // controller when the tab count changes.
-    final newTabs = _computeTabList(ref.watch(animeOnlyTvModeProvider));
+    final animeOnly = ref.watch(animeOnlyTvModeProvider);
+    final newTabs = _computeTabList(animeOnly);
     if (newTabs.length != _tabList.length) {
       _tabList = newTabs;
-      _tabBarController.removeListener(_onTabChanged);
+      _tabBarController.removeListener(_onTabSwitched);
       _tabBarController.dispose();
       _tabBarController = TabController(length: _tabList.length, vsync: this);
-      _tabBarController.addListener(_onTabChanged);
+      _tabBarController.addListener(_onTabSwitched);
     } else {
       _tabList = newTabs;
     }
@@ -306,9 +430,31 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     if (isTv) {
       return _buildTvLayout(context, currentTab, isExtensionTab, l10n);
     }
+
+    // Normal layout: recompute the type list live, same pattern as the TV
+    // controller above, but keyed only on type since Sources + Extensions
+    // are merged into one page per type here.
+    final newItemTypes = _computeItemTypes(animeOnly);
+    if (newItemTypes.length != _itemTypes.length) {
+      _itemTypes = newItemTypes;
+      _normalTabController.removeListener(_onTabSwitched);
+      _normalTabController.dispose();
+      _normalTabController = TabController(
+        length: _itemTypes.length,
+        vsync: this,
+      );
+      _normalTabController.addListener(_onTabSwitched);
+    } else {
+      _itemTypes = newItemTypes;
+    }
+    if (_itemTypes.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final currentType = _itemTypes[_normalTabController.index];
+
     return DefaultTabController(
       animationDuration: Duration.zero,
-      length: _tabList.length,
+      length: _itemTypes.length,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -317,34 +463,35 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
             l10n.browse,
             style: TextStyle(color: Theme.of(context).hintColor),
           ),
-          actions: _actions(context, isExtensionTab, currentTab.type),
+          actions: _mergedActions(context, currentType),
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.label,
             isScrollable: true,
-            controller: _tabBarController,
-            tabs: _tabList.map((tab) {
-              final type = tab.type;
-              final isExt = tab.kind == BrowseTabKind.extensions;
-
+            controller: _normalTabController,
+            tabs: _itemTypes.map((type) {
               return Tab(
                 child: Row(
                   children: [
-                    Text(
-                      isExt
-                          ? type.localizedExtensions(l10n)
-                          : type.localizedSources(l10n),
-                    ),
-                    if (isExt) ...[
-                      const SizedBox(width: 8),
-                      ExtensionUpdateNumbersBadge(itemType: type),
-                    ],
+                    Text(type.localized(l10n)),
+                    const SizedBox(width: 8),
+                    ExtensionUpdateNumbersBadge(itemType: type),
                   ],
                 ),
               );
             }).toList(),
           ),
         ),
-        body: TabBarView(controller: _tabBarController, children: _tabViews()),
+        body: TabBarView(
+          controller: _normalTabController,
+          children: _itemTypes
+              .map(
+                (type) => BrowseContentScreen(
+                  itemType: type,
+                  query: _textEditingController.text,
+                ),
+              )
+              .toList(),
+        ),
       ),
     );
   }

@@ -33,6 +33,20 @@ class MangaRepository {
       .nameEqualTo(name)
       .findFirst();
 
+  /// Other favorited entries with this exact name under this item type,
+  /// regardless of source. Used to warn before adding a manga that's already
+  /// in the library from a different source, so the same title doesn't end
+  /// up favorited twice under two separate rows.
+  Future<List<Manga>> findFavoritesByItemTypeAndName(
+    ItemType itemType,
+    String? name,
+  ) => isar.mangas
+      .filter()
+      .itemTypeEqualTo(itemType)
+      .nameEqualTo(name)
+      .favoriteEqualTo(true)
+      .findAll();
+
   Future<bool> isEmptyByLangNameSource(
     String? lang,
     String? name,
@@ -260,6 +274,16 @@ class MangaRepository {
       .langEqualTo(lang)
       .nameEqualTo(name)
       .sourceEqualTo(source)
+      .watch(fireImmediately: true);
+
+  Stream<List<Manga>> watchFavoritesByItemTypeAndName(
+    ItemType itemType,
+    String? name,
+  ) => isar.mangas
+      .filter()
+      .itemTypeEqualTo(itemType)
+      .nameEqualTo(name)
+      .favoriteEqualTo(true)
       .watch(fireImmediately: true);
 
   Stream<List<Manga>> watchBySourceAndLang(String? source, String? lang) => isar
