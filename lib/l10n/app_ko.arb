@@ -1,0 +1,1331 @@
+{
+  "@@locale": "ko",
+  "library": "보관함",
+  "updates": "업데이트",
+  "history": "기록",
+  "browse": "탐색",
+  "more": "더보기",
+  "open_random_entry": "무작위 항목 열기",
+  "import": "가져오기",
+  "filter": "필터",
+  "ignore_filters": "필터 무시",
+  "downloaded": "다운로드됨",
+  "unread": "안 읽음",
+  "unwatched": "안 봄",
+  "started": "시작됨",
+  "bookmarked": "북마크됨",
+  "sort": "정렬",
+  "alphabetically": "가나다순",
+  "last_read": "최근에 읽음",
+  "last_watched": "최근에 시청함",
+  "last_update_check": "최근 업데이트 확인",
+  "last_entry_delete_warning": "{count, plural, =1{보관함에서 이 {mediaType}의 유일한 {entryType}을(를) 삭제합니다.} other{보관함에서 이 {mediaType}의 {entryTypePlural} {count}개를 모두 삭제합니다.}}\n이 작업은 보관함에서 해당 {mediaType} 전체를 제거합니다.\n\n참고: 실제 파일은 삭제되지 않습니다.",
+  "@last_entry_delete_warning": {
+    "description": "Warning when deleting all entries (chapters/episodes) of a manga/anime.",
+    "placeholders": {
+      "count": {},
+      "entryType": {},
+      "entryTypePlural": {},
+      "mediaType": {}
+    }
+  },
+  "chapter": "화",
+  "episode": "에피소드",
+  "unread_count": "안 읽은 개수",
+  "unwatched_count": "안 본 개수",
+  "latest_chapter": "최신 화",
+  "latest_episode": "최신 에피소드",
+  "date_added": "추가된 날짜",
+  "display": "표시",
+  "display_mode": "표시 모드",
+  "compact_grid": "작은 그리드",
+  "compression_level": "압축 수준",
+  "compression_info": "압축률이 높을수록 백업 파일 용량은 줄어들지만 CPU를 더 많이 사용합니다. 기본값: {level}",
+  "comfortable_grid": "편안한 그리드",
+  "cover_only_grid": "표지만 표시하는 그리드",
+  "list": "목록",
+  "badges": "배지",
+  "downloaded_chapters": "다운로드한 화",
+  "downloaded_episodes": "다운로드한 에피소드",
+  "language": "언어",
+  "local_source": "로컬 소스",
+  "tabs": "탭",
+  "show_category_tabs": "카테고리 탭 표시",
+  "show_numbers_of_items": "항목 수 표시",
+  "other": "기타",
+  "show_continue_reading_buttons": "계속 읽기 버튼 표시",
+  "show_continue_watching_buttons": "계속 시청하기 버튼 표시",
+  "empty_library": "보관함이 비어있음",
+  "search": "검색...",
+  "no_recent_updates": "최근 업데이트 없음",
+  "remove_everything": "모두 지우기",
+  "remove_everything_msg": "정말 지우시겠습니까? 모든 기록이 삭제됩니다.",
+  "remove_all_update_msg": "정말 지우시겠습니까? 모든 업데이트 기록이 삭제됩니다.",
+  "ok": "확인",
+  "cancel": "취소",
+  "remove": "삭제",
+  "remove_history_msg": "이 화의 읽은 날짜가 삭제됩니다. 정말 삭제하시겠습니까?",
+  "last_used": "최근 사용",
+  "pinned": "고정됨",
+  "sources": "소스",
+  "install": "설치",
+  "update": "업데이트",
+  "latest": "최신",
+  "extensions": "확장 프로그램",
+  "migrate": "마이그레이션",
+  "mass_migration_title": "일괄 마이그레이션",
+  "mass_migration_preview_items": "항목 미리보기",
+  "mass_migration_destination_source": "대상 소스",
+  "mass_migration_no_library_items": "일괄 마이그레이션할 보관함 항목이 없습니다.",
+  "mass_migration_no_destination_sources": "설치된 대상 소스가 없습니다.",
+  "mass_migration_installed": "설치됨",
+  "mass_migration_items_ready_for_review": "{count, plural, =1{1개의 항목을 검토할 준비가 되었습니다} other{{count}개의 항목을 검토할 준비가 되었습니다}}",
+  "@mass_migration_items_ready_for_review": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_item_count": "{count, plural, =1{1개 항목} other{{count}개 항목}}",
+  "@mass_migration_item_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_select_destination_source": "대상 소스 선택",
+  "mass_migration_finding_matches": "{source} • {language}에서 일치하는 항목 찾는 중",
+  "@mass_migration_finding_matches": {
+    "placeholders": {
+      "source": {},
+      "language": {}
+    }
+  },
+  "mass_migration_processing_item": "항목 처리 중: {current} / {total}",
+  "@mass_migration_processing_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_waiting_next_item": "다음 항목 처리 전 2초 대기 중...",
+  "mass_migration_waiting_next_migration": "다음 마이그레이션 전 2초 대기 중...",
+  "mass_migration_matched_so_far": "지금까지 일치한 항목: {count}",
+  "@mass_migration_matched_so_far": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_match_count": "일치하지 않음: {count}",
+  "@mass_migration_no_match_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_review_matches": "{source}의 일치 항목 검토",
+  "@mass_migration_review_matches": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "mass_migration_found_matches": "일치하는 항목 찾음: {count}",
+  "@mass_migration_found_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_matches": "일치하는 항목 없음: {count}",
+  "@mass_migration_no_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_selected_to_migrate": "마이그레이션하도록 선택됨: {count}",
+  "@mass_migration_selected_to_migrate": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_finish_review": "검토 완료",
+  "mass_migration_migrate_selected": "선택한 항목 마이그레이션 ({count})",
+  "@mass_migration_migrate_selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_migrating_selected": "선택한 항목을 {source}(으)로 마이그레이션 중",
+  "@mass_migration_migrating_selected": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "mass_migration_no_items_selected": "마이그레이션할 항목이 선택되지 않았습니다.",
+  "mass_migration_migrating_item": "마이그레이션 중: {current} / {total}",
+  "@mass_migration_migrating_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_complete": "일괄 마이그레이션 완료",
+  "mass_migration_complete_success_message": "선택한 모든 항목이 성공적으로 처리되었습니다.",
+  "mass_migration_complete_partial_message": "마이그레이션이 완료되었지만 수동으로 확인해야 할 항목이 일부 있습니다.",
+  "mass_migration_route_summary": "{source} → {destination}",
+  "@mass_migration_route_summary": {
+    "placeholders": {
+      "source": {},
+      "destination": {}
+    }
+  },
+  "mass_migration_processed": "처리됨",
+  "mass_migration_matched": "일치함",
+  "mass_migration_migrated": "마이그레이션됨",
+  "mass_migration_skipped": "건너뜀",
+  "mass_migration_failed": "실패함",
+  "mass_migration_failed_items": "실패한 항목",
+  "mass_migration_exit": "일괄 마이그레이션 종료",
+  "mass_migration_no_destination_match": "일치하는 대상을 찾을 수 없음",
+  "mass_migration_query": "검색어: {query}",
+  "@mass_migration_query": {
+    "placeholders": {
+      "query": {}
+    }
+  },
+  "mass_migration_skip": "건너뛰기",
+  "mass_migration_loading": "로딩 중...",
+  "mass_migration_choose_another_result": "다른 결과 선택",
+  "mass_migration_source_chapters": "원본 화",
+  "mass_migration_destination_chapters": "대상 화",
+  "mass_migration_chapter_count": "{count, plural, =1{1화} other{{count}화}}",
+  "@mass_migration_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_source_chapter_count": "{count, plural, =1{원본 1화} other{원본 {count}화}}",
+  "@mass_migration_source_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_destination_chapter_count": "{count, plural, =1{대상 1화} other{대상 {count}화}}",
+  "@mass_migration_destination_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_chapters_found": "화를 찾을 수 없습니다.",
+  "mass_migration_and_more_chapters": "그리고 {count}개 더...",
+  "@mass_migration_and_more_chapters": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_unknown_title": "알 수 없는 제목",
+  "mass_migration_unknown_match": "알 수 없는 일치 항목",
+  "mass_migration_unknown_source": "알 수 없는 소스",
+  "mass_migration_unknown_chapter": "알 수 없는 화",
+  "migrate_confirm": "다른 소스로 마이그레이션",
+  "clean_database": "데이터베이스 정리",
+  "cleaned_database": "데이터베이스가 정리되었습니다! {x}개의 항목이 삭제되었습니다.",
+  "clean_database_desc": "보관함에 추가되지 않은 모든 항목을 제거합니다!",
+  "incognito_mode": "시크릿 모드",
+  "incognito_mode_description": "읽기 기록을 일시 중지합니다.",
+  "downloaded_only": "다운로드 항목만",
+  "downloaded_only_description": "보관함에 다운로드한 항목만 표시합니다.",
+  "download_queue": "다운로드 대기열",
+  "categories": "카테고리",
+  "statistics": "통계",
+  "settings": "설정",
+  "about": "정보",
+  "help": "도움말",
+  "no_downloads": "다운로드 없음",
+  "edit_categories": "카테고리 편집",
+  "edit_categories_description": "카테고리가 없습니다. 플러스 버튼을 눌러 보관함을 정리할 카테고리를 만들어보세요.",
+  "add": "추가",
+  "add_category": "카테고리 추가",
+  "name": "이름",
+  "label_value": "{label}: {value}",
+  "@label_value": {
+    "placeholders": {
+      "label": {},
+      "value": {}
+    }
+  },
+  "url": "URL",
+  "category_name_required": "*필수 항목",
+  "add_category_error_exist": "같은 이름의 카테고리가 이미 존재합니다!",
+  "delete_category": "카테고리 삭제",
+  "delete_category_msg": "{name} 카테고리를 삭제하시겠습니까?",
+  "rename_category": "카테고리 이름 변경",
+  "general": "일반",
+  "general_subtitle": "앱 언어",
+  "app_language": "앱 언어",
+  "default_subtitle_language": "기본 자막 언어",
+  "appearance": "모양",
+  "appearance_subtitle": "테마, 날짜 및 시간 형식",
+  "theme": "테마",
+  "dark_mode": "다크 모드",
+  "follow_system_theme": "시스템 테마 따르기",
+  "on": "켜짐",
+  "off": "꺼짐",
+  "pure_black_dark_mode": "완전한 블랙 다크 모드",
+  "timestamp": "타임스탬프",
+  "relative_timestamp": "상대적 타임스탬프",
+  "relative_timestamp_short": "짧게 (오늘, 어제)",
+  "relative_timestamp_long": "길게 (짧게+, n일 전)",
+  "date_format": "날짜 형식",
+  "reader": "리더",
+  "refresh": "새로고침",
+  "reader_subtitle": "읽기 모드, 표시, 탐색",
+  "default_reading_mode": "기본 읽기 모드",
+  "reading_mode_vertical": "수직",
+  "reading_mode_horizontal": "수평",
+  "reading_mode_left_to_right": "왼쪽에서 오른쪽으로",
+  "reading_mode_right_to_left": "오른쪽에서 왼쪽으로",
+  "reading_mode_vertical_continuous": "수직 연속",
+  "reading_mode_webtoon": "웹툰",
+  "double_tap_animation_speed": "더블 탭 애니메이션 속도",
+  "normal": "보통",
+  "fast": "빠름",
+  "no_animation": "애니메이션 없음",
+  "animate_page_transitions": "페이지 전환 애니메이션",
+  "crop_borders": "여백 자르기",
+  "downloads": "다운로드",
+  "downloads_subtitle": "다운로드 설정",
+  "download_location": "다운로드 위치",
+  "custom_location": "사용자 지정 위치",
+  "only_on_wifi": "Wi-Fi에서만",
+  "save_as_cbz_archive": "CBZ 압축 파일로 저장",
+  "delete_download_after_reading": "읽은 후 다운로드 삭제",
+  "concurrent_downloads": "동시 다운로드 수",
+  "browse_subtitle": "소스, 전체 검색",
+  "only_include_pinned_sources": "고정된 소스만 포함",
+  "nsfw_sources": "NSFW (18+) 소스",
+  "nsfw_sources_show": "소스 및 확장 프로그램 목록에 표시",
+  "nsfw_sources_info": "이 설정을 꺼도 비공식적이거나 플래그가 잘못 지정된 확장 프로그램에서 NSFW(18+) 콘텐츠가 노출되는 것을 막지는 못합니다.",
+  "version": "버전",
+  "beta_version": "베타 ({version})",
+  "@beta_version": {
+    "placeholders": {
+      "version": {}
+    }
+  },
+  "check_for_update": "업데이트 확인",
+  "logs_on": "로깅 활성화",
+  "share_app_logs": "앱 로그 공유",
+  "no_app_logs": "사용 가능한 log.txt가 없습니다!",
+  "failed": "실패!",
+  "n_days_ago": "{days}일 전",
+  "today": "오늘",
+  "yesterday": "어제",
+  "a_week_ago": "1주일 전",
+  "next_week": "다음 주",
+  "add_to_library": "보관함에 추가",
+  "completed": "완결",
+  "ongoing": "연재 중",
+  "on_hiatus": "휴재",
+  "canceled": "취소됨",
+  "publishing_finished": "출판 완료",
+  "unknown": "알 수 없음",
+  "empty_placeholder": "비어있음\n\n\n\n",
+  "error": "오류",
+  "error_with_message": "오류: {error}",
+  "@error_with_message": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "no_pages_available": "오류: 사용 가능한 페이지가 없습니다",
+  "set_categories": "카테고리 설정",
+  "edit": "편집",
+  "in_library": "보관함에 있음",
+  "filter_scanlator_groups": "번역 그룹 필터",
+  "reset": "초기화",
+  "by_source": "소스별",
+  "by_chapter_number": "화 번호별",
+  "by_episode_number": "에피소드 번호별",
+  "by_upload_date": "업로드 날짜별",
+  "source_title": "소스 제목",
+  "create_extension": "확장 프로그램 만들기",
+  "choose_extension_language": "확장 프로그램 언어 선택",
+  "lang": "언어",
+  "base_url": "기본 URL",
+  "api_url_optional": "API URL (선택)",
+  "icon_url": "아이콘 URL",
+  "source_icon_url": "소스 아이콘 URL",
+  "notes": "참고사항",
+  "extension_name_example": "예: myAnime",
+  "language_code_example": "예: ko",
+  "base_url_example": "예: https://example.com",
+  "api_url_example": "예: https://api.example.com",
+  "extension_notes_example": "예: 이 확장 프로그램은 로그인이 필요합니다",
+  "type": "유형",
+  "target": "대상",
+  "source_type_single": "단일",
+  "source_type_multi": "다중",
+  "source_type_torrent": "토렌트",
+  "source_language_dart": "Dart",
+  "source_language_javascript": "JavaScript",
+  "source_language_lnreader_compiled_js": "LNReader 컴파일 JS",
+  "source_created_successfully": "소스가 성공적으로 생성되었습니다",
+  "source_already_exists": "소스가 이미 존재합니다",
+  "error_when_creating_source": "소스 생성 중 오류 발생",
+  "cookies_deleted": "쿠키가 삭제되었습니다!",
+  "delete_all_cookies": "모든 쿠키 삭제",
+  "chapter_number": "화 번호",
+  "episode_number": "에피소드 번호",
+  "share": "공유",
+  "n_chapters": "{n}화",
+  "missing_chapters": "{count}화 누락됨",
+  "no_description": "설명 없음",
+  "resume": "이어서 보기",
+  "read": "읽기",
+  "watch": "시청",
+  "popular": "인기",
+  "open_in_browser": "브라우저에서 열기",
+  "clear_cookie": "쿠키 지우기",
+  "show_page_number": "페이지 번호 표시",
+  "from_library": "보관함에서",
+  "downloaded_chapter": "다운로드한 화",
+  "page": "{page} 페이지",
+  "global_search": "전체 검색",
+  "color_blend_level": "색상 혼합 수준",
+  "current": "현재 {char}",
+  "finished": "완료된 {char}",
+  "next": "다음 {char}",
+  "previous": "이전 {char}",
+  "no_more_chapter": "더 이상 화가 없습니다.",
+  "no_result": "결과 없음",
+  "send": "보내기",
+  "delete": "삭제",
+  "start_downloading": "지금 다운로드 시작",
+  "retry": "재시도",
+  "add_chapters": "화 추가",
+  "delete_chapters": "화를 삭제하시겠습니까?",
+  "default0": "기본값",
+  "total_chapters": "총 화수",
+  "total_episodes": "총 에피소드",
+  "import_local_file": "로컬 파일 가져오기",
+  "import_files": "파일",
+  "split_epub_chapters": "화별로 나누기",
+  "split_epub_chapters_description": "각 EPUB 챕터를 별도의 항목으로 가져옵니다.",
+  "nothing_read_recently": "최근에 읽은 항목이 없습니다",
+  "status": "상태",
+  "not_started": "시작 안 함",
+  "score": "점수",
+  "start_date": "시작일",
+  "finish_date": "종료일",
+  "reading": "읽는 중",
+  "on_hold": "보류 중",
+  "dropped": "하차",
+  "plan_to_read": "읽을 예정",
+  "re_reading": "재독 중",
+  "chapters": "화",
+  "add_tracker": "트래킹 추가",
+  "one_tracker": "1개의 트래커",
+  "n_tracker": "{n}개의 트래커",
+  "tracking": "트래킹",
+  "syncing": "동기화",
+  "sync_logged": "로그인 성공",
+  "syncing_subtitle": "셀프 호스팅 서버를 통해 여러 기기 간에 진행 상황을 동기화합니다. 자세한 내용은 디스코드 서버를 확인하세요!",
+  "last_sync": "마지막 동기화: ",
+  "sync_login_browser": "브라우저로 로그인",
+  "sync_server": "동기화 서버 주소",
+  "sync_starting": "동기화 시작 중...",
+  "sync_finished": "동기화 완료",
+  "sync_failed": "동기화 실패",
+  "sync_restore_in_progress": "동기화 건너뜀 — 복원 진행 중",
+  "sync_progress_percent": "동기화 중… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "동기화 중…",
+  "sync_button_sync": "진행 상황 동기화",
+  "sync_button_upload": "업로드 전용",
+  "sync_button_upload_info": "이 기기의 데이터가 서버의 데이터에 덮어씌워집니다. 서버의 데이터는 삭제되지 않습니다.",
+  "sync_button_download": "다운로드 전용",
+  "sync_button_download_info": "서버에서 모든 데이터를 가져옵니다. 이 기기의 데이터는 삭제되지 않습니다.",
+  "sync_status_not_configured": "연결되지 않음",
+  "sync_status_checking": "연결 확인 중...",
+  "sync_status_connected": "연결됨",
+  "sync_status_unauthorized": "세션이 만료되었습니다. 다시 로그인하세요.",
+  "sync_status_unreachable": "서버에 연결할 수 없음",
+  "sync_section_general": "일반",
+  "sync_on": "동기화 활성화",
+  "sync_auto": "자동 동기화",
+  "sync_auto_warning": "자동 동기화는 현재 실험적인 기능입니다!",
+  "sync_auto_off": "꺼짐",
+  "sync_auto_5_minutes": "5분마다",
+  "sync_auto_10_minutes": "10분마다",
+  "sync_auto_30_minutes": "30분마다",
+  "sync_auto_1_hour": "1시간마다",
+  "sync_auto_3_hours": "3시간마다",
+  "sync_auto_6_hours": "6시간마다",
+  "sync_auto_12_hours": "12시간마다",
+  "server_error": "서버 오류!",
+  "dialog_confirm": "확인",
+  "description": "설명",
+  "reorder_navigation": "내비게이션 사용자 설정",
+  "reorder_navigation_description": "필요에 따라 내비게이션 순서를 변경하고 켜거나 끌 수 있습니다.",
+  "full_screen_player": "전체 화면 사용",
+  "full_screen_player_info": "비디오 재생 시 자동으로 전체 화면을 사용합니다.",
+  "episode_progress": "진행률: {n}",
+  "n_episodes": "{n}개 에피소드",
+  "missing_episodes": "{count}개 에피소드 누락됨",
+  "manga_sources": "만화 소스",
+  "anime_sources": "애니 소스",
+  "novel_sources": "소설 소스",
+  "anime_extensions": "애니 확장 프로그램",
+  "manga_extensions": "만화 확장 프로그램",
+  "novel_extensions": "소설 확장 프로그램",
+  "extension_settings": "확장 프로그램 설정",
+  "anime": "애니",
+  "manga": "만화",
+  "novel": "소설",
+  "library_no_category_exist": "아직 카테고리가 없습니다.",
+  "watching": "시청 중",
+  "plan_to_watch": "시청 예정",
+  "re_watching": "재시청 중",
+  "episodes": "에피소드",
+  "download": "다운로드",
+  "new_update_available": "새 업데이트 사용 가능",
+  "app_version": "앱 버전 : v{v}",
+  "searching_for_updates": "업데이트 검색 중...",
+  "no_new_updates_available": "새로운 업데이트가 없습니다.",
+  "uninstall": "제거",
+  "uninstall_extension": "{ext} 확장 프로그램을 제거하시겠습니까?",
+  "langauage": "언어",
+  "extension_detail": "확장 프로그램 상세 정보",
+  "scale_type": "화면 비율 유형",
+  "scale_type_fit_screen": "화면에 맞춤",
+  "scale_type_stretch": "늘리기",
+  "scale_type_fit_width": "너비에 맞춤",
+  "scale_type_fit_height": "높이에 맞춤",
+  "scale_type_original_size": "원본 크기",
+  "scale_type_smart_fit": "스마트 맞춤",
+  "page_preload_amount": "미리 불러올 페이지 수",
+  "page_preload_amount_subtitle": "읽을 때 미리 로드할 페이지 수입니다. 값이 클수록 읽기가 더 부드러워지지만 캐시 및 네트워크 사용량이 늘어납니다.",
+  "image_loading_error": "이 이미지를 불러올 수 없습니다",
+  "add_episodes": "에피소드 추가",
+  "video_quality": "화질",
+  "video_subtitle": "자막",
+  "check_for_extension_updates": "확장 프로그램 업데이트 확인",
+  "auto_extensions_updates": "자동 확장 프로그램 업데이트",
+  "auto_extensions_updates_subtitle": "새 버전이 있을 때 자동으로 확장 프로그램을 업데이트합니다.",
+  "check_for_app_updates": "시작 시 앱 업데이트 확인",
+  "reading_mode": "읽기 모드",
+  "custom_filter": "사용자 정의 필터",
+  "background_color": "배경색",
+  "white": "흰색",
+  "black": "검은색",
+  "grey": "회색",
+  "automaic": "자동",
+  "preferred_domain": "선호하는 도메인",
+  "load_more": "더 불러오기",
+  "cancel_all_for_this_series": "이 시리즈 모두 취소",
+  "login": "로그인",
+  "login_into": "{tracker} 로그인",
+  "email_adress": "이메일 주소",
+  "password": "비밀번호",
+  "log_out_from": "{tracker}에서 로그아웃하시겠습니까?",
+  "log_out": "로그아웃",
+  "update_pending": "업데이트 대기 중",
+  "update_all": "모두 업데이트",
+  "backup_and_restore": "백업 및 복원",
+  "create_backup": "백업 생성",
+  "create_backup_dialog_title": "무엇을 백업하시겠습니까?",
+  "create_backup_subtitle": "현재 보관함을 복원하는 데 사용할 수 있습니다.",
+  "restore_backup": "백업 복원",
+  "encrypt_backups": "백업 암호화",
+  "encrypt_backups_info": "AES 암호화를 사용하여 백업 파일을 비밀번호로 보호합니다.",
+  "no_secure_storage": "보안 저장소를 찾을 수 없음",
+  "no_keyring_warning": "이 시스템에는 사용 가능한 키링 서비스가 없으므로 비밀번호를 안전하게 저장할 수 없습니다.\n\n대신 로컬 앱 데이터베이스에 암호화되지 않은 상태로 저장하시겠습니까? 기기의 앱 데이터에 접근할 수 있는 사람은 누구나 읽을 수 있습니다.",
+  "enter_backup_password": "백업 비밀번호 입력",
+  "incorrect_password_try_again": "잘못된 비밀번호입니다. 다시 시도해 주세요.",
+  "set_backup_password": "백업 비밀번호 설정",
+  "confirm_password": "비밀번호 확인",
+  "passwords_do_not_match": "비밀번호가 일치하지 않습니다",
+  "password_required_to_restore": "이 백업을 복원하려면 비밀번호가 필요합니다.",
+  "restore_backup_subtitle": "백업 파일에서 보관함 복원",
+  "automatic_backups": "자동 백업",
+  "backup_frequency": "백업 빈도",
+  "backup_location": "백업 위치",
+  "backup_options": "백업 옵션",
+  "backup_options_dialog_title": "무엇을 백업하시겠습니까?",
+  "backup_options_subtitle": "백업 파일에 포함할 정보",
+  "backup_and_restore_warning_info": "백업본은 다른 곳에도 안전하게 보관해야 합니다",
+  "library_entries": "보관함 항목",
+  "chapters_and_episode": "화 및 에피소드",
+  "every_6_hours": "6시간마다",
+  "every_12_hours": "12시간마다",
+  "daily": "매일",
+  "every_2_days": "2일마다",
+  "weekly": "매주",
+  "restore_backup_warning_title": "백업을 복원하면 기존 데이터를 모두 덮어씁니다.\n\n복원을 계속하시겠습니까?",
+  "restore_sync_question_title": "이 복원 데이터를 동기화하시겠습니까?",
+  "restore_sync_question_message": "이 기기는 동기화 서버에 연결되어 있습니다. 방금 복원한 데이터를 지금 서버에 업로드하시겠습니까? 그렇지 않으면 동기화가 꺼져서 서버의 이전 데이터가 복원한 내용을 덮어쓰는 것을 방지합니다.",
+  "restore_sync_question_confirm": "예, 동기화합니다",
+  "restore_sync_question_deny": "아니요, 동기화 끕니다",
+  "sync_disabled_after_restore": "동기화가 비활성화되었습니다. 설정에서 다시 켤 수 있습니다.",
+  "restore_sync_disabled_question_title": "현재 동기화가 비활성화되어 있습니다",
+  "restore_sync_disabled_question_message": "동기화가 꺼져 있습니다. 다시 켜서 이 복원된 데이터를 서버에 업로드하시겠습니까?",
+  "restore_sync_question_reenable": "예, 다시 활성화 및 동기화",
+  "restore_sync_question_keep_disabled": "비활성화 유지",
+  "restore_sync_uploading": "복원된 데이터를 서버에 동기화 중…",
+  "restore_sync_upload_success": "복원된 데이터가 서버에 동기화되었습니다",
+  "services": "서비스",
+  "tracking_warning_info": "트래킹 서비스의 챕터 진행 상황을 업데이트하기 위한 단방향 동기화입니다. 각 항목의 트래킹 버튼에서 개별 항목에 대한 트래킹을 설정하세요.",
+  "use_page_tap_zones": "페이지 탭 영역 사용",
+  "manage_trackers": "트래커 관리",
+  "restore": "복원",
+  "backups": "백업",
+  "by_scanlator": "번역 그룹별",
+  "by_name": "이름순",
+  "installed": "설치됨",
+  "auto_scroll": "자동 스크롤",
+  "video_audio": "오디오",
+  "video_audio_info": "선호하는 언어, 피치 보정, 오디오 채널",
+  "player": "플레이어",
+  "markEpisodeAsSeenSetting": "에피소드를 시청한 것으로 표시할 지점",
+  "mark_duplicate_chapters_read": "중복 화 번호를 읽은 상태로 표시",
+  "default_skip_intro_length": "기본 인트로 건너뛰기 시간",
+  "default_playback_speed_length": "기본 재생 속도 값",
+  "updateProgressAfterReading": "읽은 후 진행 상황 업데이트",
+  "no_sources_installed": "설치된 소스가 없습니다!",
+  "show_extensions": "확장 프로그램 표시",
+  "default_skip_forward_skip_length": "기본 앞으로 건너뛰기 시간",
+  "aniskip_requires_info": "AniSkip이 작동하려면 애니를 MAL이나 Anilist로 트래킹해야 합니다.",
+  "enable_aniskip": "AniSkip 활성화",
+  "enable_auto_skip": "자동 건너뛰기 활성화",
+  "aniskip_button_timeout": "버튼 시간 초과",
+  "skip_opening": "오프닝 건너뛰기",
+  "skip_ending": "엔딩 건너뛰기",
+  "fullscreen": "전체 화면",
+  "update_library": "보관함 업데이트",
+  "updating_library": "보관함 업데이트 중 ({cur} / {max}) - 실패: {failed}",
+  "next_chapter": "다음 화",
+  "next_5_chapters": "다음 5화",
+  "next_10_chapters": "다음 10화",
+  "next_25_chapters": "다음 25화",
+  "all_chapters": "모든 화",
+  "next_episode": "다음 에피소드",
+  "next_5_episodes": "다음 5개 에피소드",
+  "next_10_episodes": "다음 10개 에피소드",
+  "next_25_episodes": "다음 25개 에피소드",
+  "all_episodes": "모든 에피소드",
+  "cover_saved": "표지 저장됨",
+  "set_as_cover": "표지로 설정",
+  "use_this_as_cover_art": "이 이미지를 표지로 사용하시겠습니까?",
+  "save": "저장",
+  "picture_saved": "사진 저장됨",
+  "cover_updated": "표지 업데이트됨",
+  "include_subtitles": "자막 포함",
+  "blend_mode_default": "기본",
+  "blend_mode_multiply": "곱하기 (Multiply)",
+  "blend_mode_screen": "화면 (Screen)",
+  "blend_mode_overlay": "오버레이 (Overlay)",
+  "blend_mode_colorDodge": "색상 다지 (ColorDodge)",
+  "blend_mode_lighten": "밝게 (Lighten)",
+  "blend_mode_colorBurn": "색상 번 (ColorBurn)",
+  "blend_mode_darken": "어둡게 (Darken)",
+  "blend_mode_difference": "차이 (Difference)",
+  "blend_mode_saturation": "채도 (Saturation)",
+  "blend_mode_softLight": "소프트 라이트 (SoftLight)",
+  "blend_mode_plus": "더하기 (Plus)",
+  "blend_mode_exclusion": "제외 (Exclusion)",
+  "custom_color_filter": "사용자 정의 색상 필터",
+  "color_filter_blend_mode": "색상 필터 혼합 모드",
+  "enable_all": "모두 활성화",
+  "disable_all": "모두 비활성화",
+  "font": "글꼴",
+  "color": "색상",
+  "font_size": "글꼴 크기",
+  "text": "텍스트",
+  "border": "테두리",
+  "background": "배경",
+  "no_subtite_warning_message": "이 비디오에는 자막 트랙이 없으므로 효과가 없습니다.",
+  "grid_size": "그리드 크기",
+  "n_per_row": "가로 {n}개",
+  "horizontal_continious": "수평 연속",
+  "edit_code": "코드 편집",
+  "use_libass": "libass 활성화",
+  "use_libass_info": "기본 백엔드에 libass 기반 자막 렌더링을 사용합니다.",
+  "libass_not_disable_message": "자막을 사용자 지정하려면 플레이어 설정에서 `libass 사용`을 비활성화하세요.",
+  "torrent_stream": "토렌트 스트림",
+  "add_torrent": "토렌트 추가",
+  "enter_torrent_hint_text": "마그넷 또는 토렌트 파일 URL 입력",
+  "torrent_url": "토렌트 URL",
+  "or": "또는",
+  "advanced": "고급",
+  "advanced_info": "mpv 설정",
+  "use_native_http_client": "기본 HTTP 클라이언트 사용",
+  "use_native_http_client_info": "VPN과 같은 플랫폼 기능을 자동으로 지원하고, HTTP/3 및 사용자 지정 리디렉션 처리와 같은 더 많은 HTTP 기능을 지원합니다.",
+  "n_hour_ago": "{hour}시간 전",
+  "n_hours_ago": "{hours}시간 전",
+  "n_minute_ago": "{minute}분 전",
+  "n_minutes_ago": "{minutes}분 전",
+  "n_day_ago": "{day}일 전",
+  "now": "방금 전",
+  "library_last_updated": "보관함 최근 업데이트: {lastUpdated}",
+  "data_and_storage": "데이터 및 저장소",
+  "download_location_info": "챕터 다운로드에 사용됨",
+  "storage": "저장소",
+  "clear_chapter_and_episode_cache": "화 및 에피소드 캐시 지우기",
+  "cache_cleared": "캐시 지워짐",
+  "clear_chapter_or_episode_cache_on_app_launch": "앱 시작 시 화/에피소드 캐시 지우기",
+  "app_settings": "앱 설정",
+  "sources_settings": "소스 설정",
+  "include_sensitive_settings": "민감한 설정 포함 (예: 트래커 로그인 토큰)",
+  "create": "만들기",
+  "downloads_are_limited_to_wifi": "다운로드가 Wi-Fi 환경으로 제한되어 있습니다",
+  "recommendations": "추천",
+  "recommendations_similar": "비슷한 작품",
+  "recommendations_weights": "추천 가중치",
+  "recommendations_weights_genre": "장르 유사성",
+  "recommendations_weights_setting": "배경 유사성",
+  "recommendations_weights_synopsis": "스토리 유사성",
+  "recommendations_weights_theme": "테마 유사성",
+  "manga_extensions_repo": "만화 확장 프로그램 저장소",
+  "anime_extensions_repo": "애니 확장 프로그램 저장소",
+  "novel_extensions_repo": "소설 확장 프로그램 저장소",
+  "custom_dns": "사용자 지정 DNS (시스템 DNS를 사용하려면 비워두세요)",
+  "android_proxy_server": "Android 프록시 서버 (M-Extension-Server)",
+  "get_m_extension_server": "M-Extension-Server 받기",
+  "get_sync_server": "여기에서 동기화 서버 받기",
+  "undefined": "정의되지 않음",
+  "empty_extensions_repo": "여기에 저장소 URL이 없습니다. 플러스 버튼을 눌러 추가하세요!",
+  "add_extensions_repo": "저장소 URL 추가",
+  "remove_extensions_repo": "저장소 URL 삭제",
+  "manage_manga_repo_urls": "만화 저장소 URL 관리",
+  "manage_anime_repo_urls": "애니 저장소 URL 관리",
+  "manage_novel_repo_urls": "소설 저장소 URL 관리",
+  "url_cannot_be_empty": "URL은 비워둘 수 없습니다.",
+  "url_must_end_with_dot_json_or_dot_pb": "URL은 .json / .pb로 끝나야 합니다.",
+  "repo_url": "저장소 URL",
+  "invalid_url_format": "잘못된 URL 형식",
+  "clear_all_sources": "모든 소스 지우기",
+  "clear_all_sources_msg": "애플리케이션의 모든 소스가 완전히 삭제됩니다. 계속하시겠습니까?",
+  "sources_cleared": "소스가 모두 지워졌습니다!!!",
+  "repo_added": "소스 저장소가 추가되었습니다!",
+  "repo_already_exists": "저장소가 이미 존재합니다!",
+  "add_repo": "저장소를 추가하시겠습니까?",
+  "genre_search_library": "보관함에서 장르 검색",
+  "genre_search_source": "소스에서 찾기",
+  "source_not_added": "소스가 설치되지 않았습니다!",
+  "load_own_subtitles": "내 자막 불러오기...",
+  "search_subtitles": "온라인에서 자막 검색...",
+  "extension_notes": "참고사항: {notes}",
+  "unsupported_repo": "지원되지 않는 저장소를 추가하려고 했습니다. 도움이 필요하면 디스코드 서버를 확인하세요!",
+  "end_of_chapter": "이번 화 끝",
+  "chapter_completed": "화 완료됨",
+  "continue_to_next_chapter": "계속 스크롤하여 다음 화 읽기",
+  "no_next_chapter": "다음 화 없음",
+  "you_have_finished_reading": "다 읽었습니다",
+  "return_to_the_list_of_chapters": "회차 목록으로 돌아가기",
+  "hwdec": "하드웨어 디코더",
+  "enable_hardware_accel": "하드웨어 가속",
+  "enable_hardware_accel_info": "버그나 충돌이 발생하는 경우 켜거나 끄세요.",
+  "track_library_navigate": "기존 로컬 항목으로 이동",
+  "track_library_add": "로컬 보관함에 추가",
+  "track_library_add_confirm": "트래킹 중인 항목을 로컬 보관함에 추가합니다.",
+  "track_library_not_logged": "이 기능을 사용하려면 해당 트래커에 로그인하세요!",
+  "track_library_switch": "다른 트래커로 전환",
+  "go_back": "뒤로 가기",
+  "merge_library_nav_mobile": "모바일에서 보관함 내비게이션 병합",
+  "enable_discord_rpc": "Discord RPC 활성화",
+  "hide_discord_rpc_incognito": "시크릿 모드 중 Discord RPC 숨기기",
+  "rpc_show_reading_watching_progress": "Discord에 현재 진행 중인 화/에피소드 표시 (재시작 필요)",
+  "rpc_show_title": "Discord에 현재 제목 표시",
+  "rpc_show_cover_image": "Discord에 현재 표지 이미지 표시",
+  "enable_mpv": "mpv 셰이더 / 스크립트 활성화",
+  "mpv_info": "mpv/scripts/ 아래의 .js 스크립트를 지원합니다.",
+  "mpv_redownload": "mpv 설정 파일 다시 다운로드",
+  "mpv_redownload_info": "이전 설정 파일을 새 것으로 교체합니다!",
+  "mpv_download": "MPV 설정 파일이 필요합니다!\n지금 다운로드하시겠습니까?",
+  "custom_buttons": "사용자 정의 버튼",
+  "custom_buttons_info": "사용자 정의 버튼으로 lua 코드 실행",
+  "custom_buttons_edit": "사용자 정의 버튼 편집",
+  "custom_buttons_add": "사용자 정의 버튼 추가",
+  "custom_buttons_added": "사용자 정의 버튼이 추가되었습니다!",
+  "custom_buttons_delete": "사용자 정의 버튼 삭제",
+  "custom_buttons_text": "버튼 텍스트",
+  "custom_buttons_text_req": "버튼 텍스트가 필요합니다",
+  "custom_buttons_js_code": "lua 코드",
+  "custom_buttons_js_code_req": "lua 코드가 필요합니다",
+  "custom_buttons_js_code_long": "lua 코드 (길게 누를 때)",
+  "custom_buttons_startup": "lua 코드 (시작 시)",
+  "n_days": "{n}일",
+  "decoder": "디코더",
+  "decoder_info": "하드웨어 디코딩, 픽셀 포맷, 디밴딩",
+  "enable_gpu_next": "gpu-next 활성화 (Android 전용)",
+  "enable_gpu_next_info": "새로운 비디오 렌더링 백엔드",
+  "debanding": "디밴딩 (Debanding)",
+  "use_yuv420p": "YUV420P 픽셀 포맷 사용",
+  "use_yuv420p_info": "일부 비디오 코덱의 검은 화면을 수정할 수 있으며, 화질을 희생하여 성능을 향상시킬 수도 있습니다.",
+  "audio_preferred_languages": "선호하는 언어",
+  "audio_preferred_languages_info": "여러 오디오 스트림이 있는 비디오에서 기본으로 선택할 오디오 언어입니다. 2/3글자 언어 코드(예: en, ko, ja)를 지원하며 쉼표로 구분하여 여러 개를 입력할 수 있습니다.",
+  "enable_audio_pitch_correction": "오디오 피치 보정 활성화",
+  "enable_audio_pitch_correction_info": "빠른 속도에서 오디오가 고음이 되거나 느린 속도에서 저음이 되는 것을 방지합니다.",
+  "audio_channels": "오디오 채널",
+  "volume_boost_cap": "볼륨 부스트 제한",
+  "internal_player": "내장 플레이어",
+  "internal_player_info": "진행률, 컨트롤, 화면 방향",
+  "subtitle_delay_text": "자막 지연 시간",
+  "subtitle_delay": "지연 (ms)",
+  "subtitle_speed": "속도",
+  "calendar": "캘린더",
+  "calendar_no_data": "아직 데이터가 없습니다.",
+  "calendar_info": "캘린더는 이전 업로드 기록을 기반으로 다음 화 업로드를 예측할 뿐입니다. 일부 데이터는 100% 정확하지 않을 수 있습니다!",
+  "in_n_day": "{days}일 후",
+  "in_n_days": "{days}일 후",
+  "clear_library": "보관함 비우기",
+  "clear_library_desc": "모든 만화, 애니 또는 소설 항목 삭제 선택",
+  "clear_library_input": "모든 관련 항목을 제거하려면 'manga', 'anime', 또는 'novel' (쉼표로 구분)을 입력하세요",
+  "watch_order": "시청 순서",
+  "sequels": "후속작",
+  "recommendations": "추천",
+  "recommendations_similarity": "유사도:",
+  "local_folder_structure": "로컬 폴더 구조",
+  "local_folder": "로컬 폴더",
+  "add_local_folder": "로컬 폴더 추가",
+  "rescan_local_folder": "지금 모든 로컬 폴더 다시 스캔",
+  "default_download_destination": "기본 다운로드 경로",
+  "ask_download_destination": "다운로드 경로 묻기",
+  "ask_download_destination_desc": "다운로드가 시작될 때마다 로컬 폴더를 선택합니다.",
+  "select_download_destination": "다운로드 경로 선택",
+  "clear_local_library": "로컬 보관함 비우기",
+  "clear_local_library_desc": "보관함에서 로컬 폴더 및 압축 파일 항목을 제거합니다.",
+  "clear_local_library_msg": "보관함에서 로컬 폴더 및 압축 파일 항목이 제거됩니다. 디스크에 있는 파일은 삭제되지 않습니다.",
+  "custom": "사용자 정의",
+  "no_local_folder_available_for_downloads": "다운로드할 수 있는 로컬 폴더가 없습니다",
+  "failed_to_create_cbz": "CBZ 생성 실패: {error}",
+  "@failed_to_create_cbz": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "error_reading_cover_image": "표지 이미지 읽기 오류: {error}",
+  "@error_reading_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "error_reading_metadata": "메타데이터 읽기 오류: {error}",
+  "@error_reading_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "error_saving_chapter_episode_to_library": "보관함에 화/에피소드 저장 오류: {error}",
+  "@error_saving_chapter_episode_to_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "error_reading_chapter_cover_image": "화 표지 이미지 읽기 오류: {error}",
+  "@error_reading_chapter_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "error_reading_archive_cover_image": "압축 파일 표지 이미지 읽기 오류: {error}",
+  "@error_reading_archive_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "error_getting_local_library": "로컬 보관함 가져오기 오류: {error}",
+  "@error_getting_local_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "export_metadata": "메타데이터 내보내기",
+  "exported": "내보냄",
+  "failed_to_export_metadata": "메타데이터 내보내기 실패: {error}",
+  "@failed_to_export_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "unrecognized_chapter_numbers": "{count}개 화에 자동으로 번호를 매길 수 없으며 순서가 잘못되었거나 리더에서 누락될 수 있습니다.",
+  "@unrecognized_chapter_numbers": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "cloudflare_resolution_webview_server_start_failed": "Cloudflare 확인 웹뷰 서버를 시작할 수 없습니다.",
+  "tracker_token_expired": "{tracker} 토큰이 만료되었습니다",
+  "@tracker_token_expired": {
+    "placeholders": {
+      "tracker": {}
+    }
+  },
+  "video_list_empty": "비디오 목록이 비어 있습니다",
+  "playback_speed_multiplier": "x{value}",
+  "@playback_speed_multiplier": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "could_not_launch_url": "{url}을(를) 실행할 수 없습니다",
+  "@could_not_launch_url": {
+    "placeholders": {
+      "url": {}
+    }
+  },
+  "text_size": "텍스트 크기:",
+  "text_align": "텍스트 정렬",
+  "line_height": "줄 높이",
+  "show_scroll_percentage": "스크롤 비율 표시",
+  "remove_extra_paragraph_spacing": "단락 사이 추가 공백 제거",
+  "select_label_color": "{label} 색상 선택",
+  "default_user_agent": "기본 User-Agent",
+  "forceLandscapeMode": "가로 모드 강제",
+  "forceLandscapeModeSubtitle": "플레이어에서 가로 방향을 강제합니다.",
+  "dns_over_https": "DNS-over-HTTPS (DoH)",
+  "dns_provider": "DNS 제공자",
+  "tracked": "트래킹됨",
+  "auth_unlock_msg": "Mangayomi 잠금을 해제하려면 인증하세요",
+  "app_locked": "Mangayomi가 잠겨있습니다",
+  "auth_to_continue": "계속하려면 인증하세요",
+  "authenticating": "인증 중...",
+  "unlock": "잠금 해제",
+  "security": "보안",
+  "auth_to_change_security_setting": "보안 설정을 변경하려면 인증하세요",
+  "app_lock": "앱 잠금",
+  "require_biometric_or_device_credential": "앱을 열 때 생체 인식 또는 기기 자격 증명 요구",
+  "biometric_or_device_credential_not_available": "이 기기에서는 생체 인증을 사용할 수 없습니다",
+  "app_lock_description": "앱 잠금이 활성화되면 앱을 열거나 백그라운드에서 다시 돌아올 때마다 인증을 요구합니다.",
+  "keep_screen_on": "화면 켜짐 유지",
+  "webtoon_side_padding": "웹툰 측면 여백",
+  "show_page_gaps": "페이지 간격 표시",
+  "invert_colors": "색상 반전",
+  "grayscale": "흑백",
+  "brightness": "밝기",
+  "contrast": "대비",
+  "saturation": "채도",
+  "navigation_layout": "탐색 레이아웃",
+  "nav_layout_default": "기본",
+  "nav_layout_l_shaped": "L자형",
+  "nav_layout_kindle": "킨들 스타일",
+  "nav_layout_edge": "가장자리",
+  "nav_layout_right_and_left": "오른쪽 및 왼쪽",
+  "nav_layout_disabled": "비활성화됨",
+  "color_enhancements": "색상 향상",
+  "total": "총합",
+  "mean_per_title": "작품당 평균",
+  "completion_rate": "완료율",
+  "watching_time": "시청 시간",
+  "reading_time": "읽은 시간",
+  "average_chapters_per_title": "{title}당 평균 화수",
+  "read_percentage": "읽은 비율",
+  "entries": "항목",
+  "android_proxy_server_mihon": "Android 프록시 서버 (Mihon)",
+  "android_proxy_server_mihon_description": "Mihon 확장 프로그램을 사용하는 데 필요한 프록시 서버를 다운로드하고 설정합니다.",
+  "mihon_proxy_server": "Mihon 프록시 서버",
+  "extension_server_intro_with_jre": "Mihon 확장 프로그램을 사용하기 전에 프록시 서버 번들을 다운로드하세요. 번들에는 JRE 및 확장 프로그램 서버 JAR이 포함되어 있습니다.",
+  "extension_server_intro_ios": "Mihon 확장 프로그램을 사용하기 전에 프록시 서버 JAR을 다운로드하세요. iOS는 확장 프로그램 서버 JAR만 필요합니다.",
+  "checking_files": "파일 확인 중",
+  "files_installed": "파일 설치됨",
+  "files_missing": "파일 누락됨",
+  "update_files": "파일 업데이트",
+  "up_to_date": "최신 상태",
+  "choose_location": "위치 선택",
+  "import_existing_jar": "기존 JAR 가져오기",
+  "detect_files_in_selected_folder": "선택한 폴더에서 파일 감지",
+  "preparing_download": "다운로드 준비 중...",
+  "app_install_location": "앱 설치 위치",
+  "install_location": "설치 위치",
+  "jre_executable": "JRE 실행 파일",
+  "extension_server_jar": "확장 프로그램 서버 JAR",
+  "installed_version": "설치된 버전",
+  "latest_version": "최신 버전",
+  "m_extension_server_description": "별도의 Android 기기 프록시가 필요한 경우 M-Extension-Server를 사용하세요. 여기에 프록시 주소를 설정하고 GitHub에서 APK를 다운로드하세요.",
+  "set_proxy_address": "프록시 주소 설정",
+  "no_newer_proxy_server_release_available": "사용 가능한 새로운 프록시 서버 릴리스가 없습니다.",
+  "could_not_check_proxy_server_updates": "프록시 서버 업데이트를 확인할 수 없습니다.",
+  "no_extension_server_bundle_available_for_this_platform": "이 플랫폼에서 사용할 수 있는 확장 프로그램 서버 번들이 없습니다.",
+  "failed_to_download_bundle": "번들을 다운로드하지 못했습니다 ({statusCode}).",
+  "@failed_to_download_bundle": {
+    "placeholders": {
+      "statusCode": {}
+    }
+  },
+  "downloaded_bundle_missing_expected_files": "다운로드한 번들에 예상된 파일이 없습니다.",
+  "extension_server_files_ready": "확장 프로그램 서버 파일이 준비되었습니다.",
+  "ios_extension_server_import_hint": "iOS에서는 서버가 앱 샌드박스 내에 설치됩니다. 다운로드한 파일을 가져오려면 \"기존 JAR 가져오기\"를 사용하세요.",
+  "select_extension_server_folder": "확장 프로그램 서버 폴더 선택",
+  "selected_folder_does_not_exist": "선택한 폴더가 존재하지 않습니다.",
+  "no_extension_server_files_found_in_selected_folder": "선택한 폴더에서 확장 프로그램 서버 파일을 찾을 수 없습니다.",
+  "extension_server_files_linked": "확장 프로그램 서버 파일이 연결되었습니다.",
+  "select_extension_server_jar": "확장 프로그램 서버 JAR 선택",
+  "selected_file_could_not_be_accessed": "선택한 파일에 접근할 수 없습니다.",
+  "extension_server_jar_imported": "확장 프로그램 서버 JAR을 가져왔습니다.",
+  "could_not_launch_apk_bridge_page": "M-Extension-Server 페이지를 시작할 수 없습니다.",
+  "proxy_server_ip_hint": "서버 IP (예: 10.0.0.5 또는 https://example.com)",
+  "not_configured": "구성되지 않음",
+  "zero_interpreter": "Zero 인터프리터",
+  "zero_interpreter_description": "Zero 인터프리터 서버를 자동으로 또는 수동으로 제어합니다.",
+  "start_server_on_launch": "시작 시 서버 시작",
+  "runtime_status": "실행 상태",
+  "running": "실행 중",
+  "stopped": "중지됨",
+  "start": "시작",
+  "stop": "중지",
+  "webview": "웹뷰",
+  "tts": "텍스트 음성 변환 (TTS)",
+  "tts_speed": "속도",
+  "tts_pitch": "피치",
+  "tts_language": "언어",
+  "tts_voice": "음성",
+  "tts_stop": "정지",
+  "tts_play": "재생",
+  "tts_pause": "일시 정지",
+  "tts_previous": "이전 단락",
+  "tts_next": "다음 단락",
+  "tts_paragraph_progress": "단락 {current} / {total}",
+  "@tts_paragraph_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "tts_settings": "TTS 설정",
+  "tts_default": "기본",
+  "webtoon_disable_zoom_out": "웹툰 축소 비활성화",
+  "webtoon_double_tap_zoom_enabled": "웹툰 더블 탭 확대",
+  "navigate_to_pan": "패닝하여 이동",
+  "navigate_to_pan_subtitle": "페이지를 넘기기 전에 확대된 이미지를 이동합니다",
+  "split_wide_pages": "넓은 페이지 분할",
+  "dual_page_invert": "잘린 페이지 반전",
+  "dual_page_rotate_to_fit": "크기에 맞게 회전",
+  "dual_page_rotate_to_fit_invert": "회전 방향 반전",
+  "double_page_single_first_page": "첫 페이지는 한 장으로",
+  "double_page_single_first_page_subtitle": "두 페이지 모드에서 첫 번째 페이지만 단일 페이지로 표시합니다",
+  "landscape_zoom": "자동 가로 확대",
+  "zoom_start_position": "확대 시작 위치",
+  "zoom_start_left": "왼쪽",
+  "zoom_start_right": "오른쪽",
+  "zoom_start_center": "가운데",
+  "automatic_background": "자동 배경",
+  "tapping_inversion": "탭 반전",
+  "tapping_inversion_none": "없음",
+  "tapping_inversion_horizontal": "수평",
+  "tapping_inversion_vertical": "수직",
+  "tapping_inversion_both": "모두",
+  "flash_on_page_change": "페이지 변경 시 플래시",
+  "flash_on_page_change_subtitle": "AMOLED 번인 방지 도우미",
+  "flash_color": "플래시 색상",
+  "flash_color_black": "검은색",
+  "flash_color_white": "흰색",
+  "flash_color_white_black": "흰색 & 검은색",
+  "flash_interval": "플래시 간격: {n} 페이지",
+  "@flash_interval": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "flash_duration": "플래시 지속 시간: {n} ms",
+  "@flash_duration": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "show_navigation_overlay_on_start": "시작 시 내비게이션 오버레이 표시",
+  "reader_hide_threshold": "리더 숨김 임계값",
+  "reader_hide_threshold_highest": "최고 (5 px)",
+  "reader_hide_threshold_high": "높음 (13 px)",
+  "reader_hide_threshold_low": "낮음 (31 px)",
+  "reader_hide_threshold_lowest": "최저 (47 px)",
+  "error_no_pages_available": "오류: 사용 가능한 페이지가 없습니다",
+  "app_ui_scale": "인터페이스 비율",
+  "app_ui_scale_subtitle": "화면 및 시청 거리에 맞게 인터페이스를 크거나 작게 조정합니다.",
+  "allow_concurrent_downloads": "동시 다운로드 허용",
+  "allow_concurrent_downloads_subtitle": "여러 소스에서 동시에 다운로드합니다. 소스에 과부하가 걸리지 않도록 단일 소스는 한 번에 하나의 화만 다운로드합니다. 모든 곳에서 한 번에 하나씩 다운로드하려면 끄세요.",
+  "download_delay": "다운로드 지연",
+  "download_delay_subtitle": "꺼짐. 소스에 부담을 덜 주기 위해 다운로드 사이에 무작위 대기 시간을 추가합니다.",
+  "save_search": "검색 저장",
+  "saved_searches": "저장된 검색",
+  "enter_search_to_save_first": "먼저 저장할 검색어를 입력하세요",
+  "no_saved_searches": "이 소스에 아직 저장된 검색이 없습니다.\n검색을 실행한 다음 \"검색 저장\"을 선택하세요.",
+  "source": "소스",
+  "something_went_wrong": "문제가 발생했습니다",
+  "startup_failed": "Mangayomi를 시작할 수 없습니다",
+  "sources_with_no_results": "{count, plural, =1{결과가 없는 소스 1개} other{결과가 없는 소스 {count}개}}",
+  "@sources_with_no_results": {
+    "description": "Header of the collapsed group in global search holding every source that failed or found nothing.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "import_mode_title": "어떻게 가져오시겠습니까?",
+  "import_mode_message": "이 백업을 현재 보관함에 병합할지, 아니면 전체 보관함을 백업으로 덮어쓸지 선택하세요.",
+  "import_mode_keep_existing": "병합",
+  "import_mode_keep_existing_subtitle": "새로운 시리즈를 추가하고 일치하는 시리즈를 업데이트합니다. 현재 보관함의 항목은 제거되지 않습니다.",
+  "import_mode_replace": "덮어쓰기",
+  "import_mode_replace_subtitle": "현재 보관함을 모두 삭제하고 이 백업으로 덮어씁니다.",
+  "replace_summary_title": "보관함을 덮어쓸 준비가 되었습니다",
+  "replace_summary_message": "이 작업은 현재 보관함(시리즈 {currentCount}개)을 완전히 삭제하고 백업에 있는 {backupCount}개의 시리즈로 덮어씁니다. 롤백을 통해서만 되돌릴 수 있습니다.",
+  "@replace_summary_message": {
+    "placeholders": {
+      "currentCount": {},
+      "backupCount": {}
+    }
+  },
+  "replace_summary_confirm": "덮어쓰기",
+  "replace_result_message": "백업의 {count}개 시리즈로 보관함을 덮어썼습니다.",
+  "@replace_result_message": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "category_conflict_title": "기존 카테고리가 발견되었습니다",
+  "category_conflict_message": "백업에 보관함에 이미 존재하는 카테고리가 있습니다. 가져온 시리즈를 기존 카테고리에 포함하려면 유지를 선택하고, 시리즈를 카테고리 없이 두려면 삭제를 선택하세요.",
+  "category_conflict_keep": "유지 — 기존 카테고리에 병합",
+  "category_conflict_delete": "삭제 — 시리즈를 카테고리 없음으로 두기",
+  "source_conflict_title": "소스를 찾을 수 없음",
+  "source_conflict_message": "이 백업의 소스가 설치된 확장 프로그램과 일치하지 않습니다. 원래 이름을 유지하거나(작동하는 소스 없이 가져옴), 이 시리즈가 업데이트될 수 있도록 설치된 확장 프로그램으로 마이그레이션하세요.",
+  "source_conflict_keep": "원래 이름 유지 (활성 소스 없음)",
+  "import_summary_title": "가져올 준비가 되었습니다",
+  "import_summary_message": "새로운 시리즈 {newSeries}개, 업데이트할 기존 시리즈 {updatedSeries}개, 새로 추가될 화 {newChapters}개입니다. 보관함에 이미 있는 항목은 제거되지 않습니다.",
+  "@import_summary_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "import_summary_confirm": "가져오기",
+  "import_result_message": "새로운 시리즈 {newSeries}개 가져옴, 기존 시리즈 {updatedSeries}개 업데이트됨, 화 {newChapters}개 추가됨.",
+  "@import_result_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "roll_back": "롤백",
+  "roll_back_confirm_message": "이 변경 직전에 생성된 스냅샷으로 보관함을 복원하여 방금 수행한 모든 작업을 취소합니다.",
+  "roll_back_done": "변경 전 스냅샷으로 롤백되었습니다.",
+  "restoring_backup": "보관함 복원 중…",
+  "roll_back_last_change": "마지막 변경 사항 롤백",
+  "roll_back_last_change_subtitle": "{date}의 스냅샷 — {description}",
+  "@roll_back_last_change_subtitle": {
+    "placeholders": {
+      "date": {},
+      "description": {}
+    }
+  },
+  "roll_back_available_count": "롤백 가능한 최근 변경 사항 {count}개",
+  "@roll_back_available_count": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "delete_source_title": "소스 및 해당 만화 삭제",
+  "delete_source_subtitle": "소스를 선택하고 보관함에 있는 모든 만화를 챕터, 다운로드, 기록, 트래킹과 함께 제거합니다.",
+  "delete_source_pick_title": "삭제할 소스 선택",
+  "delete_source_empty": "보관함에서 소스를 찾을 수 없습니다.",
+  "delete_source_confirm_title": "{sourceName}을(를) 삭제하시겠습니까?",
+  "@delete_source_confirm_title": {
+    "placeholders": {
+      "sourceName": {}
+    }
+  },
+  "delete_source_confirm_message": "만화 {mangaCount}개, 챕터 {chapterCount}개, 기록 {historyCount}개, 업데이트 {updateCount}개가 영구적으로 삭제됩니다. 트래킹 링크는 유지됩니다. 롤백하지 않는 한 되돌릴 수 없습니다.",
+  "@delete_source_confirm_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "chapterCount": {},
+      "historyCount": {},
+      "updateCount": {}
+    }
+  },
+  "delete_source_also_remove_extension": "설치된 확장 프로그램도 함께 제거",
+  "delete_source_keep_history": "읽기 기록 유지",
+  "delete_source_keep_downloads": "다운로드 기록 유지",
+  "delete_source_button": "삭제",
+  "delete_source_result_message": "{sourceName}에서 {mangaCount}개의 만화가 삭제되었습니다.",
+  "@delete_source_result_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "sourceName": {}
+    }
+  },
+  "merge_manga_title": "중복 만화 병합",
+  "merge_manga_subtitle": "동일한 소스에 동일한 제목의 만화를 찾아 (예: 중복 소스 병합 후) 보관할 항목을 삭제하지 않고 하나로 통합합니다.",
+  "merge_manga_none_found": "중복된 만화가 발견되지 않았습니다.",
+  "merge_manga_pick_title": "중복일 가능성이 있는 만화",
+  "merge_manga_choose_primary_title": "어떤 항목으로 병합하시겠습니까?",
+  "merge_manga_choose_primary_message": "다른 항목의 챕터, 기록 및 트래킹이 선택한 항목으로 병합됩니다. 삭제되는 항목은 없습니다.",
+  "merge_manga_chapters_subtitle": "{count, plural, =1{1화} other{{count}화}}",
+  "@merge_manga_chapters_subtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "merge_manga_button": "병합",
+  "merge_manga_result_message": "{count}개의 중복된 만화를 {mangaName}(으)로 병합했습니다.",
+  "@merge_manga_result_message": {
+    "placeholders": {
+      "count": {},
+      "mangaName": {}
+    }
+  },
+  "merge_preview_title": "병합 확인",
+  "merge_manga_preview_message": "다른 항목에서 {totalChapters}개의 챕터가 발견되었습니다. 중복된 {duplicateChapters}개는 삭제되며 (읽기 진행 상태가 있는 복사본 유지) 새로운 {keptChapters}개의 챕터가 추가됩니다. {duplicateTracks}개의 중복된 트래킹 링크도 삭제됩니다.",
+  "@merge_manga_preview_message": {
+    "placeholders": {
+      "totalChapters": {},
+      "duplicateChapters": {},
+      "keptChapters": {},
+      "duplicateTracks": {}
+    }
+  },
+  "memory_overlay": "메모리 사용량 표시",
+  "memory_overlay_subtitle": "앱이 점유 중인 메모리를 실시간으로 표시합니다. 추측이 아닌 기기에서 직접 측정하려면 보관함을 스크롤하거나 화를 읽을 때 확인하세요.",
+  "beta": "베타",
+  "error_reports": "오류 보고서",
+  "error_reports_subtitle": "앱에서 발생한 오류 및 보고 방법",
+  "error_reports_empty": "문제가 발생하지 않았습니다. 앱에서 잡아낸 오류가 여기에 보관되어 보고할 수 있습니다.",
+  "error_reports_likely_cause": "예상되는 원인",
+  "error_reports_report": "GitHub에 보고하기",
+  "error_reports_banner": "Mangayomi에서 오류가 발생했습니다",
+  "error_reports_banner_action": "확인",
+  "error_reports_copy": "복사",
+  "error_reports_copied": "클립보드에 복사되었습니다",
+  "error_reports_clear": "지우기",
+  "error_reports_extension_failure": "이 오류는 Mangayomi 앱이 아닌 확장 프로그램에서 발생했습니다. 확장 프로그램은 설치한 저장소의 관리자가 유지보수하므로 해당 저장소에 수정 요청을 해야 합니다. 소스 이름과 열려던 항목에 대한 세부 정보를 제공하면 유용합니다.",
+  "error_reports_already_reported": "이미 보고됨",
+  "error_reports_expected_failure": "이 문제는 대개 앱 오류보다는 소스 자체나 네트워크 오류로 인해 발생합니다 (예: 만료된 링크, 서버 다운, 연결 끊김). 다른 곳에서는 잘 작동하는 소스에서 이 오류가 계속 발생할 경우에만 보고하는 것이 좋습니다.",
+  "share_unavailable_copied": "이 플랫폼에서는 공유 기능을 사용할 수 없어 클립보드에 복사되었습니다.",
+  "onboarding_title": "Mangayomi에 오신 것을 환영합니다",
+  "onboarding_libraries_body": "읽거나 볼 카테고리를 선택하세요. 선택하지 않은 항목은 하단 바에 표시되지 않으며 나중에 설정의 모양 메뉴에서 변경할 수 있습니다.",
+  "onboarding_nav_title": "보관함 설정",
+  "onboarding_nav_body": "각각의 탭으로 유지하거나 보관함 탭 하나에 모아서 탭 안에서 전환할 수 있습니다.",
+  "onboarding_nav_split": "각각의 탭 사용",
+  "onboarding_nav_merged": "하나의 보관함 탭 사용",
+  "onboarding_nav_inside": "보관함 탭 안에서 메뉴 전환",
+  "onboarding_next": "다음",
+  "onboarding_restore": "백업에서 복원",
+  "onboarding_or_local": "또는 가지고 있는 파일 사용하기",
+  "onboarding_local_folder": "폴더 추가",
+  "onboarding_local_existing": "폴더 {count}개가 이미 설정됨",
+  "@onboarding_local_existing": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "onboarding_local_any_type": "만화, 애니, 소설 모두 가능합니다. 각 작품은 폴더 안의 내용을 기반으로 알맞은 보관함에 배정됩니다.",
+  "onboarding_local_scanning": "폴더 스캔 중",
+  "onboarding_local_found": "작품 {count}개 찾음",
+  "@onboarding_local_found": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "onboarding_local_remove": "해당 폴더 제거",
+  "onboarding_local_in_downloads": "이곳은 앱의 다운로드 폴더입니다. 이 폴더를 추가하면 앱이 관리하는 보관함의 두 번째 로컬 사본이 만들어집니다.",
+  "onboarding_local_empty": "아무것도 찾지 못했습니다. 단일 만화가 아니라 여러 만화 폴더가 들어있는 최상위 폴더를 선택하세요.",
+  "onboarding_repo_failed": "해당 저장소를 읽을 수 없습니다. 주소와 연결 상태를 확인하세요.",
+  "onboarding_repo_title": "소스 추가",
+  "onboarding_body": "Mangayomi에는 기본 소스가 포함되어 있지 않습니다. 저장소를 추가하면 확장 프로그램을 설치하여 탐색할 수 있습니다.",
+  "onboarding_add": "저장소 추가",
+  "onboarding_skip": "일단 건너뛰기",
+  "onboarding_continue": "계속",
+  "onboarding_later": "나중에 설정의 탐색 메뉴에서 추가할 수 있습니다.",
+  "onboarding_replay": "환영 화면 다시 보기",
+  "onboarding_replay_subtitle": "새로 설치할 때 표시되는 첫 실행 화면을 다시 엽니다.",
+  "missing_source_check_title": "누락된 소스 확인",
+  "missing_source_check_subtitle": "설치되지 않은 확장 프로그램과 연결된 보관함 항목을 찾습니다. 백업 복원 시 이 기기에 설치되지 않은 소스를 가리키는 항목이 남을 수 있습니다.",
+  "missing_source_check_none_found": "보관함 항목의 모든 소스가 설치되어 있습니다.",
+  "missing_source_check_result_title": "{count, plural, =1{누락된 소스 1개} other{누락된 소스 {count}개}}",
+  "@missing_source_check_result_title": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_no_sources": "{itemType} 소스가 설치되지 않았습니다.",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "탐색 메뉴에서 저장소를 추가한 후 해당 확장 프로그램을 설치하세요.",
+  "global_search_only_pinned": "해당 소스가 {count, plural, =1{1개} other{{count}개}} 있지만, 고정된 소스만 검색됩니다.",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "하나를 고정하거나, 탐색 설정에서 \"고정된 소스만 포함\"을 끄세요.",
+  "global_search_all_nsfw": "이 유형에 대한 모든 소스가 NSFW로 표시되어 있으며 숨겨져 있습니다.",
+  "global_search_all_nsfw_hint": "검색하려면 탐색 설정에서 NSFW 소스를 활성화하세요.",
+  "missing_source_check_result_message": "이 보관함 항목들은 현재 기기에 설치되지 않은 소스를 가리킵니다. 항목을 눌러 설치된 소스로 마이그레이션하거나, 알맞은 확장 프로그램을 설치하거나, \"소스 및 해당 만화 삭제\"를 사용하여 제거하세요.",
+  "related_titles": "관련 항목",
+  "related_none": "이 작품과 관련된 항목을 찾을 수 없습니다.",
+  "relation_adaptation": "미디어 믹스 (Adaptation)",
+  "relation_sequel": "후속작",
+  "relation_prequel": "이전작",
+  "relation_parent": "본편",
+  "relation_side_story": "외전",
+  "relation_spin_off": "스핀오프",
+  "relation_alternative": "대체 버전",
+  "auto_library_update": "보관함 자동 업데이트",
+  "auto_library_update_subtitle": "앱이 시작될 때 보관함의 모든 항목에 새로운 화가 있는지 확인합니다.",
+  "auto_library_update_never": "사용 안 함",
+  "auto_library_update_12_hours": "12시간마다",
+  "auto_library_update_daily": "매일",
+  "auto_library_update_2_days": "2일마다",
+  "auto_library_update_weekly": "매주",
+  "auto_library_update_wifi_only": "Wi-Fi에서만",
+  "auto_library_update_wifi_only_subtitle": "모바일 데이터 사용 중에는 예약된 업데이트를 건너뜁니다."
+}
