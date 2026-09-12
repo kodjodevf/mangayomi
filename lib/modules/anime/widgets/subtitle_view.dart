@@ -110,20 +110,20 @@ class _CustomSubtitleViewState extends ConsumerState<CustomSubtitleView> {
 TextStyle subtileTextStyle(WidgetRef ref) {
   final subSets = ref.watch(subtitleSettingsStateProvider);
   final borderColor = Color.fromARGB(
-    subSets.borderColorA!,
-    subSets.borderColorR!,
-    subSets.borderColorG!,
-    subSets.borderColorB!,
+    subSets.borderColorA ?? 255,
+    subSets.borderColorR ?? 0,
+    subSets.borderColorG ?? 0,
+    subSets.borderColorB ?? 0,
   );
   return TextStyle(
-    fontSize: subSets.fontSize!.toDouble(),
-    fontWeight: subSets.useBold! ? FontWeight.bold : null,
-    fontStyle: subSets.useItalic! ? FontStyle.italic : null,
+    fontSize: (subSets.fontSize ?? 45).toDouble(),
+    fontWeight: (subSets.useBold ?? true) ? FontWeight.bold : null,
+    fontStyle: (subSets.useItalic ?? false) ? FontStyle.italic : null,
     color: Color.fromARGB(
-      subSets.textColorA!,
-      subSets.textColorR!,
-      subSets.textColorG!,
-      subSets.textColorB!,
+      subSets.textColorA ?? 255,
+      subSets.textColorR ?? 255,
+      subSets.textColorG ?? 255,
+      subSets.textColorB ?? 255,
     ),
     shadows: [
       Shadow(
@@ -148,10 +148,10 @@ TextStyle subtileTextStyle(WidgetRef ref) {
       ),
     ],
     backgroundColor: Color.fromARGB(
-      subSets.backgroundColorA!,
-      subSets.backgroundColorR!,
-      subSets.backgroundColorG!,
-      subSets.backgroundColorB!,
+      subSets.backgroundColorA ?? 0,
+      subSets.backgroundColorR ?? 0,
+      subSets.backgroundColorG ?? 0,
+      subSets.backgroundColorB ?? 0,
     ),
   );
 }

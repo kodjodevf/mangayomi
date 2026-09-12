@@ -32043,6 +32043,11 @@ const PlayerSubtitleSettingsSchema = Schema(
       name: r'useItalic',
       type: IsarType.bool,
     ),
+    r'overrideAssSubtitles': PropertySchema(
+      id: 15,
+      name: r'overrideAssSubtitles',
+      type: IsarType.bool,
+    ),
   },
 
   estimateSize: _playerSubtitleSettingsEstimateSize,
@@ -32081,6 +32086,7 @@ void _playerSubtitleSettingsSerialize(
   writer.writeLong(offsets[12], object.textColorR);
   writer.writeBool(offsets[13], object.useBold);
   writer.writeBool(offsets[14], object.useItalic);
+  writer.writeBool(offsets[15], object.overrideAssSubtitles);
 }
 
 PlayerSubtitleSettings _playerSubtitleSettingsDeserialize(
@@ -32105,6 +32111,7 @@ PlayerSubtitleSettings _playerSubtitleSettingsDeserialize(
     textColorR: reader.readLongOrNull(offsets[12]),
     useBold: reader.readBoolOrNull(offsets[13]),
     useItalic: reader.readBoolOrNull(offsets[14]),
+    overrideAssSubtitles: reader.readBoolOrNull(offsets[15]),
   );
   return object;
 }
@@ -32145,6 +32152,8 @@ P _playerSubtitleSettingsDeserializeProp<P>(
     case 13:
       return (reader.readBoolOrNull(offset)) as P;
     case 14:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 15:
       return (reader.readBoolOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');

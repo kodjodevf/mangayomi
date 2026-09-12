@@ -1759,6 +1759,13 @@ class AppLocalizationsAs extends AppLocalizations {
       'উপশিৰোনামসমূহ কাষ্টমাইজ কৰিবলৈ সক্ষম হ\'বলৈ প্লেয়াৰ ছেটিংছত `libass ব্যৱহাৰ কৰক` নিষ্ক্ৰিয় কৰক।';
 
   @override
+  String get override_ass_subtitles => 'Override ASS subtitles';
+
+  @override
+  String get override_ass_subtitles_info =>
+      'Apply custom styling to ASS/SSA subtitles';
+
+  @override
   String get torrent_stream => 'টৰেণ্ট ষ্ট্ৰীম';
 
   @override
@@ -2161,6 +2168,18 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get subtitle_speed => 'গতি';
+
+  @override
+  String get tracks => 'Tracks';
+
+  @override
+  String get playback_speed => 'Playback speed';
+
+  @override
+  String get shaders => 'Shaders';
+
+  @override
+  String get video_fit => 'Fit';
 
   @override
   String get calendar => 'কেলেণ্ডাৰ';

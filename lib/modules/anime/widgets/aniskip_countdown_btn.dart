@@ -70,82 +70,86 @@ class _AniSkipCountDownButtonState extends ConsumerState<AniSkipCountDownButton>
 
   @override
   Widget build(BuildContext context) {
-    return widget.active && !widget.autoSkip
-        ? _isCompleted
-              ? const SizedBox.shrink()
-              : AnimatedBuilder(
-                  animation: _controller,
-                  builder: (context, child) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 40),
-                      child: MaterialButton(
-                        padding: const EdgeInsets.all(0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        onPressed: () {
-                          _seekTo();
-                        },
-                        child: Container(
-                          clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(
-                            color: Colors.black54,
-                            borderRadius: BorderRadius.circular(5),
+    if (!widget.active || widget.autoSkip || _isCompleted) {
+      return const SizedBox.shrink();
+    }
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(999),
+          onTap: _seekTo,
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final remaining =
+                  widget.timeoutLength -
+                  (_controller.duration! * _controller.value).inSeconds;
+              return Container(
+                padding: const EdgeInsets.fromLTRB(8, 6, 16, 6),
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.90),
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.40),
+                    width: 1.0,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.28),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CircularProgressIndicator(
+                            value: 1 - _controller.value,
+                            strokeWidth: 2.5,
+                            color: colorScheme.primary,
+                            backgroundColor: colorScheme.onSurface.withValues(
+                              alpha: 0.16,
+                            ),
                           ),
-                          width: 200,
-                          child: Stack(
-                            children: [
-                              RotatedBox(
-                                quarterTurns: 0,
-                                child: Container(
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: SizedBox.fromSize(
-                                    size: const Size(200, 40),
-                                    child: LinearProgressIndicator(
-                                      color: Colors.red,
-                                      value: 1 - _controller.value,
-                                      backgroundColor: Colors.transparent,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned.fill(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Text(
-                                        widget.skipTypeText.toUpperCase(),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Text(
-                                        (widget.timeoutLength -
-                                                (_controller.duration! *
-                                                        _controller.value)
-                                                    .inSeconds)
-                                            .toString(),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                          Text(
+                            '$remaining',
+                            style: textTheme.labelSmall?.copyWith(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              color: colorScheme.onSurface,
+                              fontFeatures: const [FontFeature.tabularFigures()],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    );
-                  },
-                )
-        : const SizedBox.shrink();
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      widget.skipTypeText,
+                      style: (textTheme.labelLarge ?? const TextStyle()).copyWith(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -1732,6 +1732,13 @@ class AppLocalizationsJa extends AppLocalizations {
       '字幕をカスタマイズできるようにするには、プレーヤー設定で「libassを使用」を無効にしてください。';
 
   @override
+  String get override_ass_subtitles => 'Override ASS subtitles';
+
+  @override
+  String get override_ass_subtitles_info =>
+      'Apply custom styling to ASS/SSA subtitles';
+
+  @override
   String get torrent_stream => 'トレントストリーム';
 
   @override
@@ -2120,6 +2127,18 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get subtitle_speed => '速度';
+
+  @override
+  String get tracks => 'Tracks';
+
+  @override
+  String get playback_speed => 'Playback speed';
+
+  @override
+  String get shaders => 'Shaders';
+
+  @override
+  String get video_fit => 'Fit';
 
   @override
   String get calendar => 'カレンダー';

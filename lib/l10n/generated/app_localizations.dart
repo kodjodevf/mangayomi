@@ -3269,6 +3269,18 @@ abstract class AppLocalizations {
   /// **'Disable `use libass` in player settings to be able to customize the subtitles.'**
   String get libass_not_disable_message;
 
+  /// No description provided for @override_ass_subtitles.
+  ///
+  /// In en, this message translates to:
+  /// **'Override ASS subtitles'**
+  String get override_ass_subtitles;
+
+  /// No description provided for @override_ass_subtitles_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply custom styling to ASS/SSA subtitles'**
+  String get override_ass_subtitles_info;
+
   /// No description provided for @torrent_stream.
   ///
   /// In en, this message translates to:
@@ -4000,6 +4012,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Speed'**
   String get subtitle_speed;
+
+  /// No description provided for @tracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracks'**
+  String get tracks;
+
+  /// No description provided for @playback_speed.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback speed'**
+  String get playback_speed;
+
+  /// No description provided for @shaders.
+  ///
+  /// In en, this message translates to:
+  /// **'Shaders'**
+  String get shaders;
+
+  /// No description provided for @video_fit.
+  ///
+  /// In en, this message translates to:
+  /// **'Fit'**
+  String get video_fit;
 
   /// No description provided for @calendar.
   ///
