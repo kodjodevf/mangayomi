@@ -3,6 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/modules/main_view/nav_shell_container.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -140,8 +141,8 @@ class RouterNotifier extends ChangeNotifier {
           MainScreen(child: navigationShell),
       navigatorContainerBuilder: (context, navigationShell, children) => isTv
           ? children[navigationShell.currentIndex]
-          : IndexedStack(
-              index: navigationShell.currentIndex,
+          : NavShellContainer(
+              shell: navigationShell,
               children: children,
             ),
       branches: [

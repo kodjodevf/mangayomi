@@ -14,6 +14,22 @@ final bool isMobile = Platform.isAndroid || Platform.isIOS;
 /// macOS or iOS
 final bool isApple = Platform.isMacOS || Platform.isIOS;
 
+/// Whether navigation here is the floating capsule bar rather than the
+/// material one.
+///
+/// Everywhere touch-first plus the two desktops that already match it: Apple,
+/// Android and Linux. Windows is left on the material bar and the rail for
+/// now, and a TV never takes the capsule at all. The capsule is driven by
+/// pointer events and holds no focus handling, so a remote could not reach it;
+/// leaving TV out is what keeps it on the rail it is actually navigable with.
+///
+/// A getter rather than a final, because [isTv] is hydrated asynchronously by
+/// [initIsTv]. A top-level final is initialised on first read and cached for
+/// the rest of the process, so on a TV it would latch whatever detection had
+/// answered by then, which early in startup is "not a TV".
+bool get usesFloatingNav =>
+    (isApple || Platform.isAndroid || Platform.isLinux) && !isTv;
+
 /// What the device reported, hydrated once at startup by [initIsTv].
 bool _isTvDetected = false;
 
@@ -64,3 +80,14 @@ Future<void> initIsTv() async {
 /// phone and desktop layouts are byte-for-byte unchanged.
 EdgeInsets get tvPageInsets =>
     isTv ? const EdgeInsets.symmetric(horizontal: 16) : EdgeInsets.zero;
+
+/// Bottom room a scrolling page should leave clear.
+///
+/// On Apple the nav bar floats over the content, and the shell sets
+/// `extendBody`, so the Scaffold reports the bar's height here. On a pushed
+/// route with no bar this is just the home indicator's inset. Either way a
+/// scroll view that sets its own padding *replaces* what the Scaffold provided
+/// rather than adding to it, which is how a list ends up running underneath
+/// the bar; adding this back is what fixes it.
+EdgeInsets pageBottomInsets(BuildContext context) =>
+    EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom + 8);

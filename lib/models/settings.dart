@@ -441,6 +441,11 @@ class Settings {
   bool? tvHomeStyle;
   bool? tvHomeGenreRows;
 
+  /// Whether a horizontal drag on a page moves between navigation tabs.
+  /// Null means the default, which is off: it is a gesture that competes with
+  /// everything else a page wants to do with a sideways drag, so it is opt-in.
+  bool? swipeBetweenTabs;
+
   bool? doublePageSingleFirstPage;
 
   Settings({
@@ -653,6 +658,7 @@ class Settings {
     this.tvPlayerStyle,
     this.tvHomeStyle,
     this.tvHomeGenreRows,
+    this.swipeBetweenTabs,
     this.doublePageSingleFirstPage = false,
   });
 
@@ -999,6 +1005,7 @@ class Settings {
     tvPlayerStyle = json['tvPlayerStyle'];
     tvHomeStyle = json['tvHomeStyle'];
     tvHomeGenreRows = json['tvHomeGenreRows'];
+    swipeBetweenTabs = json['swipeBetweenTabs'];
     doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
   }
 
@@ -1234,6 +1241,7 @@ class Settings {
     'tvPlayerStyle': tvPlayerStyle,
     'tvHomeStyle': tvHomeStyle,
     'tvHomeGenreRows': tvHomeGenreRows,
+    'swipeBetweenTabs': swipeBetweenTabs,
     'doublePageSingleFirstPage': doublePageSingleFirstPage,
   };
 }

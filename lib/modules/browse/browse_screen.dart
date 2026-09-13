@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/main_view/section_memory.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
@@ -70,30 +71,47 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     _tabList = _computeTabList(ref.read(animeOnlyTvModeProvider));
     _tabBarController = TabController(
       length: _tabList.length,
-      initialIndex: _takeRequestedTabIndex(),
       vsync: this,
+      // A tab somebody asked for wins; otherwise the shell disposes this
+      // screen on every tab switch, so without seeding it the section you
+      // left is forgotten the moment you swipe away.
+      initialIndex: _takeRequestedTabIndex() ?? _rememberedTabIndex(),
     );
     _tabBarController.addListener(_onTabChanged);
   }
 
-  /// The index of the tab somebody asked us to open on, or zero.
+  static const _sectionKey = 'browse';
+
+  /// The index of the tab somebody asked us to open on, or null when nobody
+  /// asked and when the tab they asked for is not in this list.
+  ///
+  /// This answered zero for both of those before the screen remembered where
+  /// you left it. Now zero is a real answer meaning "the first tab", so the
+  /// two no-answer cases have to be distinguishable from it, or every return
+  /// to Browse lands on the first tab instead of the one you were on.
   ///
   /// The request is cleared after this frame rather than as it is read.
   /// Riverpod counts initState as part of the build and throws on a write
   /// there, which took the whole Browse screen down.
-  int _takeRequestedTabIndex() {
+  int? _takeRequestedTabIndex() {
     final requested = ref.read(browseInitialTabProvider);
-    if (requested == null) return 0;
+    if (requested == null) return null;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) ref.read(browseInitialTabProvider.notifier).clear();
     });
     final index = _tabList.indexWhere(
       (tab) => tab.kind == requested.kind && tab.type == requested.type,
     );
-    return index < 0 ? 0 : index;
+    return index < 0 ? null : index;
+  }
+
+  int _rememberedTabIndex() {
+    if (_tabList.isEmpty) return 0;
+    return rememberedSection(_sectionKey).clamp(0, _tabList.length - 1);
   }
 
   void _onTabChanged() {
+    rememberSection(_sectionKey, _tabBarController.index);
     _chekPermission();
     setState(() {
       _textEditingController.clear();
@@ -221,7 +239,12 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
       animationDuration: Duration.zero,
       length: _tabList.length,
       child: Scaffold(
+        // bottom: false so the inset reaches the tab views instead of being
+        // consumed here. Each applies it to its own scroll padding, which lets
+        // content pass under the translucent bar rather than stopping short of
+        // it, and keeps the last row reachable either way.
         body: SafeArea(
+          bottom: false,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -291,7 +314,12 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
       _tabList = newTabs;
       _tabBarController.removeListener(_onTabChanged);
       _tabBarController.dispose();
-      _tabBarController = TabController(length: _tabList.length, vsync: this);
+      _tabBarController = TabController(
+        length: _tabList.length,
+        vsync: this,
+        initialIndex: rememberedSection(_sectionKey)
+            .clamp(0, _tabList.length - 1),
+      );
       _tabBarController.addListener(_onTabChanged);
     } else {
       _tabList = newTabs;
