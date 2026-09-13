@@ -163,16 +163,20 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                           !repo.name!.endsWith('.json'))
                                       ? repo.name!
                                       : (repo.jsonUrl != null
-                                          ? (repo.jsonUrl!
-                                                  .replaceAll(
-                                                    RegExp(r'/[^/]+\.json$'),
-                                                    '',
-                                                  )
-                                                  .split('/')
-                                                  .where((s) => s.isNotEmpty)
-                                                  .lastOrNull ??
-                                              repo.jsonUrl!)
-                                          : "Invalid source - remove it"),
+                                            ? (repo.jsonUrl!
+                                                      .replaceAll(
+                                                        RegExp(
+                                                          r'/[^/]+\.json$',
+                                                        ),
+                                                        '',
+                                                      )
+                                                      .split('/')
+                                                      .where(
+                                                        (s) => s.isNotEmpty,
+                                                      )
+                                                      .lastOrNull ??
+                                                  repo.jsonUrl!)
+                                            : "Invalid source - remove it"),
                                   style: TextStyle(
                                     decoration: isHidden
                                         ? TextDecoration.lineThrough
@@ -283,7 +287,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
   /// #774: when a repo is removed, drop its *not-installed* sources so they
   /// don't linger as placeholders with a dead install button. Installed
   /// sources (non-empty [Source.sourceCode]) are kept so users don't lose them.
-  void _removeOrphanSources(Repo removedRepo) {
+  Future<void> _removeOrphanSources(Repo removedRepo) async {
     final repoUrl = removedRepo.jsonUrl;
     if (repoUrl == null) return;
     final orphanIds = sourceRepository
@@ -294,7 +298,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
         .map((s) => s.id!)
         .toList();
     if (orphanIds.isNotEmpty) {
-      sourceRepository.deleteAll(orphanIds);
+      await sourceRepository.deleteAll(orphanIds);
     }
   }
 
@@ -320,20 +324,19 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                     ),
                     const SizedBox(width: 15),
                     TextButton(
-                      onPressed: () {
+                      onPressed: () async {
                         final removedRepo = _entries[index];
                         final mangaRepos = ref
                             .read(extensionsRepoStateProvider(widget.itemType))
                             .toList();
                         mangaRepos.removeWhere((url) => url == removedRepo);
-                        ref
+                        await ref
                             .read(
                               extensionsRepoStateProvider(widget.itemType)
                                   .notifier,
                             )
                             .set(mangaRepos);
-                        _removeOrphanSources(removedRepo);
-                        ref.watch(extensionsRepoStateProvider(widget.itemType));
+                        await _removeOrphanSources(removedRepo);
                         if (context.mounted) {
                           Navigator.pop(context);
                         }
@@ -464,13 +467,19 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                             .future,
                                       );
                                       if (repo == null) {
-                                        setState(() => isLoading = false);
+                                        if (context.mounted) {
+                                          setState(() => isLoading = false);
+                                        }
                                         botToast(l10n.unsupported_repo);
                                         return;
                                       }
-                                      final repoUrl = repo.jsonUrl?.trim().toLowerCase();
+                                      final repoUrl = repo.jsonUrl
+                                          ?.trim()
+                                          .toLowerCase();
                                       final isDuplicate = currentRepos.any((r) {
-                                        final rUrl = r.jsonUrl?.trim().toLowerCase();
+                                        final rUrl = r.jsonUrl
+                                            ?.trim()
+                                            .toLowerCase();
                                         return (rUrl != null &&
                                                 (rUrl == repoUrl ||
                                                     rUrl == clean ||
@@ -478,7 +487,8 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                                     '$rUrl/' == clean ||
                                                     (repoUrl != null &&
                                                         (rUrl == '$repoUrl/' ||
-                                                            '$rUrl/' == repoUrl)))) ||
+                                                            '$rUrl/' ==
+                                                                repoUrl)))) ||
                                             r == repo;
                                       });
                                       if (isDuplicate) {
@@ -486,11 +496,21 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                         botToast(l10n.repo_already_exists);
                                         return;
                                       }
-                                      repoNotifier.set([...currentRepos, repo]);
+                                      await repoNotifier.set([
+                                        ...currentRepos,
+                                        repo,
+                                      ]);
                                       botToast(l10n.repo_added);
                                     } catch (e, s) {
-                                      setState(() => isLoading = false);
-                                      toastError(e, stack: s, source: 'sourceRepositories');
+                                      if (context.mounted) {
+                                        setState(() => isLoading = false);
+                                      }
+                                      toastError(
+                                        e,
+                                        stack: s,
+                                        source: 'sourceRepositories',
+                                      );
+                                      return;
                                     }
 
                                     if (context.mounted) {

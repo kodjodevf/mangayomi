@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -103,7 +104,8 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
   @override
   List<Repo> build(ItemType itemType) {
     final settings = settingsRepository.current;
-    final list = switch (itemType) {
+    final list =
+        switch (itemType) {
           ItemType.manga => settings.mangaExtensionsRepo,
           ItemType.anime => settings.animeExtensionsRepo,
           _ => settings.novelExtensionsRepo,
@@ -128,13 +130,13 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
       }
       return e;
     }).toList();
-    set(value);
+    unawaited(set(value));
   }
 
-  void set(List<Repo> value) {
+  Future<void> set(List<Repo> value) async {
     final deduplicated = _deduplicate(value);
     state = deduplicated;
-    settingsRepository.update((s) {
+    await settingsRepository.update((s) {
       switch (itemType) {
         case ItemType.manga:
           s.mangaExtensionsRepo = deduplicated;
@@ -146,15 +148,19 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
           s.novelExtensionsRepo = deduplicated;
       }
     });
+    unawaited(_refreshSources());
+  }
+
+  Future<void> _refreshSources() async {
     try {
-      final a = ref.refresh(
+      final refresh = ref.refresh(
         fetchItemSourcesListProvider(
           id: null,
           reFresh: false,
           itemType: itemType,
         ).future,
       );
-      Future.wait([a]);
+      await refresh;
     } catch (_) {}
   }
 }

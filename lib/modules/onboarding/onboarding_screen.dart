@@ -450,14 +450,16 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
         final rUrl = r.jsonUrl?.trim().toLowerCase();
         final newUrl = repo.jsonUrl?.trim().toLowerCase();
         return (rUrl != null &&
-                (rUrl == newUrl ||
-                    rUrl == '$newUrl/' ||
-                    '$rUrl/' == newUrl)) ||
+                (rUrl == newUrl || rUrl == '$newUrl/' || '$rUrl/' == newUrl)) ||
             r == repo;
       });
       if (!alreadyExists) {
-        ref.read(extensionsRepoStateProvider(_repoType).notifier).set([...currentRepos, repo]);
+        await ref.read(extensionsRepoStateProvider(_repoType).notifier).set([
+          ...currentRepos,
+          repo,
+        ]);
       }
+      if (!mounted) return;
       setState(() {
         _added = repo;
         _addedFor = _repoType;
