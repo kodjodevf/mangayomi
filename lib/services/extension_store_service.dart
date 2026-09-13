@@ -426,6 +426,46 @@ class ExtensionStoreService {
           continue;
         }
 
+        if (e['id'] is String &&
+            e['name'] != null &&
+            e['site'] != null &&
+            e['lang'] != null &&
+            e['version'] != null &&
+            e['url'] != null &&
+            e['iconUrl'] != null) {
+          final lang = convertLnreaderLang(e['lang']);
+          final src = Source()
+            ..apiUrl = ''
+            ..appMinVerReq = ''
+            ..dateFormat = ''
+            ..dateFormatLocale = ''
+            ..hasCloudflare = false
+            ..headers = ''
+            ..isActive = true
+            ..isAdded = false
+            ..isFullData = false
+            ..isNsfw = false
+            ..isPinned = false
+            ..lastUsed = false
+            ..sourceCode = ''
+            ..typeSource = ''
+            ..version = (e['version'] as String?) ?? '0.0.1'
+            ..versionLast = (e['version'] as String?) ?? '0.0.1'
+            ..isObsolete = false
+            ..isLocal = false
+            ..name = e['name'] as String?
+            ..lang = lang
+            ..baseUrl = (e['site'] as String?) ?? ''
+            ..sourceCodeUrl = (e['url'] as String?) ?? ''
+            ..sourceCodeLanguage = SourceCodeLanguage.lnreader
+            ..itemType = ItemType.novel
+            ..iconUrl = (e['iconUrl'] as String?) ?? ''
+            ..notes = "Performance might be poor due to limited engine";
+          src.id = 'lnreader-plugin-"${src.name}"."$lang"'.hashCode;
+          sources.add(src);
+          continue;
+        }
+
         // Native Mangayomi source or other supported JSON source
         try {
           final src = Source.fromJson(e);
@@ -435,18 +475,43 @@ class ExtensionStoreService {
         } catch (_) {}
       }
 
-      final defaultRepoName =
-          repoBaseUrl
-              .split('/')
-              .where((s) => s.isNotEmpty && !s.endsWith('.json'))
-              .lastOrNull ??
-          'Mihon Repo';
+      String defaultRepoName = 'Extension Repo';
+      String? defaultRepoWebsite = website;
+      final uri = Uri.tryParse(indexUrl);
+      if (uri != null) {
+        if (uri.host == 'raw.githubusercontent.com' &&
+            uri.pathSegments.length >= 2) {
+          defaultRepoName = uri.pathSegments[1];
+          defaultRepoWebsite ??=
+              'https://github.com/${uri.pathSegments[0]}/${uri.pathSegments[1]}';
+        } else {
+          final segments = uri.pathSegments
+              .where(
+                (s) =>
+                    s.isNotEmpty &&
+                    !s.endsWith('.json') &&
+                    s != '.dist' &&
+                    s != 'dist' &&
+                    s != 'build' &&
+                    s != '.build',
+              )
+              .toList();
+          defaultRepoName = segments.lastOrNull ?? uri.host;
+        }
+      }
+
       final repoName =
-          (name != null && name.isNotEmpty && !name.endsWith('.json'))
+          (name != null &&
+                  name.isNotEmpty &&
+                  !name.endsWith('.json') &&
+                  name != '.dist' &&
+                  name != 'dist')
               ? name
               : defaultRepoName;
       final repoWebsite =
-          (website != null && website.isNotEmpty) ? website : repoBaseUrl;
+          (defaultRepoWebsite != null && defaultRepoWebsite.isNotEmpty)
+              ? defaultRepoWebsite
+              : repoBaseUrl;
 
       return ExtensionStoreFetchResult(
         name: repoName,
@@ -633,5 +698,49 @@ class ExtensionStoreService {
         );
       }),
     );
+  }
+
+  static String convertLnreaderLang(dynamic langOrMap) {
+    final lang = langOrMap is Map ? langOrMap['lang'] : langOrMap;
+    if (lang is String) {
+      final clean = lang.replaceAll('\u200e', '').trim();
+      switch (clean) {
+        case "العربية":
+          return "ar";
+        case "中文, 汉语, 漢語":
+          return "zh";
+        case "English":
+          return "en";
+        case "Français":
+          return "fr";
+        case "Bahasa Indonesia":
+          return "id";
+        case "日本語":
+          return "ja";
+        case "조선말, 한국어":
+          return "ko";
+        case "Polski":
+          return "pl";
+        case "Português":
+          return "pt";
+        case "Русский":
+          return "ru";
+        case "Español":
+          return "es";
+        case "ไทย":
+          return "th";
+        case "Türkçe":
+          return "tr";
+        case "Українська":
+          return "uk";
+        case "Tiếng Việt":
+          return "vi";
+        case "Multi":
+          return "all";
+        default:
+          return "all";
+      }
+    }
+    return "all";
   }
 }

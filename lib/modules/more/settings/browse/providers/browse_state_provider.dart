@@ -156,7 +156,7 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
       final refresh = ref.refresh(
         fetchItemSourcesListProvider(
           id: null,
-          reFresh: false,
+          reFresh: true,
           itemType: itemType,
         ).future,
       );
@@ -217,12 +217,11 @@ Future<Repo?> getRepoInfos(Ref ref, {required String jsonUrl}) async {
       if (result != null &&
           (result.sources.isNotEmpty || result.name.isNotEmpty)) {
         String repoName = result.name;
-        if (repoName.isEmpty || repoName.endsWith('.json')) {
-          final uri = Uri.parse(url);
-          final segments = uri.pathSegments
-              .where((s) => s.isNotEmpty && !s.endsWith('.json'))
-              .toList();
-          repoName = segments.lastOrNull ?? uri.host;
+        if (repoName.isEmpty ||
+            repoName.endsWith('.json') ||
+            repoName == '.dist' ||
+            repoName == 'dist') {
+          repoName = _inferRepoName(Uri.parse(url));
         }
         return Repo(
           name: repoName,
@@ -256,12 +255,10 @@ Future<Repo?> getRepoInfos(Ref ref, {required String jsonUrl}) async {
         final repo = Repo.fromJson(infos);
         if (repo.name == null ||
             repo.name!.isEmpty ||
-            repo.name!.endsWith('.json')) {
-          final uri = Uri.parse(url);
-          final segments = uri.pathSegments
-              .where((s) => s.isNotEmpty && !s.endsWith('.json'))
-              .toList();
-          repo.name = segments.lastOrNull ?? uri.host;
+            repo.name!.endsWith('.json') ||
+            repo.name == '.dist' ||
+            repo.name == 'dist') {
+          repo.name = _inferRepoName(Uri.parse(url));
         }
         return repo;
       }
@@ -271,10 +268,32 @@ Future<Repo?> getRepoInfos(Ref ref, {required String jsonUrl}) async {
   return null;
 }
 
+String _inferRepoName(Uri uri) {
+  if (uri.host == 'raw.githubusercontent.com' && uri.pathSegments.length >= 2) {
+    return uri.pathSegments[1];
+  }
+  final segments = uri.pathSegments
+      .where(
+        (s) =>
+            s.isNotEmpty &&
+            !s.endsWith('.json') &&
+            s != '.dist' &&
+            s != 'dist' &&
+            s != 'build' &&
+            s != '.build',
+      )
+      .toList();
+  return segments.lastOrNull ?? uri.host;
+}
+
 bool _checkValidUrl(Response res) {
   try {
     final decoded = jsonDecode(res.body);
     if (decoded is List) {
+      final first = decoded.firstOrNull;
+      if (first is Map && (first['name'] != null || first['site'] != null)) {
+        return true;
+      }
       final sourceList = decoded.map((e) => Source.fromJson(e));
       if (sourceList.firstOrNull?.name != null) {
         return true;
