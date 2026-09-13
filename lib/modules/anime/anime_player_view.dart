@@ -24,6 +24,8 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
+import 'package:mangayomi/modules/anime/utils/audio_track_fallback.dart';
+import 'package:mangayomi/modules/anime/utils/audio_track_label.dart';
 import 'package:mangayomi/modules/anime/utils/playback_media.dart';
 import 'package:mangayomi/modules/anime/providers/state_provider.dart';
 import 'package:mangayomi/modules/anime/utils/player_lifecycle.dart';
@@ -53,6 +55,7 @@ import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/share.dart';
 import 'package:mangayomi/utils/system_ui.dart';
@@ -462,6 +465,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   int lastRpcTimestampUpdate = DateTime.now().millisecondsSinceEpoch;
 
   late final StreamSubscription<Duration> _currentPositionSub;
+  late final StreamSubscription<String> _playerErrorSub;
+  final Set<String> _failedAudioTrackKeys = {};
+  final Set<String> _failedAudioCodecs = {};
+  String? _requestedAudioLanguage;
+  bool _audioFallbackInProgress = false;
+  bool _audioFallbackErrorQueued = false;
 
   late final StreamSubscription<Duration> _currentTotalDurationSub = _player
       .stream
@@ -947,7 +956,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
       if (_activeAudioTrack != null) {
         try {
-          _player.setAudioTrack(_activeAudioTrack!);
+          unawaited(_setAudioTrack(_activeAudioTrack!));
         } catch (_) {}
       } else if (_firstVid.audios?.isNotEmpty ?? false) {
         try {
@@ -958,7 +967,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             language: at.label,
           );
           _activeAudioTrack = track;
-          _player.setAudioTrack(track);
+          unawaited(_setAudioTrack(track));
         } catch (_) {}
       }
     }
@@ -1110,6 +1119,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _currentPositionSub = _player.stream.position.listen(
       _unifiedPositionHandler,
     );
+    _playerErrorSub = _player.stream.error.listen(_reportPlaybackError);
     _completed;
     _currentTotalDurationSub;
     _loadAndroidFont().then((_) {
@@ -1159,6 +1169,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   Future<void> _openMedia(VideoPrefs prefs, [Duration? position]) async {
     final start = position ?? _currentPosition.value;
+    _resetAudioFallbackState(resetRequestedLanguage: true);
     await _player.open(
       playbackMedia(
         prefs.videoTrack!.id,
@@ -1183,6 +1194,162 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             .then((_) => mounted ? _player.seek(start) : null)
             .catchError((_) {}),
       );
+    }
+  }
+
+  Future<void> _setAudioTrack(AudioTrack track) async {
+    _resetAudioFallbackState();
+    _requestedAudioLanguage = track.language ?? _preferredAudioLanguage();
+    await _player.setAudioTrack(track);
+  }
+
+  String? _preferredAudioLanguage() {
+    for (final language in audioPreferredLang.split(',')) {
+      final value = language.trim();
+      if (value.isNotEmpty) return value;
+    }
+    return null;
+  }
+
+  List<AudioTrack> _audioTracksForFallback() {
+    final tracks = _player.state.tracks.audio.toList();
+    for (final sourceTrack in _firstVid.audios ?? const <vid.Track>[]) {
+      final file = sourceTrack.file;
+      if (file == null || file.isEmpty) continue;
+      tracks.add(
+        AudioTrack.uri(
+          file,
+          title: sourceTrack.label,
+          language: sourceTrack.label,
+        ),
+      );
+    }
+    return tracks;
+  }
+
+  void _resetAudioFallbackState({bool resetRequestedLanguage = false}) {
+    _failedAudioTrackKeys.clear();
+    _failedAudioCodecs.clear();
+    _audioFallbackErrorQueued = false;
+    if (resetRequestedLanguage) _requestedAudioLanguage = null;
+  }
+
+  Future<AudioTrack> _activeAudioTrackFn() async {
+    final selectedAudio = _player.state.track.audio;
+    if (selectedAudio.id != 'auto' && selectedAudio.id != 'no') {
+      return selectedAudio;
+    }
+
+    final platform = _player.platform;
+    if (platform is! NativePlayer) return selectedAudio;
+    final aid = await _nativeAudioProperty(platform, 'aid');
+    final explicitlySelected = _audioTrackForNativeId(aid);
+    if (explicitlySelected != null) return explicitlySelected;
+    final activeId = await _nativeAudioProperty(
+      platform,
+      'current-tracks/audio/id',
+    );
+    return _audioTrackForNativeId(activeId) ?? selectedAudio;
+  }
+
+  Future<String?> _nativeAudioProperty(
+    NativePlayer platform,
+    String property,
+  ) async {
+    try {
+      final value = (await platform.getProperty(property)).trim();
+      return value.isEmpty ? null : value;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<String?> _nativePreferredAudioLanguage() async {
+    final platform = _player.platform;
+    if (platform is! NativePlayer) return null;
+    final alang = await _nativeAudioProperty(platform, 'alang');
+    for (final language in alang?.split(',') ?? const <String>[]) {
+      final value = language.trim();
+      if (value.isNotEmpty && value != 'auto') return value;
+    }
+    return null;
+  }
+
+  AudioTrack? _audioTrackForNativeId(String? id) {
+    if (id == null || id == 'auto' || id == 'no' || id == '-1') return null;
+    for (final track in _player.state.tracks.audio) {
+      if (track.id == id) return track;
+    }
+    return AudioTrack(id, null, null);
+  }
+
+  bool _isVideoDecoderError(String? codec, AudioTrack activeAudio) {
+    final normalized = codec?.trim().toLowerCase();
+    if (normalized == null || normalized.isEmpty) return false;
+    if (activeAudio.codec?.trim().toLowerCase() == normalized) return false;
+    final hasAudioCodec = _player.state.tracks.audio.any(
+      (track) => track.codec?.trim().toLowerCase() == normalized,
+    );
+    final hasVideoCodec = _player.state.tracks.video.any(
+      (track) => track.codec?.trim().toLowerCase() == normalized,
+    );
+    return hasVideoCodec && !hasAudioCodec;
+  }
+
+  void _reportPlaybackError(String error) {
+    final message = error.trim();
+    if (message.isEmpty || !isAudioDecoderInitializationError(message)) return;
+    if (_audioFallbackInProgress) {
+      _audioFallbackErrorQueued = true;
+      return;
+    }
+    unawaited(_recoverFromAudioDecoderError(message));
+  }
+
+  Future<void> _recoverFromAudioDecoderError(String message) async {
+    _audioFallbackInProgress = true;
+    try {
+      final failedTrack = await _activeAudioTrackFn();
+      final failedCodec = audioDecoderCodecFromError(message);
+      if (_isVideoDecoderError(failedCodec, failedTrack)) return;
+
+      _failedAudioTrackKeys.add(audioTrackFallbackKey(failedTrack));
+      if (failedCodec != null) {
+        _failedAudioCodecs.add(failedCodec.toLowerCase());
+      }
+      final requestedLanguage =
+          failedTrack.language ??
+          _requestedAudioLanguage ??
+          _preferredAudioLanguage() ??
+          await _nativePreferredAudioLanguage();
+      final candidates = audioTrackFallbackCandidates(
+        failedTrack: failedTrack,
+        availableTracks: _audioTracksForFallback(),
+        requestedLanguage: requestedLanguage,
+        failedTrackKeys: _failedAudioTrackKeys,
+        failedCodecs: _failedAudioCodecs,
+      );
+      if (candidates.isEmpty) return;
+
+      final fallback = candidates.first;
+      _requestedAudioLanguage = requestedLanguage;
+      AppLogger.log(
+        'Audio decoder failed for ${audioTrackLabel(failedTrack)}; '
+        'trying ${audioTrackLabel(fallback)}.',
+        logLevel: LogLevel.warning,
+      );
+      await _player.setAudioTrack(fallback);
+    } catch (error, stackTrace) {
+      AppLogger.log(
+        'Audio track fallback failed: $error\n$stackTrace',
+        logLevel: LogLevel.error,
+      );
+    } finally {
+      _audioFallbackInProgress = false;
+      if (_audioFallbackErrorQueued) {
+        _audioFallbackErrorQueued = false;
+        unawaited(_recoverFromAudioDecoderError(message));
+      }
     }
   }
 
@@ -1258,6 +1425,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       listenerCancellations: [
         _completed.cancel(),
         _currentPositionSub.cancel(),
+        _playerErrorSub.cancel(),
         _currentTotalDurationSub.cancel(),
       ],
       beforeDisposePlayer: Platform.isWindows
@@ -2122,7 +2290,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               _popSettings(context);
               try {
                 _activeAudioTrack = aud.audio!;
-                _player.setAudioTrack(aud.audio!);
+                unawaited(_setAudioTrack(aud.audio!));
               } catch (_) {}
             },
           );
@@ -2322,7 +2490,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         onTap: () {
           try {
             _activeAudioTrack = aud.audio!;
-            _player.setAudioTrack(aud.audio!);
+            unawaited(_setAudioTrack(aud.audio!));
           } catch (_) {}
         },
       );
