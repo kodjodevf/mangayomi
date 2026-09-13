@@ -154,11 +154,12 @@ Widget customColorFilterListTile(
   void Function((double, bool, String))? onChanged,
   BuildContext context,
 ) {
+  final clampedValue = value.clamp(0, 255);
   final color = switch (label) {
-    "a" => Color.fromARGB(value, 255, 255, 255),
-    "r" => Color.fromARGB(255, value, 0, 0),
-    "g" => Color.fromARGB(255, 0, value, 0),
-    _ => Color.fromARGB(255, 0, 0, value),
+    "a" => Color.fromARGB(clampedValue, 255, 255, 255),
+    "r" => Color.fromARGB(255, clampedValue, 0, 0),
+    "g" => Color.fromARGB(255, 0, clampedValue, 0),
+    _ => Color.fromARGB(255, 0, 0, clampedValue),
   };
 
   return Padding(
@@ -206,12 +207,12 @@ Widget customColorFilterListTile(
               max: 255,
               divisions: max(244, 1),
               onChangeEnd: (value) => onChanged!.call((value, true, label)),
-              value: value.toDouble(),
+              value: clampedValue.toDouble(),
               onChanged: (value) => onChanged!.call((value, false, label)),
             ),
           ),
         ),
-        Padding(padding: const EdgeInsets.all(2), child: Text("$value")),
+        Padding(padding: const EdgeInsets.all(2), child: Text("$clampedValue")),
       ],
     ),
   );

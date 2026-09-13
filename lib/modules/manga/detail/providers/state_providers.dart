@@ -1,6 +1,7 @@
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/manga/detail/chapter_bulk_actions.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
@@ -328,8 +329,9 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
   void set() {
     final allChapters = <Chapter>[];
     final chapters = ref.watch(chaptersListStateProvider);
+    final markAsRead = bulkChapterTargetReadState(chapters);
     for (var chapter in chapters) {
-      chapter.isRead = !chapter.isRead!;
+      chapter.isRead = markAsRead;
       chapter.updatedAt = DateTime.now().millisecondsSinceEpoch;
       chapter.manga.value = manga;
       allChapters.add(chapter);
@@ -347,15 +349,12 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
 
   Future<void> set() async {
     ref.read(isLongPressedStateProvider.notifier).update(false);
-    await downloadRepository.transaction(() {
-      for (var chapter in ref.watch(chaptersListStateProvider)) {
-        final entry = downloadRepository.getByChapterId(chapter.id);
-        if (entry == null || !entry.isDownload!) {
-          ref.watch(addDownloadToQueueProvider(chapter: chapter));
-        }
-      }
-    });
-
+    for (final chapter in ref.read(chaptersListStateProvider).toList()) {
+      await downloadRepository.enqueue(chapter);
+    }
+    if (!ref.mounted) return;
+    ref.invalidate(processDownloadsProvider());
+    ref.read(processDownloadsProvider());
     ref.read(chaptersListStateProvider.notifier).clear();
   }
 }
@@ -409,7 +408,9 @@ class ScanlatorsFilterState extends _$ScanlatorsFilterState {
       }
     }
     filterScanlatorList.add(value);
-    settingsRepository.save(settings..filterScanlatorList = filterScanlatorList);
+    settingsRepository.save(
+      settings..filterScanlatorList = filterScanlatorList,
+    );
     state = (_getScanlators(), _getFilterScanlator()!, filterScanlators);
   }
 

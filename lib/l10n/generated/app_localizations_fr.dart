@@ -1051,9 +1051,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get syncing => 'Synchronisation';
 
   @override
-  String get sync_password => 'Mot de passe (au moins 8 caractères)';
-
-  @override
   String get sync_logged => 'Connexion réussie';
 
   @override
@@ -1061,20 +1058,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Synchronisez votre progression sur plusieurs appareils via un serveur auto-hébergé. Consultez notre serveur discord pour plus d\'informations !';
 
   @override
-  String get last_sync_manga => 'Dernière synchro du manga à :';
+  String get last_sync => 'Last sync at: ';
 
   @override
-  String get last_sync_history => 'Dernière synchro historique au :';
-
-  @override
-  String get last_sync_update =>
-      'Dernière mise à jour de la synchronisation au :';
+  String get sync_login_browser => 'Log in with browser';
 
   @override
   String get sync_server => 'Adresse du serveur de synchronisation';
-
-  @override
-  String get sync_login_invalid_creds => 'E-mail ou mot de passe invalide';
 
   @override
   String get sync_starting => 'Synchronisation de départ...';
@@ -1088,6 +1078,14 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get sync_restore_in_progress =>
       'Synchronisation ignorée — restauration en cours';
+
+  @override
+  String sync_progress_percent(Object percent) {
+    return 'Syncing… $percent%';
+  }
+
+  @override
+  String get sync_progress_indeterminate => 'Syncing…';
 
   @override
   String get sync_button_sync => 'Synchroniser les progrès';
@@ -1124,9 +1122,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get sync_section_general => 'Général';
-
-  @override
-  String get sync_section_data_types => 'Éléments à synchroniser';
 
   @override
   String get sync_on => 'Activer la synchronisation';
@@ -1782,6 +1777,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'Désactivez `use libass` dans les paramètres du lecteur pour pouvoir personnaliser les sous-titres.';
 
   @override
+  String get override_ass_subtitles =>
+      'Forcer le style sur les sous-titres ASS';
+
+  @override
+  String get override_ass_subtitles_info =>
+      'Appliquer le style personnalisé aux sous-titres ASS/SSA';
+
+  @override
   String get torrent_stream => 'Flux Torrent';
 
   @override
@@ -2076,15 +2079,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'Afficher l\'image de couverture actuelle dans Discord';
 
   @override
-  String get sync_enable_histories => 'Synchroniser les données d\'historique';
-
-  @override
-  String get sync_enable_updates => 'Synchroniser les données de mise à jour';
-
-  @override
-  String get sync_enable_settings => 'Synchroniser les paramètres';
-
-  @override
   String get enable_mpv => 'Activer les shaders / scripts mpv';
 
   @override
@@ -2201,6 +2195,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get subtitle_speed => 'Vitesse';
+
+  @override
+  String get tracks => 'Pistes';
+
+  @override
+  String get playback_speed => 'Playback speed';
+
+  @override
+  String get shaders => 'Shaders';
+
+  @override
+  String get video_fit => 'Fit';
 
   @override
   String get calendar => 'Calendrier';

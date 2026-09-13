@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
+/// Material Design 3 Slider Track Shape with support for buffer progress and chapter mark ticks.
 class CustomTrackShape extends SliderTrackShape {
   final double maxValue;
   final double minValue;
@@ -29,10 +28,11 @@ class CustomTrackShape extends SliderTrackShape {
     bool? isEnabled,
     bool? isDiscrete,
   }) {
-    final double thumbWidth = sliderTheme.thumbShape!
-        .getPreferredSize(isEnabled ?? true, isDiscrete ?? false)
-        .width;
-    final double trackHeight = sliderTheme.trackHeight!;
+    final double thumbWidth = sliderTheme.thumbShape
+            ?.getPreferredSize(isEnabled ?? true, isDiscrete ?? false)
+            .width ??
+        12.0;
+    final double trackHeight = sliderTheme.trackHeight ?? 4.0;
 
     final double trackTop =
         offset.dy + (parentBox.size.height - trackHeight) / 2;
@@ -63,138 +63,79 @@ class CustomTrackShape extends SliderTrackShape {
       isEnabled: isEnabled,
       isDiscrete: isDiscrete,
     );
-    double currentPositionWidth = (trackWidth / maxValue) * currentPosition;
-    double bufferPositionWidth = (trackWidth / maxValue) * bufferPosition;
 
-    _drawActiveThumb(context, sliderTheme, trackRect, currentPositionWidth);
-    _drawBufferThumb(
-      context,
-      sliderTheme,
-      trackRect,
-      currentPositionWidth,
-      bufferPositionWidth,
+    final double activeFraction = maxValue > 0 ? (currentPosition / maxValue).clamp(0.0, 1.0) : 0.0;
+    final double bufferFraction = maxValue > 0 ? (bufferPosition / maxValue).clamp(0.0, 1.0) : 0.0;
+
+    final double currentPositionWidth = trackWidth * activeFraction;
+    final double bufferPositionWidth = trackWidth * bufferFraction;
+    final Radius trackRadius = Radius.circular(trackRect.height / 2);
+
+    final canvas = context.canvas;
+
+    // 1. Inactive full track (M3 base)
+    final inactivePaint = Paint()
+      ..color = sliderTheme.inactiveTrackColor ?? const Color(0x33FFFFFF)
+      ..style = PaintingStyle.fill;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(trackRect, trackRadius),
+      inactivePaint,
     );
-    _drawInactiveThumb(context, sliderTheme, trackRect, currentPositionWidth);
 
-    for (final mark in chapterMarks) {
-      double markPositionWidth = (trackWidth / maxValue) * mark.$2;
-      _drawChapterMark(context, sliderTheme, trackRect, markPositionWidth);
+    // 2. Buffer track
+    if (bufferPositionWidth > 0) {
+      final bufferRect = Rect.fromLTRB(
+        trackRect.left,
+        trackRect.top,
+        (trackRect.left + bufferPositionWidth).clamp(trackRect.left, trackRect.right),
+        trackRect.bottom,
+      );
+      final bufferPaint = Paint()
+        ..color = sliderTheme.secondaryActiveTrackColor ?? const Color(0x66FFFFFF)
+        ..style = PaintingStyle.fill;
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(bufferRect, trackRadius),
+        bufferPaint,
+      );
     }
-  }
 
-  void _drawActiveThumb(
-    PaintingContext context,
-    SliderThemeData sliderTheme,
-    Rect trackRect,
-    double currentPositionWidth,
-  ) {
-    final Paint defaultPathPaint = Paint()
-      ..color = sliderTheme.activeTrackColor!
-      ..style = PaintingStyle.fill;
-
-    final defaultPathSegment = Path()
-      ..addRect(
-        Rect.fromPoints(
-          Offset(trackRect.left, trackRect.top),
-          Offset(trackRect.left + currentPositionWidth, trackRect.bottom),
-        ),
-      )
-      ..lineTo(trackRect.left, trackRect.bottom)
-      ..arcTo(
-        Rect.fromPoints(
-          Offset(trackRect.left + 5, trackRect.top),
-          Offset(trackRect.left - 5, trackRect.bottom),
-        ),
-        -pi * 3 / 2,
-        pi,
-        false,
+    // 3. Active track
+    if (currentPositionWidth > 0) {
+      final activeRect = Rect.fromLTRB(
+        trackRect.left,
+        trackRect.top,
+        (trackRect.left + currentPositionWidth).clamp(trackRect.left, trackRect.right),
+        trackRect.bottom,
       );
-
-    context.canvas.drawPath(defaultPathSegment, defaultPathPaint);
-  }
-
-  void _drawBufferThumb(
-    PaintingContext context,
-    SliderThemeData sliderTheme,
-    Rect trackRect,
-    double currentPositionWidth,
-    double bufferPositionWidth,
-  ) {
-    final Paint defaultPathPaint = Paint()
-      ..color = sliderTheme.secondaryActiveTrackColor!
-      ..style = PaintingStyle.fill;
-
-    final defaultPathSegment = Path()
-      ..addRect(
-        Rect.fromPoints(
-          Offset(trackRect.left + currentPositionWidth, trackRect.top),
-          Offset(trackRect.left + bufferPositionWidth, trackRect.bottom),
-        ),
-      )
-      ..lineTo(trackRect.left, trackRect.bottom)
-      ..arcTo(
-        Rect.fromPoints(
-          Offset(trackRect.left + 5, trackRect.top),
-          Offset(trackRect.left - 5, trackRect.bottom),
-        ),
-        -pi * 3 / 2,
-        pi,
-        false,
+      final activePaint = Paint()
+        ..color = sliderTheme.activeTrackColor ?? const Color(0xFFFFFFFF)
+        ..style = PaintingStyle.fill;
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(activeRect, trackRadius),
+        activePaint,
       );
+    }
 
-    context.canvas.drawPath(defaultPathSegment, defaultPathPaint);
-  }
+    // 4. Chapter Marks / Ticks
+    if (chapterMarks.isNotEmpty && maxValue > 0) {
+      final markPaint = Paint()
+        ..color = Colors.white.withValues(alpha: 0.70)
+        ..style = PaintingStyle.fill;
 
-  void _drawInactiveThumb(
-    PaintingContext context,
-    SliderThemeData sliderTheme,
-    Rect trackRect,
-    double currentPositionWidth,
-  ) {
-    final unselectedPathPaint = Paint()
-      ..style = PaintingStyle.fill
-      ..color = sliderTheme.inactiveTrackColor!;
-
-    final unselectedPathSegment = Path()
-      ..addRect(
-        Rect.fromPoints(
-          Offset(trackRect.right, trackRect.top),
-          Offset(trackRect.left + currentPositionWidth, trackRect.bottom),
-        ),
-      )
-      ..addArc(
-        Rect.fromPoints(
-          Offset(trackRect.right - 5, trackRect.bottom),
-          Offset(trackRect.right + 5, trackRect.top),
-        ),
-        -pi / 2,
-        pi,
-      );
-
-    context.canvas.drawPath(unselectedPathSegment, unselectedPathPaint);
-  }
-
-  void _drawChapterMark(
-    PaintingContext context,
-    SliderThemeData sliderTheme,
-    Rect trackRect,
-    double markPositionWidth,
-  ) {
-    final Paint borderPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
-
-    final pathSegmentSelected = Path()
-      ..addRect(
-        Rect.fromPoints(
-          Offset(trackRect.left + markPositionWidth, trackRect.top),
-          Offset(
-            trackRect.left + markPositionWidth + chapterMarkWidth,
-            trackRect.bottom,
+      for (final mark in chapterMarks) {
+        final double markFraction = (mark.$2 / maxValue).clamp(0.0, 1.0);
+        final double markX = trackRect.left + (trackWidth * markFraction);
+        final markRect = RRect.fromRectAndRadius(
+          Rect.fromLTWH(
+            markX - (chapterMarkWidth / 2),
+            trackRect.top - 1.5,
+            chapterMarkWidth,
+            trackRect.height + 3.0,
           ),
-        ),
-      );
-
-    context.canvas.drawPath(pathSegmentSelected, borderPaint);
+          const Radius.circular(2),
+        );
+        canvas.drawRRect(markRect, markPaint);
+      }
+    }
   }
 }

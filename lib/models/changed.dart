@@ -8,6 +8,7 @@ class ChangedPart {
   @enumerated
   late ActionType actionType;
   int? isarId;
+  int? clientId;
   String data;
   int clientDate;
 
@@ -15,6 +16,7 @@ class ChangedPart {
     this.id = Isar.autoIncrement,
     required this.actionType,
     this.isarId,
+    this.clientId,
     required this.data,
     required this.clientDate,
   });
@@ -22,6 +24,7 @@ class ChangedPart {
   Map<String, dynamic> toJson() => {
     'action': actionType.name,
     'isarId': isarId,
+    'clientId': clientId,
     'data': data,
     'clientDate': clientDate,
   };

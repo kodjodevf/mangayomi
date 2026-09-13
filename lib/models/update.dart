@@ -8,6 +8,9 @@ class Update {
   Id? id;
 
   @Index()
+  int? clientId;
+
+  @Index()
   int? mangaId;
 
   String? chapterName;
@@ -20,6 +23,7 @@ class Update {
 
   Update({
     this.id = Isar.autoIncrement,
+    this.clientId,
     required this.mangaId,
     required this.chapterName,
     required this.date,
@@ -27,6 +31,7 @@ class Update {
   });
 
   Update.fromJson(Map<String, dynamic> json) {
+    clientId = json['clientId'];
     id = json['id'];
     mangaId = json['mangaId'];
     chapterName = json['chapterName'];
@@ -35,6 +40,7 @@ class Update {
   }
 
   Map<String, dynamic> toJson() => {
+    'clientId': clientId,
     'id': id,
     'mangaId': mangaId,
     'chapterName': chapterName,

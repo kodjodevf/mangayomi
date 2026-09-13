@@ -1060,9 +1060,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get syncing => 'Синхронизация';
 
   @override
-  String get sync_password => 'Пароль (минимум 8 символов)';
-
-  @override
   String get sync_logged => 'Вход выполнен успешно';
 
   @override
@@ -1070,20 +1067,13 @@ class AppLocalizationsRu extends AppLocalizations {
       'Синхронизируйте свой прогресс на нескольких устройствах через собственный \nserver. Загляните на наш сервер discord для получения дополнительной информации!';
 
   @override
-  String get last_sync_manga => 'Последняя синхронизация манги:';
+  String get last_sync => 'Last sync at: ';
 
   @override
-  String get last_sync_history => 'Последняя история синхронизирована на:';
-
-  @override
-  String get last_sync_update => 'Последнее обновление синхронизировано на:';
+  String get sync_login_browser => 'Log in with browser';
 
   @override
   String get sync_server => 'Адрес сервера синхронизации';
-
-  @override
-  String get sync_login_invalid_creds =>
-      'Неверный адрес электронной почты или пароль';
 
   @override
   String get sync_starting => 'Начало синхронизации...';
@@ -1097,6 +1087,14 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get sync_restore_in_progress =>
       'Синхронизация пропущена — идет восстановление';
+
+  @override
+  String sync_progress_percent(Object percent) {
+    return 'Syncing… $percent%';
+  }
+
+  @override
+  String get sync_progress_indeterminate => 'Syncing…';
 
   @override
   String get sync_button_sync => 'Синхронизировать прогресс';
@@ -1132,9 +1130,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sync_section_general => 'Общие';
-
-  @override
-  String get sync_section_data_types => 'Что синхронизировать';
 
   @override
   String get sync_on => 'Включить синхронизацию';
@@ -1789,6 +1784,13 @@ class AppLocalizationsRu extends AppLocalizations {
       'Отключите `use libass` в настройках плеера, чтобы иметь возможность настраивать субтитры.';
 
   @override
+  String get override_ass_subtitles => 'Override ASS subtitles';
+
+  @override
+  String get override_ass_subtitles_info =>
+      'Apply custom styling to ASS/SSA subtitles';
+
+  @override
   String get torrent_stream => 'Торрент-стрим';
 
   @override
@@ -2084,15 +2086,6 @@ class AppLocalizationsRu extends AppLocalizations {
       'Показывать текущее изображение обложки в Discord';
 
   @override
-  String get sync_enable_histories => 'Синхронизировать данные истории';
-
-  @override
-  String get sync_enable_updates => 'Синхронизировать данные обновлений';
-
-  @override
-  String get sync_enable_settings => 'Синхронизировать настройки';
-
-  @override
   String get enable_mpv => 'Включить шейдеры / скрипты mpv';
 
   @override
@@ -2210,6 +2203,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get subtitle_speed => 'Скорость';
+
+  @override
+  String get tracks => 'Tracks';
+
+  @override
+  String get playback_speed => 'Playback speed';
+
+  @override
+  String get shaders => 'Shaders';
+
+  @override
+  String get video_fit => 'Fit';
 
   @override
   String get calendar => 'Календарь';

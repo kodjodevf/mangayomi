@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:mangayomi/repositories/download_repository.dart';
+
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
@@ -53,7 +55,10 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
         ? await resolveLocalArchivePath(episode.archivePath!)
         : null;
     List<String> infoHashes = [];
-    if (await File(mp4animePath).exists() || isLocalArchive) {
+    // A partial file from a failed download is not a playable local source.
+    final incomplete =
+        downloadRepository.getByChapterId(episode.id)?.isDownload == false;
+    if ((!incomplete && await File(mp4animePath).exists()) || isLocalArchive) {
       final animeDir =
           resolvedArchivePath != null && episode.manga.value?.source == "local"
           ? Directory(p.dirname(resolvedArchivePath))

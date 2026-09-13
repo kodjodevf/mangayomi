@@ -6,6 +6,8 @@ part 'category.g.dart';
 @Name("Category")
 class Category {
   Id? id;
+  @Index()
+  int? clientId;
   String? name;
   bool? forManga;
   int? pos;
@@ -17,6 +19,7 @@ class Category {
 
   Category({
     this.id = Isar.autoIncrement,
+    this.clientId,
     required this.name,
     required this.forItemType,
     this.pos,
@@ -27,6 +30,7 @@ class Category {
 
   Category.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    clientId = json['clientId'];
     name = json['name'];
     forItemType = ItemType.values[json['forItemType'] ?? 0];
     pos = json['pos'];
@@ -37,6 +41,7 @@ class Category {
 
   Category.fromJsonV1(Map<String, dynamic> json) {
     id = json['id'];
+    clientId = json['clientId'];
     name = json['name'];
     forItemType = json['forManga'] is bool
         ? json['forManga'] == true
@@ -47,6 +52,7 @@ class Category {
 
   Map<String, dynamic> toJson() => {
     'id': id,
+    'clientId': clientId,
     'name': name,
     'forItemType': forItemType.index,
     'pos': pos,
