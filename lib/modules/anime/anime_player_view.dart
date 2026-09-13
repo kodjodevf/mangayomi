@@ -24,6 +24,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
+import 'package:mangayomi/modules/anime/utils/playback_media.dart';
 import 'package:mangayomi/modules/anime/providers/state_provider.dart';
 import 'package:mangayomi/modules/anime/utils/player_lifecycle.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
@@ -1159,7 +1160,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   Future<void> _openMedia(VideoPrefs prefs, [Duration? position]) async {
     final start = position ?? _currentPosition.value;
     await _player.open(
-      Media(prefs.videoTrack!.id, httpHeaders: prefs.headers, start: start),
+      playbackMedia(
+        prefs.videoTrack!.id,
+        isLocal: widget.isLocal,
+        httpHeaders: prefs.headers,
+        start: start,
+      ),
     );
     if (start > Duration.zero) {
       // media_kit's Media(start:) is unreliable for some sources — playback can
