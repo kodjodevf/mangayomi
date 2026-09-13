@@ -274,7 +274,7 @@ final class ExtensionsRepoStateProvider
 }
 
 String _$extensionsRepoStateHash() =>
-    r'1f868c08bdc2b2377f98596679d1eb0395fd6a26';
+    r'e128257cfc90317cf1740dc2e20fdb9c7c690289';
 
 final class ExtensionsRepoStateFamily extends $Family
     with
@@ -478,7 +478,7 @@ final class GetRepoInfosProvider
   }
 }
 
-String _$getRepoInfosHash() => r'399a78e9c23b235105137a502415a4d9481364c5';
+String _$getRepoInfosHash() => r'81b52f6b42f3ca9e7c962e8fd25772932d6def5c';
 
 final class GetRepoInfosFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Repo?>, String> {

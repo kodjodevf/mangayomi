@@ -301,7 +301,7 @@ final class RestoreKotatsuBackupProvider
 }
 
 String _$restoreKotatsuBackupHash() =>
-    r'af549de4f7c1f73f49deafd3e9740fe4479bd63b';
+    r'411be6e760301dde79c332fdc5e7d472b15568bf';
 
 final class RestoreKotatsuBackupFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<void>, Archive> {

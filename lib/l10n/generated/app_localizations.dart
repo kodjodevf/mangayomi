@@ -1465,6 +1465,18 @@ abstract class AppLocalizations {
   /// **'Create Extension'**
   String get create_extension;
 
+  /// No description provided for @developer_mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer mode'**
+  String get developer_mode;
+
+  /// No description provided for @developer_mode_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show extension developer tools (create extension, edit code)'**
+  String get developer_mode_subtitle;
+
   /// No description provided for @choose_extension_language.
   ///
   /// In en, this message translates to:

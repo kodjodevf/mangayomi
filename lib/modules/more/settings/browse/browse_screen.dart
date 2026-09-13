@@ -28,6 +28,7 @@ class BrowseSScreen extends ConsumerWidget {
       checkForExtensionsUpdateStateProvider,
     );
     final autoUpdateExtensions = ref.watch(autoUpdateExtensionsStateProvider);
+    final developerMode = ref.watch(developerModeStateProvider);
     // On the anime-only TV layout, hide the manga & novel repo settings.
     final animeOnly = ref.watch(animeOnlyTvModeProvider);
     final l10n = l10nLocalizations(context);
@@ -222,6 +223,20 @@ class BrowseSScreen extends ConsumerWidget {
                             .set(value);
                       },
                     ),
+                  SwitchListTile(
+                    value: developerMode,
+                    title: Text(l10n.developer_mode),
+                    subtitle: Text(
+                      l10n.developer_mode_subtitle,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.secondaryColor,
+                      ),
+                    ),
+                    onChanged: (value) {
+                      ref.read(developerModeStateProvider.notifier).set(value);
+                    },
+                  ),
                 ],
               ),
             ),

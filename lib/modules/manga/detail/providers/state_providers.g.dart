@@ -791,7 +791,7 @@ final class ChapterSetIsReadStateProvider
 }
 
 String _$chapterSetIsReadStateHash() =>
-    r'6a27adceed9f20f793507ae99461c59074104b25';
+    r'99684a54942f0e2f944245af177237c6fe9aa507';
 
 final class ChapterSetIsReadStateFamily extends $Family
     with $ClassFamilyOverride<ChapterSetIsReadState, void, void, void, Manga> {
@@ -883,7 +883,7 @@ final class ChapterSetDownloadStateProvider
 }
 
 String _$chapterSetDownloadStateHash() =>
-    r'21c13768c767899a0e03562e65cf54ea2e4e10f3';
+    r'a43f0db26dfff790b30239a16f650b4c35a74e10';
 
 final class ChapterSetDownloadStateFamily extends $Family
     with

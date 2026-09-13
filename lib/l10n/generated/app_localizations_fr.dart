@@ -795,6 +795,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get create_extension => 'Créer une extension';
 
   @override
+  String get developer_mode => 'Mode développeur';
+
+  @override
+  String get developer_mode_subtitle =>
+      'Afficher les options pour créer une extension et modifier le code';
+
+  @override
   String get choose_extension_language => 'Choisir la langue de l\'extension';
 
   @override

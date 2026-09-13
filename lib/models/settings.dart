@@ -169,6 +169,8 @@ class Settings {
 
   bool? checkForExtensionUpdates;
 
+  bool? developerMode;
+
   @enumerated
   late ScaleType scaleType;
 
@@ -654,6 +656,7 @@ class Settings {
     this.tvHomeStyle,
     this.tvHomeGenreRows,
     this.doublePageSingleFirstPage = false,
+    this.developerMode = false,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -704,6 +707,7 @@ class Settings {
     enableLogs = json['enableLogs'];
     checkForAppUpdates = json['checkForAppUpdates'];
     checkForExtensionUpdates = json['checkForExtensionUpdates'];
+    developerMode = json['developerMode'] ?? false;
     if (json['cookiesList'] != null) {
       cookiesList = (json['cookiesList'] as List)
           .map((e) => MCookie.fromJson(e))
@@ -1014,6 +1018,7 @@ class Settings {
     'animeLibraryShowLanguage': animeLibraryShowLanguage,
     'animeLibraryShowNumbersOfItems': animeLibraryShowNumbersOfItems,
     'autoExtensionsUpdates': autoExtensionsUpdates,
+    'developerMode': developerMode,
     'autoLibraryUpdateInterval': autoLibraryUpdateInterval,
     'lastAutoLibraryUpdate': lastAutoLibraryUpdate,
     'autoLibraryUpdateWifiOnly': autoLibraryUpdateWifiOnly,

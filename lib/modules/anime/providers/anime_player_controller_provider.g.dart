@@ -59,7 +59,7 @@ final class AnimeStreamControllerProvider
 }
 
 String _$animeStreamControllerHash() =>
-    r'a16486ff140eff550b919bd630dd2a1c4df20f17';
+    r'f7147f12839ee9955c831fff86fe7d4ed713c2cf';
 
 final class AnimeStreamControllerFamily extends $Family
     with

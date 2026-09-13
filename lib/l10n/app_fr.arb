@@ -813,6 +813,8 @@
   "error_with_message": "Erreur : {error}",
   "no_pages_available": "Erreur : aucune page disponible",
   "create_extension": "Créer une extension",
+  "developer_mode": "Mode développeur",
+  "developer_mode_subtitle": "Afficher les options pour créer une extension et modifier le code",
   "choose_extension_language": "Choisir la langue de l'extension",
   "lang": "Langue",
   "base_url": "URL de base",

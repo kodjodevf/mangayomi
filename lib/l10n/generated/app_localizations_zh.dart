@@ -771,6 +771,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get create_extension => '创建扩展';
 
   @override
+  String get developer_mode => 'Developer mode';
+
+  @override
+  String get developer_mode_subtitle =>
+      'Show extension developer tools (create extension, edit code)';
+
+  @override
   String get choose_extension_language => '选择扩展语言';
 
   @override

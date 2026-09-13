@@ -12,6 +12,7 @@ import 'package:mangayomi/modules/browse/extension/widgets/source_preference_wid
 import 'package:mangayomi/modules/widgets/extension_server_warning_banner.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_source_preference.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -177,57 +178,59 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: context.width(1),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(0),
-                    backgroundColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
+            if (ref.watch(developerModeStateProvider))
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: context.width(1),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(0),
+                      backgroundColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
                     ),
-                    elevation: 0,
-                    shadowColor: Colors.transparent,
-                  ),
-                  onPressed: () async {
-                    final res = await context.push(
-                      '/codeEditor',
-                      extra: source.id,
-                    );
-                    if (res != null && mounted) {
-                      setState(() {
-                        source = res as Source;
-                        sourcePreference = getSourcePreference(source: source)
-                            .map(
-                              (e) =>
-                                  getSourcePreferenceEntry(e.key!, source.id!),
-                            )
-                            .toList();
-                      });
-                    }
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Text(
-                          l10n.edit_code,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                    onPressed: () async {
+                      final res = await context.push(
+                        '/codeEditor',
+                        extra: source.id,
+                      );
+                      if (res != null && mounted) {
+                        setState(() {
+                          source = res as Source;
+                          sourcePreference = getSourcePreference(source: source)
+                              .map(
+                                (e) =>
+                                    getSourcePreferenceEntry(e.key!, source.id!),
+                              )
+                              .toList();
+                        });
+                      }
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            l10n.edit_code,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                      const Icon(Icons.code),
-                    ],
+                        const Icon(Icons.code),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (source.isLocal ?? false)
+            if ((source.isLocal ?? false) &&
+                ref.watch(developerModeStateProvider))
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(

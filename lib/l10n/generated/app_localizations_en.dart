@@ -789,6 +789,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get create_extension => 'Create Extension';
 
   @override
+  String get developer_mode => 'Developer mode';
+
+  @override
+  String get developer_mode_subtitle =>
+      'Show extension developer tools (create extension, edit code)';
+
+  @override
   String get choose_extension_language => 'Choose extension language';
 
   @override

@@ -788,6 +788,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get create_extension => 'एक्सटेंशन बनाएं';
 
   @override
+  String get developer_mode => 'Developer mode';
+
+  @override
+  String get developer_mode_subtitle =>
+      'Show extension developer tools (create extension, edit code)';
+
+  @override
   String get choose_extension_language => 'एक्सटेंशन की भाषा चुनें';
 
   @override

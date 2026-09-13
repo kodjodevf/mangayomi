@@ -782,6 +782,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get create_extension => '拡張機能を作成';
 
   @override
+  String get developer_mode => 'Developer mode';
+
+  @override
+  String get developer_mode_subtitle =>
+      'Show extension developer tools (create extension, edit code)';
+
+  @override
   String get choose_extension_language => '拡張機能の言語を選択';
 
   @override

@@ -57,6 +57,22 @@ class AutoStartExtensionServerOnLaunchState
   }
 }
 
+final developerModeStateProvider = NotifierProvider<DeveloperModeState, bool>(
+  DeveloperModeState.new,
+);
+
+class DeveloperModeState extends Notifier<bool> {
+  @override
+  bool build() {
+    return settingsRepository.currentOrNull?.developerMode ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.developerMode = value);
+  }
+}
+
 @riverpod
 class OnlyIncludePinnedSourceState extends _$OnlyIncludePinnedSourceState {
   @override

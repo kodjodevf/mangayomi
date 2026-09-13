@@ -378,6 +378,8 @@
   "by_upload_date": "By upload date",
   "source_title": "Source title",
   "create_extension": "Create Extension",
+  "developer_mode": "Developer mode",
+  "developer_mode_subtitle": "Show extension developer tools (create extension, edit code)",
   "choose_extension_language": "Choose extension language",
   "lang": "Lang",
   "base_url": "BaseUrl",
