@@ -288,7 +288,7 @@ class ExtensionStoreService {
             ..sourceCode = ''
             ..typeSource = ''
             ..version = version
-            ..versionLast = '0.0.1'
+            ..versionLast = version
             ..isObsolete = false
             ..isLocal = false
             ..name = name
@@ -363,7 +363,7 @@ class ExtensionStoreService {
               ..sourceCode = ''
               ..typeSource = ''
               ..version = '${e['version'] ?? 1}.0.0'
-              ..versionLast = '0.0.1'
+              ..versionLast = '${e['version'] ?? 1}.0.0'
               ..isObsolete = false
               ..isLocal = false
               ..name = e['name']
@@ -404,7 +404,7 @@ class ExtensionStoreService {
               ..lastUsed = false
               ..sourceCode = ''
               ..typeSource = ''
-              ..versionLast = '0.0.1'
+              ..versionLast = (e['version'] as String?) ?? '0.0.1'
               ..isObsolete = false
               ..isLocal = false
               ..name = source['name']

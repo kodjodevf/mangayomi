@@ -74,7 +74,7 @@ Future<void> fetchSourcesList({
                     ..lastUsed = false
                     ..sourceCode = ''
                     ..typeSource = ''
-                    ..versionLast = '0.0.1'
+                    ..versionLast = e['version'] ?? '0.0.1'
                     ..isObsolete = false
                     ..isLocal = false
                     ..lang = _convertLang(e)
@@ -190,6 +190,8 @@ Future<void> _updateSource(
     );
   }
 
+  final existing =
+      source.id != null ? sourceRepository.getById(source.id!) : null;
   final updatedSource = Source()
     ..headers = jsonEncode(headers)
     ..supportLatest = supportLatest
@@ -198,6 +200,8 @@ Future<void> _updateSource(
         ? jsonEncode(preferenceList.map((e) => e.toJson()).toList())
         : null
     ..isAdded = true
+    ..isPinned = existing?.isPinned ?? false
+    ..lastUsed = existing?.lastUsed ?? false
     ..sourceCode = sourceCode
     ..sourceCodeUrl = source.sourceCodeUrl
     ..id = source.id

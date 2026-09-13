@@ -224,6 +224,7 @@ class SourceRepository {
             ..sourceCode = ""
             ..isAdded = false
             ..isPinned = false
+            ..versionLast = source.version
             ..updatedAt = DateTime.now().millisecondsSinceEpoch,
         );
       }

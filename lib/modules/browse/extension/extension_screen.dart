@@ -48,13 +48,13 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
   }
 
   Future<void> _updateSource(Source source) {
-    return ref.read(
-      fetchItemSourcesListProvider(
-        id: source.id,
-        reFresh: true,
-        itemType: source.itemType,
-      ).future,
+    final provider = fetchItemSourcesListProvider(
+      id: source.id,
+      reFresh: true,
+      itemType: source.itemType,
     );
+    ref.invalidate(provider);
+    return ref.read(provider.future);
   }
 
   @override
@@ -118,20 +118,22 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
               if (element.sourceCodeLanguage == SourceCodeLanguage.mihon) {
                 showWarning = true;
               }
-              final isLatestVersion = element.version == element.versionLast;
-
-              if (compareVersions(
+              final isInstalled = element.isAdded ?? false;
+              final hasUpdate =
+                  isInstalled &&
+                  !(element.isObsolete ?? false) &&
+                  compareVersions(
                     element.version ?? '',
                     element.versionLast ?? '',
                   ) <
-                  0) {
+                  0;
+
+              if (hasUpdate) {
                 updateEntries.add(element);
-              } else if (isLatestVersion) {
-                if (element.isAdded ?? false) {
-                  installedEntries.add(element);
-                } else {
-                  notInstalledEntries.add(element);
-                }
+              } else if (isInstalled) {
+                installedEntries.add(element);
+              } else {
+                notInstalledEntries.add(element);
               }
             }
 

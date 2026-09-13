@@ -360,7 +360,13 @@ final extensionUpdateCountProvider = StreamProvider.family<int, ItemType>((
         (list) => list
             .where(
               (element) =>
-                  compareVersions(element.version!, element.versionLast!) < 0,
+                  (element.isAdded ?? false) &&
+                  !(element.isObsolete ?? false) &&
+                  compareVersions(
+                    element.version ?? '',
+                    element.versionLast ?? '',
+                  ) <
+                  0,
             )
             .length,
       );

@@ -1007,7 +1007,13 @@ class _ExtensionBadgeWidget extends ConsumerWidget {
         final entries = snapshot.data!
             .where(
               (element) =>
-                  compareVersions(element.version!, element.versionLast!) < 0,
+                  (element.isAdded ?? false) &&
+                  !(element.isObsolete ?? false) &&
+                  compareVersions(
+                    element.version ?? '',
+                    element.versionLast ?? '',
+                  ) <
+                  0,
             )
             .toList();
 

@@ -26,6 +26,8 @@ class _ExtensionListTileWidgetState
   bool _isLoading = false;
 
   bool get _updateAvailable =>
+      (widget.source.isAdded ?? false) &&
+      !(widget.source.isObsolete ?? false) &&
       compareVersions(
         widget.source.version ?? '',
         widget.source.versionLast ?? '',
@@ -45,8 +47,8 @@ class _ExtensionListTileWidgetState
         itemType: widget.source.itemType,
       );
 
-      if (!widget.source.isAdded!) ref.invalidate(provider);
-      await ref.watch(provider.future);
+      ref.invalidate(provider);
+      await ref.read(provider.future);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
