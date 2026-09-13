@@ -78,7 +78,7 @@ class _StubRepoState extends ExtensionsRepoState {
   List<Repo> build(ItemType itemType) => const [];
 
   @override
-  void set(List<Repo> value) => state = value;
+  Future<void> set(List<Repo> value) async => state = value;
 }
 
 class _StubLocalFolders extends LocalFoldersState {

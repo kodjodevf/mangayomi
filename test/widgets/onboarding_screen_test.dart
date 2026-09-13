@@ -602,7 +602,7 @@ class _StubRepoState extends ExtensionsRepoState {
   // Without this the real one writes to Isar, throws, and the screen reports
   // the add as failed.
   @override
-  void set(List<Repo> value) => state = value;
+  Future<void> set(List<Repo> value) async => state = value;
 }
 
 class _StubLocalFolders extends LocalFoldersState {
