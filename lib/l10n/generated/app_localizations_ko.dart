@@ -1727,6 +1727,12 @@ class AppLocalizationsKo extends AppLocalizations {
       '자막을 사용자 지정하려면 플레이어 설정에서 `libass 사용`을 비활성화하세요.';
 
   @override
+  String get override_ass_subtitles => 'ASS 자막 재정의';
+
+  @override
+  String get override_ass_subtitles_info => 'ASS/SSA 자막에 사용자 지정 스타일 적용';
+
+  @override
   String get torrent_stream => '토렌트 스트림';
 
   @override
@@ -2115,6 +2121,18 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get subtitle_speed => '속도';
+
+  @override
+  String get tracks => '트랙';
+
+  @override
+  String get playback_speed => '재생 속도';
+
+  @override
+  String get shaders => '셰이더';
+
+  @override
+  String get video_fit => '맞춤';
 
   @override
   String get calendar => '캘린더';
