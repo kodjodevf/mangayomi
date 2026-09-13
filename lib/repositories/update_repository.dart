@@ -13,6 +13,25 @@ import 'package:mangayomi/repositories/db_write_queue.dart';
 class UpdateRepository {
   List<Update> getAll() => isar.updates.filter().idIsNotNull().findAllSync();
 
+  List<Update> getChangedSince(int since) => isar.updates
+      .filter()
+      .updatedAtGreaterThan(since, include: true)
+      .findAllSync();
+
+  Update? getByClientId(int clientId) => isar.updates
+      .filter()
+      .clientIdEqualTo(clientId)
+      .or()
+      .idEqualTo(clientId)
+      .findFirstSync();
+
+  Update? findByMangaIdAndChapterName(int? mangaId, String? chapterName) => isar
+      .updates
+      .filter()
+      .mangaIdEqualTo(mangaId)
+      .chapterNameEqualTo(chapterName)
+      .findFirstSync();
+
   // Async twin, for callers already inside an async writeTxn/writeTransactionAsync
   // — Isar rejects a sync findAllSync() call from inside an async transaction.
   Future<List<Update>> getAllAsync() =>
@@ -80,9 +99,16 @@ class UpdateRepository {
     await dbWriteQueue.run(() {
       isar.writeTxnSync(() {
         for (var id in ids) {
+          final clientId = isar.updates.getSync(id)?.clientId;
           ref
               .read(synchingProvider(syncId: 1).notifier)
-              .addChangedPart(ActionType.removeUpdate, id, "{}", false);
+              .addChangedPart(
+                ActionType.removeUpdate,
+                id,
+                "{}",
+                false,
+                clientId: clientId,
+              );
         }
       });
     });
@@ -102,7 +128,8 @@ class UpdateRepository {
 
   void clearSync() => isar.updates.clearSync();
 
-  Future<void> putAllAsync(List<Update> updates) => isar.updates.putAll(updates);
+  Future<void> putAllAsync(List<Update> updates) =>
+      isar.updates.putAll(updates);
 
   Future<int> putAsync(Update update) => isar.updates.put(update);
 

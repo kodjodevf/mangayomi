@@ -17,23 +17,24 @@ const CategorySchema = CollectionSchema(
   name: r'Category',
   id: 5751694338128944171,
   properties: {
+    r'clientId': PropertySchema(id: 0, name: r'clientId', type: IsarType.long),
     r'forItemType': PropertySchema(
-      id: 0,
+      id: 1,
       name: r'forItemType',
       type: IsarType.byte,
       enumMap: _CategoryforItemTypeEnumValueMap,
     ),
-    r'forManga': PropertySchema(id: 1, name: r'forManga', type: IsarType.bool),
-    r'hide': PropertySchema(id: 2, name: r'hide', type: IsarType.bool),
-    r'name': PropertySchema(id: 3, name: r'name', type: IsarType.string),
-    r'pos': PropertySchema(id: 4, name: r'pos', type: IsarType.long),
+    r'forManga': PropertySchema(id: 2, name: r'forManga', type: IsarType.bool),
+    r'hide': PropertySchema(id: 3, name: r'hide', type: IsarType.bool),
+    r'name': PropertySchema(id: 4, name: r'name', type: IsarType.string),
+    r'pos': PropertySchema(id: 5, name: r'pos', type: IsarType.long),
     r'shouldUpdate': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'shouldUpdate',
       type: IsarType.bool,
     ),
     r'updatedAt': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'updatedAt',
       type: IsarType.long,
     ),
@@ -44,7 +45,21 @@ const CategorySchema = CollectionSchema(
   deserialize: _categoryDeserialize,
   deserializeProp: _categoryDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'clientId': IndexSchema(
+      id: 2639372232964765565,
+      name: r'clientId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'clientId',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+  },
   links: {},
   embeddedSchemas: {},
 
@@ -75,13 +90,14 @@ void _categorySerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeByte(offsets[0], object.forItemType.index);
-  writer.writeBool(offsets[1], object.forManga);
-  writer.writeBool(offsets[2], object.hide);
-  writer.writeString(offsets[3], object.name);
-  writer.writeLong(offsets[4], object.pos);
-  writer.writeBool(offsets[5], object.shouldUpdate);
-  writer.writeLong(offsets[6], object.updatedAt);
+  writer.writeLong(offsets[0], object.clientId);
+  writer.writeByte(offsets[1], object.forItemType.index);
+  writer.writeBool(offsets[2], object.forManga);
+  writer.writeBool(offsets[3], object.hide);
+  writer.writeString(offsets[4], object.name);
+  writer.writeLong(offsets[5], object.pos);
+  writer.writeBool(offsets[6], object.shouldUpdate);
+  writer.writeLong(offsets[7], object.updatedAt);
 }
 
 Category _categoryDeserialize(
@@ -91,17 +107,18 @@ Category _categoryDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Category(
+    clientId: reader.readLongOrNull(offsets[0]),
     forItemType:
-        _CategoryforItemTypeValueEnumMap[reader.readByteOrNull(offsets[0])] ??
+        _CategoryforItemTypeValueEnumMap[reader.readByteOrNull(offsets[1])] ??
         ItemType.manga,
-    hide: reader.readBoolOrNull(offsets[2]),
+    hide: reader.readBoolOrNull(offsets[3]),
     id: id,
-    name: reader.readStringOrNull(offsets[3]),
-    pos: reader.readLongOrNull(offsets[4]),
-    shouldUpdate: reader.readBoolOrNull(offsets[5]),
-    updatedAt: reader.readLongOrNull(offsets[6]),
+    name: reader.readStringOrNull(offsets[4]),
+    pos: reader.readLongOrNull(offsets[5]),
+    shouldUpdate: reader.readBoolOrNull(offsets[6]),
+    updatedAt: reader.readLongOrNull(offsets[7]),
   );
-  object.forManga = reader.readBoolOrNull(offsets[1]);
+  object.forManga = reader.readBoolOrNull(offsets[2]);
   return object;
 }
 
@@ -113,20 +130,22 @@ P _categoryDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
+      return (reader.readLongOrNull(offset)) as P;
+    case 1:
       return (_CategoryforItemTypeValueEnumMap[reader.readByteOrNull(offset)] ??
               ItemType.manga)
           as P;
-    case 1:
-      return (reader.readBoolOrNull(offset)) as P;
     case 2:
       return (reader.readBoolOrNull(offset)) as P;
     case 3:
-      return (reader.readStringOrNull(offset)) as P;
-    case 4:
-      return (reader.readLongOrNull(offset)) as P;
-    case 5:
       return (reader.readBoolOrNull(offset)) as P;
+    case 4:
+      return (reader.readStringOrNull(offset)) as P;
+    case 5:
+      return (reader.readLongOrNull(offset)) as P;
     case 6:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 7:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -156,6 +175,14 @@ extension CategoryQueryWhereSort on QueryBuilder<Category, Category, QWhere> {
   QueryBuilder<Category, Category, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterWhere> anyClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'clientId'),
+      );
     });
   }
 }
@@ -228,10 +255,211 @@ extension CategoryQueryWhere on QueryBuilder<Category, Category, QWhereClause> {
       );
     });
   }
+
+  QueryBuilder<Category, Category, QAfterWhereClause> clientIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'clientId', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterWhereClause> clientIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterWhereClause> clientIdEqualTo(
+    int? clientId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'clientId', value: [clientId]),
+      );
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterWhereClause> clientIdNotEqualTo(
+    int? clientId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [],
+                upper: [clientId],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [clientId],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [clientId],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [],
+                upper: [clientId],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterWhereClause> clientIdGreaterThan(
+    int? clientId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [clientId],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterWhereClause> clientIdLessThan(
+    int? clientId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [],
+          upper: [clientId],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterWhereClause> clientIdBetween(
+    int? lowerClientId,
+    int? upperClientId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [lowerClientId],
+          includeLower: includeLower,
+          upper: [upperClientId],
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
 }
 
 extension CategoryQueryFilter
     on QueryBuilder<Category, Category, QFilterCondition> {
+  QueryBuilder<Category, Category, QAfterFilterCondition> clientIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'clientId'),
+      );
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> clientIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'clientId'),
+      );
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> clientIdEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'clientId', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> clientIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'clientId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> clientIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'clientId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> clientIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'clientId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
   QueryBuilder<Category, Category, QAfterFilterCondition> forItemTypeEqualTo(
     ItemType value,
   ) {
@@ -761,6 +989,18 @@ extension CategoryQueryLinks
     on QueryBuilder<Category, Category, QFilterCondition> {}
 
 extension CategoryQuerySortBy on QueryBuilder<Category, Category, QSortBy> {
+  QueryBuilder<Category, Category, QAfterSortBy> sortByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterSortBy> sortByClientIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Category, Category, QAfterSortBy> sortByForItemType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'forItemType', Sort.asc);
@@ -848,6 +1088,18 @@ extension CategoryQuerySortBy on QueryBuilder<Category, Category, QSortBy> {
 
 extension CategoryQuerySortThenBy
     on QueryBuilder<Category, Category, QSortThenBy> {
+  QueryBuilder<Category, Category, QAfterSortBy> thenByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterSortBy> thenByClientIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Category, Category, QAfterSortBy> thenByForItemType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'forItemType', Sort.asc);
@@ -947,6 +1199,12 @@ extension CategoryQuerySortThenBy
 
 extension CategoryQueryWhereDistinct
     on QueryBuilder<Category, Category, QDistinct> {
+  QueryBuilder<Category, Category, QDistinct> distinctByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'clientId');
+    });
+  }
+
   QueryBuilder<Category, Category, QDistinct> distinctByForItemType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'forItemType');
@@ -997,6 +1255,12 @@ extension CategoryQueryProperty
   QueryBuilder<Category, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<Category, int?, QQueryOperations> clientIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'clientId');
     });
   }
 

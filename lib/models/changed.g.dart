@@ -28,8 +28,9 @@ const ChangedPartSchema = CollectionSchema(
       name: r'clientDate',
       type: IsarType.long,
     ),
-    r'data': PropertySchema(id: 2, name: r'data', type: IsarType.string),
-    r'isarId': PropertySchema(id: 3, name: r'isarId', type: IsarType.long),
+    r'clientId': PropertySchema(id: 2, name: r'clientId', type: IsarType.long),
+    r'data': PropertySchema(id: 3, name: r'data', type: IsarType.string),
+    r'isarId': PropertySchema(id: 4, name: r'isarId', type: IsarType.long),
   },
 
   estimateSize: _changedPartEstimateSize,
@@ -65,8 +66,9 @@ void _changedPartSerialize(
 ) {
   writer.writeByte(offsets[0], object.actionType.index);
   writer.writeLong(offsets[1], object.clientDate);
-  writer.writeString(offsets[2], object.data);
-  writer.writeLong(offsets[3], object.isarId);
+  writer.writeLong(offsets[2], object.clientId);
+  writer.writeString(offsets[3], object.data);
+  writer.writeLong(offsets[4], object.isarId);
 }
 
 ChangedPart _changedPartDeserialize(
@@ -80,9 +82,10 @@ ChangedPart _changedPartDeserialize(
         _ChangedPartactionTypeValueEnumMap[reader.readByteOrNull(offsets[0])] ??
         ActionType.removeItem,
     clientDate: reader.readLong(offsets[1]),
-    data: reader.readString(offsets[2]),
+    clientId: reader.readLongOrNull(offsets[2]),
+    data: reader.readString(offsets[3]),
     id: id,
-    isarId: reader.readLongOrNull(offsets[3]),
+    isarId: reader.readLongOrNull(offsets[4]),
   );
   return object;
 }
@@ -103,8 +106,10 @@ P _changedPartDeserializeProp<P>(
     case 1:
       return (reader.readLong(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 3:
+      return (reader.readString(offset)) as P;
+    case 4:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -331,6 +336,79 @@ extension ChangedPartQueryFilter
       return query.addFilterCondition(
         FilterCondition.between(
           property: r'clientDate',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ChangedPart, ChangedPart, QAfterFilterCondition>
+  clientIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'clientId'),
+      );
+    });
+  }
+
+  QueryBuilder<ChangedPart, ChangedPart, QAfterFilterCondition>
+  clientIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'clientId'),
+      );
+    });
+  }
+
+  QueryBuilder<ChangedPart, ChangedPart, QAfterFilterCondition> clientIdEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'clientId', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<ChangedPart, ChangedPart, QAfterFilterCondition>
+  clientIdGreaterThan(int? value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'clientId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ChangedPart, ChangedPart, QAfterFilterCondition>
+  clientIdLessThan(int? value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'clientId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ChangedPart, ChangedPart, QAfterFilterCondition> clientIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'clientId',
           lower: lower,
           includeLower: includeLower,
           upper: upper,
@@ -669,6 +747,18 @@ extension ChangedPartQuerySortBy
     });
   }
 
+  QueryBuilder<ChangedPart, ChangedPart, QAfterSortBy> sortByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ChangedPart, ChangedPart, QAfterSortBy> sortByClientIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.desc);
+    });
+  }
+
   QueryBuilder<ChangedPart, ChangedPart, QAfterSortBy> sortByData() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'data', Sort.asc);
@@ -717,6 +807,18 @@ extension ChangedPartQuerySortThenBy
   QueryBuilder<ChangedPart, ChangedPart, QAfterSortBy> thenByClientDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'clientDate', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ChangedPart, ChangedPart, QAfterSortBy> thenByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ChangedPart, ChangedPart, QAfterSortBy> thenByClientIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.desc);
     });
   }
 
@@ -771,6 +873,12 @@ extension ChangedPartQueryWhereDistinct
     });
   }
 
+  QueryBuilder<ChangedPart, ChangedPart, QDistinct> distinctByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'clientId');
+    });
+  }
+
   QueryBuilder<ChangedPart, ChangedPart, QDistinct> distinctByData({
     bool caseSensitive = true,
   }) {
@@ -803,6 +911,12 @@ extension ChangedPartQueryProperty
   QueryBuilder<ChangedPart, int, QQueryOperations> clientDateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'clientDate');
+    });
+  }
+
+  QueryBuilder<ChangedPart, int?, QQueryOperations> clientIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'clientId');
     });
   }
 

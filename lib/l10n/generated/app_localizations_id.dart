@@ -1046,9 +1046,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get syncing => 'Sinkronisasi';
 
   @override
-  String get sync_password => 'Kata sandi (minimal 8 karakter)';
-
-  @override
   String get sync_logged => 'Berhasil masuk';
 
   @override
@@ -1056,19 +1053,13 @@ class AppLocalizationsId extends AppLocalizations {
       'Sinkronkan kemajuan Anda di beberapa perangkat melalui \nserver yang dihosting sendiri. Lihat server discord kami untuk info lebih lanjut!';
 
   @override
-  String get last_sync_manga => 'Sinkronisasi manga terakhir di:';
+  String get last_sync => 'Last sync at: ';
 
   @override
-  String get last_sync_history => 'Sinkronisasi riwayat terakhir pada:';
-
-  @override
-  String get last_sync_update => 'Sinkronisasi pembaruan terakhir pada:';
+  String get sync_login_browser => 'Log in with browser';
 
   @override
   String get sync_server => 'Alamat Server Sinkronisasi';
-
-  @override
-  String get sync_login_invalid_creds => 'Email atau kata sandi tidak valid';
 
   @override
   String get sync_starting => 'Memulai sinkronisasi...';
@@ -1082,6 +1073,14 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get sync_restore_in_progress =>
       'Sinkronisasi dilewati — pemulihan sedang berlangsung';
+
+  @override
+  String sync_progress_percent(Object percent) {
+    return 'Syncing… $percent%';
+  }
+
+  @override
+  String get sync_progress_indeterminate => 'Syncing…';
 
   @override
   String get sync_button_sync => 'Sinkronkan progres';
@@ -1117,9 +1116,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get sync_section_general => 'Umum';
-
-  @override
-  String get sync_section_data_types => 'Yang disinkronkan';
 
   @override
   String get sync_on => 'Aktifkan sinkronisasi';
@@ -1767,6 +1763,13 @@ class AppLocalizationsId extends AppLocalizations {
       'Nonaktifkan `gunakan libass` di pengaturan pemutar untuk dapat menyesuaikan subtitle.';
 
   @override
+  String get override_ass_subtitles => 'Override ASS subtitles';
+
+  @override
+  String get override_ass_subtitles_info =>
+      'Apply custom styling to ASS/SSA subtitles';
+
+  @override
   String get torrent_stream => 'Aliran Torrent';
 
   @override
@@ -2057,15 +2060,6 @@ class AppLocalizationsId extends AppLocalizations {
       'Tampilkan gambar sampul saat ini di Discord';
 
   @override
-  String get sync_enable_histories => 'Sinkronkan data riwayat';
-
-  @override
-  String get sync_enable_updates => 'Sinkronkan data pembaruan';
-
-  @override
-  String get sync_enable_settings => 'Sinkronkan pengaturan';
-
-  @override
   String get enable_mpv => 'Aktifkan shader / skrip mpv';
 
   @override
@@ -2180,6 +2174,18 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get subtitle_speed => 'Kecepatan';
+
+  @override
+  String get tracks => 'Tracks';
+
+  @override
+  String get playback_speed => 'Playback speed';
+
+  @override
+  String get shaders => 'Shaders';
+
+  @override
+  String get video_fit => 'Fit';
 
   @override
   String get calendar => 'Kalender';

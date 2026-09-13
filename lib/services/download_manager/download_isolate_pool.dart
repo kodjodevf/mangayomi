@@ -29,6 +29,15 @@ class DownloadIsolatePool {
   final Set<int> _availableWorkers = {}; // Track available workers by index
   final int poolSize;
   bool _initialized = false;
+  Future<void>? _initializing;
+  final Map<String, _PoolWorker> _runningTasks = {};
+  void Function(SendPort)? _testWorkerEntryPoint;
+
+  @visibleForTesting
+  DownloadIsolatePool.forTesting({
+    this.poolSize = 1,
+    required void Function(SendPort) workerEntryPoint,
+  }) : _testWorkerEntryPoint = workerEntryPoint;
 
   DownloadIsolatePool._({this.poolSize = 3});
 
@@ -50,7 +59,18 @@ class DownloadIsolatePool {
   }
 
   /// Initialize the Isolate pool
-  Future<void> initialize() async {
+  Future<void> initialize() =>
+      _initializing ??= _initialize().catchError((Object error) {
+        for (final worker in _workers) {
+          worker.dispose();
+        }
+        _workers.clear();
+        _availableWorkers.clear();
+        _initializing = null;
+        throw error;
+      });
+
+  Future<void> _initialize() async {
     if (_initialized) return;
 
     if (kDebugMode) {
@@ -58,7 +78,10 @@ class DownloadIsolatePool {
     }
 
     for (int i = 0; i < poolSize; i++) {
-      final worker = await _PoolWorker.create(i);
+      final worker = await _PoolWorker.create(
+        i,
+        entryPoint: _testWorkerEntryPoint,
+      );
       _workers.add(worker);
       _availableWorkers.add(i); // All workers start as available
     }
@@ -70,6 +93,25 @@ class DownloadIsolatePool {
   }
 
   /// Submit a file download task (manga/anime)
+  Future<bool> _prepareSubmission(
+    String taskId,
+    void Function(Exception) onError,
+  ) async {
+    downloadTaskCancellation[taskId] = false;
+    try {
+      if (!_initialized) await initialize();
+    } catch (_) {
+      downloadTaskCancellation.remove(taskId);
+      rethrow;
+    }
+    if (downloadTaskCancellation[taskId] == true) {
+      downloadTaskCancellation.remove(taskId);
+      onError(Exception('Download cancelled'));
+      return false;
+    }
+    return true;
+  }
+
   Future<void> submitFileDownload({
     required String taskId,
     required List<PageUrl> pageUrls,
@@ -79,10 +121,7 @@ class DownloadIsolatePool {
     required void Function() onComplete,
     required void Function(Exception) onError,
   }) async {
-    if (!_initialized) await initialize();
-
-    // Mark the task as active (not cancelled)
-    downloadTaskCancellation[taskId] = false;
+    if (!await _prepareSubmission(taskId, onError)) return;
 
     final receivePort = ReceivePort();
     final task = _DownloadTask(
@@ -109,11 +148,6 @@ class DownloadIsolatePool {
     void Function(Exception) onError,
   ) {
     receivePort.listen((message) {
-      if (downloadTaskCancellation[taskId] == true) {
-        receivePort.close();
-        return;
-      }
-
       if (message is DownloadProgress) {
         onProgress(message);
       } else if (message is DownloadComplete || message is Exception) {
@@ -140,9 +174,7 @@ class DownloadIsolatePool {
     required void Function() onComplete,
     required void Function(Exception) onError,
   }) async {
-    if (!_initialized) await initialize();
-
-    downloadTaskCancellation[taskId] = false;
+    if (!await _prepareSubmission(taskId, onError)) return;
 
     final receivePort = ReceivePort();
     final task = _DownloadTask(
@@ -168,7 +200,15 @@ class DownloadIsolatePool {
 
   /// Cancel a download task
   void cancelTask(String taskId) {
-    downloadTaskCancellation[taskId] = true;
+    if (downloadTaskCancellation.containsKey(taskId)) {
+      downloadTaskCancellation[taskId] = true;
+    }
+    final queued = _taskQueue.where((task) => task.taskId == taskId).toList();
+    _taskQueue.removeWhere((task) => task.taskId == taskId);
+    for (final task in queued) {
+      task.sendPort.send(Exception('Download cancelled'));
+    }
+    _runningTasks[taskId]?.cancelCurrentTask();
   }
 
   /// Add a task to the queue and try to process it
@@ -191,7 +231,15 @@ class DownloadIsolatePool {
         );
       }
 
-      worker.executeTask(task).then((_) {
+      _runningTasks[task.taskId] = worker;
+      worker.executeTask(task).then((_) async {
+        _runningTasks.remove(task.taskId);
+        if (worker.terminated) {
+          _workers[workerIndex] = await _PoolWorker.create(
+            workerIndex,
+            entryPoint: _testWorkerEntryPoint,
+          );
+        }
         _availableWorkers.add(workerIndex); // Worker is free again
         if (kDebugMode) {
           print(
@@ -219,6 +267,8 @@ class DownloadIsolatePool {
     _availableWorkers.clear();
     downloadTaskCancellation.clear();
     _initialized = false;
+    _initializing = null;
+    _runningTasks.clear();
   }
 }
 
@@ -283,32 +333,58 @@ class _PoolWorker {
   late SendPort _sendPort;
   late ReceivePort _receivePort;
   final Completer<void> _ready = Completer();
+  void Function(Exception)? _cancelCurrent;
+  bool terminated = false;
+
+  void cancelCurrentTask() =>
+      _cancelCurrent?.call(Exception('Download cancelled'));
 
   _PoolWorker._(this.id);
 
-  static Future<_PoolWorker> create(int id) async {
+  static Future<_PoolWorker> create(
+    int id, {
+    void Function(SendPort)? entryPoint,
+  }) async {
     final worker = _PoolWorker._(id);
-    await worker._spawn();
+    await worker._spawn(entryPoint);
     return worker;
   }
 
-  Future<void> _spawn() async {
+  Future<void> _spawn(void Function(SendPort)? entryPoint) async {
     _receivePort = ReceivePort();
 
     _isolate = await Isolate.spawn(
-      _workerEntryPoint,
-      _WorkerInit(id, _receivePort.sendPort),
+      entryPoint ?? _workerEntryPoint,
+      _receivePort.sendPort,
+      onError: _receivePort.sendPort,
+      onExit: _receivePort.sendPort,
     );
 
     // Wait for the worker to be ready and get its SendPort
     final completer = Completer<SendPort>();
     _receivePort.listen((message) {
       if (message is SendPort) {
-        completer.complete(message);
+        if (!completer.isCompleted) completer.complete(message);
+      } else {
+        final error = DownloadPoolException(
+          'Download worker exited or failed to initialize',
+          message,
+        );
+        if (!completer.isCompleted) {
+          completer.completeError(error);
+        } else {
+          _cancelCurrent?.call(error);
+        }
       }
     });
 
-    _sendPort = await completer.future;
+    try {
+      _sendPort = await completer.future.timeout(const Duration(seconds: 30));
+    } catch (_) {
+      _isolate.kill(priority: Isolate.immediate);
+      _receivePort.close();
+      rethrow;
+    }
     _ready.complete();
   }
 
@@ -320,12 +396,24 @@ class _PoolWorker {
 
     // Create a port to receive messages from this worker
     final taskPort = ReceivePort();
+    _cancelCurrent = (error) {
+      // Cancellation must stop disk writes and settle the waiting downloader,
+      // otherwise its per-source gate remains held forever.
+      _cancelCurrent = null;
+      terminated = true;
+      _isolate.kill(priority: Isolate.immediate);
+      _receivePort.close();
+      taskPort.close();
+      task.sendPort.send(error);
+      if (!completer.isCompleted) completer.complete();
+    };
 
     taskPort.listen((message) {
       // Forward the message to the original task port
       task.sendPort.send(message);
 
       if (message is DownloadComplete || message is Exception) {
+        _cancelCurrent = null;
         taskPort.close();
         completer.complete();
       }
@@ -350,13 +438,6 @@ class _PoolWorker {
   }
 }
 
-/// Worker initialization message
-class _WorkerInit {
-  final int workerId;
-  final SendPort mainPort;
-  _WorkerInit(this.workerId, this.mainPort);
-}
-
 /// Task sent to the worker
 class _WorkerTask {
   final String taskId;
@@ -373,7 +454,7 @@ class _WorkerTask {
 }
 
 /// Isolate worker entry point
-void _workerEntryPoint(_WorkerInit init) async {
+void _workerEntryPoint(SendPort mainPort) async {
   // Initialize dependencies in the Isolate
   await RustLib.init();
 
@@ -388,10 +469,10 @@ void _workerEntryPoint(_WorkerInit init) async {
   final receivePort = ReceivePort();
 
   // Send the SendPort to the main isolate
-  init.mainPort.send(receivePort.sendPort);
+  mainPort.send(receivePort.sendPort);
 
   if (kDebugMode) {
-    print('[Worker ${init.workerId}] Ready');
+    print('[Download worker] Ready');
   }
 
   // Listen for tasks
@@ -405,7 +486,7 @@ void _workerEntryPoint(_WorkerInit init) async {
             httpClient,
           );
         } else if (message.type == _TaskType.m3u8Download) {
-          await _processM3u8Download(
+          await processM3u8Download(
             message.params as M3u8DownloadParams,
             message.replyPort,
             httpClient,
@@ -581,7 +662,7 @@ Future<void> _downloadFile(
 }
 
 /// Process an M3U8 download
-Future<void> _processM3u8Download(
+Future<void> processM3u8Download(
   M3u8DownloadParams params,
   SendPort replyPort,
   Client client,
@@ -589,47 +670,31 @@ Future<void> _processM3u8Download(
   int completed = 0;
   final total = params.segments.length;
   final queue = Queue<TsInfo>.from(params.segments);
-  final List<Future<void>> activeTasks = [];
-
-  try {
-    while (queue.isNotEmpty || activeTasks.isNotEmpty) {
-      while (queue.isNotEmpty &&
-          activeTasks.length < params.concurrentDownloads) {
-        final segment = queue.removeFirst();
-        final task = _downloadSegment(segment, params, client)
-            .then((_) {
-              completed++;
-              replyPort.send(
-                DownloadProgress(
-                  segment: segment,
-                  completed,
-                  total,
-                  params.itemType,
-                ),
-              );
-            })
-            .catchError((error) {
-              replyPort.send(
-                DownloadPoolException(
-                  'Error downloading segment ${segment.name}',
-                  error,
-                ),
-              );
-              throw error;
-            });
-
-        activeTasks.add(task);
-      }
-
-      if (activeTasks.isNotEmpty) {
-        await Future.wait(activeTasks.toList(), eagerError: true);
-        activeTasks.clear();
+  Object? failure;
+  Future<void> worker() async {
+    while (queue.isNotEmpty && failure == null) {
+      final segment = queue.removeFirst();
+      try {
+        await _downloadSegment(segment, params, client);
+        completed++;
+        replyPort.send(
+          DownloadProgress(completed, total, params.itemType, segment: segment),
+        );
+      } catch (error) {
+        failure ??= error;
       }
     }
+  }
 
+  // Refill each slot immediately; a slow segment must not hold up a batch.
+  // Settle all writers before reporting failure or reusing this worker.
+  await Future.wait(
+    List.generate(params.concurrentDownloads.clamp(1, 8), (_) => worker()),
+  );
+  if (failure != null) {
+    replyPort.send(DownloadPoolException('M3U8 download failed', failure));
+  } else {
     replyPort.send(DownloadComplete());
-  } catch (e) {
-    replyPort.send(DownloadPoolException('M3U8 download failed', e));
   }
 }
 
@@ -639,58 +704,60 @@ Future<void> _downloadSegment(
   M3u8DownloadParams params,
   Client client,
 ) async {
+  final file = File(path.join(params.tempDir, '${ts.name}.ts'));
+  final partial = File('${file.path}.part');
   try {
-    final file = File(path.join(params.tempDir, '${ts.name}.ts'));
-
-    // Streaming to save memory
-    var request = Request('GET', Uri.parse(ts.url));
-    if (params.headers != null) {
-      request.headers.addAll(params.headers!);
-    }
-    // Connection/response-headers timeout so a dropped connection can't hang
-    // the segment forever (see _downloadFile) — retry, then fail loudly.
-    StreamedResponse response = await _withRetry(
-      () => client.send(request).timeout(const Duration(seconds: 30)),
-      3,
-    );
-
-    // Accept any 2xx (including 206 Partial Content) — see comment in
-    // _downloadFile.
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw DownloadPoolException(
-        'Failed to download segment: ${ts.name} (status ${response.statusCode})',
-      );
-    }
-
-    final sink = file.openWrite();
-    try {
-      // Idle timeout: a segment whose connection stalls (no bytes for 30s)
-      // fails and retries instead of hanging the whole download forever.
-      await for (var chunk in response.stream.timeout(
-        const Duration(seconds: 30),
-        onTimeout: (sink) => sink.addError(
-          TimeoutException('Segment stalled (no data for 30s)'),
-        ),
-      )) {
-        sink.add(chunk);
+    await _withRetry(() async {
+      try {
+        final request = Request('GET', Uri.parse(ts.url));
+        request.headers.addAll(params.headers ?? {});
+        if (!request.headers.keys.any(
+          (name) => name.toLowerCase() == HttpHeaders.rangeHeader,
+        )) {
+          request.headers[HttpHeaders.rangeHeader] = 'bytes=0-';
+        }
+        final response = await client
+            .send(request)
+            .timeout(const Duration(seconds: 30));
+        if (response.statusCode != 200 && response.statusCode != 206) {
+          await response.stream.listen((_) {}).cancel();
+          throw DownloadPoolException(
+            'Failed to download segment: ${ts.name} (status ${response.statusCode})',
+          );
+        }
+        final sink = partial.openWrite();
+        try {
+          await sink.addStream(
+            response.stream.timeout(const Duration(seconds: 30)),
+          );
+          await sink.flush();
+        } finally {
+          await sink.close();
+        }
+        final length = await partial.length();
+        if (length == 0 ||
+            (response.contentLength != null &&
+                length != response.contentLength)) {
+          throw DownloadPoolException('Incomplete segment: ${ts.name}');
+        }
+        if (params.key != null) {
+          final bytes = await partial.readAsBytes();
+          final index = int.parse(ts.name.substringAfter('TS_'));
+          final decrypted = _aesDecrypt(
+            (params.mediaSequence ?? 0) + index - 1,
+            bytes,
+            params.key!,
+            iv: params.iv,
+          );
+          await partial.writeAsBytes(decrypted);
+        }
+        // Only complete, decrypted segments may be reused after a retry.
+        await partial.rename(file.path);
+      } catch (_) {
+        if (await partial.exists()) await partial.delete();
+        rethrow;
       }
-    } finally {
-      await sink.flush();
-      await sink.close();
-    }
-
-    // Decrypt if necessary
-    if (params.key != null) {
-      final bytes = await file.readAsBytes();
-      final index = int.parse(ts.name.substringAfter("TS_"));
-      final decrypted = _aesDecrypt(
-        (params.mediaSequence ?? 1) + (index - 1),
-        bytes,
-        params.key!,
-        iv: params.iv,
-      );
-      await file.writeAsBytes(decrypted);
-    }
+    }, 3);
   } catch (e) {
     throw DownloadPoolException('Failed to process segment: ${ts.name}', e);
   }

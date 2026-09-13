@@ -388,7 +388,64 @@ class _MobileControllerWidgetState
                   clipBehavior: Clip.none,
                   alignment: Alignment.center,
                   children: [
-                    Positioned.fill(child: Container(color: backdropColor)),
+                    Positioned.fill(
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: onTap,
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              height: 140,
+                              child: IgnorePointer(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Theme.of(context).colorScheme.scrim
+                                            .withValues(alpha: 0.75),
+                                        Theme.of(context).colorScheme.scrim
+                                            .withValues(alpha: 0.35),
+                                        Colors.transparent,
+                                      ],
+                                      stops: const [0.0, 0.65, 1.0],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              height: 180,
+                              child: IgnorePointer(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.topCenter,
+                                      colors: [
+                                        Theme.of(context).colorScheme.scrim
+                                            .withValues(alpha: 0.85),
+                                        Theme.of(context).colorScheme.scrim
+                                            .withValues(alpha: 0.40),
+                                        Colors.transparent,
+                                      ],
+                                      stops: const [0.0, 0.70, 1.0],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                     // We are adding 16.0 boundary around the actual controls (which contain the vertical drag gesture detectors).
                     // This will make the hit-test on edges (e.g. swiping to: show status-bar, show navigation-bar, go back in navigation) not activate the swipe gesture annoyingly.
                     Positioned.fill(
@@ -831,37 +888,55 @@ class _BackwardSeekIndicatorState extends State<_BackwardSeekIndicator> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0x88767676), Color(0x00767676)],
+          colors: [Color(0x66000000), Color(0x00000000)],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
       ),
       child: InkWell(
-        splashColor: const Color(0x44767676),
+        splashColor: colorScheme.primary.withValues(alpha: 0.16),
+        highlightColor: Colors.transparent,
         onTap: increment,
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.fast_rewind,
-                size: 24.0,
-                color: Color(0xFFFFFFFF),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.85,
               ),
-              const SizedBox(height: 8.0),
-              Text(
-                '${value.inSeconds} seconds',
-                style: const TextStyle(
-                  fontSize: 12.0,
-                  color: Color(0xFFFFFFFF),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.35),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
                 ),
-              ),
-            ],
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.replay_10, size: 26.0, color: Colors.white),
+                const SizedBox(height: 4.0),
+                Text(
+                  '${value.inSeconds}s',
+                  style: (textTheme.labelMedium ?? const TextStyle()).copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -916,37 +991,55 @@ class _ForwardSeekIndicatorState extends State<_ForwardSeekIndicator> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0x00767676), Color(0x88767676)],
+          colors: [Color(0x00000000), Color(0x66000000)],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
       ),
       child: InkWell(
-        splashColor: const Color(0x44767676),
+        splashColor: colorScheme.primary.withValues(alpha: 0.16),
+        highlightColor: Colors.transparent,
         onTap: increment,
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.fast_forward,
-                size: 24.0,
-                color: Color(0xFFFFFFFF),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.85,
               ),
-              const SizedBox(height: 8.0),
-              Text(
-                '${value.inSeconds} seconds',
-                style: const TextStyle(
-                  fontSize: 12.0,
-                  color: Color(0xFFFFFFFF),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.35),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
                 ),
-              ),
-            ],
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.forward_10, size: 26.0, color: Colors.white),
+                const SizedBox(height: 4.0),
+                Text(
+                  '${value.inSeconds}s',
+                  style: (textTheme.labelMedium ?? const TextStyle()).copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -968,7 +1061,11 @@ List<Widget> mobilePrimaryButtonBar(
   final isFullScreen = isFullscreen(context);
   return [
     const Spacer(flex: 3),
-    IconButton(
+    IconButton.filledTonal(
+      style: IconButton.styleFrom(
+        backgroundColor: Colors.white.withValues(alpha: 0.15),
+        disabledBackgroundColor: Colors.white.withValues(alpha: 0.05),
+      ),
       onPressed: hasPrevEpisode
           ? () {
               if (isFullScreen) {
@@ -982,14 +1079,20 @@ List<Widget> mobilePrimaryButtonBar(
           : null,
       icon: Icon(
         Icons.skip_previous,
-        size: 35,
-        color: hasPrevEpisode ? Colors.white : Colors.grey,
+        size: 28,
+        color: hasPrevEpisode
+            ? Colors.white
+            : Colors.white.withValues(alpha: 0.35),
       ),
     ),
     const Spacer(),
     CustomPlayOrPauseButton(controller: controller, focusNode: playPauseFocus),
     const Spacer(),
-    IconButton(
+    IconButton.filledTonal(
+      style: IconButton.styleFrom(
+        backgroundColor: Colors.white.withValues(alpha: 0.15),
+        disabledBackgroundColor: Colors.white.withValues(alpha: 0.05),
+      ),
       onPressed: hasNextEpisode
           ? () {
               if (isFullScreen) {
@@ -1003,8 +1106,10 @@ List<Widget> mobilePrimaryButtonBar(
           : null,
       icon: Icon(
         Icons.skip_next,
-        size: 35,
-        color: hasPrevEpisode ? Colors.white : Colors.grey,
+        size: 28,
+        color: hasNextEpisode
+            ? Colors.white
+            : Colors.white.withValues(alpha: 0.35),
       ),
     ),
     const Spacer(flex: 3),

@@ -28,6 +28,25 @@ class ChapterRepository {
 
   List<Chapter> getAll() => isar.chapters.filter().idIsNotNull().findAllSync();
 
+  List<Chapter> getChangedSince(int since) => isar.chapters
+      .filter()
+      .updatedAtGreaterThan(since, include: true)
+      .findAllSync();
+
+  Chapter? getByClientId(int clientId) => isar.chapters
+      .filter()
+      .clientIdEqualTo(clientId)
+      .or()
+      .idEqualTo(clientId)
+      .findFirstSync();
+
+  Chapter? findByUrlAndMangaId(String url, int mangaId) => isar.chapters
+      .filter()
+      .urlEqualTo(url)
+      .and()
+      .mangaIdEqualTo(mangaId)
+      .findFirstSync();
+
   // Async twin, for callers already inside an async writeTxn/writeTransactionAsync
   // — Isar rejects a sync findAllSync() call from inside an async transaction.
   Future<List<Chapter>> getAllAsync() =>
@@ -128,7 +147,8 @@ class ChapterRepository {
 
   Future<bool> deleteAsync(int id) => isar.chapters.delete(id);
 
-  Future<void> putAllAsync(List<Chapter> chapters) => isar.chapters.putAll(chapters);
+  Future<void> putAllAsync(List<Chapter> chapters) =>
+      isar.chapters.putAll(chapters);
 
   Future<void> deleteAllAsync(List<int> ids) => isar.chapters.deleteAll(ids);
 

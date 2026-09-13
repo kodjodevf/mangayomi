@@ -17,56 +17,57 @@ const TrackSchema = CollectionSchema(
   name: r'Track',
   id: 6244076704169336260,
   properties: {
+    r'clientId': PropertySchema(id: 0, name: r'clientId', type: IsarType.long),
     r'finishedReadingDate': PropertySchema(
-      id: 0,
+      id: 1,
       name: r'finishedReadingDate',
       type: IsarType.long,
     ),
-    r'isManga': PropertySchema(id: 1, name: r'isManga', type: IsarType.bool),
+    r'isManga': PropertySchema(id: 2, name: r'isManga', type: IsarType.bool),
     r'itemType': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'itemType',
       type: IsarType.byte,
       enumMap: _TrackitemTypeEnumValueMap,
     ),
     r'lastChapterRead': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'lastChapterRead',
       type: IsarType.long,
     ),
     r'libraryId': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'libraryId',
       type: IsarType.long,
     ),
-    r'mangaId': PropertySchema(id: 5, name: r'mangaId', type: IsarType.long),
-    r'mediaId': PropertySchema(id: 6, name: r'mediaId', type: IsarType.long),
-    r'score': PropertySchema(id: 7, name: r'score', type: IsarType.long),
+    r'mangaId': PropertySchema(id: 6, name: r'mangaId', type: IsarType.long),
+    r'mediaId': PropertySchema(id: 7, name: r'mediaId', type: IsarType.long),
+    r'score': PropertySchema(id: 8, name: r'score', type: IsarType.long),
     r'startedReadingDate': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'startedReadingDate',
       type: IsarType.long,
     ),
     r'status': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'status',
       type: IsarType.byte,
       enumMap: _TrackstatusEnumValueMap,
     ),
-    r'syncId': PropertySchema(id: 10, name: r'syncId', type: IsarType.long),
-    r'title': PropertySchema(id: 11, name: r'title', type: IsarType.string),
+    r'syncId': PropertySchema(id: 11, name: r'syncId', type: IsarType.long),
+    r'title': PropertySchema(id: 12, name: r'title', type: IsarType.string),
     r'totalChapter': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'totalChapter',
       type: IsarType.long,
     ),
     r'trackingUrl': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'trackingUrl',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'updatedAt',
       type: IsarType.long,
     ),
@@ -78,6 +79,19 @@ const TrackSchema = CollectionSchema(
   deserializeProp: _trackDeserializeProp,
   idName: r'id',
   indexes: {
+    r'clientId': IndexSchema(
+      id: 2639372232964765565,
+      name: r'clientId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'clientId',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
     r'mangaId_itemType': IndexSchema(
       id: 1932770689417107750,
       name: r'mangaId_itemType',
@@ -146,21 +160,22 @@ void _trackSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.finishedReadingDate);
-  writer.writeBool(offsets[1], object.isManga);
-  writer.writeByte(offsets[2], object.itemType.index);
-  writer.writeLong(offsets[3], object.lastChapterRead);
-  writer.writeLong(offsets[4], object.libraryId);
-  writer.writeLong(offsets[5], object.mangaId);
-  writer.writeLong(offsets[6], object.mediaId);
-  writer.writeLong(offsets[7], object.score);
-  writer.writeLong(offsets[8], object.startedReadingDate);
-  writer.writeByte(offsets[9], object.status.index);
-  writer.writeLong(offsets[10], object.syncId);
-  writer.writeString(offsets[11], object.title);
-  writer.writeLong(offsets[12], object.totalChapter);
-  writer.writeString(offsets[13], object.trackingUrl);
-  writer.writeLong(offsets[14], object.updatedAt);
+  writer.writeLong(offsets[0], object.clientId);
+  writer.writeLong(offsets[1], object.finishedReadingDate);
+  writer.writeBool(offsets[2], object.isManga);
+  writer.writeByte(offsets[3], object.itemType.index);
+  writer.writeLong(offsets[4], object.lastChapterRead);
+  writer.writeLong(offsets[5], object.libraryId);
+  writer.writeLong(offsets[6], object.mangaId);
+  writer.writeLong(offsets[7], object.mediaId);
+  writer.writeLong(offsets[8], object.score);
+  writer.writeLong(offsets[9], object.startedReadingDate);
+  writer.writeByte(offsets[10], object.status.index);
+  writer.writeLong(offsets[11], object.syncId);
+  writer.writeString(offsets[12], object.title);
+  writer.writeLong(offsets[13], object.totalChapter);
+  writer.writeString(offsets[14], object.trackingUrl);
+  writer.writeLong(offsets[15], object.updatedAt);
 }
 
 Track _trackDeserialize(
@@ -170,26 +185,27 @@ Track _trackDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Track(
-    finishedReadingDate: reader.readLongOrNull(offsets[0]),
+    clientId: reader.readLongOrNull(offsets[0]),
+    finishedReadingDate: reader.readLongOrNull(offsets[1]),
     id: id,
-    isManga: reader.readBoolOrNull(offsets[1]),
+    isManga: reader.readBoolOrNull(offsets[2]),
     itemType:
-        _TrackitemTypeValueEnumMap[reader.readByteOrNull(offsets[2])] ??
+        _TrackitemTypeValueEnumMap[reader.readByteOrNull(offsets[3])] ??
         ItemType.manga,
-    lastChapterRead: reader.readLongOrNull(offsets[3]),
-    libraryId: reader.readLongOrNull(offsets[4]),
-    mangaId: reader.readLongOrNull(offsets[5]),
-    mediaId: reader.readLongOrNull(offsets[6]),
-    score: reader.readLongOrNull(offsets[7]),
-    startedReadingDate: reader.readLongOrNull(offsets[8]),
+    lastChapterRead: reader.readLongOrNull(offsets[4]),
+    libraryId: reader.readLongOrNull(offsets[5]),
+    mangaId: reader.readLongOrNull(offsets[6]),
+    mediaId: reader.readLongOrNull(offsets[7]),
+    score: reader.readLongOrNull(offsets[8]),
+    startedReadingDate: reader.readLongOrNull(offsets[9]),
     status:
-        _TrackstatusValueEnumMap[reader.readByteOrNull(offsets[9])] ??
+        _TrackstatusValueEnumMap[reader.readByteOrNull(offsets[10])] ??
         TrackStatus.reading,
-    syncId: reader.readLongOrNull(offsets[10]),
-    title: reader.readStringOrNull(offsets[11]),
-    totalChapter: reader.readLongOrNull(offsets[12]),
-    trackingUrl: reader.readStringOrNull(offsets[13]),
-    updatedAt: reader.readLongOrNull(offsets[14]),
+    syncId: reader.readLongOrNull(offsets[11]),
+    title: reader.readStringOrNull(offsets[12]),
+    totalChapter: reader.readLongOrNull(offsets[13]),
+    trackingUrl: reader.readStringOrNull(offsets[14]),
+    updatedAt: reader.readLongOrNull(offsets[15]),
   );
   return object;
 }
@@ -204,13 +220,13 @@ P _trackDeserializeProp<P>(
     case 0:
       return (reader.readLongOrNull(offset)) as P;
     case 1:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 2:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 3:
       return (_TrackitemTypeValueEnumMap[reader.readByteOrNull(offset)] ??
               ItemType.manga)
           as P;
-    case 3:
-      return (reader.readLongOrNull(offset)) as P;
     case 4:
       return (reader.readLongOrNull(offset)) as P;
     case 5:
@@ -222,18 +238,20 @@ P _trackDeserializeProp<P>(
     case 8:
       return (reader.readLongOrNull(offset)) as P;
     case 9:
+      return (reader.readLongOrNull(offset)) as P;
+    case 10:
       return (_TrackstatusValueEnumMap[reader.readByteOrNull(offset)] ??
               TrackStatus.reading)
           as P;
-    case 10:
-      return (reader.readLongOrNull(offset)) as P;
     case 11:
-      return (reader.readStringOrNull(offset)) as P;
-    case 12:
       return (reader.readLongOrNull(offset)) as P;
-    case 13:
+    case 12:
       return (reader.readStringOrNull(offset)) as P;
+    case 13:
+      return (reader.readLongOrNull(offset)) as P;
     case 14:
+      return (reader.readStringOrNull(offset)) as P;
+    case 15:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -285,6 +303,14 @@ extension TrackQueryWhereSort on QueryBuilder<Track, Track, QWhere> {
   QueryBuilder<Track, Track, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhere> anyClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'clientId'),
+      );
     });
   }
 
@@ -368,6 +394,130 @@ extension TrackQueryWhere on QueryBuilder<Track, Track, QWhereClause> {
           lower: lowerId,
           includeLower: includeLower,
           upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> clientIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'clientId', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> clientIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> clientIdEqualTo(int? clientId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'clientId', value: [clientId]),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> clientIdNotEqualTo(
+    int? clientId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [],
+                upper: [clientId],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [clientId],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [clientId],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [],
+                upper: [clientId],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> clientIdGreaterThan(
+    int? clientId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [clientId],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> clientIdLessThan(
+    int? clientId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [],
+          upper: [clientId],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> clientIdBetween(
+    int? lowerClientId,
+    int? upperClientId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [lowerClientId],
+          includeLower: includeLower,
+          upper: [upperClientId],
           includeUpper: includeUpper,
         ),
       );
@@ -739,6 +889,81 @@ extension TrackQueryWhere on QueryBuilder<Track, Track, QWhereClause> {
 }
 
 extension TrackQueryFilter on QueryBuilder<Track, Track, QFilterCondition> {
+  QueryBuilder<Track, Track, QAfterFilterCondition> clientIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'clientId'),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> clientIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'clientId'),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> clientIdEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'clientId', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> clientIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'clientId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> clientIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'clientId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> clientIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'clientId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
   QueryBuilder<Track, Track, QAfterFilterCondition>
   finishedReadingDateIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -2027,6 +2252,18 @@ extension TrackQueryObject on QueryBuilder<Track, Track, QFilterCondition> {}
 extension TrackQueryLinks on QueryBuilder<Track, Track, QFilterCondition> {}
 
 extension TrackQuerySortBy on QueryBuilder<Track, Track, QSortBy> {
+  QueryBuilder<Track, Track, QAfterSortBy> sortByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterSortBy> sortByClientIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Track, Track, QAfterSortBy> sortByFinishedReadingDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'finishedReadingDate', Sort.asc);
@@ -2209,6 +2446,18 @@ extension TrackQuerySortBy on QueryBuilder<Track, Track, QSortBy> {
 }
 
 extension TrackQuerySortThenBy on QueryBuilder<Track, Track, QSortThenBy> {
+  QueryBuilder<Track, Track, QAfterSortBy> thenByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterSortBy> thenByClientIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Track, Track, QAfterSortBy> thenByFinishedReadingDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'finishedReadingDate', Sort.asc);
@@ -2403,6 +2652,12 @@ extension TrackQuerySortThenBy on QueryBuilder<Track, Track, QSortThenBy> {
 }
 
 extension TrackQueryWhereDistinct on QueryBuilder<Track, Track, QDistinct> {
+  QueryBuilder<Track, Track, QDistinct> distinctByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'clientId');
+    });
+  }
+
   QueryBuilder<Track, Track, QDistinct> distinctByFinishedReadingDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'finishedReadingDate');
@@ -2502,6 +2757,12 @@ extension TrackQueryProperty on QueryBuilder<Track, Track, QQueryProperty> {
   QueryBuilder<Track, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<Track, int?, QQueryOperations> clientIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'clientId');
     });
   }
 

@@ -21,6 +21,7 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupAniyomi.pb.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupMihon.pb.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/kotatsu_backup.dart';
 import 'package:mangayomi/modules/more/data_and_storage/widgets/backup_encryption_password_dialog.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
@@ -940,62 +941,55 @@ ItemType _convertToItemTypeCategory(Map<String, dynamic> backup) {
 @riverpod
 Future<void> restoreKotatsuBackup(Ref ref, Archive archive) async {
   try {
-    for (var f in archive.files) {
-      List<Category> cats = [];
-      switch (f.name) {
-        case "categories":
-          final categories = jsonDecode(utf8.decode(f.content)) as List? ?? [];
-          await restoreRepository.run(() {
-            categoryRepository.clearSync();
-            for (var category in categories) {
-              final cat = Category(
-                id: category["id"],
-                name: category["title"],
-                forItemType: ItemType.manga,
-                hide: !(category["show_in_lib"] ?? true),
-              );
-              categoryRepository.putSync(cat);
-              cats.add(cat);
-            }
-          });
-        case "favourites":
-          final favourites = jsonDecode(utf8.decode(f.content)) as List? ?? [];
-          await restoreRepository.run(() {
-            mangaRepository.clearSync();
-            for (var favourite in favourites) {
-              final tempManga = favourite["manga"];
-              final manga = Manga(
-                source: tempManga["source"],
-                author: tempManga["author"],
-                artist: null,
-                genre:
-                    (tempManga["tags"] as List?)
-                        ?.map((t) => t["title"] as String)
-                        .toList() ??
-                    [],
-                imageUrl: tempManga["large_cover_url"],
-                lang: 'en',
-                link: tempManga["url"],
-                name: tempManga["title"],
-                status: Status.values.firstWhere(
-                  (s) =>
-                      s.name.toLowerCase() ==
-                      (tempManga["state"] as String?)?.toLowerCase(),
-                  orElse: () => Status.unknown,
-                ),
-                description: null,
-                categories: [favourite["category_id"]],
-                itemType: ItemType.manga,
-                favorite: true,
-                sourceId: null,
-              );
-              mangaRepository.putSync(manga);
-            }
-          });
-        default:
-          continue;
+    final backup = parseKotatsuBackup(archive);
+    await restoreRepository.run(() {
+      categoryRepository.clearSync();
+      mangaRepository.clearSync();
+
+      final categoryIdMap = <int, int>{};
+      for (final category in backup.categories) {
+        final restoredId = categoryRepository.putSync(
+          Category(
+            name: category.name,
+            forItemType: ItemType.manga,
+            pos: category.position,
+            hide: category.hidden,
+          ),
+        );
+        final sourceId = category.sourceId;
+        if (sourceId != null) categoryIdMap[sourceId] = restoredId;
       }
-    }
+
+      for (final favourite in backup.mangas) {
+        final tempManga = favourite.manga;
+        final manga = Manga(
+          source: tempManga["source"],
+          author: tempManga["author"],
+          artist: null,
+          genre:
+              (tempManga["tags"] as List?)
+                  ?.map((t) => t["title"] as String)
+                  .toList() ??
+              [],
+          imageUrl: tempManga["large_cover_url"],
+          lang: 'en',
+          link: tempManga["url"],
+          name: tempManga["title"],
+          status: Status.values.firstWhere(
+            (s) =>
+                s.name.toLowerCase() ==
+                (tempManga["state"] as String?)?.toLowerCase(),
+            orElse: () => Status.unknown,
+          ),
+          description: null,
+          categories: remapKotatsuCategoryIds(favourite, categoryIdMap),
+          itemType: ItemType.manga,
+          favorite: true,
+          sourceId: null,
+        );
+        mangaRepository.putSync(manga);
+      }
+    });
     await restoreRepository.run(() {
       chapterRepository.clearSync();
       downloadRepository.clearSync();

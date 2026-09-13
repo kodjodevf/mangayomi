@@ -25,10 +25,30 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as path;
 import 'package:mangayomi/utils/platform_utils.dart';
 
+@visibleForTesting
+String? linuxDocumentsFallbackPath(Map<String, String> environment) {
+  final home = environment['HOME']?.trim();
+  return home == null || home.isEmpty ? null : home;
+}
+
 class StorageProvider {
   static final StorageProvider _instance = StorageProvider._internal();
   StorageProvider._internal();
   factory StorageProvider() => _instance;
+
+  /// `path_provider_linux` asks `xdg-user-dir` for Documents. Minimal desktop
+  /// environments may not provide that executable, which must not prevent the
+  /// database or downloads from initializing. Fall back to HOME on Linux.
+  Future<Directory> _documentsDirectory() async {
+    try {
+      return await getApplicationDocumentsDirectory();
+    } catch (_) {
+      if (!Platform.isLinux) rethrow;
+      final home = linuxDocumentsFallbackPath(Platform.environment);
+      if (home == null) rethrow;
+      return Directory(home);
+    }
+  }
 
   Future<bool> requestPermission() async {
     if (!Platform.isAndroid) return true;
@@ -55,7 +75,7 @@ class StorageProvider {
     if (Platform.isAndroid) {
       directory = Directory("/storage/emulated/0/Mangayomi/");
     } else {
-      final dir = await getApplicationDocumentsDirectory();
+      final dir = await _documentsDirectory();
       // The documents dir in iOS is already named "Mangayomi".
       // Appending "Mangayomi" to the documents dir would create
       // unnecessarily nested Mangayomi/Mangayomi/ folder.
@@ -148,7 +168,7 @@ class StorageProvider {
         dPath.isEmpty ? "/storage/emulated/0/Mangayomi/" : "$dPath/",
       );
     } else {
-      final dir = await getApplicationDocumentsDirectory();
+      final dir = await _documentsDirectory();
       final p = dPath.isEmpty ? dir.path : dPath;
       // The documents dir in iOS is already named "Mangayomi".
       // Appending "Mangayomi" to the documents dir would create
@@ -206,7 +226,7 @@ class StorageProvider {
     // untouched — Documents is the conventional location there.
     final dir = Platform.isMacOS
         ? await getApplicationSupportDirectory()
-        : await getApplicationDocumentsDirectory();
+        : await _documentsDirectory();
     String dbDir;
     if (Platform.isAndroid) return dir;
     if (Platform.isIOS) {
@@ -326,7 +346,9 @@ class StorageProvider {
       if (settings == null) {
         // TV defaults to dark on first run (a fresh library). Only the
         // initial Settings row is seeded, so switching to light later sticks.
-        await isar.writeTxn(() async => isar.settings.put(Settings()..themeIsDark = isTv));
+        await isar.writeTxn(
+          () async => isar.settings.put(Settings()..themeIsDark = isTv),
+        );
       }
     } catch (_) {
       if (await requestPermission()) {
@@ -335,7 +357,9 @@ class StorageProvider {
           if (settings == null) {
             // TV defaults to dark on first run (a fresh library). Only the
             // initial Settings row is seeded, so switching to light later sticks.
-            await isar.writeTxn(() async => isar.settings.put(Settings()..themeIsDark = isTv));
+            await isar.writeTxn(
+              () async => isar.settings.put(Settings()..themeIsDark = isTv),
+            );
           }
         } catch (e) {
           if (kDebugMode) {

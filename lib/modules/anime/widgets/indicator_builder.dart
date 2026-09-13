@@ -11,71 +11,105 @@ class MediaIndicatorBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return ValueListenableBuilder(
       valueListenable: value,
-      builder: (context, value, child) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40),
-        child: Row(
-          mainAxisAlignment: isVolumeIndicator
-              ? MainAxisAlignment.start
-              : MainAxisAlignment.end,
-          children: [
-            Container(
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(100),
-              ),
-              width: 30,
-              child: UnconstrainedBox(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Column(
-                    children: [
-                      Text(
-                        (value * 100).ceil().toString(),
-                        style: const TextStyle(color: Colors.white),
+      builder: (context, value, child) => Visibility(
+        visible: value > 0,
+        child: IgnorePointer(
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 80),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  height: 42,
+                  width: 210,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.92,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.35),
+                      width: 1.0,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colorScheme.shadow.withValues(alpha: 0.25),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: RotatedBox(
-                          quarterTurns: -1,
-                          child: Container(
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: SizedBox.fromSize(
-                              size: const Size(130, 20),
-                              child: LinearProgressIndicator(
-                                value: value,
-                                backgroundColor: Colors.transparent,
+                    ],
+                  ),
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            isVolumeIndicator
+                                ? switch (value) {
+                                    == 0.0 => Icons.volume_off,
+                                    < 0.5 => Icons.volume_down,
+                                    _ => Icons.volume_up,
+                                  }
+                                : switch (value) {
+                                    < 1.0 / 3.0 => Icons.brightness_low,
+                                    < 2.0 / 3.0 => Icons.brightness_medium,
+                                    _ => Icons.brightness_high,
+                                  },
+                            color: colorScheme.onSurface,
+                            size: 20,
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                              ),
+                              child: Container(
+                                clipBehavior: Clip.antiAlias,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: SizedBox(
+                                  height: 6,
+                                  child: LinearProgressIndicator(
+                                    value: value,
+                                    color: colorScheme.primary,
+                                    backgroundColor: colorScheme.onSurface
+                                        .withValues(alpha: 0.18),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                          Icon(
+                            isVolumeIndicator
+                                ? switch (value) {
+                                    == 0.0 => Icons.volume_off,
+                                    < 0.5 => Icons.volume_down,
+                                    _ => Icons.volume_up,
+                                  }
+                                : switch (value) {
+                                    < 1.0 / 3.0 => Icons.brightness_low,
+                                    < 2.0 / 3.0 => Icons.brightness_medium,
+                                    _ => Icons.brightness_high,
+                                  },
+                            size: 16,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ],
                       ),
-                      Icon(
-                        isVolumeIndicator
-                            ? switch (value) {
-                                == 0.0 => Icons.volume_off,
-                                < 0.5 => Icons.volume_down,
-                                _ => Icons.volume_up,
-                              }
-                            : switch (value) {
-                                < 1.0 / 3.0 => Icons.brightness_low,
-                                < 2.0 / 3.0 => Icons.brightness_medium,
-                                _ => Icons.brightness_high,
-                              },
-                        color: Colors.white,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

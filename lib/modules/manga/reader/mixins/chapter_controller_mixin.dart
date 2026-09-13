@@ -99,13 +99,13 @@ mixin ChapterControllerMixin {
   ///
   /// [elapsedSeconds] accumulates watch/reading time; pass 0 to skip that
   /// field (the caller is responsible for tracking wall-clock deltas).
-  void setHistoryUpdate({int elapsedSeconds = 0}) {
+  Future<void> setHistoryUpdate({int elapsedSeconds = 0}) async {
     if (incognitoMode) return;
     final manga = getManga();
 
     final m = chapter.manga.value!;
     m.lastRead = DateTime.now().millisecondsSinceEpoch;
-    mangaRepository.save(m);
+    await mangaRepository.save(m);
 
     final isEmpty = historyRepository.isEmptyForManga(manga.id);
 
@@ -128,6 +128,6 @@ mixin ChapterControllerMixin {
       history.readingTimeSeconds =
           (history.readingTimeSeconds ?? 0) + elapsedSeconds;
     }
-    historyRepository.save(history);
+    await historyRepository.save(history);
   }
 }

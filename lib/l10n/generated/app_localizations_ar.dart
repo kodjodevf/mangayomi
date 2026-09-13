@@ -1054,9 +1054,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get syncing => 'مزامنة';
 
   @override
-  String get sync_password => 'كلمة المرور (على الأقل 8 أحرف)';
-
-  @override
   String get sync_logged => 'تم تسجيل الدخول بنجاح';
 
   @override
@@ -1064,19 +1061,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'قم بمزامنة تقدمك عبر أجهزة متعددة عبر خادم مستضاف ذاتيًا. اطّلع على خادم الخلاف الخاص بنا لمزيد من المعلومات!';
 
   @override
-  String get last_sync_manga => 'آخر مزامنة مانغا في:';
+  String get last_sync => 'Last sync at: ';
 
   @override
-  String get last_sync_history => 'آخر مزامنة للتاريخ في:';
-
-  @override
-  String get last_sync_update => 'آخر مزامنة تحديث في:';
+  String get sync_login_browser => 'Log in with browser';
 
   @override
   String get sync_server => 'عنوان خادم المزامنة';
-
-  @override
-  String get sync_login_invalid_creds => 'بريد إلكتروني أو كلمة مرور غير صحيحة';
 
   @override
   String get sync_starting => 'بدء المزامنة...';
@@ -1090,6 +1081,14 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get sync_restore_in_progress =>
       'تم تخطي المزامنة — الاستعادة قيد التقدم';
+
+  @override
+  String sync_progress_percent(Object percent) {
+    return 'Syncing… $percent%';
+  }
+
+  @override
+  String get sync_progress_indeterminate => 'Syncing…';
 
   @override
   String get sync_button_sync => 'مزامنة التقدم';
@@ -1126,9 +1125,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sync_section_general => 'عام';
-
-  @override
-  String get sync_section_data_types => 'ما تريد مزامنته';
 
   @override
   String get sync_on => 'تمكين المزامنة';
@@ -1777,6 +1773,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'عطل `استخدام libass` في إعدادات المشغل لتتمكن من تخصيص الترجمة.';
 
   @override
+  String get override_ass_subtitles => 'Override ASS subtitles';
+
+  @override
+  String get override_ass_subtitles_info =>
+      'Apply custom styling to ASS/SSA subtitles';
+
+  @override
   String get torrent_stream => 'بث التورنت';
 
   @override
@@ -2062,15 +2065,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get rpc_show_cover_image => 'إظهار صورة الغلاف الحالية في Discord';
 
   @override
-  String get sync_enable_histories => 'مزامنة بيانات السجل';
-
-  @override
-  String get sync_enable_updates => 'مزامنة بيانات التحديث';
-
-  @override
-  String get sync_enable_settings => 'مزامنة الإعدادات';
-
-  @override
   String get enable_mpv => 'تمكين تظليل / سكريبتات mpv';
 
   @override
@@ -2182,6 +2176,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get subtitle_speed => 'السرعة';
+
+  @override
+  String get tracks => 'Tracks';
+
+  @override
+  String get playback_speed => 'Playback speed';
+
+  @override
+  String get shaders => 'Shaders';
+
+  @override
+  String get video_fit => 'Fit';
 
   @override
   String get calendar => 'التقويم';

@@ -15,6 +15,7 @@ import 'app_localizations_hi.dart';
 import 'app_localizations_id.dart';
 import 'app_localizations_it.dart';
 import 'app_localizations_ja.dart';
+import 'app_localizations_ko.dart';
 import 'app_localizations_pt.dart';
 import 'app_localizations_ru.dart';
 import 'app_localizations_th.dart';
@@ -118,6 +119,7 @@ abstract class AppLocalizations {
     Locale('id'),
     Locale('it'),
     Locale('ja'),
+    Locale('ko'),
     Locale('pt'),
     Locale('pt', 'BR'),
     Locale('ru'),
@@ -1937,12 +1939,6 @@ abstract class AppLocalizations {
   /// **'Sync'**
   String get syncing;
 
-  /// No description provided for @sync_password.
-  ///
-  /// In en, this message translates to:
-  /// **'Password (at least 8 characters)'**
-  String get sync_password;
-
   /// No description provided for @sync_logged.
   ///
   /// In en, this message translates to:
@@ -1955,35 +1951,23 @@ abstract class AppLocalizations {
   /// **'Sync your progress across multiple devices via a self-hosted \nserver. Check out our discord server for more info!'**
   String get syncing_subtitle;
 
-  /// No description provided for @last_sync_manga.
+  /// No description provided for @last_sync.
   ///
   /// In en, this message translates to:
-  /// **'Last manga sync at: '**
-  String get last_sync_manga;
+  /// **'Last sync at: '**
+  String get last_sync;
 
-  /// No description provided for @last_sync_history.
+  /// No description provided for @sync_login_browser.
   ///
   /// In en, this message translates to:
-  /// **'Last history sync at: '**
-  String get last_sync_history;
-
-  /// No description provided for @last_sync_update.
-  ///
-  /// In en, this message translates to:
-  /// **'Last update sync at: '**
-  String get last_sync_update;
+  /// **'Log in with browser'**
+  String get sync_login_browser;
 
   /// No description provided for @sync_server.
   ///
   /// In en, this message translates to:
   /// **'Sync Server Address'**
   String get sync_server;
-
-  /// No description provided for @sync_login_invalid_creds.
-  ///
-  /// In en, this message translates to:
-  /// **'Invalid email or password'**
-  String get sync_login_invalid_creds;
 
   /// No description provided for @sync_starting.
   ///
@@ -2009,6 +1993,18 @@ abstract class AppLocalizations {
   /// **'Sync skipped — restore in progress'**
   String get sync_restore_in_progress;
 
+  /// No description provided for @sync_progress_percent.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing… {percent}%'**
+  String sync_progress_percent(Object percent);
+
+  /// No description provided for @sync_progress_indeterminate.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing…'**
+  String get sync_progress_indeterminate;
+
   /// No description provided for @sync_button_sync.
   ///
   /// In en, this message translates to:
@@ -2024,7 +2020,7 @@ abstract class AppLocalizations {
   /// No description provided for @sync_button_upload_info.
   ///
   /// In en, this message translates to:
-  /// **'This operation will fully replace the remote data with local data!'**
+  /// **'This device\'s data will overwrite the server\'s for anything it also has. Nothing on the server gets deleted.'**
   String get sync_button_upload_info;
 
   /// No description provided for @sync_button_download.
@@ -2036,7 +2032,7 @@ abstract class AppLocalizations {
   /// No description provided for @sync_button_download_info.
   ///
   /// In en, this message translates to:
-  /// **'This operation will fully replace the local data with remote data!'**
+  /// **'Pulls in everything from the server. Nothing on this device gets deleted.'**
   String get sync_button_download_info;
 
   /// No description provided for @sync_status_not_configured.
@@ -2074,12 +2070,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'General'**
   String get sync_section_general;
-
-  /// No description provided for @sync_section_data_types.
-  ///
-  /// In en, this message translates to:
-  /// **'What to sync'**
-  String get sync_section_data_types;
 
   /// No description provided for @sync_on.
   ///
@@ -3281,6 +3271,18 @@ abstract class AppLocalizations {
   /// **'Disable `use libass` in player settings to be able to customize the subtitles.'**
   String get libass_not_disable_message;
 
+  /// No description provided for @override_ass_subtitles.
+  ///
+  /// In en, this message translates to:
+  /// **'Override ASS subtitles'**
+  String get override_ass_subtitles;
+
+  /// No description provided for @override_ass_subtitles_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply custom styling to ASS/SSA subtitles'**
+  String get override_ass_subtitles_info;
+
   /// No description provided for @torrent_stream.
   ///
   /// In en, this message translates to:
@@ -3797,24 +3799,6 @@ abstract class AppLocalizations {
   /// **'Show current cover image in Discord'**
   String get rpc_show_cover_image;
 
-  /// No description provided for @sync_enable_histories.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync history data'**
-  String get sync_enable_histories;
-
-  /// No description provided for @sync_enable_updates.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync update data'**
-  String get sync_enable_updates;
-
-  /// No description provided for @sync_enable_settings.
-  ///
-  /// In en, this message translates to:
-  /// **'Sync settings'**
-  String get sync_enable_settings;
-
   /// No description provided for @enable_mpv.
   ///
   /// In en, this message translates to:
@@ -4030,6 +4014,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Speed'**
   String get subtitle_speed;
+
+  /// No description provided for @tracks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracks'**
+  String get tracks;
+
+  /// No description provided for @playback_speed.
+  ///
+  /// In en, this message translates to:
+  /// **'Playback speed'**
+  String get playback_speed;
+
+  /// No description provided for @shaders.
+  ///
+  /// In en, this message translates to:
+  /// **'Shaders'**
+  String get shaders;
+
+  /// No description provided for @video_fit.
+  ///
+  /// In en, this message translates to:
+  /// **'Fit'**
+  String get video_fit;
 
   /// No description provided for @calendar.
   ///
@@ -5997,6 +6005,7 @@ class _AppLocalizationsDelegate
     'id',
     'it',
     'ja',
+    'ko',
     'pt',
     'ru',
     'th',
@@ -6051,6 +6060,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsIt();
     case 'ja':
       return AppLocalizationsJa();
+    case 'ko':
+      return AppLocalizationsKo();
     case 'pt':
       return AppLocalizationsPt();
     case 'ru':

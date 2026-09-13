@@ -22,10 +22,11 @@ const UpdateSchema = CollectionSchema(
       name: r'chapterName',
       type: IsarType.string,
     ),
-    r'date': PropertySchema(id: 1, name: r'date', type: IsarType.string),
-    r'mangaId': PropertySchema(id: 2, name: r'mangaId', type: IsarType.long),
+    r'clientId': PropertySchema(id: 1, name: r'clientId', type: IsarType.long),
+    r'date': PropertySchema(id: 2, name: r'date', type: IsarType.string),
+    r'mangaId': PropertySchema(id: 3, name: r'mangaId', type: IsarType.long),
     r'updatedAt': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'updatedAt',
       type: IsarType.long,
     ),
@@ -37,6 +38,19 @@ const UpdateSchema = CollectionSchema(
   deserializeProp: _updateDeserializeProp,
   idName: r'id',
   indexes: {
+    r'clientId': IndexSchema(
+      id: 2639372232964765565,
+      name: r'clientId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'clientId',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
     r'mangaId': IndexSchema(
       id: 7466570075891278896,
       name: r'mangaId',
@@ -95,9 +109,10 @@ void _updateSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.chapterName);
-  writer.writeString(offsets[1], object.date);
-  writer.writeLong(offsets[2], object.mangaId);
-  writer.writeLong(offsets[3], object.updatedAt);
+  writer.writeLong(offsets[1], object.clientId);
+  writer.writeString(offsets[2], object.date);
+  writer.writeLong(offsets[3], object.mangaId);
+  writer.writeLong(offsets[4], object.updatedAt);
 }
 
 Update _updateDeserialize(
@@ -108,10 +123,11 @@ Update _updateDeserialize(
 ) {
   final object = Update(
     chapterName: reader.readStringOrNull(offsets[0]),
-    date: reader.readStringOrNull(offsets[1]),
+    clientId: reader.readLongOrNull(offsets[1]),
+    date: reader.readStringOrNull(offsets[2]),
     id: id,
-    mangaId: reader.readLongOrNull(offsets[2]),
-    updatedAt: reader.readLongOrNull(offsets[3]),
+    mangaId: reader.readLongOrNull(offsets[3]),
+    updatedAt: reader.readLongOrNull(offsets[4]),
   );
   return object;
 }
@@ -126,10 +142,12 @@ P _updateDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
-    case 2:
       return (reader.readLongOrNull(offset)) as P;
+    case 2:
+      return (reader.readStringOrNull(offset)) as P;
     case 3:
+      return (reader.readLongOrNull(offset)) as P;
+    case 4:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -153,6 +171,14 @@ extension UpdateQueryWhereSort on QueryBuilder<Update, Update, QWhere> {
   QueryBuilder<Update, Update, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterWhere> anyClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'clientId'),
+      );
     });
   }
 
@@ -228,6 +254,132 @@ extension UpdateQueryWhere on QueryBuilder<Update, Update, QWhereClause> {
           lower: lowerId,
           includeLower: includeLower,
           upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterWhereClause> clientIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'clientId', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterWhereClause> clientIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterWhereClause> clientIdEqualTo(
+    int? clientId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'clientId', value: [clientId]),
+      );
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterWhereClause> clientIdNotEqualTo(
+    int? clientId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [],
+                upper: [clientId],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [clientId],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [clientId],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'clientId',
+                lower: [],
+                upper: [clientId],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterWhereClause> clientIdGreaterThan(
+    int? clientId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [clientId],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterWhereClause> clientIdLessThan(
+    int? clientId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [],
+          upper: [clientId],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterWhereClause> clientIdBetween(
+    int? lowerClientId,
+    int? upperClientId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'clientId',
+          lower: [lowerClientId],
+          includeLower: includeLower,
+          upper: [upperClientId],
           includeUpper: includeUpper,
         ),
       );
@@ -518,6 +670,81 @@ extension UpdateQueryFilter on QueryBuilder<Update, Update, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.greaterThan(property: r'chapterName', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterFilterCondition> clientIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'clientId'),
+      );
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterFilterCondition> clientIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'clientId'),
+      );
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterFilterCondition> clientIdEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'clientId', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterFilterCondition> clientIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'clientId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterFilterCondition> clientIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'clientId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterFilterCondition> clientIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'clientId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
       );
     });
   }
@@ -939,6 +1166,18 @@ extension UpdateQuerySortBy on QueryBuilder<Update, Update, QSortBy> {
     });
   }
 
+  QueryBuilder<Update, Update, QAfterSortBy> sortByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterSortBy> sortByClientIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Update, Update, QAfterSortBy> sortByDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'date', Sort.asc);
@@ -986,6 +1225,18 @@ extension UpdateQuerySortThenBy on QueryBuilder<Update, Update, QSortThenBy> {
   QueryBuilder<Update, Update, QAfterSortBy> thenByChapterNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'chapterName', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterSortBy> thenByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterSortBy> thenByClientIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clientId', Sort.desc);
     });
   }
 
@@ -1047,6 +1298,12 @@ extension UpdateQueryWhereDistinct on QueryBuilder<Update, Update, QDistinct> {
     });
   }
 
+  QueryBuilder<Update, Update, QDistinct> distinctByClientId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'clientId');
+    });
+  }
+
   QueryBuilder<Update, Update, QDistinct> distinctByDate({
     bool caseSensitive = true,
   }) {
@@ -1078,6 +1335,12 @@ extension UpdateQueryProperty on QueryBuilder<Update, Update, QQueryProperty> {
   QueryBuilder<Update, String?, QQueryOperations> chapterNameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'chapterName');
+    });
+  }
+
+  QueryBuilder<Update, int?, QQueryOperations> clientIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'clientId');
     });
   }
 
