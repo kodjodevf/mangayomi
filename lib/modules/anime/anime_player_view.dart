@@ -466,6 +466,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   late final StreamSubscription<Duration> _currentPositionSub;
   late final StreamSubscription<String> _playerErrorSub;
+  StreamSubscription<Tracks>? _tracksSub;
+  StreamSubscription<Track>? _trackSub;
   final Set<String> _failedAudioTrackKeys = {};
   final Set<String> _failedAudioCodecs = {};
   String? _requestedAudioLanguage;
@@ -936,22 +938,28 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       _initSubtitleAndAudio = false;
       if (_activeSubtitleTrack != null) {
         try {
-          _player.setSubtitleTrack(_activeSubtitleTrack!);
+          unawaited(_setSubtitleTrack(_activeSubtitleTrack!));
         } catch (_) {}
       } else if (_firstVid.subtitles?.isNotEmpty ?? false) {
         try {
-          final defaultTrack = _firstVid.subtitles!.firstWhere(
-            (sub) => sub.label == widget.defaultSubtitle,
-            orElse: () => _firstVid.subtitles!.first,
+          final preferredSource = _findPreferredSourceSubtitleTrack(
+            _firstVid.subtitles!,
           );
+          final defaultTrack =
+              preferredSource ??
+              _firstVid.subtitles!.firstWhere(
+                (sub) => sub.label == widget.defaultSubtitle,
+                orElse: () => _firstVid.subtitles!.first,
+              );
           final file = defaultTrack.file ?? "";
           final label = defaultTrack.label;
           final track = (file.startsWith("http") || file.startsWith("file"))
               ? SubtitleTrack.uri(file, title: label, language: label)
               : SubtitleTrack.data(file, title: label, language: label);
-          _activeSubtitleTrack = track;
-          _player.setSubtitleTrack(track);
+          unawaited(_setSubtitleTrack(track));
         } catch (_) {}
+      } else {
+        unawaited(_syncActiveSubtitleTrackFromMpv());
       }
 
       if (_activeAudioTrack != null) {
@@ -960,7 +968,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         } catch (_) {}
       } else if (_firstVid.audios?.isNotEmpty ?? false) {
         try {
-          final at = _firstVid.audios!.first;
+          final preferredSource = _findPreferredSourceAudioTrack(
+            _firstVid.audios!,
+          );
+          final at = preferredSource ?? _firstVid.audios!.first;
           final track = AudioTrack.uri(
             at.file ?? "",
             title: at.label,
@@ -969,6 +980,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           _activeAudioTrack = track;
           unawaited(_setAudioTrack(track));
         } catch (_) {}
+      } else {
+        unawaited(_syncActiveAudioTrackFromMpv());
       }
     }
   }
@@ -1120,6 +1133,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       _unifiedPositionHandler,
     );
     _playerErrorSub = _player.stream.error.listen(_reportPlaybackError);
+    _tracksSub = _player.stream.tracks.listen((_) {
+      _syncActiveAudioTrackFromMpv();
+      _syncActiveSubtitleTrackFromMpv();
+    });
+    _trackSub = _player.stream.track.listen((_) {
+      _syncActiveAudioTrackFromMpv();
+      _syncActiveSubtitleTrackFromMpv();
+    });
     _completed;
     _currentTotalDurationSub;
     _loadAndroidFont().then((_) {
@@ -1195,11 +1216,246 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             .catchError((_) {}),
       );
     }
+    unawaited(_syncActiveAudioTrackFromMpv());
+    unawaited(_syncActiveSubtitleTrackFromMpv());
+  }
+
+  SubtitleTrack? get _effectiveSubtitleTrack {
+    if (_activeSubtitleTrack != null && _activeSubtitleTrack!.id == 'no') {
+      return _activeSubtitleTrack;
+    }
+    final playerSubtitle = _player.state.track.subtitle;
+    if (playerSubtitle.id == 'no') {
+      return playerSubtitle;
+    }
+    if (_activeSubtitleTrack != null && _activeSubtitleTrack!.id != 'auto') {
+      return _activeSubtitleTrack;
+    }
+    if (playerSubtitle.id != 'auto') {
+      return playerSubtitle;
+    }
+    final tracks = _player.state.tracks.subtitle
+        .where((t) => t.id != 'auto' && t.id != 'no')
+        .toList();
+    if (tracks.isNotEmpty) {
+      final preferred = _findPreferredSubtitleTrack(tracks);
+      if (preferred != null) return preferred;
+    }
+    final extSubs = _firstVid.subtitles;
+    if (extSubs != null && extSubs.isNotEmpty) {
+      final preferredExt = _findPreferredSourceSubtitleTrack(extSubs);
+      final st = preferredExt ?? extSubs.first;
+      final file = st.file ?? '';
+      return (file.startsWith('http') || file.startsWith('file'))
+          ? SubtitleTrack.uri(file, title: st.label, language: st.label)
+          : SubtitleTrack.data(file, title: st.label, language: st.label);
+    }
+    return _activeSubtitleTrack ?? playerSubtitle;
+  }
+
+  SubtitleTrack? _findPreferredSubtitleTrack(List<SubtitleTrack> tracks) {
+    if (tracks.isEmpty) return null;
+    final pref = widget.defaultSubtitle.trim().toLowerCase();
+    if (pref.isNotEmpty && pref != 'auto') {
+      for (final track in tracks) {
+        if (track.id == 'no' || track.id == 'auto') continue;
+        if (audioTrackLanguagesMatch(track.language, pref) ||
+            audioTrackLanguagesMatch(track.title, pref)) {
+          return track;
+        }
+      }
+    }
+    return tracks.firstWhere(
+      (t) => t.id != 'no' && t.id != 'auto',
+      orElse: () => tracks.first,
+    );
+  }
+
+  vid.Track? _findPreferredSourceSubtitleTrack(List<vid.Track> tracks) {
+    if (tracks.isEmpty) return null;
+    final pref = widget.defaultSubtitle.trim().toLowerCase();
+    if (pref.isNotEmpty && pref != 'auto') {
+      for (final track in tracks) {
+        if (audioTrackLanguagesMatch(track.label, pref)) {
+          return track;
+        }
+      }
+    }
+    return null;
+  }
+
+  bool _isSubtitleTrackSelected(
+    SubtitleTrack? candidate,
+    SubtitleTrack? effective,
+  ) {
+    if (candidate == null || effective == null) return false;
+    if (candidate.id == 'auto' || candidate.id == 'no') return false;
+    if (effective.id == 'auto' || effective.id == 'no') return false;
+    if (candidate.id == effective.id) return true;
+    if (candidate.title != null &&
+        candidate.title!.isNotEmpty &&
+        candidate.title == effective.title) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> _syncActiveSubtitleTrackFromMpv() async {
+    if (!mounted) return;
+    try {
+      final active = await _activeSubtitleTrackFn();
+      if (!mounted) return;
+      if (active.id != 'auto') {
+        if (_activeSubtitleTrack?.id != active.id ||
+            _activeSubtitleTrack?.title != active.title ||
+            _activeSubtitleTrack?.language != active.language) {
+          if (mounted) {
+            setState(() {
+              _activeSubtitleTrack = active;
+            });
+          }
+        }
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _setSubtitleTrack(SubtitleTrack track) async {
+    _activeSubtitleTrack = track;
+    await _player.setSubtitleTrack(track);
+  }
+
+  Future<SubtitleTrack> _activeSubtitleTrackFn() async {
+    final selectedSub = _player.state.track.subtitle;
+    if (selectedSub.id != 'auto' && selectedSub.id != 'no') {
+      return selectedSub;
+    }
+
+    final platform = _player.platform;
+    if (platform is! NativePlayer) return selectedSub;
+    final sid = await _nativeAudioProperty(platform, 'sid');
+    final explicitlySelected = _subtitleTrackForNativeId(sid);
+    if (explicitlySelected != null) return explicitlySelected;
+    final activeId = await _nativeAudioProperty(
+      platform,
+      'current-tracks/sub/id',
+    );
+    return _subtitleTrackForNativeId(activeId) ?? selectedSub;
+  }
+
+  SubtitleTrack? _subtitleTrackForNativeId(String? id) {
+    if (id == null || id == 'auto' || id == '-1') return null;
+    if (id == 'no') return SubtitleTrack.no();
+    for (final track in _player.state.tracks.subtitle) {
+      if (track.id == id) return track;
+    }
+    return SubtitleTrack(id, null, null);
+  }
+
+  AudioTrack? get _effectiveAudioTrack {
+    if (_activeAudioTrack != null && _activeAudioTrack!.id == 'no') {
+      return _activeAudioTrack;
+    }
+    final playerAudio = _player.state.track.audio;
+    if (playerAudio.id == 'no') {
+      return playerAudio;
+    }
+    if (_activeAudioTrack != null && _activeAudioTrack!.id != 'auto') {
+      return _activeAudioTrack;
+    }
+    if (playerAudio.id != 'auto') {
+      return playerAudio;
+    }
+    final tracks = _player.state.tracks.audio
+        .where((t) => t.id != 'auto' && t.id != 'no')
+        .toList();
+    if (tracks.isNotEmpty) {
+      final preferred = _findPreferredAudioTrack(tracks);
+      if (preferred != null) return preferred;
+    }
+    final extAudios = _firstVid.audios;
+    if (extAudios != null && extAudios.isNotEmpty) {
+      final preferredExt = _findPreferredSourceAudioTrack(extAudios);
+      final at = preferredExt ?? extAudios.first;
+      return AudioTrack.uri(at.file ?? '', title: at.label, language: at.label);
+    }
+    return _activeAudioTrack ?? playerAudio;
+  }
+
+  AudioTrack? _findPreferredAudioTrack(List<AudioTrack> tracks) {
+    if (tracks.isEmpty) return null;
+    final preferredList = audioPreferredLang
+        .split(',')
+        .map((l) => l.trim().toLowerCase())
+        .where((l) => l.isNotEmpty && l != 'auto')
+        .toList();
+    for (final pref in preferredList) {
+      for (final track in tracks) {
+        if (track.id == 'no' || track.id == 'auto') continue;
+        if (audioTrackLanguagesMatch(track.language, pref) ||
+            audioTrackLanguagesMatch(track.title, pref)) {
+          return track;
+        }
+      }
+    }
+    return tracks.firstWhere(
+      (t) => t.id != 'no' && t.id != 'auto',
+      orElse: () => tracks.first,
+    );
+  }
+
+  vid.Track? _findPreferredSourceAudioTrack(List<vid.Track> tracks) {
+    if (tracks.isEmpty) return null;
+    final preferredList = audioPreferredLang
+        .split(',')
+        .map((l) => l.trim().toLowerCase())
+        .where((l) => l.isNotEmpty && l != 'auto')
+        .toList();
+    for (final pref in preferredList) {
+      for (final track in tracks) {
+        if (audioTrackLanguagesMatch(track.label, pref)) {
+          return track;
+        }
+      }
+    }
+    return null;
+  }
+
+  bool _isAudioTrackSelected(AudioTrack? candidate, AudioTrack? effective) {
+    if (candidate == null || effective == null) return false;
+    if (candidate.id == 'auto' || candidate.id == 'no') return false;
+    if (effective.id == 'auto' || effective.id == 'no') return false;
+    if (candidate.id == effective.id) return true;
+    if (candidate.title != null &&
+        candidate.title!.isNotEmpty &&
+        candidate.title == effective.title) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<void> _syncActiveAudioTrackFromMpv() async {
+    if (!mounted) return;
+    try {
+      final active = await _activeAudioTrackFn();
+      if (!mounted) return;
+      if (active.id != 'auto') {
+        if (_activeAudioTrack?.id != active.id ||
+            _activeAudioTrack?.title != active.title ||
+            _activeAudioTrack?.language != active.language) {
+          if (mounted) {
+            setState(() {
+              _activeAudioTrack = active;
+            });
+          }
+        }
+      }
+    } catch (_) {}
   }
 
   Future<void> _setAudioTrack(AudioTrack track) async {
     _resetAudioFallbackState();
     _requestedAudioLanguage = track.language ?? _preferredAudioLanguage();
+    _activeAudioTrack = track;
     await _player.setAudioTrack(track);
   }
 
@@ -1427,6 +1683,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         _currentPositionSub.cancel(),
         _playerErrorSub.cancel(),
         _currentTotalDurationSub.cancel(),
+        if (_tracksSub != null) _tracksSub!.cancel(),
+        if (_trackSub != null) _trackSub!.cancel(),
       ],
       beforeDisposePlayer: Platform.isWindows
           ? () => Future<void>.delayed(const Duration(milliseconds: 250))
@@ -1587,11 +1845,23 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           stream: _player.stream.track,
           initialData: _player.state.track,
           builder: (context, snapshot) {
-            final audio = snapshot.data?.audio;
-            final label =
-                audio?.title ?? audio?.language ?? audio?.channels ?? '';
+            final effective = _effectiveAudioTrack;
+            if (effective == null || effective.id == 'no') {
+              return Text(
+                context.l10n.off,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              );
+            }
+            final rawLabel = audioTrackLabel(effective);
+            final label = (rawLabel.isNotEmpty && rawLabel != 'None')
+                ? rawLabel
+                : (effective.title ??
+                      effective.language ??
+                      effective.channels ??
+                      '');
             return Text(
-              (label.isEmpty || audio?.id == 'no') ? context.l10n.off : label,
+              label.isEmpty ? context.l10n.off : label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             );
@@ -1606,14 +1876,16 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           stream: _player.stream.track,
           initialData: _player.state.track,
           builder: (context, snapshot) {
-            final subtitle = snapshot.data?.subtitle;
-            final label =
-                subtitle?.title ??
-                subtitle?.language ??
-                subtitle?.channels ??
-                '';
+            final effective = _effectiveSubtitleTrack;
+            final rawLabel = subtitleTrackLabel(effective);
+            final label = (rawLabel.isNotEmpty && rawLabel != 'None')
+                ? rawLabel
+                : (effective?.title ??
+                      effective?.language ??
+                      effective?.channels ??
+                      '');
             return Text(
-              (label.isEmpty || subtitle?.id == 'no')
+              (label.isEmpty || effective?.id == 'no')
                   ? context.l10n.off
                   : label,
               maxLines: 1,
@@ -1712,6 +1984,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     BuildContext context, {
     int initialIndex = -1,
   }) async {
+    await _syncActiveAudioTrackFromMpv();
+    await _syncActiveSubtitleTrackFromMpv();
+    if (!context.mounted) return;
     final entries = _buildSettingsEntries(context);
     _player.pause();
     if (isDesktop) {
@@ -1737,7 +2012,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   bool _computeHasSubtitleTrack() {
     final realPlayerTracks = _player.state.tracks.subtitle.where(
-      (e) => (e.title ?? e.language ?? e.channels ?? '').isNotEmpty,
+      (e) =>
+          e.id != 'auto' &&
+          e.id != 'no' &&
+          (e.title ?? e.language ?? e.channels ?? '').isNotEmpty,
     );
     final hasSourceTracks = widget.videos.any(
       (v) => (v.subtitles?.isNotEmpty ?? false),
@@ -1970,7 +2248,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   Widget _videoSubtitle(BuildContext context) {
     List<VideoPrefs> videoSubtitle = _player.state.tracks.subtitle
-        .toList()
+        .where((e) => e.id != 'auto' && e.id != 'no')
         .map((e) => VideoPrefs(isLocal: true, subtitle: e))
         .toList();
 
@@ -1994,38 +2272,38 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         }
       }
     }
-    final subtitle = _player.state.track.subtitle;
+    final effective = _effectiveSubtitleTrack;
     videoSubtitle = videoSubtitle
         .map((e) {
           VideoPrefs vid = e;
-          vid.title =
-              vid.subtitle?.title ??
-              vid.subtitle?.language ??
-              vid.subtitle?.channels ??
-              "";
+          final label = subtitleTrackLabel(vid.subtitle);
+          vid.title = (label.isNotEmpty && label != 'None')
+              ? label
+              : (vid.subtitle?.title ??
+                    vid.subtitle?.language ??
+                    vid.subtitle?.channels ??
+                    (vid.subtitle?.id != 'auto' && vid.subtitle?.id != 'no'
+                        ? vid.subtitle?.id
+                        : null) ??
+                    "");
           return vid;
         })
         .toList()
         .where((element) => element.title!.isNotEmpty)
         .toList();
-    videoSubtitle.sort((a, b) => a.title!.compareTo(b.title!));
-    videoSubtitle.insert(
+    final seen = <String>{};
+    final List<VideoPrefs> uniqueSubtitle = [];
+    for (var element in videoSubtitle) {
+      final key = element.subtitle?.id ?? element.title ?? '';
+      if (key.isNotEmpty && seen.add(key)) {
+        uniqueSubtitle.add(element);
+      }
+    }
+    uniqueSubtitle.sort((a, b) => (a.title ?? '').compareTo(b.title ?? ''));
+    uniqueSubtitle.insert(
       0,
       VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()),
     );
-    final seenTitles = <String>{};
-    final List<VideoPrefs> videoSubtitleLast = [];
-    for (var element in videoSubtitle) {
-      final key =
-          element.title ??
-          element.subtitle?.title ??
-          element.subtitle?.language ??
-          element.subtitle?.channels ??
-          "None";
-      if (seenTitles.add(key)) {
-        videoSubtitleLast.add(element);
-      }
-    }
     return StatefulBuilder(
       builder: (context, setSectionState) => Padding(
         padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
@@ -2149,29 +2427,21 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               },
             ),
             SettingsSectionLabel(context.l10n.tracks),
-            ...videoSubtitleLast.toSet().toList().map((sub) {
-              final title =
-                  sub.title ??
-                  sub.subtitle?.title ??
-                  sub.subtitle?.language ??
-                  sub.subtitle?.channels ??
-                  "None";
-
-              final selected =
-                  (title ==
-                      (subtitle.title ??
-                          subtitle.language ??
-                          subtitle.channels ??
-                          "None")) ||
-                  (subtitle.id == "no" && title == "None");
+            ...uniqueSubtitle.map((sub) {
+              final isNone = sub.subtitle?.id == "no";
+              final title = isNone
+                  ? context.l10n.off
+                  : (sub.title ?? subtitleTrackLabel(sub.subtitle));
+              final selected = isNone
+                  ? (effective == null || effective.id == "no")
+                  : _isSubtitleTrackSelected(sub.subtitle, effective);
               return SettingsOptionRow(
                 label: title,
                 selected: selected,
                 onTap: () {
                   _popSettings(context);
                   try {
-                    _activeSubtitleTrack = sub.subtitle!;
-                    _player.setSubtitleTrack(sub.subtitle!);
+                    unawaited(_setSubtitleTrack(sub.subtitle!));
                   } catch (_) {}
                 },
               );
@@ -2185,8 +2455,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
                   if (file != null && context.mounted) {
                     final track = SubtitleTrack.uri(file.path!);
-                    _activeSubtitleTrack = track;
-                    _player.setSubtitleTrack(track);
+                    unawaited(_setSubtitleTrack(track));
                   }
                   if (!context.mounted) return;
                   _popSettings(context);
@@ -2212,8 +2481,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                       title: subtitle.language,
                       language: subtitle.language,
                     );
-                    _activeSubtitleTrack = track;
-                    _player.setSubtitleTrack(track);
+                    unawaited(_setSubtitleTrack(track));
                   }
                   if (!context.mounted) return;
                   _popSettings(context);
@@ -2231,7 +2499,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   Widget _videoAudios(BuildContext context) {
     List<VideoPrefs> videoAudio = _player.state.tracks.audio
-        .toList()
+        .where((e) => e.id != 'auto' && e.id != 'no')
         .map((e) => VideoPrefs(isLocal: true, audio: e))
         .toList();
 
@@ -2255,34 +2523,46 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         }
       }
     }
-    final audio = _player.state.track.audio;
+    final effective = _effectiveAudioTrack;
     videoAudio = videoAudio
         .map((e) {
           VideoPrefs vid = e;
-          vid.title =
-              vid.audio?.title ??
-              vid.audio?.language ??
-              vid.audio?.channels ??
-              "";
+          final label = audioTrackLabel(vid.audio);
+          vid.title = (label.isNotEmpty && label != 'None')
+              ? label
+              : (vid.audio?.title ??
+                    vid.audio?.language ??
+                    vid.audio?.channels ??
+                    (vid.audio?.id != 'auto' && vid.audio?.id != 'no'
+                        ? vid.audio?.id
+                        : null) ??
+                    "");
           return vid;
         })
         .toList()
         .where((element) => element.title!.isNotEmpty)
         .toList();
-    videoAudio.sort((a, b) => a.title!.compareTo(b.title!));
-    videoAudio.insert(0, VideoPrefs(isLocal: false, audio: AudioTrack.no()));
+    final seen = <String>{};
+    final List<VideoPrefs> uniqueAudio = [];
+    for (var element in videoAudio) {
+      final key = element.audio?.id ?? element.title ?? '';
+      if (key.isNotEmpty && seen.add(key)) {
+        uniqueAudio.add(element);
+      }
+    }
+    uniqueAudio.sort((a, b) => (a.title ?? '').compareTo(b.title ?? ''));
+    uniqueAudio.insert(0, VideoPrefs(isLocal: false, audio: AudioTrack.no()));
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
       child: Column(
-        children: videoAudio.toSet().toList().map((aud) {
-          final title =
-              aud.title ??
-              aud.audio?.title ??
-              aud.audio?.language ??
-              aud.audio?.channels ??
-              "None";
-          final selected =
-              (aud.audio == audio) || (audio.id == "no" && title == "None");
+        children: uniqueAudio.map((aud) {
+          final isNone = aud.audio?.id == "no";
+          final title = isNone
+              ? context.l10n.off
+              : (aud.title ?? audioTrackLabel(aud.audio));
+          final selected = isNone
+              ? (effective == null || effective.id == "no")
+              : _isAudioTrackSelected(aud.audio, effective);
           return SettingsOptionRow(
             label: title,
             selected: selected,
@@ -2351,7 +2631,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   List<({String label, bool selected, VoidCallback onTap})>
   _tvSubtitleOptions() {
     List<VideoPrefs> videoSubtitle = _player.state.tracks.subtitle
-        .toList()
+        .where((e) => e.id != 'auto' && e.id != 'no')
         .map((e) => VideoPrefs(isLocal: true, subtitle: e))
         .toList();
     List<String> subs = [];
@@ -2374,64 +2654,52 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         }
       }
     }
-    final subtitle = _player.state.track.subtitle;
+    final effective = _effectiveSubtitleTrack;
     videoSubtitle = videoSubtitle
         .map((e) {
-          e.title =
-              e.subtitle?.title ??
-              e.subtitle?.language ??
-              e.subtitle?.channels ??
-              "";
-          return e;
+          VideoPrefs vid = e;
+          final label = subtitleTrackLabel(vid.subtitle);
+          vid.title = (label.isNotEmpty && label != 'None')
+              ? label
+              : (vid.subtitle?.title ??
+                    vid.subtitle?.language ??
+                    vid.subtitle?.channels ??
+                    (vid.subtitle?.id != 'auto' && vid.subtitle?.id != 'no'
+                        ? vid.subtitle?.id
+                        : null) ??
+                    "");
+          return vid;
         })
         .toList()
         .where((element) => element.title!.isNotEmpty)
         .toList();
-    videoSubtitle.sort((a, b) => a.title!.compareTo(b.title!));
-    videoSubtitle.insert(
+    final seen = <String>{};
+    final List<VideoPrefs> uniqueSubtitle = [];
+    for (var element in videoSubtitle) {
+      final key = element.subtitle?.id ?? element.title ?? '';
+      if (key.isNotEmpty && seen.add(key)) {
+        uniqueSubtitle.add(element);
+      }
+    }
+    uniqueSubtitle.sort((a, b) => (a.title ?? '').compareTo(b.title ?? ''));
+    uniqueSubtitle.insert(
       0,
       VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()),
     );
-    final List<VideoPrefs> last = [];
-    for (var element in videoSubtitle) {
-      final key =
-          element.title ??
-          element.subtitle?.title ??
-          element.subtitle?.language ??
-          element.subtitle?.channels ??
-          "None";
-      final contains = last.any(
-        (sub) =>
-            (sub.title ??
-                sub.subtitle?.title ??
-                sub.subtitle?.language ??
-                sub.subtitle?.channels ??
-                "None") ==
-            key,
-      );
-      if (!contains) last.add(element);
-    }
-    return last.toSet().toList().map((sub) {
-      final title =
-          sub.title ??
-          sub.subtitle?.title ??
-          sub.subtitle?.language ??
-          sub.subtitle?.channels ??
-          "None";
-      final selected =
-          (title ==
-              (subtitle.title ??
-                  subtitle.language ??
-                  subtitle.channels ??
-                  "None")) ||
-          (subtitle.id == "no" && title == "None");
+    return uniqueSubtitle.map((sub) {
+      final isNone = sub.subtitle?.id == 'no';
+      final title = isNone
+          ? 'Off'
+          : (sub.title ?? subtitleTrackLabel(sub.subtitle));
+      final selected = isNone
+          ? (effective == null || effective.id == 'no')
+          : _isSubtitleTrackSelected(sub.subtitle, effective);
       return (
-        label: title == "None" ? "Off" : title,
+        label: title,
         selected: selected,
         onTap: () {
           try {
-            _activeSubtitleTrack = sub.subtitle!;
-            _player.setSubtitleTrack(sub.subtitle!);
+            unawaited(_setSubtitleTrack(sub.subtitle!));
           } catch (_) {}
         },
       );
@@ -2440,7 +2708,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   List<({String label, bool selected, VoidCallback onTap})> _tvAudioOptions() {
     List<VideoPrefs> videoAudio = _player.state.tracks.audio
-        .toList()
+        .where((e) => e.id != 'auto' && e.id != 'no')
         .map((e) => VideoPrefs(isLocal: true, audio: e))
         .toList();
     List<String> audios = [];
@@ -2463,29 +2731,42 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         }
       }
     }
-    final audio = _player.state.track.audio;
+    final effective = _effectiveAudioTrack;
     videoAudio = videoAudio
         .map((e) {
-          e.title =
-              e.audio?.title ?? e.audio?.language ?? e.audio?.channels ?? "";
+          final label = audioTrackLabel(e.audio);
+          e.title = (label.isNotEmpty && label != 'None')
+              ? label
+              : (e.audio?.title ??
+                    e.audio?.language ??
+                    e.audio?.channels ??
+                    (e.audio?.id != 'auto' && e.audio?.id != 'no'
+                        ? e.audio?.id
+                        : null) ??
+                    "");
           return e;
         })
         .toList()
         .where((element) => element.title!.isNotEmpty)
         .toList();
-    videoAudio.sort((a, b) => a.title!.compareTo(b.title!));
-    videoAudio.insert(0, VideoPrefs(isLocal: false, audio: AudioTrack.no()));
-    return videoAudio.toSet().toList().map((aud) {
-      final title =
-          aud.title ??
-          aud.audio?.title ??
-          aud.audio?.language ??
-          aud.audio?.channels ??
-          "None";
-      final selected =
-          (aud.audio == audio) || (audio.id == "no" && title == "None");
+    final seen = <String>{};
+    final List<VideoPrefs> uniqueAudio = [];
+    for (var element in videoAudio) {
+      final key = element.audio?.id ?? element.title ?? '';
+      if (key.isNotEmpty && seen.add(key)) {
+        uniqueAudio.add(element);
+      }
+    }
+    uniqueAudio.sort((a, b) => (a.title ?? '').compareTo(b.title ?? ''));
+    uniqueAudio.insert(0, VideoPrefs(isLocal: false, audio: AudioTrack.no()));
+    return uniqueAudio.map((aud) {
+      final isNone = aud.audio?.id == "no";
+      final title = isNone ? "Off" : (aud.title ?? audioTrackLabel(aud.audio));
+      final selected = isNone
+          ? (effective == null || effective.id == "no")
+          : _isAudioTrackSelected(aud.audio, effective);
       return (
-        label: title == "None" ? "Off" : title,
+        label: title,
         selected: selected,
         onTap: () {
           try {
@@ -2680,13 +2961,29 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   String _shortTrackLabel(String raw) {
-    final trimmed = raw.trim();
+    var trimmed = raw.trim();
     if (trimmed.isEmpty) return '';
-    final clean = trimmed.split(RegExp(r'[\(\[\-]')).first.trim();
-    if (clean.length > 7) {
-      return clean.substring(0, 6);
+    if (trimmed.startsWith('[')) {
+      final closing = trimmed.indexOf(']');
+      if (closing > 1) {
+        trimmed = trimmed.substring(1, closing).trim();
+      } else {
+        trimmed = trimmed.substring(1).trim();
+      }
+    } else if (trimmed.startsWith('(')) {
+      final closing = trimmed.indexOf(')');
+      if (closing > 1) {
+        trimmed = trimmed.substring(1, closing).trim();
+      } else {
+        trimmed = trimmed.substring(1).trim();
+      }
     }
-    return clean;
+    final clean = trimmed.split(RegExp(r'[\(\[\-]')).first.trim();
+    final candidate = clean.isNotEmpty ? clean : trimmed;
+    if (candidate.length > 7) {
+      return candidate.substring(0, 6);
+    }
+    return candidate;
   }
 
   Widget _mobileBottomButtonBar(BuildContext context) {
@@ -2901,25 +3198,19 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             builder: (context) => StreamBuilder<Track>(
               stream: _player.stream.track,
               builder: (context, snapshot) {
-                final subTrack = _player.state.track.subtitle;
-                final isSubOff =
-                    subTrack.id == 'no' ||
-                    (subTrack.title == null &&
-                        subTrack.language == null &&
-                        subTrack.channels == null);
-                final rawName =
-                    subTrack.title ??
-                    subTrack.language ??
-                    subTrack.channels ??
-                    '';
-                final shortLabel = _shortTrackLabel(rawName);
+                final subTrack = _effectiveSubtitleTrack;
+                final isSubOff = subTrack == null || subTrack.id == 'no';
+                final rawName = subtitleTrackLabel(subTrack);
+                final shortLabel =
+                    (!isSubOff && rawName.isNotEmpty && rawName != 'None')
+                    ? _shortTrackLabel(rawName)
+                    : '';
 
                 return PlayerPillButton(
                   icon: Icons.subtitles_outlined,
                   label: !isSubOff && shortLabel.isNotEmpty
                       ? shortLabel
                       : 'Off',
-                  active: false,
                   tooltip: context.l10n.video_subtitle,
                   isCompact: isMobile,
                   onTap: () => _openPlayerSettings(
@@ -2939,13 +3230,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             builder: (context) => StreamBuilder<Track>(
               stream: _player.stream.track,
               builder: (context, snapshot) {
-                final audioTrack = _player.state.track.audio;
-                final rawName =
-                    audioTrack.title ??
-                    audioTrack.language ??
-                    audioTrack.channels ??
-                    '';
-                final shortLabel = _shortTrackLabel(rawName);
+                final audioTrack = _effectiveAudioTrack;
+                final isAudioOff = audioTrack == null || audioTrack.id == 'no';
+                final rawName = audioTrackLabel(audioTrack);
+                final shortLabel =
+                    (!isAudioOff && rawName.isNotEmpty && rawName != 'None')
+                    ? _shortTrackLabel(rawName)
+                    : '';
                 final hasMultipleAudios =
                     _player.state.tracks.audio.length > 1 ||
                     widget.videos.any((v) => (v.audios?.length ?? 0) > 1);
@@ -2978,7 +3269,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               builder: (context, speed, _) => PlayerPillButton(
                 icon: Icons.speed,
                 label: '${speed}x',
-                active: false,
                 tooltip: context.l10n.playback_speed,
                 isCompact: isMobile,
                 onTap: () => _openPlayerSettings(
@@ -2998,7 +3288,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             builder: (context, fit, _) => PlayerPillButton(
               icon: Icons.fit_screen_outlined,
               label: _fitShortLabel(fit),
-              active: false,
               tooltip: 'Fit screen',
               isCompact: isMobile,
               onTap: () => _changeFitLabel(ref),
@@ -3011,7 +3300,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           child: Builder(
             builder: (btnContext) => PlayerPillButton(
               icon: Icons.video_settings,
-              active: false,
               tooltip: context.l10n.settings,
               isCompact: isMobile,
               onTap: () => _openPlayerSettings(btnContext),
@@ -3027,7 +3315,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 padding: const EdgeInsets.only(left: 2.5, right: 5),
                 child: PlayerPillButton(
                   icon: isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
-                  active: false,
                   tooltip: context.l10n.fullscreen,
                   isCompact: isMobile,
                   onTap: () async {
