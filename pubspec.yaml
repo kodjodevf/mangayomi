@@ -12,13 +12,13 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  go_router: ^17.2.0
+  go_router: ^18.0.1
   flutter_riverpod: ^3.1.0
   riverpod_annotation: ^4.0.0
-  html: ^0.15.6
+  html: ^0.15.7
   font_awesome_flutter: ^11.0.0
   flex_color_scheme: ^8.3.1
-  extended_image: ^10.0.0
+  extended_image: ^10.1.0
   flutter_avif_ios: ^3.1.0
   flutter_avif_platform_interface: ^3.1.0
   photo_view: ^0.15.0
@@ -38,10 +38,10 @@ dependencies:
   isar_community_flutter_libs: ^3.3.2
   share_plus: ^13.0.0
   xpath_selector_html_parser: ^3.0.1
-  archive: ^4.0.9
+  archive: ^4.3.0
   external_path: ^2.2.0
   file_picker: 12.0.0-beta.7
-  flutter_secure_storage: ^11.0.0
+  flutter_secure_storage: ^11.1.1
   path_provider: ^2.1.5
   scrollable_positioned_list: ^0.3.8
   bot_toast: ^4.1.3
@@ -64,7 +64,7 @@ dependencies:
   cupertino_icons: ^1.0.9
   window_manager: ^0.5.1
   ffi: ^2.1.5
-  ffigen: ^20.1.1
+  ffigen: ^22.0.0
   http_interceptor: ^2.0.0
   js_packer: ^0.0.6
   flutter_qjs:
@@ -72,7 +72,7 @@ dependencies:
       url: https://github.com/kodjodevf/flutter_qjs.git
       ref: main
   http: ^1.6.0
-  re_editor: ^0.9.0
+  re_editor: ^0.10.0
   re_highlight: ^0.0.3
   json_view: ^0.4.2
   super_sliver_list: ^0.4.1
@@ -112,11 +112,11 @@ dependencies:
     git:
       url: https://github.com/kodjodevf/m_extension_server.git
   flutter_tts: ^4.2.5
-  code_assets: ^1.2.1
-  hooks: ^2.0.2
-  native_toolchain_c: ^0.19.2
-  cupertino_ui: ^1.0.0
-  image: ^4.9.2
+  code_assets: ^2.0.0
+  hooks: ^2.2.0
+  native_toolchain_c: ^0.19.4
+  cupertino_ui: ^1.0.2
+  image: ^4.10.1
 
 dependency_overrides:
   protobuf: ^5.0.0
