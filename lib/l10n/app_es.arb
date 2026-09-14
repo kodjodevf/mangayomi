@@ -1309,5 +1309,68 @@
         "type": "int"
       }
     }
-  }
+  },
+  "developer_mode": "Modo desarrollador",
+  "developer_mode_subtitle": "Mostrar herramientas de desarrollador de extensiones (crear extensión, editar código)",
+  "last_sync": "Última sincronización: ",
+  "sync_login_browser": "Iniciar sesión con el navegador",
+  "sync_progress_percent": "Sincronizando… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "Sincronizando…",
+  "override_ass_subtitles": "Anular subtítulos ASS",
+  "override_ass_subtitles_info": "Aplicar estilo personalizado a los subtítulos ASS/SSA",
+  "repo_already_exists": "¡El repositorio ya existe!",
+  "tracks": "Pistas",
+  "playback_speed": "Velocidad de reproducción",
+  "shaders": "Shaders",
+  "video_fit": "Ajuste",
+  "double_page_single_first_page": "Primera página individual",
+  "double_page_single_first_page_subtitle": "Mostrar la primera página sola en el modo de doble página",
+  "memory_overlay": "Mostrar uso de memoria",
+  "memory_overlay_subtitle": "Lectura en vivo del consumo de memoria de la app. Para medir en el dispositivo en lugar de adivinar: obsérvelo al desplazarse por la biblioteca o leer un capítulo.",
+  "error_reports_extension_failure": "Esto proviene de una extensión, no de Mangayomi. Las extensiones son desarrolladas y mantenidas por quienes administran el repositorio desde el que instaló esta fuente, por lo que la solución debe realizarse allí. El nombre de la fuente y lo que estaba abriendo son detalles útiles para proporcionarles.",
+  "error_reports_already_reported": "Ya reportado",
+  "error_reports_expected_failure": "Esto suele deberse a la fuente o a la red más que a la app: un enlace expirado, un servidor caído o una desconexión. Solo vale la pena reportarlo si sigue sucediendo en una fuente que funciona en otros lugares.",
+  "global_search_no_sources": "No hay fuentes de {itemType} instaladas.",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "Agregue un repositorio en Explorar e instale una extensión correspondiente.",
+  "global_search_only_pinned": "Tiene {count, plural, =1{1 fuente} other{{count} fuentes}} para esto, pero solo se buscan las fijadas.",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "Fije una fuente o desactive \"Solo incluir fuentes fijadas\" en los ajustes de Explorar.",
+  "global_search_all_nsfw": "Todas sus fuentes para esto están marcadas como NSFW y están ocultas.",
+  "global_search_all_nsfw_hint": "Active las fuentes NSFW en los ajustes de Explorar para buscarlas.",
+  "related_titles": "Relacionados",
+  "related_none": "No se encontraron títulos relacionados para esta obra.",
+  "relation_adaptation": "Adaptación",
+  "relation_sequel": "Secuela",
+  "relation_prequel": "Precuela",
+  "relation_parent": "Historia principal",
+  "relation_side_story": "Historia paralela",
+  "relation_spin_off": "Spin-off",
+  "relation_alternative": "Versión alternativa",
+  "auto_library_update": "Actualizaciones automáticas de biblioteca",
+  "auto_library_update_subtitle": "Comprobar nuevos capítulos para cada entrada de su biblioteca al iniciar la app.",
+  "auto_library_update_never": "Nunca",
+  "auto_library_update_12_hours": "Cada 12 horas",
+  "auto_library_update_daily": "Diariamente",
+  "auto_library_update_2_days": "Cada 2 días",
+  "auto_library_update_weekly": "Semanalmente",
+  "auto_library_update_wifi_only": "Solo con Wi-Fi",
+  "auto_library_update_wifi_only_subtitle": "Omitir la actualización programada cuando use datos móviles."
 }

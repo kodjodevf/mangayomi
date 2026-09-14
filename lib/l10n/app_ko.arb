@@ -822,7 +822,6 @@
   "clear_library_input": "모든 관련 항목을 제거하려면 'manga', 'anime', 또는 'novel' (쉼표로 구분)을 입력하세요",
   "watch_order": "시청 순서",
   "sequels": "후속작",
-  "recommendations": "추천",
   "recommendations_similarity": "유사도:",
   "local_folder_structure": "로컬 폴더 구조",
   "local_folder": "로컬 폴더",
@@ -1333,5 +1332,7 @@
   "auto_library_update_2_days": "2일마다",
   "auto_library_update_weekly": "매주",
   "auto_library_update_wifi_only": "Wi-Fi에서만",
-  "auto_library_update_wifi_only_subtitle": "모바일 데이터 사용 중에는 예약된 업데이트를 건너뜁니다."
+  "auto_library_update_wifi_only_subtitle": "모바일 데이터 사용 중에는 예약된 업데이트를 건너뜁니다.",
+  "developer_mode": "개발자 모드",
+  "developer_mode_subtitle": "확장 프로그램 개발자 도구 표시 (확장 프로그램 생성, 코드 편집)"
 }

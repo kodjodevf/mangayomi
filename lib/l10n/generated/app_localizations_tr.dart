@@ -787,11 +787,11 @@ class AppLocalizationsTr extends AppLocalizations {
   String get create_extension => 'Eklenti Oluştur';
 
   @override
-  String get developer_mode => 'Developer mode';
+  String get developer_mode => 'Geliştirici modu';
 
   @override
   String get developer_mode_subtitle =>
-      'Show extension developer tools (create extension, edit code)';
+      'Uzantı geliştirici araçlarını göster (uzantı oluştur, kodu düzenle)';
 
   @override
   String get choose_extension_language => 'Eklenti dilini seçin';
@@ -1055,10 +1055,10 @@ class AppLocalizationsTr extends AppLocalizations {
       'İlerlemenizi kendi barındırdığınız bir \nserver aracılığıyla birden fazla cihaz arasında senkronize edin. Daha fazla bilgi için discord sunucumuza göz atın!';
 
   @override
-  String get last_sync => 'Last sync at: ';
+  String get last_sync => 'Son senkronizasyon: ';
 
   @override
-  String get sync_login_browser => 'Log in with browser';
+  String get sync_login_browser => 'Tarayıcı ile giriş yap';
 
   @override
   String get sync_server => 'Senkronizasyon Sunucu Adresi';
@@ -1078,11 +1078,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String sync_progress_percent(Object percent) {
-    return 'Syncing… $percent%';
+    return 'Senkronize ediliyor… %$percent';
   }
 
   @override
-  String get sync_progress_indeterminate => 'Syncing…';
+  String get sync_progress_indeterminate => 'Senkronize ediliyor…';
 
   @override
   String get sync_button_sync => 'İlerlemeyi senkronize et';
@@ -1772,11 +1772,11 @@ class AppLocalizationsTr extends AppLocalizations {
       'Altyazıları özelleştirmek için oyuncu ayarlarında `libass kullan` seçeneğini devre dışı bırakın.';
 
   @override
-  String get override_ass_subtitles => 'Override ASS subtitles';
+  String get override_ass_subtitles => 'ASS altyazılarını geçersiz kıl';
 
   @override
   String get override_ass_subtitles_info =>
-      'Apply custom styling to ASS/SSA subtitles';
+      'ASS/SSA altyazılarına özel stil uygula';
 
   @override
   String get torrent_stream => 'Torrent Akışı';
@@ -1970,7 +1970,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get repo_added => 'Kaynak deposu eklendi!';
 
   @override
-  String get repo_already_exists => 'Repository already exists!';
+  String get repo_already_exists => 'Depo zaten mevcut!';
 
   @override
   String get add_repo => 'Depo ekle?';
@@ -2185,16 +2185,16 @@ class AppLocalizationsTr extends AppLocalizations {
   String get subtitle_speed => 'Hız';
 
   @override
-  String get tracks => 'Tracks';
+  String get tracks => 'Parçalar';
 
   @override
-  String get playback_speed => 'Playback speed';
+  String get playback_speed => 'Oynatma hızı';
 
   @override
-  String get shaders => 'Shaders';
+  String get shaders => 'Gölgelendiriciler';
 
   @override
-  String get video_fit => 'Fit';
+  String get video_fit => 'Sığdır';
 
   @override
   String get calendar => 'Takvim';
@@ -2739,11 +2739,11 @@ class AppLocalizationsTr extends AppLocalizations {
   String get dual_page_rotate_to_fit_invert => 'Döndürme yönünü tersine çevir';
 
   @override
-  String get double_page_single_first_page => 'Single first page';
+  String get double_page_single_first_page => 'İlk sayfa tekli';
 
   @override
   String get double_page_single_first_page_subtitle =>
-      'Display the first page alone in double page mode';
+      'Çift sayfa modunda ilk sayfayı tek başına göster';
 
   @override
   String get landscape_zoom => 'Otomatik yatay yakınlaştırma';
@@ -3091,11 +3091,11 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get memory_overlay => 'Show memory usage';
+  String get memory_overlay => 'Bellek kullanımını göster';
 
   @override
   String get memory_overlay_subtitle =>
-      'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.';
+      'Uygulamanın kullandığı belleğin canlı gösterimi. Tahmin etmek yerine cihaz üzerinde ölçüm yapın: kitaplıkta gezinirken veya bir bölüm okurken izleyin.';
 
   @override
   String get beta => 'Beta';
@@ -3133,14 +3133,14 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get error_reports_extension_failure =>
-      'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.';
+      'Bu hata Mangayomi\'den değil, bir uzantıdan kaynaklandı. Uzantılar bu kaynağı yüklediğiniz deponun yöneticileri tarafından yazılır ve sürdürülür, bu nedenle düzeltmenin oraya yapılması gerekir.';
 
   @override
-  String get error_reports_already_reported => 'Already reported';
+  String get error_reports_already_reported => 'Zaten bildirildi';
 
   @override
   String get error_reports_expected_failure =>
-      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
+      'Bu durum genellikle uygulamadan ziyade kaynak veya ağdan kaynaklanır: süresi dolmuş bir bağlantı, çökmüş bir sunucu veya kopan bir bağlantı.';
 
   @override
   String get share_unavailable_copied =>
@@ -3260,93 +3260,93 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String global_search_no_sources(String itemType) {
-    return 'No $itemType sources are installed.';
+    return 'Hiçbir $itemType kaynağı yüklü değil.';
   }
 
   @override
   String get global_search_no_sources_hint =>
-      'Add a repository under Browse, then install an extension for it.';
+      'Gözat altından bir depo ekleyin ve ardından bunun için bir uzantı yükleyin.';
 
   @override
   String global_search_only_pinned(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sources',
-      one: '1 source',
+      other: '$count kaynak',
+      one: '1 kaynak',
     );
-    return 'You have $_temp0 for this, but only pinned ones are searched.';
+    return 'Bunun için $_temp0 var, ancak yalnızca sabitlenenler aranır.';
   }
 
   @override
   String get global_search_only_pinned_hint =>
-      'Pin one, or turn off \"Only include pinned sources\" in Browse settings.';
+      'Birini sabitleyin veya Gözat ayarlarından \"Yalnızca sabitlenmiş kaynakları dahil et\" seçeneğini kapatın.';
 
   @override
   String get global_search_all_nsfw =>
-      'Every source you have for this is marked NSFW, and those are hidden.';
+      'Bunun için sahip olduğunuz tüm kaynaklar NSFW olarak işaretlenmiş ve gizlenmiştir.';
 
   @override
   String get global_search_all_nsfw_hint =>
-      'Turn on NSFW sources in Browse settings to search them.';
+      'Arama yapabilmek için Gözat ayarlarından NSFW kaynaklarını açın.';
 
   @override
   String get missing_source_check_result_message =>
       'Bu girdiler yüklü olmayan kaynaklara işaret ediyor. Taşımak için dokunun veya eklentiyi yükleyin.';
 
   @override
-  String get related_titles => 'Related';
+  String get related_titles => 'İlgili';
 
   @override
-  String get related_none => 'Nothing related was found for this title.';
+  String get related_none => 'Bu başlık için ilgili bir şey bulunamadı.';
 
   @override
-  String get relation_adaptation => 'Adaptation';
+  String get relation_adaptation => 'Uyarlama';
 
   @override
-  String get relation_sequel => 'Sequel';
+  String get relation_sequel => 'Devam';
 
   @override
-  String get relation_prequel => 'Prequel';
+  String get relation_prequel => 'Öncesi';
 
   @override
-  String get relation_parent => 'Parent story';
+  String get relation_parent => 'Ana hikaye';
 
   @override
-  String get relation_side_story => 'Side story';
+  String get relation_side_story => 'Yan hikaye';
 
   @override
-  String get relation_spin_off => 'Spin-off';
+  String get relation_spin_off => 'Yan ürün';
 
   @override
-  String get relation_alternative => 'Alternative version';
+  String get relation_alternative => 'Alternatif sürüm';
 
   @override
-  String get auto_library_update => 'Automatic library updates';
+  String get auto_library_update => 'Otomatik kütüphane güncellemeleri';
 
   @override
   String get auto_library_update_subtitle =>
-      'Check every entry in your library for new chapters when the app starts.';
+      'Uygulama başladığında kütüphanenizdeki her öğeyi yeni bölümler için kontrol edin.';
 
   @override
-  String get auto_library_update_never => 'Never';
+  String get auto_library_update_never => 'Asla';
 
   @override
-  String get auto_library_update_12_hours => 'Every 12 hours';
+  String get auto_library_update_12_hours => '12 saatte bir';
 
   @override
-  String get auto_library_update_daily => 'Daily';
+  String get auto_library_update_daily => 'Günlük';
 
   @override
-  String get auto_library_update_2_days => 'Every 2 days';
+  String get auto_library_update_2_days => '2 günde bir';
 
   @override
-  String get auto_library_update_weekly => 'Weekly';
+  String get auto_library_update_weekly => 'Haftalık';
 
   @override
-  String get auto_library_update_wifi_only => 'Only on Wi-Fi';
+  String get auto_library_update_wifi_only => 'Yalnızca Wi-Fi';
 
   @override
   String get auto_library_update_wifi_only_subtitle =>
-      'Skip the scheduled update while on mobile data.';
+      'Hücresel verideyken planlanan güncellemeyi atlayın.';
 }

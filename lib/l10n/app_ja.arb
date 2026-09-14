@@ -1383,5 +1383,68 @@
         "type": "int"
       }
     }
-  }
+  },
+  "developer_mode": "開発者モード",
+  "developer_mode_subtitle": "拡張機能の開発者ツール（拡張機能の作成、コード編集）を表示",
+  "last_sync": "最終同期日時: ",
+  "sync_login_browser": "ブラウザでログイン",
+  "sync_progress_percent": "同期中… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "同期中…",
+  "override_ass_subtitles": "ASS字幕をオーバーライド",
+  "override_ass_subtitles_info": "ASS/SSA字幕にカスタムスタイルを適用",
+  "repo_already_exists": "リポジトリは既に存在します！",
+  "tracks": "トラック",
+  "playback_speed": "再生速度",
+  "shaders": "シェーダー",
+  "video_fit": "画面サイズに合わせる",
+  "double_page_single_first_page": "最初のページを単独表示",
+  "double_page_single_first_page_subtitle": "見開きモードで最初のページ（表紙）を単独で表示する",
+  "memory_overlay": "メモリ使用量を表示",
+  "memory_overlay_subtitle": "アプリが保持しているメモリのリアルタイム表示。推測ではなく端末上で測定するために、ライブラリのスクロールや閲覧中に確認できます。",
+  "error_reports_extension_failure": "これはMangayomiではなく拡張機能に起因するエラーです。拡張機能はインストール元のリポジトリ管理者によって作成・管理されているため、そちらで修正する必要があります。ソース名と開こうとした項目を伝えると役立ちます。",
+  "error_reports_already_reported": "報告済み",
+  "error_reports_expected_failure": "これは通常、アプリではなくソースまたはネットワークの問題です（リンクの期限切れ、サーバーダウン、接続切断など）。他では動作しているソースで発生し続ける場合にのみ報告することをお勧めします。",
+  "global_search_no_sources": "{itemType}のソースがインストールされていません。",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "「ブラウズ」でリポジトリを追加し、拡張機能をインストールしてください。",
+  "global_search_only_pinned": "対象のソースが{count, plural, other{{count} 件}}ありますが、固定されたソースのみが検索されます。",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "ソースをピン留めするか、ブラウズ設定で「固定されたソースのみ含める」を無効にしてください。",
+  "global_search_all_nsfw": "この項目のすべてのソースがNSFWに設定されており、非表示になっています。",
+  "global_search_all_nsfw_hint": "検索するにはブラウズ設定でNSFWソースを有効にしてください。",
+  "related_titles": "関連作品",
+  "related_none": "この作品に関連する作品は見つかりませんでした。",
+  "relation_adaptation": "メディアミックス",
+  "relation_sequel": "続編",
+  "relation_prequel": "前日譚",
+  "relation_parent": "本編",
+  "relation_side_story": "外伝",
+  "relation_spin_off": "スピンオフ",
+  "relation_alternative": "別バージョン",
+  "auto_library_update": "ライブラリの自動更新",
+  "auto_library_update_subtitle": "アプリ起動時にライブラリ内のすべての作品の最新話をチェックします。",
+  "auto_library_update_never": "更新しない",
+  "auto_library_update_12_hours": "12時間ごと",
+  "auto_library_update_daily": "毎日",
+  "auto_library_update_2_days": "2日ごと",
+  "auto_library_update_weekly": "毎週",
+  "auto_library_update_wifi_only": "Wi-Fi接続時のみ",
+  "auto_library_update_wifi_only_subtitle": "モバイルデータ通信中は予定された更新をスキップします。"
 }

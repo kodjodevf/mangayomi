@@ -790,11 +790,11 @@ class AppLocalizationsAs extends AppLocalizations {
   String get create_extension => 'এক্সটেনচন সৃষ্টি কৰক';
 
   @override
-  String get developer_mode => 'Developer mode';
+  String get developer_mode => 'ডিভেলপাৰ ম\'ড';
 
   @override
   String get developer_mode_subtitle =>
-      'Show extension developer tools (create extension, edit code)';
+      'এক্সটেনশন ডিভেলপাৰ সঁজুলিসমূহ দেখুৱাওক (এক্সটেনশন সৃষ্টি, ক\'ড সম্পাদনা)';
 
   @override
   String get choose_extension_language => 'এক্সটেনচনৰ ভাষা বাছক';
@@ -1059,10 +1059,10 @@ class AppLocalizationsAs extends AppLocalizations {
       'স্ব-হোষ্ট কৰা চাৰ্ভাৰৰ জৰিয়তে একাধিক ডিভাইচত আপোনাৰ প্ৰগতি সমন্বয় কৰক। অধিক তথ্যৰ বাবে আমাৰ ডিস্ক\'ৰ্ড চাৰ্ভাৰ চাওক!';
 
   @override
-  String get last_sync => 'Last sync at: ';
+  String get last_sync => 'সৰ্বশেষ সমন্বয়: ';
 
   @override
-  String get sync_login_browser => 'Log in with browser';
+  String get sync_login_browser => 'ব্ৰাউজাৰৰ সৈতে লগ ইন কৰক';
 
   @override
   String get sync_server => 'সিংক চাৰ্ভাৰ ঠিকনা';
@@ -1082,11 +1082,11 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String sync_progress_percent(Object percent) {
-    return 'Syncing… $percent%';
+    return 'সমন্বয় হৈ আছে… $percent%';
   }
 
   @override
-  String get sync_progress_indeterminate => 'Syncing…';
+  String get sync_progress_indeterminate => 'সমন্বয় হৈ আছে…';
 
   @override
   String get sync_button_sync => 'প্ৰগতি সিংক কৰক';
@@ -1766,11 +1766,11 @@ class AppLocalizationsAs extends AppLocalizations {
       'উপশিৰোনামসমূহ কাষ্টমাইজ কৰিবলৈ সক্ষম হ\'বলৈ প্লেয়াৰ ছেটিংছত `libass ব্যৱহাৰ কৰক` নিষ্ক্ৰিয় কৰক।';
 
   @override
-  String get override_ass_subtitles => 'Override ASS subtitles';
+  String get override_ass_subtitles => 'ASS চাবটাইটেল অভাৰৰাইড কৰক';
 
   @override
   String get override_ass_subtitles_info =>
-      'Apply custom styling to ASS/SSA subtitles';
+      'ASS/SSA চাবটাইটেলত স্বনিৰ্বাচিত শৈলী প্ৰয়োগ কৰক';
 
   @override
   String get torrent_stream => 'টৰেণ্ট ষ্ট্ৰীম';
@@ -1961,7 +1961,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get repo_added => 'উৎস ৰিপজিটৰী যোগ কৰা হ\'ল!';
 
   @override
-  String get repo_already_exists => 'Repository already exists!';
+  String get repo_already_exists => 'ৰেপজিটৰিটো ইতিমধ্যে আছে!';
 
   @override
   String get add_repo => 'ৰিপজিটৰী যোগ কৰিবনে?';
@@ -2177,16 +2177,16 @@ class AppLocalizationsAs extends AppLocalizations {
   String get subtitle_speed => 'গতি';
 
   @override
-  String get tracks => 'Tracks';
+  String get tracks => 'ট্ৰেকসমূহ';
 
   @override
-  String get playback_speed => 'Playback speed';
+  String get playback_speed => 'প্লেবেকৰ গতি';
 
   @override
-  String get shaders => 'Shaders';
+  String get shaders => 'শ্বেডাৰসমূহ';
 
   @override
-  String get video_fit => 'Fit';
+  String get video_fit => 'ফিট';
 
   @override
   String get calendar => 'কেলেণ্ডাৰ';
@@ -2728,11 +2728,11 @@ class AppLocalizationsAs extends AppLocalizations {
   String get dual_page_rotate_to_fit_invert => 'Invert rotation direction';
 
   @override
-  String get double_page_single_first_page => 'Single first page';
+  String get double_page_single_first_page => 'প্ৰথম পৃষ্ঠা একক';
 
   @override
   String get double_page_single_first_page_subtitle =>
-      'Display the first page alone in double page mode';
+      'দ্বি-পৃষ্ঠা ম\'ডত প্ৰথম পৃষ্ঠাটো অকলে প্ৰদৰ্শন কৰক';
 
   @override
   String get landscape_zoom => 'Automatic landscape zoom';
@@ -3081,11 +3081,11 @@ class AppLocalizationsAs extends AppLocalizations {
   }
 
   @override
-  String get memory_overlay => 'Show memory usage';
+  String get memory_overlay => 'মেমৰিৰ ব্যৱহাৰ দেখুৱাওক';
 
   @override
   String get memory_overlay_subtitle =>
-      'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.';
+      'এপে ব্যৱহাৰ কৰা মেমৰিৰ লাইভ তথ্য। ডিভাইচত সঠিকভাৱে নিৰীক্ষণ কৰিবলৈ: পুথিভঁৰাল স্ক্ৰল কৰোঁতে বা অধ্যায় পঢ়োঁতে লক্ষ্য কৰক।';
 
   @override
   String get beta => 'বিটা';
@@ -3123,14 +3123,14 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get error_reports_extension_failure =>
-      'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.';
+      'এইটো এটা এক্সটেনশনৰ পৰা আহিছে, Mangayomi-ৰ পৰা নহয়। যিটো ৰেপজিটৰিৰ পৰা আপুনি এই উৎস ইনষ্টল কৰিছিল সেই ৰেপজিটৰিৰ পৰিচালকসকলে ইয়াক পৰিচালনা কৰে, সেয়েহে সমাধান তাতেই হ\'ব লাগিব।';
 
   @override
-  String get error_reports_already_reported => 'Already reported';
+  String get error_reports_already_reported => 'ইতিমধ্যে ৰিপৰ্ট কৰা হৈছে';
 
   @override
   String get error_reports_expected_failure =>
-      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
+      'এইটো সাধাৰণতে এপৰ পৰিৱৰ্তে উৎস বা নেটৱৰ্কৰ সমস্যা: ম্যাদ উকলি যোৱা লিংক, চাৰ্ভাৰ ডাউন বা সংযোগ বিচ্ছিন্ন হোৱা।';
 
   @override
   String get share_unavailable_copied =>
@@ -3247,93 +3247,93 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String global_search_no_sources(String itemType) {
-    return 'No $itemType sources are installed.';
+    return 'কোনো $itemType উৎস ইনষ্টল কৰা নাই।';
   }
 
   @override
   String get global_search_no_sources_hint =>
-      'Add a repository under Browse, then install an extension for it.';
+      'ব্ৰাউজৰ অধীনত এটা ৰেপজিটৰি যোগ কৰক, তাৰ পিছত তাৰ বাবে এটা এক্সটেনশন ইনষ্টল কৰক।';
 
   @override
   String global_search_only_pinned(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sources',
-      one: '1 source',
+      other: '$countটা উৎস',
+      one: '১টা উৎস',
     );
-    return 'You have $_temp0 for this, but only pinned ones are searched.';
+    return 'আপোনাৰ ওচৰত ইয়াৰ বাবে $_temp0 আছে, কিন্তু কেৱল পিন কৰা উৎসসমূহতহে সন্ধান কৰা হয়।';
   }
 
   @override
   String get global_search_only_pinned_hint =>
-      'Pin one, or turn off \"Only include pinned sources\" in Browse settings.';
+      'এটা পিন কৰক, বা ব্ৰাউজ ছেটিংছত \"কেৱল পিন কৰা উৎসসমূহ অন্তৰ্ভুক্ত কৰক\" বন্ধ কৰক।';
 
   @override
   String get global_search_all_nsfw =>
-      'Every source you have for this is marked NSFW, and those are hidden.';
+      'ইয়াৰ বাবে আপোনাৰ সকলো উৎস NSFW হিচাপে চিহ্নিত আৰু লুকুওৱা হৈছে।';
 
   @override
   String get global_search_all_nsfw_hint =>
-      'Turn on NSFW sources in Browse settings to search them.';
+      'সন্ধান কৰিবলৈ ব্ৰাউজ ছেটিংছত NSFW উৎসসমূহ অন কৰক।';
 
   @override
   String get missing_source_check_result_message =>
       'এই এণ্ট্ৰিসমূহ ইনষ্টল নথকা উৎসৰ সৈতে জড়িত। স্থানান্তৰ কৰিবলৈ টিপক বা এক্সটেনচন ইনষ্টল কৰক।';
 
   @override
-  String get related_titles => 'Related';
+  String get related_titles => 'সম্পৰ্কিত';
 
   @override
-  String get related_none => 'Nothing related was found for this title.';
+  String get related_none => 'এই শীৰ্ষকৰ বাবে কোনো সম্পৰ্কিত বিষয় পোৱা নগ\'ল।';
 
   @override
-  String get relation_adaptation => 'Adaptation';
+  String get relation_adaptation => 'ৰূপান্তৰ';
 
   @override
-  String get relation_sequel => 'Sequel';
+  String get relation_sequel => 'পৰৱৰ্তী অংশ';
 
   @override
-  String get relation_prequel => 'Prequel';
+  String get relation_prequel => 'পূৰ্বৱৰ্তী অংশ';
 
   @override
-  String get relation_parent => 'Parent story';
+  String get relation_parent => 'মূল কাহিনী';
 
   @override
-  String get relation_side_story => 'Side story';
+  String get relation_side_story => 'পাৰ্শ্ব কাহিনী';
 
   @override
-  String get relation_spin_off => 'Spin-off';
+  String get relation_spin_off => 'স্পিন-অফ';
 
   @override
-  String get relation_alternative => 'Alternative version';
+  String get relation_alternative => 'বিকল্প সংস্কৰণ';
 
   @override
-  String get auto_library_update => 'Automatic library updates';
+  String get auto_library_update => 'স্বয়ংক্ৰিয় পুথিভঁৰাল আপডেট';
 
   @override
   String get auto_library_update_subtitle =>
-      'Check every entry in your library for new chapters when the app starts.';
+      'এপটো আৰম্ভ হোৱাৰ সময়ত পুথিভঁৰালৰ প্ৰতিটো বস্তুৰ নতুন অধ্যায় পৰীক্ষা কৰক।';
 
   @override
-  String get auto_library_update_never => 'Never';
+  String get auto_library_update_never => 'কেতিয়াও নহয়';
 
   @override
-  String get auto_library_update_12_hours => 'Every 12 hours';
+  String get auto_library_update_12_hours => 'প্ৰতি ১২ ঘণ্টাত';
 
   @override
-  String get auto_library_update_daily => 'Daily';
+  String get auto_library_update_daily => 'দৈনিক';
 
   @override
-  String get auto_library_update_2_days => 'Every 2 days';
+  String get auto_library_update_2_days => 'প্ৰতি ২ দিনত';
 
   @override
-  String get auto_library_update_weekly => 'Weekly';
+  String get auto_library_update_weekly => 'সাপ্তাহিক';
 
   @override
-  String get auto_library_update_wifi_only => 'Only on Wi-Fi';
+  String get auto_library_update_wifi_only => 'কেৱল ৱাই-ফাইত';
 
   @override
   String get auto_library_update_wifi_only_subtitle =>
-      'Skip the scheduled update while on mobile data.';
+      'ম\'বাইল ডাটা ব্যৱহাৰ কৰাৰ সময়ত নিৰ্ধাৰিত আপডেট বাদ দিয়ক।';
 }

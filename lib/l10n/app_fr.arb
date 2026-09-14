@@ -1317,5 +1317,60 @@
         "type": "int"
       }
     }
-  }
+  },
+  "last_sync": "Dernière synchronisation à : ",
+  "sync_login_browser": "Se connecter avec le navigateur",
+  "sync_progress_percent": "Synchronisation… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "Synchronisation…",
+  "playback_speed": "Vitesse de lecture",
+  "shaders": "Shaders",
+  "video_fit": "Ajustement",
+  "memory_overlay": "Afficher l'utilisation de la mémoire",
+  "memory_overlay_subtitle": "Affichage en direct de ce que l'application conserve en mémoire. Pour mesurer sur l'appareil au lieu de deviner : observez pendant le défilement de la bibliothèque ou la lecture d'un chapitre.",
+  "error_reports_extension_failure": "Ceci provient d'une extension et non de Mangayomi. Les extensions sont développées et maintenues par les gestionnaires du dépôt depuis lequel vous avez installé cette source, la correction doit donc y être apportée. Le nom de la source et ce que vous ouvriez sont des détails utiles à leur fournir.",
+  "error_reports_already_reported": "Déjà signalé",
+  "error_reports_expected_failure": "Ceci est généralement dû à la source ou au réseau plutôt qu'à l'application : un lien expiré, un serveur indisponible ou une coupure de connexion. À ne signaler que si le problème persiste sur une source qui fonctionne par ailleurs.",
+  "global_search_no_sources": "Aucune source {itemType} n'est installée.",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "Ajoutez un dépôt dans Explorer, puis installez une extension correspondante.",
+  "global_search_only_pinned": "Vous avez {count, plural, =1{1 source} other{{count} sources}} pour ceci, mais seules les sources épinglées sont recherchées.",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "Épinglez-en une, ou désactivez « Inclure uniquement les sources épinglées » dans les paramètres d'exploration.",
+  "global_search_all_nsfw": "Toutes les sources dont vous disposez pour ceci sont marquées NSFW et sont masquées.",
+  "global_search_all_nsfw_hint": "Activez les sources NSFW dans les paramètres d'exploration pour les rechercher.",
+  "related_titles": "Titres associés",
+  "related_none": "Aucun titre associé n'a été trouvé pour cette œuvre.",
+  "relation_adaptation": "Adaptation",
+  "relation_sequel": "Suite",
+  "relation_prequel": "Préquelle",
+  "relation_parent": "Histoire principale",
+  "relation_side_story": "Histoire parallèle",
+  "relation_spin_off": "Spin-off",
+  "relation_alternative": "Version alternative",
+  "auto_library_update": "Mises à jour automatiques de la bibliothèque",
+  "auto_library_update_subtitle": "Vérifier la présence de nouveaux chapitres pour chaque élément de votre bibliothèque au démarrage de l'application.",
+  "auto_library_update_never": "Jamais",
+  "auto_library_update_12_hours": "Toutes les 12 heures",
+  "auto_library_update_daily": "Quotidiennement",
+  "auto_library_update_2_days": "Tous les 2 jours",
+  "auto_library_update_weekly": "Hebdomadairement",
+  "auto_library_update_wifi_only": "Uniquement en Wi-Fi",
+  "auto_library_update_wifi_only_subtitle": "Ignorer la mise à jour planifiée lors de l'utilisation des données mobiles."
 }

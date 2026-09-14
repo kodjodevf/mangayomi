@@ -782,11 +782,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get create_extension => '拡張機能を作成';
 
   @override
-  String get developer_mode => 'Developer mode';
+  String get developer_mode => '開発者モード';
 
   @override
-  String get developer_mode_subtitle =>
-      'Show extension developer tools (create extension, edit code)';
+  String get developer_mode_subtitle => '拡張機能の開発者ツール（拡張機能の作成、コード編集）を表示';
 
   @override
   String get choose_extension_language => '拡張機能の言語を選択';
@@ -1049,10 +1048,10 @@ class AppLocalizationsJa extends AppLocalizations {
       'セルフホストサーバーを通じて複数デバイス間で進行状況を同期します。詳細はDiscordサーバーをご覧ください！';
 
   @override
-  String get last_sync => 'Last sync at: ';
+  String get last_sync => '最終同期日時: ';
 
   @override
-  String get sync_login_browser => 'Log in with browser';
+  String get sync_login_browser => 'ブラウザでログイン';
 
   @override
   String get sync_server => '同期サーバーアドレス';
@@ -1071,11 +1070,11 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String sync_progress_percent(Object percent) {
-    return 'Syncing… $percent%';
+    return '同期中… $percent%';
   }
 
   @override
-  String get sync_progress_indeterminate => 'Syncing…';
+  String get sync_progress_indeterminate => '同期中…';
 
   @override
   String get sync_button_sync => '進行状況を同期';
@@ -1739,11 +1738,10 @@ class AppLocalizationsJa extends AppLocalizations {
       '字幕をカスタマイズできるようにするには、プレーヤー設定で「libassを使用」を無効にしてください。';
 
   @override
-  String get override_ass_subtitles => 'Override ASS subtitles';
+  String get override_ass_subtitles => 'ASS字幕をオーバーライド';
 
   @override
-  String get override_ass_subtitles_info =>
-      'Apply custom styling to ASS/SSA subtitles';
+  String get override_ass_subtitles_info => 'ASS/SSA字幕にカスタムスタイルを適用';
 
   @override
   String get torrent_stream => 'トレントストリーム';
@@ -1929,7 +1927,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get repo_added => 'ソースリポジトリが追加されました！';
 
   @override
-  String get repo_already_exists => 'Repository already exists!';
+  String get repo_already_exists => 'リポジトリは既に存在します！';
 
   @override
   String get add_repo => 'リポジトリを追加しますか？';
@@ -2136,16 +2134,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get subtitle_speed => '速度';
 
   @override
-  String get tracks => 'Tracks';
+  String get tracks => 'トラック';
 
   @override
-  String get playback_speed => 'Playback speed';
+  String get playback_speed => '再生速度';
 
   @override
-  String get shaders => 'Shaders';
+  String get shaders => 'シェーダー';
 
   @override
-  String get video_fit => 'Fit';
+  String get video_fit => '画面サイズに合わせる';
 
   @override
   String get calendar => 'カレンダー';
@@ -2676,11 +2674,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get dual_page_rotate_to_fit_invert => '回転方向を反転';
 
   @override
-  String get double_page_single_first_page => 'Single first page';
+  String get double_page_single_first_page => '最初のページを単独表示';
 
   @override
   String get double_page_single_first_page_subtitle =>
-      'Display the first page alone in double page mode';
+      '見開きモードで最初のページ（表紙）を単独で表示する';
 
   @override
   String get landscape_zoom => '横画面自動ズーム';
@@ -3015,11 +3013,11 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get memory_overlay => 'Show memory usage';
+  String get memory_overlay => 'メモリ使用量を表示';
 
   @override
   String get memory_overlay_subtitle =>
-      'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.';
+      'アプリが保持しているメモリのリアルタイム表示。推測ではなく端末上で測定するために、ライブラリのスクロールや閲覧中に確認できます。';
 
   @override
   String get beta => 'ベータ';
@@ -3056,14 +3054,14 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get error_reports_extension_failure =>
-      'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.';
+      'これはMangayomiではなく拡張機能に起因するエラーです。拡張機能はインストール元のリポジトリ管理者によって作成・管理されているため、そちらで修正する必要があります。ソース名と開こうとした項目を伝えると役立ちます。';
 
   @override
-  String get error_reports_already_reported => 'Already reported';
+  String get error_reports_already_reported => '報告済み';
 
   @override
   String get error_reports_expected_failure =>
-      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
+      'これは通常、アプリではなくソースまたはネットワークの問題です（リンクの期限切れ、サーバーダウン、接続切断など）。他では動作しているソースで発生し続ける場合にのみ報告することをお勧めします。';
 
   @override
   String get share_unavailable_copied => '共有機能が利用できないためクリップボードにコピーしました。';
@@ -3174,93 +3172,90 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String global_search_no_sources(String itemType) {
-    return 'No $itemType sources are installed.';
+    return '$itemTypeのソースがインストールされていません。';
   }
 
   @override
   String get global_search_no_sources_hint =>
-      'Add a repository under Browse, then install an extension for it.';
+      '「ブラウズ」でリポジトリを追加し、拡張機能をインストールしてください。';
 
   @override
   String global_search_only_pinned(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sources',
-      one: '1 source',
+      other: '$count 件',
     );
-    return 'You have $_temp0 for this, but only pinned ones are searched.';
+    return '対象のソースが$_temp0ありますが、固定されたソースのみが検索されます。';
   }
 
   @override
   String get global_search_only_pinned_hint =>
-      'Pin one, or turn off \"Only include pinned sources\" in Browse settings.';
+      'ソースをピン留めするか、ブラウズ設定で「固定されたソースのみ含める」を無効にしてください。';
 
   @override
-  String get global_search_all_nsfw =>
-      'Every source you have for this is marked NSFW, and those are hidden.';
+  String get global_search_all_nsfw => 'この項目のすべてのソースがNSFWに設定されており、非表示になっています。';
 
   @override
-  String get global_search_all_nsfw_hint =>
-      'Turn on NSFW sources in Browse settings to search them.';
+  String get global_search_all_nsfw_hint => '検索するにはブラウズ設定でNSFWソースを有効にしてください。';
 
   @override
   String get missing_source_check_result_message =>
       'これらの作品のソースがインストールされていません。移行するか拡張機能をインストールしてください。';
 
   @override
-  String get related_titles => 'Related';
+  String get related_titles => '関連作品';
 
   @override
-  String get related_none => 'Nothing related was found for this title.';
+  String get related_none => 'この作品に関連する作品は見つかりませんでした。';
 
   @override
-  String get relation_adaptation => 'Adaptation';
+  String get relation_adaptation => 'メディアミックス';
 
   @override
-  String get relation_sequel => 'Sequel';
+  String get relation_sequel => '続編';
 
   @override
-  String get relation_prequel => 'Prequel';
+  String get relation_prequel => '前日譚';
 
   @override
-  String get relation_parent => 'Parent story';
+  String get relation_parent => '本編';
 
   @override
-  String get relation_side_story => 'Side story';
+  String get relation_side_story => '外伝';
 
   @override
-  String get relation_spin_off => 'Spin-off';
+  String get relation_spin_off => 'スピンオフ';
 
   @override
-  String get relation_alternative => 'Alternative version';
+  String get relation_alternative => '別バージョン';
 
   @override
-  String get auto_library_update => 'Automatic library updates';
+  String get auto_library_update => 'ライブラリの自動更新';
 
   @override
   String get auto_library_update_subtitle =>
-      'Check every entry in your library for new chapters when the app starts.';
+      'アプリ起動時にライブラリ内のすべての作品の最新話をチェックします。';
 
   @override
-  String get auto_library_update_never => 'Never';
+  String get auto_library_update_never => '更新しない';
 
   @override
-  String get auto_library_update_12_hours => 'Every 12 hours';
+  String get auto_library_update_12_hours => '12時間ごと';
 
   @override
-  String get auto_library_update_daily => 'Daily';
+  String get auto_library_update_daily => '毎日';
 
   @override
-  String get auto_library_update_2_days => 'Every 2 days';
+  String get auto_library_update_2_days => '2日ごと';
 
   @override
-  String get auto_library_update_weekly => 'Weekly';
+  String get auto_library_update_weekly => '毎週';
 
   @override
-  String get auto_library_update_wifi_only => 'Only on Wi-Fi';
+  String get auto_library_update_wifi_only => 'Wi-Fi接続時のみ';
 
   @override
   String get auto_library_update_wifi_only_subtitle =>
-      'Skip the scheduled update while on mobile data.';
+      'モバイルデータ通信中は予定された更新をスキップします。';
 }

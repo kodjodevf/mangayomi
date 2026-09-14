@@ -1279,5 +1279,68 @@
         "type": "int"
       }
     }
-  }
+  },
+  "developer_mode": "Mode pengembang",
+  "developer_mode_subtitle": "Tampilkan alat pengembang ekstensi (buat ekstensi, edit kode)",
+  "last_sync": "Sinkronisasi terakhir pada: ",
+  "sync_login_browser": "Masuk dengan peramban",
+  "sync_progress_percent": "Menyinkronkan… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "Menyinkronkan…",
+  "override_ass_subtitles": "Ganti teks film ASS",
+  "override_ass_subtitles_info": "Terapkan gaya khusus ke teks film ASS/SSA",
+  "repo_already_exists": "Repositori sudah ada!",
+  "tracks": "Trek",
+  "playback_speed": "Kecepatan pemutaran",
+  "shaders": "Shader",
+  "video_fit": "Kesesuaian",
+  "double_page_single_first_page": "Halaman pertama tunggal",
+  "double_page_single_first_page_subtitle": "Tampilkan halaman pertama sendirian dalam mode halaman ganda",
+  "memory_overlay": "Tampilkan penggunaan memori",
+  "memory_overlay_subtitle": "Tampilan langsung memori yang digunakan aplikasi. Untuk mengukur langsung pada perangkat: pantau saat menggulir perpustakaan atau membaca bab.",
+  "error_reports_extension_failure": "Ini berasal dari ekstensi, bukan dari Mangayomi. Ekstensi ditulis dan dikelola oleh pengelola repositori tempat Anda memasang sumber ini, jadi perbaikan harus dilakukan di sana. Nama sumber dan apa yang Anda buka adalah informasi yang berguna untuk diberikan.",
+  "error_reports_already_reported": "Sudah dilaporkan",
+  "error_reports_expected_failure": "Hal ini biasanya disebabkan oleh sumber atau jaringan dan bukan aplikasi: tautan kedaluwarsa, server mati, atau koneksi terputus. Hanya perlu dilaporkan jika terus terjadi pada sumber yang berfungsi di tempat lain.",
+  "global_search_no_sources": "Tidak ada sumber {itemType} yang terpasang.",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "Tambahkan repositori di bagian Jelajahi, lalu pasang ekstensi untuk sumber tersebut.",
+  "global_search_only_pinned": "Anda memiliki {count, plural, other{{count} sumber}} untuk ini, namun hanya sumber yang disematkan yang dicari.",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "Sematkan salah satu, atau matikan \"Hanya sertakan sumber yang disematkan\" di pengaturan Jelajahi.",
+  "global_search_all_nsfw": "Semua sumber yang Anda miliki untuk ini ditandai NSFW dan disembunyikan.",
+  "global_search_all_nsfw_hint": "Aktifkan sumber NSFW di pengaturan Jelajahi untuk mencarinya.",
+  "related_titles": "Terkait",
+  "related_none": "Tidak ada judul terkait yang ditemukan untuk karya ini.",
+  "relation_adaptation": "Adaptasi",
+  "relation_sequel": "Sekuel",
+  "relation_prequel": "Prequel",
+  "relation_parent": "Cerita utama",
+  "relation_side_story": "Cerita sampingan",
+  "relation_spin_off": "Spin-off",
+  "relation_alternative": "Versi alternatif",
+  "auto_library_update": "Pembaruan perpustakaan otomatis",
+  "auto_library_update_subtitle": "Periksa bab baru untuk setiap entri di perpustakaan Anda saat aplikasi dimulai.",
+  "auto_library_update_never": "Jangan pernah",
+  "auto_library_update_12_hours": "Setiap 12 jam",
+  "auto_library_update_daily": "Harian",
+  "auto_library_update_2_days": "Setiap 2 hari",
+  "auto_library_update_weekly": "Mingguan",
+  "auto_library_update_wifi_only": "Hanya lewat Wi-Fi",
+  "auto_library_update_wifi_only_subtitle": "Lewati pembaruan terjadwal saat menggunakan data seluler."
 }

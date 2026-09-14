@@ -1311,5 +1311,68 @@
         "type": "int"
       }
     }
-  }
+  },
+  "developer_mode": "وضع المطور",
+  "developer_mode_subtitle": "إظهار أدوات مطور الإضافات (إنشاء إضافة، تعديل الكود)",
+  "last_sync": "آخر مزامنة في: ",
+  "sync_login_browser": "تسجيل الدخول باستخدام المتصفح",
+  "sync_progress_percent": "جارٍ المزامنة… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "جارٍ المزامنة…",
+  "override_ass_subtitles": "تجاوز ترجمات ASS",
+  "override_ass_subtitles_info": "تطبيق نمط مخصص على ترجمات ASS/SSA",
+  "repo_already_exists": "المستودع موجود بالفعل!",
+  "tracks": "المسارات",
+  "playback_speed": "سرعة التشغيل",
+  "shaders": "المظللات (Shaders)",
+  "video_fit": "ملاءمة",
+  "double_page_single_first_page": "الصفحة الأولى مفردة",
+  "double_page_single_first_page_subtitle": "عرض الصفحة الأولى بمفردها في وضع الصفحتين",
+  "memory_overlay": "إظهار استخدام الذاكرة",
+  "memory_overlay_subtitle": "قراءة مباشرة لاستهلاك الذاكرة في التطبيق. للقياس على الجهاز بدلاً من التخمين: راقبها أثناء التمرير في المكتبة أو قراءة فصل.",
+  "error_reports_extension_failure": "هذا الخطأ ناتج عن إضافة وليس من تطبيق Mangayomi. تتم كتابة الإضافات وصيانتها بواسطة مسؤولي المستودع الذي قمت بتثبيت هذا المصدر منه، لذا يجب إصلاحه هناك. اسم المصدر وما كنت تفتحه هي تفاصيل مفيدة لتقديمها لهم.",
+  "error_reports_already_reported": "تم الإبلاغ مسبقاً",
+  "error_reports_expected_failure": "عادةً ما يعود هذا إلى المصدر أو الشبكة وليس التطبيق: رابط منتهي الصلاحية، أو خادم معطل، أو انقطاع في الاتصال. يستحق الإبلاغ فقط إذا استمر في الحدوث على مصدر يعمل في أماكن أخرى.",
+  "global_search_no_sources": "لا توجد مصادر {itemType} مثبتة.",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "أضف مستودعاً ضمن قسم التصفح، ثم قم بتثبيت إضافة له.",
+  "global_search_only_pinned": "لديك {count, plural, =1{مصدر واحد} few{{count} مصادر} other{{count} مصدراً}} لهذا، ولكن يتم البحث في المصادر المثبتة فقط.",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "قم بتثبيت أحدها، أو أوقف تشغيل \"تضمين المصادر المثبتة فقط\" في إعدادات التصفح.",
+  "global_search_all_nsfw": "جميع مصادرك لهذا مصنفة كـ NSFW وهي مخفية.",
+  "global_search_all_nsfw_hint": "قم بتفعيل مصادر NSFW في إعدادات التصفح للبحث فيها.",
+  "related_titles": "ذات صلة",
+  "related_none": "لم يتم العثور على أي أعمال ذات صلة بهذا العنوان.",
+  "relation_adaptation": "اقتباس",
+  "relation_sequel": "تكملة",
+  "relation_prequel": "جزء سابق",
+  "relation_parent": "القصة الرئيسية",
+  "relation_side_story": "قصة جانبية",
+  "relation_spin_off": "عمل مشتق (Spin-off)",
+  "relation_alternative": "نسخة بديلة",
+  "auto_library_update": "تحديثات المكتبة التلقائية",
+  "auto_library_update_subtitle": "التحقق من وجود فصول جديدة لكل عنصر في مكتبتك عند بدء تشغيل التطبيق.",
+  "auto_library_update_never": "أبداً",
+  "auto_library_update_12_hours": "كل 12 ساعة",
+  "auto_library_update_daily": "يومياً",
+  "auto_library_update_2_days": "كل يومين",
+  "auto_library_update_weekly": "أسبوعياً",
+  "auto_library_update_wifi_only": "عبر Wi-Fi فقط",
+  "auto_library_update_wifi_only_subtitle": "تخطي التحديث المجدول أثناء استخدام بيانات الجوال."
 }

@@ -775,11 +775,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get create_extension => '확장 프로그램 만들기';
 
   @override
-  String get developer_mode => 'Developer mode';
+  String get developer_mode => '개발자 모드';
 
   @override
-  String get developer_mode_subtitle =>
-      'Show extension developer tools (create extension, edit code)';
+  String get developer_mode_subtitle => '확장 프로그램 개발자 도구 표시 (확장 프로그램 생성, 코드 편집)';
 
   @override
   String get choose_extension_language => '확장 프로그램 언어 선택';

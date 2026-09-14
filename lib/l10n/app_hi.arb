@@ -1309,5 +1309,68 @@
         "type": "int"
       }
     }
-  }
+  },
+  "developer_mode": "डेवलपर मोड",
+  "developer_mode_subtitle": "एक्सटेंशन डेवलपर उपकरण दिखाएं (एक्सटेंशन बनाएं, कोड संपादित करें)",
+  "last_sync": "अंतिम सिंक समय: ",
+  "sync_login_browser": "ब्राउज़र से लॉग इन करें",
+  "sync_progress_percent": "सिंक हो रहा है… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "सिंक हो रहा है…",
+  "override_ass_subtitles": "ASS उपशीर्षक ओवरराइड करें",
+  "override_ass_subtitles_info": "ASS/SSA उपशीर्षक पर कस्टम स्टाइलिंग लागू करें",
+  "repo_already_exists": "रिपॉजिटरी पहले से मौजूद है!",
+  "tracks": "ट्रैक",
+  "playback_speed": "प्लेबैक गति",
+  "shaders": "शेडर्स",
+  "video_fit": "फ़िट",
+  "double_page_single_first_page": "पहला पृष्ठ एकल",
+  "double_page_single_first_page_subtitle": "दोहरे पृष्ठ मोड में पहले पृष्ठ को अकेले प्रदर्शित करें",
+  "memory_overlay": "मेमोरी उपयोग दिखाएं",
+  "memory_overlay_subtitle": "ऐप द्वारा उपयोग की जा रही मेमोरी का लाइव विवरण। उपकरण पर सटीक माप के लिए: लाइब्रेरी स्क्रॉल करते समय या अध्याय पढ़ते समय देखें।",
+  "error_reports_extension_failure": "यह त्रुटि किसी एक्सटेंशन से आई है, Mangayomi से नहीं। एक्सटेंशन उस रिपॉजिटरी के प्रबंधकों द्वारा लिखे और बनाए रखे जाते हैं जहाँ से आपने यह स्रोत स्थापित किया है, इसलिए सुधार वहीं होना चाहिए।",
+  "error_reports_already_reported": "पहले ही रिपोर्ट किया जा चुका है",
+  "error_reports_expected_failure": "यह आमतौर पर ऐप के बजाय स्रोत या नेटवर्क के कारण होता है: समाप्त हो चुका लिंक, डाउन सर्वर या टूटा हुआ कनेक्शन।",
+  "global_search_no_sources": "कोई {itemType} स्रोत स्थापित नहीं है।",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "ब्राउज़ के तहत एक रिपॉजिटरी जोड़ें, फिर इसके लिए एक एक्सटेंशन स्थापित करें।",
+  "global_search_only_pinned": "आपके पास इसके लिए {count, plural, =1{1 स्रोत} other{{count} स्रोत}} हैं, लेकिन केवल पिन किए गए स्रोतों में खोज की जाती है।",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "किसी एक को पिन करें, या ब्राउज़ सेटिंग्स में \"केवल पिन किए गए स्रोतों को शामिल करें\" बंद करें।",
+  "global_search_all_nsfw": "इसके लिए आपके सभी स्रोत NSFW चिह्नित हैं और छिपे हुए हैं।",
+  "global_search_all_nsfw_hint": "उन्हें खोजने के लिए ब्राउज़ सेटिंग्स में NSFW स्रोत चालू करें।",
+  "related_titles": "संबंधित",
+  "related_none": "इस शीर्षक के लिए कोई संबंधित सामग्री नहीं मिली।",
+  "relation_adaptation": "रूपांतरण",
+  "relation_sequel": "सीक्वल",
+  "relation_prequel": "प्रीक्वल",
+  "relation_parent": "मूल कहानी",
+  "relation_side_story": "साइड स्टोरी",
+  "relation_spin_off": "स्पिन-ऑफ",
+  "relation_alternative": "वैकल्पिक संस्करण",
+  "auto_library_update": "स्वचालित लाइब्रेरी अपडेट",
+  "auto_library_update_subtitle": "ऐप शुरू होने पर नए अध्यायों के लिए अपनी लाइब्रेरी की प्रत्येक प्रविष्टि की जांच करें।",
+  "auto_library_update_never": "कभी नहीं",
+  "auto_library_update_12_hours": "प्रत्येक 12 घंटे में",
+  "auto_library_update_daily": "दैनिक",
+  "auto_library_update_2_days": "प्रत्येक 2 दिन में",
+  "auto_library_update_weekly": "साप्ताहिक",
+  "auto_library_update_wifi_only": "केवल वाई-फ़ाई पर",
+  "auto_library_update_wifi_only_subtitle": "मोबाइल डेटा पर होने पर निर्धारित अपडेट छोड़ें।"
 }

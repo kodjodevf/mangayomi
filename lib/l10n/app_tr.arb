@@ -1279,5 +1279,68 @@
         "type": "int"
       }
     }
-  }
+  },
+  "developer_mode": "Geliştirici modu",
+  "developer_mode_subtitle": "Uzantı geliştirici araçlarını göster (uzantı oluştur, kodu düzenle)",
+  "last_sync": "Son senkronizasyon: ",
+  "sync_login_browser": "Tarayıcı ile giriş yap",
+  "sync_progress_percent": "Senkronize ediliyor… %{percent}",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "Senkronize ediliyor…",
+  "override_ass_subtitles": "ASS altyazılarını geçersiz kıl",
+  "override_ass_subtitles_info": "ASS/SSA altyazılarına özel stil uygula",
+  "repo_already_exists": "Depo zaten mevcut!",
+  "tracks": "Parçalar",
+  "playback_speed": "Oynatma hızı",
+  "shaders": "Gölgelendiriciler",
+  "video_fit": "Sığdır",
+  "double_page_single_first_page": "İlk sayfa tekli",
+  "double_page_single_first_page_subtitle": "Çift sayfa modunda ilk sayfayı tek başına göster",
+  "memory_overlay": "Bellek kullanımını göster",
+  "memory_overlay_subtitle": "Uygulamanın kullandığı belleğin canlı gösterimi. Tahmin etmek yerine cihaz üzerinde ölçüm yapın: kitaplıkta gezinirken veya bir bölüm okurken izleyin.",
+  "error_reports_extension_failure": "Bu hata Mangayomi'den değil, bir uzantıdan kaynaklandı. Uzantılar bu kaynağı yüklediğiniz deponun yöneticileri tarafından yazılır ve sürdürülür, bu nedenle düzeltmenin oraya yapılması gerekir.",
+  "error_reports_already_reported": "Zaten bildirildi",
+  "error_reports_expected_failure": "Bu durum genellikle uygulamadan ziyade kaynak veya ağdan kaynaklanır: süresi dolmuş bir bağlantı, çökmüş bir sunucu veya kopan bir bağlantı.",
+  "global_search_no_sources": "Hiçbir {itemType} kaynağı yüklü değil.",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "Gözat altından bir depo ekleyin ve ardından bunun için bir uzantı yükleyin.",
+  "global_search_only_pinned": "Bunun için {count, plural, =1{1 kaynak} other{{count} kaynak}} var, ancak yalnızca sabitlenenler aranır.",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "Birini sabitleyin veya Gözat ayarlarından \"Yalnızca sabitlenmiş kaynakları dahil et\" seçeneğini kapatın.",
+  "global_search_all_nsfw": "Bunun için sahip olduğunuz tüm kaynaklar NSFW olarak işaretlenmiş ve gizlenmiştir.",
+  "global_search_all_nsfw_hint": "Arama yapabilmek için Gözat ayarlarından NSFW kaynaklarını açın.",
+  "related_titles": "İlgili",
+  "related_none": "Bu başlık için ilgili bir şey bulunamadı.",
+  "relation_adaptation": "Uyarlama",
+  "relation_sequel": "Devam",
+  "relation_prequel": "Öncesi",
+  "relation_parent": "Ana hikaye",
+  "relation_side_story": "Yan hikaye",
+  "relation_spin_off": "Yan ürün",
+  "relation_alternative": "Alternatif sürüm",
+  "auto_library_update": "Otomatik kütüphane güncellemeleri",
+  "auto_library_update_subtitle": "Uygulama başladığında kütüphanenizdeki her öğeyi yeni bölümler için kontrol edin.",
+  "auto_library_update_never": "Asla",
+  "auto_library_update_12_hours": "12 saatte bir",
+  "auto_library_update_daily": "Günlük",
+  "auto_library_update_2_days": "2 günde bir",
+  "auto_library_update_weekly": "Haftalık",
+  "auto_library_update_wifi_only": "Yalnızca Wi-Fi",
+  "auto_library_update_wifi_only_subtitle": "Hücresel verideyken planlanan güncellemeyi atlayın."
 }

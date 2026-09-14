@@ -1309,5 +1309,68 @@
         "type": "int"
       }
     }
-  }
+  },
+  "developer_mode": "Режим разработчика",
+  "developer_mode_subtitle": "Показывать инструменты разработчика расширений (создание расширения, редактирование кода)",
+  "last_sync": "Последняя синхронизация: ",
+  "sync_login_browser": "Войти через браузер",
+  "sync_progress_percent": "Синхронизация… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "Синхронизация…",
+  "override_ass_subtitles": "Переопределить субтитры ASS",
+  "override_ass_subtitles_info": "Применить собственный стиль к субтитрам ASS/SSA",
+  "repo_already_exists": "Репозиторий уже существует!",
+  "tracks": "Дорожки",
+  "playback_speed": "Скорость воспроизведения",
+  "shaders": "Шейдеры",
+  "video_fit": "Масштабирование",
+  "double_page_single_first_page": "Первая страница отдельно",
+  "double_page_single_first_page_subtitle": "Отображать первую страницу отдельно в двухстраничном режиме",
+  "memory_overlay": "Показывать использование памяти",
+  "memory_overlay_subtitle": "Индикатор использования памяти приложением в реальном времени. Для точного измерения на устройстве: наблюдайте за ним во время прокрутки библиотеки или чтения главы.",
+  "error_reports_extension_failure": "Эта ошибка вызвана расширением, а не Mangayomi. Расширения разрабатываются и поддерживаются владельцами репозитория, из которого был установлен источник. Название источника и открываемый контент помогут им исправить проблему.",
+  "error_reports_already_reported": "Уже отправлено",
+  "error_reports_expected_failure": "Обычно это проблема на стороне источника или сети, а не приложения: истекшая ссылка, сбой сервера или обрыв соединения. Имеет смысл сообщать, только если ошибка повторяется на источнике, работающем в других местах.",
+  "global_search_no_sources": "Источники {itemType} не установлены.",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "Добавьте репозиторий в разделе «Обзор», затем установите для него расширение.",
+  "global_search_only_pinned": "У вас {count, plural, =1{1 источник} few{{count} источника} other{{count} источников}} для этого, но поиск выполняется только по закрепленным.",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "Закрепите источник или отключите «Только закрепленные источники» в настройках обзора.",
+  "global_search_all_nsfw": "Все источники для этого помечены как NSFW и скрыты.",
+  "global_search_all_nsfw_hint": "Включите источники NSFW в настройках обзора для поиска по ним.",
+  "related_titles": "Связанное",
+  "related_none": "Связанных произведений не найдено.",
+  "relation_adaptation": "Адаптация",
+  "relation_sequel": "Продолжение",
+  "relation_prequel": "Предыстория",
+  "relation_parent": "Основная история",
+  "relation_side_story": "Ответвление сюжета",
+  "relation_spin_off": "Спин-офф",
+  "relation_alternative": "Альтернативная версия",
+  "auto_library_update": "Автообновление библиотеки",
+  "auto_library_update_subtitle": "Проверять новые главы для каждого тайтла библиотеки при запуске приложения.",
+  "auto_library_update_never": "Никогда",
+  "auto_library_update_12_hours": "Каждые 12 часов",
+  "auto_library_update_daily": "Ежедневно",
+  "auto_library_update_2_days": "Каждые 2 дня",
+  "auto_library_update_weekly": "Еженедельно",
+  "auto_library_update_wifi_only": "Только по Wi-Fi",
+  "auto_library_update_wifi_only_subtitle": "Пропускать запланированное обновление при использовании мобильных данных."
 }

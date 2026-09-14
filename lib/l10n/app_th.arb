@@ -1282,5 +1282,68 @@
         "type": "int"
       }
     }
-  }
+  },
+  "developer_mode": "โหมดนักพัฒนา",
+  "developer_mode_subtitle": "แสดงเครื่องมือนักพัฒนาส่วนขยาย (สร้างส่วนขยาย, แก้ไขโค้ด)",
+  "last_sync": "การซิงค์ล่าสุดเมื่อ: ",
+  "sync_login_browser": "เข้าสู่ระบบด้วยเบราว์เซอร์",
+  "sync_progress_percent": "กำลังซิงค์… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "กำลังซิงค์…",
+  "override_ass_subtitles": "แทนที่คำบรรยาย ASS",
+  "override_ass_subtitles_info": "ใช้สไตล์ที่กำหนดเองกับคำบรรยาย ASS/SSA",
+  "repo_already_exists": "มีที่เก็บนี้อยู่แล้ว!",
+  "tracks": "แทร็ก",
+  "playback_speed": "ความเร็วในการเล่น",
+  "shaders": "เชเดอร์",
+  "video_fit": "พอดีหน้าจอ",
+  "double_page_single_first_page": "หน้าแรกหน้าเดียว",
+  "double_page_single_first_page_subtitle": "แสดงหน้าแรกเดี่ยวๆ ในโหมดสองหน้า",
+  "memory_overlay": "แสดงการใช้งานหน่วยความจำ",
+  "memory_overlay_subtitle": "แสดงข้อมูลการใช้หน่วยความจำของแอปแบบเรียลไทม์ สำหรับการวัดบนอุปกรณ์: สังเกตขณะเลื่อนดูชั้นหนังสือหรืออ่านตอน",
+  "error_reports_extension_failure": "ข้อผิดพลาดนี้มาจากส่วนขยาย ไม่ใช่จาก Mangayomi ส่วนขยายเขียนและดูแลโดยผู้ดูแลที่เก็บที่คุณติดตั้งแหล่งที่มานี้ การแก้ไขจึงต้องทำที่นั่น",
+  "error_reports_already_reported": "รายงานแล้ว",
+  "error_reports_expected_failure": "ปัญหานี้มักเกิดจากแหล่งที่มาหรือเครือข่ายมากกว่าตัวแอป เช่น ลิงก์หมดอายุ เซิร์ฟเวอร์ล่ม หรือการเชื่อมต่อหลุด",
+  "global_search_no_sources": "ไม่ได้ติดตั้งแหล่งที่มาของ {itemType}",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "เพิ่มที่เก็บใต้เมนูเรียกดู จากนั้นติดตั้งส่วนขยายที่เกี่ยวข้อง",
+  "global_search_only_pinned": "คุณมี {count, plural, other{{count} แหล่งที่มา}} สำหรับสิ่งนี้ แต่จะค้นหาเฉพาะแหล่งที่ถูกปักหมุดไว้เท่านั้น",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "ปักหมุดแหล่งที่มา หรือปิด \"รวมเฉพาะแหล่งที่มาที่ปักหมุดไว้\" ในการตั้งค่าการเรียกดู",
+  "global_search_all_nsfw": "แหล่งที่มาทั้งหมดที่คุณมีสำหรับสิ่งนี้ถูกทำเครื่องหมายเป็น NSFW และถูกซ่อนไว้",
+  "global_search_all_nsfw_hint": "เปิดใช้งานแหล่งที่มา NSFW ในการตั้งค่าการเรียกดูเพื่อค้นหา",
+  "related_titles": "เรื่องที่เกี่ยวข้อง",
+  "related_none": "ไม่พบเรื่องที่เกี่ยวข้องสำหรับเรื่องนี้",
+  "relation_adaptation": "ดัดแปลง",
+  "relation_sequel": "ภาคต่อ",
+  "relation_prequel": "ภาคก่อน",
+  "relation_parent": "เรื่องหลัก",
+  "relation_side_story": "เรื่องย่อย",
+  "relation_spin_off": "สปินออฟ",
+  "relation_alternative": "ฉบับอื่น",
+  "auto_library_update": "อัปเดตชั้นหนังสืออัตโนมัติ",
+  "auto_library_update_subtitle": "ตรวจสอบตอนใหม่สำหรับทุกเรื่องในชั้นหนังสือของคุณเมื่อเปิดแอป",
+  "auto_library_update_never": "ไม่เคย",
+  "auto_library_update_12_hours": "ทุก 12 ชั่วโมง",
+  "auto_library_update_daily": "ทุกวัน",
+  "auto_library_update_2_days": "ทุก 2 วัน",
+  "auto_library_update_weekly": "ทุกสัปดาห์",
+  "auto_library_update_wifi_only": "เฉพาะ Wi-Fi เท่านั้น",
+  "auto_library_update_wifi_only_subtitle": "ข้ามการอัปเดตตามกำหนดเวลาเมื่อใช้ข้อมูลมือถือ"
 }

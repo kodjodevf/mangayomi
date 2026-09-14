@@ -804,11 +804,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get create_extension => 'Создать расширение';
 
   @override
-  String get developer_mode => 'Developer mode';
+  String get developer_mode => 'Режим разработчика';
 
   @override
   String get developer_mode_subtitle =>
-      'Show extension developer tools (create extension, edit code)';
+      'Показывать инструменты разработчика расширений (создание расширения, редактирование кода)';
 
   @override
   String get choose_extension_language => 'Выберите язык расширения';
@@ -1074,10 +1074,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'Синхронизируйте свой прогресс на нескольких устройствах через собственный \nserver. Загляните на наш сервер discord для получения дополнительной информации!';
 
   @override
-  String get last_sync => 'Last sync at: ';
+  String get last_sync => 'Последняя синхронизация: ';
 
   @override
-  String get sync_login_browser => 'Log in with browser';
+  String get sync_login_browser => 'Войти через браузер';
 
   @override
   String get sync_server => 'Адрес сервера синхронизации';
@@ -1097,11 +1097,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String sync_progress_percent(Object percent) {
-    return 'Syncing… $percent%';
+    return 'Синхронизация… $percent%';
   }
 
   @override
-  String get sync_progress_indeterminate => 'Syncing…';
+  String get sync_progress_indeterminate => 'Синхронизация…';
 
   @override
   String get sync_button_sync => 'Синхронизировать прогресс';
@@ -1791,11 +1791,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Отключите `use libass` в настройках плеера, чтобы иметь возможность настраивать субтитры.';
 
   @override
-  String get override_ass_subtitles => 'Override ASS subtitles';
+  String get override_ass_subtitles => 'Переопределить субтитры ASS';
 
   @override
   String get override_ass_subtitles_info =>
-      'Apply custom styling to ASS/SSA subtitles';
+      'Применить собственный стиль к субтитрам ASS/SSA';
 
   @override
   String get torrent_stream => 'Торрент-стрим';
@@ -1991,7 +1991,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get repo_added => 'Репозиторий источников добавлен!';
 
   @override
-  String get repo_already_exists => 'Repository already exists!';
+  String get repo_already_exists => 'Репозиторий уже существует!';
 
   @override
   String get add_repo => 'Добавить репозиторий?';
@@ -2212,16 +2212,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get subtitle_speed => 'Скорость';
 
   @override
-  String get tracks => 'Tracks';
+  String get tracks => 'Дорожки';
 
   @override
-  String get playback_speed => 'Playback speed';
+  String get playback_speed => 'Скорость воспроизведения';
 
   @override
-  String get shaders => 'Shaders';
+  String get shaders => 'Шейдеры';
 
   @override
-  String get video_fit => 'Fit';
+  String get video_fit => 'Масштабирование';
 
   @override
   String get calendar => 'Календарь';
@@ -2765,11 +2765,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get dual_page_rotate_to_fit_invert => 'Обратное направление вращения';
 
   @override
-  String get double_page_single_first_page => 'Single first page';
+  String get double_page_single_first_page => 'Первая страница отдельно';
 
   @override
   String get double_page_single_first_page_subtitle =>
-      'Display the first page alone in double page mode';
+      'Отображать первую страницу отдельно в двухстраничном режиме';
 
   @override
   String get landscape_zoom => 'Автоматическое масштабирование в альбоме';
@@ -3124,11 +3124,11 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get memory_overlay => 'Show memory usage';
+  String get memory_overlay => 'Показывать использование памяти';
 
   @override
   String get memory_overlay_subtitle =>
-      'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.';
+      'Индикатор использования памяти приложением в реальном времени. Для точного измерения на устройстве: наблюдайте за ним во время прокрутки библиотеки или чтения главы.';
 
   @override
   String get beta => 'Бета';
@@ -3166,14 +3166,14 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get error_reports_extension_failure =>
-      'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.';
+      'Эта ошибка вызвана расширением, а не Mangayomi. Расширения разрабатываются и поддерживаются владельцами репозитория, из которого был установлен источник. Название источника и открываемый контент помогут им исправить проблему.';
 
   @override
-  String get error_reports_already_reported => 'Already reported';
+  String get error_reports_already_reported => 'Уже отправлено';
 
   @override
   String get error_reports_expected_failure =>
-      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
+      'Обычно это проблема на стороне источника или сети, а не приложения: истекшая ссылка, сбой сервера или обрыв соединения. Имеет смысл сообщать, только если ошибка повторяется на источнике, работающем в других местах.';
 
   @override
   String get share_unavailable_copied =>
@@ -3297,93 +3297,94 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String global_search_no_sources(String itemType) {
-    return 'No $itemType sources are installed.';
+    return 'Источники $itemType не установлены.';
   }
 
   @override
   String get global_search_no_sources_hint =>
-      'Add a repository under Browse, then install an extension for it.';
+      'Добавьте репозиторий в разделе «Обзор», затем установите для него расширение.';
 
   @override
   String global_search_only_pinned(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sources',
-      one: '1 source',
+      other: '$count источников',
+      few: '$count источника',
+      one: '1 источник',
     );
-    return 'You have $_temp0 for this, but only pinned ones are searched.';
+    return 'У вас $_temp0 для этого, но поиск выполняется только по закрепленным.';
   }
 
   @override
   String get global_search_only_pinned_hint =>
-      'Pin one, or turn off \"Only include pinned sources\" in Browse settings.';
+      'Закрепите источник или отключите «Только закрепленные источники» в настройках обзора.';
 
   @override
   String get global_search_all_nsfw =>
-      'Every source you have for this is marked NSFW, and those are hidden.';
+      'Все источники для этого помечены как NSFW и скрыты.';
 
   @override
   String get global_search_all_nsfw_hint =>
-      'Turn on NSFW sources in Browse settings to search them.';
+      'Включите источники NSFW в настройках обзора для поиска по ним.';
 
   @override
   String get missing_source_check_result_message =>
       'Эти тайтлы привязаны к неустановленным источникам. Нажмите для миграции или установите расширение.';
 
   @override
-  String get related_titles => 'Related';
+  String get related_titles => 'Связанное';
 
   @override
-  String get related_none => 'Nothing related was found for this title.';
+  String get related_none => 'Связанных произведений не найдено.';
 
   @override
-  String get relation_adaptation => 'Adaptation';
+  String get relation_adaptation => 'Адаптация';
 
   @override
-  String get relation_sequel => 'Sequel';
+  String get relation_sequel => 'Продолжение';
 
   @override
-  String get relation_prequel => 'Prequel';
+  String get relation_prequel => 'Предыстория';
 
   @override
-  String get relation_parent => 'Parent story';
+  String get relation_parent => 'Основная история';
 
   @override
-  String get relation_side_story => 'Side story';
+  String get relation_side_story => 'Ответвление сюжета';
 
   @override
-  String get relation_spin_off => 'Spin-off';
+  String get relation_spin_off => 'Спин-офф';
 
   @override
-  String get relation_alternative => 'Alternative version';
+  String get relation_alternative => 'Альтернативная версия';
 
   @override
-  String get auto_library_update => 'Automatic library updates';
+  String get auto_library_update => 'Автообновление библиотеки';
 
   @override
   String get auto_library_update_subtitle =>
-      'Check every entry in your library for new chapters when the app starts.';
+      'Проверять новые главы для каждого тайтла библиотеки при запуске приложения.';
 
   @override
-  String get auto_library_update_never => 'Never';
+  String get auto_library_update_never => 'Никогда';
 
   @override
-  String get auto_library_update_12_hours => 'Every 12 hours';
+  String get auto_library_update_12_hours => 'Каждые 12 часов';
 
   @override
-  String get auto_library_update_daily => 'Daily';
+  String get auto_library_update_daily => 'Ежедневно';
 
   @override
-  String get auto_library_update_2_days => 'Every 2 days';
+  String get auto_library_update_2_days => 'Каждые 2 дня';
 
   @override
-  String get auto_library_update_weekly => 'Weekly';
+  String get auto_library_update_weekly => 'Еженедельно';
 
   @override
-  String get auto_library_update_wifi_only => 'Only on Wi-Fi';
+  String get auto_library_update_wifi_only => 'Только по Wi-Fi';
 
   @override
   String get auto_library_update_wifi_only_subtitle =>
-      'Skip the scheduled update while on mobile data.';
+      'Пропускать запланированное обновление при использовании мобильных данных.';
 }

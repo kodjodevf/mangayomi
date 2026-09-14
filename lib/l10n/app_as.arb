@@ -1279,5 +1279,68 @@
         "type": "int"
       }
     }
-  }
+  },
+  "developer_mode": "ডিভেলপাৰ ম'ড",
+  "developer_mode_subtitle": "এক্সটেনশন ডিভেলপাৰ সঁজুলিসমূহ দেখুৱাওক (এক্সটেনশন সৃষ্টি, ক'ড সম্পাদনা)",
+  "last_sync": "সৰ্বশেষ সমন্বয়: ",
+  "sync_login_browser": "ব্ৰাউজাৰৰ সৈতে লগ ইন কৰক",
+  "sync_progress_percent": "সমন্বয় হৈ আছে… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "সমন্বয় হৈ আছে…",
+  "override_ass_subtitles": "ASS চাবটাইটেল অভাৰৰাইড কৰক",
+  "override_ass_subtitles_info": "ASS/SSA চাবটাইটেলত স্বনিৰ্বাচিত শৈলী প্ৰয়োগ কৰক",
+  "repo_already_exists": "ৰেপজিটৰিটো ইতিমধ্যে আছে!",
+  "tracks": "ট্ৰেকসমূহ",
+  "playback_speed": "প্লেবেকৰ গতি",
+  "shaders": "শ্বেডাৰসমূহ",
+  "video_fit": "ফিট",
+  "double_page_single_first_page": "প্ৰথম পৃষ্ঠা একক",
+  "double_page_single_first_page_subtitle": "দ্বি-পৃষ্ঠা ম'ডত প্ৰথম পৃষ্ঠাটো অকলে প্ৰদৰ্শন কৰক",
+  "memory_overlay": "মেমৰিৰ ব্যৱহাৰ দেখুৱাওক",
+  "memory_overlay_subtitle": "এপে ব্যৱহাৰ কৰা মেমৰিৰ লাইভ তথ্য। ডিভাইচত সঠিকভাৱে নিৰীক্ষণ কৰিবলৈ: পুথিভঁৰাল স্ক্ৰল কৰোঁতে বা অধ্যায় পঢ়োঁতে লক্ষ্য কৰক।",
+  "error_reports_extension_failure": "এইটো এটা এক্সটেনশনৰ পৰা আহিছে, Mangayomi-ৰ পৰা নহয়। যিটো ৰেপজিটৰিৰ পৰা আপুনি এই উৎস ইনষ্টল কৰিছিল সেই ৰেপজিটৰিৰ পৰিচালকসকলে ইয়াক পৰিচালনা কৰে, সেয়েহে সমাধান তাতেই হ'ব লাগিব।",
+  "error_reports_already_reported": "ইতিমধ্যে ৰিপৰ্ট কৰা হৈছে",
+  "error_reports_expected_failure": "এইটো সাধাৰণতে এপৰ পৰিৱৰ্তে উৎস বা নেটৱৰ্কৰ সমস্যা: ম্যাদ উকলি যোৱা লিংক, চাৰ্ভাৰ ডাউন বা সংযোগ বিচ্ছিন্ন হোৱা।",
+  "global_search_no_sources": "কোনো {itemType} উৎস ইনষ্টল কৰা নাই।",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "ব্ৰাউজৰ অধীনত এটা ৰেপজিটৰি যোগ কৰক, তাৰ পিছত তাৰ বাবে এটা এক্সটেনশন ইনষ্টল কৰক।",
+  "global_search_only_pinned": "আপোনাৰ ওচৰত ইয়াৰ বাবে {count, plural, =1{১টা উৎস} other{{count}টা উৎস}} আছে, কিন্তু কেৱল পিন কৰা উৎসসমূহতহে সন্ধান কৰা হয়।",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "এটা পিন কৰক, বা ব্ৰাউজ ছেটিংছত \"কেৱল পিন কৰা উৎসসমূহ অন্তৰ্ভুক্ত কৰক\" বন্ধ কৰক।",
+  "global_search_all_nsfw": "ইয়াৰ বাবে আপোনাৰ সকলো উৎস NSFW হিচাপে চিহ্নিত আৰু লুকুওৱা হৈছে।",
+  "global_search_all_nsfw_hint": "সন্ধান কৰিবলৈ ব্ৰাউজ ছেটিংছত NSFW উৎসসমূহ অন কৰক।",
+  "related_titles": "সম্পৰ্কিত",
+  "related_none": "এই শীৰ্ষকৰ বাবে কোনো সম্পৰ্কিত বিষয় পোৱা নগ'ল।",
+  "relation_adaptation": "ৰূপান্তৰ",
+  "relation_sequel": "পৰৱৰ্তী অংশ",
+  "relation_prequel": "পূৰ্বৱৰ্তী অংশ",
+  "relation_parent": "মূল কাহিনী",
+  "relation_side_story": "পাৰ্শ্ব কাহিনী",
+  "relation_spin_off": "স্পিন-অফ",
+  "relation_alternative": "বিকল্প সংস্কৰণ",
+  "auto_library_update": "স্বয়ংক্ৰিয় পুথিভঁৰাল আপডেট",
+  "auto_library_update_subtitle": "এপটো আৰম্ভ হোৱাৰ সময়ত পুথিভঁৰালৰ প্ৰতিটো বস্তুৰ নতুন অধ্যায় পৰীক্ষা কৰক।",
+  "auto_library_update_never": "কেতিয়াও নহয়",
+  "auto_library_update_12_hours": "প্ৰতি ১২ ঘণ্টাত",
+  "auto_library_update_daily": "দৈনিক",
+  "auto_library_update_2_days": "প্ৰতি ২ দিনত",
+  "auto_library_update_weekly": "সাপ্তাহিক",
+  "auto_library_update_wifi_only": "কেৱল ৱাই-ফাইত",
+  "auto_library_update_wifi_only_subtitle": "ম'বাইল ডাটা ব্যৱহাৰ কৰাৰ সময়ত নিৰ্ধাৰিত আপডেট বাদ দিয়ক।"
 }

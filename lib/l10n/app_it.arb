@@ -1279,5 +1279,68 @@
         "type": "int"
       }
     }
-  }
+  },
+  "developer_mode": "Modalità sviluppatore",
+  "developer_mode_subtitle": "Mostra gli strumenti di sviluppo per estensioni (crea estensione, modifica codice)",
+  "last_sync": "Ultima sincronizzazione alle: ",
+  "sync_login_browser": "Accedi con il browser",
+  "sync_progress_percent": "Sincronizzazione in corso… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "Sincronizzazione in corso…",
+  "override_ass_subtitles": "Sovrascrivi sottotitoli ASS",
+  "override_ass_subtitles_info": "Applica uno stile personalizzato ai sottotitoli ASS/SSA",
+  "repo_already_exists": "Il repository esiste già!",
+  "tracks": "Tracce",
+  "playback_speed": "Velocità di riproduzione",
+  "shaders": "Shader",
+  "video_fit": "Adatta",
+  "double_page_single_first_page": "Prima pagina singola",
+  "double_page_single_first_page_subtitle": "Mostra la prima pagina da sola nella modalità a doppia pagina",
+  "memory_overlay": "Mostra utilizzo memoria",
+  "memory_overlay_subtitle": "Lettura in tempo reale della memoria utilizzata dall'app. Per misurare sul dispositivo invece di tirare a indovinare: osservalo durante lo scorrimento della libreria o la lettura di un capitolo.",
+  "error_reports_extension_failure": "Questo errore proviene da un'estensione, non da Mangayomi. Le estensioni sono sviluppate e mantenute da chi gestisce il repository da cui hai installato questa fonte, quindi la correzione deve essere fatta lì. Il nome della fonte e ciò che stavi aprendo sono dettagli utili da fornire.",
+  "error_reports_already_reported": "Già segnalato",
+  "error_reports_expected_failure": "Questo problema è solitamente dovuto alla fonte o alla rete piuttosto che all'app: un link scaduto, un server non disponibile o una connessione interrotta. Vale la pena segnalarlo solo se continua a verificarsi su una fonte che altrove funziona.",
+  "global_search_no_sources": "Nessuna fonte di {itemType} installata.",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "Aggiungi un repository in Sfoglia, quindi installa la relativa estensione.",
+  "global_search_only_pinned": "Hai {count, plural, =1{1 fonte} other{{count} fonti}} per questo, ma vengono cercate solo quelle fissate.",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "Fissa una fonte o disattiva \"Includi solo fonti fissate\" nelle impostazioni di Sfoglia.",
+  "global_search_all_nsfw": "Tutte le fonti disponibili per questo sono contrassegnate come NSFW e sono nascoste.",
+  "global_search_all_nsfw_hint": "Attiva le fonti NSFW nelle impostazioni di Sfoglia per cercarle.",
+  "related_titles": "Correlati",
+  "related_none": "Nessun titolo correlato trovato per questa opera.",
+  "relation_adaptation": "Adattamento",
+  "relation_sequel": "Sequel",
+  "relation_prequel": "Prequel",
+  "relation_parent": "Storia principale",
+  "relation_side_story": "Storia secondaria",
+  "relation_spin_off": "Spin-off",
+  "relation_alternative": "Versione alternativa",
+  "auto_library_update": "Aggiornamenti automatici libreria",
+  "auto_library_update_subtitle": "Controlla la presenza di nuovi capitoli per ogni elemento della libreria all'avvio dell'app.",
+  "auto_library_update_never": "Mai",
+  "auto_library_update_12_hours": "Ogni 12 ore",
+  "auto_library_update_daily": "Giornalmente",
+  "auto_library_update_2_days": "Ogni 2 giorni",
+  "auto_library_update_weekly": "Settimanalmente",
+  "auto_library_update_wifi_only": "Solo con Wi-Fi",
+  "auto_library_update_wifi_only_subtitle": "Salta l'aggiornamento pianificato quando si usano i dati mobili."
 }

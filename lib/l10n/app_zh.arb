@@ -1312,5 +1312,68 @@
         "type": "int"
       }
     }
-  }
+  },
+  "developer_mode": "开发者模式",
+  "developer_mode_subtitle": "显示扩展开发者工具（创建扩展、编辑代码）",
+  "last_sync": "上次同步时间：",
+  "sync_login_browser": "使用浏览器登录",
+  "sync_progress_percent": "正在同步… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "正在同步…",
+  "override_ass_subtitles": "覆盖 ASS 字幕样式",
+  "override_ass_subtitles_info": "将自定义样式应用到 ASS/SSA 字幕",
+  "repo_already_exists": "软件源仓库已存在！",
+  "tracks": "轨道",
+  "playback_speed": "播放速度",
+  "shaders": "着色器",
+  "video_fit": "画面适配",
+  "double_page_single_first_page": "首页单页显示",
+  "double_page_single_first_page_subtitle": "在双页模式下单页显示第一页（封面）",
+  "memory_overlay": "显示内存占用",
+  "memory_overlay_subtitle": "实时显示应用占用的内存。可在滚动书架或阅读章节时实时观察设备上的内存变化。",
+  "error_reports_extension_failure": "此错误来自扩展插件，而非 Mangayomi 本身。扩展由插件仓库的维护者编写和维护，因此需要在插件仓库中修复。请向他们提供插件名称和当时正在打开的内容。",
+  "error_reports_already_reported": "已报告",
+  "error_reports_expected_failure": "这通常是来源网站或网络问题，而非应用本身的问题（如链接已失效、服务器宕机或网络连接中断）。仅当在其他地方正常工作的来源上持续出现此问题时才有必要报告。",
+  "global_search_no_sources": "未安装任何 {itemType} 来源。",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "请在“浏览”中添加仓库并安装相应的扩展插件。",
+  "global_search_only_pinned": "您有 {count, plural, other{{count} 个来源}}，但仅会搜索已固定的来源。",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "请固定某个来源，或在浏览设置中关闭“仅包含固定的来源”。",
+  "global_search_all_nsfw": "该分类下的所有来源均被标记为 NSFW 并已被隐藏。",
+  "global_search_all_nsfw_hint": "请在浏览设置中开启 NSFW 来源后再进行搜索。",
+  "related_titles": "相关作品",
+  "related_none": "未找到该作品的相关作品。",
+  "relation_adaptation": "改编",
+  "relation_sequel": "续作",
+  "relation_prequel": "前传",
+  "relation_parent": "原作/主线",
+  "relation_side_story": "外传",
+  "relation_spin_off": "衍生作",
+  "relation_alternative": "平行/替代版本",
+  "auto_library_update": "书架自动更新",
+  "auto_library_update_subtitle": "在应用启动时检查书架中所有作品的最新章节。",
+  "auto_library_update_never": "从不",
+  "auto_library_update_12_hours": "每 12 小时",
+  "auto_library_update_daily": "每天",
+  "auto_library_update_2_days": "每 2 天",
+  "auto_library_update_weekly": "每周",
+  "auto_library_update_wifi_only": "仅限 Wi-Fi",
+  "auto_library_update_wifi_only_subtitle": "使用移动数据时跳过计划更新。"
 }

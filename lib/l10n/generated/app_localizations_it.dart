@@ -795,11 +795,11 @@ class AppLocalizationsIt extends AppLocalizations {
   String get create_extension => 'Crea estensione';
 
   @override
-  String get developer_mode => 'Developer mode';
+  String get developer_mode => 'Modalità sviluppatore';
 
   @override
   String get developer_mode_subtitle =>
-      'Show extension developer tools (create extension, edit code)';
+      'Mostra gli strumenti di sviluppo per estensioni (crea estensione, modifica codice)';
 
   @override
   String get choose_extension_language => 'Scegli lingua dell\'estensione';
@@ -1065,10 +1065,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Sincronizza i tuoi progressi su più dispositivi tramite un server discord auto-ospitato. Per maggiori informazioni, visita il nostro server discord!';
 
   @override
-  String get last_sync => 'Last sync at: ';
+  String get last_sync => 'Ultima sincronizzazione alle: ';
 
   @override
-  String get sync_login_browser => 'Log in with browser';
+  String get sync_login_browser => 'Accedi con il browser';
 
   @override
   String get sync_server => 'Indirizzo del server di sincronizzazione';
@@ -1088,11 +1088,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String sync_progress_percent(Object percent) {
-    return 'Syncing… $percent%';
+    return 'Sincronizzazione in corso… $percent%';
   }
 
   @override
-  String get sync_progress_indeterminate => 'Syncing…';
+  String get sync_progress_indeterminate => 'Sincronizzazione in corso…';
 
   @override
   String get sync_button_sync => 'Sincronizza progressi';
@@ -1784,11 +1784,11 @@ class AppLocalizationsIt extends AppLocalizations {
       'Disabilita `use libass` nelle impostazioni del lettore per poter personalizzare i sottotitoli.';
 
   @override
-  String get override_ass_subtitles => 'Override ASS subtitles';
+  String get override_ass_subtitles => 'Sovrascrivi sottotitoli ASS';
 
   @override
   String get override_ass_subtitles_info =>
-      'Apply custom styling to ASS/SSA subtitles';
+      'Applica uno stile personalizzato ai sottotitoli ASS/SSA';
 
   @override
   String get torrent_stream => 'Streaming Torrent';
@@ -1983,7 +1983,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String get repo_added => 'Repository delle fonti aggiunto!';
 
   @override
-  String get repo_already_exists => 'Repository already exists!';
+  String get repo_already_exists => 'Il repository esiste già!';
 
   @override
   String get add_repo => 'Aggiungere repository?';
@@ -2203,16 +2203,16 @@ class AppLocalizationsIt extends AppLocalizations {
   String get subtitle_speed => 'Velocità';
 
   @override
-  String get tracks => 'Tracks';
+  String get tracks => 'Tracce';
 
   @override
-  String get playback_speed => 'Playback speed';
+  String get playback_speed => 'Velocità di riproduzione';
 
   @override
-  String get shaders => 'Shaders';
+  String get shaders => 'Shader';
 
   @override
-  String get video_fit => 'Fit';
+  String get video_fit => 'Adatta';
 
   @override
   String get calendar => 'Calendario';
@@ -2758,11 +2758,11 @@ class AppLocalizationsIt extends AppLocalizations {
       'Inverti la direzione di rotazione';
 
   @override
-  String get double_page_single_first_page => 'Single first page';
+  String get double_page_single_first_page => 'Prima pagina singola';
 
   @override
   String get double_page_single_first_page_subtitle =>
-      'Display the first page alone in double page mode';
+      'Mostra la prima pagina da sola nella modalità a doppia pagina';
 
   @override
   String get landscape_zoom => 'Zoom automatico in orizzontale';
@@ -3115,11 +3115,11 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get memory_overlay => 'Show memory usage';
+  String get memory_overlay => 'Mostra utilizzo memoria';
 
   @override
   String get memory_overlay_subtitle =>
-      'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.';
+      'Lettura in tempo reale della memoria utilizzata dall\'app. Per misurare sul dispositivo invece di tirare a indovinare: osservalo durante lo scorrimento della libreria o la lettura di un capitolo.';
 
   @override
   String get beta => 'Beta';
@@ -3157,14 +3157,14 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get error_reports_extension_failure =>
-      'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.';
+      'Questo errore proviene da un\'estensione, non da Mangayomi. Le estensioni sono sviluppate e mantenute da chi gestisce il repository da cui hai installato questa fonte, quindi la correzione deve essere fatta lì. Il nome della fonte e ciò che stavi aprendo sono dettagli utili da fornire.';
 
   @override
-  String get error_reports_already_reported => 'Already reported';
+  String get error_reports_already_reported => 'Già segnalato';
 
   @override
   String get error_reports_expected_failure =>
-      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
+      'Questo problema è solitamente dovuto alla fonte o alla rete piuttosto che all\'app: un link scaduto, un server non disponibile o una connessione interrotta. Vale la pena segnalarlo solo se continua a verificarsi su una fonte che altrove funziona.';
 
   @override
   String get share_unavailable_copied =>
@@ -3286,48 +3286,49 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String global_search_no_sources(String itemType) {
-    return 'No $itemType sources are installed.';
+    return 'Nessuna fonte di $itemType installata.';
   }
 
   @override
   String get global_search_no_sources_hint =>
-      'Add a repository under Browse, then install an extension for it.';
+      'Aggiungi un repository in Sfoglia, quindi installa la relativa estensione.';
 
   @override
   String global_search_only_pinned(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sources',
-      one: '1 source',
+      other: '$count fonti',
+      one: '1 fonte',
     );
-    return 'You have $_temp0 for this, but only pinned ones are searched.';
+    return 'Hai $_temp0 per questo, ma vengono cercate solo quelle fissate.';
   }
 
   @override
   String get global_search_only_pinned_hint =>
-      'Pin one, or turn off \"Only include pinned sources\" in Browse settings.';
+      'Fissa una fonte o disattiva \"Includi solo fonti fissate\" nelle impostazioni di Sfoglia.';
 
   @override
   String get global_search_all_nsfw =>
-      'Every source you have for this is marked NSFW, and those are hidden.';
+      'Tutte le fonti disponibili per questo sono contrassegnate come NSFW e sono nascoste.';
 
   @override
   String get global_search_all_nsfw_hint =>
-      'Turn on NSFW sources in Browse settings to search them.';
+      'Attiva le fonti NSFW nelle impostazioni di Sfoglia per cercarle.';
 
   @override
   String get missing_source_check_result_message =>
       'Queste voci puntano a sorgenti non installate. Tocca per migrare o installare l\'estensione.';
 
   @override
-  String get related_titles => 'Related';
+  String get related_titles => 'Correlati';
 
   @override
-  String get related_none => 'Nothing related was found for this title.';
+  String get related_none =>
+      'Nessun titolo correlato trovato per questa opera.';
 
   @override
-  String get relation_adaptation => 'Adaptation';
+  String get relation_adaptation => 'Adattamento';
 
   @override
   String get relation_sequel => 'Sequel';
@@ -3336,43 +3337,43 @@ class AppLocalizationsIt extends AppLocalizations {
   String get relation_prequel => 'Prequel';
 
   @override
-  String get relation_parent => 'Parent story';
+  String get relation_parent => 'Storia principale';
 
   @override
-  String get relation_side_story => 'Side story';
+  String get relation_side_story => 'Storia secondaria';
 
   @override
   String get relation_spin_off => 'Spin-off';
 
   @override
-  String get relation_alternative => 'Alternative version';
+  String get relation_alternative => 'Versione alternativa';
 
   @override
-  String get auto_library_update => 'Automatic library updates';
+  String get auto_library_update => 'Aggiornamenti automatici libreria';
 
   @override
   String get auto_library_update_subtitle =>
-      'Check every entry in your library for new chapters when the app starts.';
+      'Controlla la presenza di nuovi capitoli per ogni elemento della libreria all\'avvio dell\'app.';
 
   @override
-  String get auto_library_update_never => 'Never';
+  String get auto_library_update_never => 'Mai';
 
   @override
-  String get auto_library_update_12_hours => 'Every 12 hours';
+  String get auto_library_update_12_hours => 'Ogni 12 ore';
 
   @override
-  String get auto_library_update_daily => 'Daily';
+  String get auto_library_update_daily => 'Giornalmente';
 
   @override
-  String get auto_library_update_2_days => 'Every 2 days';
+  String get auto_library_update_2_days => 'Ogni 2 giorni';
 
   @override
-  String get auto_library_update_weekly => 'Weekly';
+  String get auto_library_update_weekly => 'Settimanalmente';
 
   @override
-  String get auto_library_update_wifi_only => 'Only on Wi-Fi';
+  String get auto_library_update_wifi_only => 'Solo con Wi-Fi';
 
   @override
   String get auto_library_update_wifi_only_subtitle =>
-      'Skip the scheduled update while on mobile data.';
+      'Salta l\'aggiornamento pianificato quando si usano i dati mobili.';
 }

@@ -800,11 +800,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get create_extension => 'إنشاء إضافة';
 
   @override
-  String get developer_mode => 'Developer mode';
+  String get developer_mode => 'وضع المطور';
 
   @override
   String get developer_mode_subtitle =>
-      'Show extension developer tools (create extension, edit code)';
+      'إظهار أدوات مطور الإضافات (إنشاء إضافة، تعديل الكود)';
 
   @override
   String get choose_extension_language => 'اختر لغة الإضافة';
@@ -1068,10 +1068,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'قم بمزامنة تقدمك عبر أجهزة متعددة عبر خادم مستضاف ذاتيًا. اطّلع على خادم الخلاف الخاص بنا لمزيد من المعلومات!';
 
   @override
-  String get last_sync => 'Last sync at: ';
+  String get last_sync => 'آخر مزامنة في: ';
 
   @override
-  String get sync_login_browser => 'Log in with browser';
+  String get sync_login_browser => 'تسجيل الدخول باستخدام المتصفح';
 
   @override
   String get sync_server => 'عنوان خادم المزامنة';
@@ -1091,11 +1091,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String sync_progress_percent(Object percent) {
-    return 'Syncing… $percent%';
+    return 'جارٍ المزامنة… $percent%';
   }
 
   @override
-  String get sync_progress_indeterminate => 'Syncing…';
+  String get sync_progress_indeterminate => 'جارٍ المزامنة…';
 
   @override
   String get sync_button_sync => 'مزامنة التقدم';
@@ -1780,11 +1780,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'عطل `استخدام libass` في إعدادات المشغل لتتمكن من تخصيص الترجمة.';
 
   @override
-  String get override_ass_subtitles => 'Override ASS subtitles';
+  String get override_ass_subtitles => 'تجاوز ترجمات ASS';
 
   @override
-  String get override_ass_subtitles_info =>
-      'Apply custom styling to ASS/SSA subtitles';
+  String get override_ass_subtitles_info => 'تطبيق نمط مخصص على ترجمات ASS/SSA';
 
   @override
   String get torrent_stream => 'بث التورنت';
@@ -1974,7 +1973,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get repo_added => 'تمت إضافة مستودع المصدر!';
 
   @override
-  String get repo_already_exists => 'Repository already exists!';
+  String get repo_already_exists => 'المستودع موجود بالفعل!';
 
   @override
   String get add_repo => 'إضافة مستودع؟';
@@ -2185,16 +2184,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get subtitle_speed => 'السرعة';
 
   @override
-  String get tracks => 'Tracks';
+  String get tracks => 'المسارات';
 
   @override
-  String get playback_speed => 'Playback speed';
+  String get playback_speed => 'سرعة التشغيل';
 
   @override
-  String get shaders => 'Shaders';
+  String get shaders => 'المظللات (Shaders)';
 
   @override
-  String get video_fit => 'Fit';
+  String get video_fit => 'ملاءمة';
 
   @override
   String get calendar => 'التقويم';
@@ -2730,11 +2729,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dual_page_rotate_to_fit_invert => 'عكس اتجاه التدوير';
 
   @override
-  String get double_page_single_first_page => 'Single first page';
+  String get double_page_single_first_page => 'الصفحة الأولى مفردة';
 
   @override
   String get double_page_single_first_page_subtitle =>
-      'Display the first page alone in double page mode';
+      'عرض الصفحة الأولى بمفردها في وضع الصفحتين';
 
   @override
   String get landscape_zoom => 'تكبير تلقائي للوضع الأفقي';
@@ -3082,11 +3081,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get memory_overlay => 'Show memory usage';
+  String get memory_overlay => 'إظهار استخدام الذاكرة';
 
   @override
   String get memory_overlay_subtitle =>
-      'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.';
+      'قراءة مباشرة لاستهلاك الذاكرة في التطبيق. للقياس على الجهاز بدلاً من التخمين: راقبها أثناء التمرير في المكتبة أو قراءة فصل.';
 
   @override
   String get beta => 'تجريبي';
@@ -3123,14 +3122,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get error_reports_extension_failure =>
-      'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.';
+      'هذا الخطأ ناتج عن إضافة وليس من تطبيق Mangayomi. تتم كتابة الإضافات وصيانتها بواسطة مسؤولي المستودع الذي قمت بتثبيت هذا المصدر منه، لذا يجب إصلاحه هناك. اسم المصدر وما كنت تفتحه هي تفاصيل مفيدة لتقديمها لهم.';
 
   @override
-  String get error_reports_already_reported => 'Already reported';
+  String get error_reports_already_reported => 'تم الإبلاغ مسبقاً';
 
   @override
   String get error_reports_expected_failure =>
-      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
+      'عادةً ما يعود هذا إلى المصدر أو الشبكة وليس التطبيق: رابط منتهي الصلاحية، أو خادم معطل، أو انقطاع في الاتصال. يستحق الإبلاغ فقط إذا استمر في الحدوث على مصدر يعمل في أماكن أخرى.';
 
   @override
   String get share_unavailable_copied =>
@@ -3248,93 +3247,94 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String global_search_no_sources(String itemType) {
-    return 'No $itemType sources are installed.';
+    return 'لا توجد مصادر $itemType مثبتة.';
   }
 
   @override
   String get global_search_no_sources_hint =>
-      'Add a repository under Browse, then install an extension for it.';
+      'أضف مستودعاً ضمن قسم التصفح، ثم قم بتثبيت إضافة له.';
 
   @override
   String global_search_only_pinned(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sources',
-      one: '1 source',
+      other: '$count مصدراً',
+      few: '$count مصادر',
+      one: 'مصدر واحد',
     );
-    return 'You have $_temp0 for this, but only pinned ones are searched.';
+    return 'لديك $_temp0 لهذا، ولكن يتم البحث في المصادر المثبتة فقط.';
   }
 
   @override
   String get global_search_only_pinned_hint =>
-      'Pin one, or turn off \"Only include pinned sources\" in Browse settings.';
+      'قم بتثبيت أحدها، أو أوقف تشغيل \"تضمين المصادر المثبتة فقط\" في إعدادات التصفح.';
 
   @override
   String get global_search_all_nsfw =>
-      'Every source you have for this is marked NSFW, and those are hidden.';
+      'جميع مصادرك لهذا مصنفة كـ NSFW وهي مخفية.';
 
   @override
   String get global_search_all_nsfw_hint =>
-      'Turn on NSFW sources in Browse settings to search them.';
+      'قم بتفعيل مصادر NSFW في إعدادات التصفح للبحث فيها.';
 
   @override
   String get missing_source_check_result_message =>
       'تشير هذه العناصر إلى مصادر غير مثبتة. اضغط لنقلها أو ثبت الإضافة.';
 
   @override
-  String get related_titles => 'Related';
+  String get related_titles => 'ذات صلة';
 
   @override
-  String get related_none => 'Nothing related was found for this title.';
+  String get related_none => 'لم يتم العثور على أي أعمال ذات صلة بهذا العنوان.';
 
   @override
-  String get relation_adaptation => 'Adaptation';
+  String get relation_adaptation => 'اقتباس';
 
   @override
-  String get relation_sequel => 'Sequel';
+  String get relation_sequel => 'تكملة';
 
   @override
-  String get relation_prequel => 'Prequel';
+  String get relation_prequel => 'جزء سابق';
 
   @override
-  String get relation_parent => 'Parent story';
+  String get relation_parent => 'القصة الرئيسية';
 
   @override
-  String get relation_side_story => 'Side story';
+  String get relation_side_story => 'قصة جانبية';
 
   @override
-  String get relation_spin_off => 'Spin-off';
+  String get relation_spin_off => 'عمل مشتق (Spin-off)';
 
   @override
-  String get relation_alternative => 'Alternative version';
+  String get relation_alternative => 'نسخة بديلة';
 
   @override
-  String get auto_library_update => 'Automatic library updates';
+  String get auto_library_update => 'تحديثات المكتبة التلقائية';
 
   @override
   String get auto_library_update_subtitle =>
-      'Check every entry in your library for new chapters when the app starts.';
+      'التحقق من وجود فصول جديدة لكل عنصر في مكتبتك عند بدء تشغيل التطبيق.';
 
   @override
-  String get auto_library_update_never => 'Never';
+  String get auto_library_update_never => 'أبداً';
 
   @override
-  String get auto_library_update_12_hours => 'Every 12 hours';
+  String get auto_library_update_12_hours => 'كل 12 ساعة';
 
   @override
-  String get auto_library_update_daily => 'Daily';
+  String get auto_library_update_daily => 'يومياً';
 
   @override
-  String get auto_library_update_2_days => 'Every 2 days';
+  String get auto_library_update_2_days => 'كل يومين';
 
   @override
-  String get auto_library_update_weekly => 'Weekly';
+  String get auto_library_update_weekly => 'أسبوعياً';
 
   @override
-  String get auto_library_update_wifi_only => 'Only on Wi-Fi';
+  String get auto_library_update_wifi_only => 'عبر Wi-Fi فقط';
 
   @override
   String get auto_library_update_wifi_only_subtitle =>
-      'Skip the scheduled update while on mobile data.';
+      'تخطي التحديث المجدول أثناء استخدام بيانات الجوال.';
 }

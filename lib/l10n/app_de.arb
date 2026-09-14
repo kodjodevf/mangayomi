@@ -1282,5 +1282,68 @@
         "type": "int"
       }
     }
-  }
+  },
+  "developer_mode": "Entwicklermodus",
+  "developer_mode_subtitle": "Entwicklerwerkzeuge für Erweiterungen anzeigen (Erweiterung erstellen, Code bearbeiten)",
+  "last_sync": "Letzte Synchronisierung um: ",
+  "sync_login_browser": "Im Browser anmelden",
+  "sync_progress_percent": "Synchronisierung… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "Synchronisierung…",
+  "override_ass_subtitles": "ASS-Untertitel überschreiben",
+  "override_ass_subtitles_info": "Benutzerdefinierten Stil auf ASS/SSA-Untertitel anwenden",
+  "repo_already_exists": "Repository existiert bereits!",
+  "tracks": "Spuren",
+  "playback_speed": "Wiedergabegeschwindigkeit",
+  "shaders": "Shader",
+  "video_fit": "Anpassen",
+  "double_page_single_first_page": "Erste Seite einzeln",
+  "double_page_single_first_page_subtitle": "Erste Seite im Doppelseitenmodus einzeln anzeigen",
+  "memory_overlay": "Speichernutzung anzeigen",
+  "memory_overlay_subtitle": "Live-Anzeige der Speicherauslastung der App. Zum Messen auf dem Gerät: beobachten Sie die Anzeige beim Scrollen in der Bibliothek oder Lesen eines Kapitels.",
+  "error_reports_extension_failure": "Dies wurde durch eine Erweiterung verursacht, nicht durch Mangayomi. Erweiterungen werden von den Betreibern des Repositories gewartet, aus dem diese Quelle installiert wurde. Der Quellenname und die geöffnete Seite sind hilfreiche Details für einen Fehlerbericht.",
+  "error_reports_already_reported": "Bereits gemeldet",
+  "error_reports_expected_failure": "Dies liegt normalerweise an der Quelle oder am Netzwerk und nicht an der App: ein abgelaufener Link, ein Serverausfall oder ein Verbindungsabbruch. Sollte nur gemeldet werden, wenn es bei einer ansonsten funktionierenden Quelle dauerhaft auftritt.",
+  "global_search_no_sources": "Keine {itemType}-Quellen installiert.",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "Fügen Sie unter Durchsuchen ein Repository hinzu und installieren Sie eine Erweiterung dafür.",
+  "global_search_only_pinned": "Sie haben {count, plural, =1{1 Quelle} other{{count} Quellen}} hierfür, aber es werden nur angepinnte Quellen durchsucht.",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "Pinnen Sie eine Quelle an oder deaktivieren Sie \"Nur angepinnte Quellen einbeziehen\" in den Durchsuchen-Einstellungen.",
+  "global_search_all_nsfw": "Alle Ihre Quellen hierfür sind als NSFW markiert und ausgeblendet.",
+  "global_search_all_nsfw_hint": "Aktivieren Sie NSFW-Quellen in den Durchsuchen-Einstellungen, um sie zu durchsuchen.",
+  "related_titles": "Verwandt",
+  "related_none": "Keine verwandten Titel für diesen Eintrag gefunden.",
+  "relation_adaptation": "Adaption",
+  "relation_sequel": "Fortsetzung",
+  "relation_prequel": "Prequel",
+  "relation_parent": "Hauptgeschichte",
+  "relation_side_story": "Nebengeschichte",
+  "relation_spin_off": "Spin-off",
+  "relation_alternative": "Alternative Version",
+  "auto_library_update": "Automatische Bibliotheksaktualisierungen",
+  "auto_library_update_subtitle": "Beim Starten der App jeden Eintrag in Ihrer Bibliothek auf neue Kapitel überprüfen.",
+  "auto_library_update_never": "Nie",
+  "auto_library_update_12_hours": "Alle 12 Stunden",
+  "auto_library_update_daily": "Täglich",
+  "auto_library_update_2_days": "Alle 2 Tage",
+  "auto_library_update_weekly": "Wöchentlich",
+  "auto_library_update_wifi_only": "Nur über WLAN",
+  "auto_library_update_wifi_only_subtitle": "Geplante Aktualisierung bei mobiler Datenverbindung überspringen."
 }

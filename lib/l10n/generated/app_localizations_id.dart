@@ -792,11 +792,11 @@ class AppLocalizationsId extends AppLocalizations {
   String get create_extension => 'Buat Ekstensi';
 
   @override
-  String get developer_mode => 'Developer mode';
+  String get developer_mode => 'Mode pengembang';
 
   @override
   String get developer_mode_subtitle =>
-      'Show extension developer tools (create extension, edit code)';
+      'Tampilkan alat pengembang ekstensi (buat ekstensi, edit kode)';
 
   @override
   String get choose_extension_language => 'Pilih bahasa ekstensi';
@@ -1060,10 +1060,10 @@ class AppLocalizationsId extends AppLocalizations {
       'Sinkronkan kemajuan Anda di beberapa perangkat melalui \nserver yang dihosting sendiri. Lihat server discord kami untuk info lebih lanjut!';
 
   @override
-  String get last_sync => 'Last sync at: ';
+  String get last_sync => 'Sinkronisasi terakhir pada: ';
 
   @override
-  String get sync_login_browser => 'Log in with browser';
+  String get sync_login_browser => 'Masuk dengan peramban';
 
   @override
   String get sync_server => 'Alamat Server Sinkronisasi';
@@ -1083,11 +1083,11 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String sync_progress_percent(Object percent) {
-    return 'Syncing… $percent%';
+    return 'Menyinkronkan… $percent%';
   }
 
   @override
-  String get sync_progress_indeterminate => 'Syncing…';
+  String get sync_progress_indeterminate => 'Menyinkronkan…';
 
   @override
   String get sync_button_sync => 'Sinkronkan progres';
@@ -1770,11 +1770,11 @@ class AppLocalizationsId extends AppLocalizations {
       'Nonaktifkan `gunakan libass` di pengaturan pemutar untuk dapat menyesuaikan subtitle.';
 
   @override
-  String get override_ass_subtitles => 'Override ASS subtitles';
+  String get override_ass_subtitles => 'Ganti teks film ASS';
 
   @override
   String get override_ass_subtitles_info =>
-      'Apply custom styling to ASS/SSA subtitles';
+      'Terapkan gaya khusus ke teks film ASS/SSA';
 
   @override
   String get torrent_stream => 'Aliran Torrent';
@@ -1966,7 +1966,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get repo_added => 'Repositori sumber ditambahkan!';
 
   @override
-  String get repo_already_exists => 'Repository already exists!';
+  String get repo_already_exists => 'Repositori sudah ada!';
 
   @override
   String get add_repo => 'Tambahkan repositori?';
@@ -2183,16 +2183,16 @@ class AppLocalizationsId extends AppLocalizations {
   String get subtitle_speed => 'Kecepatan';
 
   @override
-  String get tracks => 'Tracks';
+  String get tracks => 'Trek';
 
   @override
-  String get playback_speed => 'Playback speed';
+  String get playback_speed => 'Kecepatan pemutaran';
 
   @override
-  String get shaders => 'Shaders';
+  String get shaders => 'Shader';
 
   @override
-  String get video_fit => 'Fit';
+  String get video_fit => 'Kesesuaian';
 
   @override
   String get calendar => 'Kalender';
@@ -2731,11 +2731,11 @@ class AppLocalizationsId extends AppLocalizations {
   String get dual_page_rotate_to_fit_invert => 'Balikkan arah rotasi';
 
   @override
-  String get double_page_single_first_page => 'Single first page';
+  String get double_page_single_first_page => 'Halaman pertama tunggal';
 
   @override
   String get double_page_single_first_page_subtitle =>
-      'Display the first page alone in double page mode';
+      'Tampilkan halaman pertama sendirian dalam mode halaman ganda';
 
   @override
   String get landscape_zoom => 'Zoom lanskap otomatis';
@@ -3087,11 +3087,11 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get memory_overlay => 'Show memory usage';
+  String get memory_overlay => 'Tampilkan penggunaan memori';
 
   @override
   String get memory_overlay_subtitle =>
-      'A live readout of what the app is holding. For measuring on the device rather than guessing: watch it while scrolling the library or reading a chapter.';
+      'Tampilan langsung memori yang digunakan aplikasi. Untuk mengukur langsung pada perangkat: pantau saat menggulir perpustakaan atau membaca bab.';
 
   @override
   String get beta => 'Beta';
@@ -3129,14 +3129,14 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get error_reports_extension_failure =>
-      'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.';
+      'Ini berasal dari ekstensi, bukan dari Mangayomi. Ekstensi ditulis dan dikelola oleh pengelola repositori tempat Anda memasang sumber ini, jadi perbaikan harus dilakukan di sana. Nama sumber dan apa yang Anda buka adalah informasi yang berguna untuk diberikan.';
 
   @override
-  String get error_reports_already_reported => 'Already reported';
+  String get error_reports_already_reported => 'Sudah dilaporkan';
 
   @override
   String get error_reports_expected_failure =>
-      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
+      'Hal ini biasanya disebabkan oleh sumber atau jaringan dan bukan aplikasi: tautan kedaluwarsa, server mati, atau koneksi terputus. Hanya perlu dilaporkan jika terus terjadi pada sumber yang berfungsi di tempat lain.';
 
   @override
   String get share_unavailable_copied =>
@@ -3258,93 +3258,93 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String global_search_no_sources(String itemType) {
-    return 'No $itemType sources are installed.';
+    return 'Tidak ada sumber $itemType yang terpasang.';
   }
 
   @override
   String get global_search_no_sources_hint =>
-      'Add a repository under Browse, then install an extension for it.';
+      'Tambahkan repositori di bagian Jelajahi, lalu pasang ekstensi untuk sumber tersebut.';
 
   @override
   String global_search_only_pinned(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count sources',
-      one: '1 source',
+      other: '$count sumber',
     );
-    return 'You have $_temp0 for this, but only pinned ones are searched.';
+    return 'Anda memiliki $_temp0 untuk ini, namun hanya sumber yang disematkan yang dicari.';
   }
 
   @override
   String get global_search_only_pinned_hint =>
-      'Pin one, or turn off \"Only include pinned sources\" in Browse settings.';
+      'Sematkan salah satu, atau matikan \"Hanya sertakan sumber yang disematkan\" di pengaturan Jelajahi.';
 
   @override
   String get global_search_all_nsfw =>
-      'Every source you have for this is marked NSFW, and those are hidden.';
+      'Semua sumber yang Anda miliki untuk ini ditandai NSFW dan disembunyikan.';
 
   @override
   String get global_search_all_nsfw_hint =>
-      'Turn on NSFW sources in Browse settings to search them.';
+      'Aktifkan sumber NSFW di pengaturan Jelajahi untuk mencarinya.';
 
   @override
   String get missing_source_check_result_message =>
       'Entri ini mengarah ke sumber yang tidak terpasang. Ketuk untuk memigrasikan atau pasang ekstensi.';
 
   @override
-  String get related_titles => 'Related';
+  String get related_titles => 'Terkait';
 
   @override
-  String get related_none => 'Nothing related was found for this title.';
+  String get related_none =>
+      'Tidak ada judul terkait yang ditemukan untuk karya ini.';
 
   @override
-  String get relation_adaptation => 'Adaptation';
+  String get relation_adaptation => 'Adaptasi';
 
   @override
-  String get relation_sequel => 'Sequel';
+  String get relation_sequel => 'Sekuel';
 
   @override
   String get relation_prequel => 'Prequel';
 
   @override
-  String get relation_parent => 'Parent story';
+  String get relation_parent => 'Cerita utama';
 
   @override
-  String get relation_side_story => 'Side story';
+  String get relation_side_story => 'Cerita sampingan';
 
   @override
   String get relation_spin_off => 'Spin-off';
 
   @override
-  String get relation_alternative => 'Alternative version';
+  String get relation_alternative => 'Versi alternatif';
 
   @override
-  String get auto_library_update => 'Automatic library updates';
+  String get auto_library_update => 'Pembaruan perpustakaan otomatis';
 
   @override
   String get auto_library_update_subtitle =>
-      'Check every entry in your library for new chapters when the app starts.';
+      'Periksa bab baru untuk setiap entri di perpustakaan Anda saat aplikasi dimulai.';
 
   @override
-  String get auto_library_update_never => 'Never';
+  String get auto_library_update_never => 'Jangan pernah';
 
   @override
-  String get auto_library_update_12_hours => 'Every 12 hours';
+  String get auto_library_update_12_hours => 'Setiap 12 jam';
 
   @override
-  String get auto_library_update_daily => 'Daily';
+  String get auto_library_update_daily => 'Harian';
 
   @override
-  String get auto_library_update_2_days => 'Every 2 days';
+  String get auto_library_update_2_days => 'Setiap 2 hari';
 
   @override
-  String get auto_library_update_weekly => 'Weekly';
+  String get auto_library_update_weekly => 'Mingguan';
 
   @override
-  String get auto_library_update_wifi_only => 'Only on Wi-Fi';
+  String get auto_library_update_wifi_only => 'Hanya lewat Wi-Fi';
 
   @override
   String get auto_library_update_wifi_only_subtitle =>
-      'Skip the scheduled update while on mobile data.';
+      'Lewati pembaruan terjadwal saat menggunakan data seluler.';
 }

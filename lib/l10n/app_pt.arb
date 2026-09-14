@@ -1309,5 +1309,68 @@
         "type": "int"
       }
     }
-  }
+  },
+  "developer_mode": "Modo de programador",
+  "developer_mode_subtitle": "Mostrar ferramentas de programador de extensões (criar extensão, editar código)",
+  "last_sync": "Última sincronização às: ",
+  "sync_login_browser": "Iniciar sessão com o navegador",
+  "sync_progress_percent": "A sincronizar… {percent}%",
+  "@sync_progress_percent": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "sync_progress_indeterminate": "A sincronizar…",
+  "override_ass_subtitles": "Substituir legendas ASS",
+  "override_ass_subtitles_info": "Aplicar estilo personalizado às legendas ASS/SSA",
+  "repo_already_exists": "O repositório já existe!",
+  "tracks": "Faixas",
+  "playback_speed": "Velocidade de reprodução",
+  "shaders": "Shaders",
+  "video_fit": "Ajustar",
+  "double_page_single_first_page": "Primeira página individual",
+  "double_page_single_first_page_subtitle": "Mostrar a primeira página sozinha no modo de página dupla",
+  "memory_overlay": "Mostrar uso de memória",
+  "memory_overlay_subtitle": "Leitura em direto da memória ocupada pela aplicação. Para medir no dispositivo em vez de adivinhar: observe enquanto percorre a biblioteca ou lê um capítulo.",
+  "error_reports_extension_failure": "Isto veio de uma extensão, não do Mangayomi. As extensões são escritas e mantidas por quem gere o repositório a partir do qual instalou esta fonte, pelo que a correção tem de ser feita lá. O nome da fonte e o que estava a abrir são detalhes úteis para lhes fornecer.",
+  "error_reports_already_reported": "Já reportado",
+  "error_reports_expected_failure": "Geralmente é da fonte ou da rede e não da aplicação: uma hiperligação que expirou, um servidor em baixo ou uma ligação que caiu. Vale a pena reportar apenas se continuar a acontecer numa fonte que funciona noutros locais.",
+  "global_search_no_sources": "Nenhuma fonte de {itemType} instalada.",
+  "@global_search_no_sources": {
+    "placeholders": {
+      "itemType": {
+        "type": "String"
+      }
+    }
+  },
+  "global_search_no_sources_hint": "Adicione um repositório em Navegar e, em seguida, instale uma extensão correspondente.",
+  "global_search_only_pinned": "Tem {count, plural, =1{1 fonte} other{{count} fontes}} para isto, mas apenas as fixadas são pesquisadas.",
+  "@global_search_only_pinned": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "global_search_only_pinned_hint": "Fixe uma fonte ou desative \"Apenas incluir fontes fixadas\" nas definições de Navegar.",
+  "global_search_all_nsfw": "Todas as fontes para isto estão marcadas como NSFW e estão ocultas.",
+  "global_search_all_nsfw_hint": "Ative as fontes NSFW nas definições de Navegar para pesquisar nas mesmas.",
+  "related_titles": "Relacionados",
+  "related_none": "Nenhum título relacionado encontrado para esta obra.",
+  "relation_adaptation": "Adaptação",
+  "relation_sequel": "Sequela",
+  "relation_prequel": "Prequela",
+  "relation_parent": "História principal",
+  "relation_side_story": "História paralela",
+  "relation_spin_off": "Spin-off",
+  "relation_alternative": "Versão alternativa",
+  "auto_library_update": "Atualizações automáticas da biblioteca",
+  "auto_library_update_subtitle": "Verificar novos capítulos para cada entrada da sua biblioteca ao iniciar a aplicação.",
+  "auto_library_update_never": "Nunca",
+  "auto_library_update_12_hours": "A cada 12 horas",
+  "auto_library_update_daily": "Diariamente",
+  "auto_library_update_2_days": "A cada 2 dias",
+  "auto_library_update_weekly": "Semanalmente",
+  "auto_library_update_wifi_only": "Apenas por Wi-Fi",
+  "auto_library_update_wifi_only_subtitle": "Ignorar a atualização agendada quando estiver em dados móveis."
 }
