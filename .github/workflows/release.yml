@@ -277,10 +277,12 @@ jobs:
       - name: build windows zip
         shell: pwsh
         run: |
-          # Rename installer exe
+          New-Item -ItemType Directory -Force -Path "dist"
+
+          # Rename and move installer exe
           $installer = Get-ChildItem -Path "build/windows/x64/installer/Release/*.exe" | Select-Object -First 1
           if ($installer) {
-            Move-Item -Path $installer.FullName -Destination "build/windows/x64/installer/Release/Mangayomi-${{ github.ref_name }}-windows.exe" -Force
+            Move-Item -Path $installer.FullName -Destination "dist/Mangayomi-${{ github.ref_name }}-windows.exe" -Force
           } else {
             Write-Error "Installer executable not found in build/windows/x64/installer/Release/"
           }
@@ -288,15 +290,13 @@ jobs:
           # Create zip of runner release
           $tempZip = Join-Path $env:RUNNER_TEMP "Mangayomi-${{ github.ref_name }}-windows.zip"
           Compress-Archive -Path "build/windows/x64/runner/Release/*" -DestinationPath $tempZip -Force
-          Move-Item -Path $tempZip -Destination "build/windows/x64/runner/Release/Mangayomi-${{ github.ref_name }}-windows.zip" -Force
+          Move-Item -Path $tempZip -Destination "dist/Mangayomi-${{ github.ref_name }}-windows.zip" -Force
 
       - name: upload artifact windows exe_zip
         uses: actions/upload-artifact@v4
         with:
           name: Mangayomi-${{ github.ref_name }}-windows-zip
-          path: |
-            build/windows/x64/installer/Release/Mangayomi-*.exe
-            build/windows/x64/runner/Release/Mangayomi-*.zip
+          path: dist/Mangayomi-*
           if-no-files-found: error
 
   build-and-release-linux-zip_AppImage_RPM:
@@ -507,6 +507,11 @@ jobs:
           pattern: Mangayomi-*
           merge-multiple: true
           path: release-assets
+
+      - name: Flatten release assets
+        run: |
+          find release-assets -mindepth 2 -type f -exec mv {} release-assets/ \;
+          find release-assets -mindepth 1 -type d -empty -delete
 
       - name: Publish GitHub Release
         uses: ncipollo/release-action@v1
