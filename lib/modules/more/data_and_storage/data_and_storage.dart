@@ -62,7 +62,11 @@ class DataAndStorage extends ConsumerWidget {
                               Navigator.pop(context);
                             } else {
                               String? result =
-                                  await FilePicker.getDirectoryPath();
+                                  await FilePicker.getDirectoryPath(
+                                    linuxOptions: const LinuxOptions(
+                                      lockParentWindow: true,
+                                    ),
+                                  );
 
                               if (result != null) {
                                 ref
@@ -321,7 +325,9 @@ class DataAndStorage extends ConsumerWidget {
             if (!Platform.isIOS)
               ListTile(
                 onTap: () async {
-                  String? result = await FilePicker.getDirectoryPath();
+                  String? result = await FilePicker.getDirectoryPath(
+                    linuxOptions: const LinuxOptions(lockParentWindow: true),
+                  );
 
                   if (result != null) {
                     ref

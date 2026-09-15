@@ -8,7 +8,7 @@ import Foundation
 import app_links
 import connectivity_plus
 import device_info_plus
-import file_picker
+import file_picker_darwin
 import flutter_inappwebview_macos
 import flutter_qjs
 import flutter_secure_storage_darwin

@@ -2451,7 +2451,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               icon: Icons.file_open_outlined,
               onTap: () async {
                 try {
-                  final file = await FilePicker.pickFile();
+                  final file = await FilePicker.pickFile(
+                    linuxOptions: const LinuxOptions(lockParentWindow: true),
+                  );
 
                   if (file != null && context.mounted) {
                     final track = SubtitleTrack.uri(file.path!);

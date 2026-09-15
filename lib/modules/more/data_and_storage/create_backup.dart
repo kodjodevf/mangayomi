@@ -173,7 +173,11 @@ class _CreateBackupState extends ConsumerState<CreateBackup> {
                                         .getIosBackupDirectory())!
                                     .path;
                           } else {
-                            result = await FilePicker.getDirectoryPath();
+                            result = await FilePicker.getDirectoryPath(
+                              linuxOptions: const LinuxOptions(
+                                lockParentWindow: true,
+                              ),
+                            );
                           }
                           if (result != null && context.mounted) {
                             ref.read(

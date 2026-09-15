@@ -14,15 +14,16 @@ Future addTorrentFromUrlOrFromFile(
   required bool init,
   String? url,
 }) async {
-  FilePickerResult? result;
+  List<PlatformFile>? files;
   if (url == null) {
-    result = await FilePicker.pickFiles(
+    files = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['torrent'],
+      linuxOptions: const LinuxOptions(lockParentWindow: true),
     );
   }
 
-  if (result != null || url != null) {
+  if (files?.isNotEmpty ?? false || url != null) {
     String torrentName = "";
     if (url != null) {
       torrentName = (await MTorrentServer().getTorrentPlaylist(
@@ -42,7 +43,7 @@ Future addTorrentFromUrlOrFromFile(
           imageUrl: '',
           lang: '',
           link: '',
-          name: url != null ? torrentName : _getName(result!.files.first.path!),
+          name: url != null ? torrentName : _getName(files!.first.path!),
           dateAdded: dateNow,
           lastUpdate: dateNow,
           status: Status.unknown,
@@ -67,7 +68,7 @@ Future addTorrentFromUrlOrFromFile(
         chapters.manga.saveSync();
       });
     } else {
-      for (var file in result!.files.reversed.toList()) {
+      for (var file in files!.reversed) {
         String name = _getName(file.path!);
 
         if (init) {
