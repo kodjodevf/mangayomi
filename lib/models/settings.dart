@@ -884,7 +884,8 @@ class Settings {
       novelReaderPadding = json['novelReaderPadding'];
     }
     if (json['novelReaderLineHeight'] != null) {
-      novelReaderLineHeight = json['novelReaderLineHeight'];
+      novelReaderLineHeight = (json['novelReaderLineHeight'] as num)
+          .toDouble();
     }
     if (json['novelFontFamily'] != null) {
       novelFontFamily = json['novelFontFamily'];
@@ -1458,7 +1459,7 @@ class AutoScrollPages {
 
   AutoScrollPages.fromJson(Map<String, dynamic> json) {
     mangaId = json['mangaId'];
-    pageOffset = json['pageOffset'];
+    pageOffset = (json['pageOffset'] as num?)?.toDouble();
     autoScroll = json['autoScroll'];
   }
 
