@@ -17,7 +17,7 @@ import 'package:mangayomi/utils/constant.dart';
 ///
 /// Kitsu ids are not AniList ids, which is why [DiscoveryMedia.source] exists:
 /// whatever answered the search has to answer the follow-up calls too.
-const String _kitsuEndpoint = "https://kitsu.io/api/edge";
+const String _kitsuEndpoint = "https://kitsu.app/api/edge";
 const Duration _kitsuTimeout = Duration(seconds: 15);
 
 String _kitsuType(ItemType itemType) =>
@@ -58,6 +58,13 @@ Future<Map<String, dynamic>?> _get(
       "did not answer within ${_kitsuTimeout.inSeconds}s",
       cooldown: const Duration(minutes: 2),
     );
+  } on Exception catch (e) {
+    // Covers DNS failure, refused connection, TLS errors, etc.
+    throw ServiceAvailability.markDown(
+      DiscoveryService.kitsu,
+      "network failure: $e",
+      cooldown: const Duration(minutes: 2),
+    );
   } finally {
     client.close();
   }
@@ -66,6 +73,9 @@ Future<Map<String, dynamic>?> _get(
 /// Kitsu's own shape, mapped onto the AniList-shaped [DiscoveryMedia] the rest
 /// of the app already understands.
 DiscoveryMedia kitsuMediaFrom(Map<String, dynamic> entry) {
+  final rawId = entry["id"];
+  final id = int.tryParse('$rawId');
+  if (id == null) throw FormatException("Invalid Kitsu media ID: $rawId");
   final attributes = (entry["attributes"] as Map<String, dynamic>?) ?? const {};
   final titles = (attributes["titles"] as Map<String, dynamic>?) ?? const {};
   final poster = attributes["posterImage"] as Map<String, dynamic>?;
@@ -73,7 +83,7 @@ DiscoveryMedia kitsuMediaFrom(Map<String, dynamic> entry) {
   final startDate = '${attributes["startDate"] ?? ''}'.split('-');
 
   return DiscoveryMedia(
-    id: int.tryParse('${entry["id"]}') ?? 0,
+    id: id,
     source: DiscoveryService.kitsu,
     romaji:
         titles["en_jp"] as String? ?? attributes["canonicalTitle"] as String?,
