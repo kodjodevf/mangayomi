@@ -9,7 +9,7 @@ import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:path/path.dart' as p;
 import 'package:http_interceptor/http/intercepted_client.dart';
 import 'package:js_packer/js_packer.dart';
-import 'package:mangayomi/eval/javascript/http.dart';
+import 'package:mangayomi/eval/http_response_extensions.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/http/m_client.dart';

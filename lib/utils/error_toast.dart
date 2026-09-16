@@ -1,6 +1,5 @@
-import 'package:go_router/go_router.dart';
+import 'package:mangayomi/core/navigation/app_navigator.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/utils/localized_message.dart';
 
@@ -23,7 +22,7 @@ void toastError(
     second: seconds,
     maxLines: 3,
     detailsLabel: localizedMessage((l10n) => l10n.error_reports_banner_action),
-    onDetails: () => navigatorKey.currentContext?.push('/errorReports'),
+    onDetails: () => AppNavigator.push('/errorReports'),
   );
 }
 

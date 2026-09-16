@@ -48,3 +48,53 @@ abstract final class Alphas {
 /// box is fixed and the image is cropped to fill rather than the box moving to
 /// fit whatever arrived.
 const double coverAspect = 2 / 3;
+
+/// Padding and gaps. An audit of `EdgeInsets.all(...)` across the app found
+/// the same handful of values reached for over and over - 8, 12, 16, 20, 24 -
+/// alongside dozens of one-off numbers (3, 6, 7, 9, 14, 15...) that are each
+/// used once or twice and were almost always meant to be the nearest step on
+/// this same ladder.
+///
+/// New code should reach for these instead of a literal. Existing call sites
+/// were not swept to adopt them - that's a separate, visually-verified pass,
+/// not a rename - so don't take their current absence from a screen as
+/// meaning that screen is already off-ladder.
+abstract final class Spacing {
+  /// Tight gaps: an icon's own padding, a badge's inset.
+  static const double xs = 4;
+
+  /// The single most common padding in the app - list tiles, small cards,
+  /// icon buttons.
+  static const double sm = 8;
+
+  /// Between [sm] and [lg] - used where [sm] reads as too tight but a full
+  /// [lg] would push content too far from the edge.
+  static const double md = 12;
+
+  /// Section and screen padding.
+  static const double lg = 16;
+
+  /// Generous breathing room - empty states, dialog padding.
+  static const double xl = 24;
+}
+
+/// Corner radii. `BorderRadius.circular(5)` alone appears more often than any
+/// other single value in the app - not because 5 is a meaningful design
+/// decision, but because it was Material's old default and got copied
+/// forward into every new card and list tile after the first one. [small]
+/// preserves that value rather than "fixing" it to something rounder,
+/// because changing it is a visual change to nearly every card in the app,
+/// not a token migration - see [Spacing] on the same point.
+abstract final class Radii {
+  /// Cards, list tiles, chip-shaped badges - the de facto default.
+  static const double small = 5;
+
+  /// Buttons, larger cards, bottom sheets.
+  static const double medium = 8;
+
+  /// Dialogs, prominent containers.
+  static const double large = 12;
+
+  /// Pills and fully-rounded chips.
+  static const double pill = 20;
+}

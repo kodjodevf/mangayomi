@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:http_interceptor/http_interceptor.dart';
+import 'package:mangayomi/eval/http_response_extensions.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:http/http.dart' as http;
 
@@ -140,37 +141,4 @@ Future<String> _toHttpResponse(Client client, String method, List args) async {
     _ => client.patch(Uri.parse(url), headers: headers, body: body),
   };
   return jsonEncode((await future).toJson());
-}
-
-extension ResponseExtexsion on Response {
-  Map<String, dynamic> toJson() => {
-    'body': body,
-    'headers': headers,
-    'isRedirect': isRedirect,
-    'persistentConnection': persistentConnection,
-    'reasonPhrase': reasonPhrase,
-    'statusCode': statusCode,
-    'request': {
-      'contentLength': request?.contentLength,
-      'finalized': request?.finalized,
-      'followRedirects': request?.followRedirects,
-      'headers': request?.headers,
-      'maxRedirects': request?.maxRedirects,
-      'method': request?.method,
-      'persistentConnection': request?.persistentConnection,
-      'url': request?.url.toString(),
-    },
-  };
-}
-
-extension ToMapExtension on Map? {
-  Map<String, dynamic>? get toMapStringDynamic {
-    return this?.map((key, value) => MapEntry(key.toString(), value));
-  }
-
-  Map<String, String>? get toMapStringString {
-    return this?.map(
-      (key, value) => MapEntry(key.toString(), value.toString()),
-    );
-  }
 }

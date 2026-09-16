@@ -6,7 +6,6 @@ import 'dart:math';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:ffi/ffi.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +26,7 @@ import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
 import 'package:mangayomi/modules/anime/utils/audio_track_fallback.dart';
 import 'package:mangayomi/modules/anime/utils/audio_track_label.dart';
 import 'package:mangayomi/modules/anime/utils/playback_media.dart';
+import 'package:mangayomi/modules/anime/utils/video_prefs.dart';
 import 'package:mangayomi/modules/anime/providers/state_provider.dart';
 import 'package:mangayomi/modules/anime/utils/player_lifecycle.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
@@ -34,12 +34,15 @@ import 'package:mangayomi/modules/anime/widgets/tv_player_controls.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_settings_panel.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
+import 'package:mangayomi/modules/anime/utils/track_list_builder.dart';
+import 'package:mangayomi/modules/anime/widgets/audio_section_widget.dart';
 import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
+import 'package:mangayomi/modules/anime/widgets/player_settings_sections.dart';
+import 'package:mangayomi/modules/anime/widgets/subtitle_section_widget.dart';
 import 'package:mangayomi/utils/manga_cover_actions.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
-import 'package:mangayomi/modules/anime/widgets/subtitle_setting_widget.dart';
 import 'package:mangayomi/modules/anime/widgets/unified_settings_sheet.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_audio_state_provider.dart';
@@ -50,7 +53,6 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/aniskip.dart';
-import 'package:mangayomi/services/fetch_subtitles.dart';
 import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -69,8 +71,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:window_manager/window_manager.dart' show windowManager;
-
-import 'widgets/search_subtitles.dart';
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final int episodeId;
@@ -458,9 +458,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   SubtitleTrack? _activeSubtitleTrack;
   AudioTrack? _activeAudioTrack;
   bool _includeSubtitles = false;
-  int _subDelay = 0;
   final _subDelayController = TextEditingController(text: "0");
-  double _subSpeed = 1;
   final _subSpeedController = TextEditingController(text: "1.00");
   int lastRpcTimestampUpdate = DateTime.now().millisecondsSinceEpoch;
 
@@ -1029,7 +1027,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       );
       malloc.free(namePtr);
       malloc.free(valuePtr);
-      _subDelay = delayMs;
     }
   }
 
@@ -1052,7 +1049,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       );
       malloc.free(namePtr);
       malloc.free(valuePtr);
-      _subSpeed = speed;
     }
   }
 
@@ -1141,7 +1137,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       _syncActiveAudioTrackFromMpv();
       _syncActiveSubtitleTrackFromMpv();
     });
+    // Referencing these `late final` subscriptions forces them to
+    // initialize now (and start listening) rather than lazily on first use,
+    // which could otherwise be their own `.cancel()` in dispose() - creating
+    // a subscription just to immediately cancel it, or worse, after the
+    // player it subscribes to is already gone.
+    // ignore: unnecessary_statements
     _completed;
+    // ignore: unnecessary_statements
     _currentTotalDurationSub;
     _loadAndroidFont().then((_) {
       // Loading the subtitle font writes a file, so this callback can arrive
@@ -1744,60 +1747,30 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   Widget _videoQualityWidget(BuildContext context) {
-    List<VideoPrefs> videoQuality = _player.state.tracks.video
-        .where(
-          (element) => element.w != null && element.h != null && widget.isLocal,
-        )
-        .toList()
-        .map((e) => VideoPrefs(videoTrack: e, isLocal: true))
-        .toList();
-
-    if (widget.videos.isNotEmpty && !widget.isLocal) {
-      for (var video in widget.videos) {
-        videoQuality.add(
-          VideoPrefs(
-            videoTrack: VideoTrack(video.url, video.quality, video.quality),
-            headers: video.headers,
-            isLocal: false,
-          ),
-        );
-      }
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-      child: Column(
-        children: videoQuality.map((quality) {
-          final selected =
-              _video.value!.videoTrack!.title == quality.videoTrack!.title ||
-              widget.isLocal;
-          return SettingsOptionRow(
-            label: widget.isLocal
-                ? _firstVid.quality
-                : quality.videoTrack!.title!,
-            selected: selected,
-            onTap: () async {
-              if (_video.value?.videoTrack?.id == quality.videoTrack?.id) {
-                _popSettings(context);
-                return;
-              }
-              _video.value = quality;
-              _player.stop();
-              if (quality.isLocal) {
-                if (widget.isLocal) {
-                  _player.setVideoTrack(quality.videoTrack!);
-                } else {
-                  _openMedia(quality);
-                }
-              } else {
-                _openMedia(quality);
-              }
-              _initSubtitleAndAudio = true;
-              _popSettings(context);
-            },
-          );
-        }).toList(),
+    return VideoQualitySectionWidget(
+      videoQuality: buildVideoQualityOptions(
+        player: _player,
+        videos: widget.videos,
+        isLocal: widget.isLocal,
       ),
+      isLocal: widget.isLocal,
+      localQualityLabel: _firstVid.quality,
+      currentVideo: _video.value,
+      onSelect: (quality) {
+        _video.value = quality;
+        _player.stop();
+        if (quality.isLocal) {
+          if (widget.isLocal) {
+            _player.setVideoTrack(quality.videoTrack!);
+          } else {
+            _openMedia(quality);
+          }
+        } else {
+          _openMedia(quality);
+        }
+        _initSubtitleAndAudio = true;
+      },
+      onDone: () => _popSettings(context),
     );
   }
 
@@ -2024,560 +1997,98 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   Widget _appearanceSectionWidget(BuildContext context, bool hasSubtitleTrack) {
-    // FontSettingWidget/ColorSettingWidget style themselves from the ambient
-    // Theme — they used to open inside their own draggable menu.
-    // Forced dark here so they stay legible against this sheet's dark ground
-    // even when the app itself runs in light mode.
-    return Theme(
-      data: ThemeData.dark(useMaterial3: true),
-      child: Column(
-        children: [
-          if (useLibass) ...[
-            Consumer(
-              builder: (context, ref, _) {
-                final overrideAss = ref.watch(
-                  overrideAssSubtitlesStateProvider,
-                );
-                return SwitchListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                  value: overrideAss,
-                  title: Text(
-                    context.l10n.override_ass_subtitles,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  subtitle: Text(
-                    context.l10n.override_ass_subtitles_info,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white.withValues(alpha: 0.6),
-                    ),
-                  ),
-                  onChanged: (val) {
-                    ref
-                        .read(subtitleSettingsStateProvider.notifier)
-                        .setOverrideAss(val);
-                  },
-                );
-              },
-            ),
-            const Divider(height: 1, color: Color(0x14FFFFFF)),
-          ],
-          SubtitleAppearanceWidget(hasSubtitleTrack: hasSubtitleTrack),
-        ],
-      ),
+    return AppearanceSectionWidget(
+      useLibass: useLibass,
+      hasSubtitleTrack: hasSubtitleTrack,
     );
   }
 
   Widget _chaptersSectionWidget(BuildContext context) {
-    return ValueListenableBuilder<int?>(
-      valueListenable: _currentChapterMark,
-      builder: (context, current, _) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-        child: Column(
-          children: _chapterMarks.value.asMap().entries.map((entry) {
-            final index = entry.key;
-            final mark = entry.value;
-            return SettingsOptionRow(
-              label: mark.$1,
-              hint: Duration(milliseconds: mark.$2).label(),
-              selected: current == index,
-              onTap: () {
-                _player.seek(Duration(milliseconds: mark.$2));
-                _popSettings(context);
-              },
-            );
-          }).toList(),
-        ),
-      ),
+    return ChaptersSectionWidget(
+      chapterMarks: _chapterMarks.value,
+      currentChapterMark: _currentChapterMark,
+      onSeek: (ms) => _player.seek(Duration(milliseconds: ms)),
+      onDone: () => _popSettings(context),
     );
   }
 
   Widget _speedSectionWidget(BuildContext context) {
-    const speeds = [0.25, 0.5, 0.75, 1.0, 1.25, 1.50, 1.75, 2.0];
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-      child: Column(
-        children: speeds.map((speed) {
-          return ValueListenableBuilder<double>(
-            valueListenable: _playbackSpeed,
-            builder: (context, current, _) => SettingsOptionRow(
-              label: '${speed}x',
-              selected: current == speed,
-              onTap: () {
-                _setPlaybackSpeed(speed);
-                _popSettings(context);
-              },
-            ),
-          );
-        }).toList(),
-      ),
+    return SpeedSectionWidget(
+      playbackSpeed: _playbackSpeed,
+      onSelect: _setPlaybackSpeed,
+      onDone: () => _popSettings(context),
     );
   }
 
   Widget _fitSectionWidget(BuildContext context) {
-    const fits = [
-      BoxFit.contain,
-      BoxFit.cover,
-      BoxFit.fill,
-      BoxFit.fitHeight,
-      BoxFit.fitWidth,
-      BoxFit.scaleDown,
-      BoxFit.none,
-    ];
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-      child: Column(
-        children: fits.map((fit) {
-          return ValueListenableBuilder<BoxFit>(
-            valueListenable: _fit,
-            builder: (context, current, _) => SettingsOptionRow(
-              label: _fitShortLabel(fit),
-              selected: current == fit,
-              onTap: () {
-                _fit.value = fit;
-                _key.currentState?.update(fit: fit);
-                _popSettings(context);
-              },
-            ),
-          );
-        }).toList(),
-      ),
+    return FitSectionWidget(
+      fit: _fit,
+      fitLabel: _fitShortLabel,
+      onSelect: (fit) {
+        _fit.value = fit;
+        _key.currentState?.update(fit: fit);
+      },
+      onDone: () => _popSettings(context),
     );
   }
-
-  static const _shaderModes = [
-    ("Anime4K: Mode A (Fast)", "set_anime_a"),
-    ("Anime4K: Mode B (Fast)", "set_anime_b"),
-    ("Anime4K: Mode C (Fast)", "set_anime_c"),
-    ("Anime4K: Mode A+A (Fast)", "set_anime_aa"),
-    ("Anime4K: Mode B+B (Fast)", "set_anime_bb"),
-    ("Anime4K: Mode C+A (Fast)", "set_anime_ca"),
-    ("Anime4K: Mode A (HQ)", "set_anime_hq_a"),
-    ("Anime4K: Mode B (HQ)", "set_anime_hq_b"),
-    ("Anime4K: Mode C (HQ)", "set_anime_hq_c"),
-    ("Anime4K: Mode A+A (HQ)", "set_anime_hq_aa"),
-    ("Anime4K: Mode B+B (HQ)", "set_anime_hq_bb"),
-    ("Anime4K: Mode C+A (HQ)", "set_anime_hq_ca"),
-    ("AMD FSR", "set_fsr"),
-    ("Luma Upscaling", "set_luma"),
-    ("Qualcomm Snapdragon GSR", "set_snapdragon"),
-    ("NVIDIA Image Scaling", "set_nvidia"),
-    ("Clear GLSL shaders", "clear_anime"),
-  ];
 
   Widget _shadersSectionWidget(BuildContext context) {
-    return ValueListenableBuilder<String>(
-      valueListenable: _selectedShader,
-      builder: (context, selectedShader, _) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-        child: Column(
-          children: _shaderModes.map((mode) {
-            return SettingsOptionRow(
-              label: mode.$1,
-              selected: selectedShader == mode.$1,
-              onTap: () {
-                (_player.platform as NativePlayer).command([
-                  "script-message",
-                  mode.$2,
-                ]);
-                _popSettings(context);
-              },
-            );
-          }).toList(),
-        ),
-      ),
+    return ShadersSectionWidget(
+      selectedShader: _selectedShader,
+      onSelect: (arg) =>
+          (_player.platform as NativePlayer).command(["script-message", arg]),
+      onDone: () => _popSettings(context),
     );
   }
 
-  static const _statsModes = [
-    ("Stats Toggle", "stats/display-stats-toggle"),
-    ("Stats Page 1", "stats/display-page-1"),
-    ("Stats Page 2", "stats/display-page-2"),
-    ("Stats Page 3", "stats/display-page-3"),
-    ("Stats Page 4", "stats/display-page-4"),
-    ("Stats Page 5", "stats/display-page-5"),
-  ];
-
   Widget _statsSectionWidget(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-      child: Column(
-        children: _statsModes.map((mode) {
-          return SettingsOptionRow(
-            label: mode.$1,
-            selected: false,
-            onTap: () {
-              (_player.platform as NativePlayer).command([
-                "script-binding",
-                mode.$2,
-              ]);
-              _popSettings(context);
-            },
-          );
-        }).toList(),
-      ),
+    return StatsSectionWidget(
+      onSelect: (arg) =>
+          (_player.platform as NativePlayer).command(["script-binding", arg]),
+      onDone: () => _popSettings(context),
     );
   }
 
   Widget _customButtonsSectionWidget(BuildContext context) {
-    return ValueListenableBuilder<List<CustomButton>?>(
-      valueListenable: _customButtons,
-      builder: (context, buttons, _) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-        child: Column(
-          children: (buttons ?? []).map((btn) {
-            return SettingsOptionRow(
-              label: btn.title!,
-              selected: false,
-              onTap: () {
-                (_player.platform as NativePlayer).command([
-                  "script-message",
-                  "call_button_${btn.id}",
-                ]);
-                _popSettings(context);
-              },
-            );
-          }).toList(),
-        ),
-      ),
+    return CustomButtonsSectionWidget(
+      customButtons: _customButtons,
+      onSelect: (btn) => (_player.platform as NativePlayer).command([
+        "script-message",
+        "call_button_${btn.id}",
+      ]),
+      onDone: () => _popSettings(context),
     );
   }
 
   Widget _videoSubtitle(BuildContext context) {
-    List<VideoPrefs> videoSubtitle = _player.state.tracks.subtitle
-        .where((e) => e.id != 'auto' && e.id != 'no')
-        .map((e) => VideoPrefs(isLocal: true, subtitle: e))
-        .toList();
-
-    List<String> subs = [];
-    if (widget.videos.isNotEmpty) {
-      for (var video in widget.videos) {
-        for (var sub in video.subtitles ?? []) {
-          if (!subs.contains(sub.file)) {
-            final file = sub.file!;
-            final label = sub.label;
-            videoSubtitle.add(
-              VideoPrefs(
-                isLocal: widget.isLocal,
-                subtitle: (file.startsWith("http") || file.startsWith("file"))
-                    ? SubtitleTrack.uri(file, title: label, language: label)
-                    : SubtitleTrack.data(file, title: label, language: label),
-              ),
-            );
-            subs.add(sub.file!);
-          }
-        }
-      }
-    }
-    final effective = _effectiveSubtitleTrack;
-    videoSubtitle = videoSubtitle
-        .map((e) {
-          VideoPrefs vid = e;
-          final label = subtitleTrackLabel(vid.subtitle);
-          vid.title = (label.isNotEmpty && label != 'None')
-              ? label
-              : (vid.subtitle?.title ??
-                    vid.subtitle?.language ??
-                    vid.subtitle?.channels ??
-                    (vid.subtitle?.id != 'auto' && vid.subtitle?.id != 'no'
-                        ? vid.subtitle?.id
-                        : null) ??
-                    "");
-          return vid;
-        })
-        .toList()
-        .where((element) => element.title!.isNotEmpty)
-        .toList();
-    final seen = <String>{};
-    final List<VideoPrefs> uniqueSubtitle = [];
-    for (var element in videoSubtitle) {
-      final key = element.subtitle?.id ?? element.title ?? '';
-      if (key.isNotEmpty && seen.add(key)) {
-        uniqueSubtitle.add(element);
-      }
-    }
-    uniqueSubtitle.sort((a, b) => (a.title ?? '').compareTo(b.title ?? ''));
-    uniqueSubtitle.insert(
-      0,
-      VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()),
-    );
-    return StatefulBuilder(
-      builder: (context, setSectionState) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    context.l10n.subtitle_delay_text,
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.75),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setSectionState(() {
-                      _subDelay = 0;
-                      _subDelayController.value = const TextEditingValue(
-                        text: "0",
-                        selection: TextSelection.collapsed(offset: 1),
-                      );
-                      _subSpeed = 1;
-                      _subSpeedController.value = const TextEditingValue(
-                        text: "1.00",
-                        selection: TextSelection.collapsed(offset: 4),
-                      );
-                    });
-                  },
-                  icon: Icon(
-                    Icons.refresh,
-                    color: Theme.of(context).colorScheme.onSurface,
-                    size: 18,
-                  ),
-                ),
-              ],
-            ),
-            SettingsStepperRow(
-              label: context.l10n.subtitle_delay,
-              controller: _subDelayController,
-              suffix: ' ms',
-              keyboardType: const TextInputType.numberWithOptions(signed: true),
-              onDecrement: () => setSectionState(() {
-                _subDelay -= 50;
-                final text = "$_subDelay";
-                _subDelayController.value = TextEditingValue(
-                  text: text,
-                  selection: TextSelection.collapsed(offset: text.length),
-                );
-              }),
-              onIncrement: () => setSectionState(() {
-                _subDelay += 50;
-                final text = "$_subDelay";
-                _subDelayController.value = TextEditingValue(
-                  text: text,
-                  selection: TextSelection.collapsed(offset: text.length),
-                );
-              }),
-              onSubmitted: (text) {
-                final val = int.tryParse(text);
-                if (val != null) {
-                  setSectionState(() {
-                    _subDelay = val;
-                    final str = "$val";
-                    _subDelayController.value = TextEditingValue(
-                      text: str,
-                      selection: TextSelection.collapsed(offset: str.length),
-                    );
-                  });
-                } else {
-                  final str = "$_subDelay";
-                  _subDelayController.value = TextEditingValue(
-                    text: str,
-                    selection: TextSelection.collapsed(offset: str.length),
-                  );
-                }
-              },
-            ),
-            SettingsStepperRow(
-              label: context.l10n.subtitle_speed,
-              controller: _subSpeedController,
-              suffix: 'x',
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              onDecrement: () => setSectionState(() {
-                _subSpeed = (_subSpeed - 0.01).clamp(0.1, 10.0);
-                final text = _subSpeed.toStringAsFixed(2);
-                _subSpeedController.value = TextEditingValue(
-                  text: text,
-                  selection: TextSelection.collapsed(offset: text.length),
-                );
-              }),
-              onIncrement: () => setSectionState(() {
-                _subSpeed = (_subSpeed + 0.01).clamp(0.1, 10.0);
-                final text = _subSpeed.toStringAsFixed(2);
-                _subSpeedController.value = TextEditingValue(
-                  text: text,
-                  selection: TextSelection.collapsed(offset: text.length),
-                );
-              }),
-              onSubmitted: (text) {
-                final val = double.tryParse(text);
-                if (val != null) {
-                  setSectionState(() {
-                    _subSpeed = val.clamp(0.1, 10.0);
-                    final str = _subSpeed.toStringAsFixed(2);
-                    _subSpeedController.value = TextEditingValue(
-                      text: str,
-                      selection: TextSelection.collapsed(offset: str.length),
-                    );
-                  });
-                } else {
-                  final str = _subSpeed.toStringAsFixed(2);
-                  _subSpeedController.value = TextEditingValue(
-                    text: str,
-                    selection: TextSelection.collapsed(offset: str.length),
-                  );
-                }
-              },
-            ),
-            SettingsSectionLabel(context.l10n.tracks),
-            ...uniqueSubtitle.map((sub) {
-              final isNone = sub.subtitle?.id == "no";
-              final title = isNone
-                  ? context.l10n.off
-                  : (sub.title ?? subtitleTrackLabel(sub.subtitle));
-              final selected = isNone
-                  ? (effective == null || effective.id == "no")
-                  : _isSubtitleTrackSelected(sub.subtitle, effective);
-              return SettingsOptionRow(
-                label: title,
-                selected: selected,
-                onTap: () {
-                  _popSettings(context);
-                  try {
-                    unawaited(_setSubtitleTrack(sub.subtitle!));
-                  } catch (_) {}
-                },
-              );
-            }),
-            SettingsActionRow(
-              label: context.l10n.load_own_subtitles,
-              icon: Icons.file_open_outlined,
-              onTap: () async {
-                try {
-                  final file = await FilePicker.pickFile(
-                    linuxOptions: const LinuxOptions(lockParentWindow: true),
-                  );
-
-                  if (file != null && context.mounted) {
-                    final track = SubtitleTrack.uri(file.path!);
-                    unawaited(_setSubtitleTrack(track));
-                  }
-                  if (!context.mounted) return;
-                  _popSettings(context);
-                } catch (e) {
-                  botToast(context.l10n.error_with_message(e));
-                  _popSettings(context);
-                }
-              },
-            ),
-            SettingsActionRow(
-              label: context.l10n.search_subtitles,
-              icon: Icons.search,
-              onTap: () async {
-                try {
-                  final subtitle = await subtitlesSearchraggableMenu(
-                    context,
-                    chapter: widget.episode,
-                    isLocal: widget.isLocal,
-                  ) as ImdbSubtitle?;
-                  if (subtitle != null && context.mounted) {
-                    final track = SubtitleTrack.uri(
-                      subtitle.url!,
-                      title: subtitle.language,
-                      language: subtitle.language,
-                    );
-                    unawaited(_setSubtitleTrack(track));
-                  }
-                  if (!context.mounted) return;
-                  _popSettings(context);
-                } catch (_) {
-                  botToast(context.l10n.error);
-                  _popSettings(context);
-                }
-              },
-            ),
-          ],
-        ),
-      ),
+    return SubtitleSectionWidget(
+      player: _player,
+      videos: widget.videos,
+      isLocal: widget.isLocal,
+      episode: widget.episode,
+      effectiveSubtitleTrack: _effectiveSubtitleTrack,
+      isTrackSelected: _isSubtitleTrackSelected,
+      onSetSubtitleTrack: _setSubtitleTrack,
+      subDelayController: _subDelayController,
+      subSpeedController: _subSpeedController,
+      onDone: () => _popSettings(context),
     );
   }
 
   Widget _videoAudios(BuildContext context) {
-    List<VideoPrefs> videoAudio = _player.state.tracks.audio
-        .where((e) => e.id != 'auto' && e.id != 'no')
-        .map((e) => VideoPrefs(isLocal: true, audio: e))
-        .toList();
-
-    List<String> audios = [];
-    if (widget.videos.isNotEmpty && !widget.isLocal) {
-      for (var video in widget.videos) {
-        for (var audio in video.audios ?? []) {
-          if (!audios.contains(audio.file)) {
-            videoAudio.add(
-              VideoPrefs(
-                isLocal: false,
-                audio: AudioTrack.uri(
-                  audio.file!,
-                  title: audio.label,
-                  language: audio.label,
-                ),
-              ),
-            );
-            audios.add(audio.file!);
-          }
-        }
-      }
-    }
-    final effective = _effectiveAudioTrack;
-    videoAudio = videoAudio
-        .map((e) {
-          VideoPrefs vid = e;
-          final label = audioTrackLabel(vid.audio);
-          vid.title = (label.isNotEmpty && label != 'None')
-              ? label
-              : (vid.audio?.title ??
-                    vid.audio?.language ??
-                    vid.audio?.channels ??
-                    (vid.audio?.id != 'auto' && vid.audio?.id != 'no'
-                        ? vid.audio?.id
-                        : null) ??
-                    "");
-          return vid;
-        })
-        .toList()
-        .where((element) => element.title!.isNotEmpty)
-        .toList();
-    final seen = <String>{};
-    final List<VideoPrefs> uniqueAudio = [];
-    for (var element in videoAudio) {
-      final key = element.audio?.id ?? element.title ?? '';
-      if (key.isNotEmpty && seen.add(key)) {
-        uniqueAudio.add(element);
-      }
-    }
-    uniqueAudio.sort((a, b) => (a.title ?? '').compareTo(b.title ?? ''));
-    uniqueAudio.insert(0, VideoPrefs(isLocal: false, audio: AudioTrack.no()));
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-      child: Column(
-        children: uniqueAudio.map((aud) {
-          final isNone = aud.audio?.id == "no";
-          final title = isNone
-              ? context.l10n.off
-              : (aud.title ?? audioTrackLabel(aud.audio));
-          final selected = isNone
-              ? (effective == null || effective.id == "no")
-              : _isAudioTrackSelected(aud.audio, effective);
-          return SettingsOptionRow(
-            label: title,
-            selected: selected,
-            onTap: () {
-              _popSettings(context);
-              try {
-                _activeAudioTrack = aud.audio!;
-                unawaited(_setAudioTrack(aud.audio!));
-              } catch (_) {}
-            },
-          );
-        }).toList(),
+    return AudioSectionWidget(
+      audioOptions: buildUniqueAudioOptions(
+        player: _player,
+        videos: widget.videos,
+        isLocal: widget.isLocal,
       ),
+      effectiveAudioTrack: _effectiveAudioTrack,
+      isTrackSelected: _isAudioTrackSelected,
+      onSelect: (track) {
+        _activeAudioTrack = track;
+        unawaited(_setAudioTrack(track));
+      },
+      onDone: () => _popSettings(context),
     );
   }
 
@@ -2586,24 +2097,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   // is not a route). Records: (label, selected, onTap).
   List<({String label, bool selected, VoidCallback onTap})>
   _tvQualityOptions() {
-    List<VideoPrefs> videoQuality = _player.state.tracks.video
-        .where(
-          (element) => element.w != null && element.h != null && widget.isLocal,
-        )
-        .toList()
-        .map((e) => VideoPrefs(videoTrack: e, isLocal: true))
-        .toList();
-    if (widget.videos.isNotEmpty && !widget.isLocal) {
-      for (var video in widget.videos) {
-        videoQuality.add(
-          VideoPrefs(
-            videoTrack: VideoTrack(video.url, video.quality, video.quality),
-            headers: video.headers,
-            isLocal: false,
-          ),
-        );
-      }
-    }
+    final videoQuality = buildVideoQualityOptions(
+      player: _player,
+      videos: widget.videos,
+      isLocal: widget.isLocal,
+    );
     return videoQuality.map((quality) {
       final selected =
           _video.value!.videoTrack!.title == quality.videoTrack!.title ||
@@ -2632,62 +2130,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   List<({String label, bool selected, VoidCallback onTap})>
   _tvSubtitleOptions() {
-    List<VideoPrefs> videoSubtitle = _player.state.tracks.subtitle
-        .where((e) => e.id != 'auto' && e.id != 'no')
-        .map((e) => VideoPrefs(isLocal: true, subtitle: e))
-        .toList();
-    List<String> subs = [];
-    if (widget.videos.isNotEmpty) {
-      for (var video in widget.videos) {
-        for (var sub in video.subtitles ?? []) {
-          if (!subs.contains(sub.file)) {
-            final file = sub.file!;
-            final label = sub.label;
-            videoSubtitle.add(
-              VideoPrefs(
-                isLocal: widget.isLocal,
-                subtitle: (file.startsWith("http") || file.startsWith("file"))
-                    ? SubtitleTrack.uri(file, title: label, language: label)
-                    : SubtitleTrack.data(file, title: label, language: label),
-              ),
-            );
-            subs.add(sub.file!);
-          }
-        }
-      }
-    }
-    final effective = _effectiveSubtitleTrack;
-    videoSubtitle = videoSubtitle
-        .map((e) {
-          VideoPrefs vid = e;
-          final label = subtitleTrackLabel(vid.subtitle);
-          vid.title = (label.isNotEmpty && label != 'None')
-              ? label
-              : (vid.subtitle?.title ??
-                    vid.subtitle?.language ??
-                    vid.subtitle?.channels ??
-                    (vid.subtitle?.id != 'auto' && vid.subtitle?.id != 'no'
-                        ? vid.subtitle?.id
-                        : null) ??
-                    "");
-          return vid;
-        })
-        .toList()
-        .where((element) => element.title!.isNotEmpty)
-        .toList();
-    final seen = <String>{};
-    final List<VideoPrefs> uniqueSubtitle = [];
-    for (var element in videoSubtitle) {
-      final key = element.subtitle?.id ?? element.title ?? '';
-      if (key.isNotEmpty && seen.add(key)) {
-        uniqueSubtitle.add(element);
-      }
-    }
-    uniqueSubtitle.sort((a, b) => (a.title ?? '').compareTo(b.title ?? ''));
-    uniqueSubtitle.insert(
-      0,
-      VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()),
+    final uniqueSubtitle = buildUniqueSubtitleOptions(
+      player: _player,
+      videos: widget.videos,
+      isLocal: widget.isLocal,
     );
+    final effective = _effectiveSubtitleTrack;
     return uniqueSubtitle.map((sub) {
       final isNone = sub.subtitle?.id == 'no';
       final title = isNone
@@ -2709,58 +2157,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   List<({String label, bool selected, VoidCallback onTap})> _tvAudioOptions() {
-    List<VideoPrefs> videoAudio = _player.state.tracks.audio
-        .where((e) => e.id != 'auto' && e.id != 'no')
-        .map((e) => VideoPrefs(isLocal: true, audio: e))
-        .toList();
-    List<String> audios = [];
-    if (widget.videos.isNotEmpty && !widget.isLocal) {
-      for (var video in widget.videos) {
-        for (var audio in video.audios ?? []) {
-          if (!audios.contains(audio.file)) {
-            videoAudio.add(
-              VideoPrefs(
-                isLocal: false,
-                audio: AudioTrack.uri(
-                  audio.file!,
-                  title: audio.label,
-                  language: audio.label,
-                ),
-              ),
-            );
-            audios.add(audio.file!);
-          }
-        }
-      }
-    }
+    final uniqueAudio = buildUniqueAudioOptions(
+      player: _player,
+      videos: widget.videos,
+      isLocal: widget.isLocal,
+    );
     final effective = _effectiveAudioTrack;
-    videoAudio = videoAudio
-        .map((e) {
-          final label = audioTrackLabel(e.audio);
-          e.title = (label.isNotEmpty && label != 'None')
-              ? label
-              : (e.audio?.title ??
-                    e.audio?.language ??
-                    e.audio?.channels ??
-                    (e.audio?.id != 'auto' && e.audio?.id != 'no'
-                        ? e.audio?.id
-                        : null) ??
-                    "");
-          return e;
-        })
-        .toList()
-        .where((element) => element.title!.isNotEmpty)
-        .toList();
-    final seen = <String>{};
-    final List<VideoPrefs> uniqueAudio = [];
-    for (var element in videoAudio) {
-      final key = element.audio?.id ?? element.title ?? '';
-      if (key.isNotEmpty && seen.add(key)) {
-        uniqueAudio.add(element);
-      }
-    }
-    uniqueAudio.sort((a, b) => (a.title ?? '').compareTo(b.title ?? ''));
-    uniqueAudio.insert(0, VideoPrefs(isLocal: false, audio: AudioTrack.no()));
     return uniqueAudio.map((aud) {
       final isNone = aud.audio?.id == "no";
       final title = isNone ? "Off" : (aud.title ?? audioTrackLabel(aud.audio));
@@ -3931,23 +3333,6 @@ Widget seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
       );
     },
   );
-}
-
-class VideoPrefs {
-  String? title;
-  VideoTrack? videoTrack;
-  SubtitleTrack? subtitle;
-  AudioTrack? audio;
-  bool isLocal;
-  final Map<String, String>? headers;
-  VideoPrefs({
-    this.videoTrack,
-    this.isLocal = true,
-    this.headers,
-    this.subtitle,
-    this.audio,
-    this.title,
-  });
 }
 
 mixin _AlwaysOnTopStateMixin<T extends StatefulWidget> on State<T> {

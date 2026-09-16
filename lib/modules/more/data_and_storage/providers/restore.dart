@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:archive/archive_io.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
@@ -19,10 +18,11 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/backup_decoder.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/backup_format.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupAniyomi.pb.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupMihon.pb.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/kotatsu_backup.dart';
-import 'package:mangayomi/modules/more/data_and_storage/widgets/backup_encryption_password_dialog.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
@@ -32,7 +32,6 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:mangayomi/services/backup_password_storage.dart';
 import 'package:mangayomi/repositories/category_repository.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/custom_button_repository.dart';
@@ -202,75 +201,6 @@ Future<void> _uploadToSyncServerIfConnected(
   }
 }
 
-/// Decodes a mangayomi-format backup's JSON contents, transparently
-/// handling AES-encrypted backups: tries with no password, then the
-/// locally-stored password (if any), then prompts the user - retrying on a
-/// wrong password until it succeeds or the user cancels.
-///
-/// On success, if the backup embeds an encryption password (see
-/// `backup.dart`), persists it locally so future backups/restores on this
-/// device don't need it retyped - mirroring how every other part of a
-/// restored backup overwrites the local settings, just kept out of the
-/// generic Settings JSON round-trip (see backup_password_fallback.dart).
-///
-/// Public so the restore UI can decode+preview a mangayomi-format backup
-/// (merge/replace choice, category/source conflicts) before committing to
-/// the actual restore - doRestore accepts the result back as
-/// decodedMangayomiBackup so it isn't decrypted (and the password
-/// re-prompted) a second time.
-Future<Map<String, dynamic>> decodeMangayomiBackup(
-  String path,
-  BuildContext context,
-) async {
-  String? passwordToTry;
-  var triedStoredPassword = false;
-  var wasIncorrect = false;
-  final l10n = l10nLocalizations(context)!;
-
-  while (true) {
-    final stream = InputFileStream(path);
-    try {
-      final archive = ZipDecoder().decodeStream(
-        stream,
-        password: passwordToTry,
-      );
-      // decodeStream() only parses headers and buffers raw compressed
-      // bytes - it doesn't verify/decrypt content (and so won't throw on a
-      // wrong password) until the content is actually read, hence forcing
-      // that access here rather than after returning.
-      final bytes = archive.files.first.content as List<int>;
-      final backup = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
-
-      final embeddedPassword = backup['backupEncryptionPassword'] as String?;
-      if (embeddedPassword != null && context.mounted) {
-        await persistResolvedPassword(embeddedPassword, context);
-      }
-      return backup;
-    } catch (_) {
-      if (!triedStoredPassword) {
-        triedStoredPassword = true;
-        final stored = await BackupPasswordStorage.get();
-        if (stored != null) {
-          passwordToTry = stored;
-          continue;
-        }
-      }
-      if (!context.mounted) rethrow;
-      final entered = await showBackupDecryptPasswordDialog(
-        context,
-        wasIncorrect: wasIncorrect,
-      );
-      if (entered == null) {
-        throw Exception(l10n.password_required_to_restore);
-      }
-      passwordToTry = entered;
-      wasIncorrect = true;
-    } finally {
-      stream.close();
-    }
-  }
-}
-
 void showBotToast(String text) {
   BotToast.showNotification(
     animationDuration: const Duration(milliseconds: 200),
@@ -284,278 +214,6 @@ void showBotToast(String text) {
     crossPage: true,
   );
 }
-
-enum BackupType { unknown, mangayomi, mihon, aniyomi, kotatsu, neko }
-
-BackupType checkBackupType(String path, Archive archive) {
-  if (path.toLowerCase().contains("mangayomi") &&
-      (archive.files.firstOrNull?.name ?? "").endsWith(".backup.db")) {
-    return BackupType.mangayomi;
-  } else if (path.toLowerCase().contains("kotatsu") &&
-      archive.files.where((f) {
-            switch (f.name) {
-              case "categories":
-              case "favourites":
-                return true;
-              default:
-                return false;
-            }
-          }).length ==
-          2) {
-    return BackupType.kotatsu;
-  } else if (path.toLowerCase().endsWith(".tachibk") ||
-      path.toLowerCase().endsWith(".proto.gz")) {
-    return path.contains("xyz.jmir.tachiyomi.mi") || path.contains("aniyomi.mi")
-        ? BackupType.aniyomi
-        : path.contains("tachiyomi") ||
-              path.contains("mihon") ||
-              path.contains("komikku")
-        ? BackupType.mihon
-        : path.contains("neko")
-        ? BackupType.neko
-        : BackupType.unknown;
-  }
-  return BackupType.unknown;
-}
-
-BackupType peekBackupType(String path) {
-  final inputStream = InputFileStream(path);
-  try {
-    final archive = ZipDecoder().decodeStream(inputStream);
-    return checkBackupType(path, archive);
-  } finally {
-    inputStream.close();
-  }
-}
-
-class TachiBkImportPreview {
-  TachiBkImportPreview({
-    required this.conflictingCategories,
-    required this.unmatchedSourceNames,
-    required this.newSeriesCount,
-    required this.updatedSeriesCount,
-    required this.newChapterCount,
-  });
-
-  final List<String> conflictingCategories;
-
-  final Map<String, ItemType> unmatchedSourceNames;
-
-  final int newSeriesCount;
-  final int updatedSeriesCount;
-  final int newChapterCount;
-}
-
-TachiBkImportPreview? previewTachiBkImport(String path) {
-  final backupType = peekBackupType(path);
-  if (backupType != BackupType.mihon &&
-      backupType != BackupType.aniyomi &&
-      backupType != BackupType.neko) {
-    return null;
-  }
-  final inputStream = InputFileStream(path);
-  final content = GZipDecoder().decodeBytes(inputStream.toUint8List());
-  inputStream.close();
-  final backup = BackupMihon.create();
-  backup.mergeFromCodedBufferReader(
-    CodedBufferReader(content, sizeLimit: 250 << 20),
-  );
-
-  final existingCategoryNames = categoryRepository
-      .getAll()
-      .map((c) => c.name)
-      .whereType<String>()
-      .toSet();
-  final categoryNames = <String>{for (var c in backup.backupCategories) c.name};
-
-  final installedSourceNames = sourceRepository
-      .getAll()
-      .where((s) => s.isAdded ?? false)
-      .map((s) => (s.itemType, s.name?.toLowerCase()))
-      .toSet();
-  final unmatchedSources = <String, ItemType>{};
-
-  final existingMangaByLink = {
-    for (var m in mangaRepository.getByItemType(ItemType.manga))
-      if (m.link != null) m.link!: m,
-  };
-  int newSeries = 0, updatedSeries = 0, newChapters = 0;
-  for (var m in backup.backupManga) {
-    final sourceId = _protoInt(m.source);
-    final srcName =
-        backup.backupSources
-            .firstWhereOrNull((s) => _protoInt(s.sourceId) == sourceId)
-            ?.name ??
-        "Unknown";
-    if (!installedSourceNames.contains((
-      ItemType.manga,
-      srcName.toLowerCase(),
-    ))) {
-      unmatchedSources[srcName] = ItemType.manga;
-    }
-    final existing = existingMangaByLink[m.url];
-    if (existing != null) {
-      updatedSeries++;
-      final existingUrls = chapterRepository
-          .getAllByMangaId(existing.id)
-          .map((c) => c.url)
-          .whereType<String>()
-          .toSet();
-      newChapters += m.chapters
-          .where((c) => !existingUrls.contains(c.url))
-          .length;
-    } else {
-      newSeries++;
-      newChapters += m.chapters.length;
-    }
-  }
-
-  if (backupType == BackupType.aniyomi) {
-    final backupAnime = BackupAniyomi.fromBuffer(content);
-    final animeCategories = backupAnime.backupAnimeCategories.isNotEmpty
-        ? backupAnime.backupAnimeCategories
-        : backupAnime.legacyBackupAnimeCategories;
-    final animeEntries = backupAnime.backupAnime.isNotEmpty
-        ? backupAnime.backupAnime
-        : backupAnime.legacyBackupAnime;
-    final animeSources = backupAnime.backupAnimeSources.isNotEmpty
-        ? backupAnime.backupAnimeSources
-        : backupAnime.legacyBackupAnimeSources;
-    categoryNames.addAll(animeCategories.map((c) => c.name));
-    final existingAnimeByLink = {
-      for (var m in mangaRepository.getByItemType(ItemType.anime))
-        if (m.link != null) m.link!: m,
-    };
-    for (var a in animeEntries) {
-      final sourceId = _protoInt(a.source);
-      final srcName =
-          animeSources
-              .firstWhereOrNull((s) => _protoInt(s.sourceId) == sourceId)
-              ?.name ??
-          "Unknown";
-      if (!installedSourceNames.contains((
-        ItemType.anime,
-        srcName.toLowerCase(),
-      ))) {
-        unmatchedSources[srcName] = ItemType.anime;
-      }
-      final existing = existingAnimeByLink[a.url];
-      if (existing != null) {
-        updatedSeries++;
-        final existingUrls = chapterRepository
-            .getAllByMangaId(existing.id)
-            .map((c) => c.url)
-            .whereType<String>()
-            .toSet();
-        newChapters += a.episodes
-            .where((c) => !existingUrls.contains(c.url))
-            .length;
-      } else {
-        newSeries++;
-        newChapters += a.episodes.length;
-      }
-    }
-  }
-
-  return TachiBkImportPreview(
-    conflictingCategories: categoryNames
-        .where(existingCategoryNames.contains)
-        .toList(),
-    unmatchedSourceNames: unmatchedSources,
-    newSeriesCount: newSeries,
-    updatedSeriesCount: updatedSeries,
-    newChapterCount: newChapters,
-  );
-}
-
-List<Source> installedSourcesFor(ItemType itemType) => sourceRepository
-    .getAll()
-    .where((s) => s.itemType == itemType && (s.isAdded ?? false))
-    .toList();
-
-/// Same preview shape as previewTachiBkImport, but for the native
-/// mangayomi backup format - already-decoded (and, for encrypted backups,
-/// already-decrypted) JSON rather than a path to re-read from disk.
-TachiBkImportPreview previewMangayomiBackup(Map<String, dynamic> backup) {
-  final mangaList = (backup["manga"] as List?)
-      ?.map((e) => Manga.fromJson(e)..itemType = _convertToItemType(e))
-      .toList();
-  final chapterList = (backup["chapters"] as List?)
-      ?.map((e) => Chapter.fromJson(e))
-      .toList();
-  final categoryList = (backup["categories"] as List?)
-      ?.map(
-        (e) =>
-            Category.fromJson(e)..forItemType = _convertToItemTypeCategory(e),
-      )
-      .toList();
-
-  final existingCategoryNames = categoryRepository
-      .getAll()
-      .map((c) => c.name)
-      .whereType<String>()
-      .toSet();
-  final categoryNames = <String>{
-    for (final c in categoryList ?? <Category>[])
-      if (c.name != null) c.name!,
-  };
-
-  final installedSourceNames = sourceRepository
-      .getAll()
-      .where((s) => s.isAdded ?? false)
-      .map((s) => (s.itemType, s.name?.toLowerCase()))
-      .toSet();
-  final unmatchedSources = <String, ItemType>{};
-
-  final existingMangaByKey = {
-    for (final m in mangaRepository.getAll())
-      if (m.link != null) '${m.itemType.index}|${m.link}': m,
-  };
-  final chaptersByMangaId = <int, List<Chapter>>{};
-  for (final c in chapterList ?? <Chapter>[]) {
-    if (c.mangaId == null) continue;
-    chaptersByMangaId.putIfAbsent(c.mangaId!, () => []).add(c);
-  }
-
-  int newSeries = 0, updatedSeries = 0, newChapters = 0;
-  for (final m in mangaList ?? <Manga>[]) {
-    final srcName = m.source ?? "Unknown";
-    if (!installedSourceNames.contains((m.itemType, srcName.toLowerCase()))) {
-      unmatchedSources[srcName] = m.itemType;
-    }
-    final key = '${m.itemType.index}|${m.link}';
-    final existing = m.link != null ? existingMangaByKey[key] : null;
-    final mangaChapters = m.id != null
-        ? chaptersByMangaId[m.id!] ?? const <Chapter>[]
-        : const <Chapter>[];
-    if (existing != null) {
-      updatedSeries++;
-      final existingUrls = chapterRepository
-          .getAllByMangaId(existing.id)
-          .map((c) => c.url)
-          .whereType<String>()
-          .toSet();
-      newChapters += mangaChapters
-          .where((c) => c.url != null && !existingUrls.contains(c.url))
-          .length;
-    } else {
-      newSeries++;
-      newChapters += mangaChapters.length;
-    }
-  }
-
-  return TachiBkImportPreview(
-    conflictingCategories: categoryNames
-        .where(existingCategoryNames.contains)
-        .toList(),
-    unmatchedSourceNames: unmatchedSources,
-    newSeriesCount: newSeries,
-    updatedSeriesCount: updatedSeries,
-    newChapterCount: newChapters,
-  );
-}
-
-int currentFavoriteMangaCount() => mangaRepository.countFavorites();
 
 @riverpod
 Future<void> restoreBackup(
@@ -574,7 +232,7 @@ Future<void> restoreBackup(
   if (["1", "2"].any((e) => e == version)) {
     try {
       final manga = (backup["manga"] as List?)
-          ?.map((e) => Manga.fromJson(e)..itemType = _convertToItemType(e))
+          ?.map((e) => Manga.fromJson(e)..itemType = convertToItemType(e))
           .toList();
       final chapters = (backup["chapters"] as List?)
           ?.map((e) => Chapter.fromJson(e))
@@ -583,17 +241,17 @@ Future<void> restoreBackup(
           ?.map(
             (e) =>
                 Category.fromJson(e)
-                  ..forItemType = _convertToItemTypeCategory(e),
+                  ..forItemType = convertToItemTypeCategory(e),
           )
           .toList();
       final track = (backup["tracks"] as List?)
-          ?.map((e) => Track.fromJson(e)..itemType = _convertToItemType(e))
+          ?.map((e) => Track.fromJson(e)..itemType = convertToItemType(e))
           .toList();
       final trackPreferences = (backup["trackPreferences"] as List?)
           ?.map((e) => TrackPreference.fromJson(e))
           .toList();
       final history = (backup["history"] as List?)
-          ?.map((e) => History.fromJson(e)..itemType = _convertToItemType(e))
+          ?.map((e) => History.fromJson(e)..itemType = convertToItemType(e))
           .toList();
       final downloads = (backup["downloads"] as List?)
           ?.map((e) => Download.fromJson(e))
@@ -602,7 +260,7 @@ Future<void> restoreBackup(
           ?.map((e) => Settings.fromJson(e))
           .toList();
       final extensions = (backup["extensions"] as List?)
-          ?.map((e) => Source.fromJson(e)..itemType = _convertToItemType(e))
+          ?.map((e) => Source.fromJson(e)..itemType = convertToItemType(e))
           .toList();
       final sourcesPrefs = (backup["extensions_preferences"] as List?)
           ?.map((e) => SourcePreference.fromJson(e))
@@ -920,24 +578,6 @@ void _mergeMangayomiBackup({
   }
 }
 
-ItemType _convertToItemType(Map<String, dynamic> backup) {
-  final isManga = backup['isManga'];
-  return isManga == null
-      ? ItemType.values[backup['itemType'] ?? 0]
-      : isManga
-      ? ItemType.manga
-      : ItemType.anime;
-}
-
-ItemType _convertToItemTypeCategory(Map<String, dynamic> backup) {
-  final forManga = backup['forManga'];
-  return forManga == null
-      ? ItemType.values[backup['forItemType'] ?? 0]
-      : forManga
-      ? ItemType.manga
-      : ItemType.anime;
-}
-
 @riverpod
 Future<void> restoreKotatsuBackup(Ref ref, Archive archive) async {
   try {
@@ -1049,7 +689,7 @@ Future<void> restoreTachiBkBackup(
         ? categoryRepository.getByItemType(ItemType.manga)
         : <Category>[];
     for (var category in backup.backupCategories) {
-      final order = _protoInt(category.order);
+      final order = protoInt(category.order);
       final existing = existingCategories.firstWhereOrNull(
         (c) => c.name == category.name,
       );
@@ -1073,8 +713,8 @@ Future<void> restoreTachiBkBackup(
           }
         : <String, Manga>{};
     for (var tempManga in backup.backupManga) {
-      final sourceId = _protoInt(tempManga.source);
-      final categoryOrders = tempManga.categories.map(_protoInt).toSet();
+      final sourceId = protoInt(tempManga.source);
+      final categoryOrders = tempManga.categories.map(protoInt).toSet();
       final newCategoryIds = categoryOrders
           .map((o) => categoryByOrder[o]?.id)
           .whereType<int>()
@@ -1089,7 +729,7 @@ Future<void> restoreTachiBkBackup(
       } else {
         final originalSourceName =
             backup.backupSources
-                .firstWhereOrNull((src) => _protoInt(src.sourceId) == sourceId)
+                .firstWhereOrNull((src) => protoInt(src.sourceId) == sourceId)
                 ?.name ??
             "Unknown";
         final boundSource = resolveSource(originalSourceName, ItemType.manga);
@@ -1102,13 +742,13 @@ Future<void> restoreTachiBkBackup(
           lang: boundSource?.lang ?? 'en',
           link: tempManga.url,
           name: tempManga.title,
-          status: _convertStatusFromTachiBk(tempManga.status),
+          status: convertStatusFromTachiBk(tempManga.status),
           description: tempManga.description,
           categories: newCategoryIds,
           itemType: ItemType.manga,
           favorite: true,
-          dateAdded: _protoInt(tempManga.dateAdded),
-          lastUpdate: _protoInt(tempManga.lastModifiedAt),
+          dateAdded: protoInt(tempManga.dateAdded),
+          lastUpdate: protoInt(tempManga.lastModifiedAt),
           sourceId: boundSource?.id,
         );
         if (bkType == BackupType.neko && boundSource == null) {
@@ -1129,12 +769,12 @@ Future<void> restoreTachiBkBackup(
           mangaId: manga.id!,
           name: tempChapter.name,
           dateUpload: bkType != BackupType.neko
-              ? "${_protoInt(tempChapter.dateUpload)}"
-              : "${DateTime.now().millisecondsSinceEpoch - _protoInt(tempChapter.dateUpload).abs()}",
+              ? "${protoInt(tempChapter.dateUpload)}"
+              : "${DateTime.now().millisecondsSinceEpoch - protoInt(tempChapter.dateUpload).abs()}",
           isBookmarked: tempChapter.bookmark,
           isRead: tempChapter.read,
-          lastPageRead: _protoInt(tempChapter.lastPageRead) != 0
-              ? "${_protoInt(tempChapter.lastPageRead)}"
+          lastPageRead: protoInt(tempChapter.lastPageRead) != 0
+              ? "${protoInt(tempChapter.lastPageRead)}"
               : "1",
           scanlator: tempChapter.scanlator,
           url: tempChapter.url,
@@ -1143,12 +783,12 @@ Future<void> restoreTachiBkBackup(
         chapter.manga.saveSync();
         if ((history == null ||
             int.parse(history.date ?? "0") <
-                _protoInt(tempChapter.lastModifiedAt))) {
+                protoInt(tempChapter.lastModifiedAt))) {
           history = History(
             mangaId: manga.id,
             date: bkType != BackupType.neko
-                ? "${_protoInt(tempChapter.lastModifiedAt)}"
-                : "${DateTime.now().millisecondsSinceEpoch - _protoInt(tempChapter.dateUpload).abs()}",
+                ? "${protoInt(tempChapter.lastModifiedAt)}"
+                : "${DateTime.now().millisecondsSinceEpoch - protoInt(tempChapter.dateUpload).abs()}",
             itemType: ItemType.manga,
             chapterId: chapter.id,
           )..chapter.value = chapter;
@@ -1178,7 +818,7 @@ Future<void> restoreTachiBkBackup(
           ? categoryRepository.getByItemType(ItemType.anime)
           : <Category>[];
       for (var category in animeCategories) {
-        final order = _protoInt(category.order);
+        final order = protoInt(category.order);
         final existing = existingAnimeCategories.firstWhereOrNull(
           (c) => c.name == category.name,
         );
@@ -1202,8 +842,8 @@ Future<void> restoreTachiBkBackup(
             }
           : <String, Manga>{};
       for (var tempAnime in animeEntries) {
-        final sourceId = _protoInt(tempAnime.source);
-        final categoryOrders = tempAnime.categories.map(_protoInt).toSet();
+        final sourceId = protoInt(tempAnime.source);
+        final categoryOrders = tempAnime.categories.map(protoInt).toSet();
         final newCategoryIds = categoryOrders
             .map((o) => categoryByOrder[o]?.id)
             .whereType<int>()
@@ -1218,9 +858,7 @@ Future<void> restoreTachiBkBackup(
         } else {
           final originalSourceName =
               animeSources
-                  .firstWhereOrNull(
-                    (src) => _protoInt(src.sourceId) == sourceId,
-                  )
+                  .firstWhereOrNull((src) => protoInt(src.sourceId) == sourceId)
                   ?.name ??
               "Unknown";
           final boundSource = resolveSource(originalSourceName, ItemType.anime);
@@ -1233,13 +871,13 @@ Future<void> restoreTachiBkBackup(
             lang: boundSource?.lang ?? 'en',
             link: tempAnime.url,
             name: tempAnime.title,
-            status: _convertStatusFromTachiBk(tempAnime.status),
+            status: convertStatusFromTachiBk(tempAnime.status),
             description: tempAnime.description,
             categories: newCategoryIds,
             itemType: ItemType.anime,
             favorite: true,
-            dateAdded: _protoInt(tempAnime.dateAdded),
-            lastUpdate: _protoInt(tempAnime.lastModifiedAt),
+            dateAdded: protoInt(tempAnime.dateAdded),
+            lastUpdate: protoInt(tempAnime.lastModifiedAt),
             sourceId: boundSource?.id,
           );
         }
@@ -1256,11 +894,11 @@ Future<void> restoreTachiBkBackup(
           final episode = Chapter(
             mangaId: anime.id!,
             name: tempEpisode.name,
-            dateUpload: "${_protoInt(tempEpisode.dateUpload)}",
+            dateUpload: "${protoInt(tempEpisode.dateUpload)}",
             isBookmarked: tempEpisode.bookmark,
             isRead: tempEpisode.seen,
-            lastPageRead: _protoInt(tempEpisode.lastSecondSeen) != 0
-                ? "${_secondsToMillis(tempEpisode.lastSecondSeen)}"
+            lastPageRead: protoInt(tempEpisode.lastSecondSeen) != 0
+                ? "${secondsToMillis(tempEpisode.lastSecondSeen)}"
                 : "1",
             scanlator: tempEpisode.scanlator,
             url: tempEpisode.url,
@@ -1269,10 +907,10 @@ Future<void> restoreTachiBkBackup(
           episode.manga.saveSync();
           if ((history == null ||
               int.parse(history.date ?? "0") <
-                  _protoInt(tempEpisode.lastModifiedAt))) {
+                  protoInt(tempEpisode.lastModifiedAt))) {
             history = History(
               mangaId: anime.id,
-              date: "${_protoInt(tempEpisode.lastModifiedAt)}",
+              date: "${protoInt(tempEpisode.lastModifiedAt)}",
               itemType: ItemType.anime,
               chapterId: episode.id,
             )..chapter.value = episode;
@@ -1297,15 +935,6 @@ Future<void> restoreTachiBkBackup(
   });
   _invalidateCommonState(ref);
 }
-
-int _protoInt(Object value) {
-  if (value is int) {
-    return value;
-  }
-  return (value as dynamic).toInt() as int;
-}
-
-int _secondsToMillis(Object seconds) => _protoInt(seconds) * 1000;
 
 Settings _preserveDeviceLocalSettings(Settings incoming, Settings current) {
   return incoming
@@ -1335,21 +964,4 @@ void _invalidateCommonState(Ref ref) {
   ref.invalidate(extensionsRepoStateProvider(ItemType.anime));
   ref.invalidate(extensionsRepoStateProvider(ItemType.novel));
   ref.read(routerCurrentLocationStateProvider.notifier).refresh();
-}
-
-Status _convertStatusFromTachiBk(int idx) {
-  switch (idx) {
-    case 1:
-      return Status.ongoing;
-    case 2:
-      return Status.completed;
-    case 4:
-      return Status.publishingFinished;
-    case 5:
-      return Status.canceled;
-    case 6:
-      return Status.onHiatus;
-    default:
-      return Status.unknown;
-  }
 }

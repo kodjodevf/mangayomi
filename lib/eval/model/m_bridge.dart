@@ -10,7 +10,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:js_packer/js_packer.dart';
 import 'package:mangayomi/eval/model/document.dart';
-import 'package:mangayomi/eval/javascript/http.dart';
+import 'package:mangayomi/eval/http_response_extensions.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/anime_extractors/dood_extractor.dart';

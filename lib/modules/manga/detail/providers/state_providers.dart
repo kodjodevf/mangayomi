@@ -2,6 +2,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/detail/chapter_bulk_actions.dart';
+import 'package:mangayomi/modules/manga/detail/providers/per_manga_tri_state_filter.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
@@ -141,141 +142,95 @@ class SortChapterState extends _$SortChapterState {
 }
 
 @riverpod
-class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
+class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState
+    with PerMangaTriStateFilter<ChapterFilterDownloaded> {
   @override
   int build({required int mangaId}) {
     state = getType();
     return getType();
   }
 
-  int getType() {
-    return (settingsRepository.current.chapterFilterDownloadedList!
-                .where((element) => element.mangaId == mangaId)
-                .toList()
-                .firstOrNull ??
-            ChapterFilterDownloaded(mangaId: mangaId, type: 0))
-        .type!;
-  }
+  @override
+  List<ChapterFilterDownloaded> currentList() =>
+      settingsRepository.current.chapterFilterDownloadedList ?? [];
 
-  void setType(int type) {
-    var value = ChapterFilterDownloaded()
-      ..type = type
-      ..mangaId = mangaId;
-    final settings = settingsRepository.current;
-    List<ChapterFilterDownloaded>? chapterFilterDownloadedList = [];
-    for (var filterChapter in settings.chapterFilterDownloadedList!) {
-      if (filterChapter.mangaId != mangaId) {
-        chapterFilterDownloadedList.add(filterChapter);
-      }
-    }
-    chapterFilterDownloadedList.add(value);
+  @override
+  int mangaIdOf(ChapterFilterDownloaded entry) => entry.mangaId!;
+
+  @override
+  int typeOf(ChapterFilterDownloaded entry) => entry.type!;
+
+  @override
+  ChapterFilterDownloaded create(int mangaId, int type) =>
+      ChapterFilterDownloaded(mangaId: mangaId, type: type);
+
+  @override
+  void persist(List<ChapterFilterDownloaded> updated) {
     settingsRepository.save(
-      settings..chapterFilterDownloadedList = chapterFilterDownloadedList,
+      settingsRepository.current..chapterFilterDownloadedList = updated,
     );
-
-    state = type;
-  }
-
-  void update() {
-    if (state == 0) {
-      setType(1);
-    } else if (state == 1) {
-      setType(2);
-    } else {
-      setType(0);
-    }
   }
 }
 
 @riverpod
-class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
+class ChapterFilterUnreadState extends _$ChapterFilterUnreadState
+    with PerMangaTriStateFilter<ChapterFilterUnread> {
   @override
   int build({required int mangaId}) {
     state = getType();
     return getType();
   }
 
-  int getType() {
-    return (settingsRepository.current.chapterFilterUnreadList!
-                .where((element) => element.mangaId == mangaId)
-                .toList()
-                .firstOrNull ??
-            ChapterFilterUnread(mangaId: mangaId, type: 0))
-        .type!;
-  }
+  @override
+  List<ChapterFilterUnread> currentList() =>
+      settingsRepository.current.chapterFilterUnreadList ?? [];
 
-  void setType(int type) {
-    var value = ChapterFilterUnread()
-      ..type = type
-      ..mangaId = mangaId;
-    final settings = settingsRepository.current;
-    List<ChapterFilterUnread>? chapterFilterUnreadList = [];
-    for (var filterChapter in settings.chapterFilterUnreadList!) {
-      if (filterChapter.mangaId != mangaId) {
-        chapterFilterUnreadList.add(filterChapter);
-      }
-    }
-    chapterFilterUnreadList.add(value);
+  @override
+  int mangaIdOf(ChapterFilterUnread entry) => entry.mangaId!;
+
+  @override
+  int typeOf(ChapterFilterUnread entry) => entry.type!;
+
+  @override
+  ChapterFilterUnread create(int mangaId, int type) =>
+      ChapterFilterUnread(mangaId: mangaId, type: type);
+
+  @override
+  void persist(List<ChapterFilterUnread> updated) {
     settingsRepository.save(
-      settings..chapterFilterUnreadList = chapterFilterUnreadList,
+      settingsRepository.current..chapterFilterUnreadList = updated,
     );
-    state = type;
-  }
-
-  void update() {
-    if (state == 0) {
-      setType(1);
-    } else if (state == 1) {
-      setType(2);
-    } else {
-      setType(0);
-    }
   }
 }
 
 @riverpod
-class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
+class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState
+    with PerMangaTriStateFilter<ChapterFilterBookmarked> {
   @override
   int build({required int mangaId}) {
     state = getType();
     return getType();
   }
 
-  int getType() {
-    return (settingsRepository.current.chapterFilterBookmarkedList!
-                .where((element) => element.mangaId == mangaId)
-                .toList()
-                .firstOrNull ??
-            ChapterFilterBookmarked(mangaId: mangaId, type: 0))
-        .type!;
-  }
+  @override
+  List<ChapterFilterBookmarked> currentList() =>
+      settingsRepository.current.chapterFilterBookmarkedList ?? [];
 
-  void setType(int type) {
-    var value = ChapterFilterBookmarked()
-      ..type = type
-      ..mangaId = mangaId;
-    final settings = settingsRepository.current;
-    List<ChapterFilterBookmarked>? chapterFilterBookmarkedList = [];
-    for (var filterChapter in settings.chapterFilterBookmarkedList!) {
-      if (filterChapter.mangaId != mangaId) {
-        chapterFilterBookmarkedList.add(filterChapter);
-      }
-    }
-    chapterFilterBookmarkedList.add(value);
+  @override
+  int mangaIdOf(ChapterFilterBookmarked entry) => entry.mangaId!;
+
+  @override
+  int typeOf(ChapterFilterBookmarked entry) => entry.type!;
+
+  @override
+  ChapterFilterBookmarked create(int mangaId, int type) =>
+      ChapterFilterBookmarked(mangaId: mangaId, type: type);
+
+  @override
+  void persist(List<ChapterFilterBookmarked> updated) {
     settingsRepository.save(
-      settings..chapterFilterBookmarkedList = chapterFilterBookmarkedList,
+      settingsRepository.current..chapterFilterBookmarkedList = updated,
     );
-    state = type;
-  }
-
-  void update() {
-    if (state == 0) {
-      setType(1);
-    } else if (state == 1) {
-      setType(2);
-    } else {
-      setType(0);
-    }
   }
 }
 

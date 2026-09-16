@@ -1,4 +1,4 @@
-import './protocol.dart';
+import 'protocol.dart';
 
 class WindowsProtocolHandler extends ProtocolHandler {
   @override

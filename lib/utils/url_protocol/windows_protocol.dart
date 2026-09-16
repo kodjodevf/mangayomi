@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:win32_registry/win32_registry.dart';
 
-import './protocol.dart';
+import 'protocol.dart';
 
 final _hive = CURRENT_USER;
 

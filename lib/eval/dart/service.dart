@@ -2,7 +2,7 @@ import 'package:d4rt/d4rt.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mangayomi/eval/dart/bridge/registrer.dart';
 import 'package:mangayomi/eval/model/filter.dart';
-import 'package:mangayomi/eval/javascript/http.dart';
+import 'package:mangayomi/eval/http_response_extensions.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';

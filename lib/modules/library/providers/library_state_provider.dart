@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/library/providers/tri_state_filter.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
@@ -96,7 +97,8 @@ class LibraryGridSizeState extends _$LibraryGridSizeState {
 }
 
 @riverpod
-class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
+class MangaFilterDownloadedState extends _$MangaFilterDownloadedState
+    with TriStateFilterField, TriStateFilterCycle {
   @override
   int build({
     required List<Manga> mangaList,
@@ -107,46 +109,24 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
     return getType();
   }
 
-  int getType() {
-    switch (itemType) {
-      case ItemType.manga:
-        return settings.libraryFilterMangasDownloadType!;
-      case ItemType.anime:
-        return settings.libraryFilterAnimeDownloadType!;
-      default:
-        return settings.libraryFilterNovelDownloadType ?? 0;
-    }
-  }
-
-  void setType(int type) {
-    Settings appSettings = Settings();
-    switch (itemType) {
-      case ItemType.manga:
-        appSettings = settings..libraryFilterMangasDownloadType = type;
-        break;
-      case ItemType.anime:
-        appSettings = settings..libraryFilterAnimeDownloadType = type;
-        break;
-      default:
-        appSettings = settings..libraryFilterNovelDownloadType = type;
-    }
-    settingsRepository.save(appSettings);
-    state = type;
-  }
-
-  void update() {
-    if (state == 0) {
-      setType(1);
-    } else if (state == 1) {
-      setType(2);
-    } else {
-      setType(0);
-    }
-  }
+  @override
+  TriStateFilterFields get fields => TriStateFilterFields(
+    read: (s, t) => switch (t) {
+      ItemType.manga => s.libraryFilterMangasDownloadType!,
+      ItemType.anime => s.libraryFilterAnimeDownloadType!,
+      _ => s.libraryFilterNovelDownloadType ?? 0,
+    },
+    write: (s, t, type) => switch (t) {
+      ItemType.manga => s..libraryFilterMangasDownloadType = type,
+      ItemType.anime => s..libraryFilterAnimeDownloadType = type,
+      _ => s..libraryFilterNovelDownloadType = type,
+    },
+  );
 }
 
 @riverpod
-class MangaFilterUnreadState extends _$MangaFilterUnreadState {
+class MangaFilterUnreadState extends _$MangaFilterUnreadState
+    with TriStateFilterField {
   @override
   int build({
     required List<Manga> mangaList,
@@ -157,32 +137,19 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
     return getType();
   }
 
-  int getType() {
-    switch (itemType) {
-      case ItemType.manga:
-        return settings.libraryFilterMangasUnreadType!;
-      case ItemType.anime:
-        return settings.libraryFilterAnimeUnreadType!;
-      default:
-        return settings.libraryFilterNovelUnreadType ?? 0;
-    }
-  }
-
-  void setType(int type) {
-    Settings appSettings = Settings();
-    switch (itemType) {
-      case ItemType.manga:
-        appSettings = settings..libraryFilterMangasUnreadType = type;
-        break;
-      case ItemType.anime:
-        appSettings = settings..libraryFilterAnimeUnreadType = type;
-        break;
-      default:
-        appSettings = settings..libraryFilterNovelUnreadType = type;
-    }
-    settingsRepository.save(appSettings);
-    state = type;
-  }
+  @override
+  TriStateFilterFields get fields => TriStateFilterFields(
+    read: (s, t) => switch (t) {
+      ItemType.manga => s.libraryFilterMangasUnreadType!,
+      ItemType.anime => s.libraryFilterAnimeUnreadType!,
+      _ => s.libraryFilterNovelUnreadType ?? 0,
+    },
+    write: (s, t, type) => switch (t) {
+      ItemType.manga => s..libraryFilterMangasUnreadType = type,
+      ItemType.anime => s..libraryFilterAnimeUnreadType = type,
+      _ => s..libraryFilterNovelUnreadType = type,
+    },
+  );
 
   List<Manga> getData() {
     if (getType() == 1) {
@@ -219,7 +186,8 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
 }
 
 @riverpod
-class MangaFilterStartedState extends _$MangaFilterStartedState {
+class MangaFilterStartedState extends _$MangaFilterStartedState
+    with TriStateFilterField {
   @override
   int build({
     required List<Manga> mangaList,
@@ -230,32 +198,19 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
     return getType();
   }
 
-  int getType() {
-    switch (itemType) {
-      case ItemType.manga:
-        return settings.libraryFilterMangasStartedType!;
-      case ItemType.anime:
-        return settings.libraryFilterAnimeStartedType!;
-      default:
-        return settings.libraryFilterNovelStartedType ?? 0;
-    }
-  }
-
-  void setType(int type) {
-    Settings appSettings = Settings();
-    switch (itemType) {
-      case ItemType.manga:
-        appSettings = settings..libraryFilterMangasStartedType = type;
-        break;
-      case ItemType.anime:
-        appSettings = settings..libraryFilterAnimeStartedType = type;
-        break;
-      default:
-        appSettings = settings..libraryFilterNovelStartedType = type;
-    }
-    settingsRepository.save(appSettings);
-    state = type;
-  }
+  @override
+  TriStateFilterFields get fields => TriStateFilterFields(
+    read: (s, t) => switch (t) {
+      ItemType.manga => s.libraryFilterMangasStartedType!,
+      ItemType.anime => s.libraryFilterAnimeStartedType!,
+      _ => s.libraryFilterNovelStartedType ?? 0,
+    },
+    write: (s, t, type) => switch (t) {
+      ItemType.manga => s..libraryFilterMangasStartedType = type,
+      ItemType.anime => s..libraryFilterAnimeStartedType = type,
+      _ => s..libraryFilterNovelStartedType = type,
+    },
+  );
 
   List<Manga> getData() {
     if (getType() == 1) {
@@ -292,7 +247,8 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
 }
 
 @riverpod
-class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
+class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState
+    with TriStateFilterField {
   @override
   int build({
     required List<Manga> mangaList,
@@ -303,32 +259,19 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
     return getType();
   }
 
-  int getType() {
-    switch (itemType) {
-      case ItemType.manga:
-        return settings.libraryFilterMangasBookMarkedType!;
-      case ItemType.anime:
-        return settings.libraryFilterAnimeBookMarkedType!;
-      default:
-        return settings.libraryFilterNovelBookMarkedType ?? 0;
-    }
-  }
-
-  void setType(int type) {
-    Settings appSettings = Settings();
-    switch (itemType) {
-      case ItemType.manga:
-        appSettings = settings..libraryFilterMangasBookMarkedType = type;
-        break;
-      case ItemType.anime:
-        appSettings = settings..libraryFilterAnimeBookMarkedType = type;
-        break;
-      default:
-        appSettings = settings..libraryFilterNovelBookMarkedType = type;
-    }
-    settingsRepository.save(appSettings);
-    state = type;
-  }
+  @override
+  TriStateFilterFields get fields => TriStateFilterFields(
+    read: (s, t) => switch (t) {
+      ItemType.manga => s.libraryFilterMangasBookMarkedType!,
+      ItemType.anime => s.libraryFilterAnimeBookMarkedType!,
+      _ => s.libraryFilterNovelBookMarkedType ?? 0,
+    },
+    write: (s, t, type) => switch (t) {
+      ItemType.manga => s..libraryFilterMangasBookMarkedType = type,
+      ItemType.anime => s..libraryFilterAnimeBookMarkedType = type,
+      _ => s..libraryFilterNovelBookMarkedType = type,
+    },
+  );
 
   List<Manga> getData() {
     if (getType() == 1) {
@@ -375,7 +318,8 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
 // ── Completed filter ──────────────────────────────────────────────────────────
 
 @riverpod
-class MangaFilterCompletedState extends _$MangaFilterCompletedState {
+class MangaFilterCompletedState extends _$MangaFilterCompletedState
+    with TriStateFilterField, TriStateFilterCycle {
   @override
   int build({
     required List<Manga> mangaList,
@@ -386,48 +330,26 @@ class MangaFilterCompletedState extends _$MangaFilterCompletedState {
     return getType();
   }
 
-  int getType() {
-    switch (itemType) {
-      case ItemType.manga:
-        return settings.libraryFilterMangasCompletedType ?? 0;
-      case ItemType.anime:
-        return settings.libraryFilterAnimeCompletedType ?? 0;
-      default:
-        return settings.libraryFilterNovelCompletedType ?? 0;
-    }
-  }
-
-  void setType(int type) {
-    Settings appSettings = Settings();
-    switch (itemType) {
-      case ItemType.manga:
-        appSettings = settings..libraryFilterMangasCompletedType = type;
-        break;
-      case ItemType.anime:
-        appSettings = settings..libraryFilterAnimeCompletedType = type;
-        break;
-      default:
-        appSettings = settings..libraryFilterNovelCompletedType = type;
-    }
-    settingsRepository.save(appSettings);
-    state = type;
-  }
-
-  void update() {
-    if (state == 0) {
-      setType(1);
-    } else if (state == 1) {
-      setType(2);
-    } else {
-      setType(0);
-    }
-  }
+  @override
+  TriStateFilterFields get fields => TriStateFilterFields(
+    read: (s, t) => switch (t) {
+      ItemType.manga => s.libraryFilterMangasCompletedType ?? 0,
+      ItemType.anime => s.libraryFilterAnimeCompletedType ?? 0,
+      _ => s.libraryFilterNovelCompletedType ?? 0,
+    },
+    write: (s, t, type) => switch (t) {
+      ItemType.manga => s..libraryFilterMangasCompletedType = type,
+      ItemType.anime => s..libraryFilterAnimeCompletedType = type,
+      _ => s..libraryFilterNovelCompletedType = type,
+    },
+  );
 }
 
 // ── Tracking filter ───────────────────────────────────────────────────────────
 
 @riverpod
-class MangaFilterTrackingState extends _$MangaFilterTrackingState {
+class MangaFilterTrackingState extends _$MangaFilterTrackingState
+    with TriStateFilterField, TriStateFilterCycle {
   @override
   int build({
     required List<Manga> mangaList,
@@ -438,42 +360,19 @@ class MangaFilterTrackingState extends _$MangaFilterTrackingState {
     return getType();
   }
 
-  int getType() {
-    switch (itemType) {
-      case ItemType.manga:
-        return settings.libraryFilterMangasTrackingType ?? 0;
-      case ItemType.anime:
-        return settings.libraryFilterAnimeTrackingType ?? 0;
-      default:
-        return settings.libraryFilterNovelTrackingType ?? 0;
-    }
-  }
-
-  void setType(int type) {
-    Settings appSettings = Settings();
-    switch (itemType) {
-      case ItemType.manga:
-        appSettings = settings..libraryFilterMangasTrackingType = type;
-        break;
-      case ItemType.anime:
-        appSettings = settings..libraryFilterAnimeTrackingType = type;
-        break;
-      default:
-        appSettings = settings..libraryFilterNovelTrackingType = type;
-    }
-    settingsRepository.save(appSettings);
-    state = type;
-  }
-
-  void update() {
-    if (state == 0) {
-      setType(1);
-    } else if (state == 1) {
-      setType(2);
-    } else {
-      setType(0);
-    }
-  }
+  @override
+  TriStateFilterFields get fields => TriStateFilterFields(
+    read: (s, t) => switch (t) {
+      ItemType.manga => s.libraryFilterMangasTrackingType ?? 0,
+      ItemType.anime => s.libraryFilterAnimeTrackingType ?? 0,
+      _ => s.libraryFilterNovelTrackingType ?? 0,
+    },
+    write: (s, t, type) => switch (t) {
+      ItemType.manga => s..libraryFilterMangasTrackingType = type,
+      ItemType.anime => s..libraryFilterAnimeTrackingType = type,
+      _ => s..libraryFilterNovelTrackingType = type,
+    },
+  );
 }
 
 @riverpod

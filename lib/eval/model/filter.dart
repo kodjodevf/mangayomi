@@ -1,4 +1,4 @@
-import 'package:mangayomi/eval/javascript/http.dart';
+import 'package:mangayomi/eval/http_response_extensions.dart';
 
 class FilterList {
   List<dynamic> filters;
