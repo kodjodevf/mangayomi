@@ -217,7 +217,9 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
               onTap: () async {
                 final result =
                     await LocalDirectoryAccess.pickDirectory() ??
-                    await FilePicker.getDirectoryPath();
+                    await FilePicker.getDirectoryPath(
+                      linuxOptions: const LinuxOptions(lockParentWindow: true),
+                    );
                 if (result != null) {
                   ref.read(downloadLocationStateProvider.notifier).set(result);
                 }
@@ -234,7 +236,9 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
               onTap: () async {
                 final result =
                     await LocalDirectoryAccess.pickDirectory() ??
-                    await FilePicker.getDirectoryPath();
+                    await FilePicker.getDirectoryPath(
+                      linuxOptions: const LinuxOptions(lockParentWindow: true),
+                    );
                 if (result != null) {
                   if (!context.mounted) return;
                   final name = await _showLocalFolderNameDialog(
@@ -333,7 +337,6 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
       ),
     );
   }
-
 
   void _showHelpDialog(BuildContext context) {
     final data = (
@@ -478,9 +481,8 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
         child: Row(
           children: [
             CircleAvatar(
-              backgroundColor: Theme.of(
-                context,
-              ).colorScheme.primary.withValues(alpha: 0.12),
+              backgroundColor: Theme.of(context).colorScheme.primary
+                  .withValues(alpha: 0.12),
               child: Icon(
                 isDefault ? Icons.home_outlined : Icons.folder_outlined,
                 color: Theme.of(context).colorScheme.primary,

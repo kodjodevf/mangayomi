@@ -22,15 +22,16 @@ Future importArchivesFromFile(
 }) async {
   final keepAlile = ref.keepAlive();
   try {
-    FilePickerResult? result = await FilePicker.pickFiles(
+    List<PlatformFile> files = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: switch (itemType) {
         ItemType.manga => ['cbz', 'zip'],
         ItemType.anime => ['mp4', 'mov', 'avi', 'flv', 'wmv', 'mpeg', 'mkv'],
         ItemType.novel => ['epub'],
       },
+      linuxOptions: const LinuxOptions(lockParentWindow: true),
     );
-    if (result != null) {
+    if (files.isNotEmpty) {
       final dateNow = DateTime.now().millisecondsSinceEpoch;
       final manga =
           mManga ??
@@ -43,7 +44,7 @@ Future importArchivesFromFile(
             imageUrl: '',
             lang: '',
             link: '',
-            name: _getName(result.files.first.path!),
+            name: _getName(files.first.path!),
             dateAdded: dateNow,
             lastUpdate: dateNow,
             status: Status.unknown,
@@ -54,7 +55,7 @@ Future importArchivesFromFile(
             sourceId: null,
           );
 
-      for (var file in result.files.reversed.toList()) {
+      for (var file in files.reversed) {
         (String, LocalExtensionType, Uint8List, String)? data =
             itemType == ItemType.manga
             ? await ref.watch(

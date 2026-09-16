@@ -511,6 +511,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     final selectedDirectory = await FilePicker.getDirectoryPath(
       dialogTitle: l10n.select_extension_server_folder,
       initialDirectory: initialDirectory,
+      linuxOptions: const LinuxOptions(lockParentWindow: true),
     );
     if (!mounted || selectedDirectory == null || selectedDirectory.isEmpty) {
       return;

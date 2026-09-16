@@ -32,7 +32,9 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 Future<bool> performRestore(BuildContext context, WidgetRef ref) async {
   String? safetyBackupPath;
   try {
-    final file = await FilePicker.pickFile();
+    final file = await FilePicker.pickFile(
+      linuxOptions: const LinuxOptions(lockParentWindow: true),
+    );
     if (file?.path == null || !context.mounted) return false;
     final path = file!.path!;
     // A successful restore pushes to the sync server automatically, so a

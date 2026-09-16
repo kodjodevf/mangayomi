@@ -301,7 +301,9 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   Future<void> _addLocalFolder() async {
     final path =
         await LocalDirectoryAccess.pickDirectory() ??
-        await FilePicker.getDirectoryPath();
+        await FilePicker.getDirectoryPath(
+          linuxOptions: const LinuxOptions(lockParentWindow: true),
+        );
     if (path == null || !mounted) return;
     final folders = ref.read(localFoldersStateProvider).toList();
     // Picking the same folder twice used to add it twice, and the name

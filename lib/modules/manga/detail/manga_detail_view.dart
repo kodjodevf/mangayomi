@@ -179,7 +179,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         break;
       case 5:
         try {
-          final result = await FilePicker.getDirectoryPath();
+          final result = await FilePicker.getDirectoryPath(
+            linuxOptions: const LinuxOptions(lockParentWindow: true),
+          );
           if (result != null) {
             final headers = isLocalArchive
                 ? null
@@ -2175,6 +2177,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       } else if (value == 1) {
                                         final file = await FilePicker.pickFile(
                                           type: FileType.image,
+                                          linuxOptions: const LinuxOptions(
+                                            lockParentWindow: true,
+                                          ),
                                         );
                                         if (file?.path != null &&
                                             context.mounted) {
