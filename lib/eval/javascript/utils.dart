@@ -71,9 +71,9 @@ class JsUtils {
           .then((res) {
             if (res.statusCode == 200) {
               final data = jsonDecode(res.body) as Map<String, dynamic>;
-              return data['result'] as bool;
+              return data['result']?.toString() ?? '';
             }
-            return false;
+            return '';
           });
     });
     runtime.onMessage('parseEpub', (dynamic args) async {
