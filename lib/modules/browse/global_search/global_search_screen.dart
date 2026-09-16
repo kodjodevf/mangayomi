@@ -1,23 +1,32 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/migrate_screen.dart';
 import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/services/get_popular.dart';
 import 'package:mangayomi/services/search.dart';
+import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
+import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
-import 'package:mangayomi/modules/widgets/global_search_result_card.dart';
+import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 class GlobalSearchScreen extends ConsumerStatefulWidget {
@@ -29,10 +38,41 @@ class GlobalSearchScreen extends ConsumerStatefulWidget {
   ConsumerState<GlobalSearchScreen> createState() => _GlobalSearchScreenState();
 }
 
+/// Caps how many source rows fetch at once.
+///
+/// Every row used to call getPopular/search in initState, so opening the
+/// screen fired one isolate evaluation per installed source simultaneously —
+/// the more extensions installed, the worse the stall. Gating it to a
+/// handful in flight keeps the device's isolate pool from being flooded
+/// while still finishing the full scan in the background.
+class FetchGate {
+  FetchGate(this._maxConcurrent);
+  final int _maxConcurrent;
+  int _active = 0;
+  final _waiting = <Completer<void>>[];
+
+  Future<void> acquire() async {
+    if (_active < _maxConcurrent) {
+      _active++;
+      return;
+    }
+    final completer = Completer<void>();
+    _waiting.add(completer);
+    await completer.future;
+    _active++;
+  }
+
+  void release() {
+    _active--;
+    if (_waiting.isNotEmpty) _waiting.removeAt(0).complete();
+  }
+}
+
 class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   String _query = "";
   final _textEditingController = TextEditingController();
   late final bool _showNSFW = ref.read(showNSFWStateProvider);
+  final _fetchGate = FetchGate(3);
 
   /// Every installed source for this item type, before the pinned-only and
   /// NSFW settings are applied.
@@ -112,7 +152,6 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
           // reads as "nothing matched" when the truth is that nothing was
           // searched.
           ? _noSources(context)
-          : _query.isNotEmpty || widget.search != null
           // Every row is built rather than lazily. A source that fails or finds
           // nothing collapses to zero height, and a lazy list that estimates
           // extents cannot cope with that: scrolling up builds more rows, they
@@ -120,7 +159,13 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
           // position, so the view fights the finger and never reaches the top.
           // Building all of them keeps the extent stable. There is one row per
           // installed source, and a global search queries all of them anyway.
-          ? SingleChildScrollView(
+          //
+          // No query yet (fresh open, or cleared) shows each source's normal
+          // Popular page instead of nothing — SourceSearchScreen picks
+          // getPopular vs search based on whether query is empty, so this is
+          // the same per-source request every source's own Popular tab makes,
+          // not extra work invented just for this screen.
+          : SingleChildScrollView(
               child: Column(
                 children: [
                   for (final source in sourceList)
@@ -130,14 +175,14 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
                       key: ValueKey('$query#${source.id}'),
                       query: query,
                       source: source,
+                      fetchGate: _fetchGate,
                       onNothingToShow: (reason) =>
                           _reportNothingToShow(source, reason),
                     ),
                   _nothingToShowGroup(context),
                 ],
               ),
-            )
-          : Container(),
+            ),
     );
   }
 
@@ -235,16 +280,19 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
             if (byId[entry.key] != null)
               ListTile(
                 dense: true,
-                onTap: () => Navigator.push(
-                  context,
-                  createRoute(
-                    page: MangaHomeScreen(
-                      query: _query.isNotEmpty ? _query : widget.search ?? "",
-                      source: byId[entry.key]!,
-                      isSearch: true,
+                onTap: () {
+                  final q = _query.isNotEmpty ? _query : widget.search ?? "";
+                  Navigator.push(
+                    context,
+                    createRoute(
+                      page: MangaHomeScreen(
+                        query: q,
+                        source: byId[entry.key]!,
+                        isSearch: q.trim().isNotEmpty,
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
                 title: Text(
                   byId[entry.key]!.name!,
                   style: const TextStyle(fontSize: 13),
@@ -277,6 +325,8 @@ class SourceSearchScreen extends ConsumerStatefulWidget {
 
   final Source source;
 
+  final FetchGate fetchGate;
+
   /// Called when this source finishes with nothing to show, with the reason.
   /// The parent gathers these into one collapsed group at the bottom.
   final void Function(String reason)? onNothingToShow;
@@ -285,6 +335,7 @@ class SourceSearchScreen extends ConsumerStatefulWidget {
     super.key,
     required this.query,
     required this.source,
+    required this.fetchGate,
     this.onNothingToShow,
   });
 
@@ -303,16 +354,26 @@ class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
   bool _isLoading = true;
   MPages? pages;
   Future<void> _init() async {
+    // Throttled: with many sources installed, letting every row fire its
+    // isolate call the moment it's built is what made this screen laggy.
+    await widget.fetchGate.acquire();
     try {
       _errorMessage = "";
-      pages = await ref.read(
-        searchProvider(
-          source: widget.source,
-          page: 1,
-          query: widget.query,
-          filterList: const [],
-        ).future,
-      );
+      // No query: same "Popular" request the source's own tab makes, so an
+      // empty global search reads as a discovery feed rather than a blank
+      // page, without inventing a heavier request just for this screen.
+      pages = widget.query.trim().isEmpty
+          ? await ref.read(
+              getPopularProvider(source: widget.source, page: 1).future,
+            )
+          : await ref.read(
+              searchProvider(
+                source: widget.source,
+                page: 1,
+                query: widget.query,
+                filterList: const [],
+              ).future,
+            );
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -325,6 +386,8 @@ class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
           _isLoading = false;
         });
       }
+    } finally {
+      widget.fetchGate.release();
     }
   }
 
@@ -361,7 +424,11 @@ class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
             page: MangaHomeScreen(
               query: widget.query,
               source: widget.source,
-              isSearch: true,
+              // MangaHomeScreen's search tab assumes a non-empty query; an
+              // empty one here means this row is showing Popular (our
+              // empty-query behavior), so open it on Popular instead of a
+              // search tab with nothing to search for.
+              isSearch: widget.query.trim().isNotEmpty,
             ),
           ),
         );
@@ -377,7 +444,7 @@ class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
     // A Scaffold per list row was never needed; it also forces the row to
     // expand, which would defeat the collapse.
     return SizedBox(
-      height: 300,
+      height: 340,
       child: ClipRect(
         child: Column(
           children: [
@@ -411,7 +478,7 @@ class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
   }
 }
 
-class MangaGlobalImageCard extends ConsumerWidget {
+class MangaGlobalImageCard extends ConsumerStatefulWidget {
   final MManga manga;
   final Source source;
 
@@ -421,33 +488,202 @@ class MangaGlobalImageCard extends ConsumerWidget {
     required this.source,
   });
 
-  void _open(WidgetRef ref, BuildContext context) {
+  @override
+  ConsumerState<MangaGlobalImageCard> createState() =>
+      _MangaGlobalImageCardState();
+}
+
+const _cardWidth = 150.0;
+const _cardHeight = 220.0;
+
+class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
+    with AutomaticKeepAliveClientMixin<MangaGlobalImageCard> {
+  bool _focused = false;
+
+  void _open() {
     pushToMangaReaderDetail(
       ref: ref,
       context: context,
-      getManga: manga,
-      lang: source.lang!,
-      itemType: source.itemType,
+      getManga: widget.manga,
+      lang: widget.source.lang!,
+      itemType: widget.source.itemType,
       useMaterialRoute: true,
-      source: source.name!,
-      sourceId: source.id,
+      source: widget.source.name!,
+      sourceId: widget.source.id,
+    );
+  }
+
+  // Matches the long-press-to-favorite convention already used by
+  // MangaImageCardListTileWidget: a direct add, no duplicate-across-sources
+  // check. That check belongs to the deliberate "Add to library" button on
+  // the detail page; a long-press here is a quick action and should stay one.
+  void _quickAddToLibrary() {
+    pushToMangaReaderDetail(
+      ref: ref,
+      context: context,
+      getManga: widget.manga,
+      lang: widget.source.lang!,
+      itemType: widget.source.itemType,
+      source: widget.source.name!,
+      sourceId: widget.source.id,
+      addToFavourite: true,
     );
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return GlobalSearchResultCard(
-      manga: manga,
-      source: source,
+  Widget build(BuildContext context) {
+    super.build(context);
+    final getMangaDetail = widget.manga;
+    // A bare GestureDetector never takes focus, so on a remote these covers
+    // were unreachable: the only focusable things on the screen were the source
+    // headers, and the d-pad could never get down into the results. Focus also
+    // scrolls the card into view, and ensureVisible walks every enclosing
+    // scrollable, so it moves the horizontal strip and the source list both.
+    return Focus(
+      onFocusChange: (f) {
+        setState(() => _focused = f);
+        if (f && context.mounted && Scrollable.maybeOf(context) != null) {
+          Scrollable.ensureVisible(
+            context,
+            alignment: 0.5,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+          );
+        }
+      },
+      onKeyEvent: (node, event) {
+        if (event is KeyDownEvent && tvIsSelectKey(event.logicalKey)) {
+          _open();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
       // The padding sits outside the scale deliberately: it is the room the
       // focused cover grows into. Inside, it would scale along with the card
       // and buy nothing, which is why the block had to be stretched before.
-      padding: isTv
-          ? const EdgeInsets.symmetric(horizontal: 8, vertical: 8)
-          : const EdgeInsets.only(left: 10),
-      onActivate: () => _open(ref, context),
+      child: Padding(
+        padding: isTv
+            ? const EdgeInsets.symmetric(horizontal: 8, vertical: 8)
+            : const EdgeInsets.only(left: 10),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 130),
+          curve: Curves.easeOut,
+          // Matches the library cover: accent ring plus a slight lift.
+          transform: Matrix4.identity()
+            ..scaleByDouble(
+              _focused ? 1.06 : 1.0,
+              _focused ? 1.06 : 1.0,
+              _focused ? 1.06 : 1.0,
+              1,
+            ),
+          transformAlignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: _focused ? context.primaryColor : Colors.transparent,
+              width: 2,
+            ),
+          ),
+          child: GestureDetector(
+            onTap: _open,
+            onLongPress: _quickAddToLibrary,
+            child: StreamBuilder(
+              stream: mangaRepository.watchFavoritesByItemTypeAndName(
+                widget.source.itemType,
+                getMangaDetail.name,
+              ),
+              builder: (context, snapshot) {
+                final favorites = snapshot.data ?? const <Manga>[];
+                final sameSource = favorites.where(
+                  (m) =>
+                      m.lang == widget.source.lang &&
+                      m.source == widget.source.name,
+                );
+                final matched = sameSource.isNotEmpty
+                    ? sameSource.first
+                    : (favorites.isNotEmpty ? favorites.first : null);
+                final hasData = matched != null;
+                return Stack(
+                  children: [
+                    SizedBox(
+                      width: _cardWidth,
+                      child: Column(
+                        children: [
+                          Builder(
+                            builder: (context) {
+                              if (hasData && matched.customCoverImage != null) {
+                                return Image.memory(
+                                  matched.customCoverImage as Uint8List,
+                                );
+                              }
+                              return ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: cachedNetworkImage(
+                                  headers: ref.watch(
+                                    headersProvider(
+                                      source: widget.source.name!,
+                                      lang: widget.source.lang!,
+                                      sourceId: widget.source.id,
+                                    ),
+                                  ),
+                                  imageUrl: toImgUrl(
+                                    hasData
+                                        ? matched.customCoverFromTracker ??
+                                              matched.imageUrl ??
+                                              ""
+                                        : getMangaDetail.imageUrl ?? "",
+                                  ),
+                                  width: _cardWidth,
+                                  height: _cardHeight,
+                                  fit: BoxFit.cover,
+                                ),
+                              );
+                            },
+                          ),
+                          BottomTextWidget(
+                            fontSize: 12.0,
+                            text: widget.manga.name!,
+                            isLoading: true,
+                            textColor: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .color,
+                            isComfortableGrid: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: _cardWidth,
+                      height: _cardHeight,
+                      color: hasData && matched.favorite!
+                          ? Colors.black.withValues(alpha: 0.7)
+                          : null,
+                    ),
+                    if (hasData && matched.favorite!)
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(
+                            Icons.collections_bookmark,
+                            color: context.primaryColor,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 /// Why a global search has nothing to search.

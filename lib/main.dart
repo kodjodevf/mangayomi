@@ -122,17 +122,6 @@ void main(List<String> args) async {
       if (Platform.isWindows) {
         registerProtocolHandler("mangayomi");
       }
-      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
-        final availableVersion = await WebViewEnvironment.getAvailableVersion();
-        if (availableVersion != null) {
-          final document = await getApplicationDocumentsDirectory();
-          webViewEnvironment = await WebViewEnvironment.create(
-            settings: WebViewEnvironmentSettings(
-              userDataFolder: p.join(document.path, 'flutter_inappwebview'),
-            ),
-          );
-        }
-      }
       final storage = StorageProvider();
       // Don't force the Android "all files access" (MANAGE_EXTERNAL_STORAGE)
       // prompt at launch. The database lives in scoped app storage, so the app
@@ -231,6 +220,22 @@ Future<void> _postLaunchInit(StorageProvider storage) async {
   }
   await storage.deleteBtDirectory();
   await webviewServer();
+  // Deferred until after runApp() creates the window: on Windows,
+  // WebViewEnvironment.create() needs COM initialized on a thread with an
+  // active message pump, which doesn't exist yet during main()'s pre-launch
+  // setup. Running it here (post-first-frame territory) avoids the
+  // "CoInitialize has not been called" PlatformException.
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+    final availableVersion = await WebViewEnvironment.getAvailableVersion();
+    if (availableVersion != null) {
+      final document = await getApplicationDocumentsDirectory();
+      webViewEnvironment = await WebViewEnvironment.create(
+        settings: WebViewEnvironmentSettings(
+          userDataFolder: p.join(document.path, 'flutter_inappwebview'),
+        ),
+      );
+    }
+  }
 }
 
 class MyApp extends ConsumerStatefulWidget {

@@ -317,9 +317,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           filterList: filters,
         ),
       );
-    } else if (_selectedIndex == 1 && (!_isSearch || isTv) && _query.isEmpty) {
+    } else if (_selectedIndex == 1 && _query.isEmpty) {
       _getManga = ref.watch(getLatestUpdatesProvider(source: source, page: 1));
-    } else if (_selectedIndex == 0 && (!_isSearch || isTv) && _query.isEmpty) {
+    } else if (_selectedIndex == 0 && _query.isEmpty) {
       _getManga = ref.watch(getPopularProvider(source: source, page: 1));
     }
     final l10n = context.l10n;

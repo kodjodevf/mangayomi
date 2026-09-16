@@ -325,6 +325,8 @@ class Settings {
 
   bool? mergeLibraryNavMobile;
 
+  bool? showNavDoubleTapTooltip;
+
   bool? enableDiscordRpc;
 
   bool? hideDiscordRpcInIncognito;
@@ -589,6 +591,7 @@ class Settings {
     this.autoStartExtensionServerOnLaunch = false,
     this.lastTrackerLibraryLocation,
     this.mergeLibraryNavMobile = false,
+    this.showNavDoubleTapTooltip = true,
     this.enableDiscordRpc = true,
     this.hideDiscordRpcInIncognito = true,
     this.rpcShowReadingWatchingProgress = true,
@@ -927,6 +930,7 @@ class Settings {
     autoStartExtensionServerOnLaunch = json['autoStartExtensionServerOnLaunch'];
     lastTrackerLibraryLocation = json['lastTrackerLibraryLocation'];
     mergeLibraryNavMobile = json['mergeLibraryNavMobile'];
+    showNavDoubleTapTooltip = json['showNavDoubleTapTooltip'];
     enableDiscordRpc = json['enableDiscordRpc'];
     hideDiscordRpcInIncognito = json['hideDiscordRpcInIncognito'];
     rpcShowReadingWatchingProgress = json['rpcShowReadingWatchingProgress'];
@@ -1173,6 +1177,7 @@ class Settings {
     'autoStartExtensionServerOnLaunch': autoStartExtensionServerOnLaunch,
     'lastTrackerLibraryLocation': lastTrackerLibraryLocation,
     'mergeLibraryNavMobile': mergeLibraryNavMobile,
+    'showNavDoubleTapTooltip': showNavDoubleTapTooltip,
     'enableDiscordRpc': enableDiscordRpc,
     'hideDiscordRpcInIncognito': hideDiscordRpcInIncognito,
     'rpcShowReadingWatchingProgress': rpcShowReadingWatchingProgress,

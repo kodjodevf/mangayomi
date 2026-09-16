@@ -448,7 +448,7 @@ Future<void> stopwebviewServer() async {
 void _handleResolveCf(HttpRequest request) async {
   int time = 0;
   bool timeOut = false;
-  bool isCloudFlare = true;
+  bool solved = false;
   try {
     final body = await utf8.decoder.bind(request).join();
     final data = jsonDecode(body) as Map<String, dynamic>;
@@ -462,37 +462,47 @@ void _handleResolveCf(HttpRequest request) async {
       return;
     }
 
+    final webUri = flutter_inappwebview.WebUri(url);
+
+    // Whether the challenge actually passed is determined by Cloudflare's
+    // own cf_clearance cookie, which it only sets once the challenge is
+    // solved. The previous check (a string search for '#challenge-success-
+    // text' in document.head.innerHTML) is unreliable: Cloudflare's
+    // challenge template references that id in a <style> block in <head>
+    // from the very first load, pass or fail, so the search was true
+    // immediately and the resolver silently ran out the clock without ever
+    // saving cookies.
+    Future<bool> hasClearanceCookie(
+      flutter_inappwebview.InAppWebViewController? controller,
+    ) async {
+      try {
+        final cookies = await flutter_inappwebview.CookieManager.instance(
+          webViewEnvironment: webViewEnvironment,
+        ).getCookies(url: webUri, webViewController: controller);
+        return cookies.any((c) => c.name == 'cf_clearance');
+      } catch (_) {
+        return false;
+      }
+    }
+
     flutter_inappwebview.HeadlessInAppWebView? headlessWebView;
     headlessWebView = flutter_inappwebview.HeadlessInAppWebView(
       webViewEnvironment: webViewEnvironment,
-      initialUrlRequest: flutter_inappwebview.URLRequest(
-        url: flutter_inappwebview.WebUri(url),
-      ),
+      initialUrlRequest: flutter_inappwebview.URLRequest(url: webUri),
       onLoadStop: (controller, url) async {
-        try {
-          isCloudFlare = await controller.platform.evaluateJavascript(
-            source:
-                "document.head.innerHTML.includes('#challenge-success-text')",
-          );
-        } catch (_) {
-          isCloudFlare = false;
-        }
+        solved = await hasClearanceCookie(controller);
 
         await Future.doWhile(() async {
-          if (!timeOut && isCloudFlare) {
-            try {
-              isCloudFlare = await controller.platform.evaluateJavascript(
-                source: "document.head.innerHTML.includes('#challenge-success-text')",
-              );
-            } catch (_) {
-              isCloudFlare = false;
-            }
+          if (!timeOut && !solved) {
+            solved = await hasClearanceCookie(controller);
           }
-          if (isCloudFlare) await Future.delayed(Duration(milliseconds: 300));
-
-          return isCloudFlare;
+          if (!solved) {
+            await Future.delayed(const Duration(milliseconds: 300));
+          }
+          return !solved && !timeOut;
         });
-        if (!timeOut) {
+
+        if (solved) {
           final ua =
               await controller.evaluateJavascript(
                 source: "navigator.userAgent",
@@ -507,7 +517,7 @@ void _handleResolveCf(HttpRequest request) async {
 
     await Future.doWhile(() async {
       timeOut = time == 15;
-      if (!isCloudFlare || timeOut) {
+      if (solved || timeOut) {
         return false;
       }
       await Future.delayed(const Duration(seconds: 1));
@@ -520,7 +530,7 @@ void _handleResolveCf(HttpRequest request) async {
 
     request.response
       ..headers.contentType = ContentType.json
-      ..write(jsonEncode({'result': isCloudFlare}))
+      ..write(jsonEncode({'result': solved}))
       ..close();
   } catch (e) {
     request.response

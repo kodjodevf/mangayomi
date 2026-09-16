@@ -5,6 +5,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/memory_probe_provider.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/doh_provider_notifier.dart';
@@ -55,6 +56,9 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
     );
     final rpcShowTitleState = ref.watch(rpcShowTitleStateProvider);
     final rpcShowCoverImage = ref.watch(rpcShowCoverImageStateProvider);
+    final showNavDoubleTapTooltip = ref.watch(
+      showNavDoubleTapTooltipStateProvider,
+    );
     final autoUpdateInterval = ref.watch(
       autoLibraryUpdateIntervalStateProvider,
     );
@@ -504,6 +508,14 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
               subtitle: Text(l10n.memory_overlay_subtitle),
               onChanged: (value) =>
                   ref.read(memoryOverlayVisibleProvider.notifier).set(value),
+            ),
+            SwitchListTile(
+              value: showNavDoubleTapTooltip,
+              title: Text(l10n.show_nav_double_tap_tooltip),
+              subtitle: Text(l10n.show_nav_double_tap_tooltip_subtitle),
+              onChanged: (value) => ref
+                  .read(showNavDoubleTapTooltipStateProvider.notifier)
+                  .set(value),
             ),
             SwitchListTile(
               value: enableDiscordRpc,

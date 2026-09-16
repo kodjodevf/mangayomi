@@ -383,18 +383,33 @@ class MihonExtensionService implements ExtensionService {
 }
 
 void hasError(Response response) {
+  Map<String, dynamic>? decoded;
   try {
-    final errorMessage = jsonDecode(response.body)['error'];
-    final code = jsonDecode(response.body)['code'];
-    if (errorMessage != null && code != null) {
-      if ((code as int) == 403) {
-        throw "errorMessage: Failed to bypass Cloudflare.\n\n\nYou can try to bypass it manually in the webview \n\n\nstatusCode: 403";
-      }
-      throw "errorMessage: $errorMessage \n\n\nstatusCode: $code";
+    final parsed = jsonDecode(response.body);
+    if (parsed is Map<String, dynamic>) decoded = parsed;
+  } catch (_) {
+    // Not valid JSON - the Android extension bridge (the device/emulator
+    // configured in Settings > Browse > Extension Server) returned something
+    // other than the expected response, most likely because it crashed, was
+    // unreachable, or dropped the connection mid-response. Say so clearly
+    // instead of letting the caller's own jsonDecode() on the same empty/
+    // malformed body fail moments later with a bare "Unexpected end of
+    // input" that gives no indication of the actual cause.
+    if (response.body.trim().isEmpty) {
+      throw "The Android extension bridge server returned an empty response "
+          "(HTTP ${response.statusCode}). Check that the device/emulator set "
+          "in Settings > Browse > Extension Server is running and reachable.";
     }
-  } catch (e) {
-    if (e.toString().startsWith('errorMessage:')) {
-      throw e.toString().replaceFirst('errorMessage: ', '');
+    throw "The Android extension bridge server returned an unexpected "
+        "response (HTTP ${response.statusCode}): ${response.body}";
+  }
+
+  final errorMessage = decoded?['error'];
+  final code = decoded?['code'];
+  if (errorMessage != null && code != null) {
+    if (code == 403) {
+      throw "Failed to bypass Cloudflare.\n\n\nYou can try to bypass it manually in the webview \n\n\nstatusCode: 403";
     }
+    throw "$errorMessage \n\n\nstatusCode: $code";
   }
 }
