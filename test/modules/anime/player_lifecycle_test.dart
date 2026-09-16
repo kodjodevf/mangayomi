@@ -26,10 +26,17 @@ void main() {
     );
   });
 
-  test('Windows avoids the crashing GPU texture output', () {
+  test('Windows allows configurable hardware accelerated video output', () {
     expect(
       shouldUseHardwareAcceleratedVideoOutput(
         userEnabled: true,
+        isWindows: true,
+      ),
+      isTrue,
+    );
+    expect(
+      shouldUseHardwareAcceleratedVideoOutput(
+        userEnabled: false,
         isWindows: true,
       ),
       isFalse,

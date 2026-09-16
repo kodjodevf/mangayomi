@@ -36,10 +36,10 @@ bool shouldExitDesktopFullscreenOnDispose({
   required bool isEpisodeReplacement,
 }) => isDesktop && isFullscreen && !isEpisodeReplacement;
 
-/// Windows' GPU-backed external texture can outlive Flutter's graphics
-/// context during navigation or standby. Pixel-buffer output avoids that
-/// engine crash while leaving media decode acceleration controlled by hwdec.
+/// Allows hardware-accelerated video output if enabled by user settings.
+/// On Windows, users can toggle this in Settings > Decoder (falls back to
+/// pixel-buffer output if turned off or to resolve driver crashes).
 bool shouldUseHardwareAcceleratedVideoOutput({
   required bool userEnabled,
-  required bool isWindows,
-}) => userEnabled && !isWindows;
+  bool isWindows = false,
+}) => userEnabled;

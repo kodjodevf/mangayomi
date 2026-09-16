@@ -89,6 +89,7 @@ class _DesktopControllerWidgetState
   bool _hoveringSeekbar = false;
 
   void _onSeekbarHoverChanged(bool hovering) {
+    if (_hoveringSeekbar == hovering) return;
     setState(() => _hoveringSeekbar = hovering);
     _timer?.cancel();
     if (!hovering) {
@@ -202,11 +203,13 @@ class _DesktopControllerWidgetState
   }
 
   void onHover() {
-    setState(() {
-      mount = true;
-      visible = true;
-      cursorVisible = true;
-    });
+    if (!mount || !visible || !cursorVisible) {
+      setState(() {
+        mount = true;
+        visible = true;
+        cursorVisible = true;
+      });
+    }
 
     _timer?.cancel();
     // The seekbar's own hover callback owns the timer while the cursor is on
@@ -225,11 +228,13 @@ class _DesktopControllerWidgetState
   }
 
   void onEnter() {
-    setState(() {
-      mount = true;
-      visible = true;
-      cursorVisible = true;
-    });
+    if (!mount || !visible || !cursorVisible) {
+      setState(() {
+        mount = true;
+        visible = true;
+        cursorVisible = true;
+      });
+    }
 
     _timer?.cancel();
     if (_hoveringSeekbar) return;
@@ -244,10 +249,12 @@ class _DesktopControllerWidgetState
   }
 
   void onExit() {
-    setState(() {
-      visible = false;
-      cursorVisible = true;
-    });
+    if (visible || !cursorVisible) {
+      setState(() {
+        visible = false;
+        cursorVisible = true;
+      });
+    }
 
     _timer?.cancel();
   }

@@ -46,10 +46,11 @@ class HwdecModeState extends _$HwdecModeState {
 class EnableHardwareAccelState extends _$EnableHardwareAccelState {
   @override
   bool build() {
-    return settingsRepository.current.enableHardwareAcceleration ??
-            Platform.isMacOS
-        ? false
-        : true;
+    final userSetting = settingsRepository.current.enableHardwareAcceleration;
+    if (userSetting != null) {
+      return userSetting;
+    }
+    return !(Platform.isMacOS || Platform.isWindows);
   }
 
   void set(bool value) {
