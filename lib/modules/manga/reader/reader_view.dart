@@ -173,6 +173,7 @@ class _MangaChapterPageGalleryState
     _rebuildDetail.close();
 
     _failedPageIndexes.dispose();
+    _currentPageViewIndex.dispose();
     _panAnimator.dispose();
     _autoScroll.value = false;
     _autoScroll.dispose();
@@ -263,6 +264,9 @@ class _MangaChapterPageGalleryState
     }
     return saved;
   }();
+  late final ValueNotifier<int?> _currentPageViewIndex = ValueNotifier(
+    _currentIndex,
+  );
   late final ValueNotifier<int> _currentPageDisplayIndex = ValueNotifier(
     _readerController.getPageIndex(),
   );
@@ -533,9 +537,19 @@ class _MangaChapterPageGalleryState
           child: SafeArea(
             top: !fullScreenReader,
             bottom: false,
-            child: ValueListenableBuilder<Set<int>>(
-              valueListenable: _failedPageIndexes,
-              builder: (context, failedPageIndexes, child) {
+            child: AnimatedBuilder(
+              animation: Listenable.merge([
+                _failedPageIndexes,
+                _currentPageViewIndex,
+                _currentPageDisplayIndex,
+              ]),
+              builder: (context, child) {
+                final failedPageIndexes = _failedPageIndexes.value;
+                final curPvIndex = _currentPageViewIndex.value ?? 0;
+                final curActualIndex = _currentPageDisplayIndex.value;
+                final bool hasCurrentError =
+                    failedPageIndexes.contains(curPvIndex) ||
+                    failedPageIndexes.contains(curActualIndex);
                 return Stack(
                   children: [
                     ReaderPageContent(
@@ -558,11 +572,10 @@ class _MangaChapterPageGalleryState
                       pageControllerFor: (index) =>
                           _pageControllers.putIfAbsent(
                             index,
-                            () =>
-                                ssiv.SubsamplingScaleImageViewController()
-                                  ..addListener(
-                                    () => _updateZoomStateForIndex(index),
-                                  ),
+                            () => ssiv.SubsamplingScaleImageViewController()
+                              ..addListener(
+                                () => _updateZoomStateForIndex(index),
+                              ),
                           ),
                       onFailedToLoadImage: _onFailedToLoadImage,
                       onWidePage: _splitWidePage,
@@ -591,9 +604,7 @@ class _MangaChapterPageGalleryState
                     ),
                     ReaderOverlays(
                       isReverseHorizontal: _isReverseHorizontal,
-                      hasCurrentPageImageError: failedPageIndexes.contains(
-                        _currentIndex ?? 0,
-                      ),
+                      hasCurrentPageImageError: hasCurrentError,
                       isContinuousMode: readerMode.isContinuous,
                       onToggleUI: _isViewFunction,
                       onPreviousPage: () {
@@ -672,6 +683,7 @@ class _MangaChapterPageGalleryState
                             jumpIndex = _actualToPageViewIndex(jumpIndex);
                           }
                           _currentIndex = jumpIndex;
+                          _currentPageViewIndex.value = jumpIndex;
                           navigationService.jumpToPage(
                             index: jumpIndex,
                             readerMode: ref.read(_currentReaderMode)!,
@@ -707,6 +719,7 @@ class _MangaChapterPageGalleryState
                           }
 
                           _currentIndex = targetIndex;
+                          _currentPageViewIndex.value = targetIndex;
                           if (mounted) {
                             setState(() {
                               _pageMode = newPageMode;
@@ -928,6 +941,7 @@ class _MangaChapterPageGalleryState
     final newIndex = itemPositions.first.index;
     final bool pageChanged = _currentIndex != newIndex;
     _currentIndex = newIndex;
+    _currentPageViewIndex.value = newIndex;
     if (pageChanged) _triggerFlash();
     final currentReaderMode = ref.read(_currentReaderMode);
     int pagesLength =
@@ -1238,6 +1252,7 @@ class _MangaChapterPageGalleryState
 
     final bool pageChanged = _currentIndex != index;
     _currentIndex = index;
+    _currentPageViewIndex.value = index;
 
     if (pageChanged) _triggerFlash();
     _updateDisplayIndex(actualIndex, true /*Paged*/);
@@ -1381,6 +1396,7 @@ class _MangaChapterPageGalleryState
         ? _actualToPageViewIndex(actualIndex)
         : actualIndex;
     _currentIndex = targetIndex;
+    _currentPageViewIndex.value = targetIndex;
 
     if (value == ReaderMode.vertical || value.isHorizontalPaged) {
       if (_extendedController.hasClients) {

@@ -641,6 +641,9 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     }
 
     final provider = widget.image;
+    try {
+      await provider.evict();
+    } catch (_) {}
 
     // 1. Fast path: FileImage
     if (provider is FileImage) {

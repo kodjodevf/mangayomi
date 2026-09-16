@@ -338,23 +338,19 @@ class _DoublePageViewState extends State<DoublePageView>
   }
 
   Widget _buildRetryButton(SubsamplingImageState state, dynamic l10n) {
-    return GestureDetector(
-      onLongPress: () {
-        state.reLoadImage();
-        widget.onFailedToLoadImage?.call(false);
-      },
-      onTap: () {
-        state.reLoadImage();
-        widget.onFailedToLoadImage?.call(false);
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: context.primaryColor,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        child: Text(l10n.retry),
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: context.primaryColor,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       ),
+      onPressed: () {
+        state.reLoadImage();
+        widget.onFailedToLoadImage?.call(false);
+      },
+      icon: const Icon(Icons.refresh, size: 18),
+      label: Text(l10n.retry),
     );
   }
 }

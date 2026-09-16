@@ -332,28 +332,24 @@ class ReaderPagedItem extends ConsumerWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: GestureDetector(
-                    onLongPress: () {
-                      state.reLoadImage();
-                      onFailedToLoadImage(index, false);
-                    },
-                    onTap: () {
-                      state.reLoadImage();
-                      onFailedToLoadImage(index, false);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: context.primaryColor,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: context.primaryColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                          horizontal: 16,
-                        ),
-                        child: Text(l10n.retry),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 20,
                       ),
                     ),
+                    onPressed: () {
+                      state.reLoadImage();
+                      onFailedToLoadImage(index, false);
+                    },
+                    icon: const Icon(Icons.refresh, size: 18),
+                    label: Text(l10n.retry),
                   ),
                 ),
               ],

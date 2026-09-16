@@ -82,6 +82,68 @@ class ReaderGestureHandler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (hasImageError) {
+      // When the visible page has an error:
+      // - The center box (25% to 65% height, 20% to 80% width) is left empty
+      //   so hit-tests fall straight through to the Retry button.
+      // - Top & bottom center zones trigger onToggleUI (to show/hide menus).
+      // - Left & right strips allow page navigation.
+      final topHeight = context.height(0.25);
+      final bottomHeight = context.height(0.35);
+      final sideWidth = context.width(0.20);
+      final prevAction = _shouldInvertHorizontal ? _next() : _prev();
+      final nextAction = _shouldInvertHorizontal ? _prev() : _next();
+
+      return Stack(
+        children: [
+          // Top zone: left/right turn pages, center toggles UI
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: topHeight,
+            child: Row(
+              children: [
+                SizedBox(width: sideWidth, child: _zone(prevAction)),
+                Expanded(child: _uiZone()),
+                SizedBox(width: sideWidth, child: _zone(nextAction)),
+              ],
+            ),
+          ),
+          // Bottom zone: left/right turn pages, center toggles UI
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: bottomHeight,
+            child: Row(
+              children: [
+                SizedBox(width: sideWidth, child: _zone(prevAction)),
+                Expanded(child: _uiZone()),
+                SizedBox(width: sideWidth, child: _zone(nextAction)),
+              ],
+            ),
+          ),
+          // Left middle strip (between top and bottom)
+          Positioned(
+            top: topHeight,
+            bottom: bottomHeight,
+            left: 0,
+            width: sideWidth,
+            child: _zone(prevAction),
+          ),
+          // Right middle strip (between top and bottom)
+          Positioned(
+            top: topHeight,
+            bottom: bottomHeight,
+            right: 0,
+            width: sideWidth,
+            child: _zone(nextAction),
+          ),
+        ],
+      );
+    }
+
     return switch (navigationLayout) {
       1 => _buildLShaped(context),
       2 => _buildKindle(context),
@@ -135,12 +197,7 @@ class ReaderGestureHandler extends StatelessWidget {
     return Row(
       children: [
         Expanded(flex: 2, child: _zone(leftAction)),
-        Expanded(
-          flex: 2,
-          child: hasImageError
-              ? SizedBox(width: context.width(1), height: context.height(0.7))
-              : _uiZone(),
-        ),
+        Expanded(flex: 2, child: _uiZone()),
         Expanded(flex: 2, child: _zone(rightAction)),
       ],
     );
@@ -151,12 +208,9 @@ class ReaderGestureHandler extends StatelessWidget {
     final bottomAction = _shouldInvertVertical ? onPreviousPage : onNextPage;
     return Column(
       children: [
-        Expanded(flex: 2, child: _zone(hasImageError ? onToggleUI : topAction)),
+        Expanded(flex: 2, child: _zone(topAction)),
         const Expanded(flex: 5, child: SizedBox.shrink()),
-        Expanded(
-          flex: 2,
-          child: _zone(hasImageError ? onToggleUI : bottomAction),
-        ),
+        Expanded(flex: 2, child: _zone(bottomAction)),
       ],
     );
   }

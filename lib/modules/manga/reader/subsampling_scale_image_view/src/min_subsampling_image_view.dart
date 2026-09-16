@@ -120,6 +120,9 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
       await _loadFromPath(path);
     } else {
       final provider = widget.data.getImageProvider(ref, true);
+      try {
+        await provider.evict();
+      } catch (_) {}
       _imageStream = provider.resolve(ImageConfiguration.empty);
       _streamListener = ImageStreamListener(
         (info, syncCall) async {
@@ -339,22 +342,21 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: _loadImage,
-                onLongPress: _loadImage,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: context.primaryColor,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: context.primaryColor,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                      horizontal: 16,
-                    ),
-                    child: Text(l10n.retry),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 20,
                   ),
                 ),
+                onPressed: _loadImage,
+                icon: const Icon(Icons.refresh, size: 18),
+                label: Text(l10n.retry),
               ),
             ),
           ],
