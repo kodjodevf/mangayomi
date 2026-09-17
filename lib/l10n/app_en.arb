@@ -1326,5 +1326,16 @@
   "auto_library_update_2_days": "Every 2 days",
   "auto_library_update_weekly": "Weekly",
   "auto_library_update_wifi_only": "Only on Wi-Fi",
-  "auto_library_update_wifi_only_subtitle": "Skip the scheduled update while on mobile data."
+  "auto_library_update_wifi_only_subtitle": "Skip the scheduled update while on mobile data.",
+  "padding": "Padding",
+  "page_mode": "Page mode",
+  "single_page": "Single page",
+  "double_page": "Double page",
+  "speed": "Speed",
+  "theme_dark": "Dark",
+  "theme_light": "Light",
+  "theme_black": "Black",
+  "theme_sepia": "Sepia",
+  "decrease": "Decrease",
+  "increase": "Increase"
 }

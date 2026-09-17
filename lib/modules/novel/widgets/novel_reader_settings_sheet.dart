@@ -9,7 +9,16 @@ import 'package:mangayomi/modules/novel/utils/novel_reader_fonts.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
 class ReaderSettingsTab extends ConsumerWidget {
-  const ReaderSettingsTab({super.key});
+  final NovelReaderController? readerController;
+  final PageMode? currentPageMode;
+  final ValueChanged<PageMode>? onPageModeChanged;
+
+  const ReaderSettingsTab({
+    super.key,
+    this.readerController,
+    this.currentPageMode,
+    this.onPageModeChanged,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,77 +28,87 @@ class ReaderSettingsTab extends ConsumerWidget {
     final backgroundColor = ref.watch(novelReaderThemeStateProvider);
     final textColor = ref.watch(novelReaderTextColorStateProvider);
     final fontFamilyKey = ref.watch(novelFontFamilyStateProvider);
+    final fontSize = ref.watch(novelFontSizeStateProvider);
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       child: Column(
         children: [
           _SettingSection(
             title: context.l10n.theme,
             child: Column(
               children: [
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                Row(
                   children: [
-                    _ThemeButton(
-                      backgroundColor: '#292832',
-                      textColor: '#CCCCCC',
-                      label: 'Dark',
-                      isSelected: backgroundColor == '#292832',
-                      onTap: () {
-                        ref
-                            .read(novelReaderThemeStateProvider.notifier)
-                            .set('#292832');
-                        ref
-                            .read(novelReaderTextColorStateProvider.notifier)
-                            .set('#CCCCCC');
-                      },
+                    Expanded(
+                      child: _ThemeButton(
+                        backgroundColor: '#292832',
+                        textColor: '#CCCCCC',
+                        label: context.l10n.theme_dark,
+                        isSelected: backgroundColor == '#292832',
+                        onTap: () {
+                          ref
+                              .read(novelReaderThemeStateProvider.notifier)
+                              .set('#292832');
+                          ref
+                              .read(novelReaderTextColorStateProvider.notifier)
+                              .set('#CCCCCC');
+                        },
+                      ),
                     ),
-                    _ThemeButton(
-                      backgroundColor: '#FFFFFF',
-                      textColor: '#000000',
-                      label: 'Light',
-                      isSelected: backgroundColor == '#FFFFFF',
-                      onTap: () {
-                        ref
-                            .read(novelReaderThemeStateProvider.notifier)
-                            .set('#FFFFFF');
-                        ref
-                            .read(novelReaderTextColorStateProvider.notifier)
-                            .set('#000000');
-                      },
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _ThemeButton(
+                        backgroundColor: '#FFFFFF',
+                        textColor: '#000000',
+                        label: context.l10n.theme_light,
+                        isSelected: backgroundColor == '#FFFFFF',
+                        onTap: () {
+                          ref
+                              .read(novelReaderThemeStateProvider.notifier)
+                              .set('#FFFFFF');
+                          ref
+                              .read(novelReaderTextColorStateProvider.notifier)
+                              .set('#000000');
+                        },
+                      ),
                     ),
-                    _ThemeButton(
-                      backgroundColor: '#000000',
-                      textColor: '#FFFFFF',
-                      label: 'Black',
-                      isSelected: backgroundColor == '#000000',
-                      onTap: () {
-                        ref
-                            .read(novelReaderThemeStateProvider.notifier)
-                            .set('#000000');
-                        ref
-                            .read(novelReaderTextColorStateProvider.notifier)
-                            .set('#FFFFFF');
-                      },
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _ThemeButton(
+                        backgroundColor: '#000000',
+                        textColor: '#FFFFFF',
+                        label: context.l10n.theme_black,
+                        isSelected: backgroundColor == '#000000',
+                        onTap: () {
+                          ref
+                              .read(novelReaderThemeStateProvider.notifier)
+                              .set('#000000');
+                          ref
+                              .read(novelReaderTextColorStateProvider.notifier)
+                              .set('#FFFFFF');
+                        },
+                      ),
                     ),
-                    _ThemeButton(
-                      backgroundColor: '#F5E6D3',
-                      textColor: '#5F4B32',
-                      label: 'Sepia',
-                      isSelected: backgroundColor == '#F5E6D3',
-                      onTap: () {
-                        ref
-                            .read(novelReaderThemeStateProvider.notifier)
-                            .set('#F5E6D3');
-                        ref
-                            .read(novelReaderTextColorStateProvider.notifier)
-                            .set('#5F4B32');
-                      },
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _ThemeButton(
+                        backgroundColor: '#F5E6D3',
+                        textColor: '#5F4B32',
+                        label: context.l10n.theme_sepia,
+                        isSelected: backgroundColor == '#F5E6D3',
+                        onTap: () {
+                          ref
+                              .read(novelReaderThemeStateProvider.notifier)
+                              .set('#F5E6D3');
+                          ref
+                              .read(novelReaderTextColorStateProvider.notifier)
+                              .set('#5F4B32');
+                        },
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     Expanded(
@@ -103,7 +122,7 @@ class ReaderSettingsTab extends ConsumerWidget {
                         },
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: _ColorPicker(
                         label: context.l10n.text,
@@ -121,221 +140,310 @@ class ReaderSettingsTab extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           _SettingSection(
             title: context.l10n.text_align,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _AlignButton(
-                  icon: Icons.format_align_left,
-                  isSelected: textAlign == NovelTextAlign.left,
-                  onTap: () {
-                    ref
-                        .read(novelTextAlignStateProvider.notifier)
-                        .set(NovelTextAlign.left);
-                  },
+                Expanded(
+                  child: _AlignButton(
+                    icon: Icons.format_align_left,
+                    isSelected: textAlign == NovelTextAlign.left,
+                    onTap: () {
+                      ref
+                          .read(novelTextAlignStateProvider.notifier)
+                          .set(NovelTextAlign.left);
+                    },
+                  ),
                 ),
-                _AlignButton(
-                  icon: Icons.format_align_center,
-                  isSelected: textAlign == NovelTextAlign.center,
-                  onTap: () {
-                    ref
-                        .read(novelTextAlignStateProvider.notifier)
-                        .set(NovelTextAlign.center);
-                  },
+                const SizedBox(width: 6),
+                Expanded(
+                  child: _AlignButton(
+                    icon: Icons.format_align_center,
+                    isSelected: textAlign == NovelTextAlign.center,
+                    onTap: () {
+                      ref
+                          .read(novelTextAlignStateProvider.notifier)
+                          .set(NovelTextAlign.center);
+                    },
+                  ),
                 ),
-                _AlignButton(
-                  icon: Icons.format_align_right,
-                  isSelected: textAlign == NovelTextAlign.right,
-                  onTap: () {
-                    ref
-                        .read(novelTextAlignStateProvider.notifier)
-                        .set(NovelTextAlign.right);
-                  },
+                const SizedBox(width: 6),
+                Expanded(
+                  child: _AlignButton(
+                    icon: Icons.format_align_right,
+                    isSelected: textAlign == NovelTextAlign.right,
+                    onTap: () {
+                      ref
+                          .read(novelTextAlignStateProvider.notifier)
+                          .set(NovelTextAlign.right);
+                    },
+                  ),
                 ),
-                _AlignButton(
-                  icon: Icons.format_align_justify,
-                  isSelected: textAlign == NovelTextAlign.block,
-                  onTap: () {
-                    ref
-                        .read(novelTextAlignStateProvider.notifier)
-                        .set(NovelTextAlign.block);
-                  },
+                const SizedBox(width: 6),
+                Expanded(
+                  child: _AlignButton(
+                    icon: Icons.format_align_justify,
+                    isSelected: textAlign == NovelTextAlign.block,
+                    onTap: () {
+                      ref
+                          .read(novelTextAlignStateProvider.notifier)
+                          .set(NovelTextAlign.block);
+                    },
+                  ),
                 ),
               ],
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
 
           _SettingSection(
-            title: 'Padding',
-            child: Column(
+            title: context.l10n.font_size,
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor
-                            .withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
+                Icon(
+                  Icons.format_size_rounded,
+                  size: 20,
+                  color: Theme.of(context).primaryColor,
+                ),
+                const SizedBox(width: 4),
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  padding: EdgeInsets.zero,
+                  onPressed: fontSize > 8
+                      ? () {
+                          ref
+                              .read(novelFontSizeStateProvider.notifier)
+                              .set(fontSize - 1);
+                        }
+                      : null,
+                  icon: const Icon(Icons.remove_rounded, size: 18),
+                  tooltip: context.l10n.decrease,
+                ),
+                Expanded(
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 3,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 6,
                       ),
-                      child: Icon(
-                        Icons.space_bar_rounded,
-                        size: 22,
-                        color: Theme.of(context).primaryColor,
+                      overlayShape: const RoundSliderOverlayShape(
+                        overlayRadius: 12,
                       ),
+                      activeTrackColor: Theme.of(context).primaryColor,
+                      inactiveTrackColor: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.2),
+                      thumbColor: Theme.of(context).primaryColor,
+                      overlayColor: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.2),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          trackHeight: 4,
-                          thumbShape: const RoundSliderThumbShape(
-                            enabledThumbRadius: 8,
-                          ),
-                          overlayShape: const RoundSliderOverlayShape(
-                            overlayRadius: 16,
-                          ),
-                          activeTrackColor: Theme.of(context).primaryColor,
-                          inactiveTrackColor: Theme.of(context).primaryColor
-                              .withValues(alpha: 0.2),
-                          thumbColor: Theme.of(context).primaryColor,
-                          overlayColor: Theme.of(context).primaryColor
-                              .withValues(alpha: 0.2),
-                        ),
-                        child: Slider(
-                          value: padding.toDouble(),
-                          min: 0,
-                          max: 50,
-                          divisions: 50,
-                          label: '$padding px',
-                          onChanged: (value) {
-                            ref
-                                .read(novelReaderPaddingStateProvider.notifier)
-                                .set(value.toInt());
-                          },
-                        ),
-                      ),
+                    child: Slider(
+                      value: fontSize.toDouble().clamp(8.0, 40.0),
+                      min: 8,
+                      max: 40,
+                      divisions: 32,
+                      label: '$fontSize px',
+                      onChanged: (value) {
+                        ref
+                            .read(novelFontSizeStateProvider.notifier)
+                            .set(value.toInt());
+                      },
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor
-                            .withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '${padding}px',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
+                  ),
+                ),
+                IconButton(
+                  visualDensity: VisualDensity.compact,
+                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  padding: EdgeInsets.zero,
+                  onPressed: fontSize < 40
+                      ? () {
+                          ref
+                              .read(novelFontSizeStateProvider.notifier)
+                              .set(fontSize + 1);
+                        }
+                      : null,
+                  icon: const Icon(Icons.add_rounded, size: 18),
+                  tooltip: context.l10n.increase,
+                ),
+                const SizedBox(width: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor
+                        .withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    '${fontSize}px',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).primaryColor,
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
+
+          _SettingSection(
+            title: context.l10n.padding,
+            child: Row(
+              children: [
+                Icon(
+                  Icons.space_bar_rounded,
+                  size: 20,
+                  color: Theme.of(context).primaryColor,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 3,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 6,
+                      ),
+                      overlayShape: const RoundSliderOverlayShape(
+                        overlayRadius: 12,
+                      ),
+                      activeTrackColor: Theme.of(context).primaryColor,
+                      inactiveTrackColor: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.2),
+                      thumbColor: Theme.of(context).primaryColor,
+                      overlayColor: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.2),
+                    ),
+                    child: Slider(
+                      value: padding.toDouble(),
+                      min: 0,
+                      max: 50,
+                      divisions: 50,
+                      label: '$padding px',
+                      onChanged: (value) {
+                        ref
+                            .read(novelReaderPaddingStateProvider.notifier)
+                            .set(value.toInt());
+                      },
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor
+                        .withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    '${padding}px',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 10),
 
           _SettingSection(
             title: context.l10n.line_height,
-            child: Column(
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor
-                            .withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
+                Icon(
+                  Icons.height_rounded,
+                  size: 20,
+                  color: Theme.of(context).primaryColor,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 3,
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 6,
                       ),
-                      child: Icon(
-                        Icons.height_rounded,
-                        size: 22,
-                        color: Theme.of(context).primaryColor,
+                      overlayShape: const RoundSliderOverlayShape(
+                        overlayRadius: 12,
                       ),
+                      activeTrackColor: Theme.of(context).primaryColor,
+                      inactiveTrackColor: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.2),
+                      thumbColor: Theme.of(context).primaryColor,
+                      overlayColor: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.2),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: SliderTheme(
-                        data: SliderTheme.of(context).copyWith(
-                          trackHeight: 4,
-                          thumbShape: const RoundSliderThumbShape(
-                            enabledThumbRadius: 8,
-                          ),
-                          overlayShape: const RoundSliderOverlayShape(
-                            overlayRadius: 16,
-                          ),
-                          activeTrackColor: Theme.of(context).primaryColor,
-                          inactiveTrackColor: Theme.of(context).primaryColor
-                              .withValues(alpha: 0.2),
-                          thumbColor: Theme.of(context).primaryColor,
-                          overlayColor: Theme.of(context).primaryColor
-                              .withValues(alpha: 0.2),
-                        ),
-                        child: Slider(
-                          value: lineHeight,
-                          min: 1.0,
-                          max: 3.0,
-                          divisions: 20,
-                          label: lineHeight.toStringAsFixed(1),
-                          onChanged: (value) {
-                            ref
-                                .read(
-                                  novelReaderLineHeightStateProvider.notifier,
-                                )
-                                .set(value);
-                          },
-                        ),
-                      ),
+                    child: Slider(
+                      value: lineHeight,
+                      min: 1.0,
+                      max: 3.0,
+                      divisions: 20,
+                      label: lineHeight.toStringAsFixed(1),
+                      onChanged: (value) {
+                        ref
+                            .read(
+                              novelReaderLineHeightStateProvider.notifier,
+                            )
+                            .set(value);
+                      },
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor
-                            .withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        lineHeight.toStringAsFixed(1),
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor
+                        .withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    lineHeight.toStringAsFixed(1),
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).primaryColor,
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
 
           _SettingSection(
-            title: 'Font',
+            title: context.l10n.font,
             child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: 6,
+              runSpacing: 6,
               children: [
                 for (final option in novelReaderFontOptions)
                   ChoiceChip(
-                    label: Text(option.label),
+                    visualDensity: VisualDensity.compact,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    labelStyle: const TextStyle(fontSize: 11),
+                    label: Text(
+                      option.key == null
+                          ? context.l10n.default0
+                          : option.label,
+                    ),
                     selected: fontFamilyKey == option.key,
                     onSelected: (_) {
                       ref
@@ -343,6 +451,56 @@ class ReaderSettingsTab extends ConsumerWidget {
                           .set(option.key);
                     },
                   ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          _SettingSection(
+            title: context.l10n.page_mode,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (currentPageMode != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _ModeChipButton(
+                            icon: Icons.article_outlined,
+                            label: context.l10n.single_page,
+                            isSelected: currentPageMode == PageMode.onePage,
+                            onTap: () {
+                              readerController?.setPageMode(PageMode.onePage);
+                              onPageModeChanged?.call(PageMode.onePage);
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _ModeChipButton(
+                            icon: Icons.auto_stories_outlined,
+                            label: context.l10n.double_page,
+                            isSelected: currentPageMode == PageMode.doublePage,
+                            onTap: () {
+                              readerController?.setPageMode(PageMode.doublePage);
+                              onPageModeChanged?.call(PageMode.doublePage);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                _SwitchListTileSetting(
+                  title: context.l10n.double_page_auto,
+                  secondary: const Icon(Icons.screen_rotation_outlined, size: 20),
+                  value: ref.watch(doublePageAutoStateProvider),
+                  onChanged: (value) {
+                    ref.read(doublePageAutoStateProvider.notifier).set(value);
+                  },
+                ),
               ],
             ),
           ),
@@ -368,7 +526,7 @@ class GeneralSettingsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       child: Column(
         children: [
           _SwitchListTileSetting(
@@ -388,6 +546,7 @@ class GeneralSettingsTab extends ConsumerWidget {
                   _SwitchListTileSetting(
                     secondary: Icon(
                       valueT ? Icons.timer : Icons.timer_outlined,
+                      size: 20,
                     ),
                     value: valueT,
                     title: context.l10n.auto_scroll,
@@ -398,19 +557,134 @@ class GeneralSettingsTab extends ConsumerWidget {
                     },
                   ),
                   if (valueT)
-                    ValueListenableBuilder(
-                      valueListenable: pageOffset,
-                      builder: (context, value, child) => Slider(
-                        min: 2.0,
-                        max: 30.0,
-                        divisions: max(28, 3),
-                        value: value,
-                        onChanged: (val) {
-                          pageOffset.value = val;
-                        },
-                        onChangeEnd: (val) {
-                          readerController.setAutoScroll(valueT, val);
-                        },
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor
+                              .withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: Theme.of(context).primaryColor
+                                .withValues(alpha: 0.15),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.speed_rounded,
+                                      size: 16,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      context.l10n.speed,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.color,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                ValueListenableBuilder<double>(
+                                  valueListenable: pageOffset,
+                                  builder: (context, val, _) => Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).primaryColor
+                                          .withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      '${val.toStringAsFixed(1)}x',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            ValueListenableBuilder<double>(
+                              valueListenable: pageOffset,
+                              builder: (context, value, child) => Row(
+                                children: [
+                                  Icon(
+                                    Icons.directions_walk_rounded,
+                                    size: 16,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color
+                                        ?.withValues(alpha: 0.5),
+                                  ),
+                                  Expanded(
+                                    child: SliderTheme(
+                                      data: SliderTheme.of(context).copyWith(
+                                        trackHeight: 3,
+                                        thumbShape: const RoundSliderThumbShape(
+                                          enabledThumbRadius: 6,
+                                        ),
+                                        overlayShape:
+                                            const RoundSliderOverlayShape(
+                                          overlayRadius: 12,
+                                        ),
+                                      ),
+                                      child: Slider(
+                                        min: 2.0,
+                                        max: 30.0,
+                                        divisions: max(28, 3),
+                                        value: value.clamp(2.0, 30.0),
+                                        onChanged: (val) {
+                                          pageOffset.value = val;
+                                        },
+                                        onChangeEnd: (val) {
+                                          readerController.setAutoScroll(
+                                            valueT,
+                                            val,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.directions_run_rounded,
+                                    size: 16,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color
+                                        ?.withValues(alpha: 0.5),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                 ],
@@ -452,25 +726,25 @@ class _SettingSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 10),
+          padding: const EdgeInsets.only(left: 2, bottom: 6),
           child: Row(
             children: [
               Container(
-                width: 4,
-                height: 20,
+                width: 3,
+                height: 14,
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 8),
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
                   color: Theme.of(context).textTheme.titleLarge?.color,
-                  letterSpacing: 0.3,
+                  letterSpacing: 0.2,
                 ),
               ),
             ],
@@ -478,7 +752,7 @@ class _SettingSection extends StatelessWidget {
         ),
         Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -492,7 +766,10 @@ class _SettingSection extends StatelessWidget {
               width: 1,
             ),
           ),
-          child: Padding(padding: const EdgeInsets.all(16), child: child),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: child,
+          ),
         ),
       ],
     );
@@ -515,16 +792,17 @@ class _SwitchListTileSetting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
+      dense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 4),
       secondary: secondary,
       title: Text(
         title,
         style: TextStyle(
           color: Theme.of(context).textTheme.bodyLarge!.color!
               .withValues(alpha: 0.9),
-          fontSize: 14,
+          fontSize: 13,
         ),
       ),
-
       value: value,
       onChanged: onChanged,
     );
@@ -553,55 +831,91 @@ class _ThemeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+    final bg = _parseColor(backgroundColor);
+    final txt = _parseColor(textColor);
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          width: 75,
-          height: 70,
+          height: 52,
           decoration: BoxDecoration(
-            color: _parseColor(backgroundColor),
-            borderRadius: BorderRadius.circular(12),
+            color: bg,
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: isSelected
-                  ? Theme.of(context).primaryColor
-                  : Colors.grey.withValues(alpha: 0.3),
-              width: isSelected ? 3 : 1.5,
+                  ? primaryColor
+                  : Colors.grey.withValues(alpha: 0.25),
+              width: isSelected ? 2 : 1,
             ),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: Theme.of(context).primaryColor
-                          .withValues(alpha: 0.3),
-                      blurRadius: 8,
+                      color: primaryColor.withValues(alpha: 0.35),
+                      blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
                   ]
-                : null,
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 3,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Stack(
             children: [
-              Text(
-                'Aa',
-                style: TextStyle(
-                  color: _parseColor(textColor),
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Aa',
+                      style: TextStyle(
+                        color: txt,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: txt.withValues(alpha: 0.9),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  color: _parseColor(textColor),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
+              if (isSelected)
+                Positioned(
+                  top: 3,
+                  right: 3,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      size: 9,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
-              ),
             ],
           ),
         ),
@@ -643,8 +957,8 @@ class _ColorPicker extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+                  spacing: 6,
+                  runSpacing: 6,
                   children: [
                     _colorOption(context, Colors.white, selectedColor),
                     _colorOption(context, Colors.black, selectedColor),
@@ -703,24 +1017,24 @@ class _ColorPicker extends StatelessWidget {
           onColorChanged(_colorToHex(optionColor));
           Navigator.of(context).pop();
         },
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          width: 56,
-          height: 56,
+          width: 48,
+          height: 48,
           decoration: BoxDecoration(
             color: optionColor,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
-              width: isSelected ? 3 : 1.5,
+              width: isSelected ? 2.5 : 1,
             ),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
                       color: Theme.of(context).primaryColor
                           .withValues(alpha: 0.4),
-                      blurRadius: 8,
+                      blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
                   ]
@@ -729,7 +1043,7 @@ class _ColorPicker extends StatelessWidget {
           child: isSelected
               ? Icon(
                   Icons.check_circle_rounded,
-                  size: 26,
+                  size: 22,
                   color: optionColor.computeLuminance() > 0.5
                       ? Colors.black
                       : Colors.white,
@@ -746,15 +1060,15 @@ class _ColorPicker extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () => _showColorPickerDialog(context),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         child: Container(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
             border: Border.all(
-              color: Colors.grey.withValues(alpha: 0.3),
-              width: 1.5,
+              color: Colors.grey.withValues(alpha: 0.25),
+              width: 1,
             ),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -767,41 +1081,42 @@ class _ColorPicker extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 36,
-                height: 36,
+                width: 24,
+                height: 24,
                 decoration: BoxDecoration(
                   color: _parseColor(color),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     color: Colors.grey.withValues(alpha: 0.5),
-                    width: 2,
+                    width: 1.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 3,
+                      offset: const Offset(0, 1),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 13,
+                        fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 2),
                     Text(
                       color,
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 10,
                         color: Colors.grey[600],
                         fontFamily: 'monospace',
                       ),
@@ -812,7 +1127,7 @@ class _ColorPicker extends StatelessWidget {
               Icon(
                 Icons.palette_outlined,
                 color: Theme.of(context).primaryColor.withValues(alpha: 0.7),
-                size: 20,
+                size: 16,
               ),
             ],
           ),
@@ -839,29 +1154,99 @@ class _AlignButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          width: 48,
-          height: 48,
+          height: 36,
           decoration: BoxDecoration(
             color: isSelected
                 ? Theme.of(context).primaryColor.withValues(alpha: 0.15)
                 : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: isSelected
                   ? Theme.of(context).primaryColor
-                  : Colors.grey.withValues(alpha: 0.3),
-              width: isSelected ? 2 : 1.5,
+                  : Colors.grey.withValues(alpha: 0.2),
+              width: isSelected ? 1.5 : 1,
             ),
           ),
           child: Icon(
             icon,
-            size: 22,
+            size: 18,
             color: isSelected
                 ? Theme.of(context).primaryColor
                 : Theme.of(context).iconTheme.color,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ModeChipButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _ModeChipButton({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? primaryColor.withValues(alpha: 0.15)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isSelected
+                  ? primaryColor
+                  : Colors.grey.withValues(alpha: 0.25),
+              width: isSelected ? 1.5 : 1,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Icon(
+                icon,
+                size: 17,
+                color: isSelected
+                    ? primaryColor
+                    : Theme.of(context).iconTheme.color,
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    color: isSelected
+                        ? primaryColor
+                        : Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),

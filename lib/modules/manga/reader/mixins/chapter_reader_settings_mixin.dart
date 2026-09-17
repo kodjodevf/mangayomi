@@ -99,4 +99,41 @@ mixin ChapterReaderSettingsMixin on ChapterControllerMixin {
     );
     onSettingsMutated();
   }
+
+  // ---------------------------------------------------------------------------
+  // Page mode
+  // ---------------------------------------------------------------------------
+
+  /// Returns the configured [PageMode] for the current manga / novel.
+  ///
+  /// Falls back to [PageMode.onePage] if no custom setting exists.
+  PageMode getPageMode() {
+    final personalPageModeList = getIsarSetting().personalPageModeList ?? [];
+    final personalPageMode = personalPageModeList.where(
+      (element) => element.mangaId == getManga().id,
+    );
+    if (personalPageMode.isNotEmpty) {
+      return personalPageMode.first.pageMode;
+    }
+    return PageMode.onePage;
+  }
+
+  /// Persists the [PageMode] for the current manga / novel.
+  void setPageMode(PageMode newPageMode) {
+    List<PersonalPageMode>? personalPageModeLists = [];
+    for (var personalPageMode in getIsarSetting().personalPageModeList ?? []) {
+      if (personalPageMode.mangaId != getManga().id) {
+        personalPageModeLists.add(personalPageMode);
+      }
+    }
+    personalPageModeLists.add(
+      PersonalPageMode()
+        ..mangaId = getManga().id
+        ..pageMode = newPageMode,
+    );
+    settingsRepository.save(
+      getIsarSetting()..personalPageModeList = personalPageModeLists,
+    );
+    onSettingsMutated();
+  }
 }
