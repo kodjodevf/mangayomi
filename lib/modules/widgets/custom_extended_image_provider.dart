@@ -266,6 +266,28 @@ class CustomExtendedNetworkImageProvider
   }
 
   @override
+  Future<bool> evict({
+    ImageCache? cache,
+    ImageConfiguration configuration = ImageConfiguration.empty,
+    bool includeLive = true,
+  }) async {
+    final String md5Key = cacheKey ?? keyToMd5(url);
+    try {
+      final Directory cacheImagesDirectory = await StorageProvider()
+          .createCacheDirectory(imageCacheFolderName);
+      final File cacheFile = File(join(cacheImagesDirectory.path, md5Key));
+      if (await cacheFile.exists()) {
+        await cacheFile.delete();
+      }
+    } catch (_) {}
+    return super.evict(
+      cache: cache,
+      configuration: configuration,
+      includeLive: includeLive,
+    );
+  }
+
+  @override
   Future<ui.Codec> instantiateImageCodec(
     Uint8List data,
     ImageDecoderCallback decode,
@@ -396,6 +418,12 @@ class CustomExtendedNetworkImageProvider
       } else {
         data = await cacheFile.readAsBytes();
         unawaited(cacheFile.setLastModified(DateTime.now()).catchError((_) {}));
+      }
+      if (data != null && data.isEmpty) {
+        data = null;
+        try {
+          await cacheFile.delete();
+        } catch (_) {}
       }
     }
 

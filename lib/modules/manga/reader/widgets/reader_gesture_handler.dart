@@ -82,7 +82,7 @@ class ReaderGestureHandler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (hasImageError) {
+    if (hasImageError && !isContinuousMode) {
       // When the visible page has an error:
       // - The center box (25% to 65% height, 20% to 80% width) is left empty
       //   so hit-tests fall straight through to the Retry button.

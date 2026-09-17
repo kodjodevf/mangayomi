@@ -10,13 +10,14 @@ import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/double_page_view.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/image_actions_dialog.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/reader_interactive_region.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/transition_view_paged.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 /// The reader's actual page content: the continuous (webtoon) list, or the
 /// paged (single/double-page) PageView, depending on [readerMode] and
@@ -49,9 +50,8 @@ class ReaderPageContent extends ConsumerWidget {
   final bool isReverseHorizontal;
   final bool isCurrentPageZoomed;
 
-  final ItemScrollController itemScrollController;
-  final ScrollOffsetController scrollOffsetController;
-  final ItemPositionsListener itemPositionsListener;
+  final ListController listController;
+  final ScrollController continuousScrollController;
   final PageController extendedController;
   final Axis scrollDirection;
 
@@ -86,9 +86,8 @@ class ReaderPageContent extends ConsumerWidget {
     required this.pageViewPageCount,
     required this.isReverseHorizontal,
     required this.isCurrentPageZoomed,
-    required this.itemScrollController,
-    required this.scrollOffsetController,
-    required this.itemPositionsListener,
+    required this.listController,
+    required this.continuousScrollController,
     required this.extendedController,
     required this.scrollDirection,
     required this.pageControllerFor,
@@ -107,9 +106,8 @@ class ReaderPageContent extends ConsumerWidget {
     if (readerMode.isContinuous) {
       return ImageViewWebtoon(
         pages: pages,
-        itemScrollController: itemScrollController,
-        scrollOffsetController: scrollOffsetController,
-        itemPositionsListener: itemPositionsListener,
+        listController: listController,
+        scrollController: continuousScrollController,
         scrollDirection: isHorizontalContinuous
             ? Axis.horizontal
             : Axis.vertical,
@@ -118,8 +116,8 @@ class ReaderPageContent extends ConsumerWidget {
         // _prefetchPagesInOrder. Tying this to pagePreloadAmount pinned up to
         // 20 screens of decoded pages at once (OOM on webtoons).
         minCacheExtent: isHorizontalContinuous
-            ? (pagePreloadAmount.clamp(0, 2) * 2.0) * context.width(1)
-            : (pagePreloadAmount.clamp(0, 2) * 2.0) * context.height(1),
+            ? (pagePreloadAmount.clamp(1, 3) * 1.5) * context.width(1)
+            : (pagePreloadAmount.clamp(1, 3) * 1.5) * context.height(1),
         initialScrollIndex: initialScrollIndex,
         physics: const ClampingScrollPhysics(),
         onLongPressData: (data) => ImageActionsDialog.show(
@@ -332,24 +330,26 @@ class ReaderPagedItem extends ConsumerWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: context.primaryColor,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                  child: ReaderInteractiveRegion(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: context.primaryColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 10,
+                          horizontal: 20,
+                        ),
                       ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 20,
-                      ),
+                      onPressed: () {
+                        state.reLoadImage();
+                        onFailedToLoadImage(index, false);
+                      },
+                      icon: const Icon(Icons.refresh, size: 18),
+                      label: Text(l10n.retry),
                     ),
-                    onPressed: () {
-                      state.reLoadImage();
-                      onFailedToLoadImage(index, false);
-                    },
-                    icon: const Icon(Icons.refresh, size: 18),
-                    label: Text(l10n.retry),
                   ),
                 ),
               ],

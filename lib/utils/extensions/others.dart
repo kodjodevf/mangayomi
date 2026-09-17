@@ -81,6 +81,7 @@ extension ImageProviderExtension on ImageProvider {
 extension UChapDataPreloadExtensions on UChapDataPreload {
   Future<String?> get getLocalFilePath async {
     if (isTransitionPage) return null;
+    if (resolvedFilePath != null) return resolvedFilePath;
     if (localImagePath != null) {
       // Local image-folder page: this already IS a real file on disk, so
       // just hand back its path directly rather than reading it into memory

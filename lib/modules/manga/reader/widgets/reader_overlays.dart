@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/navigation_overlay.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_gesture_handler.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/reader_interactive_region.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 
 /// The reader's interaction layer above the page content: the tap-zone
@@ -48,16 +49,18 @@ class ReaderOverlays extends ConsumerWidget {
               readerNavigationLayoutStateProvider,
             );
             final tappingInversion = ref.watch(tappingInversionStateProvider);
-            return ReaderGestureHandler(
-              usePageTapZones: usePageTapZones,
-              navigationLayout: navigationLayout,
-              tappingInversion: tappingInversion,
-              isRTL: isReverseHorizontal,
-              hasImageError: hasCurrentPageImageError,
-              isContinuousMode: isContinuousMode,
-              onToggleUI: onToggleUI,
-              onPreviousPage: onPreviousPage,
-              onNextPage: onNextPage,
+            return ReaderInteractiveHitTestBlocker(
+              child: ReaderGestureHandler(
+                usePageTapZones: usePageTapZones,
+                navigationLayout: navigationLayout,
+                tappingInversion: tappingInversion,
+                isRTL: isReverseHorizontal,
+                hasImageError: hasCurrentPageImageError,
+                isContinuousMode: isContinuousMode,
+                onToggleUI: onToggleUI,
+                onPreviousPage: onPreviousPage,
+                onNextPage: onNextPage,
+              ),
             );
           },
         ),

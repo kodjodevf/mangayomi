@@ -11,6 +11,7 @@ import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicat
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/reader_interactive_region.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -338,19 +339,21 @@ class _DoublePageViewState extends State<DoublePageView>
   }
 
   Widget _buildRetryButton(SubsamplingImageState state, dynamic l10n) {
-    return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: context.primaryColor,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+    return ReaderInteractiveRegion(
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: context.primaryColor,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        ),
+        onPressed: () {
+          state.reLoadImage();
+          widget.onFailedToLoadImage?.call(false);
+        },
+        icon: const Icon(Icons.refresh, size: 18),
+        label: Text(l10n.retry),
       ),
-      onPressed: () {
-        state.reLoadImage();
-        widget.onFailedToLoadImage?.call(false);
-      },
-      icon: const Icon(Icons.refresh, size: 18),
-      label: Text(l10n.retry),
     );
   }
 }
