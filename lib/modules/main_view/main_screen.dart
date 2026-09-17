@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
@@ -79,7 +78,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   late final String _defaultLocation;
   late final List<String> _navigationOrder;
-  late final int _autoSyncFrequency;
 
   static final Map<String, String> _hyphenatedLabelsCache = {};
 
@@ -123,9 +121,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     super.initState();
 
     _navigationOrder = ref.read(navigationOrderStateProvider);
-    _autoSyncFrequency = ref
-        .read(synchingProvider(syncId: 1))
-        .autoSyncFrequency;
     final hiddenItems = ref.read(hideItemsStateProvider);
 
     // On the anime-only TV layout, never land on a hidden manga/novel library.
@@ -146,18 +141,28 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     discordRpc?.connect(ref);
   }
 
+  void _rescheduleSyncTimer() {
+    _syncTimer?.cancel();
+    _syncTimer = null;
+
+    if (ref.read(restoreSyncGuardProvider)) return;
+
+    final syncPrefs = ref.read(synchingProvider(syncId: 1));
+    final freq = syncPrefs.autoSyncFrequency;
+    if (syncPrefs.syncOn &&
+        freq > 0 &&
+        (syncPrefs.authToken?.isNotEmpty ?? false)) {
+      _syncTimer = Timer.periodic(Duration(seconds: freq), _onSyncTimerTick);
+    }
+  }
+
   void _initializeTimers() {
     _backupTimer = Timer.periodic(
       const Duration(minutes: 5),
       _onBackupTimerTick,
     );
 
-    if (_autoSyncFrequency != 0) {
-      _syncTimer = Timer.periodic(
-        Duration(seconds: _autoSyncFrequency),
-        _onSyncTimerTick,
-      );
-    }
+    _rescheduleSyncTimer();
 
     // Pauses the auto-sync timer for the duration of a restore (and its
     // post-restore upload), instead of just rescheduling it — a restore can
@@ -167,15 +172,18 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     ref.listenManual<bool>(restoreSyncGuardProvider, (_, restoring) {
       if (restoring) {
         _syncTimer?.cancel();
+        _syncTimer = null;
         return;
       }
-      // Re-read the live setting rather than the _autoSyncFrequency snapshot
-      // taken at init — a restore can turn sync off (frequency reset to 0),
-      // and that must take effect immediately, not just on next app launch.
-      final freq = ref.read(synchingProvider(syncId: 1)).autoSyncFrequency;
-      _syncTimer?.cancel();
-      if (freq != 0) {
-        _syncTimer = Timer.periodic(Duration(seconds: freq), _onSyncTimerTick);
+      _rescheduleSyncTimer();
+    });
+
+    // Listen to changes in sync preferences (frequency, syncOn, login/logout)
+    // and immediately reschedule the timer and check if due.
+    ref.listenManual(synchingProvider(syncId: 1), (prev, next) {
+      _rescheduleSyncTimer();
+      if (mounted) {
+        unawaited(autoSyncIfDue(ref));
       }
     });
   }
@@ -228,16 +236,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       timer.cancel();
       return;
     }
-    try {
-      final l10n = l10nLocalizations(context)!;
-      ref.read(syncServerProvider(syncId: 1).notifier).startSync(l10n, true);
-    } catch (e) {
-      botToast(
-        "Failed to sync! Maybe the sync server is down. "
-        "Restart the app to resume auto sync.",
-      );
-      timer.cancel();
-    }
+    unawaited(autoSyncIfDue(ref));
   }
 
   @override
