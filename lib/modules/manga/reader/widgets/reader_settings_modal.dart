@@ -140,6 +140,7 @@ class _ReadingModeTab extends ConsumerWidget {
     final doublePageSingleFirstPage = ref.watch(
       doublePageSingleFirstPageStateProvider,
     );
+    final doublePageAuto = ref.watch(doublePageAutoStateProvider);
     final landscapeZoom = ref.watch(landscapeZoomStateProvider);
     final zoomStartPosition = ref.watch(zoomStartPositionStateProvider);
     final webtoonDisableZoomOut = ref.watch(webtoonDisableZoomOutStateProvider);
@@ -322,6 +323,29 @@ class _ReadingModeTab extends ConsumerWidget {
                 ref
                     .read(doublePageSingleFirstPageStateProvider.notifier)
                     .set(value);
+              },
+            ),
+
+            SwitchListTile(
+              value: doublePageAuto,
+              title: Text(
+                l10n.double_page_auto,
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge!.color!
+                      .withValues(alpha: 0.9),
+                  fontSize: 14,
+                ),
+              ),
+              subtitle: Text(
+                l10n.double_page_auto_subtitle,
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodySmall!.color!
+                      .withValues(alpha: 0.7),
+                  fontSize: 12,
+                ),
+              ),
+              onChanged: (value) {
+                ref.read(doublePageAutoStateProvider.notifier).set(value);
               },
             ),
 

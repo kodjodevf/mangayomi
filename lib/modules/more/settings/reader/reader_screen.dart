@@ -47,6 +47,7 @@ class ReaderScreen extends ConsumerWidget {
     final doublePageSingleFirstPage = ref.watch(
       doublePageSingleFirstPageStateProvider,
     );
+    final doublePageAuto = ref.watch(doublePageAutoStateProvider);
     final landscapeZoom = ref.watch(landscapeZoomStateProvider);
     final zoomStartPosition = ref.watch(zoomStartPositionStateProvider);
 
@@ -589,6 +590,17 @@ class ReaderScreen extends ConsumerWidget {
                 ref
                     .read(doublePageSingleFirstPageStateProvider.notifier)
                     .set(value);
+              },
+            ),
+
+            SwitchListTile(
+              value: doublePageAuto,
+              title: Text(context.l10n.double_page_auto),
+              subtitle: Text(
+                context.l10n.double_page_auto_subtitle,
+              ),
+              onChanged: (value) {
+                ref.read(doublePageAutoStateProvider.notifier).set(value);
               },
             ),
 

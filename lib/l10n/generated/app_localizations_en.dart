@@ -2746,6 +2746,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Display the first page alone in double page mode';
 
   @override
+  String get double_page_auto => 'Automatic double page';
+
+  @override
+  String get double_page_auto_subtitle =>
+      'Switch to double page mode automatically in landscape';
+
+  @override
   String get landscape_zoom => 'Automatic landscape zoom';
 
   @override

@@ -6,8 +6,9 @@ import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/transition_view_vertical.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:mangayomi/modules/manga/reader/utils/reader_page_index_math.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 /// A specialized [ScaleGestureRecognizer] for the webtoon reader.
 ///
@@ -451,10 +452,10 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
   int _calculateItemCount(bool singleFirst) {
     if (widget.isDoublePageMode && !widget.isHorizontalContinuous) {
       if (widget.pages.isEmpty) return 0;
-      if (singleFirst) {
-        return 1 + ((widget.pages.length - 1) / 2).ceil();
-      }
-      return (widget.pages.length / 2).ceil();
+      return ReaderPageIndexMath.buildSpreads(
+        widget.pages,
+        singleFirst: singleFirst,
+      ).length;
     }
     return widget.pages.length;
   }
@@ -657,21 +658,18 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     bool singleFirst,
   ) {
     final pageLength = widget.pages.length;
+    final spreads = ReaderPageIndexMath.buildSpreads(
+      widget.pages,
+      singleFirst: singleFirst,
+    );
 
-    int index1;
-    int? index2;
-    if (singleFirst) {
-      if (index == 0) {
-        index1 = 0;
-        index2 = null;
-      } else {
-        index1 = index * 2 - 1;
-        index2 = index1 + 1;
-      }
-    } else {
-      index1 = index * 2;
-      index2 = index1 + 1;
+    if (index >= spreads.length) {
+      return const SizedBox.shrink();
     }
+
+    final spread = spreads[index];
+    final index1 = spread.firstIndex;
+    final index2 = spread.secondIndex;
 
     if (index1 >= pageLength) {
       return const SizedBox.shrink();

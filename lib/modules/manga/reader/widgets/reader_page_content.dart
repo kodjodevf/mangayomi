@@ -7,6 +7,7 @@ import 'package:mangayomi/modules/manga/reader/image_view_webtoon.dart';
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart'
     as ssiv;
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
+import 'package:mangayomi/modules/manga/reader/utils/reader_page_index_math.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/double_page_view.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/image_actions_dialog.dart';
@@ -173,20 +174,15 @@ class ReaderPageContent extends ConsumerWidget {
                 final singleFirst = ref.watch(
                   doublePageSingleFirstPageStateProvider,
                 );
-                int index1;
-                int? index2;
-                if (singleFirst) {
-                  if (index == 0) {
-                    index1 = 0;
-                    index2 = null;
-                  } else {
-                    index1 = index * 2 - 1;
-                    index2 = index1 + 1;
-                  }
-                } else {
-                  index1 = index * 2;
-                  index2 = index1 + 1;
-                }
+                final spreads = ReaderPageIndexMath.buildSpreads(
+                  pages,
+                  singleFirst: singleFirst,
+                );
+                final spread = index < spreads.length
+                    ? spreads[index]
+                    : null;
+                final index1 = spread?.firstIndex ?? index * 2;
+                final index2 = spread?.secondIndex;
                 final pageList = [
                   index1 < pages.length ? pages[index1] : null,
                   (index2 != null && index2 < pages.length)

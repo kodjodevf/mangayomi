@@ -212,10 +212,8 @@ class _DoublePageViewState extends State<DoublePageView>
   }
 
   bool _isTransitionPage() {
-    return (widget.pages.isNotEmpty &&
-            (widget.pages[0]?.isTransitionPage ?? false)) ||
-        (widget.pages.length > 1 &&
-            (widget.pages[1]?.isTransitionPage ?? false));
+    return widget.pages.isNotEmpty &&
+        (widget.pages[0]?.isTransitionPage ?? false);
   }
 
   Widget _buildTransitionPage() {

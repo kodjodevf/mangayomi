@@ -2747,6 +2747,13 @@ class AppLocalizationsTh extends AppLocalizations {
       'แสดงหน้าแรกเดี่ยวๆ ในโหมดสองหน้า';
 
   @override
+  String get double_page_auto => 'Automatic double page';
+
+  @override
+  String get double_page_auto_subtitle =>
+      'Switch to double page mode automatically in landscape';
+
+  @override
   String get landscape_zoom => 'ซูมแนวนอนอัตโนมัติ';
 
   @override

@@ -5029,6 +5029,18 @@ abstract class AppLocalizations {
   /// **'Display the first page alone in double page mode'**
   String get double_page_single_first_page_subtitle;
 
+  /// No description provided for @double_page_auto.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic double page'**
+  String get double_page_auto;
+
+  /// No description provided for @double_page_auto_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to double page mode automatically in landscape'**
+  String get double_page_auto_subtitle;
+
   /// No description provided for @landscape_zoom.
   ///
   /// In en, this message translates to:

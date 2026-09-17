@@ -2780,6 +2780,13 @@ class AppLocalizationsPt extends AppLocalizations {
       'Mostrar a primeira página sozinha no modo de página dupla';
 
   @override
+  String get double_page_auto => 'Automatic double page';
+
+  @override
+  String get double_page_auto_subtitle =>
+      'Switch to double page mode automatically in landscape';
+
+  @override
   String get landscape_zoom => 'Zoom automático em modo paisagem';
 
   @override

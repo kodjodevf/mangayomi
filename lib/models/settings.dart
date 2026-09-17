@@ -446,6 +446,7 @@ class Settings {
   bool? tvHomeGenreRows;
 
   bool? doublePageSingleFirstPage;
+  bool? doublePageAuto;
 
   Settings({
     this.id = 227,
@@ -659,6 +660,7 @@ class Settings {
     this.tvHomeStyle,
     this.tvHomeGenreRows,
     this.doublePageSingleFirstPage = false,
+    this.doublePageAuto = false,
     this.developerMode = false,
   });
 
@@ -1009,6 +1011,7 @@ class Settings {
     tvHomeStyle = json['tvHomeStyle'];
     tvHomeGenreRows = json['tvHomeGenreRows'];
     doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
+    doublePageAuto = json['doublePageAuto'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -1246,6 +1249,7 @@ class Settings {
     'tvHomeStyle': tvHomeStyle,
     'tvHomeGenreRows': tvHomeGenreRows,
     'doublePageSingleFirstPage': doublePageSingleFirstPage,
+    'doublePageAuto': doublePageAuto,
   };
 }
 

@@ -2238,6 +2238,59 @@ abstract class _$DoublePageSingleFirstPageState extends $Notifier<bool> {
   }
 }
 
+@ProviderFor(DoublePageAutoState)
+final doublePageAutoStateProvider = DoublePageAutoStateProvider._();
+
+final class DoublePageAutoStateProvider
+    extends $NotifierProvider<DoublePageAutoState, bool> {
+  DoublePageAutoStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'doublePageAutoStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$doublePageAutoStateHash();
+
+  @$internal
+  @override
+  DoublePageAutoState create() => DoublePageAutoState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$doublePageAutoStateHash() =>
+    r'74c5e1fe37a11529b640356cb1899efa3c89c5f4';
+
+abstract class _$DoublePageAutoState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(LandscapeZoomState)
 final landscapeZoomStateProvider = LandscapeZoomStateProvider._();
 
