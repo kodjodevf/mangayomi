@@ -132,7 +132,7 @@ final class EnableHardwareAccelStateProvider
 }
 
 String _$enableHardwareAccelStateHash() =>
-    r'509a6a9536f4c86f5e004d0e9ca272e3ae486dfd';
+    r'add4c13e774f2957d0675c7f0ec03356fbc44e77';
 
 abstract class _$EnableHardwareAccelState extends $Notifier<bool> {
   bool build();

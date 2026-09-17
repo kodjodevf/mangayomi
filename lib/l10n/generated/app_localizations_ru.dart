@@ -2798,6 +2798,13 @@ class AppLocalizationsRu extends AppLocalizations {
       'Отображать первую страницу отдельно в двухстраничном режиме';
 
   @override
+  String get double_page_auto => 'Automatic double page';
+
+  @override
+  String get double_page_auto_subtitle =>
+      'Switch to double page mode automatically in landscape';
+
+  @override
   String get landscape_zoom => 'Автоматическое масштабирование в альбоме';
 
   @override

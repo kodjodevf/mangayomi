@@ -2772,6 +2772,13 @@ class AppLocalizationsTr extends AppLocalizations {
       'Çift sayfa modunda ilk sayfayı tek başına göster';
 
   @override
+  String get double_page_auto => 'Automatic double page';
+
+  @override
+  String get double_page_auto_subtitle =>
+      'Switch to double page mode automatically in landscape';
+
+  @override
   String get landscape_zoom => 'Otomatik yatay yakınlaştırma';
 
   @override

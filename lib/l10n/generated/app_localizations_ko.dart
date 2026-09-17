@@ -2698,6 +2698,13 @@ class AppLocalizationsKo extends AppLocalizations {
       '두 페이지 모드에서 첫 번째 페이지만 단일 페이지로 표시합니다';
 
   @override
+  String get double_page_auto => 'Automatic double page';
+
+  @override
+  String get double_page_auto_subtitle =>
+      'Switch to double page mode automatically in landscape';
+
+  @override
   String get landscape_zoom => '자동 가로 확대';
 
   @override

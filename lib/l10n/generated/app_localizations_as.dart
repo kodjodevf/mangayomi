@@ -2761,6 +2761,13 @@ class AppLocalizationsAs extends AppLocalizations {
       'দ্বি-পৃষ্ঠা ম\'ডত প্ৰথম পৃষ্ঠাটো অকলে প্ৰদৰ্শন কৰক';
 
   @override
+  String get double_page_auto => 'Automatic double page';
+
+  @override
+  String get double_page_auto_subtitle =>
+      'Switch to double page mode automatically in landscape';
+
+  @override
   String get landscape_zoom => 'Automatic landscape zoom';
 
   @override

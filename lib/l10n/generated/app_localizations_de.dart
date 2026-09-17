@@ -2782,6 +2782,13 @@ class AppLocalizationsDe extends AppLocalizations {
       'Erste Seite im Doppelseitenmodus einzeln anzeigen';
 
   @override
+  String get double_page_auto => 'Automatic double page';
+
+  @override
+  String get double_page_auto_subtitle =>
+      'Switch to double page mode automatically in landscape';
+
+  @override
   String get landscape_zoom => 'Automatischer Querformat-Zoom';
 
   @override

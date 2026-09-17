@@ -572,6 +572,19 @@ class DoublePageSingleFirstPageState extends _$DoublePageSingleFirstPageState {
 }
 
 @riverpod
+class DoublePageAutoState extends _$DoublePageAutoState {
+  @override
+  bool build() {
+    return settingsRepository.current.doublePageAuto ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.doublePageAuto = value);
+  }
+}
+
+@riverpod
 class LandscapeZoomState extends _$LandscapeZoomState {
   @override
   bool build() {

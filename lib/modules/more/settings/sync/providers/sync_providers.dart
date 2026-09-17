@@ -34,18 +34,22 @@ class Synching extends _$Synching {
 
   void setSince(int timestamp) {
     syncPreferenceRepository.save(state..since = timestamp);
+    ref.invalidateSelf();
   }
 
   void setLastSync(int timestamp) {
     syncPreferenceRepository.save(state..lastSync = timestamp);
+    ref.invalidateSelf();
   }
 
   void setServer(String? server) {
     syncPreferenceRepository.save(state..server = server);
+    ref.invalidateSelf();
   }
 
   void setSyncOn(bool value) {
     syncPreferenceRepository.save(state..syncOn = value);
+    ref.invalidateSelf();
   }
 
   void setAutoSyncFrequency(int value) {

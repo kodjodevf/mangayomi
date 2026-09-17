@@ -207,7 +207,7 @@ String toString() {
 
 
 class ProxySettings_CustomProxyList extends ProxySettings {
-  const ProxySettings_CustomProxyList( List<CustomProxy> field0): _field0 = field0,super._();
+  const ProxySettings_CustomProxyList(final  List<CustomProxy> field0): _field0 = field0,super._();
   
 
  final  List<CustomProxy> _field0;

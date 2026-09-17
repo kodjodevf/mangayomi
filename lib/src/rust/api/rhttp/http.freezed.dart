@@ -175,7 +175,7 @@ return list(_that.field0);case _:
 
 
 class HttpHeaders_Map extends HttpHeaders {
-  const HttpHeaders_Map( Map<String, String> field0): _field0 = field0,super._();
+  const HttpHeaders_Map(final  Map<String, String> field0): _field0 = field0,super._();
   
 
  final  Map<String, String> _field0;
@@ -247,7 +247,7 @@ as Map<String, String>,
 
 
 class HttpHeaders_List extends HttpHeaders {
-  const HttpHeaders_List( List<(String, String)> field0): _field0 = field0,super._();
+  const HttpHeaders_List(final  List<(String, String)> field0): _field0 = field0,super._();
   
 
  final  List<(String, String)> _field0;

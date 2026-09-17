@@ -753,6 +753,8 @@
   "dual_page_rotate_to_fit_invert": "Inverser le sens de rotation",
   "double_page_single_first_page": "Première page seule",
   "double_page_single_first_page_subtitle": "Afficher la première page isolée en mode double page",
+  "double_page_auto": "Double page automatique",
+  "double_page_auto_subtitle": "Passer automatiquement en mode double page en mode paysage",
   "landscape_zoom": "Zoom paysage automatique",
   "zoom_start_position": "Position de départ du zoom",
   "zoom_start_left": "Gauche",

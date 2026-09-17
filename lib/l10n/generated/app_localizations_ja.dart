@@ -2707,6 +2707,13 @@ class AppLocalizationsJa extends AppLocalizations {
       '見開きモードで最初のページ（表紙）を単独で表示する';
 
   @override
+  String get double_page_auto => 'Automatic double page';
+
+  @override
+  String get double_page_auto_subtitle =>
+      'Switch to double page mode automatically in landscape';
+
+  @override
   String get landscape_zoom => '横画面自動ズーム';
 
   @override

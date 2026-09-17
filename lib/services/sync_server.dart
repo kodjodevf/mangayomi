@@ -8,6 +8,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -16,6 +17,7 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_progress_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -145,7 +147,7 @@ class SyncServer extends _$SyncServer {
   // ------------------------------------------------------------------
 
   Future<bool> startSync(
-    AppLocalizations l10n,
+    AppLocalizations? l10n,
     bool silent, {
     bool upload = false,
     bool download = false,
@@ -156,19 +158,21 @@ class SyncServer extends _$SyncServer {
     // Anything else - the periodic timer or a manual trigger - must wait,
     // otherwise it could race the restore and pull stale data back down.
     if (!bypassRestoreGuard && ref.read(restoreSyncGuardProvider)) {
-      if (!silent) {
+      if (!silent && l10n != null) {
         botToast(l10n.sync_restore_in_progress, second: 3);
       }
       return false;
     }
-    if (!silent) {
+    if (!silent && l10n != null) {
       botToast(l10n.sync_starting, second: 500);
     }
     final progress = ref.read(syncProgressProvider(syncId: syncId).notifier);
     progress.begin();
     try {
       if (!await _apiClient.checkVersion(_getServer())) {
-        botToast(l10n.sync_failed, second: 5);
+        if (!silent && l10n != null) {
+          botToast(l10n.sync_failed, second: 5);
+        }
         return false;
       }
       // Cheap safety net: covers a row created earlier in this same running
@@ -184,16 +188,20 @@ class SyncServer extends _$SyncServer {
           : await _incrementalSync(notifier);
 
       if (!ok) {
-        botToast(l10n.sync_failed, second: 5);
+        if (!silent && l10n != null) {
+          botToast(l10n.sync_failed, second: 5);
+        }
         return false;
       }
       ref.invalidate(synchingProvider(syncId: syncId));
-      if (!silent) {
+      if (!silent && l10n != null) {
         botToast(l10n.sync_finished, second: 2);
       }
       return true;
     } catch (error) {
-      botToast(error.toString(), second: 5);
+      if (!silent) {
+        botToast(error.toString(), second: 5);
+      }
       return false;
     } finally {
       progress.finish();
@@ -257,10 +265,7 @@ class SyncServer extends _$SyncServer {
   ) {
     final totalCounts = response['totalCounts'] as Map?;
     if (totalCounts != null) {
-      final sum = totalCounts.values.fold<int>(
-        0,
-        (a, b) => a + (b as int),
-      );
+      final sum = totalCounts.values.fold<int>(0, (a, b) => a + (b as int));
       progress.addTotal(sum);
     }
     const pagedKeys = [
@@ -413,4 +418,30 @@ class SyncServer extends _$SyncServer {
     ref.invalidate(extensionsRepoStateProvider(ItemType.anime));
     ref.invalidate(extensionsRepoStateProvider(ItemType.novel));
   }
+}
+
+/// Triggers auto sync if sync is enabled, user is logged in, autoSyncFrequency > 0,
+/// and enough time has elapsed since lastSync.
+Future<void> autoSyncIfDue(WidgetRef ref, {int syncId = 1}) async {
+  if (!ref.read(appUnlockedStateProvider)) return;
+
+  final syncPrefs = ref.read(synchingProvider(syncId: syncId));
+  if (!syncPrefs.syncOn) return;
+  final authToken = syncPrefs.authToken;
+  if (authToken == null || authToken.isEmpty) return;
+
+  final autoSyncFrequency = syncPrefs.autoSyncFrequency;
+  if (autoSyncFrequency <= 0) return;
+
+  final now = DateTime.now().millisecondsSinceEpoch;
+  final lastSync = syncPrefs.lastSync ?? 0;
+  final elapsedMs = now - lastSync;
+  if (elapsedMs < autoSyncFrequency * 1000) return;
+
+  if (ref.read(syncProgressProvider(syncId: syncId)).active) return;
+  if (ref.read(restoreSyncGuardProvider)) return;
+
+  await ref
+      .read(syncServerProvider(syncId: syncId).notifier)
+      .startSync(null, true);
 }

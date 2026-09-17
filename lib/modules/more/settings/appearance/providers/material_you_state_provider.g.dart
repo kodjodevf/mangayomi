@@ -41,7 +41,7 @@ final class MaterialYouStateProvider
   }
 }
 
-String _$materialYouStateHash() => r'80740ecd1db0ecbd7d8ba2292dcc96b5a142a839';
+String _$materialYouStateHash() => r'0150224de5bc643d4fc2560254a2cc9c580f9c67';
 
 abstract class _$MaterialYouState extends $Notifier<bool> {
   bool build();

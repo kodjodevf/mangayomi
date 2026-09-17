@@ -2667,6 +2667,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get double_page_single_first_page_subtitle => '在双页模式下单页显示第一页（封面）';
 
   @override
+  String get double_page_auto => 'Automatic double page';
+
+  @override
+  String get double_page_auto_subtitle =>
+      'Switch to double page mode automatically in landscape';
+
+  @override
   String get landscape_zoom => '横屏自动缩放';
 
   @override

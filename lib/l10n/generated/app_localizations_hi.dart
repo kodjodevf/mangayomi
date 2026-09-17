@@ -2762,6 +2762,13 @@ class AppLocalizationsHi extends AppLocalizations {
       'दोहरे पृष्ठ मोड में पहले पृष्ठ को अकेले प्रदर्शित करें';
 
   @override
+  String get double_page_auto => 'Automatic double page';
+
+  @override
+  String get double_page_auto_subtitle =>
+      'Switch to double page mode automatically in landscape';
+
+  @override
   String get landscape_zoom => 'स्वचालित लैंडस्केप ज़ूम';
 
   @override

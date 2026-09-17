@@ -136,7 +136,7 @@ final class DownloadChapterProvider
   }
 }
 
-String _$downloadChapterHash() => r'43e511860fa9d1967cd9c7f2b005c4b913aa3257';
+String _$downloadChapterHash() => r'624b525da4df9688833fe0ae27717276a51f3740';
 
 final class DownloadChapterFamily extends $Family
     with
@@ -215,7 +215,7 @@ final class ProcessDownloadsProvider
   }
 }
 
-String _$processDownloadsHash() => r'bd46774a24979c13b6805f126d6d1116a02a8f6b';
+String _$processDownloadsHash() => r'a682edf681c4315140f2b0aff42c4525d29adac1';
 
 final class ProcessDownloadsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<void>, bool?> {
