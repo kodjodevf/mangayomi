@@ -1119,48 +1119,53 @@ const SettingsSchema = CollectionSchema(
       name: r'useLibass',
       type: IsarType.bool,
     ),
-    r'useMpvConfig': PropertySchema(
+    r'useMaterialYou': PropertySchema(
       id: 208,
+      name: r'useMaterialYou',
+      type: IsarType.bool,
+    ),
+    r'useMpvConfig': PropertySchema(
+      id: 209,
       name: r'useMpvConfig',
       type: IsarType.bool,
     ),
     r'usePageTapZones': PropertySchema(
-      id: 209,
+      id: 210,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
     r'useYUV420P': PropertySchema(
-      id: 210,
+      id: 211,
       name: r'useYUV420P',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 211,
+      id: 212,
       name: r'userAgent',
       type: IsarType.string,
     ),
     r'volumeBoostCap': PropertySchema(
-      id: 212,
+      id: 213,
       name: r'volumeBoostCap',
       type: IsarType.long,
     ),
     r'webtoonDisableZoomOut': PropertySchema(
-      id: 213,
+      id: 214,
       name: r'webtoonDisableZoomOut',
       type: IsarType.bool,
     ),
     r'webtoonDoubleTapZoomEnabled': PropertySchema(
-      id: 214,
+      id: 215,
       name: r'webtoonDoubleTapZoomEnabled',
       type: IsarType.bool,
     ),
     r'webtoonSidePadding': PropertySchema(
-      id: 215,
+      id: 216,
       name: r'webtoonSidePadding',
       type: IsarType.long,
     ),
     r'zoomStartPosition': PropertySchema(
-      id: 216,
+      id: 217,
       name: r'zoomStartPosition',
       type: IsarType.long,
     ),
@@ -2136,15 +2141,16 @@ void _settingsSerialize(
   writer.writeBool(offsets[205], object.updateProgressAfterReading);
   writer.writeLong(offsets[206], object.updatedAt);
   writer.writeBool(offsets[207], object.useLibass);
-  writer.writeBool(offsets[208], object.useMpvConfig);
-  writer.writeBool(offsets[209], object.usePageTapZones);
-  writer.writeBool(offsets[210], object.useYUV420P);
-  writer.writeString(offsets[211], object.userAgent);
-  writer.writeLong(offsets[212], object.volumeBoostCap);
-  writer.writeBool(offsets[213], object.webtoonDisableZoomOut);
-  writer.writeBool(offsets[214], object.webtoonDoubleTapZoomEnabled);
-  writer.writeLong(offsets[215], object.webtoonSidePadding);
-  writer.writeLong(offsets[216], object.zoomStartPosition);
+  writer.writeBool(offsets[208], object.useMaterialYou);
+  writer.writeBool(offsets[209], object.useMpvConfig);
+  writer.writeBool(offsets[210], object.usePageTapZones);
+  writer.writeBool(offsets[211], object.useYUV420P);
+  writer.writeString(offsets[212], object.userAgent);
+  writer.writeLong(offsets[213], object.volumeBoostCap);
+  writer.writeBool(offsets[214], object.webtoonDisableZoomOut);
+  writer.writeBool(offsets[215], object.webtoonDoubleTapZoomEnabled);
+  writer.writeLong(offsets[216], object.webtoonSidePadding);
+  writer.writeLong(offsets[217], object.zoomStartPosition);
 }
 
 Settings _settingsDeserialize(
@@ -2495,15 +2501,16 @@ Settings _settingsDeserialize(
     updateProgressAfterReading: reader.readBoolOrNull(offsets[205]),
     updatedAt: reader.readLongOrNull(offsets[206]),
     useLibass: reader.readBoolOrNull(offsets[207]),
-    useMpvConfig: reader.readBoolOrNull(offsets[208]),
-    usePageTapZones: reader.readBoolOrNull(offsets[209]),
-    useYUV420P: reader.readBoolOrNull(offsets[210]),
-    userAgent: reader.readStringOrNull(offsets[211]),
-    volumeBoostCap: reader.readLongOrNull(offsets[212]),
-    webtoonDisableZoomOut: reader.readBoolOrNull(offsets[213]),
-    webtoonDoubleTapZoomEnabled: reader.readBoolOrNull(offsets[214]),
-    webtoonSidePadding: reader.readLongOrNull(offsets[215]),
-    zoomStartPosition: reader.readLongOrNull(offsets[216]),
+    useMaterialYou: reader.readBoolOrNull(offsets[208]),
+    useMpvConfig: reader.readBoolOrNull(offsets[209]),
+    usePageTapZones: reader.readBoolOrNull(offsets[210]),
+    useYUV420P: reader.readBoolOrNull(offsets[211]),
+    userAgent: reader.readStringOrNull(offsets[212]),
+    volumeBoostCap: reader.readLongOrNull(offsets[213]),
+    webtoonDisableZoomOut: reader.readBoolOrNull(offsets[214]),
+    webtoonDoubleTapZoomEnabled: reader.readBoolOrNull(offsets[215]),
+    webtoonSidePadding: reader.readLongOrNull(offsets[216]),
+    zoomStartPosition: reader.readLongOrNull(offsets[217]),
   );
   object.chapterFilterBookmarkedList = reader
       .readObjectList<ChapterFilterBookmarked>(
@@ -3154,16 +3161,18 @@ P _settingsDeserializeProp<P>(
     case 210:
       return (reader.readBoolOrNull(offset)) as P;
     case 211:
-      return (reader.readStringOrNull(offset)) as P;
-    case 212:
-      return (reader.readLongOrNull(offset)) as P;
-    case 213:
       return (reader.readBoolOrNull(offset)) as P;
+    case 212:
+      return (reader.readStringOrNull(offset)) as P;
+    case 213:
+      return (reader.readLongOrNull(offset)) as P;
     case 214:
       return (reader.readBoolOrNull(offset)) as P;
     case 215:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 216:
+      return (reader.readLongOrNull(offset)) as P;
+    case 217:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -17769,6 +17778,34 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  useMaterialYouIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'useMaterialYou'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  useMaterialYouIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'useMaterialYou'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> useMaterialYouEqualTo(
+    bool? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'useMaterialYou', value: value),
+      );
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition> useMpvConfigIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -20824,6 +20861,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseMaterialYou() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useMaterialYou', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseMaterialYouDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useMaterialYou', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseMpvConfig() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'useMpvConfig', Sort.asc);
@@ -23229,6 +23278,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseMaterialYou() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useMaterialYou', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseMaterialYouDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useMaterialYou', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseMpvConfig() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'useMpvConfig', Sort.asc);
@@ -24584,6 +24645,12 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByUseLibass() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'useLibass');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByUseMaterialYou() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'useMaterialYou');
     });
   }
 
@@ -26027,6 +26094,12 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, bool?, QQueryOperations> useLibassProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'useLibass');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations> useMaterialYouProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'useMaterialYou');
     });
   }
 

@@ -57,3 +57,6 @@ libisar.dylib
 libisar.so
 isar.dll
 libisar.dll
+
+# Widget Preview related
+.widget_preview/
