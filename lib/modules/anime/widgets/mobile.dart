@@ -526,78 +526,83 @@ class _MobileControllerWidgetState
                                 bottom: MediaQuery.of(context).padding.bottom,
                               )
                             : EdgeInsets.zero),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            widget.topButtonBarWidget,
-                            // Only display [primaryButtonBar] if [buffering] is false.
-                            Expanded(
-                              child: AnimatedOpacity(
-                                curve: Curves.easeInOut,
-                                opacity: buffering
-                                    ? 0.0
-                                    : showSwipeDuration
-                                    ? 0.0
-                                    : 1.0,
-                                duration: controlsTransitionDuration,
-                                child: Center(
-                                  // Brighter focus highlight on the main controls
-                                  // so the focused button stands out against the
-                                  // dark backdrop on a TV.
-                                  child: Theme(
-                                    data: Theme.of(context).copyWith(
-                                      focusColor: Colors.white.withValues(
-                                        alpha: 0.45,
+                        child: Listener(
+                          behavior: HitTestBehavior.translucent,
+                          onPointerDown: (_) => _restartHideTimer(),
+                          onPointerMove: (_) => _restartHideTimer(),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              widget.topButtonBarWidget,
+                              // Only display [primaryButtonBar] if [buffering] is false.
+                              Expanded(
+                                child: AnimatedOpacity(
+                                  curve: Curves.easeInOut,
+                                  opacity: buffering
+                                      ? 0.0
+                                      : showSwipeDuration
+                                      ? 0.0
+                                      : 1.0,
+                                  duration: controlsTransitionDuration,
+                                  child: Center(
+                                    // Brighter focus highlight on the main controls
+                                    // so the focused button stands out against the
+                                    // dark backdrop on a TV.
+                                    child: Theme(
+                                      data: Theme.of(context).copyWith(
+                                        focusColor: Colors.white.withValues(
+                                          alpha: 0.45,
+                                        ),
                                       ),
-                                    ),
-                                    child: Row(
-                                      children: mobilePrimaryButtonBar(
-                                        context,
-                                        widget.videoStatekey,
-                                        widget.streamController,
-                                        widget.videoController,
-                                        playPauseFocus: _playPauseFocus,
+                                      child: Row(
+                                        children: mobilePrimaryButtonBar(
+                                          context,
+                                          widget.videoStatekey,
+                                          widget.streamController,
+                                          widget.videoController,
+                                          playPauseFocus: _playPauseFocus,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Stack(
-                              alignment: Alignment.bottomCenter,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: CustomSeekBar(
-                                    onSeekStart: (value) {
-                                      setState(() {
-                                        swipeDuration = value.inSeconds;
-                                        showSwipeDuration = true;
-                                      });
-                                      _timer?.cancel();
-                                    },
-                                    onSeekEnd: (value) {
-                                      _timer = Timer(controlsHoverDuration, () {
-                                        if (mounted) {
-                                          setState(() {
-                                            visible = false;
-                                          });
-                                        }
-                                      });
-                                      setState(() {
-                                        showSwipeDuration = false;
-                                      });
-                                    },
-                                    player: widget.videoController.player,
-                                    chapterMarks: widget.chapterMarks,
+                              Stack(
+                                alignment: Alignment.bottomCenter,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: CustomSeekBar(
+                                      onSeekStart: (value) {
+                                        setState(() {
+                                          swipeDuration = value.inSeconds;
+                                          showSwipeDuration = true;
+                                        });
+                                        _timer?.cancel();
+                                      },
+                                      onSeekEnd: (value) {
+                                        _timer = Timer(controlsHoverDuration, () {
+                                          if (mounted) {
+                                            setState(() {
+                                              visible = false;
+                                            });
+                                          }
+                                        });
+                                        setState(() {
+                                          showSwipeDuration = false;
+                                        });
+                                      },
+                                      player: widget.videoController.player,
+                                      chapterMarks: widget.chapterMarks,
+                                    ),
                                   ),
-                                ),
-                                widget.bottomButtonBarWidget,
-                              ],
-                            ),
-                          ],
+                                  widget.bottomButtonBarWidget,
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                   ],
