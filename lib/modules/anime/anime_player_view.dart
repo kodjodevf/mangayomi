@@ -86,6 +86,20 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   bool desktopFullScreenPlayer = false;
   bool _episodeReplacementInProgress = false;
   @override
+  void initState() {
+    super.initState();
+    if (!isDesktop) {
+      final forceLandscape = ref.read(forceLandscapePlayerStateProvider);
+      if (forceLandscape || ref.read(fullscreenProvider)) {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
+      }
+    }
+  }
+
+  @override
   void dispose() {
     if (shouldExitDesktopFullscreenOnDispose(
       isDesktop: isDesktop,
@@ -97,7 +111,17 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     for (var infoHash in _infoHashList) {
       MTorrentServer().removeTorrent(infoHash);
     }
-    restoreSystemUI();
+    if (!_episodeReplacementInProgress) {
+      if (!isDesktop) {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown,
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
+      }
+      restoreSystemUI();
+    }
     super.dispose();
   }
 
@@ -114,6 +138,14 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
           autofocus: isTv,
           icon: const BackButtonIcon(),
           onPressed: () {
+            if (!isDesktop) {
+              SystemChrome.setPreferredOrientations([
+                DeviceOrientation.portraitUp,
+                DeviceOrientation.portraitDown,
+                DeviceOrientation.landscapeLeft,
+                DeviceOrientation.landscapeRight,
+              ]);
+            }
             restoreSystemUI();
             Navigator.pop(context);
           },
@@ -511,12 +543,18 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       return;
     }
 
-    // If the last episode of an Anime has ended, exit fullscreen mode.
+    // If the last episode of an Anime has ended, exit fullscreen / landscape mode.
     final isFullScreen = ref.read(fullscreenProvider);
-    if (!hasNext && isDesktop && isFullScreen) {
-      setFullScreen(value: false);
-      ref.read(fullscreenProvider.notifier).state = false;
-      widget.desktopFullScreenPlayer.call(false);
+    if (!hasNext) {
+      if (isDesktop && isFullScreen) {
+        setFullScreen(value: false);
+        ref.read(fullscreenProvider.notifier).state = false;
+        widget.desktopFullScreenPlayer.call(false);
+      } else if (!isDesktop) {
+        _setLandscapeMode(false);
+        ref.read(fullscreenProvider.notifier).state = false;
+        widget.desktopFullScreenPlayer.call(false);
+      }
     }
   }
 
@@ -918,6 +956,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _setCurrentPosition(true, saveWatchTime: true);
     if (isDesktop && ref.read(fullscreenProvider)) {
       await _exitDesktopFullScreen();
+    }
+    if (!isDesktop) {
+      _setLandscapeMode(false);
     }
     restoreSystemUI();
     await _retireVideoTexture();
@@ -1724,7 +1765,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _skipPhase.dispose();
     _subDelayController.dispose();
     _subSpeedController.dispose();
-    if (!isDesktop) _setLandscapeMode(false);
+    if (!isDesktop && !_routeExitInProgress) {
+      _setLandscapeMode(false);
+    }
     discordRpc?.showIdleText();
     discordRpc?.showOriginalTimestamp();
     _streamController.keepAliveLink?.close();
@@ -2738,8 +2781,16 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               return Padding(
                 padding: const EdgeInsets.only(left: 2.5, right: 5),
                 child: PlayerPillButton(
-                  icon: isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
-                  tooltip: context.l10n.fullscreen,
+                  icon: isDesktop
+                      ? (isFullscreen
+                          ? Icons.fullscreen_exit
+                          : Icons.fullscreen)
+                      : (isFullscreen
+                          ? Icons.screen_rotation
+                          : Icons.screen_rotation_outlined),
+                  tooltip: isDesktop
+                      ? context.l10n.fullscreen
+                      : context.l10n.forceLandscapeMode,
                   isCompact: isMobile,
                   onTap: () async {
                     if (isDesktop) {

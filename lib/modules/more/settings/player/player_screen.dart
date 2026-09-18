@@ -488,28 +488,30 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                 ),
               ],
             ),
-            SwitchListTile(
-              value: fullScreenPlayer,
-              title: Text(context.l10n.full_screen_player),
-              subtitle: Text(
-                context.l10n.full_screen_player_info,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+            if (isDesktop)
+              SwitchListTile(
+                value: fullScreenPlayer,
+                title: Text(context.l10n.full_screen_player),
+                subtitle: Text(
+                  context.l10n.full_screen_player_info,
+                  style: TextStyle(fontSize: 11, color: context.secondaryColor),
+                ),
+                onChanged: (value) {
+                  ref.read(fullScreenPlayerStateProvider.notifier).set(value);
+                },
               ),
-              onChanged: (value) {
-                ref.read(fullScreenPlayerStateProvider.notifier).set(value);
-              },
-            ),
-            SwitchListTile(
-              value: forceLandscapePlayer,
-              title: Text(context.l10n.forceLandscapeMode),
-              subtitle: Text(
-                context.l10n.forceLandscapeModeSubtitle,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+            if (!isDesktop)
+              SwitchListTile(
+                value: forceLandscapePlayer,
+                title: Text(context.l10n.forceLandscapeMode),
+                subtitle: Text(
+                  context.l10n.forceLandscapeModeSubtitle,
+                  style: TextStyle(fontSize: 11, color: context.secondaryColor),
+                ),
+                onChanged: (value) {
+                  ref.read(forceLandscapePlayerStateProvider.notifier).set(value);
+                },
               ),
-              onChanged: (value) {
-                ref.read(forceLandscapePlayerStateProvider.notifier).set(value);
-              },
-            ),
             SwitchListTile(
               value: playerRespectEpisodeSortOrder,
               title: Text(context.l10n.player_respect_episode_sort_order),
