@@ -6048,6 +6048,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip the scheduled update while on mobile data.'**
   String get auto_library_update_wifi_only_subtitle;
+
+  /// No description provided for @padding.
+  ///
+  /// In en, this message translates to:
+  /// **'Padding'**
+  String get padding;
+
+  /// No description provided for @page_mode.
+  ///
+  /// In en, this message translates to:
+  /// **'Page mode'**
+  String get page_mode;
+
+  /// No description provided for @single_page.
+  ///
+  /// In en, this message translates to:
+  /// **'Single page'**
+  String get single_page;
+
+  /// No description provided for @double_page.
+  ///
+  /// In en, this message translates to:
+  /// **'Double page'**
+  String get double_page;
+
+  /// No description provided for @speed.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed'**
+  String get speed;
+
+  /// No description provided for @theme_dark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get theme_dark;
+
+  /// No description provided for @theme_light.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get theme_light;
+
+  /// No description provided for @theme_black.
+  ///
+  /// In en, this message translates to:
+  /// **'Black'**
+  String get theme_black;
+
+  /// No description provided for @theme_sepia.
+  ///
+  /// In en, this message translates to:
+  /// **'Sepia'**
+  String get theme_sepia;
+
+  /// No description provided for @decrease.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease'**
+  String get decrease;
+
+  /// No description provided for @increase.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase'**
+  String get increase;
 }
 
 class _AppLocalizationsDelegate

@@ -1374,5 +1374,16 @@
   "auto_library_update_2_days": "Tous les 2 jours",
   "auto_library_update_weekly": "Hebdomadairement",
   "auto_library_update_wifi_only": "Uniquement en Wi-Fi",
-  "auto_library_update_wifi_only_subtitle": "Ignorer la mise à jour planifiée lors de l'utilisation des données mobiles."
+  "auto_library_update_wifi_only_subtitle": "Ignorer la mise à jour planifiée lors de l'utilisation des données mobiles.",
+  "padding": "Espacement",
+  "page_mode": "Mode de page",
+  "single_page": "Page simple",
+  "double_page": "Double page",
+  "speed": "Vitesse",
+  "theme_dark": "Sombre",
+  "theme_light": "Clair",
+  "theme_black": "Noir",
+  "theme_sepia": "Sépia",
+  "decrease": "Diminuer",
+  "increase": "Augmenter"
 }

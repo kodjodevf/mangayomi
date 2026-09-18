@@ -73,17 +73,6 @@ class ReaderController extends _$ReaderController
     return ref.read(defaultReadingModeStateProvider);
   }
 
-  PageMode getPageMode() {
-    final personalPageModeList = getIsarSetting().personalPageModeList ?? [];
-    final personalPageMode = personalPageModeList.where(
-      (element) => element.mangaId == getManga().id,
-    );
-    if (personalPageMode.isNotEmpty) {
-      return personalPageMode.first.pageMode;
-    }
-    return PageMode.onePage;
-  }
-
   void setReaderMode(ReaderMode newReaderMode) {
     _cachedIsContinuousLike = null;
     List<PersonalReaderMode>? personalReaderModeLists = [];
@@ -100,24 +89,6 @@ class ReaderController extends _$ReaderController
     );
     settingsRepository.save(
       getIsarSetting()..personalReaderModeList = personalReaderModeLists,
-    );
-    onSettingsMutated();
-  }
-
-  void setPageMode(PageMode newPageMode) {
-    List<PersonalPageMode>? personalPageModeLists = [];
-    for (var personalPageMode in getIsarSetting().personalPageModeList ?? []) {
-      if (personalPageMode.mangaId != getManga().id) {
-        personalPageModeLists.add(personalPageMode);
-      }
-    }
-    personalPageModeLists.add(
-      PersonalPageMode()
-        ..mangaId = getManga().id
-        ..pageMode = newPageMode,
-    );
-    settingsRepository.save(
-      getIsarSetting()..personalPageModeList = personalPageModeLists,
     );
     onSettingsMutated();
   }
@@ -191,8 +162,9 @@ class ReaderController extends _$ReaderController
               ..index = newIndex,
           );
         }
-        final autoReadDuplChap =
-            ref.read(autoReadDuplicateChaptersStateProvider);
+        final autoReadDuplChap = ref.read(
+          autoReadDuplicateChaptersStateProvider,
+        );
         final now = DateTime.now().millisecondsSinceEpoch;
         final List<Chapter> siblings = [];
         if (isRead && autoReadDuplChap) {
