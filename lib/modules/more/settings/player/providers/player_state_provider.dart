@@ -174,3 +174,17 @@ class ForceLandscapePlayerState extends _$ForceLandscapePlayerState {
     settingsRepository.update((s) => s.forceLandscapePlayer = value);
   }
 }
+
+@riverpod
+class PlayerRespectEpisodeSortOrderState
+    extends _$PlayerRespectEpisodeSortOrderState {
+  @override
+  bool build() {
+    return settingsRepository.current.playerRespectEpisodeSortOrder ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.playerRespectEpisodeSortOrder = value);
+  }
+}

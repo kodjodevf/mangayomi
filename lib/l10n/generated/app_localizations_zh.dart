@@ -1159,6 +1159,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get full_screen_player_info => '播放视频时自动使用全屏。';
 
   @override
+  String get player_respect_episode_sort_order => 'Respect episode sort order';
+
+  @override
+  String get player_respect_episode_sort_order_info =>
+      'Navigate next/previous episodes in the order currently set in the episode list.';
+
+  @override
   String episode_progress(Object n) {
     return '进度：$n';
   }

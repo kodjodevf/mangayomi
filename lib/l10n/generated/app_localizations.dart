@@ -2203,6 +2203,18 @@ abstract class AppLocalizations {
   /// **'Automatically use fullscreen when playing a video.'**
   String get full_screen_player_info;
 
+  /// No description provided for @player_respect_episode_sort_order.
+  ///
+  /// In en, this message translates to:
+  /// **'Respect episode sort order'**
+  String get player_respect_episode_sort_order;
+
+  /// No description provided for @player_respect_episode_sort_order_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate next/previous episodes in the order currently set in the episode list.'**
+  String get player_respect_episode_sort_order_info;
+
   /// No description provided for @episode_progress.
   ///
   /// In en, this message translates to:

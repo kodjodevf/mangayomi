@@ -149,4 +149,62 @@ void main() {
     expect(saved?.duration, '1440000');
     expect(history?.readingTimeSeconds, 300);
   });
+
+  test('respects episode sort order when enabled', () async {
+    final manga = Manga(
+      source: 'Source',
+      author: '',
+      artist: '',
+      genre: const [],
+      imageUrl: null,
+      lang: 'en',
+      link: '/anime3',
+      name: 'Anime 3',
+      status: Status.ongoing,
+      description: '',
+      sourceId: 1,
+    );
+    await database.writeTxn(() => database.mangas.put(manga));
+    final ep1 = Chapter(
+      mangaId: manga.id,
+      name: 'Episode 1',
+      isRead: false,
+    )..manga.value = manga;
+    final ep2 = Chapter(
+      mangaId: manga.id,
+      name: 'Episode 2',
+      isRead: false,
+    )..manga.value = manga;
+    await database.writeTxn(() async {
+      await database.chapters.putAll([ep1, ep2]);
+      await ep1.manga.save();
+      await ep2.manga.save();
+      // In Mangayomi, reverse: false corresponds to descending order (ep2, ep1)
+      final settings = await database.settings.where().findFirst() ?? Settings();
+      settings.sortChapterList = [SortChapter(mangaId: manga.id, index: 1, reverse: false)];
+      settings.playerRespectEpisodeSortOrder = true;
+      await database.settings.put(settings);
+    });
+
+    final notifierEp2 = container.read(
+      animeStreamControllerProvider(episode: ep2).notifier,
+    );
+    // In descending order: list is [ep2, ep1]
+    // ep2 is at index 0, so next episode in list order is ep1
+    expect(notifierEp2.hasNextEpisode, isTrue);
+    expect(notifierEp2.getNextEpisode().id, ep1.id);
+    expect(notifierEp2.hasPreviousEpisode, isFalse);
+
+    // When disabled, navigation falls back to chronological ascending order [ep1, ep2]
+    await database.writeTxn(() async {
+      final settings = await database.settings.where().findFirst() ?? Settings();
+      settings.playerRespectEpisodeSortOrder = false;
+      await database.settings.put(settings);
+    });
+
+    // In chronological order, ep2 is at index 1 (last episode)
+    expect(notifierEp2.hasNextEpisode, isFalse);
+    expect(notifierEp2.hasPreviousEpisode, isTrue);
+    expect(notifierEp2.getPrevEpisode().id, ep1.id);
+  });
 }

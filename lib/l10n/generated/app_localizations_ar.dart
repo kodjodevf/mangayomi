@@ -1196,6 +1196,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'استخدام الشاشة الكاملة تلقائيًا عند تشغيل الفيديو.';
 
   @override
+  String get player_respect_episode_sort_order => 'Respect episode sort order';
+
+  @override
+  String get player_respect_episode_sort_order_info =>
+      'Navigate next/previous episodes in the order currently set in the episode list.';
+
+  @override
   String episode_progress(Object n) {
     return 'التقدم: $n';
   }

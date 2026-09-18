@@ -35,6 +35,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
 
     final fullScreenPlayer = ref.watch(fullScreenPlayerStateProvider);
     final forceLandscapePlayer = ref.watch(forceLandscapePlayerStateProvider);
+    final playerRespectEpisodeSortOrder = ref.watch(
+      playerRespectEpisodeSortOrderStateProvider,
+    );
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.internal_player)),
       body: SingleChildScrollView(
@@ -505,6 +508,19 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               ),
               onChanged: (value) {
                 ref.read(forceLandscapePlayerStateProvider.notifier).set(value);
+              },
+            ),
+            SwitchListTile(
+              value: playerRespectEpisodeSortOrder,
+              title: Text(context.l10n.player_respect_episode_sort_order),
+              subtitle: Text(
+                context.l10n.player_respect_episode_sort_order_info,
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ),
+              onChanged: (value) {
+                ref
+                    .read(playerRespectEpisodeSortOrderStateProvider.notifier)
+                    .set(value);
               },
             ),
           ],

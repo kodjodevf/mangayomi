@@ -506,6 +506,8 @@
   "reorder_navigation_description": "Reorder and toggle each navigation to your needs.",
   "full_screen_player": "Use Fullscreen",
   "full_screen_player_info": "Automatically use fullscreen when playing a video.",
+  "player_respect_episode_sort_order": "Respect episode sort order",
+  "player_respect_episode_sort_order_info": "Navigate next/previous episodes in the order currently set in the episode list.",
   "episode_progress": "Progress: {n}",
   "n_episodes": "{n} episodes",
   "missing_episodes": "Missing {count} episodes",

@@ -55,6 +55,10 @@ mixin ChapterControllerMixin {
   Chapter getPrevChapter() => _chapterWithOffset(-1);
   Chapter getNextChapter() => _chapterWithOffset(1);
 
+  /// Returns the list of chapters/episodes used for navigation. Subclasses can
+  /// override this to respect user sort preferences.
+  List<Chapter> getChapterList() => getManga().getChapterListForReading();
+
   /// Finds this [chapter] in either the filtered list or the raw list and
   /// returns [index + offset]. The boolean indicates whether the filtered list
   /// was used (true) or the full list (false).
@@ -68,7 +72,7 @@ mixin ChapterControllerMixin {
       return null;
     }
 
-    final index = findIn(manga.getChapterListForReading());
+    final index = findIn(getChapterList());
     if (index != null) return (index, true);
     // Fallback to raw list if chapter was filtered out.
     final all = manga.chapters.toList();
@@ -78,7 +82,7 @@ mixin ChapterControllerMixin {
   Chapter _chapterWithOffset(int offset) {
     final idx = _chapterIndexWithOffset(offset);
     final list = idx.$2
-        ? getManga().getChapterListForReading()
+        ? getChapterList()
         : getManga().chapters.toList();
     if (idx.$1 < 0 || idx.$1 >= list.length) {
       throw RangeError('No chapter at offset $offset from ${chapter.id}');
@@ -87,7 +91,7 @@ mixin ChapterControllerMixin {
   }
 
   int getChaptersLength(bool isInFilterList) => isInFilterList
-      ? getManga().getChapterListForReading().length
+      ? getChapterList().length
       : getManga().chapters.length;
 
   // ---------------------------------------------------------------------------

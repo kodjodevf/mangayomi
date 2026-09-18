@@ -647,3 +647,59 @@ abstract class _$ForceLandscapePlayerState extends $Notifier<bool> {
     element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(PlayerRespectEpisodeSortOrderState)
+final playerRespectEpisodeSortOrderStateProvider =
+    PlayerRespectEpisodeSortOrderStateProvider._();
+
+final class PlayerRespectEpisodeSortOrderStateProvider
+    extends $NotifierProvider<PlayerRespectEpisodeSortOrderState, bool> {
+  PlayerRespectEpisodeSortOrderStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'playerRespectEpisodeSortOrderStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() =>
+      _$playerRespectEpisodeSortOrderStateHash();
+
+  @$internal
+  @override
+  PlayerRespectEpisodeSortOrderState create() =>
+      PlayerRespectEpisodeSortOrderState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$playerRespectEpisodeSortOrderStateHash() =>
+    r'c2ff64085dbe1866dd070d1a461653b76d4aa72d';
+
+abstract class _$PlayerRespectEpisodeSortOrderState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}

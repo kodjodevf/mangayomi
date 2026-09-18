@@ -72,22 +72,22 @@ extension MangaExtensions on Manga {
     final settings = settingsOverride ?? settingsRepository.current;
 
     final filterUnread =
-        (settings.chapterFilterUnreadList!
-                    .where((e) => e.mangaId == id)
+        (settings.chapterFilterUnreadList
+                    ?.where((e) => e.mangaId == id)
                     .firstOrNull ??
                 ChapterFilterUnread(mangaId: id, type: 0))
             .type!;
 
     final filterBookmarked =
-        (settings.chapterFilterBookmarkedList!
-                    .where((e) => e.mangaId == id)
+        (settings.chapterFilterBookmarkedList
+                    ?.where((e) => e.mangaId == id)
                     .firstOrNull ??
                 ChapterFilterBookmarked(mangaId: id, type: 0))
             .type!;
 
     final filterDownloaded =
-        (settings.chapterFilterDownloadedList!
-                    .where((e) => e.mangaId == id)
+        (settings.chapterFilterDownloadedList
+                    ?.where((e) => e.mangaId == id)
                     .firstOrNull ??
                 ChapterFilterDownloaded(mangaId: id, type: 0))
             .type!;
@@ -144,10 +144,10 @@ extension MangaExtensions on Manga {
     final settings = settingsRepository.current;
 
     final sortChapterEntry =
-        settings.sortChapterList!.where((e) => e.mangaId == id).firstOrNull ??
+        settings.sortChapterList?.where((e) => e.mangaId == id).firstOrNull ??
         SortChapter(mangaId: id, index: 1);
-    final sortIndex = sortChapterEntry.index!;
-    final reverse = sortChapterEntry.reverse!;
+    final sortIndex = sortChapterEntry.index ?? 1;
+    final reverse = sortChapterEntry.reverse ?? false;
 
     // Build on getFilteredChapters so filter logic lives in one place.
     List<Chapter> list = getFilteredChapters(settings);
@@ -202,6 +202,18 @@ extension MangaExtensions on Manga {
   /// would silently drop real chapters instead of just scanlator copies.
   List<Chapter> getChapterListForReading() {
     final list = getFilteredChapters();
+    final sortKeys = _chapterSortKeys(name ?? '', list);
+    final seen = <double>{};
+    return list.where((c) {
+      final key = sortKeys[c.id];
+      return key == null || seen.add(key);
+    }).toList();
+  }
+
+  /// Same as [getChapterListForReading] but respecting the user's sort preference
+  /// and order direction ([getSortedFilteredChapters]).
+  List<Chapter> getSortedChapterListForReading() {
+    final list = getSortedFilteredChapters();
     final sortKeys = _chapterSortKeys(name ?? '', list);
     final seen = <double>{};
     return list.where((c) {

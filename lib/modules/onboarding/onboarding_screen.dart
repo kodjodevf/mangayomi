@@ -444,7 +444,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
     try {
       final repo = await ref.read(getRepoInfosProvider(jsonUrl: url).future);
       if (repo == null) {
-        setState(() => _error = l10n.unsupported_repo);
+        setState(() => _error = l10n.onboarding_repo_failed);
         return;
       }
       final currentRepos = ref.read(extensionsRepoStateProvider(_repoType));

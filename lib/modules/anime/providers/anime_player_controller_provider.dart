@@ -5,6 +5,7 @@ import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/chapter_controller_mixin.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
+import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
@@ -33,6 +34,15 @@ class AnimeStreamController extends _$AnimeStreamController
   // Keep incognitoMode as a final field (read once, not on every access).
   @override
   final bool incognitoMode = settingsRepository.current.incognitoMode!;
+
+  @override
+  List<Chapter> getChapterList() {
+    final respectOrder =
+        settingsRepository.current.playerRespectEpisodeSortOrder ?? false;
+    return respectOrder
+        ? getManga().getSortedChapterListForReading()
+        : getManga().getChapterListForReading();
+  }
 
   // ---------------------------------------------------------------------------
   // Anime-flavoured aliases (preserve the existing public API)

@@ -1186,6 +1186,13 @@ class AppLocalizationsHi extends AppLocalizations {
       'वीडियो चलाते समय स्वचालित रूप से पूर्ण स्क्रीन का उपयोग करें।';
 
   @override
+  String get player_respect_episode_sort_order => 'Respect episode sort order';
+
+  @override
+  String get player_respect_episode_sort_order_info =>
+      'Navigate next/previous episodes in the order currently set in the episode list.';
+
+  @override
   String episode_progress(Object n) {
     return 'प्रगति: $n';
   }

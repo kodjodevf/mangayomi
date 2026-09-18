@@ -1171,6 +1171,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get full_screen_player_info => '動画再生時に自動的にフルスクリーンを使用します。';
 
   @override
+  String get player_respect_episode_sort_order => 'Respect episode sort order';
+
+  @override
+  String get player_respect_episode_sort_order_info =>
+      'Navigate next/previous episodes in the order currently set in the episode list.';
+
+  @override
   String episode_progress(Object n) {
     return '進行状況: $n';
   }

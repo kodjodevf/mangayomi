@@ -205,6 +205,8 @@ class Settings {
 
   bool? forceLandscapePlayer;
 
+  bool? playerRespectEpisodeSortOrder;
+
   bool? updateProgressAfterReading;
 
   bool? enableAniSkip;
@@ -537,6 +539,7 @@ class Settings {
     this.defaultPlayBackSpeed = 1.0,
     this.fullScreenPlayer = false,
     this.forceLandscapePlayer = false,
+    this.playerRespectEpisodeSortOrder = false,
     this.updateProgressAfterReading = true,
     this.enableAniSkip,
     this.enableAutoSkip,
@@ -830,6 +833,7 @@ class Settings {
         : (json['defaultPlayBackSpeed'] as int).toDouble();
     fullScreenPlayer = json['fullScreenPlayer'];
     forceLandscapePlayer = json['forceLandscapePlayer'];
+    playerRespectEpisodeSortOrder = json['playerRespectEpisodeSortOrder'];
     updateProgressAfterReading = json['updateProgressAfterReading'];
     enableAniSkip = json['enableAniSkip'];
     enableAutoSkip = json['enableAutoSkip'];
@@ -1124,6 +1128,7 @@ class Settings {
     'defaultPlayBackSpeed': defaultPlayBackSpeed,
     'fullScreenPlayer': fullScreenPlayer,
     'forceLandscapePlayer': forceLandscapePlayer,
+    'playerRespectEpisodeSortOrder': playerRespectEpisodeSortOrder,
     'updateProgressAfterReading': updateProgressAfterReading,
     'enableAniSkip': enableAniSkip,
     'enableAutoSkip': enableAutoSkip,
