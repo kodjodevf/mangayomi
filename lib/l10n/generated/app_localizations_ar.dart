@@ -1276,23 +1276,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String double_tap_search_hint(Object type) {
-    return 'Double-tap to search all $type';
+    return 'انقر مرتين للبحث في كل $type';
   }
 
   @override
-  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+  String get show_nav_double_tap_tooltip => 'إظهار تلميح البحث بالنقر المزدوج';
 
   @override
   String get show_nav_double_tap_tooltip_subtitle =>
-      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+      'إظهار تلميح على وجهات مانغا/أنمي/روايات يوضح أن النقر المزدوج يفتح البحث الشامل.';
 
   @override
   String already_in_library(Object source, Object title) {
-    return '\"$title\" is already in your library via $source.';
+    return '\"$title\" موجود بالفعل في مكتبتك عبر $source.';
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => 'إضافة على أي حال';
 
   @override
   String get langauage => 'اللغة';
@@ -2756,11 +2756,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'عرض الصفحة الأولى بمفردها في وضع الصفحتين';
 
   @override
-  String get double_page_auto => 'Automatic double page';
+  String get double_page_auto => 'صفحة مزدوجة تلقائياً';
 
   @override
   String get double_page_auto_subtitle =>
-      'Switch to double page mode automatically in landscape';
+      'التبديل إلى وضع الصفحة المزدوجة تلقائياً في الوضع الأفقي';
 
   @override
   String get landscape_zoom => 'تكبير تلقائي للوضع الأفقي';
@@ -3366,56 +3366,56 @@ class AppLocalizationsAr extends AppLocalizations {
       'تخطي التحديث المجدول أثناء استخدام بيانات الجوال.';
 
   @override
-  String get padding => 'Padding';
+  String get padding => 'الهامش';
 
   @override
-  String get page_mode => 'Page mode';
+  String get page_mode => 'وضع الصفحة';
 
   @override
-  String get single_page => 'Single page';
+  String get single_page => 'صفحة مفردة';
 
   @override
-  String get double_page => 'Double page';
+  String get double_page => 'صفحة مزدوجة';
 
   @override
-  String get speed => 'Speed';
+  String get speed => 'السرعة';
 
   @override
-  String get theme_dark => 'Dark';
+  String get theme_dark => 'داكن';
 
   @override
-  String get theme_light => 'Light';
+  String get theme_light => 'فاتح';
 
   @override
-  String get theme_black => 'Black';
+  String get theme_black => 'أسود';
 
   @override
-  String get theme_sepia => 'Sepia';
+  String get theme_sepia => 'سيبيا';
 
   @override
-  String get decrease => 'Decrease';
+  String get decrease => 'تقليل';
 
   @override
-  String get increase => 'Increase';
+  String get increase => 'زيادة';
 
   @override
-  String get chapter_swipe_actions => 'Chapter swipe actions';
+  String get chapter_swipe_actions => 'إجراءات سحب الفصل';
 
   @override
-  String get chapter_swipe_start => 'Swipe right';
+  String get chapter_swipe_start => 'السحب لليمين';
 
   @override
-  String get chapter_swipe_end => 'Swipe left';
+  String get chapter_swipe_end => 'السحب لليسار';
 
   @override
-  String get chapter_swipe_toggle_bookmark => 'Toggle bookmark';
+  String get chapter_swipe_toggle_bookmark => 'تبديل الإشارة المرجعية';
 
   @override
-  String get chapter_swipe_toggle_read => 'Toggle read';
+  String get chapter_swipe_toggle_read => 'تبديل حالة القراءة';
 
   @override
-  String get chapter_swipe_download => 'Download';
+  String get chapter_swipe_download => 'تنزيل';
 
   @override
-  String get chapter_swipe_disabled => 'Disabled';
+  String get chapter_swipe_disabled => 'معطل';
 }

@@ -1264,23 +1264,24 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String double_tap_search_hint(Object type) {
-    return 'Double-tap to search all $type';
+    return 'แตะสองครั้งเพื่อค้นหา $type ทั้งหมด';
   }
 
   @override
-  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+  String get show_nav_double_tap_tooltip =>
+      'แสดงคำแนะนำการค้นหาด้วยการแตะสองครั้ง';
 
   @override
   String get show_nav_double_tap_tooltip_subtitle =>
-      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+      'แสดงคำแนะนำในแท็บ มังงะ/อนิเมะ/นิยาย ว่าการแตะสองครั้งจะเปิดการค้นหาทั่วโลก';
 
   @override
   String already_in_library(Object source, Object title) {
-    return '\"$title\" is already in your library via $source.';
+    return '\"$title\" มีอยู่ในคลังของคุณแล้วผ่าน $source';
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => 'เพิ่มต่อไป';
 
   @override
   String get langauage => 'ภาษา';
@@ -2747,11 +2748,11 @@ class AppLocalizationsTh extends AppLocalizations {
       'แสดงหน้าแรกเดี่ยวๆ ในโหมดสองหน้า';
 
   @override
-  String get double_page_auto => 'Automatic double page';
+  String get double_page_auto => 'หน้าคู่อัตโนมัติ';
 
   @override
   String get double_page_auto_subtitle =>
-      'Switch to double page mode automatically in landscape';
+      'สลับเป็นโหมดหน้าคู่อัตโนมัติในแนวนอน';
 
   @override
   String get landscape_zoom => 'ซูมแนวนอนอัตโนมัติ';
@@ -3352,56 +3353,56 @@ class AppLocalizationsTh extends AppLocalizations {
       'ข้ามการอัปเดตตามกำหนดเวลาเมื่อใช้ข้อมูลมือถือ';
 
   @override
-  String get padding => 'Padding';
+  String get padding => 'ระยะขอบ';
 
   @override
-  String get page_mode => 'Page mode';
+  String get page_mode => 'โหมดหน้า';
 
   @override
-  String get single_page => 'Single page';
+  String get single_page => 'หน้าเดี่ยว';
 
   @override
-  String get double_page => 'Double page';
+  String get double_page => 'หน้าคู่';
 
   @override
-  String get speed => 'Speed';
+  String get speed => 'ความเร็ว';
 
   @override
-  String get theme_dark => 'Dark';
+  String get theme_dark => 'มืด';
 
   @override
-  String get theme_light => 'Light';
+  String get theme_light => 'สว่าง';
 
   @override
-  String get theme_black => 'Black';
+  String get theme_black => 'ดำ';
 
   @override
-  String get theme_sepia => 'Sepia';
+  String get theme_sepia => 'ซีเปีย';
 
   @override
-  String get decrease => 'Decrease';
+  String get decrease => 'ลด';
 
   @override
-  String get increase => 'Increase';
+  String get increase => 'เพิ่ม';
 
   @override
-  String get chapter_swipe_actions => 'Chapter swipe actions';
+  String get chapter_swipe_actions => 'การกระทำการปัดตอน';
 
   @override
-  String get chapter_swipe_start => 'Swipe right';
+  String get chapter_swipe_start => 'ปัดไปทางขวา';
 
   @override
-  String get chapter_swipe_end => 'Swipe left';
+  String get chapter_swipe_end => 'ปัดไปทางซ้าย';
 
   @override
-  String get chapter_swipe_toggle_bookmark => 'Toggle bookmark';
+  String get chapter_swipe_toggle_bookmark => 'สลับบุ๊กมาร์ก';
 
   @override
-  String get chapter_swipe_toggle_read => 'Toggle read';
+  String get chapter_swipe_toggle_read => 'สลับสถานะการอ่าน';
 
   @override
-  String get chapter_swipe_download => 'Download';
+  String get chapter_swipe_download => 'ดาวน์โหลด';
 
   @override
-  String get chapter_swipe_disabled => 'Disabled';
+  String get chapter_swipe_disabled => 'ปิดใช้งาน';
 }

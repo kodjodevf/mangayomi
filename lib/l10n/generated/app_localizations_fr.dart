@@ -1275,23 +1275,24 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String double_tap_search_hint(Object type) {
-    return 'Double-tap to search all $type';
+    return 'Appuyez deux fois pour rechercher tous les $type';
   }
 
   @override
-  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+  String get show_nav_double_tap_tooltip =>
+      'Afficher l\'astuce de recherche par double appui';
 
   @override
   String get show_nav_double_tap_tooltip_subtitle =>
-      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+      'Afficher une info-bulle sur les onglets Manga/Anime/Roman expliquant qu\'un double appui ouvre la recherche globale.';
 
   @override
   String already_in_library(Object source, Object title) {
-    return '\"$title\" is already in your library via $source.';
+    return '\"$title\" est déjà dans votre bibliothèque via $source.';
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => 'Ajouter quand même';
 
   @override
   String get langauage => 'Langue';

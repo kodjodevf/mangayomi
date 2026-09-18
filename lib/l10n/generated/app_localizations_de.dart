@@ -1269,23 +1269,24 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String double_tap_search_hint(Object type) {
-    return 'Double-tap to search all $type';
+    return 'Doppeltippen, um alle $type zu durchsuchen';
   }
 
   @override
-  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+  String get show_nav_double_tap_tooltip =>
+      'Suchtipp für Doppeltippen anzeigen';
 
   @override
   String get show_nav_double_tap_tooltip_subtitle =>
-      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+      'Einen Tooltip auf den Reitern Manga/Anime/Roman anzeigen, der erklärt, dass ein Doppeltippen die globale Suche öffnet.';
 
   @override
   String already_in_library(Object source, Object title) {
-    return '\"$title\" is already in your library via $source.';
+    return '\"$title\" ist bereits über $source in Ihrer Bibliothek.';
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => 'Trotzdem hinzufügen';
 
   @override
   String get langauage => 'Sprache';
@@ -2776,11 +2777,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Erste Seite im Doppelseitenmodus einzeln anzeigen';
 
   @override
-  String get double_page_auto => 'Automatic double page';
+  String get double_page_auto => 'Automatische Doppelseite';
 
   @override
   String get double_page_auto_subtitle =>
-      'Switch to double page mode automatically in landscape';
+      'Im Querformat automatisch in den Doppelseitenmodus wechseln';
 
   @override
   String get landscape_zoom => 'Automatischer Querformat-Zoom';
@@ -3398,56 +3399,56 @@ class AppLocalizationsDe extends AppLocalizations {
       'Geplante Aktualisierung bei mobiler Datenverbindung überspringen.';
 
   @override
-  String get padding => 'Padding';
+  String get padding => 'Abstand';
 
   @override
-  String get page_mode => 'Page mode';
+  String get page_mode => 'Seitenmodus';
 
   @override
-  String get single_page => 'Single page';
+  String get single_page => 'Einzelseite';
 
   @override
-  String get double_page => 'Double page';
+  String get double_page => 'Doppelseite';
 
   @override
-  String get speed => 'Speed';
+  String get speed => 'Geschwindigkeit';
 
   @override
-  String get theme_dark => 'Dark';
+  String get theme_dark => 'Dunkel';
 
   @override
-  String get theme_light => 'Light';
+  String get theme_light => 'Hell';
 
   @override
-  String get theme_black => 'Black';
+  String get theme_black => 'Schwarz';
 
   @override
   String get theme_sepia => 'Sepia';
 
   @override
-  String get decrease => 'Decrease';
+  String get decrease => 'Verringern';
 
   @override
-  String get increase => 'Increase';
+  String get increase => 'Erhöhen';
 
   @override
-  String get chapter_swipe_actions => 'Chapter swipe actions';
+  String get chapter_swipe_actions => 'Wischaktionen für Kapitel';
 
   @override
-  String get chapter_swipe_start => 'Swipe right';
+  String get chapter_swipe_start => 'Nach rechts wischen';
 
   @override
-  String get chapter_swipe_end => 'Swipe left';
+  String get chapter_swipe_end => 'Nach links wischen';
 
   @override
-  String get chapter_swipe_toggle_bookmark => 'Toggle bookmark';
+  String get chapter_swipe_toggle_bookmark => 'Lesezeichen umschalten';
 
   @override
-  String get chapter_swipe_toggle_read => 'Toggle read';
+  String get chapter_swipe_toggle_read => 'Gelesen/Ungelesen umschalten';
 
   @override
-  String get chapter_swipe_download => 'Download';
+  String get chapter_swipe_download => 'Herunterladen';
 
   @override
-  String get chapter_swipe_disabled => 'Disabled';
+  String get chapter_swipe_disabled => 'Deaktiviert';
 }

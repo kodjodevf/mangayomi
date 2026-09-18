@@ -1282,23 +1282,24 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String double_tap_search_hint(Object type) {
-    return 'Double-tap to search all $type';
+    return 'Дважды коснитесь для поиска по всем $type';
   }
 
   @override
-  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+  String get show_nav_double_tap_tooltip =>
+      'Подсказка о поиске двойным касанием';
 
   @override
   String get show_nav_double_tap_tooltip_subtitle =>
-      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+      'Показывать подсказку во вкладках Манга/Аниме/Новеллы о том, что двойное нажатие открывает глобальный поиск.';
 
   @override
   String already_in_library(Object source, Object title) {
-    return '\"$title\" is already in your library via $source.';
+    return '\"$title\" уже в вашей библиотеке из $source.';
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => 'Всё равно добавить';
 
   @override
   String get langauage => 'Язык';
@@ -2792,11 +2793,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Отображать первую страницу отдельно в двухстраничном режиме';
 
   @override
-  String get double_page_auto => 'Automatic double page';
+  String get double_page_auto => 'Автоматический двухстраничный режим';
 
   @override
   String get double_page_auto_subtitle =>
-      'Switch to double page mode automatically in landscape';
+      'Автоматически переключаться на двухстраничный режим в альбомной ориентации';
 
   @override
   String get landscape_zoom => 'Автоматическое масштабирование в альбоме';
@@ -3416,56 +3417,56 @@ class AppLocalizationsRu extends AppLocalizations {
       'Пропускать запланированное обновление при использовании мобильных данных.';
 
   @override
-  String get padding => 'Padding';
+  String get padding => 'Отступ';
 
   @override
-  String get page_mode => 'Page mode';
+  String get page_mode => 'Режим страниц';
 
   @override
-  String get single_page => 'Single page';
+  String get single_page => 'Одиночная страница';
 
   @override
-  String get double_page => 'Double page';
+  String get double_page => 'Две страницы';
 
   @override
-  String get speed => 'Speed';
+  String get speed => 'Скорость';
 
   @override
-  String get theme_dark => 'Dark';
+  String get theme_dark => 'Тёмная';
 
   @override
-  String get theme_light => 'Light';
+  String get theme_light => 'Светлая';
 
   @override
-  String get theme_black => 'Black';
+  String get theme_black => 'Чёрная';
 
   @override
-  String get theme_sepia => 'Sepia';
+  String get theme_sepia => 'Сепия';
 
   @override
-  String get decrease => 'Decrease';
+  String get decrease => 'Уменьшить';
 
   @override
-  String get increase => 'Increase';
+  String get increase => 'Увеличить';
 
   @override
-  String get chapter_swipe_actions => 'Chapter swipe actions';
+  String get chapter_swipe_actions => 'Действия при свайпе главы';
 
   @override
-  String get chapter_swipe_start => 'Swipe right';
+  String get chapter_swipe_start => 'Свайп вправо';
 
   @override
-  String get chapter_swipe_end => 'Swipe left';
+  String get chapter_swipe_end => 'Свайп влево';
 
   @override
-  String get chapter_swipe_toggle_bookmark => 'Toggle bookmark';
+  String get chapter_swipe_toggle_bookmark => 'Закладка';
 
   @override
-  String get chapter_swipe_toggle_read => 'Toggle read';
+  String get chapter_swipe_toggle_read => 'Прочитано/Не прочитано';
 
   @override
-  String get chapter_swipe_download => 'Download';
+  String get chapter_swipe_download => 'Скачать';
 
   @override
-  String get chapter_swipe_disabled => 'Disabled';
+  String get chapter_swipe_disabled => 'Отключено';
 }
