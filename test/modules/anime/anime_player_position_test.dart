@@ -106,4 +106,47 @@ void main() {
     expect(history?.chapterId, episode.id);
     expect(history?.readingTimeSeconds, 42);
   });
+
+  test('intermediate playback progress saves without marking as seen', () async {
+    final manga = Manga(
+      source: 'Source',
+      author: '',
+      artist: '',
+      genre: const [],
+      imageUrl: null,
+      lang: 'en',
+      link: '/anime2',
+      name: 'Anime 2',
+      status: Status.ongoing,
+      description: '',
+      sourceId: 1,
+    );
+    await database.writeTxn(() => database.mangas.put(manga));
+    final episode = Chapter(
+      mangaId: manga.id,
+      name: 'Episode 2',
+      isRead: false,
+    )..manga.value = manga;
+    await database.writeTxn(() async {
+      await database.chapters.put(episode);
+      await episode.manga.save();
+    });
+
+    final notifier = container.read(
+      animeStreamControllerProvider(episode: episode).notifier,
+    );
+    notifier.setCurrentPosition(
+      const Duration(minutes: 5),
+      const Duration(minutes: 24),
+      save: true,
+    );
+    await notifier.setHistoryUpdate(elapsedSeconds: 300);
+
+    final saved = await database.chapters.get(episode.id!);
+    final history = await database.historys.where().findFirst();
+    expect(saved?.isRead, isFalse);
+    expect(saved?.lastPageRead, '300000');
+    expect(saved?.duration, '1440000');
+    expect(history?.readingTimeSeconds, 300);
+  });
 }

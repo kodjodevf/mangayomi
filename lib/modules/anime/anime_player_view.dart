@@ -461,6 +461,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   final _subDelayController = TextEditingController(text: "0");
   final _subSpeedController = TextEditingController(text: "1.00");
   int lastRpcTimestampUpdate = DateTime.now().millisecondsSinceEpoch;
+  int _lastSavedPositionSec = 0;
+  int _lastSavedWallClockMillis = 0;
 
   late final StreamSubscription<Duration> _currentPositionSub;
   late final StreamSubscription<String> _playerErrorSub;
@@ -884,6 +886,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   Future<void> pushToNewEpisode(BuildContext context, Chapter episode) async {
     if (_routeExitInProgress) return;
     _routeExitInProgress = true;
+    _setCurrentPosition(true, saveWatchTime: true);
     widget.desktopFullScreenPlayer.call(ref.read(fullscreenProvider));
     widget.onEpisodeReplacement();
     await _retireVideoTexture();
@@ -912,6 +915,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   Future<void> _goBackToDetail() async {
     if (_routeExitInProgress) return;
     _routeExitInProgress = true;
+    _setCurrentPosition(true, saveWatchTime: true);
     if (isDesktop && ref.read(fullscreenProvider)) {
       await _exitDesktopFullScreen();
     }
@@ -926,6 +930,19 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     final currentSecs = position.inSeconds;
     _setCurrentAudSub(position, currentSecs);
     _setSkipPhase(currentSecs);
+    _checkPeriodicProgressSave(currentSecs);
+  }
+
+  void _checkPeriodicProgressSave(int currentSecs) {
+    final now = DateTime.now().millisecondsSinceEpoch;
+
+    // Auto-save every 5 seconds of playback change or every 5 seconds of wall-clock time
+    if ((currentSecs - _lastSavedPositionSec).abs() >= 5 ||
+        (now - _lastSavedWallClockMillis).abs() >= 5000) {
+      _lastSavedPositionSec = currentSecs;
+      _lastSavedWallClockMillis = now;
+      _setCurrentPosition(true, saveWatchTime: true);
+    }
   }
 
   void _setCurrentAudSub(Duration position, int secs) {
@@ -1757,8 +1774,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       localQualityLabel: _firstVid.quality,
       currentVideo: _video.value,
       onSelect: (quality) {
+        _setCurrentPosition(true, saveWatchTime: true);
         _video.value = quality;
         _player.stop();
+
         if (quality.isLocal) {
           if (widget.isLocal) {
             _player.setVideoTrack(quality.videoTrack!);
@@ -2336,6 +2355,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           selected: currentTitle == video.quality,
           onSelect: () {
             if (_video.value?.videoTrack?.title == video.quality) return;
+            _setCurrentPosition(true, saveWatchTime: true);
             final prefs = VideoPrefs(
               videoTrack: VideoTrack(video.url, video.quality, video.quality),
               headers: video.headers,
