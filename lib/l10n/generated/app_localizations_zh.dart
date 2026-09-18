@@ -3243,4 +3243,37 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get auto_library_update_wifi_only_subtitle => '使用移动数据时跳过计划更新。';
+
+  @override
+  String get padding => 'Padding';
+
+  @override
+  String get page_mode => 'Page mode';
+
+  @override
+  String get single_page => 'Single page';
+
+  @override
+  String get double_page => 'Double page';
+
+  @override
+  String get speed => 'Speed';
+
+  @override
+  String get theme_dark => 'Dark';
+
+  @override
+  String get theme_light => 'Light';
+
+  @override
+  String get theme_black => 'Black';
+
+  @override
+  String get theme_sepia => 'Sepia';
+
+  @override
+  String get decrease => 'Decrease';
+
+  @override
+  String get increase => 'Increase';
 }

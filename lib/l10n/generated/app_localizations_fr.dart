@@ -3423,4 +3423,37 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get auto_library_update_wifi_only_subtitle =>
       'Ignorer la mise à jour planifiée lors de l\'utilisation des données mobiles.';
+
+  @override
+  String get padding => 'Espacement';
+
+  @override
+  String get page_mode => 'Mode de page';
+
+  @override
+  String get single_page => 'Page simple';
+
+  @override
+  String get double_page => 'Double page';
+
+  @override
+  String get speed => 'Vitesse';
+
+  @override
+  String get theme_dark => 'Sombre';
+
+  @override
+  String get theme_light => 'Clair';
+
+  @override
+  String get theme_black => 'Noir';
+
+  @override
+  String get theme_sepia => 'Sépia';
+
+  @override
+  String get decrease => 'Diminuer';
+
+  @override
+  String get increase => 'Augmenter';
 }
