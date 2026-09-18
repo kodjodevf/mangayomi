@@ -26,7 +26,8 @@ class NovelTtsService {
   NovelTtsService._();
   static final NovelTtsService instance = NovelTtsService._();
   static const _manualInterruptionWindow = Duration(milliseconds: 500);
-  bool get _isSupported => !Platform.isLinux;
+  bool get isSupported => !Platform.isLinux;
+  bool get _isSupported => isSupported;
 
   FlutterTts? _flutterTts;
   final _stateController = StreamController<TtsState>.broadcast();

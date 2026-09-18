@@ -37,10 +37,19 @@ class SettingsScreen extends StatelessWidget {
                 if (ref.watch(animeOnlyTvModeProvider)) {
                   return const SizedBox.shrink();
                 }
-                return ListTileWidget(
-                  title: l10n.reader,
-                  icon: Icons.chrome_reader_mode_rounded,
-                  onTap: () => context.push('/readerMode'),
+                return Column(
+                  children: [
+                    ListTileWidget(
+                      title: l10n.reader,
+                      icon: Icons.chrome_reader_mode_rounded,
+                      onTap: () => context.push('/readerMode'),
+                    ),
+                    ListTileWidget(
+                      title: '${l10n.novel} ${l10n.reader}',
+                      icon: Icons.menu_book_rounded,
+                      onTap: () => context.push('/novelReaderMode'),
+                    ),
+                  ],
                 );
               },
             ),
