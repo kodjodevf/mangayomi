@@ -24,7 +24,7 @@ final class GetChapterPagesProvider
         $FutureProvider<GetChapterPagesModel> {
   GetChapterPagesProvider._({
     required GetChapterPagesFamily super.from,
-    required Chapter super.argument,
+    required ({Chapter chapter, bool forceRefresh}) super.argument,
   }) : super(
          retry: null,
          name: r'getChapterPagesProvider',
@@ -40,7 +40,7 @@ final class GetChapterPagesProvider
   String toString() {
     return r'getChapterPagesProvider'
         ''
-        '($argument)';
+        '$argument';
   }
 
   @$internal
@@ -51,8 +51,12 @@ final class GetChapterPagesProvider
 
   @override
   FutureOr<GetChapterPagesModel> create(Ref ref) {
-    final argument = this.argument as Chapter;
-    return getChapterPages(ref, chapter: argument);
+    final argument = this.argument as ({Chapter chapter, bool forceRefresh});
+    return getChapterPages(
+      ref,
+      chapter: argument.chapter,
+      forceRefresh: argument.forceRefresh,
+    );
   }
 
   @override
@@ -66,10 +70,14 @@ final class GetChapterPagesProvider
   }
 }
 
-String _$getChapterPagesHash() => r'ab41cd04576b243ee9e15bc0fbb1a311cddaf2a2';
+String _$getChapterPagesHash() => r'a66f484ee4dffced26bd6e94138fd22f0d1988b3';
 
 final class GetChapterPagesFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<GetChapterPagesModel>, Chapter> {
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<GetChapterPagesModel>,
+          ({Chapter chapter, bool forceRefresh})
+        > {
   GetChapterPagesFamily._()
     : super(
         retry: null,
@@ -79,8 +87,13 @@ final class GetChapterPagesFamily extends $Family
         isAutoDispose: true,
       );
 
-  GetChapterPagesProvider call({required Chapter chapter}) =>
-      GetChapterPagesProvider._(argument: chapter, from: this);
+  GetChapterPagesProvider call({
+    required Chapter chapter,
+    bool forceRefresh = false,
+  }) => GetChapterPagesProvider._(
+    argument: (chapter: chapter, forceRefresh: forceRefresh),
+    from: this,
+  );
 
   @override
   String toString() => r'getChapterPagesProvider';

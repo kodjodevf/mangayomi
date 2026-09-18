@@ -69,8 +69,6 @@ class Settings {
   /// so an existing library never sees a welcome screen.
   bool? onboardingCompleted;
 
-  List<ChapterPageurls>? chapterPageUrlsList;
-
   bool? showPagesNumber;
 
   List<ChapterPageIndex>? chapterPageIndexList;
@@ -478,7 +476,6 @@ class Settings {
     this.followSystemTheme = false,
     this.incognitoMode = false,
     this.onboardingCompleted,
-    this.chapterPageUrlsList,
     this.showPagesNumber = true,
     this.chapterPageIndexList,
     this.userAgent = defaultUserAgent,
@@ -708,11 +705,6 @@ class Settings {
           .map((e) => ChapterPageIndex.fromJson(e))
           .toList();
     }
-    if (json['chapterPageUrlsList'] != null) {
-      chapterPageUrlsList = (json['chapterPageUrlsList'] as List)
-          .map((e) => ChapterPageurls.fromJson(e))
-          .toList();
-    }
     enableLogs = json['enableLogs'];
     checkForAppUpdates = json['checkForAppUpdates'];
     checkForExtensionUpdates = json['checkForExtensionUpdates'];
@@ -893,8 +885,7 @@ class Settings {
       novelReaderPadding = json['novelReaderPadding'];
     }
     if (json['novelReaderLineHeight'] != null) {
-      novelReaderLineHeight = (json['novelReaderLineHeight'] as num)
-          .toDouble();
+      novelReaderLineHeight = (json['novelReaderLineHeight'] as num).toDouble();
     }
     if (json['novelFontFamily'] != null) {
       novelFontFamily = json['novelFontFamily'];
@@ -1049,7 +1040,6 @@ class Settings {
     'chapterPageIndexList': chapterPageIndexList
         ?.map((v) => v.toJson())
         .toList(),
-    'chapterPageUrlsList': chapterPageUrlsList?.map((v) => v.toJson()).toList(),
     'enableLogs': enableLogs,
     'checkForAppUpdates': checkForAppUpdates,
     'checkForExtensionUpdates': checkForExtensionUpdates,
@@ -1785,9 +1775,4 @@ enum ColorFilterBlendMode {
   exclusion,
 }
 
-enum ChapterSwipeAction {
-  toggleBookmark,
-  toggleRead,
-  download,
-  disabled,
-}
+enum ChapterSwipeAction { toggleBookmark, toggleRead, download, disabled }

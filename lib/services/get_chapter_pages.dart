@@ -1,21 +1,18 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/services/isolate_service.dart';
+import 'package:mangayomi/services/chapter_cache.dart';
 import 'package:mangayomi/utils/downloaded_page_file.dart';
-import 'package:mangayomi/eval/http_response_extensions.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/page.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/downloaded_chapter.dart';
 import 'package:mangayomi/utils/utils.dart';
-import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_chapter_pages.g.dart';
@@ -45,18 +42,13 @@ class GetChapterPagesModel {
 Future<GetChapterPagesModel> getChapterPages(
   Ref ref, {
   required Chapter chapter,
+  bool forceRefresh = false,
 }) async {
   final keepAlive = ref.keepAlive();
   try {
     Directory? path;
     List<PageUrl> pageUrls = [];
     List<bool> isLocaleList = [];
-    final settings = settingsRepository.currentOrNull;
-    List<ChapterPageurls>? chapterPageUrlsList =
-        settings!.chapterPageUrlsList ?? [];
-    final isarPageUrls = chapterPageUrlsList
-        .where((element) => element.chapterId == chapter.id)
-        .firstOrNull;
     final incognitoMode = ref.read(incognitoModeStateProvider);
     final storageProvider = StorageProvider();
     final mangaDirectory = await storageProvider.getMangaMainDirectory(chapter);
@@ -83,18 +75,14 @@ Future<GetChapterPagesModel> getChapterPages(
     if (downloaded?.pagesDirectory != null) path = downloaded!.pagesDirectory;
 
     if (!chapter.manga.value!.isLocalArchive!) {
-      if ((isarPageUrls?.urls?.isNotEmpty ?? false) &&
-          (isarPageUrls?.chapterUrl ?? chapter.url) == chapter.url) {
+      final chapterCache = ChapterCache();
+      final cachedPages = (!forceRefresh && downloaded == null)
+          ? await chapterCache.getPageListFromCache(chapter)
+          : null;
+
+      if (cachedPages != null && cachedPages.isNotEmpty) {
         pagesFromCache = true;
-        for (var i = 0; i < isarPageUrls!.urls!.length; i++) {
-          Map<String, String>? headers;
-          if (isarPageUrls.headers?.isNotEmpty ?? false) {
-            headers = (jsonDecode(
-              isarPageUrls.headers![i],
-            ) as Map?)?.toMapStringString;
-          }
-          pageUrls.add(PageUrl(isarPageUrls.urls![i], headers: headers));
-        }
+        pageUrls = cachedPages;
       } else if (downloaded == null) {
         // Only ask the source when there is nothing on disk to read. The
         // extension is also resolved here rather than above, so a missing one
@@ -167,53 +155,11 @@ Future<GetChapterPagesModel> getChapterPages(
           pageUrls.add(PageUrl(""));
         }
       }
-      if (isLocalArchive) {
-        // Archives store placeholder urls only for the page count; skip the
-        // write when the stored entry already matches.
-        if ((isarPageUrls?.urls?.length ?? -1) == pageUrls.length &&
-            (isarPageUrls?.chapterUrl ?? chapter.url) == chapter.url) {
-          pagesFromCache = true;
-        }
-      }
-      // Persisting the page-URL cache rewrites the entire (large) settings
-      // row, so only do it when there is something new to store — never when
-      // the pages came from that cache. The cache is also capped to the most
-      // recent chapters so the row doesn't grow with reading history.
-      // A downloaded chapter's urls are placeholders; storing them would make
-      // it unreadable online once the download is deleted.
-      if (!incognitoMode && !pagesFromCache && downloaded == null) {
-        const maxCachedChapters = 40;
-        final chapterPageHeaders = pageUrls
-            .map((e) => e.headers == null ? null : jsonEncode(e.headers))
-            .toList();
-        // Re-read the row here rather than reuse the one loaded at the top of
-        // this function. Fetching the pages ran several awaits, and writing the
-        // row puts all of it back, so the old copy would undo every setting
-        // changed while the chapter was loading.
-        settingsRepository.update((settings) {
-          final chapterPageUrls = <ChapterPageurls>[];
-          for (final chapterPageUrl in settings.chapterPageUrlsList ?? []) {
-            if (chapterPageUrl.chapterId != chapter.id) {
-              chapterPageUrls.add(chapterPageUrl);
-            }
-          }
-          chapterPageUrls.add(
-            ChapterPageurls()
-              ..chapterId = chapter.id
-              ..urls = pageUrls.map((e) => e.url).toList()
-              ..chapterUrl = chapter.url
-              ..headers = chapterPageHeaders.first != null
-                  ? chapterPageHeaders.map((e) => e.toString()).toList()
-                  : null,
-          );
-          if (chapterPageUrls.length > maxCachedChapters) {
-            chapterPageUrls.removeRange(
-              0,
-              chapterPageUrls.length - maxCachedChapters,
-            );
-          }
-          settings.chapterPageUrlsList = chapterPageUrls;
-        });
+      if (!incognitoMode &&
+          !pagesFromCache &&
+          downloaded == null &&
+          pageUrls.isNotEmpty) {
+        await ChapterCache().putPageListToCache(chapter, pageUrls);
       }
       for (var i = 0; i < pageUrls.length; i++) {
         chapterModel.uChapDataPreload.add(

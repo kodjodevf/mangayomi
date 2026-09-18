@@ -28,6 +28,12 @@ class TotalChapterCacheSizeState extends _$TotalChapterCacheSizeState {
       if (dir.existsSync()) {
         await dir.delete(recursive: true);
       }
+      final chapterCacheDir = await _storage.getCacheDirectory(
+        'chapter_disk_cache',
+      );
+      if (chapterCacheDir.existsSync()) {
+        await chapterCacheDir.delete(recursive: true);
+      }
       msg = "0.00 B";
     } catch (_) {}
     try {
@@ -41,9 +47,13 @@ class TotalChapterCacheSizeState extends _$TotalChapterCacheSizeState {
 
   Future<int> _getTotalDiskSpace() async {
     try {
-      return await _getdirectorySize(
+      final imageCacheSize = await _getdirectorySize(
         await _storage.getCacheDirectory('cacheimagemanga'),
       );
+      final chapterCacheSize = await _getdirectorySize(
+        await _storage.getCacheDirectory('chapter_disk_cache'),
+      );
+      return imageCacheSize + chapterCacheSize;
     } catch (_) {}
     return 0;
   }
