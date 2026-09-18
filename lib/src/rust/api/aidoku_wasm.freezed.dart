@@ -504,7 +504,7 @@ as String,
 
 
 class AidokuFilterValue_MultiSelect extends AidokuFilterValue {
-  const AidokuFilterValue_MultiSelect({required this.id, required final  List<String> included, required final  List<String> excluded}): _included = included,_excluded = excluded,super._();
+  const AidokuFilterValue_MultiSelect({required this.id, required  List<String> included, required  List<String> excluded}): _included = included,_excluded = excluded,super._();
   
 
 @override final  String id;
@@ -828,7 +828,7 @@ return zipFile(_that.url,_that.filePath);case _:
 
 
 class AidokuPage_Url extends AidokuPage {
-  const AidokuPage_Url({required this.url, required final  List<(String, String)> context}): _context = context,super._();
+  const AidokuPage_Url({required this.url, required  List<(String, String)> context}): _context = context,super._();
   
 
  final  String url;
