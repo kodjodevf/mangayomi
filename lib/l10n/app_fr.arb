@@ -1385,5 +1385,12 @@
   "theme_black": "Noir",
   "theme_sepia": "Sépia",
   "decrease": "Diminuer",
-  "increase": "Augmenter"
+  "increase": "Augmenter",
+  "chapter_swipe_actions": "Actions de glissement de chapitre",
+  "chapter_swipe_start": "Glisser vers la droite",
+  "chapter_swipe_end": "Glisser vers la gauche",
+  "chapter_swipe_toggle_bookmark": "Basculer le signet",
+  "chapter_swipe_toggle_read": "Marquer lu/non lu",
+  "chapter_swipe_download": "Télécharger",
+  "chapter_swipe_disabled": "Désactivé"
 }

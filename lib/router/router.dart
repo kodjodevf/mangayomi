@@ -290,12 +290,24 @@ class RouterNotifier extends ChangeNotifier {
       name: "migrate",
       builder: (manga) => MigrationScreen(manga: manga),
     ),
-    _genericRoute<(ItemType, Manga?)>(
+    _genericRoute<dynamic>(
       name: "massMigration",
-      builder: (data) => MassMigrationSourceSelectionScreen(
-        itemType: data.$1,
-        prioritizedManga: data.$2,
-      ),
+      builder: (data) {
+        if (data is (ItemType, Manga?, List<Manga>?)) {
+          return MassMigrationSourceSelectionScreen(
+            itemType: data.$1,
+            prioritizedManga: data.$2,
+            selectedMangas: data.$3,
+          );
+        }
+        if (data is (ItemType, Manga?)) {
+          return MassMigrationSourceSelectionScreen(
+            itemType: data.$1,
+            prioritizedManga: data.$2,
+          );
+        }
+        return MassMigrationSourceSelectionScreen(itemType: data as ItemType);
+      },
     ),
     _genericRoute<(Manga, TrackSearch)>(
       name: "migrate/tracker",

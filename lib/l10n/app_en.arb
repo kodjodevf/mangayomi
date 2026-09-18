@@ -1337,5 +1337,12 @@
   "theme_black": "Black",
   "theme_sepia": "Sepia",
   "decrease": "Decrease",
-  "increase": "Increase"
+  "increase": "Increase",
+  "chapter_swipe_actions": "Chapter swipe actions",
+  "chapter_swipe_start": "Swipe right",
+  "chapter_swipe_end": "Swipe left",
+  "chapter_swipe_toggle_bookmark": "Toggle bookmark",
+  "chapter_swipe_toggle_read": "Toggle read",
+  "chapter_swipe_download": "Download",
+  "chapter_swipe_disabled": "Disabled"
 }

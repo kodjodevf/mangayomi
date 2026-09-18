@@ -6102,6 +6102,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Increase'**
   String get increase;
+
+  /// No description provided for @chapter_swipe_actions.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter swipe actions'**
+  String get chapter_swipe_actions;
+
+  /// No description provided for @chapter_swipe_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe right'**
+  String get chapter_swipe_start;
+
+  /// No description provided for @chapter_swipe_end.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe left'**
+  String get chapter_swipe_end;
+
+  /// No description provided for @chapter_swipe_toggle_bookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle bookmark'**
+  String get chapter_swipe_toggle_bookmark;
+
+  /// No description provided for @chapter_swipe_toggle_read.
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle read'**
+  String get chapter_swipe_toggle_read;
+
+  /// No description provided for @chapter_swipe_download.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get chapter_swipe_download;
+
+  /// No description provided for @chapter_swipe_disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get chapter_swipe_disabled;
 }
 
 class _AppLocalizationsDelegate

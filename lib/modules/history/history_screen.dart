@@ -33,6 +33,33 @@ class HistoryScreen extends ConsumerStatefulWidget {
 
 class _HistoryScreenState extends BaseLibraryTabScreenState<HistoryScreen> {
   @override
+  void initState() {
+    super.initState();
+    _syncActiveItemType();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncActiveItemType();
+  }
+
+  void _syncActiveItemType() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref
+            .read(activeHistoryItemTypeStateProvider.notifier)
+            .set(getCurrentItemType());
+      }
+    });
+  }
+
+  @override
+  void onTabChanged(ItemType type) {
+    ref.read(activeHistoryItemTypeStateProvider.notifier).set(type);
+  }
+
+  @override
   String get title => l10nLocalizations(context)!.history;
 
   @override
@@ -132,8 +159,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
             .toSet()
             .toList();
         final chapterById = {
-          for (final c in chapterRepository.getAllByIds(chapterIds))
-            c?.id!: c!,
+          for (final c in chapterRepository.getAllByIds(chapterIds)) c?.id!: c!,
         };
         final mangaIds = chapterById.values
             .map((c) => c.mangaId)

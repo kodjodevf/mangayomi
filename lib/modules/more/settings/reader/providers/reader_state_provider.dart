@@ -288,13 +288,14 @@ class NovelRemoveExtraParagraphSpacingState
     extends _$NovelRemoveExtraParagraphSpacingState {
   @override
   bool build() {
-    return settingsRepository.current.novelRemoveExtraParagraphSpacing ??
-        false;
+    return settingsRepository.current.novelRemoveExtraParagraphSpacing ?? false;
   }
 
   void set(bool value) {
     state = value;
-    settingsRepository.update((s) => s.novelRemoveExtraParagraphSpacing = value);
+    settingsRepository.update(
+      (s) => s.novelRemoveExtraParagraphSpacing = value,
+    );
   }
 }
 
@@ -739,5 +740,39 @@ class ReaderHideThresholdState extends _$ReaderHideThresholdState {
   void set(int value) {
     state = value;
     settingsRepository.update((s) => s.readerHideThreshold = value);
+  }
+}
+
+@riverpod
+class ChapterSwipeStartActionState extends _$ChapterSwipeStartActionState {
+  @override
+  ChapterSwipeAction build() {
+    final idx = settingsRepository.current.chapterSwipeStartAction ?? 0;
+    if (idx >= 0 && idx < ChapterSwipeAction.values.length) {
+      return ChapterSwipeAction.values[idx];
+    }
+    return ChapterSwipeAction.toggleBookmark;
+  }
+
+  void set(ChapterSwipeAction value) {
+    state = value;
+    settingsRepository.update((s) => s.chapterSwipeStartAction = value.index);
+  }
+}
+
+@riverpod
+class ChapterSwipeEndActionState extends _$ChapterSwipeEndActionState {
+  @override
+  ChapterSwipeAction build() {
+    final idx = settingsRepository.current.chapterSwipeEndAction ?? 1;
+    if (idx >= 0 && idx < ChapterSwipeAction.values.length) {
+      return ChapterSwipeAction.values[idx];
+    }
+    return ChapterSwipeAction.toggleRead;
+  }
+
+  void set(ChapterSwipeAction value) {
+    state = value;
+    settingsRepository.update((s) => s.chapterSwipeEndAction = value.index);
   }
 }

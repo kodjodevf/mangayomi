@@ -1,6 +1,5 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
@@ -451,9 +450,27 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SelectableText(
-          widget.manga.name!,
-          style: const TextStyle(fontSize: 20),
+        InkWell(
+          borderRadius: BorderRadius.circular(4),
+          onTap: () {
+            final name = widget.manga.name;
+            if (name != null && name.trim().isNotEmpty) {
+              context.push('/globalSearch', extra: (name, widget.manga.itemType));
+            }
+          },
+          onLongPress: () async {
+            final name = widget.manga.name;
+            if (name != null && name.isNotEmpty) {
+              await Clipboard.setData(ClipboardData(text: name));
+              if (mounted) {
+                botToast(context.l10n.error_reports_copied, second: 2);
+              }
+            }
+          },
+          child: Text(
+            widget.manga.name!,
+            style: const TextStyle(fontSize: 20),
+          ),
         ),
         widget.titleDescription,
       ],

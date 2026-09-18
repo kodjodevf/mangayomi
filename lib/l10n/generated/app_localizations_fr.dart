@@ -3450,4 +3450,25 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get increase => 'Augmenter';
+
+  @override
+  String get chapter_swipe_actions => 'Actions de glissement de chapitre';
+
+  @override
+  String get chapter_swipe_start => 'Glisser vers la droite';
+
+  @override
+  String get chapter_swipe_end => 'Glisser vers la gauche';
+
+  @override
+  String get chapter_swipe_toggle_bookmark => 'Basculer le signet';
+
+  @override
+  String get chapter_swipe_toggle_read => 'Marquer lu/non lu';
+
+  @override
+  String get chapter_swipe_download => 'Télécharger';
+
+  @override
+  String get chapter_swipe_disabled => 'Désactivé';
 }

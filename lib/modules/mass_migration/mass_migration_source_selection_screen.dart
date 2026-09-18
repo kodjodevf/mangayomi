@@ -13,6 +13,7 @@ class MassMigrationSourceSelectionScreen extends StatelessWidget {
   const MassMigrationSourceSelectionScreen({
     required this.itemType,
     this.prioritizedManga,
+    this.selectedMangas,
     super.key,
   });
 
@@ -23,12 +24,16 @@ class MassMigrationSourceSelectionScreen extends StatelessWidget {
   /// Null when opened library-wide (e.g. from More) rather than from a manga.
   final Manga? prioritizedManga;
 
+  /// Optional: specific mangas selected by the user to migrate.
+  final List<Manga>? selectedMangas;
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final sourceGroups = buildMassMigrationSourceGroups(
       itemType: itemType,
       prioritizedManga: prioritizedManga,
+      selectedMangas: selectedMangas,
     );
 
     return Scaffold(

@@ -437,6 +437,8 @@ class Settings {
   bool? webtoonDisableZoomOut;
   bool? webtoonDoubleTapZoomEnabled;
   int? readerHideThreshold;
+  int? chapterSwipeStartAction;
+  int? chapterSwipeEndAction;
 
   // Android TV preferences (null = follow the default). See #729.
   bool? autoPlayNextEpisode;
@@ -654,6 +656,8 @@ class Settings {
     this.webtoonDisableZoomOut = false,
     this.webtoonDoubleTapZoomEnabled = true,
     this.readerHideThreshold = 1,
+    this.chapterSwipeStartAction = 0,
+    this.chapterSwipeEndAction = 1,
     this.autoPlayNextEpisode,
     this.tvAnimeOnlyOverride,
     this.tvPlayerStyle,
@@ -1005,6 +1009,8 @@ class Settings {
     webtoonDisableZoomOut = json['webtoonDisableZoomOut'];
     webtoonDoubleTapZoomEnabled = json['webtoonDoubleTapZoomEnabled'];
     readerHideThreshold = json['readerHideThreshold'];
+    chapterSwipeStartAction = json['chapterSwipeStartAction'] ?? 0;
+    chapterSwipeEndAction = json['chapterSwipeEndAction'] ?? 1;
     autoPlayNextEpisode = json['autoPlayNextEpisode'];
     tvAnimeOnlyOverride = json['tvAnimeOnlyOverride'];
     tvPlayerStyle = json['tvPlayerStyle'];
@@ -1243,6 +1249,8 @@ class Settings {
     'webtoonDisableZoomOut': webtoonDisableZoomOut,
     'webtoonDoubleTapZoomEnabled': webtoonDoubleTapZoomEnabled,
     'readerHideThreshold': readerHideThreshold,
+    'chapterSwipeStartAction': chapterSwipeStartAction,
+    'chapterSwipeEndAction': chapterSwipeEndAction,
     'autoPlayNextEpisode': autoPlayNextEpisode,
     'tvAnimeOnlyOverride': tvAnimeOnlyOverride,
     'tvPlayerStyle': tvPlayerStyle,
@@ -1775,4 +1783,11 @@ enum ColorFilterBlendMode {
   softLight,
   plus,
   exclusion,
+}
+
+enum ChapterSwipeAction {
+  toggleBookmark,
+  toggleRead,
+  download,
+  disabled,
 }

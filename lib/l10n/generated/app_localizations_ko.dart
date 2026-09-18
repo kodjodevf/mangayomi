@@ -3330,4 +3330,25 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get increase => 'Increase';
+
+  @override
+  String get chapter_swipe_actions => 'Chapter swipe actions';
+
+  @override
+  String get chapter_swipe_start => 'Swipe right';
+
+  @override
+  String get chapter_swipe_end => 'Swipe left';
+
+  @override
+  String get chapter_swipe_toggle_bookmark => 'Toggle bookmark';
+
+  @override
+  String get chapter_swipe_toggle_read => 'Toggle read';
+
+  @override
+  String get chapter_swipe_download => 'Download';
+
+  @override
+  String get chapter_swipe_disabled => 'Disabled';
 }

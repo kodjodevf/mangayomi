@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -552,6 +553,21 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     )
                     .set();
                 _invalidateStreams();
+              },
+            ),
+            BottomSelectButton(
+              icon: Icon(Icons.swap_horiz_rounded, color: color),
+              onPressed: () {
+                final List<Manga> bulkMangas = mangaIds
+                    .map((id) => mangaRepository.getById(id))
+                    .whereType<Manga>()
+                    .toList();
+                ref.read(isLongPressedStateProvider.notifier).update(false);
+                ref.read(mangasListStateProvider.notifier).clear();
+                context.push(
+                  '/massMigration',
+                  extra: (widget.itemType, null, bulkMangas),
+                );
               },
             ),
             BottomSelectButton(

@@ -51,12 +51,16 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
     tabController = TabController(length: visibleTabTypes.length, vsync: this);
 
     tabController.addListener(() {
+      onTabChanged(visibleTabTypes[tabController.index]);
       setState(() {
         textEditingController.clear();
         isSearch = false;
       });
     });
   }
+
+  /// Called whenever the active tab type changes.
+  void onTabChanged(ItemType type) {}
 
   @override
   void dispose() {
@@ -96,7 +100,10 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
                     TvPill(
                       label: visibleTabTypes[i].localized(l10n),
                       selected: tabController.index == i,
-                      onTap: () => tabController.animateTo(i),
+                      onTap: () {
+                        tabController.animateTo(i);
+                        onTabChanged(visibleTabTypes[i]);
+                      },
                     ),
                   ],
                 ],
@@ -109,6 +116,7 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
     return TabBar(
       controller: tabController,
       indicatorSize: TabBarIndicatorSize.tab,
+      onTap: (i) => onTabChanged(visibleTabTypes[i]),
       tabs: visibleTabTypes.map((type) {
         return buildTabLabel(type, type.localized(l10n));
       }).toList(),
