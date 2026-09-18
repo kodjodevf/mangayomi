@@ -35,6 +35,8 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/services/chapter_cache.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/utils/double_page_zoom_pan.dart';
@@ -58,7 +60,9 @@ class MangaReaderView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;
     final chapterData = ref.watch(mangaReaderProvider(chapterId));
-
+    if (chapterData.isRefreshing || chapterData.isReloading) {
+      return scaffoldWith(context, const ProgressCenter());
+    }
     return chapterData.when(
       loading: () => scaffoldWith(context, const ProgressCenter()),
       error: (error, _) {
@@ -69,7 +73,14 @@ class MangaReaderView extends ConsumerWidget {
           context,
           ErrorState(
             detail: error.toString(),
-            onRetry: () => ref.invalidate(mangaReaderProvider(chapterId)),
+            onRetry: () async {
+              final chapter = await chapterRepository.findById(chapterId);
+              if (chapter != null) {
+                await ChapterCache().remove(chapter);
+                ref.invalidate(getChapterPagesProvider(chapter: chapter));
+              }
+              ref.invalidate(mangaReaderProvider(chapterId));
+            },
           ),
         );
       },
@@ -535,8 +546,8 @@ class _MangaChapterPageGalleryState
     final orientation = MediaQuery.orientationOf(context);
     final effectivePageMode = doublePageAuto
         ? (orientation == Orientation.landscape
-            ? PageMode.doublePage
-            : PageMode.onePage)
+              ? PageMode.doublePage
+              : PageMode.onePage)
         : _pageMode;
 
     final prevEffectiveMode = _lastEffectivePageMode ?? _pageMode;
@@ -556,10 +567,7 @@ class _MangaChapterPageGalleryState
         if (!mounted) return;
         final mode = ref.read(_currentReaderMode);
         if (mode != null) {
-          navigationService.jumpToPage(
-            index: targetIndex,
-            readerMode: mode,
-          );
+          navigationService.jumpToPage(index: targetIndex, readerMode: mode);
         }
       });
     }
@@ -742,6 +750,21 @@ class _MangaChapterPageGalleryState
                           }
                         }
                       : null,
+                  onRefreshPressed:
+                      (chapter.manga.value!.isLocalArchive ?? false) == false
+                      ? () async {
+                          if (chapter.id != null) {
+                            ref.invalidate(mangaReaderProvider(chapter.id!));
+                          }
+                          await ChapterCache().remove(chapter);
+                          if (context.mounted) {
+                            pushReplacementMangaReaderView(
+                              chapter: chapter,
+                              context: context,
+                            );
+                          }
+                        }
+                      : null,
                 ),
                 ReaderBottomBar(
                   chapter: chapter,
@@ -787,8 +810,8 @@ class _MangaChapterPageGalleryState
                       final currentEffective = _effectivePageMode;
                       final PageMode newPageMode =
                           currentEffective == PageMode.onePage
-                              ? PageMode.doublePage
-                              : PageMode.onePage;
+                          ? PageMode.doublePage
+                          : PageMode.onePage;
                       ref.read(doublePageAutoStateProvider.notifier).set(false);
                       _readerController.setPageMode(newPageMode);
 
@@ -1570,7 +1593,8 @@ class _MangaChapterPageGalleryState
     await WidgetsBinding.instance.endOfFrame;
 
     final isDoubleInNewMode =
-        _effectivePageMode == PageMode.doublePage && !value.isHorizontalContinuous;
+        _effectivePageMode == PageMode.doublePage &&
+        !value.isHorizontalContinuous;
     final int targetIndex = isDoubleInNewMode
         ? _actualToPageViewIndex(actualIndex)
         : actualIndex;
@@ -1655,7 +1679,8 @@ class _MangaChapterPageGalleryState
   PageMode get _effectivePageMode {
     final auto = ref.read(doublePageAutoStateProvider);
     if (auto && mounted) {
-      final orientation = _lastOrientation ??
+      final orientation =
+          _lastOrientation ??
           (context.mounted ? MediaQuery.maybeOrientationOf(context) : null);
       if (orientation != null) {
         return orientation == Orientation.landscape

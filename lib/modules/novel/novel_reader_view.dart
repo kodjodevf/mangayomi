@@ -37,6 +37,7 @@ import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
@@ -153,16 +154,31 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     if (discordReaderSession != null) {
       unawaited(discordRpc?.endReaderSession(discordReaderSession));
     }
+    WakelockPlus.disable();
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    final keepOn = ref.read(keepScreenOnReaderStateProvider);
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       _readingStopwatch.stop();
+      if (keepOn) {
+        WakelockPlus.disable();
+      }
     } else if (state == AppLifecycleState.resumed) {
       _readingStopwatch.start();
+      if (keepOn) {
+        WakelockPlus.enable();
+      }
+    }
+  }
+
+  void _initWakelock() {
+    final keepOn = ref.read(keepScreenOnReaderStateProvider);
+    if (keepOn) {
+      WakelockPlus.enable();
     }
   }
 
@@ -182,6 +198,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     WidgetsBinding.instance.addObserver(this);
     _readingStopwatch.start();
     _autoScroll.addListener(_onAutoScrollChanged);
+    _initWakelock();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.addListener(onScroll);
       final initFontSize = ref.read(novelFontSizeStateProvider);
@@ -376,6 +393,13 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(keepScreenOnReaderStateProvider, (_, next) {
+      if (next) {
+        WakelockPlus.enable();
+      } else {
+        WakelockPlus.disable();
+      }
+    });
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     final doublePageAuto = ref.watch(doublePageAutoStateProvider);
@@ -1322,288 +1346,303 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         // mid-animation (it's animating between 0 and 116), which is a
         // transient overflow, not a real layout bug - clip it during the
         // transition instead of restructuring content that fits fine once
-        // the animation settles.
         child: ClipRect(
-          child: Column(
-            children: [
-              if (_isView)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                    vertical: 2.0,
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundColor: _backgroundColor(context),
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth: 36,
-                            minHeight: 36,
-                          ),
-                          onPressed: hasPrevChapter
-                              ? () {
-                                  pushReplacementMangaReaderView(
-                                    context: context,
-                                    chapter: _readerController.getPrevChapter(),
-                                  );
-                                }
-                              : null,
-                          icon: Icon(
-                            Icons.skip_previous_rounded,
-                            size: 22,
-                            color: hasPrevChapter
-                                ? bodyLargeColor
-                                : bodyLargeColor!.withValues(alpha: 0.35),
-                          ),
-                        ),
+          child: OverflowBox(
+            alignment: Alignment.topCenter,
+            minHeight: 0,
+            maxHeight: 116,
+            child: SizedBox(
+              height: 116,
+              child: Column(
+                children: [
+                  if (_isView)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8.0,
+                        vertical: 2.0,
                       ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Container(
-                          height: 38,
-                          decoration: BoxDecoration(
-                            color: _backgroundColor(context),
-                            borderRadius: BorderRadius.circular(20),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundColor: _backgroundColor(context),
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(
+                                minWidth: 36,
+                                minHeight: 36,
+                              ),
+                              onPressed: hasPrevChapter
+                                  ? () {
+                                      pushReplacementMangaReaderView(
+                                        context: context,
+                                        chapter: _readerController
+                                            .getPrevChapter(),
+                                      );
+                                    }
+                                  : null,
+                              icon: Icon(
+                                Icons.skip_previous_rounded,
+                                size: 22,
+                                color: hasPrevChapter
+                                    ? bodyLargeColor
+                                    : bodyLargeColor!.withValues(alpha: 0.35),
+                              ),
+                            ),
                           ),
-                          child: StreamBuilder(
-                            stream: _rebuildDetail.stream,
-                            builder: (context, asyncSnapshot) {
-                              return Consumer(
-                                builder: (context, ref, child) {
-                                  final scrollPercentage = maxOffset > 0
-                                      ? ((offset / maxOffset) * 100)
-                                            .clamp(0, 100)
-                                            .toInt()
-                                      : 0;
-                                  return Row(
-                                    children: [
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        '$scrollPercentage%',
-                                        style: TextStyle(
-                                          color: bodyLargeColor,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: SliderTheme(
-                                          data: SliderTheme.of(context).copyWith(
-                                            trackHeight: 2.5,
-                                            thumbShape:
-                                                const RoundSliderThumbShape(
-                                                  enabledThumbRadius: 6.0,
-                                                ),
-                                            overlayShape:
-                                                const RoundSliderOverlayShape(
-                                                  overlayRadius: 12.0,
-                                                ),
-                                            activeTrackColor: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
-                                            thumbColor: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Container(
+                              height: 38,
+                              decoration: BoxDecoration(
+                                color: _backgroundColor(context),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: StreamBuilder(
+                                stream: _rebuildDetail.stream,
+                                builder: (context, asyncSnapshot) {
+                                  return Consumer(
+                                    builder: (context, ref, child) {
+                                      final scrollPercentage = maxOffset > 0
+                                          ? ((offset / maxOffset) * 100)
+                                                .clamp(0, 100)
+                                                .toInt()
+                                          : 0;
+                                      return Row(
+                                        children: [
+                                          const SizedBox(width: 12),
+                                          Text(
+                                            '$scrollPercentage%',
+                                            style: TextStyle(
+                                              color: bodyLargeColor,
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                          child: Slider(
-                                            onChanged: (value) {
-                                              if (_scrollController
-                                                  .hasClients) {
-                                                _scrollController.jumpTo(
-                                                  _scrollController
-                                                          .position
-                                                          .maxScrollExtent *
-                                                      value,
-                                                );
-                                              }
-                                            },
-                                            value: (scrollPercentage / 100)
-                                                .clamp(0.0, 1.0),
-                                            min: 0,
-                                            max: 1,
+                                          Expanded(
+                                            child: SliderTheme(
+                                              data: SliderTheme.of(context).copyWith(
+                                                trackHeight: 2.5,
+                                                thumbShape:
+                                                    const RoundSliderThumbShape(
+                                                      enabledThumbRadius: 6.0,
+                                                    ),
+                                                overlayShape:
+                                                    const RoundSliderOverlayShape(
+                                                      overlayRadius: 12.0,
+                                                    ),
+                                                activeTrackColor: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                                thumbColor: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                              ),
+                                              child: Slider(
+                                                onChanged: (value) {
+                                                  if (_scrollController
+                                                      .hasClients) {
+                                                    _scrollController.jumpTo(
+                                                      _scrollController
+                                                              .position
+                                                              .maxScrollExtent *
+                                                          value,
+                                                    );
+                                                  }
+                                                },
+                                                value: (scrollPercentage / 100)
+                                                    .clamp(0.0, 1.0),
+                                                min: 0,
+                                                max: 1,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                      Text(
-                                        '100%',
-                                        style: TextStyle(
-                                          color: bodyLargeColor?.withValues(
-                                            alpha: 0.6,
+                                          Text(
+                                            '100%',
+                                            style: TextStyle(
+                                              color: bodyLargeColor?.withValues(
+                                                alpha: 0.6,
+                                              ),
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                    ],
+                                          const SizedBox(width: 12),
+                                        ],
+                                      );
+                                    },
                                   );
                                 },
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundColor: _backgroundColor(context),
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth: 36,
-                            minHeight: 36,
-                          ),
-                          onPressed: hasNextChapter
-                              ? () {
-                                  pushReplacementMangaReaderView(
-                                    context: context,
-                                    chapter: _readerController.getNextChapter(),
-                                  );
-                                }
-                              : null,
-                          icon: Icon(
-                            Icons.skip_next_rounded,
-                            size: 22,
-                            color: hasNextChapter
-                                ? bodyLargeColor
-                                : bodyLargeColor!.withValues(alpha: 0.35),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              if (_isView)
-                Expanded(
-                  child: Container(
-                    color: _backgroundColor(context),
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        IconButton(
-                          visualDensity: VisualDensity.compact,
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth: 40,
-                            minHeight: 40,
-                          ),
-                          onPressed: () => _showFontSizeBottomSheet(context),
-                          icon: const Icon(Icons.format_size_rounded, size: 22),
-                          tooltip: context.l10n.font_size,
-                        ),
-                        IconButton(
-                          visualDensity: VisualDensity.compact,
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth: 40,
-                            minHeight: 40,
-                          ),
-                          onPressed: () {
-                            final newMode =
-                                effectivePageMode == PageMode.doublePage
-                                ? PageMode.onePage
-                                : PageMode.doublePage;
-                            _readerController.setPageMode(newMode);
-                            setState(() {
-                              _pageMode = newMode;
-                            });
-                          },
-                          icon: Icon(
-                            effectivePageMode == PageMode.doublePage
-                                ? Icons.auto_stories
-                                : Icons.auto_stories_outlined,
-                            size: 22,
-                            color: effectivePageMode == PageMode.doublePage
-                                ? Theme.of(context).colorScheme.primary
-                                : null,
-                          ),
-                          tooltip: effectivePageMode == PageMode.doublePage
-                              ? context.l10n.single_page
-                              : context.l10n.double_page,
-                        ),
-                        if (_ttsSupported)
-                          IconButton(
-                            visualDensity: VisualDensity.compact,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(
-                              minWidth: 40,
-                              minHeight: 40,
+                              ),
                             ),
-                            onPressed: () {
-                              setState(() {
-                                _showTts = !_showTts;
-                              });
-                            },
-                            icon: Icon(
-                              _showTts
-                                  ? Icons.record_voice_over_rounded
-                                  : Icons.record_voice_over_outlined,
-                              size: 22,
-                              color: _showTts
-                                  ? Theme.of(context).colorScheme.primary
+                          ),
+                          const SizedBox(width: 6),
+                          CircleAvatar(
+                            radius: 20,
+                            backgroundColor: _backgroundColor(context),
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(
+                                minWidth: 36,
+                                minHeight: 36,
+                              ),
+                              onPressed: hasNextChapter
+                                  ? () {
+                                      pushReplacementMangaReaderView(
+                                        context: context,
+                                        chapter: _readerController
+                                            .getNextChapter(),
+                                      );
+                                    }
                                   : null,
+                              icon: Icon(
+                                Icons.skip_next_rounded,
+                                size: 22,
+                                color: hasNextChapter
+                                    ? bodyLargeColor
+                                    : bodyLargeColor!.withValues(alpha: 0.35),
+                              ),
                             ),
-                            tooltip: context.l10n.tts,
                           ),
-                        IconButton(
-                          visualDensity: VisualDensity.compact,
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(
-                            minWidth: 40,
-                            minHeight: 40,
-                          ),
-                          onPressed: () async {
-                            bool autoScrollAlreadyFalse =
-                                _autoScroll.value == false;
-                            if (!autoScrollAlreadyFalse) {
-                              _autoScroll.value = false;
-                            }
-                            await customDraggableTabBar(
-                              tabs: [
-                                Tab(text: context.l10n.reader),
-                                Tab(text: context.l10n.general),
-                                if (_ttsSupported) Tab(text: context.l10n.tts),
-                              ],
-                              children: [
-                                ReaderSettingsTab(
-                                  readerController: _readerController,
-                                  currentPageMode: effectivePageMode,
-                                  onPageModeChanged: (newMode) {
-                                    setState(() {
-                                      _pageMode = newMode;
-                                    });
-                                  },
-                                ),
-                                GeneralSettingsTab(
-                                  autoScrollPage: _autoScrollPage,
-                                  autoScroll: _autoScroll,
-                                  readerController: _readerController,
-                                  pageOffset: _pageOffset,
-                                ),
-                                if (_ttsSupported) const TtsSettingsTab(),
-                              ],
-                              context: context,
-                              vsync: this,
-                            );
-                            if (!autoScrollAlreadyFalse || _autoScroll.value) {
-                              if (_autoScrollPage.value &&
-                                  _isContinuousMode()) {
-                                _autoScroll.value = true;
-                              }
-                            }
-                          },
-                          icon: const Icon(Icons.tune_rounded),
-                          tooltip: context.l10n.settings,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ),
-            ],
+                  if (_isView)
+                    Expanded(
+                      child: Container(
+                        color: _backgroundColor(context),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            IconButton(
+                              visualDensity: VisualDensity.compact,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(
+                                minWidth: 40,
+                                minHeight: 40,
+                              ),
+                              onPressed: () =>
+                                  _showFontSizeBottomSheet(context),
+                              icon: const Icon(
+                                Icons.format_size_rounded,
+                                size: 22,
+                              ),
+                              tooltip: context.l10n.font_size,
+                            ),
+                            IconButton(
+                              visualDensity: VisualDensity.compact,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(
+                                minWidth: 40,
+                                minHeight: 40,
+                              ),
+                              onPressed: () {
+                                final newMode =
+                                    effectivePageMode == PageMode.doublePage
+                                    ? PageMode.onePage
+                                    : PageMode.doublePage;
+                                _readerController.setPageMode(newMode);
+                                setState(() {
+                                  _pageMode = newMode;
+                                });
+                              },
+                              icon: Icon(
+                                effectivePageMode == PageMode.doublePage
+                                    ? Icons.auto_stories
+                                    : Icons.auto_stories_outlined,
+                                size: 22,
+                                color: effectivePageMode == PageMode.doublePage
+                                    ? Theme.of(context).colorScheme.primary
+                                    : null,
+                              ),
+                              tooltip: effectivePageMode == PageMode.doublePage
+                                  ? context.l10n.single_page
+                                  : context.l10n.double_page,
+                            ),
+                            if (_ttsSupported)
+                              IconButton(
+                                visualDensity: VisualDensity.compact,
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(
+                                  minWidth: 40,
+                                  minHeight: 40,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _showTts = !_showTts;
+                                  });
+                                },
+                                icon: Icon(
+                                  _showTts
+                                      ? Icons.record_voice_over_rounded
+                                      : Icons.record_voice_over_outlined,
+                                  size: 22,
+                                  color: _showTts
+                                      ? Theme.of(context).colorScheme.primary
+                                      : null,
+                                ),
+                                tooltip: context.l10n.tts,
+                              ),
+                            IconButton(
+                              visualDensity: VisualDensity.compact,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(
+                                minWidth: 40,
+                                minHeight: 40,
+                              ),
+                              onPressed: () async {
+                                bool autoScrollAlreadyFalse =
+                                    _autoScroll.value == false;
+                                if (!autoScrollAlreadyFalse) {
+                                  _autoScroll.value = false;
+                                }
+                                await customDraggableTabBar(
+                                  tabs: [
+                                    Tab(text: context.l10n.reader),
+                                    Tab(text: context.l10n.general),
+                                    if (_ttsSupported)
+                                      Tab(text: context.l10n.tts),
+                                  ],
+                                  children: [
+                                    ReaderSettingsTab(
+                                      readerController: _readerController,
+                                      currentPageMode: effectivePageMode,
+                                      onPageModeChanged: (newMode) {
+                                        setState(() {
+                                          _pageMode = newMode;
+                                        });
+                                      },
+                                    ),
+                                    GeneralSettingsTab(
+                                      autoScrollPage: _autoScrollPage,
+                                      autoScroll: _autoScroll,
+                                      readerController: _readerController,
+                                      pageOffset: _pageOffset,
+                                    ),
+                                    if (_ttsSupported) const TtsSettingsTab(),
+                                  ],
+                                  context: context,
+                                  vsync: this,
+                                );
+                                if (!autoScrollAlreadyFalse ||
+                                    _autoScroll.value) {
+                                  if (_autoScrollPage.value &&
+                                      _isContinuousMode()) {
+                                    _autoScroll.value = true;
+                                  }
+                                }
+                              },
+                              icon: const Icon(Icons.tune_rounded),
+                              tooltip: context.l10n.settings,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

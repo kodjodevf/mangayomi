@@ -92,8 +92,10 @@ class MassMigrationResolvedItem {
 List<MassMigrationSourceGroup> buildMassMigrationSourceGroups({
   required ItemType itemType,
   Manga? prioritizedManga,
+  List<Manga>? selectedMangas,
 }) {
-  final libraryItems = mangaRepository.getFavoritesByItemType(itemType);
+  final libraryItems =
+      selectedMangas ?? mangaRepository.getFavoritesByItemType(itemType);
 
   final grouped = <String, List<Manga>>{};
   for (final manga in libraryItems) {

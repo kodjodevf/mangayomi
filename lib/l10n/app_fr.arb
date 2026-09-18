@@ -1385,5 +1385,17 @@
   "theme_black": "Noir",
   "theme_sepia": "Sépia",
   "decrease": "Diminuer",
-  "increase": "Augmenter"
+  "increase": "Augmenter",
+  "chapter_swipe_actions": "Actions de glissement de chapitre",
+  "chapter_swipe_start": "Glisser vers la droite",
+  "chapter_swipe_end": "Glisser vers la gauche",
+  "chapter_swipe_toggle_bookmark": "Basculer le signet",
+  "chapter_swipe_toggle_read": "Marquer lu/non lu",
+  "chapter_swipe_download": "Télécharger",
+  "chapter_swipe_disabled": "Désactivé",
+  "double_tap_search_hint": "Appuyez deux fois pour rechercher tous les {type}",
+  "show_nav_double_tap_tooltip": "Afficher l'astuce de recherche par double appui",
+  "show_nav_double_tap_tooltip_subtitle": "Afficher une info-bulle sur les onglets Manga/Anime/Roman expliquant qu'un double appui ouvre la recherche globale.",
+  "already_in_library": "\"{title}\" est déjà dans votre bibliothèque via {source}.",
+  "add_anyway": "Ajouter quand même"
 }

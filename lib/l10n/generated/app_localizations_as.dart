@@ -1274,23 +1274,23 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String double_tap_search_hint(Object type) {
-    return 'Double-tap to search all $type';
+    return 'সকলো $type সন্ধান কৰিবলৈ দুবাৰ স্পৰ্শ কৰক';
   }
 
   @override
-  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+  String get show_nav_double_tap_tooltip => 'ডাবল-টেপ সন্ধানৰ ইংগিত দেখুৱাওক';
 
   @override
   String get show_nav_double_tap_tooltip_subtitle =>
-      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+      'মাংগা/এনিমে/উপন্যাস নেভিগেচনত এটা টুলটিপ দেখুৱাওক য\'ত ব্যাখ্যা কৰা হৈছে যে দুবাৰ স্পৰ্শ কৰিলে বিশ্বজনীন সন্ধান খোল খাব।';
 
   @override
   String already_in_library(Object source, Object title) {
-    return '\"$title\" is already in your library via $source.';
+    return '\"$title\" ইতিমধ্যে $sourceৰ জৰিয়তে আপোনাৰ সংগ্ৰহালয়ত আছে।';
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => 'তথাপিও যোগ কৰক';
 
   @override
   String get langauage => 'ভাষা';
@@ -2761,11 +2761,11 @@ class AppLocalizationsAs extends AppLocalizations {
       'দ্বি-পৃষ্ঠা ম\'ডত প্ৰথম পৃষ্ঠাটো অকলে প্ৰদৰ্শন কৰক';
 
   @override
-  String get double_page_auto => 'Automatic double page';
+  String get double_page_auto => 'স্বয়ংক্ৰিয় দুটা পৃষ্ঠা';
 
   @override
   String get double_page_auto_subtitle =>
-      'Switch to double page mode automatically in landscape';
+      'লেণ্ডস্কেপ ম\'ডত স্বয়ংক্ৰিয়ভাৱে দুটা পৃষ্ঠাৰ ম\'ডলৈ সলনি কৰক';
 
   @override
   String get landscape_zoom => 'Automatic landscape zoom';
@@ -3371,35 +3371,56 @@ class AppLocalizationsAs extends AppLocalizations {
       'ম\'বাইল ডাটা ব্যৱহাৰ কৰাৰ সময়ত নিৰ্ধাৰিত আপডেট বাদ দিয়ক।';
 
   @override
-  String get padding => 'Padding';
+  String get padding => 'পেডিং';
 
   @override
-  String get page_mode => 'Page mode';
+  String get page_mode => 'পৃষ্ঠা ম\'ড';
 
   @override
-  String get single_page => 'Single page';
+  String get single_page => 'একক পৃষ্ঠা';
 
   @override
-  String get double_page => 'Double page';
+  String get double_page => 'দুটা পৃষ্ঠা';
 
   @override
-  String get speed => 'Speed';
+  String get speed => 'গতি';
 
   @override
-  String get theme_dark => 'Dark';
+  String get theme_dark => 'ডাঠ';
 
   @override
-  String get theme_light => 'Light';
+  String get theme_light => 'উজ্জ্বল';
 
   @override
-  String get theme_black => 'Black';
+  String get theme_black => 'ক\'লা';
 
   @override
-  String get theme_sepia => 'Sepia';
+  String get theme_sepia => 'চেপিয়া';
 
   @override
-  String get decrease => 'Decrease';
+  String get decrease => 'হ্ৰাস কৰক';
 
   @override
-  String get increase => 'Increase';
+  String get increase => 'বৃদ্ধি কৰক';
+
+  @override
+  String get chapter_swipe_actions => 'অধ্যায় স্বাইপ কাৰ্য্য';
+
+  @override
+  String get chapter_swipe_start => 'সোঁফালে স্বাইপ কৰক';
+
+  @override
+  String get chapter_swipe_end => 'বাওঁফালে স্বাইপ কৰক';
+
+  @override
+  String get chapter_swipe_toggle_bookmark => 'বুকমাৰ্ক টগল কৰক';
+
+  @override
+  String get chapter_swipe_toggle_read => 'পঢ়া হৈছে বুলি টগল কৰক';
+
+  @override
+  String get chapter_swipe_download => 'ডাউনল\'ড';
+
+  @override
+  String get chapter_swipe_disabled => 'অক্ষম কৰা হৈছে';
 }

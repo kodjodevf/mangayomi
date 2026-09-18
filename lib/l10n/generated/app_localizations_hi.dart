@@ -1272,23 +1272,23 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String double_tap_search_hint(Object type) {
-    return 'Double-tap to search all $type';
+    return 'सभी $type खोजने के लिए दो बार टैप करें';
   }
 
   @override
-  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+  String get show_nav_double_tap_tooltip => 'डबल-टैप खोज संकेत दिखाएं';
 
   @override
   String get show_nav_double_tap_tooltip_subtitle =>
-      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+      'मंगा/एनीमे/उपन्यास नेविगेशन पर एक टूलटिप दिखाएं जिसमें बताया गया हो कि डबल-टैप करने से ग्लोबल खोज खुलती है।';
 
   @override
   String already_in_library(Object source, Object title) {
-    return '\"$title\" is already in your library via $source.';
+    return '\"$title\" पहले से ही $source के माध्यम से आपकी लाइब्रेरी में है।';
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => 'फिर भी जोड़ें';
 
   @override
   String get langauage => 'भाषा';
@@ -2762,11 +2762,11 @@ class AppLocalizationsHi extends AppLocalizations {
       'दोहरे पृष्ठ मोड में पहले पृष्ठ को अकेले प्रदर्शित करें';
 
   @override
-  String get double_page_auto => 'Automatic double page';
+  String get double_page_auto => 'स्वचालित दोहरा पृष्ठ';
 
   @override
   String get double_page_auto_subtitle =>
-      'Switch to double page mode automatically in landscape';
+      'लैंडस्केप में स्वचालित रूप से दोहरे पृष्ठ मोड पर स्विच करें';
 
   @override
   String get landscape_zoom => 'स्वचालित लैंडस्केप ज़ूम';
@@ -3376,35 +3376,56 @@ class AppLocalizationsHi extends AppLocalizations {
       'मोबाइल डेटा पर होने पर निर्धारित अपडेट छोड़ें।';
 
   @override
-  String get padding => 'Padding';
+  String get padding => 'पैडिंग';
 
   @override
-  String get page_mode => 'Page mode';
+  String get page_mode => 'पृष्ठ मोड';
 
   @override
-  String get single_page => 'Single page';
+  String get single_page => 'एकल पृष्ठ';
 
   @override
-  String get double_page => 'Double page';
+  String get double_page => 'दोहरा पृष्ठ';
 
   @override
-  String get speed => 'Speed';
+  String get speed => 'गति';
 
   @override
-  String get theme_dark => 'Dark';
+  String get theme_dark => 'गहरा';
 
   @override
-  String get theme_light => 'Light';
+  String get theme_light => 'हल्का';
 
   @override
-  String get theme_black => 'Black';
+  String get theme_black => 'काला';
 
   @override
-  String get theme_sepia => 'Sepia';
+  String get theme_sepia => 'सेपिया';
 
   @override
-  String get decrease => 'Decrease';
+  String get decrease => 'घटाएं';
 
   @override
-  String get increase => 'Increase';
+  String get increase => 'बढ़ाएं';
+
+  @override
+  String get chapter_swipe_actions => 'अध्याय स्वाइप क्रियाएं';
+
+  @override
+  String get chapter_swipe_start => 'दाएं स्वाइप करें';
+
+  @override
+  String get chapter_swipe_end => 'बाएं स्वाइप करें';
+
+  @override
+  String get chapter_swipe_toggle_bookmark => 'बुकमार्क टॉगल करें';
+
+  @override
+  String get chapter_swipe_toggle_read => 'पढ़ा गया टॉगल करें';
+
+  @override
+  String get chapter_swipe_download => 'डाउनलोड करें';
+
+  @override
+  String get chapter_swipe_disabled => 'अक्षम';
 }

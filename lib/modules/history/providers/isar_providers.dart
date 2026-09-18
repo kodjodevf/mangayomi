@@ -16,6 +16,14 @@ Stream<List<History>> getAllHistoryStream(
   yield* historyRepository.watchByItemTypeAndSearch(itemType, search);
 }
 
+@Riverpod(keepAlive: true)
+class ActiveHistoryItemTypeState extends _$ActiveHistoryItemTypeState {
+  @override
+  ItemType build() => ItemType.manga;
+
+  void set(ItemType type) => state = type;
+}
+
 @riverpod
 Stream<List<Update>> getAllUpdateStream(
   Ref ref, {

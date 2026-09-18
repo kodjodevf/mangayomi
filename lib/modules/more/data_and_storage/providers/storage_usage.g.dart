@@ -43,7 +43,7 @@ final class TotalChapterCacheSizeStateProvider
 }
 
 String _$totalChapterCacheSizeStateHash() =>
-    r'a658ed7a11777a44f665c6b0ecd374231664de63';
+    r'6152149053518123c6a420693fac58d8d0981c5b';
 
 abstract class _$TotalChapterCacheSizeState extends $Notifier<String> {
   String build();

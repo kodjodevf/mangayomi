@@ -1252,23 +1252,23 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String double_tap_search_hint(Object type) {
-    return 'Double-tap to search all $type';
+    return '모든 $type 검색하려면 두 번 탭하세요';
   }
 
   @override
-  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+  String get show_nav_double_tap_tooltip => '더블 탭 검색 힌트 표시';
 
   @override
   String get show_nav_double_tap_tooltip_subtitle =>
-      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+      '만화/애니/소설 탭에서 더블 탭하면 전체 검색이 열린다는 툴팁을 표시합니다.';
 
   @override
   String already_in_library(Object source, Object title) {
-    return '\"$title\" is already in your library via $source.';
+    return '\"$title\"은(는) 이미 $source을(를) 통해 보관함에 있습니다.';
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => '계속 추가';
 
   @override
   String get langauage => '언어';
@@ -2698,11 +2698,10 @@ class AppLocalizationsKo extends AppLocalizations {
       '두 페이지 모드에서 첫 번째 페이지만 단일 페이지로 표시합니다';
 
   @override
-  String get double_page_auto => 'Automatic double page';
+  String get double_page_auto => '자동 두 쪽 보기';
 
   @override
-  String get double_page_auto_subtitle =>
-      'Switch to double page mode automatically in landscape';
+  String get double_page_auto_subtitle => '가로 모드에서 자동으로 두 쪽 보기 모드로 전환';
 
   @override
   String get landscape_zoom => '자동 가로 확대';
@@ -3305,35 +3304,56 @@ class AppLocalizationsKo extends AppLocalizations {
       '모바일 데이터 사용 중에는 예약된 업데이트를 건너뜁니다.';
 
   @override
-  String get padding => 'Padding';
+  String get padding => '여백';
 
   @override
-  String get page_mode => 'Page mode';
+  String get page_mode => '페이지 모드';
 
   @override
-  String get single_page => 'Single page';
+  String get single_page => '한 쪽 보기';
 
   @override
-  String get double_page => 'Double page';
+  String get double_page => '두 쪽 보기';
 
   @override
-  String get speed => 'Speed';
+  String get speed => '속도';
 
   @override
-  String get theme_dark => 'Dark';
+  String get theme_dark => '다크';
 
   @override
-  String get theme_light => 'Light';
+  String get theme_light => '라이트';
 
   @override
-  String get theme_black => 'Black';
+  String get theme_black => '블랙';
 
   @override
-  String get theme_sepia => 'Sepia';
+  String get theme_sepia => '세피아';
 
   @override
-  String get decrease => 'Decrease';
+  String get decrease => '감소';
 
   @override
-  String get increase => 'Increase';
+  String get increase => '증가';
+
+  @override
+  String get chapter_swipe_actions => '화 스와이프 동작';
+
+  @override
+  String get chapter_swipe_start => '오른쪽으로 밀기';
+
+  @override
+  String get chapter_swipe_end => '왼쪽으로 밀기';
+
+  @override
+  String get chapter_swipe_toggle_bookmark => '북마크 전환';
+
+  @override
+  String get chapter_swipe_toggle_read => '읽음 전환';
+
+  @override
+  String get chapter_swipe_download => '다운로드';
+
+  @override
+  String get chapter_swipe_disabled => '사용 안 함';
 }

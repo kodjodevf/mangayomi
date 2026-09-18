@@ -47,6 +47,9 @@ class ReaderAppBar extends ConsumerWidget {
   /// Callback when web view button is pressed
   final VoidCallback? onWebViewPressed;
 
+  /// Callback when refresh button is pressed
+  final VoidCallback? onRefreshPressed;
+
   /// Background color getter
   final Color Function(BuildContext) backgroundColor;
 
@@ -60,6 +63,7 @@ class ReaderAppBar extends ConsumerWidget {
     required this.onBackPressed,
     required this.onBookmarkPressed,
     this.onWebViewPressed,
+    this.onRefreshPressed,
     required this.backgroundColor,
   });
 
@@ -133,6 +137,13 @@ class ReaderAppBar extends ConsumerWidget {
           isBookmarked ? Icons.bookmark : Icons.bookmark_border_outlined,
         ),
       ),
+
+      // Refresh button (only for non-local sources)
+      if (!isLocalArchive && onRefreshPressed != null)
+        IconButton(
+          onPressed: onRefreshPressed,
+          icon: const Icon(Icons.refresh),
+        ),
 
       // Web view button (only for non-local sources)
       if (!isLocalArchive && onWebViewPressed != null)

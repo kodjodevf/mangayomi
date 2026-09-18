@@ -71,8 +71,6 @@ class Settings {
   /// so an existing library never sees a welcome screen.
   bool? onboardingCompleted;
 
-  List<ChapterPageurls>? chapterPageUrlsList;
-
   bool? showPagesNumber;
 
   List<ChapterPageIndex>? chapterPageIndexList;
@@ -439,6 +437,8 @@ class Settings {
   bool? webtoonDisableZoomOut;
   bool? webtoonDoubleTapZoomEnabled;
   int? readerHideThreshold;
+  int? chapterSwipeStartAction;
+  int? chapterSwipeEndAction;
 
   // Android TV preferences (null = follow the default). See #729.
   bool? autoPlayNextEpisode;
@@ -479,7 +479,6 @@ class Settings {
     this.followSystemTheme = false,
     this.incognitoMode = false,
     this.onboardingCompleted,
-    this.chapterPageUrlsList,
     this.showPagesNumber = true,
     this.chapterPageIndexList,
     this.userAgent = defaultUserAgent,
@@ -657,6 +656,8 @@ class Settings {
     this.webtoonDisableZoomOut = false,
     this.webtoonDoubleTapZoomEnabled = true,
     this.readerHideThreshold = 1,
+    this.chapterSwipeStartAction = 0,
+    this.chapterSwipeEndAction = 1,
     this.autoPlayNextEpisode,
     this.tvAnimeOnlyOverride,
     this.tvPlayerStyle,
@@ -705,11 +706,6 @@ class Settings {
     if (json['chapterPageIndexList'] != null) {
       chapterPageIndexList = (json['chapterPageIndexList'] as List)
           .map((e) => ChapterPageIndex.fromJson(e))
-          .toList();
-    }
-    if (json['chapterPageUrlsList'] != null) {
-      chapterPageUrlsList = (json['chapterPageUrlsList'] as List)
-          .map((e) => ChapterPageurls.fromJson(e))
           .toList();
     }
     enableLogs = json['enableLogs'];
@@ -893,8 +889,7 @@ class Settings {
       novelReaderPadding = json['novelReaderPadding'];
     }
     if (json['novelReaderLineHeight'] != null) {
-      novelReaderLineHeight = (json['novelReaderLineHeight'] as num)
-          .toDouble();
+      novelReaderLineHeight = (json['novelReaderLineHeight'] as num).toDouble();
     }
     if (json['novelFontFamily'] != null) {
       novelFontFamily = json['novelFontFamily'];
@@ -1009,6 +1004,8 @@ class Settings {
     webtoonDisableZoomOut = json['webtoonDisableZoomOut'];
     webtoonDoubleTapZoomEnabled = json['webtoonDoubleTapZoomEnabled'];
     readerHideThreshold = json['readerHideThreshold'];
+    chapterSwipeStartAction = json['chapterSwipeStartAction'] ?? 0;
+    chapterSwipeEndAction = json['chapterSwipeEndAction'] ?? 1;
     autoPlayNextEpisode = json['autoPlayNextEpisode'];
     tvAnimeOnlyOverride = json['tvAnimeOnlyOverride'];
     tvPlayerStyle = json['tvPlayerStyle'];
@@ -1047,7 +1044,6 @@ class Settings {
     'chapterPageIndexList': chapterPageIndexList
         ?.map((v) => v.toJson())
         .toList(),
-    'chapterPageUrlsList': chapterPageUrlsList?.map((v) => v.toJson()).toList(),
     'enableLogs': enableLogs,
     'checkForAppUpdates': checkForAppUpdates,
     'checkForExtensionUpdates': checkForExtensionUpdates,
@@ -1248,6 +1244,8 @@ class Settings {
     'webtoonDisableZoomOut': webtoonDisableZoomOut,
     'webtoonDoubleTapZoomEnabled': webtoonDoubleTapZoomEnabled,
     'readerHideThreshold': readerHideThreshold,
+    'chapterSwipeStartAction': chapterSwipeStartAction,
+    'chapterSwipeEndAction': chapterSwipeEndAction,
     'autoPlayNextEpisode': autoPlayNextEpisode,
     'tvAnimeOnlyOverride': tvAnimeOnlyOverride,
     'tvPlayerStyle': tvPlayerStyle,
@@ -1781,3 +1779,5 @@ enum ColorFilterBlendMode {
   plus,
   exclusion,
 }
+
+enum ChapterSwipeAction { toggleBookmark, toggleRead, download, disabled }

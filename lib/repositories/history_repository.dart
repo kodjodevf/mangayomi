@@ -23,6 +23,28 @@ class HistoryRepository {
   History? findByChapterId(int? chapterId) =>
       isar.historys.filter().chapterIdEqualTo(chapterId).findFirstSync();
 
+  History? getLatestHistory([ItemType? itemType]) {
+    if (itemType == null) {
+      return isar.historys
+          .filter()
+          .chapterIdIsNotNull()
+          .sortByDateDesc()
+          .findFirstSync();
+    }
+    return isar.historys
+        .filter()
+        .chapterIdIsNotNull()
+        .and()
+        .group(
+          (q) => q
+              .itemTypeEqualTo(itemType)
+              .or()
+              .chapter((q) => q.manga((q) => q.itemTypeEqualTo(itemType))),
+        )
+        .sortByDateDesc()
+        .findFirstSync();
+  }
+
   List<History> getAll() => isar.historys.filter().idIsNotNull().findAllSync();
 
   List<History> getChangedSince(int since) => isar.historys

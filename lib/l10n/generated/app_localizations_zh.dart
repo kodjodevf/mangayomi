@@ -1245,23 +1245,23 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String double_tap_search_hint(Object type) {
-    return 'Double-tap to search all $type';
+    return '双击以搜索全部 $type';
   }
 
   @override
-  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+  String get show_nav_double_tap_tooltip => '显示双击搜索提示';
 
   @override
   String get show_nav_double_tap_tooltip_subtitle =>
-      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+      '在漫画/动画/小说导航栏上显示提示，说明双击可打开全局搜索。';
 
   @override
   String already_in_library(Object source, Object title) {
-    return '\"$title\" is already in your library via $source.';
+    return '\"$title\" 已通过 $source 添加到您的书架中。';
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => '仍然添加';
 
   @override
   String get langauage => '语言';
@@ -2667,11 +2667,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get double_page_single_first_page_subtitle => '在双页模式下单页显示第一页（封面）';
 
   @override
-  String get double_page_auto => 'Automatic double page';
+  String get double_page_auto => '自动双页';
 
   @override
-  String get double_page_auto_subtitle =>
-      'Switch to double page mode automatically in landscape';
+  String get double_page_auto_subtitle => '横屏时自动切换到双页模式';
 
   @override
   String get landscape_zoom => '横屏自动缩放';
@@ -3245,35 +3244,56 @@ class AppLocalizationsZh extends AppLocalizations {
   String get auto_library_update_wifi_only_subtitle => '使用移动数据时跳过计划更新。';
 
   @override
-  String get padding => 'Padding';
+  String get padding => '内边距';
 
   @override
-  String get page_mode => 'Page mode';
+  String get page_mode => '翻页模式';
 
   @override
-  String get single_page => 'Single page';
+  String get single_page => '单页';
 
   @override
-  String get double_page => 'Double page';
+  String get double_page => '双页';
 
   @override
-  String get speed => 'Speed';
+  String get speed => '速度';
 
   @override
-  String get theme_dark => 'Dark';
+  String get theme_dark => '暗色';
 
   @override
-  String get theme_light => 'Light';
+  String get theme_light => '浅色';
 
   @override
-  String get theme_black => 'Black';
+  String get theme_black => '纯黑';
 
   @override
-  String get theme_sepia => 'Sepia';
+  String get theme_sepia => '复古';
 
   @override
-  String get decrease => 'Decrease';
+  String get decrease => '减少';
 
   @override
-  String get increase => 'Increase';
+  String get increase => '增加';
+
+  @override
+  String get chapter_swipe_actions => '章节滑动操作';
+
+  @override
+  String get chapter_swipe_start => '向右滑动';
+
+  @override
+  String get chapter_swipe_end => '向左滑动';
+
+  @override
+  String get chapter_swipe_toggle_bookmark => '切换书签';
+
+  @override
+  String get chapter_swipe_toggle_read => '切换已读状态';
+
+  @override
+  String get chapter_swipe_download => '下载';
+
+  @override
+  String get chapter_swipe_disabled => '已禁用';
 }

@@ -1270,23 +1270,24 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String double_tap_search_hint(Object type) {
-    return 'Double-tap to search all $type';
+    return 'Tüm $type aramak için çift dokunun';
   }
 
   @override
-  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+  String get show_nav_double_tap_tooltip =>
+      'Çift dokunarak arama ipucunu göster';
 
   @override
   String get show_nav_double_tap_tooltip_subtitle =>
-      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+      'Manga/Anime/Roman sekmelerinde çift dokunmanın Genel Aramayı açtığını açıklayan bir ipucu göster.';
 
   @override
   String already_in_library(Object source, Object title) {
-    return '\"$title\" is already in your library via $source.';
+    return '\"$title\" zaten $source üzerinden kütüphanenizde var.';
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => 'Yine de Ekle';
 
   @override
   String get langauage => 'Dil';
@@ -2772,11 +2773,11 @@ class AppLocalizationsTr extends AppLocalizations {
       'Çift sayfa modunda ilk sayfayı tek başına göster';
 
   @override
-  String get double_page_auto => 'Automatic double page';
+  String get double_page_auto => 'Otomatik çift sayfa';
 
   @override
   String get double_page_auto_subtitle =>
-      'Switch to double page mode automatically in landscape';
+      'Yatay modda otomatik olarak çift sayfa moduna geç';
 
   @override
   String get landscape_zoom => 'Otomatik yatay yakınlaştırma';
@@ -3384,35 +3385,56 @@ class AppLocalizationsTr extends AppLocalizations {
       'Hücresel verideyken planlanan güncellemeyi atlayın.';
 
   @override
-  String get padding => 'Padding';
+  String get padding => 'Kenar Boşluğu';
 
   @override
-  String get page_mode => 'Page mode';
+  String get page_mode => 'Sayfa modu';
 
   @override
-  String get single_page => 'Single page';
+  String get single_page => 'Tek sayfa';
 
   @override
-  String get double_page => 'Double page';
+  String get double_page => 'Çift sayfa';
 
   @override
-  String get speed => 'Speed';
+  String get speed => 'Hız';
 
   @override
-  String get theme_dark => 'Dark';
+  String get theme_dark => 'Koyu';
 
   @override
-  String get theme_light => 'Light';
+  String get theme_light => 'Açık';
 
   @override
-  String get theme_black => 'Black';
+  String get theme_black => 'Siyah';
 
   @override
-  String get theme_sepia => 'Sepia';
+  String get theme_sepia => 'Sepya';
 
   @override
-  String get decrease => 'Decrease';
+  String get decrease => 'Azalt';
 
   @override
-  String get increase => 'Increase';
+  String get increase => 'Artır';
+
+  @override
+  String get chapter_swipe_actions => 'Bölüm kaydırma eylemleri';
+
+  @override
+  String get chapter_swipe_start => 'Sağa kaydır';
+
+  @override
+  String get chapter_swipe_end => 'Sola kaydır';
+
+  @override
+  String get chapter_swipe_toggle_bookmark => 'Yer işaretini aç/kapat';
+
+  @override
+  String get chapter_swipe_toggle_read => 'Okundu durumunu değiştir';
+
+  @override
+  String get chapter_swipe_download => 'İndir';
+
+  @override
+  String get chapter_swipe_disabled => 'Devre dışı';
 }

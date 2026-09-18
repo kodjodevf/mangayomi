@@ -7,8 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/modules/history/providers/isar_providers.dart';
+import 'package:mangayomi/repositories/history_repository.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/modules/more/about/providers/download_file_screen.dart';
@@ -52,6 +57,28 @@ ItemType? _itemTypeForNavDest(String dest) => switch (dest) {
 /// How close together two taps on the same nav destination need to land to
 /// count as a double-tap/double-click, rather than two separate single taps.
 const _navDoubleTapWindow = Duration(milliseconds: 450);
+
+/// Resumes the most recently read/watched entry from history (optionally filtered by [itemType]),
+/// or shows a snackbar if none found.
+Future<void> _resumeLatestHistory(
+  BuildContext context, [
+  ItemType? itemType,
+]) async {
+  // When an itemType is specified (e.g. from the active tab), strictly query that itemType.
+  final history = itemType != null
+      ? historyRepository.getLatestHistory(itemType)
+      : historyRepository.getLatestHistory();
+  if (history != null && history.chapterId != null) {
+    final chapter = chapterRepository.findByIdSync(history.chapterId!);
+    if (chapter != null && chapter.manga.value != null) {
+      await pushMangaReaderView(context: context, chapter: chapter);
+      return;
+    }
+  }
+  if (context.mounted) {
+    botToast(context.l10n.no_next_chapter, second: 2);
+  }
+}
 
 /// Whether tapping [current] counts as a double-tap on [last], given when
 /// [last] landed. Shared by the desktop rail and mobile bottom bar, which
@@ -389,6 +416,18 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                     _lastMobileNavTapTime,
                                     now,
                                   );
+                                  if (isDoubleTap &&
+                                      destination == '/history') {
+                                    _lastMobileNavDest = null;
+                                    _lastMobileNavTapTime = null;
+                                    final activeType = ref.read(
+                                      activeHistoryItemTypeStateProvider,
+                                    );
+                                    unawaited(
+                                      _resumeLatestHistory(context, activeType),
+                                    );
+                                    return;
+                                  }
                                   final itemType = _itemTypeForNavDest(
                                     destination,
                                   );
@@ -850,7 +889,16 @@ class _TabletLayoutState extends State<_TabletLayout> {
       now,
     );
 
-    final itemType = _itemTypeForNavDest(widget.dest[newIndex]);
+    final dest = widget.dest[newIndex];
+    if (isDoubleTap && dest == '/history') {
+      _lastNavTapIndex = null;
+      _lastNavTapTime = null;
+      final activeType = widget.ref.read(activeHistoryItemTypeStateProvider);
+      unawaited(_resumeLatestHistory(context, activeType));
+      return;
+    }
+
+    final itemType = _itemTypeForNavDest(dest);
     if (isDoubleTap && itemType != null) {
       _lastNavTapIndex = null;
       _lastNavTapTime = null;

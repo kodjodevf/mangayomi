@@ -1274,23 +1274,24 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String double_tap_search_hint(Object type) {
-    return 'Double-tap to search all $type';
+    return 'Ketuk dua kali untuk mencari semua $type';
   }
 
   @override
-  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+  String get show_nav_double_tap_tooltip =>
+      'Tampilkan petunjuk pencarian ketuk dua kali';
 
   @override
   String get show_nav_double_tap_tooltip_subtitle =>
-      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+      'Tampilkan tooltip pada navigasi Manga/Anime/Novel yang menjelaskan bahwa mengetuk dua kali akan membuka Pencarian Global.';
 
   @override
   String already_in_library(Object source, Object title) {
-    return '\"$title\" is already in your library via $source.';
+    return '\"$title\" sudah ada di pustaka Anda melalui $source.';
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => 'Tetap Tambahkan';
 
   @override
   String get langauage => 'Bahasa';
@@ -2764,11 +2765,11 @@ class AppLocalizationsId extends AppLocalizations {
       'Tampilkan halaman pertama sendirian dalam mode halaman ganda';
 
   @override
-  String get double_page_auto => 'Automatic double page';
+  String get double_page_auto => 'Halaman ganda otomatis';
 
   @override
   String get double_page_auto_subtitle =>
-      'Switch to double page mode automatically in landscape';
+      'Beralih ke mode halaman ganda secara otomatis saat lanskap';
 
   @override
   String get landscape_zoom => 'Zoom lanskap otomatis';
@@ -3382,35 +3383,56 @@ class AppLocalizationsId extends AppLocalizations {
       'Lewati pembaruan terjadwal saat menggunakan data seluler.';
 
   @override
-  String get padding => 'Padding';
+  String get padding => 'Bantalan';
 
   @override
-  String get page_mode => 'Page mode';
+  String get page_mode => 'Mode halaman';
 
   @override
-  String get single_page => 'Single page';
+  String get single_page => 'Halaman tunggal';
 
   @override
-  String get double_page => 'Double page';
+  String get double_page => 'Halaman ganda';
 
   @override
-  String get speed => 'Speed';
+  String get speed => 'Kecepatan';
 
   @override
-  String get theme_dark => 'Dark';
+  String get theme_dark => 'Gelap';
 
   @override
-  String get theme_light => 'Light';
+  String get theme_light => 'Terang';
 
   @override
-  String get theme_black => 'Black';
+  String get theme_black => 'Hitam';
 
   @override
   String get theme_sepia => 'Sepia';
 
   @override
-  String get decrease => 'Decrease';
+  String get decrease => 'Kurangi';
 
   @override
-  String get increase => 'Increase';
+  String get increase => 'Tambah';
+
+  @override
+  String get chapter_swipe_actions => 'Aksi usap bab';
+
+  @override
+  String get chapter_swipe_start => 'Usap ke kanan';
+
+  @override
+  String get chapter_swipe_end => 'Usap ke kiri';
+
+  @override
+  String get chapter_swipe_toggle_bookmark => 'Alihkan penanda';
+
+  @override
+  String get chapter_swipe_toggle_read => 'Alihkan status baca';
+
+  @override
+  String get chapter_swipe_download => 'Unduh';
+
+  @override
+  String get chapter_swipe_disabled => 'Dinonaktifkan';
 }

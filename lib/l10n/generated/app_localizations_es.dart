@@ -1278,23 +1278,24 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String double_tap_search_hint(Object type) {
-    return 'Double-tap to search all $type';
+    return 'Toca dos veces para buscar todo en $type';
   }
 
   @override
-  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+  String get show_nav_double_tap_tooltip =>
+      'Mostrar sugerencia de búsqueda por doble toque';
 
   @override
   String get show_nav_double_tap_tooltip_subtitle =>
-      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+      'Muestra un cuadro de información en los destinos de Manga/Anime/Novela explicando que tocar dos veces abre la búsqueda global.';
 
   @override
   String already_in_library(Object source, Object title) {
-    return '\"$title\" is already in your library via $source.';
+    return '\"$title\" ya está en tu biblioteca a través de $source.';
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => 'Añadir de todos modos';
 
   @override
   String get langauage => 'Idioma';
@@ -2792,11 +2793,11 @@ class AppLocalizationsEs extends AppLocalizations {
       'Mostrar la primera página sola en el modo de doble página';
 
   @override
-  String get double_page_auto => 'Automatic double page';
+  String get double_page_auto => 'Doble página automática';
 
   @override
   String get double_page_auto_subtitle =>
-      'Switch to double page mode automatically in landscape';
+      'Cambiar automáticamente al modo de doble página en horizontal';
 
   @override
   String get landscape_zoom => 'Zoom automático en horizontal';
@@ -3417,37 +3418,58 @@ class AppLocalizationsEs extends AppLocalizations {
       'Omitir la actualización programada cuando use datos móviles.';
 
   @override
-  String get padding => 'Padding';
+  String get padding => 'Espaciado';
 
   @override
-  String get page_mode => 'Page mode';
+  String get page_mode => 'Modo de página';
 
   @override
-  String get single_page => 'Single page';
+  String get single_page => 'Página única';
 
   @override
-  String get double_page => 'Double page';
+  String get double_page => 'Doble página';
 
   @override
-  String get speed => 'Speed';
+  String get speed => 'Velocidad';
 
   @override
-  String get theme_dark => 'Dark';
+  String get theme_dark => 'Oscuro';
 
   @override
-  String get theme_light => 'Light';
+  String get theme_light => 'Claro';
 
   @override
-  String get theme_black => 'Black';
+  String get theme_black => 'Negro';
 
   @override
   String get theme_sepia => 'Sepia';
 
   @override
-  String get decrease => 'Decrease';
+  String get decrease => 'Disminuir';
 
   @override
-  String get increase => 'Increase';
+  String get increase => 'Aumentar';
+
+  @override
+  String get chapter_swipe_actions => 'Acciones al deslizar capítulo';
+
+  @override
+  String get chapter_swipe_start => 'Deslizar a la derecha';
+
+  @override
+  String get chapter_swipe_end => 'Deslizar a la izquierda';
+
+  @override
+  String get chapter_swipe_toggle_bookmark => 'Alternar marcador';
+
+  @override
+  String get chapter_swipe_toggle_read => 'Marcar leído/no leído';
+
+  @override
+  String get chapter_swipe_download => 'Descargar';
+
+  @override
+  String get chapter_swipe_disabled => 'Desactivado';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -4714,6 +4736,27 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String uninstall_extension(Object ext) {
     return '¿Desinstalar extensión $ext?';
   }
+
+  @override
+  String double_tap_search_hint(Object type) {
+    return 'Toca dos veces para buscar en todo $type';
+  }
+
+  @override
+  String get show_nav_double_tap_tooltip =>
+      'Mostrar sugerencia de búsqueda por doble toque';
+
+  @override
+  String get show_nav_double_tap_tooltip_subtitle =>
+      'Muestra una sugerencia en los destinos de Manga/Anime/Novela explicando que tocar dos veces abre la búsqueda global.';
+
+  @override
+  String already_in_library(Object source, Object title) {
+    return '\"$title\" ya está en tu biblioteca desde $source.';
+  }
+
+  @override
+  String get add_anyway => 'Agregar de todos modos';
 
   @override
   String get langauage => 'Idioma';
@@ -6210,6 +6253,13 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
       'Mostrar la primera página sola en el modo de doble página';
 
   @override
+  String get double_page_auto => 'Doble página automática';
+
+  @override
+  String get double_page_auto_subtitle =>
+      'Cambiar automáticamente al modo de doble página en horizontal';
+
+  @override
   String get landscape_zoom => 'Zoom automático en horizontal';
 
   @override
@@ -6826,4 +6876,58 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   @override
   String get auto_library_update_wifi_only_subtitle =>
       'Omitir la actualización programada cuando use datos móviles.';
+
+  @override
+  String get padding => 'Espaciado';
+
+  @override
+  String get page_mode => 'Modo de página';
+
+  @override
+  String get single_page => 'Página única';
+
+  @override
+  String get double_page => 'Doble página';
+
+  @override
+  String get speed => 'Velocidad';
+
+  @override
+  String get theme_dark => 'Oscuro';
+
+  @override
+  String get theme_light => 'Claro';
+
+  @override
+  String get theme_black => 'Negro';
+
+  @override
+  String get theme_sepia => 'Sepia';
+
+  @override
+  String get decrease => 'Disminuir';
+
+  @override
+  String get increase => 'Aumentar';
+
+  @override
+  String get chapter_swipe_actions => 'Acciones al deslizar capítulo';
+
+  @override
+  String get chapter_swipe_start => 'Deslizar a la derecha';
+
+  @override
+  String get chapter_swipe_end => 'Deslizar a la izquierda';
+
+  @override
+  String get chapter_swipe_toggle_bookmark => 'Alternar marcador';
+
+  @override
+  String get chapter_swipe_toggle_read => 'Marcar leído/no leído';
+
+  @override
+  String get chapter_swipe_download => 'Descargar';
+
+  @override
+  String get chapter_swipe_disabled => 'Desactivado';
 }

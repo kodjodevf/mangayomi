@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -10,9 +9,7 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
-import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/manga/detail/providers/export_metadata.dart';
@@ -25,6 +22,7 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/download_manager/download_queue_order.dart';
 import 'package:mangayomi/services/download_manager/m_downloader.dart';
 import 'package:mangayomi/services/get_video_list.dart';
+import 'package:mangayomi/services/chapter_cache.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/download_manager/m3u8/m3u8_downloader.dart';
@@ -86,9 +84,7 @@ Future<void> downloadChapter(
         connectivity.contains(ConnectivityResult.wifi) ||
         connectivity.contains(ConnectivityResult.ethernet);
     if (onlyOnWifi && !isOnWifi) {
-      botToast(
-        localizedMessage((l10n) => l10n.downloads_are_limited_to_wifi),
-      );
+      botToast(localizedMessage((l10n) => l10n.downloads_are_limited_to_wifi));
       keepAlive.close();
       return;
     }
@@ -260,26 +256,7 @@ Future<void> downloadChapter(
       // local pages carry no url. Storing those placeholders would leave the
       // chapter unreadable from its source once the download is deleted.
       if (pageUrls.every((pageUrl) => pageUrl.url.isEmpty)) return;
-      List<ChapterPageurls>? chapterPageUrls = [];
-      for (var chapterPageUrl
-          in settingsRepository.current.chapterPageUrlsList ?? []) {
-        if (chapterPageUrl.chapterId != chapter.id) {
-          chapterPageUrls.add(chapterPageUrl);
-        }
-      }
-      final chapterPageHeaders = pageUrls
-          .map((e) => e.headers == null ? null : jsonEncode(e.headers))
-          .toList();
-      chapterPageUrls.add(
-        ChapterPageurls()
-          ..chapterId = chapter.id
-          ..urls = pageUrls.map((e) => e.url).toList()
-          ..chapterUrl = chapter.url
-          ..headers = chapterPageHeaders.first != null
-              ? chapterPageHeaders.map((e) => e.toString()).toList()
-              : null,
-      );
-      settingsRepository.update((s) => s.chapterPageUrlsList = chapterPageUrls);
+      ChapterCache().putPageListToCache(chapter, pageUrls);
     }
 
     if (itemType == ItemType.manga) {

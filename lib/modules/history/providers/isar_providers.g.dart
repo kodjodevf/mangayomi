@@ -98,6 +98,60 @@ final class GetAllHistoryStreamFamily extends $Family
   String toString() => r'getAllHistoryStreamProvider';
 }
 
+@ProviderFor(ActiveHistoryItemTypeState)
+final activeHistoryItemTypeStateProvider =
+    ActiveHistoryItemTypeStateProvider._();
+
+final class ActiveHistoryItemTypeStateProvider
+    extends $NotifierProvider<ActiveHistoryItemTypeState, ItemType> {
+  ActiveHistoryItemTypeStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'activeHistoryItemTypeStateProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$activeHistoryItemTypeStateHash();
+
+  @$internal
+  @override
+  ActiveHistoryItemTypeState create() => ActiveHistoryItemTypeState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ItemType value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ItemType>(value),
+    );
+  }
+}
+
+String _$activeHistoryItemTypeStateHash() =>
+    r'881ae706e2908719952fd9f6c935a5847aaf8d7f';
+
+abstract class _$ActiveHistoryItemTypeState extends $Notifier<ItemType> {
+  ItemType build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<ItemType, ItemType>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ItemType, ItemType>,
+              ItemType,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(getAllUpdateStream)
 final getAllUpdateStreamProvider = GetAllUpdateStreamFamily._();
 

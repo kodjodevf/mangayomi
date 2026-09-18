@@ -63,6 +63,8 @@ class ReaderScreen extends ConsumerWidget {
     final flashColor = ref.watch(flashColorStateProvider);
     final flashInterval = ref.watch(flashIntervalStateProvider);
     final flashDuration = ref.watch(flashDurationStateProvider);
+    final chapterSwipeStart = ref.watch(chapterSwipeStartActionStateProvider);
+    final chapterSwipeEnd = ref.watch(chapterSwipeEndActionStateProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.reader)),
@@ -596,9 +598,7 @@ class ReaderScreen extends ConsumerWidget {
             SwitchListTile(
               value: doublePageAuto,
               title: Text(context.l10n.double_page_auto),
-              subtitle: Text(
-                context.l10n.double_page_auto_subtitle,
-              ),
+              subtitle: Text(context.l10n.double_page_auto_subtitle),
               onChanged: (value) {
                 ref.read(doublePageAutoStateProvider.notifier).set(value);
               },
@@ -931,6 +931,97 @@ class ReaderScreen extends ConsumerWidget {
               ),
             ],
 
+            _buildSectionHeader(context, context.l10n.chapter_swipe_actions),
+
+            ListTile(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) {
+                    return SimpleDialog(
+                      title: Text(context.l10n.chapter_swipe_start),
+                      children: [
+                        RadioGroup<ChapterSwipeAction>(
+                          groupValue: chapterSwipeStart,
+                          onChanged: (val) {
+                            if (val != null) {
+                              ref
+                                  .read(
+                                    chapterSwipeStartActionStateProvider
+                                        .notifier,
+                                  )
+                                  .set(val);
+                              Navigator.pop(ctx);
+                            }
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: ChapterSwipeAction.values.map((action) {
+                              return RadioListTile<ChapterSwipeAction>(
+                                value: action,
+                                title: Text(
+                                  _chapterSwipeActionName(action, context),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              title: Text(context.l10n.chapter_swipe_start),
+              subtitle: Text(
+                _chapterSwipeActionName(chapterSwipeStart, context),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ),
+            ),
+
+            ListTile(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) {
+                    return SimpleDialog(
+                      title: Text(context.l10n.chapter_swipe_end),
+                      children: [
+                        RadioGroup<ChapterSwipeAction>(
+                          groupValue: chapterSwipeEnd,
+                          onChanged: (val) {
+                            if (val != null) {
+                              ref
+                                  .read(
+                                    chapterSwipeEndActionStateProvider.notifier,
+                                  )
+                                  .set(val);
+                              Navigator.pop(ctx);
+                            }
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: ChapterSwipeAction.values.map((action) {
+                              return RadioListTile<ChapterSwipeAction>(
+                                value: action,
+                                title: Text(
+                                  _chapterSwipeActionName(action, context),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              title: Text(context.l10n.chapter_swipe_end),
+              subtitle: Text(
+                _chapterSwipeActionName(chapterSwipeEnd, context),
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ),
+            ),
+
             const Divider(height: 32),
           ],
         ),
@@ -1058,5 +1149,18 @@ String _navLayoutNameGlobal(int index, BuildContext context) {
     4 => context.l10n.nav_layout_right_and_left,
     5 => context.l10n.nav_layout_disabled,
     _ => context.l10n.nav_layout_default,
+  };
+}
+
+String _chapterSwipeActionName(
+  ChapterSwipeAction action,
+  BuildContext context,
+) {
+  return switch (action) {
+    ChapterSwipeAction.toggleBookmark =>
+      context.l10n.chapter_swipe_toggle_bookmark,
+    ChapterSwipeAction.toggleRead => context.l10n.chapter_swipe_toggle_read,
+    ChapterSwipeAction.download => context.l10n.chapter_swipe_download,
+    ChapterSwipeAction.disabled => context.l10n.chapter_swipe_disabled,
   };
 }

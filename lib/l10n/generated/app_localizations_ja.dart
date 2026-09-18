@@ -1257,23 +1257,23 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String double_tap_search_hint(Object type) {
-    return 'Double-tap to search all $type';
+    return 'ダブルタップしてすべての$typeを検索';
   }
 
   @override
-  String get show_nav_double_tap_tooltip => 'Show double-tap search hint';
+  String get show_nav_double_tap_tooltip => 'ダブルタップ検索のヒントを表示';
 
   @override
   String get show_nav_double_tap_tooltip_subtitle =>
-      'Show a tooltip on the Manga/Anime/Novel nav destinations explaining that double-tapping opens Global Search.';
+      'マンガ/アニメ/ノベルのナビゲーションで、ダブルタップで全体検索が開くことを示すツールチップを表示します。';
 
   @override
   String already_in_library(Object source, Object title) {
-    return '\"$title\" is already in your library via $source.';
+    return '「$title」はすでに$source経由でライブラリに存在します。';
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => 'それでも追加';
 
   @override
   String get langauage => '言語';
@@ -2707,11 +2707,10 @@ class AppLocalizationsJa extends AppLocalizations {
       '見開きモードで最初のページ（表紙）を単独で表示する';
 
   @override
-  String get double_page_auto => 'Automatic double page';
+  String get double_page_auto => '自動見開き表示';
 
   @override
-  String get double_page_auto_subtitle =>
-      'Switch to double page mode automatically in landscape';
+  String get double_page_auto_subtitle => '横向き時に自動で見開き表示モードに切り替える';
 
   @override
   String get landscape_zoom => '横画面自動ズーム';
@@ -3293,35 +3292,56 @@ class AppLocalizationsJa extends AppLocalizations {
       'モバイルデータ通信中は予定された更新をスキップします。';
 
   @override
-  String get padding => 'Padding';
+  String get padding => '余白';
 
   @override
-  String get page_mode => 'Page mode';
+  String get page_mode => 'ページモード';
 
   @override
-  String get single_page => 'Single page';
+  String get single_page => '単一ページ';
 
   @override
-  String get double_page => 'Double page';
+  String get double_page => '見開きページ';
 
   @override
-  String get speed => 'Speed';
+  String get speed => '速度';
 
   @override
-  String get theme_dark => 'Dark';
+  String get theme_dark => 'ダーク';
 
   @override
-  String get theme_light => 'Light';
+  String get theme_light => 'ライト';
 
   @override
-  String get theme_black => 'Black';
+  String get theme_black => 'ブラック';
 
   @override
-  String get theme_sepia => 'Sepia';
+  String get theme_sepia => 'セピア';
 
   @override
-  String get decrease => 'Decrease';
+  String get decrease => '減らす';
 
   @override
-  String get increase => 'Increase';
+  String get increase => '増やす';
+
+  @override
+  String get chapter_swipe_actions => 'チャプタースワイプ操作';
+
+  @override
+  String get chapter_swipe_start => '右にスワイプ';
+
+  @override
+  String get chapter_swipe_end => '左にスワイプ';
+
+  @override
+  String get chapter_swipe_toggle_bookmark => 'ブックマークを切り替え';
+
+  @override
+  String get chapter_swipe_toggle_read => '既読/未読を切り替え';
+
+  @override
+  String get chapter_swipe_download => 'ダウンロード';
+
+  @override
+  String get chapter_swipe_disabled => '無効';
 }
