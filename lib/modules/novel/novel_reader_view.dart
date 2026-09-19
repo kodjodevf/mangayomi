@@ -1721,6 +1721,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                   _readerController.setPageMode(
                                     PageMode.onePage,
                                   );
+                                  ref
+                                      .read(doublePageAutoStateProvider.notifier)
+                                      .set(false);
                                   setState(() {
                                     _readerMode = ReaderMode.ltr;
                                     _pageMode = PageMode.onePage;
@@ -1730,6 +1733,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                   _readerController.setPageMode(
                                     PageMode.doublePage,
                                   );
+                                  ref
+                                      .read(doublePageAutoStateProvider.notifier)
+                                      .set(false);
                                   setState(() {
                                     _pageMode = PageMode.doublePage;
                                   });
