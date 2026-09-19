@@ -3290,7 +3290,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
 Widget seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
   final swipeDuration = duration.inSeconds;
-  final value = currentPosition.inSeconds + swipeDuration;
   return Builder(
     builder: (ctx) {
       final accent = ctx.primaryColor;
@@ -3308,15 +3307,6 @@ Widget seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              Duration(seconds: value).label(),
-              style: const TextStyle(
-                fontSize: 44.0,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-                fontFeatures: [FontFeature.tabularFigures()],
-              ),
-            ),
             Text(
               swipeDuration > 0
                   ? "+${Duration(seconds: swipeDuration).label()}"
