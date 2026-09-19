@@ -71,6 +71,20 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
   void didUpdateWidget(MinSubsamplingImage oldWidget) {
     super.didUpdateWidget(oldWidget);
     final bool dataChanged = widget.data != oldWidget.data;
+    if (dataChanged) {
+      _cleanStream();
+      ffiImageDecoder.cancel(this);
+      _uiImage?.dispose();
+      _uiImage = null;
+      if (widget.data.decodedImage != null) {
+        _uiImage = widget.data.decodedImage!.clone();
+        _isLoading = false;
+        _hasError = false;
+        return;
+      }
+      _loadImage(refresh: false);
+      return;
+    }
     final bool imageLoaded =
         _uiImage == null && widget.data.decodedImage != null;
     if (imageLoaded) {
@@ -80,8 +94,8 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
       _hasError = false;
       return;
     }
-    if (dataChanged || widget.cropBorders != oldWidget.cropBorders) {
-      _loadImage(refresh: widget.cropBorders != oldWidget.cropBorders);
+    if (widget.cropBorders != oldWidget.cropBorders) {
+      _loadImage(refresh: true);
     }
   }
 

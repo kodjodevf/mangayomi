@@ -669,8 +669,14 @@ void main() {
       final ch1 = Chapter(id: 101, mangaId: 101, name: 'Chapter 1');
       final ch2 = Chapter(id: 102, mangaId: 102, name: 'Chapter 2');
 
-      UChapDataPreload makePage(Chapter ch, int pageIdx, int index) {
-        return UChapDataPreload(
+      UChapDataPreload makePage(
+        Chapter ch,
+        int pageIdx,
+        int index, {
+        double? width,
+        double? height,
+      }) {
+        final p = UChapDataPreload(
           ch,
           null,
           null,
@@ -680,6 +686,9 @@ void main() {
           null,
           pageIdx,
         );
+        p.loadedWidth = width;
+        p.loadedHeight = height;
+        return p;
       }
 
       UChapDataPreload makeTransition(
@@ -830,6 +839,122 @@ void main() {
         ]);
         expect(math.pageViewToActualIndex(2), 4);
         expect(math.actualToPageViewIndex(3), 1);
+      });
+
+      test('Wide page (landscape spread) is isolated as a single spread', () {
+        // Page 0: Portrait (normal)
+        // Page 1: Landscape (wide two-page spread: width 2000, height 1200)
+        // Page 2: Portrait (normal)
+        // Page 3: Portrait (normal)
+        final pages = [
+          makePage(ch1, 0, 0, width: 800, height: 1200),
+          makePage(ch1, 1, 1, width: 2000, height: 1200),
+          makePage(ch1, 2, 2, width: 800, height: 1200),
+          makePage(ch1, 3, 3, width: 800, height: 1200),
+        ];
+
+        final spreads = ReaderPageIndexMath.buildSpreads(pages);
+        // Expect:
+        // spread 0: page 0 alone (preceding normal page)
+        // spread 1: page 1 alone (wide spread)
+        // spread 2: pages 2 and 3 paired together
+        expect(spreads.length, 3);
+        expect(spreads[0], const DoublePageSpread(0));
+        expect(spreads[0].isSingle, isTrue);
+        expect(spreads[1], const DoublePageSpread(1));
+        expect(spreads[1].isSingle, isTrue);
+        expect(spreads[2], const DoublePageSpread(2, 3));
+        expect(spreads[2].isSingle, isFalse);
+
+        final math = ReaderPageIndexMath(
+          isDoublePageActive: true,
+          singleFirst: false,
+          pageCount: pages.length,
+          pages: pages,
+        );
+
+        expect(math.actualToPageViewIndex(0), 0);
+        expect(math.actualToPageViewIndex(1), 1);
+        expect(math.actualToPageViewIndex(2), 2);
+        expect(math.actualToPageViewIndex(3), 2);
+
+        expect(math.pageViewToActualIndex(0), 0);
+        expect(math.pageViewToActualIndex(1), 1);
+        expect(math.pageViewToActualIndex(2), 2);
+
+        expect(math.currentIndexLabel(0, 4), '1');
+        expect(math.currentIndexLabel(1, 4), '2');
+        expect(math.currentIndexLabel(2, 4), '3-4');
+        expect(math.currentIndexLabel(3, 4), '3-4');
+      });
+
+      test('Multiple wide pages in sequence are each isolated', () {
+        final pages = [
+          makePage(ch1, 0, 0, width: 2000, height: 1200),
+          makePage(ch1, 1, 1, width: 1900, height: 1200),
+          makePage(ch1, 2, 2, width: 800, height: 1200),
+        ];
+
+        final spreads = ReaderPageIndexMath.buildSpreads(pages);
+        expect(spreads.length, 3);
+        expect(spreads[0], const DoublePageSpread(0));
+        expect(spreads[1], const DoublePageSpread(1));
+        expect(spreads[2], const DoublePageSpread(2));
+      });
+
+      test('Continuous chapter mode toggle preserves active page in chapter 2', () {
+        // Ch1: pages 0, 1, 2, 3 (pageIndex in pages: 0, 1, 2, 3; ch-local index: 0, 1, 2, 3)
+        // Transition page: index in pages: 4
+        // Ch2: pages 0, 1, 2, 3 (pageIndex in pages: 5, 6, 7, 8; ch-local index: 0, 1, 2, 3)
+        final pages = [
+          makePage(ch1, 0, 0),
+          makePage(ch1, 1, 1),
+          makePage(ch1, 2, 2),
+          makePage(ch1, 3, 3),
+          makeTransition(ch1, ch2, 4),
+          makePage(ch2, 5, 0),
+          makePage(ch2, 6, 1),
+          makePage(ch2, 7, 2),
+          makePage(ch2, 8, 3),
+        ];
+
+        // Spreads:
+        // spread 0: pages 0, 1 (Ch1)
+        // spread 1: pages 2, 3 (Ch1)
+        // spread 2: page 4 (Transition)
+        // spread 3: pages 5, 6 (Ch2)
+        // spread 4: pages 7, 8 (Ch2)
+        final mathDouble = ReaderPageIndexMath(
+          isDoublePageActive: true,
+          singleFirst: false,
+          pageCount: pages.length,
+          pages: pages,
+        );
+
+        // User is reading Chapter 2, page 1 (actualIndex in pages: 6, but chapter-local index: 1)
+        const int actualCh2Index = 6;
+        final ch2Page = pages[actualCh2Index];
+        expect(ch2Page.chapter?.id, ch2.id);
+        expect(ch2Page.index, 1); // Chapter-local display index is 1
+
+        // 1. Single Page -> Double Page toggle:
+        // Using actualIndex (6) correctly maps to spread 3 (Ch2 pages 5 & 6)
+        final targetSpread = mathDouble.actualToPageViewIndex(actualCh2Index);
+        expect(targetSpread, 3);
+        expect(mathDouble.spreads[targetSpread].firstIndex, 5);
+        expect(mathDouble.spreads[targetSpread].secondIndex, 6);
+
+        // 2. Double Page -> Single Page toggle:
+        // From spread 3, converting back to actual index in pages gives 5 (or 6), staying in Ch2
+        final actualFromSpread = mathDouble.pageViewToActualIndex(targetSpread);
+        expect(actualFromSpread, 5);
+        expect(pages[actualFromSpread].chapter?.id, ch2.id);
+
+        // 3. Contrast with buggy behavior (if chapter-local index 1 was passed):
+        // It would have mapped to spread 0 (pages 0 & 1 of Chapter 1!)
+        final buggySpread = mathDouble.actualToPageViewIndex(ch2Page.index!);
+        expect(buggySpread, 0); // Demonstrates the bug jumping back to Chapter 1
+        expect(pages[mathDouble.spreads[buggySpread].firstIndex].chapter?.id, ch1.id);
       });
     },
   );

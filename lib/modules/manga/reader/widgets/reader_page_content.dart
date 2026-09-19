@@ -184,12 +184,11 @@ class ReaderPageContent extends ConsumerWidget {
                 final index1 = spread?.firstIndex ?? index * 2;
                 final index2 = spread?.secondIndex;
                 final pageList = [
-                  index1 < pages.length ? pages[index1] : null,
-                  (index2 != null && index2 < pages.length)
-                      ? pages[index2]
-                      : null,
+                  if (index1 < pages.length) pages[index1],
+                  if (index2 != null && index2 < pages.length) pages[index2],
                 ];
                 return DoublePageView.paged(
+                  key: ValueKey('spread_${index}_${index1}_$index2'),
                   pages: isReverseHorizontal
                       ? pageList.reversed.toList()
                       : pageList,
@@ -204,6 +203,13 @@ class ReaderPageContent extends ConsumerWidget {
                   onFailedToLoadImage: (val) {
                     onFailedToLoadImage(index, val);
                   },
+                  onImageLoaded: (pIdx, width, height) {
+                    if (ref.read(splitWidePagesStateProvider) &&
+                        width > height * 1.2) {
+                      onWidePage(pIdx, width, height);
+                    }
+                  },
+                  onWideSinglePageLoaded: onWideSinglePageLoaded,
                   onLongPressData: (datas) {
                     ImageActionsDialog.show(
                       context: context,
