@@ -10,12 +10,16 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 
 class ReaderSettingsTab extends ConsumerWidget {
   final NovelReaderController? readerController;
+  final ReaderMode? currentReaderMode;
+  final ValueChanged<ReaderMode>? onReaderModeChanged;
   final PageMode? currentPageMode;
   final ValueChanged<PageMode>? onPageModeChanged;
 
   const ReaderSettingsTab({
     super.key,
     this.readerController,
+    this.currentReaderMode,
+    this.onReaderModeChanged,
     this.currentPageMode,
     this.onPageModeChanged,
   });
@@ -457,53 +461,92 @@ class ReaderSettingsTab extends ConsumerWidget {
 
           const SizedBox(height: 10),
 
-          _SettingSection(
-            title: context.l10n.page_mode,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (currentPageMode != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _ModeChipButton(
-                            icon: Icons.article_outlined,
-                            label: context.l10n.single_page,
-                            isSelected: currentPageMode == PageMode.onePage,
-                            onTap: () {
-                              readerController?.setPageMode(PageMode.onePage);
-                              onPageModeChanged?.call(PageMode.onePage);
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: _ModeChipButton(
-                            icon: Icons.auto_stories_outlined,
-                            label: context.l10n.double_page,
-                            isSelected: currentPageMode == PageMode.doublePage,
-                            onTap: () {
-                              readerController?.setPageMode(PageMode.doublePage);
-                              onPageModeChanged?.call(PageMode.doublePage);
-                            },
-                          ),
-                        ),
-                      ],
+          if (currentReaderMode != null) ...[
+            _SettingSection(
+              title: context.l10n.reading_mode,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _ModeChipButton(
+                      icon: Icons.swap_vert_rounded,
+                      label: context.l10n.reading_mode_vertical_continuous,
+                      isSelected: currentReaderMode!.isContinuous,
+                      onTap: () {
+                        readerController?.setReaderMode(
+                          ReaderMode.verticalContinuous,
+                        );
+                        onReaderModeChanged?.call(
+                          ReaderMode.verticalContinuous,
+                        );
+                      },
                     ),
                   ),
-                _SwitchListTileSetting(
-                  title: context.l10n.double_page_auto,
-                  secondary: const Icon(Icons.screen_rotation_outlined, size: 20),
-                  value: ref.watch(doublePageAutoStateProvider),
-                  onChanged: (value) {
-                    ref.read(doublePageAutoStateProvider.notifier).set(value);
-                  },
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _ModeChipButton(
+                      icon: Icons.auto_stories_rounded,
+                      label: context.l10n.reading_mode_left_to_right,
+                      isSelected: !currentReaderMode!.isContinuous,
+                      onTap: () {
+                        readerController?.setReaderMode(ReaderMode.ltr);
+                        onReaderModeChanged?.call(ReaderMode.ltr);
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+            const SizedBox(height: 10),
+          ],
+
+          if (currentReaderMode == null || !currentReaderMode!.isContinuous)
+            _SettingSection(
+              title: context.l10n.page_mode,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (currentPageMode != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _ModeChipButton(
+                              icon: Icons.article_outlined,
+                              label: context.l10n.single_page,
+                              isSelected: currentPageMode == PageMode.onePage,
+                              onTap: () {
+                                readerController?.setPageMode(PageMode.onePage);
+                                onPageModeChanged?.call(PageMode.onePage);
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: _ModeChipButton(
+                              icon: Icons.auto_stories_outlined,
+                              label: context.l10n.double_page,
+                              isSelected: currentPageMode == PageMode.doublePage,
+                              onTap: () {
+                                readerController?.setPageMode(PageMode.doublePage);
+                                onPageModeChanged?.call(PageMode.doublePage);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  _SwitchListTileSetting(
+                    title: context.l10n.double_page_auto,
+                    secondary: const Icon(Icons.screen_rotation_outlined, size: 20),
+                    value: ref.watch(doublePageAutoStateProvider),
+                    onChanged: (value) {
+                      ref.read(doublePageAutoStateProvider.notifier).set(value);
+                    },
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );

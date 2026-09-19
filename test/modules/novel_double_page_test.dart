@@ -173,5 +173,42 @@ void main() {
       expect(res.pages[0].contains('나는 내가 태어난 날을 기억한다.'), isTrue);
       expect(res.pages.last.contains('가슴이 답답했다.'), isTrue);
     });
+
+    test('Single-page helpers and spreadLabelForSpread work correctly', () {
+      final buffer = StringBuffer('<div id="readerViewContent">');
+      for (int i = 0; i < 20; i++) {
+        buffer.write(
+          '<p data-tts-index="$i">Paragraph $i: Sample text for pagination testing in single-page mode.</p>',
+        );
+      }
+      buffer.write('</div>');
+
+      final res = NovelPaginator.paginate(
+        htmlContent: buffer.toString(),
+        pageWidth: 400,
+        pageHeight: 300,
+        fontSize: 16,
+        lineHeight: 1.5,
+      );
+
+      expect(res.pageCount, greaterThan(1));
+
+      // Test pageForIndex
+      expect(res.pageForIndex(0).isNotEmpty, isTrue);
+      expect(res.pageForIndex(-1), isEmpty);
+      expect(res.pageForIndex(res.pageCount + 10), isEmpty);
+
+      // Test pageLabelForIndex
+      expect(res.pageLabelForIndex(0), '1 / ${res.pageCount}');
+
+      // Test spreadLabelForSpread
+      expect(res.spreadLabelForSpread(0), startsWith('1-2'));
+
+      // Test pageForProgress and progressForPage
+      expect(res.pageForProgress(0.0), 0);
+      expect(res.pageForProgress(1.0), res.pageCount - 1);
+      expect(res.progressForPage(0), 0.0);
+      expect(res.progressForPage(res.pageCount - 1), 1.0);
+    });
   });
 }

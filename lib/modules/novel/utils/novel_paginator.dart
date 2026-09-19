@@ -45,6 +45,16 @@ class NovelPaginationResult {
     return '$p1 / $pageCount';
   }
 
+  String spreadLabelForSpread(int spreadIndex) {
+    if (pageCount == 0) return '0';
+    final p1 = spreadIndex * 2 + 1;
+    final p2 = p1 + 1;
+    if (p2 <= pageCount) {
+      return '$p1-$p2';
+    }
+    return '$p1';
+  }
+
   int spreadForProgress(double progress) {
     if (spreadCount <= 1) return 0;
     final targetSpread = ((progress * pageCount) / 2).floor();
@@ -59,6 +69,34 @@ class NovelPaginationResult {
   int spreadForBlock(int blockIndex) {
     final page = blockToPageMap[blockIndex] ?? 0;
     return (page ~/ 2).clamp(0, math.max(0, spreadCount - 1));
+  }
+
+  String pageForIndex(int pageIndex) {
+    if (pageIndex >= 0 && pageIndex < pageCount) {
+      return pages[pageIndex];
+    }
+    return '';
+  }
+
+  String pageLabelForIndex(int pageIndex) {
+    if (pageCount == 0) return '0 / 0';
+    return '${pageIndex + 1} / $pageCount';
+  }
+
+  int pageForProgress(double progress) {
+    if (pageCount <= 1) return 0;
+    final targetPage = (progress * (pageCount - 1)).round();
+    return targetPage.clamp(0, pageCount - 1);
+  }
+
+  double progressForPage(int pageIndex) {
+    if (pageCount <= 1) return 0.0;
+    return (pageIndex / (pageCount - 1)).clamp(0.0, 1.0);
+  }
+
+  int pageForBlock(int blockIndex) {
+    final page = blockToPageMap[blockIndex] ?? 0;
+    return page.clamp(0, math.max(0, pageCount - 1));
   }
 }
 
