@@ -94,6 +94,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   int? _cachedPaginationFontSize;
   double? _cachedPaginationLineHeight;
   int? _cachedPaginationPadding;
+  String? _cachedPaginationFontFamily;
+  bool? _cachedPaginationRemoveExtraSpacing;
+  TextAlign? _cachedPaginationTextAlign;
 
   bool scrolled = false;
   bool _scrollRestoreScheduled = false;
@@ -605,7 +608,13 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                 _cachedPaginationPadding !=
                                                     padding ||
                                                 _cachedPaginationHtml !=
-                                                    htmlData) {
+                                                    htmlData ||
+                                                _cachedPaginationFontFamily !=
+                                                    fontFamily ||
+                                                _cachedPaginationRemoveExtraSpacing !=
+                                                    removeExtraSpacing ||
+                                                _cachedPaginationTextAlign !=
+                                                    textAlignEnum) {
                                               _cachedPagination =
                                                   NovelPaginator.paginate(
                                                     htmlContent: htmlData,
@@ -615,6 +624,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                         .toDouble(),
                                                     lineHeight: lineHeight,
                                                     padding: padding.toDouble(),
+                                                    fontFamily: fontFamily,
+                                                    removeExtraSpacing:
+                                                        removeExtraSpacing,
+                                                    textAlign: textAlignEnum,
                                                   );
                                               _cachedPaginationWidth =
                                                   singlePageWidth;
@@ -627,6 +640,12 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                               _cachedPaginationPadding =
                                                   padding;
                                               _cachedPaginationHtml = htmlData;
+                                              _cachedPaginationFontFamily =
+                                                  fontFamily;
+                                              _cachedPaginationRemoveExtraSpacing =
+                                                  removeExtraSpacing;
+                                              _cachedPaginationTextAlign =
+                                                  textAlignEnum;
                                             }
 
                                             if (!_scrollRestoreScheduled) {
@@ -708,28 +727,30 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                             .stretch,
                                                     children: [
                                                       Expanded(
-                                                        child: SingleChildScrollView(
-                                                          physics:
-                                                              const ClampingScrollPhysics(),
-                                                          child: _buildNovelHtmlWidget(
-                                                            context: context,
-                                                            htmlData: leftHtml,
-                                                            fontFamily:
-                                                                fontFamily,
-                                                            fontSize: fontSize,
-                                                            lineHeight:
-                                                                lineHeight,
-                                                            padding: padding,
-                                                            textAlign:
-                                                                textAlignEnum,
-                                                            removeExtraSpacing:
-                                                                removeExtraSpacing,
-                                                            textColor:
-                                                                parsedTextColor,
-                                                            backgroundColor:
-                                                                parsedBackgroundColor,
-                                                            showTts: _showTts,
-                                                            tts: tts,
+                                                        child: ClipRect(
+                                                          child: SingleChildScrollView(
+                                                            physics:
+                                                                const NeverScrollableScrollPhysics(),
+                                                            child: _buildNovelHtmlWidget(
+                                                              context: context,
+                                                              htmlData: leftHtml,
+                                                              fontFamily:
+                                                                  fontFamily,
+                                                              fontSize: fontSize,
+                                                              lineHeight:
+                                                                  lineHeight,
+                                                              padding: padding,
+                                                              textAlign:
+                                                                  textAlignEnum,
+                                                              removeExtraSpacing:
+                                                                  removeExtraSpacing,
+                                                              textColor:
+                                                                  parsedTextColor,
+                                                              backgroundColor:
+                                                                  parsedBackgroundColor,
+                                                              showTts: _showTts,
+                                                              tts: tts,
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
@@ -743,33 +764,35 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                       ),
                                                       Expanded(
                                                         child: rightHtml != null
-                                                            ? SingleChildScrollView(
-                                                                physics:
-                                                                    const ClampingScrollPhysics(),
-                                                                child: _buildNovelHtmlWidget(
-                                                                  context:
-                                                                      context,
-                                                                  htmlData:
-                                                                      rightHtml,
-                                                                  fontFamily:
-                                                                      fontFamily,
-                                                                  fontSize:
-                                                                      fontSize,
-                                                                  lineHeight:
-                                                                      lineHeight,
-                                                                  padding:
-                                                                      padding,
-                                                                  textAlign:
-                                                                      textAlignEnum,
-                                                                  removeExtraSpacing:
-                                                                      removeExtraSpacing,
-                                                                  textColor:
-                                                                      parsedTextColor,
-                                                                  backgroundColor:
-                                                                      parsedBackgroundColor,
-                                                                  showTts:
-                                                                      _showTts,
-                                                                  tts: tts,
+                                                            ? ClipRect(
+                                                                child: SingleChildScrollView(
+                                                                  physics:
+                                                                      const NeverScrollableScrollPhysics(),
+                                                                  child: _buildNovelHtmlWidget(
+                                                                    context:
+                                                                        context,
+                                                                    htmlData:
+                                                                        rightHtml,
+                                                                    fontFamily:
+                                                                        fontFamily,
+                                                                    fontSize:
+                                                                        fontSize,
+                                                                    lineHeight:
+                                                                        lineHeight,
+                                                                    padding:
+                                                                        padding,
+                                                                    textAlign:
+                                                                        textAlignEnum,
+                                                                    removeExtraSpacing:
+                                                                        removeExtraSpacing,
+                                                                    textColor:
+                                                                        parsedTextColor,
+                                                                    backgroundColor:
+                                                                        parsedBackgroundColor,
+                                                                    showTts:
+                                                                        _showTts,
+                                                                    tts: tts,
+                                                                  ),
                                                                 ),
                                                               )
                                                             : Container(

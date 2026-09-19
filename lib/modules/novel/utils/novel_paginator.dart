@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/widgets.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html_parser;
 
@@ -72,6 +73,9 @@ class NovelPaginator {
     required double fontSize,
     required double lineHeight,
     double padding = 16.0,
+    String? fontFamily,
+    bool removeExtraSpacing = false,
+    TextAlign textAlign = TextAlign.start,
   }) {
     if (htmlContent.trim().isEmpty) {
       return const NovelPaginationResult(
@@ -81,17 +85,12 @@ class NovelPaginator {
       );
     }
 
-    final safeWidth = math.max(150.0, pageWidth - (padding * 2));
-    final safeHeight = math.max(200.0, pageHeight - (padding * 2));
-    final effectiveLineHeight = math.max(12.0, fontSize * lineHeight);
+    final safeWidth = math.max(100.0, pageWidth - (padding * 2));
+    final safeHeight = math.max(150.0, pageHeight - (padding * 2));
+    final paragraphMargin = removeExtraSpacing ? 4.0 : 8.0;
 
-    // Approximate characters per line for average proportional fonts (0.52 width factor)
-    final charsPerLine = math.max(15, (safeWidth / (fontSize * 0.52)).floor());
-    final maxLinesPerPage = math.max(
-      5,
-      (safeHeight / effectiveLineHeight).floor(),
-    );
-    final maxContentHeight = maxLinesPerPage * effectiveLineHeight;
+    // Safety buffer to ensure that flutter_html never overflows the viewport by even a fraction of a pixel.
+    final maxContentHeight = math.max(50.0, safeHeight - 8.0);
 
     final document = html_parser.parse(htmlContent);
     final body = document.body;
@@ -104,9 +103,37 @@ class NovelPaginator {
     }
 
     final container = body.querySelector('#readerViewContent') ?? body;
-    final children = container.children.isNotEmpty
-        ? container.children
-        : [container];
+
+    // Collect block-level elements recursively unwrapping transparent container divs
+    final List<dom.Element> blockElements = [];
+    void collectBlockElements(dom.Element parent) {
+      final children = parent.children;
+      if (children.isEmpty) {
+        if (parent.text.trim().isNotEmpty ||
+            parent.localName == 'img' ||
+            parent.localName == 'hr') {
+          blockElements.add(parent);
+        }
+        return;
+      }
+      for (final child in children) {
+        final tag = child.localName?.toLowerCase() ?? '';
+        if (tag == 'div' && child.children.isNotEmpty) {
+          collectBlockElements(child);
+        } else {
+          blockElements.add(child);
+        }
+      }
+    }
+
+    collectBlockElements(container);
+    if (blockElements.isEmpty) {
+      if (container.children.isNotEmpty) {
+        blockElements.addAll(container.children);
+      } else {
+        blockElements.add(container);
+      }
+    }
 
     final pages = <String>[];
     final blockToPageMap = <int, int>{};
@@ -149,92 +176,149 @@ class NovelPaginator {
       }
     }
 
+    double measureText(String text, {double scale = 1.0}) {
+      final trimmed = text.trim();
+      if (trimmed.isEmpty) return 0.0;
+      final painter = TextPainter(
+        text: TextSpan(
+          text: trimmed,
+          style: TextStyle(
+            fontFamily: fontFamily,
+            fontSize: fontSize * scale,
+            height: lineHeight,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+        textAlign: textAlign,
+      )..layout(maxWidth: safeWidth);
+      final h = painter.size.height;
+      painter.dispose();
+      return h;
+    }
+
     double estimateElementHeight(dom.Element el) {
       final tagName = el.localName?.toLowerCase() ?? '';
       if (tagName == 'img' || el.querySelector('img') != null) {
-        return 220.0;
+        return 220.0 + paragraphMargin;
       }
       if (tagName == 'table' || el.querySelector('table') != null) {
-        return 180.0;
+        return 180.0 + paragraphMargin;
       }
       if (tagName == 'hr') {
-        return 24.0;
+        return 16.0 + paragraphMargin;
       }
 
       final text = el.text.trim();
       if (text.isEmpty) {
-        return 10.0;
+        return 0.0;
       }
 
       final isHeading = tagName.startsWith('h') && tagName.length == 2;
       final headingScale = isHeading ? 1.4 : 1.0;
-      final lineH = effectiveLineHeight * headingScale;
-      final charsLine = isHeading
-          ? math.max(10, (charsPerLine / headingScale).floor())
-          : charsPerLine;
-
-      final estimatedLines = math.max(1, (text.length / charsLine).ceil());
-      final blockMargin = isHeading ? 18.0 : 10.0;
-      return (estimatedLines * lineH) + blockMargin;
+      final textH = measureText(text, scale: headingScale);
+      final blockMargin = isHeading ? (paragraphMargin * 1.5) : paragraphMargin;
+      return textH + blockMargin;
     }
 
     List<dom.Element> splitLargeElement(dom.Element element, double maxHeight) {
-      final text = element.text;
+      final text = element.text.trim();
       final estimatedHeight = estimateElementHeight(element);
-      if (estimatedHeight <= maxHeight || text.length < 200) {
+      if (estimatedHeight <= maxHeight) {
         return [element];
       }
 
-      final sentences = RegExp(r'[^.!?]+[.!?]+|\s*[^.!?]+$')
+      // Sentence boundaries: period, exclamation, question mark, ellipsis, newline
+      final sentences = RegExp(r'[^.!?\n…]+[.!?\n…]*|\s*[^.!?\n…]+$')
           .allMatches(text)
-          .map((m) => m.group(0) ?? '')
-          .where((s) => s.trim().isNotEmpty)
+          .map((m) => m.group(0)?.trim() ?? '')
+          .where((s) => s.isNotEmpty)
           .toList();
 
-      if (sentences.length <= 1) {
+      if (sentences.isEmpty) {
         return [element];
+      }
+
+      final atomicUnits = <String>[];
+      for (final s in sentences) {
+        final sHeight = measureText(s) + paragraphMargin;
+        if (sHeight > maxHeight) {
+          final clauses = RegExp(r'[^,;:]+[,;:]*|\s*[^,;:]+$')
+              .allMatches(s)
+              .map((m) => m.group(0)?.trim() ?? '')
+              .where((c) => c.isNotEmpty)
+              .toList();
+          if (clauses.length > 1) {
+            atomicUnits.addAll(clauses);
+          } else {
+            final words = s.split(' ');
+            if (words.length > 1) {
+              atomicUnits.addAll(words);
+            } else {
+              for (int i = 0; i < s.length; i += 40) {
+                atomicUnits.add(s.substring(i, math.min(i + 40, s.length)));
+              }
+            }
+          }
+        } else {
+          atomicUnits.add(s);
+        }
       }
 
       final result = <dom.Element>[];
       var currentChunk = StringBuffer();
-      var currentChunkLength = 0;
-      final maxChunkChars = (maxLinesPerPage * charsPerLine * 0.85).floor();
 
-      for (final s in sentences) {
-        if (currentChunkLength + s.length > maxChunkChars &&
-            currentChunk.isNotEmpty) {
-          final newEl = dom.Element.tag(element.localName ?? 'p');
-          element.attributes.forEach((k, v) => newEl.attributes[k] = v);
-          newEl.text = currentChunk.toString().trim();
-          result.add(newEl);
-          currentChunk = StringBuffer();
-          currentChunkLength = 0;
+      dom.Element createChunkElement(String chunkText) {
+        final newEl = dom.Element.tag(element.localName ?? 'p');
+        element.attributes.forEach((k, v) => newEl.attributes[k] = v);
+        newEl.text = chunkText;
+        return newEl;
+      }
+
+      for (final unit in atomicUnits) {
+        final candidate = currentChunk.isEmpty
+            ? unit
+            : '${currentChunk.toString()} $unit';
+        final candidateHeight = measureText(candidate) + paragraphMargin;
+
+        if (currentChunk.isNotEmpty && candidateHeight > maxHeight) {
+          result.add(createChunkElement(currentChunk.toString()));
+          currentChunk = StringBuffer(unit);
+        } else {
+          if (currentChunk.isNotEmpty) currentChunk.write(' ');
+          currentChunk.write(unit);
         }
-        currentChunk.write('$s ');
-        currentChunkLength += s.length + 1;
       }
 
       if (currentChunk.isNotEmpty) {
-        final newEl = dom.Element.tag(element.localName ?? 'p');
-        element.attributes.forEach((k, v) => newEl.attributes[k] = v);
-        newEl.text = currentChunk.toString().trim();
-        result.add(newEl);
+        result.add(createChunkElement(currentChunk.toString()));
       }
 
       return result.isNotEmpty ? result : [element];
     }
 
-    for (final child in children) {
-      final chunks = splitLargeElement(child, maxContentHeight);
-      for (final chunk in chunks) {
-        final h = estimateElementHeight(chunk);
-        if (currentPageHeight + h > maxContentHeight &&
+    for (final child in blockElements) {
+      final childHeight = estimateElementHeight(child);
+
+      if (childHeight > maxContentHeight) {
+        final chunks = splitLargeElement(child, maxContentHeight);
+        for (final chunk in chunks) {
+          final chunkHeight = estimateElementHeight(chunk);
+          if (currentPageHeight + chunkHeight > maxContentHeight &&
+              currentPageNodes.isNotEmpty) {
+            flushCurrentPage();
+          }
+          currentPageNodes.add(chunk);
+          currentPageHeight += chunkHeight;
+          recordBlockIndices(chunk, pages.length);
+        }
+      } else {
+        if (currentPageHeight + childHeight > maxContentHeight &&
             currentPageNodes.isNotEmpty) {
           flushCurrentPage();
         }
-        currentPageNodes.add(chunk);
-        currentPageHeight += h;
-        recordBlockIndices(chunk, pages.length);
+        currentPageNodes.add(child);
+        currentPageHeight += childHeight;
+        recordBlockIndices(child, pages.length);
       }
     }
 

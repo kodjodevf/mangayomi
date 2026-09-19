@@ -77,5 +77,71 @@ void main() {
       // Long paragraph should be split across at least 2 pages
       expect(res.pageCount, greaterThan(1));
     });
+
+    test('Korean / CJK novel text pagination splits naturally without overflowing', () {
+      final koreanText = StringBuffer('<div id="readerViewContent">');
+      for (int i = 0; i < 20; i++) {
+        koreanText.write(
+          '<p data-tts-index="$i">제${i + 1}장: 깊은 어둠 속에서 푸른 안개가 천천히 피어올랐다. 소년은 검자루를 단단히 쥐고 숨을 죽인 채 전방의 기척을 주시했다. 바람조차 불지 않는 고요 속에서 심장 박동 소리만이 귀를 때렸다.</p>',
+        );
+      }
+      koreanText.write('</div>');
+
+      final res = NovelPaginator.paginate(
+        htmlContent: koreanText.toString(),
+        pageWidth: 400,
+        pageHeight: 600,
+        fontSize: 18,
+        lineHeight: 1.6,
+        removeExtraSpacing: true,
+      );
+
+      expect(res.pageCount, greaterThan(1));
+      expect(res.spreadCount, greaterThan(1));
+      expect(res.leftPageForSpread(0).contains('제1장'), isTrue);
+    });
+
+    test('Nested div containers are unwrapped and individual paragraphs paginated', () {
+      const nestedHtml = '''
+<div id="readerViewContent">
+  <div class="chapter-container">
+    <div class="content-body">
+      <p data-tts-index="0">첫 번째 문단입니다.</p>
+      <p data-tts-index="1">두 번째 문단입니다.</p>
+      <p data-tts-index="2">세 번째 문단입니다.</p>
+    </div>
+  </div>
+</div>
+''';
+
+      final res = NovelPaginator.paginate(
+        htmlContent: nestedHtml,
+        pageWidth: 300,
+        pageHeight: 200,
+        fontSize: 16,
+        lineHeight: 1.5,
+      );
+
+      expect(res.blockToPageMap.containsKey(0), isTrue);
+      expect(res.blockToPageMap.containsKey(1), isTrue);
+      expect(res.blockToPageMap.containsKey(2), isTrue);
+    });
+
+    test('Pagination with custom fontFamily and textAlign works seamlessly', () {
+      const sampleHtml =
+          '<div id="readerViewContent"><p>테스트 문장입니다. 정렬과 폰트 설정이 적용되는지 검증합니다.</p></div>';
+
+      final res = NovelPaginator.paginate(
+        htmlContent: sampleHtml,
+        pageWidth: 400,
+        pageHeight: 600,
+        fontSize: 16,
+        lineHeight: 1.5,
+        fontFamily: 'Roboto',
+      );
+
+      expect(res.pageCount, 1);
+      expect(res.pages.first.contains('테스트 문장'), isTrue);
+    });
   });
 }
