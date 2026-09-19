@@ -1,6 +1,7 @@
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/chapter_reader_settings_mixin.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/chapter_controller_mixin.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -15,6 +16,41 @@ class NovelReaderController extends _$NovelReaderController
   // Keep incognitoMode as a final field (read once, not on every access).
   @override
   final bool incognitoMode = settingsRepository.current.incognitoMode!;
+
+  // ---------------------------------------------------------------------------
+  // Reader mode
+  // ---------------------------------------------------------------------------
+
+  ReaderMode getReaderMode() {
+    final personalReaderModeList =
+        getIsarSetting().personalReaderModeList ?? [];
+    final personalReaderMode = personalReaderModeList.where(
+      (element) => element.mangaId == getManga().id,
+    );
+    if (personalReaderMode.isNotEmpty) {
+      return personalReaderMode.first.readerMode;
+    }
+    return ReaderMode.verticalContinuous;
+  }
+
+  void setReaderMode(ReaderMode newReaderMode) {
+    List<PersonalReaderMode>? personalReaderModeLists = [];
+    for (var personalReaderMode
+        in getIsarSetting().personalReaderModeList ?? []) {
+      if (personalReaderMode.mangaId != getManga().id) {
+        personalReaderModeLists.add(personalReaderMode);
+      }
+    }
+    personalReaderModeLists.add(
+      PersonalReaderMode()
+        ..mangaId = getManga().id
+        ..readerMode = newReaderMode,
+    );
+    settingsRepository.save(
+      getIsarSetting()..personalReaderModeList = personalReaderModeLists,
+    );
+    onSettingsMutated();
+  }
 
   // ---------------------------------------------------------------------------
   // Scroll-position tracking

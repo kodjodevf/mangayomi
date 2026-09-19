@@ -8,20 +8,50 @@ import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
 import 'package:mangayomi/modules/novel/utils/novel_reader_fonts.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
-class ReaderSettingsTab extends ConsumerWidget {
+class ReaderSettingsTab extends ConsumerStatefulWidget {
   final NovelReaderController? readerController;
+  final ReaderMode? currentReaderMode;
+  final ValueChanged<ReaderMode>? onReaderModeChanged;
   final PageMode? currentPageMode;
   final ValueChanged<PageMode>? onPageModeChanged;
 
   const ReaderSettingsTab({
     super.key,
     this.readerController,
+    this.currentReaderMode,
+    this.onReaderModeChanged,
     this.currentPageMode,
     this.onPageModeChanged,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ReaderSettingsTab> createState() => _ReaderSettingsTabState();
+}
+
+class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
+  late ReaderMode? _readerMode;
+  late PageMode? _pageMode;
+
+  @override
+  void initState() {
+    super.initState();
+    _readerMode = widget.currentReaderMode;
+    _pageMode = widget.currentPageMode;
+  }
+
+  @override
+  void didUpdateWidget(covariant ReaderSettingsTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.currentReaderMode != oldWidget.currentReaderMode) {
+      _readerMode = widget.currentReaderMode;
+    }
+    if (widget.currentPageMode != oldWidget.currentPageMode) {
+      _pageMode = widget.currentPageMode;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final padding = ref.watch(novelReaderPaddingStateProvider);
     final lineHeight = ref.watch(novelReaderLineHeightStateProvider);
     final textAlign = ref.watch(novelTextAlignStateProvider);
@@ -457,53 +487,136 @@ class ReaderSettingsTab extends ConsumerWidget {
 
           const SizedBox(height: 10),
 
-          _SettingSection(
-            title: context.l10n.page_mode,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (currentPageMode != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _ModeChipButton(
-                            icon: Icons.article_outlined,
-                            label: context.l10n.single_page,
-                            isSelected: currentPageMode == PageMode.onePage,
-                            onTap: () {
-                              readerController?.setPageMode(PageMode.onePage);
-                              onPageModeChanged?.call(PageMode.onePage);
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: _ModeChipButton(
-                            icon: Icons.auto_stories_outlined,
-                            label: context.l10n.double_page,
-                            isSelected: currentPageMode == PageMode.doublePage,
-                            onTap: () {
-                              readerController?.setPageMode(PageMode.doublePage);
-                              onPageModeChanged?.call(PageMode.doublePage);
-                            },
-                          ),
-                        ),
-                      ],
+          if (_readerMode != null) ...[
+            _SettingSection(
+              title: context.l10n.reading_mode,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _ModeChipButton(
+                      icon: Icons.swap_vert_rounded,
+                      label: context.l10n.reading_mode_vertical_continuous,
+                      isSelected: _readerMode!.isContinuous,
+                      onTap: () {
+                        setState(() {
+                          _readerMode = ReaderMode.verticalContinuous;
+                        });
+                        widget.readerController?.setReaderMode(
+                          ReaderMode.verticalContinuous,
+                        );
+                        widget.onReaderModeChanged?.call(
+                          ReaderMode.verticalContinuous,
+                        );
+                      },
                     ),
                   ),
-                _SwitchListTileSetting(
-                  title: context.l10n.double_page_auto,
-                  secondary: const Icon(Icons.screen_rotation_outlined, size: 20),
-                  value: ref.watch(doublePageAutoStateProvider),
-                  onChanged: (value) {
-                    ref.read(doublePageAutoStateProvider.notifier).set(value);
-                  },
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _ModeChipButton(
+                      icon: Icons.auto_stories_rounded,
+                      label: context.l10n.reading_mode_left_to_right,
+                      isSelected: !_readerMode!.isContinuous,
+                      onTap: () {
+                        setState(() {
+                          _readerMode = ReaderMode.ltr;
+                        });
+                        widget.readerController?.setReaderMode(ReaderMode.ltr);
+                        widget.onReaderModeChanged?.call(ReaderMode.ltr);
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+            const SizedBox(height: 10),
+          ],
+
+          if (_readerMode == null || !_readerMode!.isContinuous) ...[
+            Builder(
+              builder: (context) {
+                final doublePageAuto = ref.watch(doublePageAutoStateProvider);
+                final orientation = MediaQuery.orientationOf(context);
+                final effectivePageMode = doublePageAuto
+                    ? (orientation == Orientation.landscape
+                          ? PageMode.doublePage
+                          : PageMode.onePage)
+                    : (_pageMode ?? PageMode.onePage);
+
+                return _SettingSection(
+                  title: context.l10n.page_mode,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _ModeChipButton(
+                                icon: Icons.article_outlined,
+                                label: context.l10n.single_page,
+                                isSelected: effectivePageMode == PageMode.onePage,
+                                onTap: () {
+                                  setState(() {
+                                    _pageMode = PageMode.onePage;
+                                  });
+                                  ref
+                                      .read(doublePageAutoStateProvider.notifier)
+                                      .set(false);
+                                  widget.readerController?.setPageMode(
+                                    PageMode.onePage,
+                                  );
+                                  widget.onPageModeChanged?.call(
+                                    PageMode.onePage,
+                                  );
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: _ModeChipButton(
+                                icon: Icons.auto_stories_outlined,
+                                label: context.l10n.double_page,
+                                isSelected:
+                                    effectivePageMode == PageMode.doublePage,
+                                onTap: () {
+                                  setState(() {
+                                    _pageMode = PageMode.doublePage;
+                                  });
+                                  ref
+                                      .read(doublePageAutoStateProvider.notifier)
+                                      .set(false);
+                                  widget.readerController?.setPageMode(
+                                    PageMode.doublePage,
+                                  );
+                                  widget.onPageModeChanged?.call(
+                                    PageMode.doublePage,
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      _SwitchListTileSetting(
+                        title: context.l10n.double_page_auto,
+                        secondary: const Icon(
+                          Icons.screen_rotation_outlined,
+                          size: 20,
+                        ),
+                        value: doublePageAuto,
+                        onChanged: (value) {
+                          ref
+                              .read(doublePageAutoStateProvider.notifier)
+                              .set(value);
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
         ],
       ),
     );

@@ -77,5 +77,138 @@ void main() {
       // Long paragraph should be split across at least 2 pages
       expect(res.pageCount, greaterThan(1));
     });
+
+    test('Korean / CJK novel text pagination splits naturally without overflowing', () {
+      final koreanText = StringBuffer('<div id="readerViewContent">');
+      for (int i = 0; i < 20; i++) {
+        koreanText.write(
+          '<p data-tts-index="$i">제${i + 1}장: 깊은 어둠 속에서 푸른 안개가 천천히 피어올랐다. 소년은 검자루를 단단히 쥐고 숨을 죽인 채 전방의 기척을 주시했다. 바람조차 불지 않는 고요 속에서 심장 박동 소리만이 귀를 때렸다.</p>',
+        );
+      }
+      koreanText.write('</div>');
+
+      final res = NovelPaginator.paginate(
+        htmlContent: koreanText.toString(),
+        pageWidth: 400,
+        pageHeight: 600,
+        fontSize: 18,
+        lineHeight: 1.6,
+        removeExtraSpacing: true,
+      );
+
+      expect(res.pageCount, greaterThan(1));
+      expect(res.spreadCount, greaterThan(1));
+      expect(res.leftPageForSpread(0).contains('제1장'), isTrue);
+    });
+
+    test('Nested div containers are unwrapped and individual paragraphs paginated', () {
+      const nestedHtml = '''
+<div id="readerViewContent">
+  <div class="chapter-container">
+    <div class="content-body">
+      <p data-tts-index="0">첫 번째 문단입니다.</p>
+      <p data-tts-index="1">두 번째 문단입니다.</p>
+      <p data-tts-index="2">세 번째 문단입니다.</p>
+    </div>
+  </div>
+</div>
+''';
+
+      final res = NovelPaginator.paginate(
+        htmlContent: nestedHtml,
+        pageWidth: 300,
+        pageHeight: 200,
+        fontSize: 16,
+        lineHeight: 1.5,
+      );
+
+      expect(res.blockToPageMap.containsKey(0), isTrue);
+      expect(res.blockToPageMap.containsKey(1), isTrue);
+      expect(res.blockToPageMap.containsKey(2), isTrue);
+    });
+
+    test('Pagination with custom fontFamily and textAlign works seamlessly', () {
+      const sampleHtml =
+          '<div id="readerViewContent"><p>테스트 문장입니다. 정렬과 폰트 설정이 적용되는지 검증합니다.</p></div>';
+
+      final res = NovelPaginator.paginate(
+        htmlContent: sampleHtml,
+        pageWidth: 400,
+        pageHeight: 600,
+        fontSize: 16,
+        lineHeight: 1.5,
+        fontFamily: 'Roboto',
+      );
+
+      expect(res.pageCount, 1);
+      expect(res.pages.first.contains('테스트 문장'), isTrue);
+    });
+
+    test('Web novel with bare text nodes and br tags is properly extracted and paginated', () {
+      const webNovelHtml = '''
+<div id="readerViewContent">
+  <h2>1화</h2>
+  <hr>
+  나는 내가 태어난 날을 기억한다.<br><br>
+  하늘의 축복이었을까?<br><br>
+  내 뇌는 태어난 순간부터 눈에 보이는 것을 현실로 받아들일 수 있을 만큼 성숙해 있었고 나는 세상의 입구에서 그 사실을 자각했다.<br><br>
+  감긴 눈 위로 갑자기 쏟아지던 날카로운 빛.<br><br>
+  탯줄로 양분과 산소를 받았던 탓에 생전 이용해 본 적 없었던 호흡기가 제대로 작동하지 않았다.<br><br>
+  숨이 막혀온다. 가슴이 답답했다.
+</div>
+''';
+
+      final res = NovelPaginator.paginate(
+        htmlContent: webNovelHtml,
+        pageWidth: 400,
+        pageHeight: 300,
+        fontSize: 18,
+        lineHeight: 1.6,
+      );
+
+      // Must not be a single empty page!
+      expect(res.pageCount, greaterThan(1));
+      expect(res.spreadCount, greaterThan(1));
+      expect(res.pages[0].contains('1화'), isTrue);
+      expect(res.pages[0].contains('나는 내가 태어난 날을 기억한다.'), isTrue);
+      expect(res.pages.last.contains('가슴이 답답했다.'), isTrue);
+    });
+
+    test('Single-page helpers and spreadLabelForSpread work correctly', () {
+      final buffer = StringBuffer('<div id="readerViewContent">');
+      for (int i = 0; i < 20; i++) {
+        buffer.write(
+          '<p data-tts-index="$i">Paragraph $i: Sample text for pagination testing in single-page mode.</p>',
+        );
+      }
+      buffer.write('</div>');
+
+      final res = NovelPaginator.paginate(
+        htmlContent: buffer.toString(),
+        pageWidth: 400,
+        pageHeight: 300,
+        fontSize: 16,
+        lineHeight: 1.5,
+      );
+
+      expect(res.pageCount, greaterThan(1));
+
+      // Test pageForIndex
+      expect(res.pageForIndex(0).isNotEmpty, isTrue);
+      expect(res.pageForIndex(-1), isEmpty);
+      expect(res.pageForIndex(res.pageCount + 10), isEmpty);
+
+      // Test pageLabelForIndex
+      expect(res.pageLabelForIndex(0), '1 / ${res.pageCount}');
+
+      // Test spreadLabelForSpread
+      expect(res.spreadLabelForSpread(0), startsWith('1-2'));
+
+      // Test pageForProgress and progressForPage
+      expect(res.pageForProgress(0.0), 0);
+      expect(res.pageForProgress(1.0), res.pageCount - 1);
+      expect(res.progressForPage(0), 0.0);
+      expect(res.progressForPage(res.pageCount - 1), 1.0);
+    });
   });
 }
