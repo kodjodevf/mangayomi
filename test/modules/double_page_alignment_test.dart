@@ -669,8 +669,14 @@ void main() {
       final ch1 = Chapter(id: 101, mangaId: 101, name: 'Chapter 1');
       final ch2 = Chapter(id: 102, mangaId: 102, name: 'Chapter 2');
 
-      UChapDataPreload makePage(Chapter ch, int pageIdx, int index) {
-        return UChapDataPreload(
+      UChapDataPreload makePage(
+        Chapter ch,
+        int pageIdx,
+        int index, {
+        double? width,
+        double? height,
+      }) {
+        final p = UChapDataPreload(
           ch,
           null,
           null,
@@ -680,6 +686,9 @@ void main() {
           null,
           pageIdx,
         );
+        p.loadedWidth = width;
+        p.loadedHeight = height;
+        return p;
       }
 
       UChapDataPreload makeTransition(
@@ -830,6 +839,67 @@ void main() {
         ]);
         expect(math.pageViewToActualIndex(2), 4);
         expect(math.actualToPageViewIndex(3), 1);
+      });
+
+      test('Wide page (landscape spread) is isolated as a single spread', () {
+        // Page 0: Portrait (normal)
+        // Page 1: Landscape (wide two-page spread: width 2000, height 1200)
+        // Page 2: Portrait (normal)
+        // Page 3: Portrait (normal)
+        final pages = [
+          makePage(ch1, 0, 0, width: 800, height: 1200),
+          makePage(ch1, 1, 1, width: 2000, height: 1200),
+          makePage(ch1, 2, 2, width: 800, height: 1200),
+          makePage(ch1, 3, 3, width: 800, height: 1200),
+        ];
+
+        final spreads = ReaderPageIndexMath.buildSpreads(pages);
+        // Expect:
+        // spread 0: page 0 alone (preceding normal page)
+        // spread 1: page 1 alone (wide spread)
+        // spread 2: pages 2 and 3 paired together
+        expect(spreads.length, 3);
+        expect(spreads[0], const DoublePageSpread(0));
+        expect(spreads[0].isSingle, isTrue);
+        expect(spreads[1], const DoublePageSpread(1));
+        expect(spreads[1].isSingle, isTrue);
+        expect(spreads[2], const DoublePageSpread(2, 3));
+        expect(spreads[2].isSingle, isFalse);
+
+        final math = ReaderPageIndexMath(
+          isDoublePageActive: true,
+          singleFirst: false,
+          pageCount: pages.length,
+          pages: pages,
+        );
+
+        expect(math.actualToPageViewIndex(0), 0);
+        expect(math.actualToPageViewIndex(1), 1);
+        expect(math.actualToPageViewIndex(2), 2);
+        expect(math.actualToPageViewIndex(3), 2);
+
+        expect(math.pageViewToActualIndex(0), 0);
+        expect(math.pageViewToActualIndex(1), 1);
+        expect(math.pageViewToActualIndex(2), 2);
+
+        expect(math.currentIndexLabel(0, 4), '1');
+        expect(math.currentIndexLabel(1, 4), '2');
+        expect(math.currentIndexLabel(2, 4), '3-4');
+        expect(math.currentIndexLabel(3, 4), '3-4');
+      });
+
+      test('Multiple wide pages in sequence are each isolated', () {
+        final pages = [
+          makePage(ch1, 0, 0, width: 2000, height: 1200),
+          makePage(ch1, 1, 1, width: 1900, height: 1200),
+          makePage(ch1, 2, 2, width: 800, height: 1200),
+        ];
+
+        final spreads = ReaderPageIndexMath.buildSpreads(pages);
+        expect(spreads.length, 3);
+        expect(spreads[0], const DoublePageSpread(0));
+        expect(spreads[1], const DoublePageSpread(1));
+        expect(spreads[2], const DoublePageSpread(2));
       });
     },
   );

@@ -50,6 +50,12 @@ class DoublePageView extends StatefulWidget {
   /// Callback when the PhotoViewController is created/disposed.
   final void Function(PhotoViewController? controller)? onControllerCreated;
 
+  /// Callback when an image finishes loading with its dimensions.
+  final void Function(int index, double width, double height)? onImageLoaded;
+
+  /// Callback when a wide single page is loaded.
+  final void Function(int index)? onWideSinglePageLoaded;
+
   const DoublePageView({
     super.key,
     required this.pages,
@@ -61,6 +67,8 @@ class DoublePageView extends StatefulWidget {
     this.scrollDirection = Axis.horizontal,
     this.onZoomChanged,
     this.onControllerCreated,
+    this.onImageLoaded,
+    this.onWideSinglePageLoaded,
   });
 
   /// Creates a paged mode double page view.
@@ -73,6 +81,8 @@ class DoublePageView extends StatefulWidget {
     required this.scrollDirection,
     this.onZoomChanged,
     this.onControllerCreated,
+    this.onImageLoaded,
+    this.onWideSinglePageLoaded,
   }) : isPagedMode = true,
        addTopPadding = false;
 
@@ -87,7 +97,9 @@ class DoublePageView extends StatefulWidget {
   }) : isPagedMode = false,
        scrollDirection = Axis.vertical,
        onZoomChanged = null,
-       onControllerCreated = null;
+       onControllerCreated = null,
+       onImageLoaded = null,
+       onWideSinglePageLoaded = null;
 
   @override
   State<DoublePageView> createState() => _DoublePageViewState();
@@ -212,8 +224,7 @@ class _DoublePageViewState extends State<DoublePageView>
   }
 
   bool _isTransitionPage() {
-    return widget.pages.isNotEmpty &&
-        (widget.pages[0]?.isTransitionPage ?? false);
+    return widget.pages.any((p) => p?.isTransitionPage ?? false);
   }
 
   Widget _buildTransitionPage() {
@@ -252,7 +263,7 @@ class _DoublePageViewState extends State<DoublePageView>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // Add top padding for first page
-        if (widget.addTopPadding && widget.pages[0]?.index == 0)
+        if (widget.addTopPadding && widget.pages.isNotEmpty && widget.pages[0]?.index == 0)
           SizedBox(height: MediaQuery.of(context).padding.top),
         _buildPageRow(),
       ],
@@ -263,10 +274,12 @@ class _DoublePageViewState extends State<DoublePageView>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (widget.pages.isNotEmpty && widget.pages[0] != null)
-          Flexible(child: _buildPageImage(widget.pages[0]!)),
-        if (widget.pages.length > 1 && widget.pages[1] != null)
-          Flexible(child: _buildPageImage(widget.pages[1]!)),
+        for (final page in widget.pages)
+          if (page != null)
+            Flexible(
+              key: ValueKey('dp_page_${page.chapter?.id}_${page.index}_${page.pageUrl?.url}'),
+              child: _buildPageImage(page),
+            ),
       ],
     );
   }
@@ -282,6 +295,15 @@ class _DoublePageViewState extends State<DoublePageView>
       },
       onLongPressData: onLongPress,
       isHorizontal: true,
+      onImageLoaded: (width, height) {
+        pageData.loadedWidth = width;
+        pageData.loadedHeight = height;
+        final idx = pageData.index ?? 0;
+        widget.onImageLoaded?.call(idx, width, height);
+        if (width > height) {
+          widget.onWideSinglePageLoaded?.call(idx);
+        }
+      },
       loadStateChanged: (state) {
         switch (state.loadState) {
           case LoadState.loading:

@@ -119,9 +119,22 @@ class ReaderPageIndexMath {
       }
 
       while (cIdx < runEnd) {
+        final p1 = pages[cIdx];
+        if (_isPageWide(p1)) {
+          result.add(DoublePageSpread(cIdx));
+          cIdx++;
+          continue;
+        }
+
         if (cIdx + 1 < runEnd) {
-          result.add(DoublePageSpread(cIdx, cIdx + 1));
-          cIdx += 2;
+          final p2 = pages[cIdx + 1];
+          if (_isPageWide(p2)) {
+            result.add(DoublePageSpread(cIdx));
+            cIdx++;
+          } else {
+            result.add(DoublePageSpread(cIdx, cIdx + 1));
+            cIdx += 2;
+          }
         } else {
           result.add(DoublePageSpread(cIdx));
           cIdx++;
@@ -130,6 +143,17 @@ class ReaderPageIndexMath {
     }
 
     return result;
+  }
+
+  /// Checks if a page is a wide / landscape image (two-page spread).
+  static bool _isPageWide(UChapDataPreload page) {
+    if (page.isTransitionPage) return false;
+    final w = page.loadedWidth;
+    final h = page.loadedHeight;
+    if (w != null && h != null && h > 0) {
+      return w > h;
+    }
+    return false;
   }
 
   /// Builds synthetic spreads for a homogeneous chapter without full page objects.

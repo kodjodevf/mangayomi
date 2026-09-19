@@ -487,8 +487,10 @@ class _MangaChapterPageGalleryState
 
   late final _extendedController = PageController(initialPage: _currentIndex!);
 
-  Axis _scrollDirection = Axis.vertical;
-  bool _isReverseHorizontal = false;
+  late Axis _scrollDirection = _cachedReaderMode == ReaderMode.vertical
+      ? Axis.vertical
+      : Axis.horizontal;
+  late bool _isReverseHorizontal = _cachedReaderMode.isRTL;
 
   Color _backgroundColor(BuildContext context) =>
       Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.9);
@@ -670,8 +672,21 @@ class _MangaChapterPageGalleryState
                   onFailedToLoadImage: _onFailedToLoadImage,
                   onWidePage: _splitWidePage,
                   onWideSinglePageLoaded: (index) {
-                    Future.delayed(const Duration(milliseconds: 600), () {
-                      setState(() {});
+                    Future.delayed(const Duration(milliseconds: 300), () {
+                      if (!mounted) return;
+                      final currentActual = _currentPageDisplayIndex.value;
+                      final targetIndex = _isDoublePageActive
+                          ? _actualToPageViewIndex(currentActual)
+                          : currentActual;
+                      setState(() {
+                        if (_currentIndex != targetIndex) {
+                          _currentIndex = targetIndex;
+                          _currentPageViewIndex.value = targetIndex;
+                          if (_extendedController.hasClients) {
+                            _extendedController.jumpToPage(targetIndex);
+                          }
+                        }
+                      });
                     });
                   },
                   onDoublePageZoomChanged: (index, zoomed) {
@@ -908,6 +923,7 @@ class _MangaChapterPageGalleryState
     if (index < 0 || index >= pages.length) return;
     final page = pages[index];
     if (page.srcRect != null || page.isTransitionPage) return;
+    if (_isDoublePageActive) return;
 
     final isRTL = _isReverseHorizontal;
     final dualPageInvert = ref.read(dualPageInvertStateProvider);
@@ -1695,7 +1711,11 @@ class _MangaChapterPageGalleryState
   PageMode get _effectivePageModeSync {
     final auto = settingsRepository.current.doublePageAuto ?? false;
     if (auto) {
-      final orientation = _lastOrientation;
+      final orientation =
+          _lastOrientation ??
+          (mounted && context.mounted
+              ? MediaQuery.maybeOrientationOf(context)
+              : null);
       if (orientation != null) {
         return orientation == Orientation.landscape
             ? PageMode.doublePage
