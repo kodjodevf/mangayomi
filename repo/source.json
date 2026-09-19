@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.9.5",
-      "versionDate": "2026-09-18T16:45:07Z",
-      "versionDescription": "What's Changed\n\n## Reader & Novels\n\n* **Smart Double-Page Mode** (#1008):\n  * Automatically switch to double-page view based on screen orientation (landscape/portrait).\n  * Chapter transition pages now remain isolated for a natural, seamless reading experience.\n* **Complete Novel Reader Overhaul** (#1014):\n  * Added double-page reading mode support for novels.\n  * Added a **Keep screen on** toggle to prevent the display from turning off while reading (#1014).\n  * Added smooth auto-scroll with fine-tuned speed controls.\n  * Redesigned Novel bottom bar and settings sheets: more compact, with quick font-size adjustments.\n  * Centralized all novel settings under **More > Settings > Novel Reader** (#1014).\n* **Smooth Webtoon Scrolling**:\n  * Much smoother continuous scrolling without stutter or layout jumps.\n  * Fluid auto-scroll that reacts instantly to touch and drag gestures.\n* **Reliable Page Error Recovery**:\n  * The **Retry** button is now immediately clickable with no menu overlay interference.\n  * Added a manual **Refresh** button in the reader top bar to re-fetch fresh pages from the source.\n* **Dedicated Page Cache**:\n  * Redesigned chapter caching system (100 MB disk limit with automatic cleanup of older files) to save storage and speed up loading times.\n\n---\n\n## Features & User Experience\n\n* **Quick Resume from History** (#1005):\n  * Double-tap or double-click the **History** icon in the navigation bar to instantly jump straight back into your latest read chapter or watched episode (filtered by Manga, Anime, or Novel).\n* **One-Tap Global Search**:\n  * Tap any title in the entry details header to immediately search for it across all extensions (long-press continues to copy to clipboard).\n  * Warns you before adding an entry that is already in your library.\n* **Customizable Chapter Swipe Actions** (#1005):\n  * Configure left and right swipe gestures for chapters in Reader settings (Mark as Read/Unread, Bookmark, Download, or Disable).\n* **Mass Migration from Library** (#1005):\n  * Added a dedicated shortcut button in the multi-select bottom action bar to quickly migrate multiple selected entries at once.\n* **Automatic Sync** (#1012):\n  * Added background auto-sync support and improved sync preference handling.\n\n---\n\n## Video Player & Desktop\n\n* **Desktop Controls & Performance** (#1015):\n  * Eliminated stutter caused by mouse hover on the player controls.\n  * Added a setting to toggle hardware acceleration on Windows.\n* **Audio & Subtitle Tracks**:\n  * Better track synchronization, duplicate removal, and cleaner track labels.\n\n---\n\n## Localization\n\n* Fully updated and completed translations across **17 languages** (French, German, Spanish, Italian, Portuguese, Russian, Chinese, Japanese, Korean, Arabic, and more).\n\n---\n\n## Fixes & Stability\n\n* Fixed visual layout overflow issues in settings sheets and bottom bars (#1014).\n* Improved error handling and reliability for Kitsu discovery (#1011).\n* File picker improvements and stability updates (#1010).\n\n---\n\n## Contributors\n\n* @kodjodevf\n* @NBA2K1 (#1010, #1011)\n* @not-akari\n\n\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.4...v0.9.5",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.5/Mangayomi-v0.9.5-ios.ipa",
+      "version": "0.9.6",
+      "versionDate": "2026-09-19T16:50:53Z",
+      "versionDescription": "What's Changed\n* fix(reader): isolate wide page spreads in double\u2022page mode and fix RTL resume order (1008) by @jikkun in https://github.com/kodjodevf/mangayomi/pull/1018\n* feat(novel): add reading mode toggle (continuous vs paged) and scroll\u2022free e\u2022reader double\u2022page support by @jikkun in https://github.com/kodjodevf/mangayomi/pull/1019\n\nNew Contributors\n* @jikkun made their first contribution in https://github.com/kodjodevf/mangayomi/pull/1018\n\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.5...v0.9.6",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.6/Mangayomi-v0.9.6-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 114289495,
+      "size": 114296014,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.9.6",
+          "date": "2026-09-19T16:50:53Z",
+          "localizedDescription": "What's Changed\n* fix(reader): isolate wide page spreads in double\u2022page mode and fix RTL resume order (1008) by @jikkun in https://github.com/kodjodevf/mangayomi/pull/1018\n* feat(novel): add reading mode toggle (continuous vs paged) and scroll\u2022free e\u2022reader double\u2022page support by @jikkun in https://github.com/kodjodevf/mangayomi/pull/1019\n\nNew Contributors\n* @jikkun made their first contribution in https://github.com/kodjodevf/mangayomi/pull/1018\n\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.5...v0.9.6",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.6/Mangayomi-v0.9.6-ios.ipa",
+          "size": 114296014
+        },
+        {
           "version": "0.9.5",
           "date": "2026-09-18T16:45:07Z",
-          "localizedDescription": "What's Changed\n* Update FilePicker package by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/1010\n* Add some error handling to kitsu_discovery.dart by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/1011\n\n\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.4...v0.9.5",
+          "localizedDescription": "What's Changed\r\n\r\nReader & Novels\r\n\r\n* **Smart Double\u2022Page Mode** (1008):\r\n  * Automatically switch to double\u2022page view based on screen orientation (landscape/portrait).\r\n  * Chapter transition pages now remain isolated for a natural, seamless reading experience.\r\n* **Complete Novel Reader Overhaul** (1014):\r\n  * Added double\u2022page reading mode support for novels.\r\n  * Added a **Keep screen on** toggle to prevent the display from turning off while reading (1014).\r\n  * Added smooth auto\u2022scroll with fine\u2022tuned speed controls.\r\n  * Redesigned Novel bottom bar and settings sheets: more compact, with quick font\u2022size adjustments.\r\n  * Centralized all novel settings under **More > Settings > Novel Reader** (1014).\r\n* **Smooth Webtoon Scrolling**:\r\n  * Much smoother continuous scrolling without stutter or layout jumps.\r\n  * Fluid auto\u2022scroll that reacts instantly to touch and drag gestures.\r\n* **Reliable Page Error Recovery**:\r\n  * The **Retry** button is now immediately clickable with no menu overlay interference.\r\n  * Added a manual **Refresh** button in the reader top bar to re\u2022fetch fresh pages from the source.\r\n* **Dedicated Page Cache**:\r\n  * Redesigned chapter caching system (100 MB disk limit with automatic cleanup of older files) to save storage and speed up loading times.\r\n\r\n\u2022\u2022\u2022\r\n\r\n Features & User Experience\r\n\r\n* **Quick Resume from History** (1005):\r\n  * Double\u2022tap or double\u2022click the **History** icon in the navigation bar to instantly jump straight back into your latest read chapter or watched episode (filtered by Manga, Anime, or Novel).\r\n* **One\u2022Tap Global Search**:\r\n  * Tap any title in the entry details header to immediately search for it across all extensions (long\u2022press continues to copy to clipboard).\r\n  * Warns you before adding an entry that is already in your library.\r\n* **Customizable Chapter Swipe Actions** (1005):\r\n  * Configure left and right swipe gestures for chapters in Reader settings (Mark as Read/Unread, Bookmark, Download, or Disable).\r\n* **Mass Migration from Library** (1005):\r\n  * Added a dedicated shortcut button in the multi\u2022select bottom action bar to quickly migrate multiple selected entries at once.\r\n* **Automatic Sync** (1012):\r\n  * Added background auto\u2022sync support and improved sync preference handling.\r\n\r\n\u2022\u2022\u2022\r\n\r\nVideo Player & Desktop\r\n\r\n* **Desktop Controls & Performance** (1015):\r\n  * Eliminated stutter caused by mouse hover on the player controls.\r\n  * Added a setting to toggle hardware acceleration on Windows.\r\n* **Audio & Subtitle Tracks**:\r\n  * Better track synchronization, duplicate removal, and cleaner track labels.\r\n\r\n\u2022\u2022\u2022\r\n\r\n Localization\r\n\r\n* Fully updated and completed translations across **17 languages** (French, German, Spanish, Italian, Portuguese, Russian, Chinese, Japanese, Korean, Arabic, and more).\r\n\r\n\u2022\u2022\u2022\r\n\r\n Fixes & Stability\r\n\r\n* Fixed visual layout overflow issues in settings sheets and bottom bars (1014).\r\n* Improved error handling and reliability for Kitsu discovery (1011).\r\n* File picker improvements and stability updates (1010).\r\n\r\n\u2022\u2022\u2022\r\n\r\n Contributors\r\n\r\n* @kodjodevf \r\n* @NBA2K1 (1010, 1011)\r\n* @not\u2022akari\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.4...v0.9.5",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.5/Mangayomi-v0.9.5-ios.ipa",
           "size": 114289495
         },
@@ -231,13 +238,6 @@
           "localizedDescription": "What's Changed\r\n* Fix \"Show extensions\" Button AND Fix category rearrange bug AND hide ItemType from calendar by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/636\r\n* Add a force landscape mode on mobile by @686udjie in https://github.com/kodjodevf/mangayomi/pull/638\r\n* Fix 637: Importing .epub doesn\u2019t work\r\n* Enhance category management with animation\r\n* Refactor download management with shared isolate pool and optimize concurrent downloads\r\n\r\nNew Contributors\r\n* @686udjie made their first contribution in https://github.com/kodjodevf/mangayomi/pull/638\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.90...v0.6.95",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.95/Mangayomi-v0.6.95-ios.ipa",
           "size": 45267048
-        },
-        {
-          "version": "0.6.90",
-          "date": "2025-12-23T18:21:22Z",
-          "localizedDescription": "What's Changed\r\n* Add log switch to about\u2022menu by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/629\r\n* Path optimizations by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/632\r\n* fix: show chanded source preference for mihon source\r\n* Chapter jump fix in vertical continuous mode\r\n* some fixes\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.85...v0.6.90",
-          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.90/Mangayomi-v0.6.90-ios.ipa",
-          "size": 45074046
         }
       ],
       "appPermissions": {
@@ -721,6 +721,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.9.5"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.9.6 - 19 Sep",
+      "identifier": "release-0.9.6",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2026-09-19T16:50:53Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.9.6"
     }
   ]
 }
