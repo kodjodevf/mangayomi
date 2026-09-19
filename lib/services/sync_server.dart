@@ -153,6 +153,7 @@ class SyncServer extends _$SyncServer {
     bool download = false,
     bool bypassRestoreGuard = false,
   }) async {
+    if (!ref.mounted) return false;
     // A restore in progress owns the sync server state until its own
     // post-restore upload runs (that call passes bypassRestoreGuard: true).
     // Anything else - the periodic timer or a manual trigger - must wait,
@@ -175,10 +176,12 @@ class SyncServer extends _$SyncServer {
         }
         return false;
       }
+      if (!ref.mounted) return false;
       // Cheap safety net: covers a row created earlier in this same running
       // session, which the once-at-launch sweep in main.dart couldn't have
       // seen yet. See lib/utils/client_id.dart.
       await backfillMissingClientIds();
+      if (!ref.mounted) return false;
 
       final notifier = ref.read(synchingProvider(syncId: syncId).notifier);
       final ok = upload
@@ -193,7 +196,9 @@ class SyncServer extends _$SyncServer {
         }
         return false;
       }
-      ref.invalidate(synchingProvider(syncId: syncId));
+      if (ref.mounted) {
+        ref.invalidate(synchingProvider(syncId: syncId));
+      }
       if (!silent && l10n != null) {
         botToast(l10n.sync_finished, second: 2);
       }
@@ -227,6 +232,7 @@ class SyncServer extends _$SyncServer {
     var chunkIndex = 0;
 
     while (true) {
+      if (!ref.mounted) return false;
       final hasChunk = chunkIndex < chunks.length;
       final body = <String, dynamic>{
         'since': since,
@@ -308,6 +314,7 @@ class SyncServer extends _$SyncServer {
     var chunkIndex = 0;
 
     while (true) {
+      if (!ref.mounted) return false;
       final hasChunk = chunkIndex < chunks.length;
       final body = <String, dynamic>{
         'since': since,
@@ -355,6 +362,7 @@ class SyncServer extends _$SyncServer {
     final progress = ref.read(syncProgressProvider(syncId: syncId).notifier);
 
     while (true) {
+      if (!ref.mounted) return false;
       final body = <String, dynamic>{
         'since': since,
         'sessionToken': ?sessionToken,
@@ -388,12 +396,14 @@ class SyncServer extends _$SyncServer {
       _apiClient.postSync(_getServer(), _getAccessToken(), body);
 
   String _getAccessToken() {
-    final syncPrefs = ref.watch(synchingProvider(syncId: syncId));
+    if (!ref.mounted) return "";
+    final syncPrefs = ref.read(synchingProvider(syncId: syncId));
     return syncPrefs.authToken ?? "";
   }
 
   String _getServer() {
-    final syncPrefs = ref.watch(synchingProvider(syncId: syncId));
+    if (!ref.mounted) return "";
+    final syncPrefs = ref.read(synchingProvider(syncId: syncId));
     return syncPrefs.server ?? "";
   }
 
@@ -408,6 +418,7 @@ class SyncServer extends _$SyncServer {
   }
 
   void _invalidateSettingsDerivedProviders() {
+    if (!ref.mounted) return;
     ref.invalidate(followSystemThemeStateProvider);
     ref.invalidate(themeModeStateProvider);
     ref.invalidate(blendLevelStateProvider);
