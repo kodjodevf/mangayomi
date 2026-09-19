@@ -104,29 +104,93 @@ class NovelPaginator {
 
     final container = body.querySelector('#readerViewContent') ?? body;
 
-    // Collect block-level elements recursively unwrapping transparent container divs
+    // Collect block-level elements recursively unwrapping containers and preserving
+    // bare text nodes and <br> line breaks commonly used in web novels.
     final List<dom.Element> blockElements = [];
-    void collectBlockElements(dom.Element parent) {
-      final children = parent.children;
-      if (children.isEmpty) {
-        if (parent.text.trim().isNotEmpty ||
-            parent.localName == 'img' ||
-            parent.localName == 'hr') {
-          blockElements.add(parent);
+
+    void processContainer(dom.Element element) {
+      final nodes = element.nodes;
+      var currentParagraphNodes = <dom.Node>[];
+
+      void flushParagraph() {
+        if (currentParagraphNodes.isEmpty) return;
+        final combinedText =
+            currentParagraphNodes.map((n) => n.text ?? '').join().trim();
+        if (combinedText.isNotEmpty) {
+          final p = dom.Element.tag('p');
+          if (element.attributes.containsKey('data-tts-index')) {
+            p.attributes['data-tts-index'] =
+                element.attributes['data-tts-index']!;
+          }
+          for (final n in currentParagraphNodes) {
+            p.append(n.clone(true));
+          }
+          blockElements.add(p);
         }
-        return;
+        currentParagraphNodes = [];
       }
-      for (final child in children) {
-        final tag = child.localName?.toLowerCase() ?? '';
-        if (tag == 'div' && child.children.isNotEmpty) {
-          collectBlockElements(child);
-        } else {
-          blockElements.add(child);
+
+      for (int i = 0; i < nodes.length; i++) {
+        final node = nodes[i];
+        if (node is dom.Element) {
+          final tag = node.localName?.toLowerCase() ?? '';
+          if (tag == 'br') {
+            flushParagraph();
+          } else if (tag == 'div') {
+            flushParagraph();
+            processContainer(node);
+          } else if (tag == 'p' ||
+              tag.startsWith('h') && tag.length == 2 ||
+              tag == 'hr' ||
+              tag == 'blockquote' ||
+              tag == 'table' ||
+              tag == 'img' ||
+              tag == 'ul' ||
+              tag == 'ol' ||
+              tag == 'li') {
+            flushParagraph();
+            if (tag == 'p') {
+              final hasBr = node.querySelectorAll('br').isNotEmpty;
+              if (hasBr) {
+                processContainer(node);
+              } else {
+                if (node.text.trim().isNotEmpty ||
+                    node.querySelector('img') != null) {
+                  blockElements.add(node);
+                }
+              }
+            } else {
+              blockElements.add(node);
+            }
+          } else {
+            // Inline formatting tags (span, b, i, em, strong, a, etc.)
+            currentParagraphNodes.add(node);
+          }
+        } else if (node is dom.Text) {
+          final text = node.text;
+          if (text.contains('\n')) {
+            final lines = text.split('\n');
+            for (int j = 0; j < lines.length; j++) {
+              final line = lines[j].trim();
+              if (line.isNotEmpty) {
+                currentParagraphNodes.add(dom.Text(line));
+              }
+              if (j < lines.length - 1) {
+                flushParagraph();
+              }
+            }
+          } else {
+            final trimmed = text.trim();
+            if (trimmed.isNotEmpty) {
+              currentParagraphNodes.add(dom.Text(trimmed));
+            }
+          }
         }
       }
+      flushParagraph();
     }
 
-    collectBlockElements(container);
+    processContainer(container);
     if (blockElements.isEmpty) {
       if (container.children.isNotEmpty) {
         blockElements.addAll(container.children);

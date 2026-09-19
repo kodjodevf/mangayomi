@@ -143,5 +143,35 @@ void main() {
       expect(res.pageCount, 1);
       expect(res.pages.first.contains('테스트 문장'), isTrue);
     });
+
+    test('Web novel with bare text nodes and br tags is properly extracted and paginated', () {
+      const webNovelHtml = '''
+<div id="readerViewContent">
+  <h2>1화</h2>
+  <hr>
+  나는 내가 태어난 날을 기억한다.<br><br>
+  하늘의 축복이었을까?<br><br>
+  내 뇌는 태어난 순간부터 눈에 보이는 것을 현실로 받아들일 수 있을 만큼 성숙해 있었고 나는 세상의 입구에서 그 사실을 자각했다.<br><br>
+  감긴 눈 위로 갑자기 쏟아지던 날카로운 빛.<br><br>
+  탯줄로 양분과 산소를 받았던 탓에 생전 이용해 본 적 없었던 호흡기가 제대로 작동하지 않았다.<br><br>
+  숨이 막혀온다. 가슴이 답답했다.
+</div>
+''';
+
+      final res = NovelPaginator.paginate(
+        htmlContent: webNovelHtml,
+        pageWidth: 400,
+        pageHeight: 300,
+        fontSize: 18,
+        lineHeight: 1.6,
+      );
+
+      // Must not be a single empty page!
+      expect(res.pageCount, greaterThan(1));
+      expect(res.spreadCount, greaterThan(1));
+      expect(res.pages[0].contains('1화'), isTrue);
+      expect(res.pages[0].contains('나는 내가 태어난 날을 기억한다.'), isTrue);
+      expect(res.pages.last.contains('가슴이 답답했다.'), isTrue);
+    });
   });
 }
