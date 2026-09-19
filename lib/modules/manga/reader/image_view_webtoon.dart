@@ -634,7 +634,12 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
       rotation = dualPageRotateToFitInvert ? 270 : 90;
     }
 
+    final uniqueKey = ValueKey(
+      'single-${currentPage.chapter?.id ?? "trans"}-${currentPage.index ?? index}',
+    );
+
     return Padding(
+      key: uniqueKey,
       padding: widget.isHorizontalContinuous
           ? EdgeInsets.zero
           : EdgeInsets.symmetric(horizontal: sidePad),

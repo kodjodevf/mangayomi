@@ -231,9 +231,13 @@ class ReaderPageContent extends ConsumerWidget {
                   ? const NeverScrollableScrollPhysics()
                   : const ClampingScrollPhysics(),
               itemBuilder: (BuildContext context, int index) {
+                final page = pages[index];
                 return ReaderPagedItem(
+                  key: ValueKey(
+                    'paged-${page.chapter?.id ?? "trans"}-${page.index ?? index}',
+                  ),
                   index: index,
-                  page: pages[index],
+                  page: page,
                   chapter: chapter,
                   pageController: extendedController,
                   controller: pageControllerFor(index),
