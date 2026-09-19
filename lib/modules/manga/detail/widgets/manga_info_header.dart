@@ -455,7 +455,10 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
           onTap: () {
             final name = widget.manga.name;
             if (name != null && name.trim().isNotEmpty) {
-              context.push('/globalSearch', extra: (name, widget.manga.itemType));
+              context.push(
+                '/globalSearch',
+                extra: (name, widget.manga.itemType),
+              );
             }
           },
           onLongPress: () async {
@@ -467,10 +470,7 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
               }
             }
           },
-          child: Text(
-            widget.manga.name!,
-            style: const TextStyle(fontSize: 20),
-          ),
+          child: Text(widget.manga.name!, style: const TextStyle(fontSize: 20)),
         ),
         widget.titleDescription,
       ],
@@ -588,24 +588,24 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
           return SizedBox.shrink();
         }
         return Expanded(
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              elevation: 0,
-            ),
-            onPressed: () {
-              _trackingDraggableMenu(entries);
-            },
-            child: StreamBuilder(
-              stream: trackRepository.watchByMangaId(widget.manga.id!),
-              builder: (context, snapshot) {
-                final l10n = l10nLocalizations(context)!;
-                List<Track>? trackRes = snapshot.hasData ? snapshot.data : [];
-                bool isNotEmpty = trackRes!.isNotEmpty;
-                Color color = isNotEmpty
-                    ? context.primaryColor
-                    : context.secondaryColor;
-                return Column(
+          child: StreamBuilder(
+            stream: trackRepository.watchByMangaId(widget.manga.id!),
+            builder: (context, snapshot) {
+              final l10n = l10nLocalizations(context)!;
+              List<Track>? trackRes = snapshot.hasData ? snapshot.data : [];
+              bool isNotEmpty = trackRes!.isNotEmpty;
+              Color color = isNotEmpty
+                  ? context.primaryColor
+                  : context.secondaryColor;
+              return ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  elevation: 0,
+                ),
+                onPressed: () {
+                  _trackingDraggableMenu(entries);
+                },
+                child: Column(
                   children: [
                     Icon(
                       isNotEmpty ? Icons.done_rounded : Icons.sync_outlined,
@@ -623,9 +623,9 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
                       textAlign: TextAlign.center,
                     ),
                   ],
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         );
       },
