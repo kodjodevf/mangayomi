@@ -567,6 +567,12 @@ class AppLocalizationsIt extends AppLocalizations {
   String get theme => 'Tema';
 
   @override
+  String get material_you => 'Material You';
+
+  @override
+  String get not_supported_on_this_device => 'Not supported on this device';
+
+  @override
   String get dark_mode => 'Modalità scura';
 
   @override
