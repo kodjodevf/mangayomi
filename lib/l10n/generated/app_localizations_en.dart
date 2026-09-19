@@ -2409,6 +2409,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authenticating => 'Authenticating...';
 
   @override
+  String get lock => 'Lock';
+
+  @override
   String get unlock => 'Unlock';
 
   @override

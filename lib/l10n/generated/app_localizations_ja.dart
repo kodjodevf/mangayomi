@@ -2367,6 +2367,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get authenticating => '認証中です...';
 
   @override
+  String get lock => 'Lock';
+
+  @override
   String get unlock => 'ロック解除';
 
   @override

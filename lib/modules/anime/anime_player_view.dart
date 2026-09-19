@@ -444,6 +444,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   final ValueNotifier<String> _selectedShader = ValueNotifier("");
   final ValueNotifier<ActiveCustomButton?> _customButton = ValueNotifier(null);
   final ValueNotifier<List<CustomButton>?> _customButtons = ValueNotifier(null);
+  final ValueNotifier<bool> _isLocked = ValueNotifier(false);
   late final ValueNotifier<_AniSkipPhase> _skipPhase = ValueNotifier(
     _AniSkipPhase.none,
   );
@@ -1704,6 +1705,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _isCompleted.dispose();
     _tempPosition.dispose();
     _fit.dispose();
+    _isLocked.dispose();
     _skipPhase.dispose();
     _subDelayController.dispose();
     _subSpeedController.dispose();
@@ -2400,6 +2402,17 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
               children: [
+                IconButton(
+                  tooltip: context.l10n.lock,
+                  icon: const Icon(
+                    Icons.lock_open_outlined,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    HapticFeedback.lightImpact();
+                    _isLocked.value = true;
+                  },
+                ),
                 _seekToWidget(),
                 _chapterMarkWidget(),
                 Expanded(
@@ -2918,6 +2931,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                       _isDoubleSpeed.value = value ?? false;
                     },
                     chapterMarks: _chapterMarks,
+                    isLocked: _isLocked,
                   ),
             controller: _controller,
             // When docked left for the settings panel, fill the (narrower) slot
@@ -2972,22 +2986,30 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           Positioned(
             right: 0,
             bottom: 80,
-            child: ValueListenableBuilder<_AniSkipPhase>(
-              valueListenable: _skipPhase,
-              builder: (context, phase, _) {
-                if (phase == _AniSkipPhase.none) return const SizedBox.shrink();
-                final isOpening = phase == _AniSkipPhase.opening;
-                final result = isOpening ? _openingResult! : _endingResult!;
-                return AniSkipCountDownButton(
-                  key: Key(isOpening ? 'skip_opening' : 'skip_ending'),
-                  active: true,
-                  autoSkip: enableAutoSkip,
-                  timeoutLength: aniSkipTimeoutLength,
-                  skipTypeText: isOpening
-                      ? context.l10n.skip_opening
-                      : context.l10n.skip_ending,
-                  player: _player,
-                  aniSkipResult: result,
+            child: ValueListenableBuilder<bool>(
+              valueListenable: _isLocked,
+              builder: (context, isLocked, _) {
+                if (isLocked) return const SizedBox.shrink();
+                return ValueListenableBuilder<_AniSkipPhase>(
+                  valueListenable: _skipPhase,
+                  builder: (context, phase, _) {
+                    if (phase == _AniSkipPhase.none) {
+                      return const SizedBox.shrink();
+                    }
+                    final isOpening = phase == _AniSkipPhase.opening;
+                    final result = isOpening ? _openingResult! : _endingResult!;
+                    return AniSkipCountDownButton(
+                      key: Key(isOpening ? 'skip_opening' : 'skip_ending'),
+                      active: true,
+                      autoSkip: enableAutoSkip,
+                      timeoutLength: aniSkipTimeoutLength,
+                      skipTypeText: isOpening
+                          ? context.l10n.skip_opening
+                          : context.l10n.skip_ending,
+                      player: _player,
+                      aniSkipResult: result,
+                    );
+                  },
                 );
               },
             ),
@@ -3199,7 +3221,26 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     // DesktopControllerWidget. On mobile / Android TV the controls have none,
     // so wrap the player so a physical keyboard or TV remote can drive
     // playback too. See #668 / #729.
-    return Scaffold(body: isDesktop ? body : _wrapWithPlayerShortcuts(body));
+    final content = Scaffold(
+      body: isDesktop ? body : _wrapWithPlayerShortcuts(body),
+    );
+
+    if (isDesktop) return content;
+
+    return ValueListenableBuilder<bool>(
+      valueListenable: _isLocked,
+      builder: (context, isLocked, _) {
+        return PopScope(
+          canPop: !isLocked,
+          onPopInvokedWithResult: (didPop, result) {
+            if (!didPop) {
+              _revealControls.value++;
+            }
+          },
+          child: content,
+        );
+      },
+    );
   }
 
   /// Maps keyboard and TV-remote keys to player actions for non-desktop

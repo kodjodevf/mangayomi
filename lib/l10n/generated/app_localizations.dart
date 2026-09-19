@@ -4417,6 +4417,12 @@ abstract class AppLocalizations {
   /// **'Authenticating...'**
   String get authenticating;
 
+  /// No description provided for @lock.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock'**
+  String get lock;
+
   /// No description provided for @unlock.
   ///
   /// In en, this message translates to:

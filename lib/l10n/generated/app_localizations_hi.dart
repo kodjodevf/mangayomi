@@ -2419,6 +2419,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get authenticating => 'प्रमाणीकरण चल रहा है...';
 
   @override
+  String get lock => 'Lock';
+
+  @override
   String get unlock => 'अनलॉक करें';
 
   @override

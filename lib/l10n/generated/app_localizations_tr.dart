@@ -2427,6 +2427,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get authenticating => 'Kimlik doğrulanıyor...';
 
   @override
+  String get lock => 'Lock';
+
+  @override
   String get unlock => 'Kilit Aç';
 
   @override

@@ -2423,6 +2423,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get authenticating => 'Mengautentikasi...';
 
   @override
+  String get lock => 'Lock';
+
+  @override
   String get unlock => 'Buka';
 
   @override

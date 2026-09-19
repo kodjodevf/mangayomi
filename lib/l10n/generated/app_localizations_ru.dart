@@ -2455,6 +2455,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get authenticating => 'Идет аутентификация...';
 
   @override
+  String get lock => 'Lock';
+
+  @override
   String get unlock => 'Разблокировать';
 
   @override

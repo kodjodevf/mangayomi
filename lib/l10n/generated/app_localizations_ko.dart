@@ -2364,6 +2364,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get authenticating => '인증 중...';
 
   @override
+  String get lock => 'Lock';
+
+  @override
   String get unlock => '잠금 해제';
 
   @override

@@ -2450,6 +2450,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get authenticating => 'Authentification en cours...';
 
   @override
+  String get lock => 'Verrouiller';
+
+  @override
   String get unlock => 'Déverrouiller';
 
   @override

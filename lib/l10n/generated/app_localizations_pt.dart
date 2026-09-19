@@ -2441,6 +2441,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get authenticating => 'Autenticando...';
 
   @override
+  String get lock => 'Lock';
+
+  @override
   String get unlock => 'Desbloquear';
 
   @override

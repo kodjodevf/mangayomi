@@ -2439,6 +2439,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get authenticating => 'Authentifizierung läuft...';
 
   @override
+  String get lock => 'Lock';
+
+  @override
   String get unlock => 'Entsperren';
 
   @override

@@ -2411,6 +2411,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get authenticating => 'กำลังยืนยันตัวตน...';
 
   @override
+  String get lock => 'Lock';
+
+  @override
   String get unlock => 'ปลดล็อก';
 
   @override

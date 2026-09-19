@@ -2341,6 +2341,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get authenticating => '正在验证...';
 
   @override
+  String get lock => 'Lock';
+
+  @override
   String get unlock => '解锁';
 
   @override

@@ -2423,6 +2423,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authenticating => 'جاري المصادقة...';
 
   @override
+  String get lock => 'Lock';
+
+  @override
   String get unlock => 'فتح القفل';
 
   @override

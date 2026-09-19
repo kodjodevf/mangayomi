@@ -12,6 +12,7 @@ import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,7 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
   final ValueNotifier<List<(String, int)>> chapterMarks;
   // Bumped by the player on each d-pad key so the controls reveal on a TV remote.
   final ValueNotifier<int> revealControls;
+  final ValueNotifier<bool>? isLocked;
   const MobileControllerWidget({
     super.key,
     required this.videoController,
@@ -38,6 +40,7 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
     required this.doubleSpeed,
     required this.chapterMarks,
     required this.revealControls,
+    this.isLocked,
   });
 
   @override
@@ -166,9 +169,24 @@ class _MobileControllerWidgetState
     }
   }
 
+  void _onLockChanged() {
+    if (!mounted) return;
+    setState(() {});
+    if (widget.isLocked?.value == true) {
+      if (!visible) {
+        setState(() {
+          mount = true;
+          visible = true;
+        });
+      }
+      _restartHideTimer();
+    }
+  }
+
   @override
   void dispose() {
     widget.revealControls.removeListener(_onRevealRequest);
+    widget.isLocked?.removeListener(_onLockChanged);
     _controlsScope.dispose();
     _playPauseFocus.dispose();
     for (final subscription in subscriptions) {
@@ -291,6 +309,7 @@ class _MobileControllerWidgetState
   void initState() {
     super.initState();
     widget.revealControls.addListener(_onRevealRequest);
+    widget.isLocked?.addListener(_onLockChanged);
     _volumeController = VolumeController.instance;
 
     Future.microtask(() async {
@@ -394,54 +413,56 @@ class _MobileControllerWidgetState
                         onTap: onTap,
                         child: Stack(
                           children: [
-                            Positioned(
-                              top: 0,
-                              left: 0,
-                              right: 0,
-                              height: 140,
-                              child: IgnorePointer(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Theme.of(context).colorScheme.scrim
-                                            .withValues(alpha: 0.75),
-                                        Theme.of(context).colorScheme.scrim
-                                            .withValues(alpha: 0.35),
-                                        Colors.transparent,
-                                      ],
-                                      stops: const [0.0, 0.65, 1.0],
+                            if (widget.isLocked?.value != true) ...[
+                              Positioned(
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                height: 140,
+                                child: IgnorePointer(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Theme.of(context).colorScheme.scrim
+                                              .withValues(alpha: 0.75),
+                                          Theme.of(context).colorScheme.scrim
+                                              .withValues(alpha: 0.35),
+                                          Colors.transparent,
+                                        ],
+                                        stops: const [0.0, 0.65, 1.0],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              height: 180,
-                              child: IgnorePointer(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.bottomCenter,
-                                      end: Alignment.topCenter,
-                                      colors: [
-                                        Theme.of(context).colorScheme.scrim
-                                            .withValues(alpha: 0.85),
-                                        Theme.of(context).colorScheme.scrim
-                                            .withValues(alpha: 0.40),
-                                        Colors.transparent,
-                                      ],
-                                      stops: const [0.0, 0.70, 1.0],
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                height: 180,
+                                child: IgnorePointer(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.bottomCenter,
+                                        end: Alignment.topCenter,
+                                        colors: [
+                                          Theme.of(context).colorScheme.scrim
+                                              .withValues(alpha: 0.85),
+                                          Theme.of(context).colorScheme.scrim
+                                              .withValues(alpha: 0.40),
+                                          Colors.transparent,
+                                        ],
+                                        stops: const [0.0, 0.70, 1.0],
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
+                            ],
                           ],
                         ),
                       ),
@@ -457,6 +478,7 @@ class _MobileControllerWidgetState
                         onTap: onTap,
                         onDoubleTapDown: _handleTapDown,
                         onDoubleTap: () {
+                          if (widget.isLocked?.value == true) return;
                           if (_tapPosition != null &&
                               _tapPosition!.dx >
                                   MediaQuery.of(context).size.width / 2) {
@@ -466,6 +488,7 @@ class _MobileControllerWidgetState
                           }
                         },
                         onLongPressStart: (e) {
+                          if (widget.isLocked?.value == true) return;
                           previousPlaybackSpeed =
                               widget.videoController.player.state.rate;
                           widget.videoController.player.setRate(
@@ -474,6 +497,7 @@ class _MobileControllerWidgetState
                           widget.doubleSpeed(true);
                         },
                         onLongPressEnd: (e) {
+                          if (widget.isLocked?.value == true) return;
                           if (previousPlaybackSpeed != -1) {
                             widget.videoController.player.setRate(
                               previousPlaybackSpeed,
@@ -483,12 +507,15 @@ class _MobileControllerWidgetState
                           }
                         },
                         onHorizontalDragUpdate: (details) {
+                          if (widget.isLocked?.value == true) return;
                           onHorizontalDragUpdate(details);
                         },
                         onHorizontalDragEnd: (details) {
+                          if (widget.isLocked?.value == true) return;
                           onHorizontalDragEnd();
                         },
                         onVerticalDragUpdate: (e) async {
+                          if (widget.isLocked?.value == true) return;
                           final delta = e.delta.dy;
                           final Offset position = e.localPosition;
 
@@ -515,96 +542,128 @@ class _MobileControllerWidgetState
                       ),
                     ),
                     if (mount)
-                      Padding(
-                        padding:
-                            (
-                            // Add padding in fullscreen!
-                            isFullscreen(context)
-                            ? MediaQuery.of(context).padding
-                            : Platform.isIOS
-                            ? EdgeInsets.only(
-                                bottom: MediaQuery.of(context).padding.bottom,
-                              )
-                            : EdgeInsets.zero),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            widget.topButtonBarWidget,
-                            // Only display [primaryButtonBar] if [buffering] is false.
-                            Expanded(
-                              child: AnimatedOpacity(
-                                curve: Curves.easeInOut,
-                                opacity: buffering
-                                    ? 0.0
-                                    : showSwipeDuration
-                                    ? 0.0
-                                    : 1.0,
-                                duration: controlsTransitionDuration,
-                                child: Center(
-                                  // Brighter focus highlight on the main controls
-                                  // so the focused button stands out against the
-                                  // dark backdrop on a TV.
-                                  child: Theme(
-                                    data: Theme.of(context).copyWith(
-                                      focusColor: Colors.white.withValues(
-                                        alpha: 0.45,
+                      if (widget.isLocked?.value == true)
+                        Positioned(
+                          top:
+                              (isFullscreen(context)
+                                  ? MediaQuery.of(context).padding.top
+                                  : 0) +
+                              16,
+                          left:
+                              (isFullscreen(context)
+                                  ? MediaQuery.of(context).padding.left
+                                  : 0) +
+                              16,
+                          child: IconButton.filledTonal(
+                            style: IconButton.styleFrom(
+                              backgroundColor: Colors.black.withValues(
+                                alpha: 0.55,
+                              ),
+                              foregroundColor: Colors.white,
+                            ),
+                            tooltip: context.l10n.unlock,
+                            onPressed: () {
+                              HapticFeedback.lightImpact();
+                              widget.isLocked?.value = false;
+                              _restartHideTimer();
+                            },
+                            icon: const Icon(Icons.lock_outline, size: 24),
+                          ),
+                        )
+                      else
+                        Padding(
+                          padding:
+                              (
+                              // Add padding in fullscreen!
+                              isFullscreen(context)
+                              ? MediaQuery.of(context).padding
+                              : Platform.isIOS
+                              ? EdgeInsets.only(
+                                  bottom: MediaQuery.of(context).padding.bottom,
+                                )
+                              : EdgeInsets.zero),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              widget.topButtonBarWidget,
+                              // Only display [primaryButtonBar] if [buffering] is false.
+                              Expanded(
+                                child: AnimatedOpacity(
+                                  curve: Curves.easeInOut,
+                                  opacity: buffering
+                                      ? 0.0
+                                      : showSwipeDuration
+                                      ? 0.0
+                                      : 1.0,
+                                  duration: controlsTransitionDuration,
+                                  child: Center(
+                                    // Brighter focus highlight on the main controls
+                                    // so the focused button stands out against the
+                                    // dark backdrop on a TV.
+                                    child: Theme(
+                                      data: Theme.of(context).copyWith(
+                                        focusColor: Colors.white.withValues(
+                                          alpha: 0.45,
+                                        ),
                                       ),
-                                    ),
-                                    child: Row(
-                                      children: mobilePrimaryButtonBar(
-                                        context,
-                                        widget.videoStatekey,
-                                        widget.streamController,
-                                        widget.videoController,
-                                        playPauseFocus: _playPauseFocus,
+                                      child: Row(
+                                        children: mobilePrimaryButtonBar(
+                                          context,
+                                          widget.videoStatekey,
+                                          widget.streamController,
+                                          widget.videoController,
+                                          playPauseFocus: _playPauseFocus,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Stack(
-                              alignment: Alignment.bottomCenter,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: CustomSeekBar(
-                                    onSeekStart: (value) {
-                                      setState(() {
-                                        swipeDuration = value.inSeconds;
-                                        showSwipeDuration = true;
-                                      });
-                                      _timer?.cancel();
-                                    },
-                                    onSeekEnd: (value) {
-                                      _timer = Timer(controlsHoverDuration, () {
-                                        if (mounted) {
-                                          setState(() {
-                                            visible = false;
-                                          });
-                                        }
-                                      });
-                                      setState(() {
-                                        showSwipeDuration = false;
-                                      });
-                                    },
-                                    player: widget.videoController.player,
-                                    chapterMarks: widget.chapterMarks,
+                              Stack(
+                                alignment: Alignment.bottomCenter,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: CustomSeekBar(
+                                      onSeekStart: (value) {
+                                        setState(() {
+                                          swipeDuration = value.inSeconds;
+                                          showSwipeDuration = true;
+                                        });
+                                        _timer?.cancel();
+                                      },
+                                      onSeekEnd: (value) {
+                                        _timer = Timer(
+                                          controlsHoverDuration,
+                                          () {
+                                            if (mounted) {
+                                              setState(() {
+                                                visible = false;
+                                              });
+                                            }
+                                          },
+                                        );
+                                        setState(() {
+                                          showSwipeDuration = false;
+                                        });
+                                      },
+                                      player: widget.videoController.player,
+                                      chapterMarks: widget.chapterMarks,
+                                    ),
                                   ),
-                                ),
-                                widget.bottomButtonBarWidget,
-                              ],
-                            ),
-                          ],
+                                  widget.bottomButtonBarWidget,
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
                   ],
                 ),
               ),
               // // Double-Tap Seek Seek-Bar:
-              if (!mount)
+              if (!mount && widget.isLocked?.value != true)
                 if (_mountSeekBackwardButton ||
                     _mountSeekForwardButton ||
                     showSwipeDuration)

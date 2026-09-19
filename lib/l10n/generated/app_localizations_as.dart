@@ -2418,6 +2418,9 @@ class AppLocalizationsAs extends AppLocalizations {
   String get authenticating => 'প্রমাণ কৰা হৈ আছে...';
 
   @override
+  String get lock => 'Lock';
+
+  @override
   String get unlock => 'আনলক';
 
   @override
