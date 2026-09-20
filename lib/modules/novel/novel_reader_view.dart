@@ -16,6 +16,7 @@ import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_gestures.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/auto_scroll_button.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/chapter_transition_page.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_app_bar.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
@@ -47,21 +48,36 @@ typedef DoubleClickAnimationListener = void Function();
 
 class NovelReaderView extends ConsumerWidget {
   final int chapterId;
-  NovelReaderView({super.key, required this.chapterId});
+  final bool startAtEnd;
+  NovelReaderView({
+    super.key,
+    required this.chapterId,
+    this.startAtEnd = false,
+  });
   late final Chapter chapter = chapterRepository.getById(chapterId);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final result = ref.watch(getHtmlContentProvider(chapter: chapter));
 
-    return NovelWebView(chapter: chapter, result: result);
+    return NovelWebView(
+      chapter: chapter,
+      result: result,
+      startAtEnd: startAtEnd,
+    );
   }
 }
 
 class NovelWebView extends ConsumerStatefulWidget {
-  const NovelWebView({super.key, required this.chapter, required this.result});
+  const NovelWebView({
+    super.key,
+    required this.chapter,
+    required this.result,
+    this.startAtEnd = false,
+  });
 
   final Chapter chapter;
   final AsyncValue<(String, EpubNovel?)> result;
+  final bool startAtEnd;
 
   @override
   ConsumerState createState() {
@@ -102,6 +118,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
 
   bool scrolled = false;
   bool _scrollRestoreScheduled = false;
+  bool _isNavigatingChapter = false;
+  double _backwardOverscrollAmount = 0;
+  double _forwardOverscrollAmount = 0;
   double offset = 0;
   double maxOffset = 0;
   int fontSize = 14;
@@ -378,14 +397,18 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   ///
   /// If the reader is already at the first or last chapter (depending on
   /// the direction), the method returns without navigating.
-  void _goToChapter(bool next) {
+  void _goToChapter(bool next, {bool? startAtEnd}) {
+    if (_isNavigatingChapter) return;
     if (next && !_readerController.hasNextChapter) return;
     if (!next && !_readerController.hasPreviousChapter) return;
+    _isNavigatingChapter = true;
+    final bool shouldStartAtEnd = startAtEnd ?? !next;
     pushReplacementMangaReaderView(
       context: context,
       chapter: next
           ? _readerController.getNextChapter()
           : _readerController.getPrevChapter(),
+      startAtEnd: shouldStartAtEnd,
     );
   }
 
@@ -474,6 +497,31 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
           } else if (notification is ScrollEndNotification) {
             _isUserDragging = false;
           }
+          if (notification is OverscrollNotification) {
+            if (notification.overscroll < 0) {
+              _backwardOverscrollAmount += (-notification.overscroll);
+              _forwardOverscrollAmount = 0;
+              if (_backwardOverscrollAmount > 80) {
+                _backwardOverscrollAmount = 0;
+                _goToChapter(false, startAtEnd: true);
+              }
+            } else if (notification.overscroll > 0) {
+              _forwardOverscrollAmount += notification.overscroll;
+              _backwardOverscrollAmount = 0;
+              if (_forwardOverscrollAmount > 80) {
+                _forwardOverscrollAmount = 0;
+                _goToChapter(true, startAtEnd: false);
+              }
+            }
+          } else if (notification is ScrollUpdateNotification) {
+            if (notification.scrollDelta != null) {
+              if (notification.scrollDelta! > 0) {
+                _backwardOverscrollAmount = 0;
+              } else if (notification.scrollDelta! < 0) {
+                _forwardOverscrollAmount = 0;
+              }
+            }
+          }
           if (notification is UserScrollNotification) {
             if (notification.direction == ScrollDirection.idle) {
               if (_isView) {
@@ -524,34 +572,49 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                               if (!_scrollRestoreScheduled &&
                                   _readerMode.isContinuous) {
                                 _scrollRestoreScheduled = true;
+                                final screenHeight =
+                                    MediaQuery.of(context).size.height;
                                 Future.delayed(
                                   const Duration(milliseconds: 100),
                                   () {
                                     if (!scrolled &&
                                         mounted &&
                                         _scrollController.hasClients) {
-                                      _scrollController
-                                          .animateTo(
-                                            _scrollController
-                                                    .position
-                                                    .maxScrollExtent *
-                                                (double.tryParse(
-                                                      chapter.lastPageRead!,
-                                                    ) ??
-                                                    0),
-                                            duration: const Duration(
-                                              seconds: 1,
-                                            ),
-                                            curve: Curves.fastOutSlowIn,
-                                          )
-                                          .then((value) {
-                                            if (!mounted) return;
-                                            scrolled = true;
-                                            if (_autoScroll.value &&
-                                                _isContinuousMode()) {
-                                              _startAutoScroll();
-                                            }
-                                          });
+                                      final targetProgress = widget.startAtEnd
+                                          ? 1.0
+                                          : (double.tryParse(
+                                                chapter.lastPageRead ?? '',
+                                              ) ??
+                                              0);
+                                      if (widget.startAtEnd) {
+                                        final maxScroll = _scrollController
+                                            .position.maxScrollExtent;
+                                        _scrollController.jumpTo(
+                                          (maxScroll - screenHeight)
+                                              .clamp(0.0, maxScroll),
+                                        );
+                                        scrolled = true;
+                                      } else {
+                                        _scrollController
+                                            .animateTo(
+                                              _scrollController
+                                                      .position
+                                                      .maxScrollExtent *
+                                                  targetProgress,
+                                              duration: const Duration(
+                                                seconds: 1,
+                                              ),
+                                              curve: Curves.fastOutSlowIn,
+                                            )
+                                            .then((value) {
+                                              if (!mounted) return;
+                                              scrolled = true;
+                                              if (_autoScroll.value &&
+                                                  _isContinuousMode()) {
+                                                _startAutoScroll();
+                                              }
+                                            });
+                                      }
                                     }
                                   },
                                 );
@@ -660,22 +723,33 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                   textAlignEnum;
                                             }
 
+                                            final pagination =
+                                                _cachedPagination!;
+                                            final contentCount = isDouble
+                                                ? pagination.spreadCount
+                                                : pagination.pageCount;
+                                            final totalCount =
+                                                contentCount + 1;
+
                                             if (!_scrollRestoreScheduled) {
                                               _scrollRestoreScheduled = true;
-                                              final progress =
-                                                  double.tryParse(
-                                                    chapter.lastPageRead ?? '',
-                                                  ) ??
-                                                  0.0;
-                                              final targetIndex = isDouble
-                                                  ? _cachedPagination!
-                                                      .spreadForProgress(
-                                                        progress,
-                                                      )
-                                                  : _cachedPagination!
-                                                      .pageForProgress(
-                                                        progress,
-                                                      );
+                                              final progress = widget.startAtEnd
+                                                  ? 1.0
+                                                  : (double.tryParse(
+                                                        chapter.lastPageRead ?? '',
+                                                      ) ??
+                                                      0.0);
+                                              final targetIndex = widget.startAtEnd
+                                                  ? (contentCount > 0 ? contentCount - 1 : 0)
+                                                  : (isDouble
+                                                      ? pagination
+                                                          .spreadForProgress(
+                                                            progress,
+                                                          )
+                                                      : pagination
+                                                          .pageForProgress(
+                                                            progress,
+                                                          ));
                                               _currentSpreadIndex =
                                                   targetIndex;
                                               WidgetsBinding.instance
@@ -692,12 +766,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                   });
                                             }
 
-                                            final pagination =
-                                                _cachedPagination!;
-                                            final totalCount = isDouble
-                                                ? pagination.spreadCount
-                                                : pagination.pageCount;
-
                                             return Container(
                                               color: parsedBackgroundColor,
                                               child: PageView.builder(
@@ -708,15 +776,18 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                     _currentSpreadIndex =
                                                         pageIndex;
                                                   });
-                                                  final progress = isDouble
-                                                      ? pagination
-                                                          .progressForSpread(
-                                                            pageIndex,
-                                                          )
-                                                      : pagination
-                                                          .progressForPage(
-                                                            pageIndex,
-                                                          );
+                                                  final progress = pageIndex >=
+                                                          contentCount
+                                                      ? 1.0
+                                                      : (isDouble
+                                                          ? pagination
+                                                              .progressForSpread(
+                                                                pageIndex,
+                                                              )
+                                                          : pagination
+                                                              .progressForPage(
+                                                                pageIndex,
+                                                              ));
                                                   offset =
                                                       progress *
                                                       (maxOffset > 0
@@ -734,6 +805,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                   _rebuildDetail.add(offset);
                                                 },
                                                 itemBuilder: (context, index) {
+                                                  if (index >= contentCount) {
+                                                    return _buildTransitionPage(
+                                                      chapter,
+                                                    );
+                                                  }
                                                   if (isDouble) {
                                                     final leftHtml = pagination
                                                         .leftPageForSpread(
@@ -889,6 +965,16 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                   tts: tts,
                                                 ),
                                               ),
+                                              SliverToBoxAdapter(
+                                                child: SizedBox(
+                                                  height: MediaQuery.of(
+                                                    context,
+                                                  ).size.height,
+                                                  child: _buildTransitionPage(
+                                                    chapter,
+                                                  ),
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -916,16 +1002,25 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                   if (!_readerMode.isContinuous &&
                                       _cachedPagination != null &&
                                       _cachedPagination!.pageCount > 0) {
-                                    displayLabel = effectivePageMode ==
+                                    final contentCount = effectivePageMode ==
                                             PageMode.doublePage
-                                        ? _cachedPagination!
-                                            .pageLabelForSpread(
-                                              _currentSpreadIndex,
-                                            )
-                                        : _cachedPagination!
-                                            .pageLabelForIndex(
-                                              _currentSpreadIndex,
-                                            );
+                                        ? _cachedPagination!.spreadCount
+                                        : _cachedPagination!.pageCount;
+                                    if (_currentSpreadIndex >= contentCount) {
+                                      displayLabel =
+                                          context.l10n.end_of_chapter;
+                                    } else {
+                                      displayLabel = effectivePageMode ==
+                                              PageMode.doublePage
+                                          ? _cachedPagination!
+                                              .pageLabelForSpread(
+                                                _currentSpreadIndex,
+                                              )
+                                          : _cachedPagination!
+                                              .pageLabelForIndex(
+                                                _currentSpreadIndex,
+                                              );
+                                    }
                                   } else {
                                     final scrollPercentage = maxOffset > 0
                                         ? ((offset / maxOffset) * 100)
@@ -1062,15 +1157,52 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     Navigator.pop(context);
   }
 
+  Widget _buildTransitionPage(Chapter chapter) {
+    final nextChapter = _readerController.hasNextChapter
+        ? _readerController.getNextChapter()
+        : null;
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        _isViewFunction();
+      },
+      child: SizedBox.expand(
+        child: ChapterTransitionPage(
+          currentChapter: chapter,
+          nextChapter: nextChapter,
+          mangaName: chapter.manga.value?.name ?? '',
+          readerMode: _readerMode,
+          onNextChapter: nextChapter != null
+              ? () => _goToChapter(true, startAtEnd: false)
+              : null,
+        ),
+      ),
+    );
+  }
+
   void _onBtnTapped(double value) {
     if (!_readerMode.isContinuous) {
       if (_spreadController.hasClients) {
+        final contentCount = _cachedPagination != null
+            ? (_lastEffectivePageMode == PageMode.doublePage
+                ? _cachedPagination!.spreadCount
+                : _cachedPagination!.pageCount)
+            : 1;
+        final maxIndex = contentCount; // Transition page is at index contentCount
         if (value > 0) {
+          if (_currentSpreadIndex >= maxIndex) {
+            _goToChapter(true, startAtEnd: false);
+            return;
+          }
           _spreadController.nextPage(
             duration: const Duration(milliseconds: 250),
             curve: Curves.easeOut,
           );
         } else {
+          if (_currentSpreadIndex <= 0) {
+            _goToChapter(false, startAtEnd: true);
+            return;
+          }
           _spreadController.previousPage(
             duration: const Duration(milliseconds: 250),
             curve: Curves.easeOut,
@@ -1082,10 +1214,17 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     if (_scrollController.hasClients) {
       final currentOffset = _scrollController.offset;
       final maxScroll = _scrollController.position.maxScrollExtent;
+      if (value > 0 && currentOffset >= maxScroll - 20) {
+        _goToChapter(true, startAtEnd: false);
+        return;
+      } else if (value < 0 && currentOffset <= 20) {
+        _goToChapter(false, startAtEnd: true);
+        return;
+      }
 
       final newOffset = currentOffset + value;
       _scrollController.animateTo(
-        min(newOffset, maxScroll),
+        newOffset.clamp(0.0, maxScroll),
         duration: const Duration(milliseconds: 100),
         curve: Curves.linear,
       );
@@ -1451,13 +1590,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                 minHeight: 36,
                               ),
                               onPressed: hasPrevChapter
-                                  ? () {
-                                      pushReplacementMangaReaderView(
-                                        context: context,
-                                        chapter: _readerController
-                                            .getPrevChapter(),
-                                      );
-                                    }
+                                  ? () => _goToChapter(false, startAtEnd: false)
                                   : null,
                               icon: Icon(
                                 Icons.skip_previous_rounded,
@@ -1663,13 +1796,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                 minHeight: 36,
                               ),
                               onPressed: hasNextChapter
-                                  ? () {
-                                      pushReplacementMangaReaderView(
-                                        context: context,
-                                        chapter: _readerController
-                                            .getNextChapter(),
-                                      );
-                                    }
+                                  ? () => _goToChapter(true, startAtEnd: false)
                                   : null,
                               icon: Icon(
                                 Icons.skip_next_rounded,

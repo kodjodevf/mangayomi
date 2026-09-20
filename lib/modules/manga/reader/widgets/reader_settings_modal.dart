@@ -55,6 +55,8 @@ class ReaderSettingsModal {
     required void Function(bool enabled, double offset) onAutoScrollSave,
     required VoidCallback onFullScreenToggle,
     required VoidCallback onAutoPageScroll,
+    PageMode? pageMode,
+    ValueChanged<PageMode>? onPageModeChanged,
   }) async {
     // Pause auto-scroll while settings are open
     final autoScrollWasRunning = autoScroll.value;
@@ -81,6 +83,8 @@ class ReaderSettingsModal {
           onAutoScroll: (val) {
             autoScroll.value = val;
           },
+          pageMode: pageMode,
+          onPageModeChanged: onPageModeChanged,
         ),
 
         // General Tab
@@ -112,6 +116,8 @@ class _ReadingModeTab extends ConsumerWidget {
   final void Function(ReaderMode mode, WidgetRef ref) onReaderModeChanged;
   final void Function(bool enabled, double offset) onAutoScrollSave;
   final void Function(bool val) onAutoScroll;
+  final PageMode? pageMode;
+  final ValueChanged<PageMode>? onPageModeChanged;
 
   const _ReadingModeTab({
     required this.currentReaderModeProvider,
@@ -120,6 +126,8 @@ class _ReadingModeTab extends ConsumerWidget {
     required this.onReaderModeChanged,
     required this.onAutoScrollSave,
     required this.onAutoScroll,
+    this.pageMode,
+    this.onPageModeChanged,
   });
 
   @override
@@ -301,52 +309,107 @@ class _ReadingModeTab extends ConsumerWidget {
                 },
               ),
 
-            SwitchListTile(
-              value: doublePageSingleFirstPage,
-              title: Text(
-                l10n.double_page_single_first_page,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: _SettingSection(
+                title: l10n.page_mode,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _ModeChipButton(
+                            icon: Icons.article_outlined,
+                            label: l10n.single_page,
+                            isSelected: (doublePageAuto
+                                    ? (MediaQuery.of(context).orientation ==
+                                            Orientation.landscape
+                                        ? PageMode.doublePage
+                                        : PageMode.onePage)
+                                    : (pageMode ?? PageMode.onePage)) ==
+                                PageMode.onePage,
+                            onTap: () {
+                              ref
+                                  .read(doublePageAutoStateProvider.notifier)
+                                  .set(false);
+                              onPageModeChanged?.call(PageMode.onePage);
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _ModeChipButton(
+                            icon: Icons.auto_stories_outlined,
+                            label: l10n.double_page,
+                            isSelected: (doublePageAuto
+                                    ? (MediaQuery.of(context).orientation ==
+                                            Orientation.landscape
+                                        ? PageMode.doublePage
+                                        : PageMode.onePage)
+                                    : (pageMode ?? PageMode.onePage)) ==
+                                PageMode.doublePage,
+                            onTap: () {
+                              ref
+                                  .read(doublePageAutoStateProvider.notifier)
+                                  .set(false);
+                              onPageModeChanged?.call(PageMode.doublePage);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _ModeChipButton(
+                            icon: Icons.menu_book_rounded,
+                            label: l10n.double_page_single_first_page,
+                            isSelected: doublePageSingleFirstPage,
+                            onTap: () {
+                              ref
+                                  .read(
+                                    doublePageSingleFirstPageStateProvider
+                                        .notifier,
+                                  )
+                                  .set(!doublePageSingleFirstPage);
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _ModeChipButton(
+                            icon: Icons.screen_rotation_outlined,
+                            label: l10n.double_page_auto,
+                            isSelected: doublePageAuto,
+                            onTap: () {
+                              ref
+                                  .read(
+                                    doublePageAutoStateProvider.notifier,
+                                  )
+                                  .set(!doublePageAuto);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      doublePageAuto
+                          ? l10n.double_page_auto_subtitle
+                          : (doublePageSingleFirstPage
+                              ? l10n.double_page_single_first_page_subtitle
+                              : ''),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodySmall!.color!
+                            .withValues(alpha: 0.7),
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              subtitle: Text(
-                l10n.double_page_single_first_page_subtitle,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodySmall!.color!
-                      .withValues(alpha: 0.7),
-                  fontSize: 12,
-                ),
-              ),
-              onChanged: (value) {
-                ref
-                    .read(doublePageSingleFirstPageStateProvider.notifier)
-                    .set(value);
-              },
-            ),
-
-            SwitchListTile(
-              value: doublePageAuto,
-              title: Text(
-                l10n.double_page_auto,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              subtitle: Text(
-                l10n.double_page_auto_subtitle,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodySmall!.color!
-                      .withValues(alpha: 0.7),
-                  fontSize: 12,
-                ),
-              ),
-              onChanged: (value) {
-                ref.read(doublePageAutoStateProvider.notifier).set(value);
-              },
             ),
 
             if (!readerMode.isContinuous)
@@ -1150,6 +1213,118 @@ class _CustomFilterTab extends ConsumerWidget {
           else
             const SizedBox(width: 32),
         ],
+      ),
+    );
+  }
+}
+
+class _SettingSection extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _SettingSection({required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 2, bottom: 6),
+          child: Row(
+            children: [
+              Container(
+                width: 3,
+                height: 14,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).textTheme.titleLarge?.color,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+        child,
+      ],
+    );
+  }
+}
+
+class _ModeChipButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _ModeChipButton({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).primaryColor;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? primaryColor.withValues(alpha: 0.15)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isSelected
+                  ? primaryColor
+                  : Colors.grey.withValues(alpha: 0.25),
+              width: isSelected ? 1.5 : 1,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Icon(
+                icon,
+                size: 17,
+                color: isSelected
+                    ? primaryColor
+                    : Theme.of(context).iconTheme.color,
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    color: isSelected
+                        ? primaryColor
+                        : Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

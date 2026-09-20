@@ -53,6 +53,9 @@ class DoublePageView extends StatefulWidget {
   /// Callback when an image finishes loading with its dimensions.
   final void Function(int index, double width, double height)? onImageLoaded;
 
+  /// Active reader mode (used to render transition pages correctly).
+  final ReaderMode? readerMode;
+
   /// Callback when a wide single page is loaded.
   final void Function(int index)? onWideSinglePageLoaded;
 
@@ -60,6 +63,7 @@ class DoublePageView extends StatefulWidget {
     super.key,
     required this.pages,
     required this.backgroundColor,
+    this.readerMode,
     this.onLongPressData,
     this.onFailedToLoadImage,
     this.isPagedMode = true,
@@ -76,6 +80,7 @@ class DoublePageView extends StatefulWidget {
     super.key,
     required this.pages,
     required this.backgroundColor,
+    this.readerMode,
     this.onLongPressData,
     this.onFailedToLoadImage,
     required this.scrollDirection,
@@ -91,6 +96,7 @@ class DoublePageView extends StatefulWidget {
     super.key,
     required this.pages,
     required this.backgroundColor,
+    this.readerMode,
     this.onLongPressData,
     this.onFailedToLoadImage,
     this.addTopPadding = true,
@@ -235,9 +241,14 @@ class _DoublePageViewState extends State<DoublePageView>
 
     if (transitionPage == null) return const SizedBox.shrink();
 
-    return widget.isPagedMode
-        ? TransitionViewPaged(data: transitionPage)
-        : TransitionViewVertical(data: transitionPage);
+    return SizedBox.expand(
+      child: widget.isPagedMode
+          ? TransitionViewPaged(
+              data: transitionPage,
+              readerMode: widget.readerMode,
+            )
+          : TransitionViewVertical(data: transitionPage),
+    );
   }
 
   Widget _buildPagedMode() {
