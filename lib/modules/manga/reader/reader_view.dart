@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/scheduler.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
@@ -54,7 +56,12 @@ typedef DoubleClickAnimationListener = void Function();
 
 class MangaReaderView extends ConsumerWidget {
   final int chapterId;
-  const MangaReaderView({super.key, required this.chapterId});
+  final bool startAtEnd;
+  const MangaReaderView({
+    super.key,
+    required this.chapterId,
+    this.startAtEnd = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -100,6 +107,7 @@ class MangaReaderView extends ConsumerWidget {
         return MangaChapterPageGallery(
           chapter: chapter,
           chapterUrlModel: model,
+          startAtEnd: startAtEnd,
         );
       },
     );
@@ -145,10 +153,12 @@ class MangaChapterPageGallery extends ConsumerStatefulWidget {
     super.key,
     required this.chapter,
     required this.chapterUrlModel,
+    this.startAtEnd = false,
   });
   final GetChapterPagesModel chapterUrlModel;
 
   final Chapter chapter;
+  final bool startAtEnd;
 
   @override
   ConsumerState createState() {
@@ -300,17 +310,30 @@ class _MangaChapterPageGalleryState
   );
 
   late int? _currentIndex = () {
-    final saved = _readerController.getPageIndex();
-    if (_isDoublePageActiveSync) {
-      return _actualToPageViewIndexSync(saved);
+    if (!isPreloadManagerInitialized) {
+      initializePreloadManager(_chapterUrlModel, onPagesUpdated: () {});
     }
-    return saved;
+    final int targetActual;
+    if (widget.startAtEnd) {
+      final len = _chapterUrlModel.uChapDataPreload.length;
+      targetActual = len > 0 ? len - 1 : 0;
+    } else {
+      targetActual = _readerController.getPageIndex();
+    }
+    if (_isDoublePageActiveSync) {
+      return _actualToPageViewIndexSync(targetActual);
+    }
+    return targetActual;
   }();
   late final ValueNotifier<int?> _currentPageViewIndex = ValueNotifier(
     _currentIndex,
   );
   late final ValueNotifier<int> _currentPageDisplayIndex = ValueNotifier(
-    _readerController.getPageIndex(),
+    widget.startAtEnd
+        ? (_chapterUrlModel.uChapDataPreload.isNotEmpty
+            ? _chapterUrlModel.uChapDataPreload.length - 1
+            : 0)
+        : _readerController.getPageIndex(),
   );
 
   late final ListController _listController = ListController();
@@ -337,7 +360,11 @@ class _MangaChapterPageGalleryState
     super.initState();
     _readingStopwatch.start();
 
-    final saved = _readerController.getPageIndex();
+    final saved = widget.startAtEnd
+        ? (_chapterUrlModel.uChapDataPreload.isNotEmpty
+            ? _chapterUrlModel.uChapDataPreload.length - 1
+            : 0)
+        : _readerController.getPageIndex();
     if (saved > 0 && _cachedReaderMode.isContinuous) {
       _initialContinuousJumpPending = true;
       _initialContinuousTargetIndex = _currentIndex;
@@ -523,6 +550,7 @@ class _MangaChapterPageGalleryState
         chapter: next
             ? _readerController.getNextChapter()
             : _readerController.getPrevChapter(),
+        startAtEnd: !next,
       );
     } catch (_) {
       // If the replacement fails, dispose() never runs to reset this flag, so reset it here instead.
@@ -629,16 +657,43 @@ class _MangaChapterPageGalleryState
       child: NotificationListener<ScrollNotification>(
         onNotification: (notification) {
           if (notification is ScrollStartNotification) {
+            _backwardOverscrollAmount = 0.0;
             if (notification.dragDetails != null) {
               _isUserDragging = true;
             }
           } else if (notification is ScrollEndNotification) {
             _isUserDragging = false;
+            _backwardOverscrollAmount = 0.0;
+          }
+          if (notification is OverscrollNotification) {
+            final isAtStart = (_currentIndex != null && _currentIndex! <= 0) ||
+                (notification.metrics.pixels <= 0);
+            if (isAtStart) {
+              // In Flutter scroll physics, overscrolling past the start boundary (0.0)
+              // produces negative overscroll.
+              final isBackward = notification.overscroll < 0;
+              if (isBackward) {
+                _backwardOverscrollAmount += notification.overscroll.abs();
+                if (_backwardOverscrollAmount > 80.0) {
+                  _backwardOverscrollAmount = 0.0;
+                  _goToChapter(false);
+                }
+              } else {
+                _backwardOverscrollAmount = 0.0;
+              }
+            } else {
+              _backwardOverscrollAmount = 0.0;
+            }
           }
           if (notification is ScrollUpdateNotification) {
             final delta = notification.scrollDelta ?? 0.0;
             if (delta.abs() > scrollHideThreshold && _isView) {
               _isViewFunction();
+            }
+            // Reset backward overscroll accumulator when user is scrolling forward
+            final isForward = _isReverseHorizontal ? delta < 0 : delta > 0;
+            if (isForward) {
+              _backwardOverscrollAmount = 0.0;
             }
           }
           return true;
@@ -675,7 +730,14 @@ class _MangaChapterPageGalleryState
                   onWidePage: _splitWidePage,
                   onPageImageLoaded: _onContinuousPageImageLoaded,
                   onWideSinglePageLoaded: (index) {
-                    Future.delayed(const Duration(milliseconds: 300), () {
+                    if (index < pages.length && pages[index].loadedWidth != null) {
+                      final currentActual = _getCurrentPagesActualIndex();
+                      final targetIndex = _isDoublePageActive
+                          ? _actualToPageViewIndex(currentActual)
+                          : currentActual;
+                      if (_currentIndex == targetIndex) return;
+                    }
+                    Future.delayed(const Duration(milliseconds: 100), () {
                       if (!mounted) return;
                       final currentActual = _getCurrentPagesActualIndex();
                       final targetIndex = _isDoublePageActive
@@ -822,48 +884,12 @@ class _MangaChapterPageGalleryState
                     _setReaderMode(mode, ref);
                   },
                   onPageModeToggle: () async {
-                    final readerMode = ref.read(_currentReaderMode);
-                    if (!(readerMode?.isHorizontalContinuous ?? false)) {
-                      final currentEffective = _effectivePageMode;
-                      final currentActual = _getCurrentPagesActualIndex(
-                        currentEffective,
-                      );
-                      final PageMode newPageMode =
-                          currentEffective == PageMode.onePage
-                          ? PageMode.doublePage
-                          : PageMode.onePage;
-                      ref.read(doublePageAutoStateProvider.notifier).set(false);
-                      _readerController.setPageMode(newPageMode);
-
-                      final singleFirst = ref.read(
-                        doublePageSingleFirstPageStateProvider,
-                      );
-                      final int targetIndex = newPageMode == PageMode.doublePage
-                          ? ReaderPageIndexMath(
-                              isDoublePageActive: true,
-                              singleFirst: singleFirst,
-                              pageCount: pages.length,
-                              pages: pages,
-                            ).actualToPageViewIndex(currentActual)
-                          : currentActual;
-
-                      _currentIndex = targetIndex;
-                      _currentPageViewIndex.value = targetIndex;
-                      if (mounted) {
-                        setState(() {
-                          _pageMode = newPageMode;
-                          _lastEffectivePageMode = newPageMode;
-                        });
-                      }
-
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (!mounted) return;
-                        navigationService.jumpToPage(
-                          index: targetIndex,
-                          readerMode: ref.read(_currentReaderMode)!,
-                        );
-                      });
-                    }
+                    final currentEffective = _effectivePageMode;
+                    final PageMode newPageMode =
+                        currentEffective == PageMode.onePage
+                        ? PageMode.doublePage
+                        : PageMode.onePage;
+                    _changePageMode(newPageMode);
                   },
                   onSettingsPressed: () => ReaderSettingsModal.show(
                     context: context,
@@ -872,6 +898,8 @@ class _MangaChapterPageGalleryState
                     autoScroll: _autoScroll,
                     autoScrollPage: _autoScrollPage,
                     pageOffset: _pageOffset,
+                    pageMode: effectivePageMode,
+                    onPageModeChanged: (mode) => _changePageMode(mode),
                     onAutoPageScroll: _autoPagescroll,
                     onReaderModeChanged: (mode, widgetRef) {
                       widgetRef.read(_currentReaderMode.notifier).state = mode;
@@ -922,6 +950,44 @@ class _MangaChapterPageGalleryState
         ),
       ),
     );
+  }
+
+  void _changePageMode(PageMode newPageMode) {
+    final readerMode = ref.read(_currentReaderMode);
+    if (readerMode?.isHorizontalContinuous ?? false) return;
+    final currentEffective = _effectivePageMode;
+    if (currentEffective == newPageMode && _pageMode == newPageMode) return;
+
+    final currentActual = _getCurrentPagesActualIndex(currentEffective);
+    ref.read(doublePageAutoStateProvider.notifier).set(false);
+    _readerController.setPageMode(newPageMode);
+
+    final singleFirst = ref.read(doublePageSingleFirstPageStateProvider);
+    final int targetIndex = newPageMode == PageMode.doublePage
+        ? ReaderPageIndexMath(
+            isDoublePageActive: true,
+            singleFirst: singleFirst,
+            pageCount: pages.length,
+            pages: pages,
+          ).actualToPageViewIndex(currentActual)
+        : currentActual;
+
+    _currentIndex = targetIndex;
+    _currentPageViewIndex.value = targetIndex;
+    if (mounted) {
+      setState(() {
+        _pageMode = newPageMode;
+        _lastEffectivePageMode = newPageMode;
+      });
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      navigationService.jumpToPage(
+        index: targetIndex,
+        readerMode: ref.read(_currentReaderMode)!,
+      );
+    });
   }
 
   void _splitWidePage(int index, double width, double height) {
@@ -1051,6 +1117,10 @@ class _MangaChapterPageGalleryState
         animate: animatePageTransitions,
       );
     } else {
+      if (_currentIndex != null && _currentIndex! <= 0) {
+        _goToChapter(false);
+        return;
+      }
       navigationService.previousPage(
         readerMode: readerMode,
         currentIndex: _currentIndex!,
@@ -1226,10 +1296,27 @@ class _MangaChapterPageGalleryState
 
   void _initCurrentIndex() async {
     final readerMode = _cachedReaderMode;
-    _currentPageDisplayIndex.value = _readerController.getPageIndex();
+    if (!isPreloadManagerInitialized) {
+      initializePreloadManager(_chapterUrlModel, onPagesUpdated: () {});
+    }
+    if (widget.startAtEnd) {
+      final len = _chapterUrlModel.uChapDataPreload.length;
+      _currentPageDisplayIndex.value = len > 0 ? len - 1 : 0;
+    } else {
+      _currentPageDisplayIndex.value = _readerController.getPageIndex();
+    }
 
-    // Initialize the preload manager with bounded memory (from ReaderMemoryManagement mixin)
-    initializePreloadManager(_chapterUrlModel, onPagesUpdated: () {});
+    // Pre-detect image dimensions for initial pages to eliminate 2-page pop-in
+    if (widget.startAtEnd) {
+      final startIndex = math.max(0, pages.length - 6);
+      for (var i = startIndex; i < pages.length; i++) {
+        unawaited(_detectPageDimensions(pages[i]));
+      }
+    } else {
+      for (var i = 0; i < pages.length && i < 6; i++) {
+        unawaited(_detectPageDimensions(pages[i]));
+      }
+    }
 
     // Kick off ordered prefetch before the first frame so lower-indexed pages
     // win the HTTP race against the simultaneous widget-driven loads.
@@ -1250,7 +1337,7 @@ class _MangaChapterPageGalleryState
       }
     }
     ref.read(_currentReaderMode.notifier).state = readerMode;
-    _setReaderMode(readerMode, ref, forceIndex: _currentIndex);
+    _setReaderMode(readerMode, ref, forceActualIndex: _currentPageDisplayIndex.value);
 
     if (!readerMode.isVerticalContinuous) {
       _autoScroll.value = false;
@@ -1327,6 +1414,40 @@ class _MangaChapterPageGalleryState
     }
   }
 
+  Future<void> _detectPageDimensions(UChapDataPreload page) async {
+    if (page.loadedWidth != null && page.loadedHeight != null) return;
+    if (page.isTransitionPage) return;
+    try {
+      if (page.resolvedFilePath == null) {
+        final path = await page.getLocalFilePath;
+        if (path != null) {
+          page.resolvedFilePath = path;
+        }
+      }
+      if (page.resolvedFilePath != null) {
+        final file = File(page.resolvedFilePath!);
+        if (await file.exists()) {
+          final buffer = await ui.ImmutableBuffer.fromFilePath(page.resolvedFilePath!);
+          final descriptor = await ui.ImageDescriptor.encoded(buffer);
+          page.loadedWidth = descriptor.width.toDouble();
+          page.loadedHeight = descriptor.height.toDouble();
+          buffer.dispose();
+          descriptor.dispose();
+          return;
+        }
+      }
+      if (page.archiveImage != null) {
+        final buffer = await ui.ImmutableBuffer.fromUint8List(page.archiveImage!);
+        final descriptor = await ui.ImageDescriptor.encoded(buffer);
+        page.loadedWidth = descriptor.width.toDouble();
+        page.loadedHeight = descriptor.height.toDouble();
+        buffer.dispose();
+        descriptor.dispose();
+        return;
+      }
+    } catch (_) {}
+  }
+
   /// Warms Flutter's [ImageCache] and pre-resolves each page’s
   /// local/archive file path in reading order before the widget tree renders.
   ///
@@ -1385,6 +1506,7 @@ class _MangaChapterPageGalleryState
               }
             }
           }
+          await _detectPageDimensions(page);
         } catch (_) {
           // Swallow errors: network failures, widget disposal, etc.
         }
@@ -1437,7 +1559,9 @@ class _MangaChapterPageGalleryState
 
     // ── Next-chapter preloading: trigger when near the end ──
     final distToEnd = pages.length - 1 - actualIndex;
-    if (distToEnd <= pagePreloadAmount && !_isLastPageTransition) {
+    final pvDistToEnd = _pageViewPageCount - 1 - index;
+    if ((distToEnd <= pagePreloadAmount * 2 || pvDistToEnd <= pagePreloadAmount) &&
+        !_isLastPageTransition) {
       _triggerNextChapterPreload();
     }
 
@@ -1534,6 +1658,7 @@ class _MangaChapterPageGalleryState
   Ticker? _autoScrollTicker;
   Duration _lastAutoScrollTick = Duration.zero;
   bool _isUserDragging = false;
+  double _backwardOverscrollAmount = 0.0;
 
   void _onAutoScrollChanged() {
     if (_autoScroll.value && _isContinuousMode()) {
@@ -1608,7 +1733,7 @@ class _MangaChapterPageGalleryState
   void _setReaderMode(
     ReaderMode value,
     WidgetRef ref, {
-    int? forceIndex,
+    int? forceActualIndex,
   }) async {
     final showOverlay = ref.read(showNavigationOverlayOnStartStateProvider);
     if (!value.isVerticalContinuous) {
@@ -1624,7 +1749,7 @@ class _MangaChapterPageGalleryState
     // Cache the reader mode for safe access in dispose
     _cachedReaderMode = value;
 
-    final int actualIndex = forceIndex ?? _getCurrentPagesActualIndex();
+    final int actualIndex = forceActualIndex ?? _getCurrentPagesActualIndex();
     ref.read(_currentReaderMode.notifier).state = value;
     if (!mounted) return;
     setState(() {

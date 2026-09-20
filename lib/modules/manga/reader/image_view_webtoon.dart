@@ -671,6 +671,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
       child: DoublePageView.vertical(
         pages: datas,
         backgroundColor: widget.backgroundColor,
+        readerMode: widget.readerMode,
         onFailedToLoadImage: (failed) =>
             widget.onFailedToLoadImage(index1, failed),
         onLongPressData: widget.onLongPressData,

@@ -187,22 +187,42 @@ class RouterNotifier extends ChangeNotifier {
       path: "/manga-reader/detail",
       builder: (id) => MangaReaderDetail(mangaId: id),
     ),
-    _genericRoute<int>(
+    _genericRoute<dynamic>(
       name: "mangaReaderView",
       // Keyed by chapter id so a chapter-to-chapter pushReplacement fully
       // remounts instead of reusing the Element and going stale.
-      builder: (id) =>
-          MangaReaderView(key: ValueKey('mangaReader-$id'), chapterId: id),
+      builder: (extra) {
+        final int id = extra is int
+            ? extra
+            : ((extra as Map)['chapterId'] as int);
+        final bool startAtEnd =
+            extra is Map && (extra['startAtEnd'] == true);
+        return MangaReaderView(
+          key: ValueKey('mangaReader-$id-$startAtEnd'),
+          chapterId: id,
+          startAtEnd: startAtEnd,
+        );
+      },
     ),
     _genericRoute<int>(
       name: "animePlayerView",
       builder: (id) =>
           AnimePlayerView(key: ValueKey('animePlayer-$id'), episodeId: id),
     ),
-    _genericRoute<int>(
+    _genericRoute<dynamic>(
       name: "novelReaderView",
-      builder: (id) =>
-          NovelReaderView(key: ValueKey('novelReader-$id'), chapterId: id),
+      builder: (extra) {
+        final int id = extra is int
+            ? extra
+            : ((extra as Map)['chapterId'] as int);
+        final bool startAtEnd =
+            extra is Map && (extra['startAtEnd'] == true);
+        return NovelReaderView(
+          key: ValueKey('novelReader-$id-$startAtEnd'),
+          chapterId: id,
+          startAtEnd: startAtEnd,
+        );
+      },
     ),
     _genericRoute<ItemType>(
       name: "ExtensionLang",
