@@ -110,31 +110,38 @@ class ReaderBottomBar extends ConsumerWidget {
     final readerMode = ref.watch(currentReaderModeProvider);
     if (readerMode == null) return const SizedBox.shrink();
     final isHorizontalContinuous = readerMode.isHorizontalContinuous;
+    final mediaQuery = MediaQuery.of(context);
+    final bottomInset = max(
+      mediaQuery.viewPadding.bottom,
+      mediaQuery.systemGestureInsets.bottom,
+    );
 
     return Positioned(
-      bottom: 0,
+      bottom: bottomInset,
       child: AnimatedContainer(
         curve: Curves.ease,
         duration: const Duration(milliseconds: 300),
         width: context.width(1),
         height: isVisible ? 130 : 0,
-        child: Column(
-          children: [
-            // Page slider section
-            Flexible(
-              child: _buildPageSlider(context, ref, isHorizontalContinuous),
-            ),
-
-            // Quick actions section
-            Flexible(
-              child: _buildQuickActions(
-                context,
-                ref,
-                readerMode,
-                isHorizontalContinuous,
+        child: ClipRect(
+          child: Column(
+            children: [
+              // Page slider section
+              Flexible(
+                child: _buildPageSlider(context, ref, isHorizontalContinuous),
               ),
-            ),
-          ],
+
+              // Quick actions section
+              Flexible(
+                child: _buildQuickActions(
+                  context,
+                  ref,
+                  readerMode,
+                  isHorizontalContinuous,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
