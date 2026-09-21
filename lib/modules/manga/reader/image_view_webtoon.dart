@@ -66,6 +66,7 @@ class ImageViewWebtoon extends ConsumerStatefulWidget {
   final bool reverse;
   final bool zoomOutDisabled;
   final bool doubleTapZoomEnabled;
+  final void Function(int index)? onPageImageLoaded;
 
   const ImageViewWebtoon({
     super.key,
@@ -88,6 +89,7 @@ class ImageViewWebtoon extends ConsumerStatefulWidget {
     this.zoomOutDisabled = false,
     this.doubleTapZoomEnabled = true,
     this.onImageLoaded,
+    this.onPageImageLoaded,
   });
 
   final Function(int index, double width, double height)? onImageLoaded;
@@ -129,18 +131,8 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
         if (!mounted) return;
         if (widget.listController.isAttached &&
             widget.scrollController.hasClients) {
-          // ignore: invalid_use_of_visible_for_testing_member
-          final offset = widget.listController.getOffsetToReveal(
-            widget.initialScrollIndex,
-            0.0,
-          );
-          if (offset.isFinite && offset > 0) {
-            final maxExtent = widget.scrollController.position.maxScrollExtent;
-            if (maxExtent > 0) {
-              widget.scrollController.jumpTo(offset.clamp(0.0, maxExtent));
-              return;
-            }
-          }
+          // Keep restoration index-based, like ScrollablePositionedList. The
+          // controller accounts for reverse/RTL and estimated item extents.
           widget.listController.jumpToItem(
             index: widget.initialScrollIndex,
             scrollController: widget.scrollController,
@@ -148,7 +140,9 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
           );
           if (attempt < 5) {
             final range = widget.listController.visibleRange;
-            if (range == null || range.$1 < widget.initialScrollIndex) {
+            if (range == null ||
+                widget.initialScrollIndex < range.$1 ||
+                widget.initialScrollIndex > range.$2) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 jump(attempt + 1);
               });
@@ -652,6 +646,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
         rotation: rotation,
         onImageLoaded: (width, height) {
           widget.onImageLoaded?.call(index, width, height);
+          widget.onPageImageLoaded?.call(index);
         },
       ),
     );

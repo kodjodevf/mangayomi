@@ -317,6 +317,7 @@ class _MangaChapterPageGalleryState
   late final ScrollController _continuousScrollController = ScrollController();
   bool _readProgressScheduled = false;
   bool _initialContinuousJumpPending = false;
+  int? _initialContinuousTargetIndex;
 
   void _scheduleReadProgressListener() {
     if (_readProgressScheduled) return;
@@ -339,6 +340,7 @@ class _MangaChapterPageGalleryState
     final saved = _readerController.getPageIndex();
     if (saved > 0 && _cachedReaderMode.isContinuous) {
       _initialContinuousJumpPending = true;
+      _initialContinuousTargetIndex = _currentIndex;
     }
 
     _continuousScrollController.addListener(_scheduleReadProgressListener);
@@ -671,6 +673,7 @@ class _MangaChapterPageGalleryState
                   ),
                   onFailedToLoadImage: _onFailedToLoadImage,
                   onWidePage: _splitWidePage,
+                  onPageImageLoaded: _onContinuousPageImageLoaded,
                   onWideSinglePageLoaded: (index) {
                     Future.delayed(const Duration(milliseconds: 300), () {
                       if (!mounted) return;
@@ -822,8 +825,9 @@ class _MangaChapterPageGalleryState
                     final readerMode = ref.read(_currentReaderMode);
                     if (!(readerMode?.isHorizontalContinuous ?? false)) {
                       final currentEffective = _effectivePageMode;
-                      final currentActual =
-                          _getCurrentPagesActualIndex(currentEffective);
+                      final currentActual = _getCurrentPagesActualIndex(
+                        currentEffective,
+                      );
                       final PageMode newPageMode =
                           currentEffective == PageMode.onePage
                           ? PageMode.doublePage
@@ -1072,13 +1076,20 @@ class _MangaChapterPageGalleryState
     if (range == null) return;
     final (first, last) = range;
     if (_initialContinuousJumpPending) {
-      final targetIndex = _currentIndex ?? 0;
-      if (first >= targetIndex ||
-          (first <= targetIndex && targetIndex <= last)) {
-        _initialContinuousJumpPending = false;
-      } else {
+      // SuperListView can report a neighboring item while it corrects
+      // estimated extents and images replace their loading placeholders.
+      // Until the user drags, keep the persisted index as the anchor instead
+      // of turning that transient range into reading progress.
+      if (!_isUserDragging) {
+        final targetIndex = _initialContinuousTargetIndex;
+        if (targetIndex != null && _currentIndex != targetIndex) {
+          _currentIndex = targetIndex;
+          _currentPageViewIndex.value = targetIndex;
+        }
         return;
       }
+      _initialContinuousJumpPending = false;
+      _initialContinuousTargetIndex = null;
     }
     final newIndex = first;
     final bool pageChanged = _currentIndex != newIndex;
@@ -1120,6 +1131,29 @@ class _MangaChapterPageGalleryState
         _scheduleEvictionsAndPrefetch();
       }
     }
+  }
+
+  void _onContinuousPageImageLoaded(int index) {
+    if (!_initialContinuousJumpPending ||
+        !_cachedReaderMode.isContinuous ||
+        _initialContinuousTargetIndex == null) {
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_initialContinuousJumpPending) return;
+      final targetIndex = _initialContinuousTargetIndex;
+      if (targetIndex == null ||
+          !_listController.isAttached ||
+          !_continuousScrollController.hasClients) {
+        return;
+      }
+      _listController.jumpToItem(
+        index: targetIndex,
+        scrollController: _continuousScrollController,
+        alignment: 0.0,
+      );
+    });
   }
 
   void _addLastPageTransition(Chapter chap) {
@@ -1625,24 +1659,11 @@ class _MangaChapterPageGalleryState
     } else {
       if (_listController.isAttached &&
           _continuousScrollController.hasClients) {
-        // ignore: invalid_use_of_visible_for_testing_member
-        final offset = _listController.getOffsetToReveal(targetIndex, 0.0);
-        if (offset.isFinite &&
-            offset > 0 &&
-            _continuousScrollController.position.maxScrollExtent > 0) {
-          _continuousScrollController.jumpTo(
-            offset.clamp(
-              0.0,
-              _continuousScrollController.position.maxScrollExtent,
-            ),
-          );
-        } else {
-          _listController.jumpToItem(
-            index: targetIndex,
-            scrollController: _continuousScrollController,
-            alignment: 0.0,
-          );
-        }
+        _listController.jumpToItem(
+          index: targetIndex,
+          scrollController: _continuousScrollController,
+          alignment: 0.0,
+        );
       }
     }
   }
@@ -1765,7 +1786,8 @@ class _MangaChapterPageGalleryState
   int _getCurrentPagesActualIndex([PageMode? fromMode]) {
     final effectiveMode = fromMode ?? _effectivePageMode;
     final currentMode = ref.read(_currentReaderMode) ?? _cachedReaderMode;
-    final isDouble = effectiveMode == PageMode.doublePage &&
+    final isDouble =
+        effectiveMode == PageMode.doublePage &&
         !currentMode.isHorizontalContinuous;
     if (_currentIndex != null) {
       if (isDouble) {

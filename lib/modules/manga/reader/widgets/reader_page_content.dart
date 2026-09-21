@@ -64,6 +64,7 @@ class ReaderPageContent extends ConsumerWidget {
 
   final void Function(int index, bool failed) onFailedToLoadImage;
   final void Function(int index, double width, double height) onWidePage;
+  final void Function(int index) onPageImageLoaded;
 
   /// A single page's image finished loading wider than tall; the caller
   /// schedules a delayed rebuild once the layout has had a chance to settle.
@@ -94,6 +95,7 @@ class ReaderPageContent extends ConsumerWidget {
     required this.pageControllerFor,
     required this.onFailedToLoadImage,
     required this.onWidePage,
+    required this.onPageImageLoaded,
     required this.onWideSinglePageLoaded,
     required this.onDoublePageZoomChanged,
     required this.onDoublePageControllerCreated,
@@ -144,6 +146,7 @@ class ReaderPageContent extends ConsumerWidget {
           if (ref.read(splitWidePagesStateProvider) && width > height * 1.2) {
             onWidePage(index, width, height);
           }
+          onPageImageLoaded(index);
         },
       );
     }
