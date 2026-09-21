@@ -178,12 +178,10 @@ class ReaderPageContent extends ConsumerWidget {
                   pages,
                   singleFirst: singleFirst,
                 );
-                final spread = index < spreads.length
-                    ? spreads[index]
-                    : null;
+                final spread = index < spreads.length ? spreads[index] : null;
                 final index1 = spread?.firstIndex ?? index * 2;
                 final index2 = spread?.secondIndex;
-                final pageList = [
+                final List<UChapDataPreload?> pageList = [
                   if (index1 < pages.length) pages[index1],
                   if (index2 != null && index2 < pages.length) pages[index2],
                 ];

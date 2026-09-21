@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -228,9 +229,8 @@ class _DoublePageViewState extends State<DoublePageView>
   }
 
   Widget _buildTransitionPage() {
-    final transitionPage = widget.pages.firstWhere(
+    final transitionPage = widget.pages.firstWhereOrNull(
       (p) => p?.isTransitionPage ?? false,
-      orElse: () => null,
     );
 
     if (transitionPage == null) return const SizedBox.shrink();
@@ -263,7 +263,9 @@ class _DoublePageViewState extends State<DoublePageView>
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         // Add top padding for first page
-        if (widget.addTopPadding && widget.pages.isNotEmpty && widget.pages[0]?.index == 0)
+        if (widget.addTopPadding &&
+            widget.pages.isNotEmpty &&
+            widget.pages[0]?.index == 0)
           SizedBox(height: MediaQuery.of(context).padding.top),
         _buildPageRow(),
       ],
@@ -277,7 +279,9 @@ class _DoublePageViewState extends State<DoublePageView>
         for (final page in widget.pages)
           if (page != null)
             Flexible(
-              key: ValueKey('dp_page_${page.chapter?.id}_${page.index}_${page.pageUrl?.url}'),
+              key: ValueKey(
+                'dp_page_${page.chapter?.id}_${page.index}_${page.pageUrl?.url}',
+              ),
               child: _buildPageImage(page),
             ),
       ],
@@ -364,7 +368,9 @@ class _DoublePageViewState extends State<DoublePageView>
         style: ElevatedButton.styleFrom(
           backgroundColor: context.primaryColor,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         ),
         onPressed: () {
