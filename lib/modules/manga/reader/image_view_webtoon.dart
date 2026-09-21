@@ -44,6 +44,14 @@ class WebtoonScaleGestureRecognizer extends ScaleGestureRecognizer {
   void resolve(GestureDisposition disposition) {
     super.resolve(resolveDisposition(disposition));
   }
+
+  @override
+  void handleEvent(PointerEvent event) {
+    if (event is PointerMoveEvent && canPanCallback?.call() == true) {
+      resolve(GestureDisposition.accepted);
+    }
+    super.handleEvent(event);
+  }
 }
 
 /// Main widget for virtual reading using SuperListView from super_sliver_list
@@ -105,6 +113,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
   Offset _offset = Offset.zero;
   Offset _baseOffset = Offset.zero;
   Offset _pinchStartFocalPoint = Offset.zero;
+  Offset _lastGlobalFocalPoint = Offset.zero;
   int _previousPointerCount = 0;
 
   // QuickScale (one-finger double-tap and drag zoom)
@@ -248,6 +257,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     _baseScale = _scale;
     _baseOffset = _offset;
     _pinchStartFocalPoint = details.localFocalPoint;
+    _lastGlobalFocalPoint = details.focalPoint;
     _previousPointerCount = details.pointerCount;
     if (details.pointerCount > 1) {
       _isQuickScaling = false;
@@ -268,6 +278,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
       _baseScale = _scale;
       _baseOffset = _offset;
       _pinchStartFocalPoint = details.localFocalPoint;
+      _lastGlobalFocalPoint = details.focalPoint;
       _previousPointerCount = details.pointerCount;
     }
 
@@ -313,62 +324,30 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
       newDx = focalX - (focalX - _baseOffset.dx) * (newScale / _baseScale);
       newDy = focalY - (focalY - _baseOffset.dy) * (newScale / _baseScale);
     } else if (details.pointerCount == 1 && !_isQuickScaling) {
-      final dragDeltaX = details.localFocalPoint.dx - _pinchStartFocalPoint.dx;
-      final dragDeltaY = details.localFocalPoint.dy - _pinchStartFocalPoint.dy;
+      final globalDelta = details.focalPoint - _lastGlobalFocalPoint;
+      _lastGlobalFocalPoint = details.focalPoint;
+      final proposedOffset = _offset + globalDelta;
 
-      final tempDx = _baseOffset.dx + dragDeltaX;
-      final tempDy = _baseOffset.dy + dragDeltaY;
+      final maxDx =
+          (screenWidth * (_scale - 1).clamp(0.0, double.infinity)) / 2;
+      final maxDy =
+          (screenHeight * (_scale - 1).clamp(0.0, double.infinity)) / 2;
 
-      final maxDx = (screenWidth * (_scale - 1)) / 2;
-      final maxDy = (screenHeight * (_scale - 1)) / 2;
+      final clampedOffset = Offset(
+        proposedOffset.dx.clamp(-maxDx, maxDx),
+        proposedOffset.dy.clamp(-maxDy, maxDy),
+      );
+      final overflow = proposedOffset - clampedOffset;
+      newDx = clampedOffset.dx;
+      newDy = clampedOffset.dy;
 
-      if (_scale <= 1.0) {
-        newDx = 0.0;
-        newDy = 0.0;
-      } else if (isVertical) {
-        newDx = tempDx.clamp(-maxDx, maxDx);
-
-        if (tempDy > maxDy) {
-          newDy = maxDy;
-          final overflowY = tempDy - maxDy;
-          if (widget.scrollController.hasClients) {
-            final target = (widget.scrollController.offset - overflowY * 0.1)
-                .clamp(0.0, widget.scrollController.position.maxScrollExtent);
-            widget.scrollController.jumpTo(target);
-          }
-        } else if (tempDy < -maxDy) {
-          newDy = -maxDy;
-          final overflowY = tempDy - (-maxDy);
-          if (widget.scrollController.hasClients) {
-            final target = (widget.scrollController.offset - overflowY * 0.1)
-                .clamp(0.0, widget.scrollController.position.maxScrollExtent);
-            widget.scrollController.jumpTo(target);
-          }
-        } else {
-          newDy = tempDy;
-        }
-      } else {
-        newDy = tempDy.clamp(-maxDy, maxDy);
-
-        if (tempDx > maxDx) {
-          newDx = maxDx;
-          final overflowX = tempDx - maxDx;
-          if (widget.scrollController.hasClients) {
-            final target = (widget.scrollController.offset - overflowX * 0.1)
-                .clamp(0.0, widget.scrollController.position.maxScrollExtent);
-            widget.scrollController.jumpTo(target);
-          }
-        } else if (tempDx < -maxDx) {
-          newDx = -maxDx;
-          final overflowX = tempDx - (-maxDx);
-          if (widget.scrollController.hasClients) {
-            final target = (widget.scrollController.offset - overflowX * 0.1)
-                .clamp(0.0, widget.scrollController.position.maxScrollExtent);
-            widget.scrollController.jumpTo(target);
-          }
-        } else {
-          newDx = tempDx;
-        }
+      final parentOverflow = isVertical ? overflow.dy : overflow.dx;
+      if (parentOverflow != 0 && widget.scrollController.hasClients) {
+        final target = (widget.scrollController.offset - parentOverflow).clamp(
+          0.0,
+          widget.scrollController.position.maxScrollExtent,
+        );
+        widget.scrollController.jumpTo(target);
       }
     }
 
@@ -395,20 +374,22 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     // 2. Fling inertia momentum if panning while zoomed
     if (_scale > 1.0) {
       final velocity = details.velocity.pixelsPerSecond;
-      if (velocity.distance > 350) {
+      if (velocity.distance > 400) {
         final screenWidth = MediaQuery.of(context).size.width;
         final screenHeight = MediaQuery.of(context).size.height;
-        final maxDx = (screenWidth * (_scale - 1)) / 2;
-        final maxDy = (screenHeight * (_scale - 1)) / 2;
+        final maxDx =
+            (screenWidth * (_scale - 1).clamp(0.0, double.infinity)) / 2;
+        final maxDy =
+            (screenHeight * (_scale - 1).clamp(0.0, double.infinity)) / 2;
 
-        final targetDx = (_offset.dx + velocity.dx * 0.15).clamp(-maxDx, maxDx);
-        final targetDy = (_offset.dy + velocity.dy * 0.15).clamp(-maxDy, maxDy);
+        final targetDx = (_offset.dx + velocity.dx * 0.2).clamp(-maxDx, maxDx);
+        final targetDy = (_offset.dy + velocity.dy * 0.2).clamp(-maxDy, maxDy);
 
         if ((Offset(targetDx, targetDy) - _offset).distance > 8) {
           _animateTo(
             _scale,
             Offset(targetDx, targetDy),
-            duration: const Duration(milliseconds: 400),
+            duration: const Duration(seconds: 1),
           );
         }
       }
@@ -470,8 +451,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
             GestureRecognizerFactoryWithHandlers<WebtoonScaleGestureRecognizer>(
               () => WebtoonScaleGestureRecognizer(),
               (instance) {
-                instance.canPanCallback = () =>
-                    _scale > 1.01 || _isQuickScaling;
+                instance.canPanCallback = () => _scale > 1.01;
                 instance
                   ..onStart = _handleScaleStart
                   ..onUpdate = _handleScaleUpdate
