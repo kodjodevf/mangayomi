@@ -128,39 +128,63 @@ class TraktTv extends _$TraktTv implements BaseTracker {
   Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
     final type = isManga ? "movies" : "shows";
     final accessToken = await _getAccessToken();
-    final url = Uri.parse('$_baseApiUrl/sync/watched/$type')
+
+    // 1. Fetch watched items
+    final watchedUrl = Uri.parse('$_baseApiUrl/sync/watched/$type')
         .replace(queryParameters: {"extended": "full,images"});
-    final result = await _makeGetRequest(url, accessToken);
-    final data = jsonDecode(result.body) as List?;
-    return data?.map((e) {
-          final type = e['movie'] != null ? "movie" : "show";
-          final typeName = type == 'movie' ? 'movies' : 'shows';
-          return TrackSearch(
-            mediaId: e[type]?['ids']?['trakt'],
-            summary: e[type]?['overview'] ?? 'No summary available.',
-            totalChapter: e[type]?['aired_episodes'] ?? 1,
+    final watchedResult = await _makeGetRequest(watchedUrl, accessToken);
+    final watchedData = (jsonDecode(watchedResult.body) as List?) ?? [];
+
+    // 2. Fetch watchlist items
+    final watchlistUrl = Uri.parse('$_baseApiUrl/sync/watchlist/$type')
+        .replace(queryParameters: {"extended": "full,images"});
+    final watchlistResult = await _makeGetRequest(watchlistUrl, accessToken);
+    final watchlistData = (jsonDecode(watchlistResult.body) as List?) ?? [];
+
+    final Set<int> seenMediaIds = {};
+    final List<TrackSearch> resultList = [];
+
+    void addItems(List items) {
+      for (final e in items) {
+        final itemType = e['movie'] != null ? "movie" : "show";
+        final typeName = itemType == 'movie' ? 'movies' : 'shows';
+        final mediaId = e[itemType]?['ids']?['trakt'] as int?;
+        if (mediaId == null || seenMediaIds.contains(mediaId)) continue;
+        seenMediaIds.add(mediaId);
+
+        resultList.add(
+          TrackSearch(
+            mediaId: mediaId,
+            summary: e[itemType]?['overview'] ?? 'No summary available.',
+            totalChapter: e[itemType]?['aired_episodes'] ?? 1,
             coverUrl: (e['images']?['fanart'] as List?)?.isNotEmpty ?? false
                 ? 'https://wsrv.nl/?url=${e['images']?['fanart'][0]}'
-                : (e[type]?['images']?['fanart'] as List?)?.isNotEmpty ?? false
-                ? 'https://wsrv.nl/?url=${e[type]?['images']?['fanart'][0]}'
+                : (e[itemType]?['images']?['fanart'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e[itemType]?['images']?['fanart'][0]}'
                 : (e['images']?['poster'] as List?)?.isNotEmpty ?? false
                 ? 'https://wsrv.nl/?url=${e['images']?['poster'][0]}'
-                : (e[type]?['images']?['poster'] as List?)?.isNotEmpty ?? false
-                ? 'https://wsrv.nl/?url=${e[type]?['images']?['poster'][0]}'
+                : (e[itemType]?['images']?['poster'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e[itemType]?['images']?['poster'][0]}'
                 : '',
-            title: e[type]['title'] ?? 'Unknown Title',
+            title: e[itemType]['title'] ?? 'Unknown Title',
             score: double.tryParse(
-              (e[type]?["rating"] as num?)?.toDouble().toStringAsFixed(2) ?? "",
+              (e[itemType]?["rating"] as num?)?.toDouble().toStringAsFixed(2) ?? "",
             ),
-            startDate: e[type]?["first_aired"] ?? "",
-            publishingType: type,
-            publishingStatus: e[type]["status"],
+            startDate: e[itemType]?["first_aired"] ?? "",
+            publishingType: itemType,
+            publishingStatus: e[itemType]["status"],
             trackingUrl:
-                "https://trakt.tv/$typeName/${e[type]?['ids']?['slug']}",
+                "https://trakt.tv/$typeName/${e[itemType]?['ids']?['slug']}",
             syncId: syncId,
-          );
-        }).toList() ??
-        [];
+          ),
+        );
+      }
+    }
+
+    addItems(watchedData);
+    addItems(watchlistData);
+
+    return resultList;
   }
 
   @override
@@ -169,25 +193,61 @@ class TraktTv extends _$TraktTv implements BaseTracker {
     final isMovie =
         track.trackingUrl?.replaceAll("https://trakt.tv/", "").split("/")[0] ==
         "movies";
-    final url = Uri.parse(
-      '$_baseApiUrl/sync/history/${isMovie ? "movies" : "shows"}/${track.mediaId}',
+    final type = isMovie ? "movies" : "shows";
+
+    // Check history first
+    final historyUrl = Uri.parse(
+      '$_baseApiUrl/sync/history/$type/${track.mediaId}',
     ).replace(queryParameters: {"extended": "full", "page": "1", "limit": "3000"});
-    final result = await _makeGetRequest(url, accessToken);
-    final data = jsonDecode(result.body) as List?;
-    if (data?.isNotEmpty ?? false) {
-      if (!isMovie) {
-        track.lastChapterRead = data!
+    final historyResult = await _makeGetRequest(historyUrl, accessToken);
+    final historyData = jsonDecode(historyResult.body) as List?;
+
+    if (historyData?.isNotEmpty ?? false) {
+      if (isMovie) {
+        track.lastChapterRead = 1;
+        track.status = TrackStatus.completed;
+      } else {
+        track.lastChapterRead = historyData!
             .where((e) => e["type"] == "episode")
             .length;
+        if ((track.totalChapter ?? 0) > 0 &&
+            (track.lastChapterRead ?? 0) >= (track.totalChapter ?? 0)) {
+          track.status = TrackStatus.completed;
+        } else {
+          track.status = TrackStatus.watching;
+        }
       }
-      if ((track.lastChapterRead ?? 0) >= (track.totalChapter ?? 0)) {
-        track.finishedReadingDate = DateTime.tryParse(
-          data!.firstOrNull?["watched_at"],
-        )?.millisecondsSinceEpoch;
-      }
+      track.finishedReadingDate = DateTime.tryParse(
+        historyData!.firstOrNull?["watched_at"] ?? "",
+      )?.millisecondsSinceEpoch;
       return track;
     }
-    return await update(track, isManga);
+
+    // Check watchlist if not in history
+    try {
+      final watchlistUrl = Uri.parse(
+        '$_baseApiUrl/sync/watchlist/$type',
+      ).replace(queryParameters: {"extended": "full"});
+      final watchlistResult = await _makeGetRequest(watchlistUrl, accessToken);
+      final watchlistData = jsonDecode(watchlistResult.body) as List?;
+
+      final inWatchlist = watchlistData?.any((e) {
+            final item = e[isMovie ? 'movie' : 'show'];
+            return item?['ids']?['trakt'] == track.mediaId;
+          }) ??
+          false;
+
+      if (inWatchlist) {
+        track.status = TrackStatus.planToWatch;
+        track.lastChapterRead = 0;
+        return track;
+      }
+    } catch (_) {}
+
+    // Not in history or watchlist - default to plan to watch without modifying remote
+    track.status = TrackStatus.planToWatch;
+    track.lastChapterRead = 0;
+    return track;
   }
 
   @override
@@ -238,7 +298,11 @@ class TraktTv extends _$TraktTv implements BaseTracker {
   }
 
   @override
-  List<TrackStatus> statusList(bool isManga) => [];
+  List<TrackStatus> statusList(bool isManga) => [
+    TrackStatus.watching,
+    TrackStatus.completed,
+    TrackStatus.planToWatch,
+  ];
 
   @override
   Future<Track> update(Track track, bool isManga) async {
@@ -246,56 +310,98 @@ class TraktTv extends _$TraktTv implements BaseTracker {
     final isMovie =
         track.trackingUrl?.replaceAll("https://trakt.tv/", "").split("/")[0] ==
         "movies";
-    /*final urlRemove = Uri.parse(
-      "$_baseApiUrl/sync/history/remove",
-    ).replace(queryParameters: {'clientId': _clientId});
-    final bodyRemove = isMovie
-        ? {
-            'movies': [
-              {
-                'ids': {'trakt': track.mediaId},
-              },
-            ],
-          }
-        : {
-            'shows': [
-              {
-                'ids': {'trakt': track.mediaId},
-              },
-            ],
-          };
-    await _makePostRequest(urlRemove, accessToken, bodyRemove);*/
-    final url = Uri.parse("$_baseApiUrl/sync/history")
-        .replace(queryParameters: {'extended': 'full', 'clientId': _clientId});
-    final body = isMovie
-        ? {
-            'movies': [
-              {
-                'watched_at': DateTime.timestamp().toIso8601String(),
-                'ids': {'trakt': track.mediaId},
-              },
-            ],
-          }
-        : {
-            'shows': [
-              {
-                'ids': {'trakt': track.mediaId},
-                'seasons': [
+
+    // 1. Handle Plan to Watch -> Sync to Watchlist
+    if (track.status == TrackStatus.planToWatch ||
+        ((track.lastChapterRead ?? 0) == 0 && track.status != TrackStatus.completed)) {
+      final watchlistUrl = Uri.parse("$_baseApiUrl/sync/watchlist")
+          .replace(queryParameters: {'clientId': _clientId});
+      final watchlistBody = isMovie
+          ? {
+              'movies': [
+                {
+                  'ids': {'trakt': track.mediaId},
+                },
+              ],
+            }
+          : {
+              'shows': [
+                {
+                  'ids': {'trakt': track.mediaId},
+                },
+              ],
+            };
+      await _makePostRequest(watchlistUrl, accessToken, watchlistBody);
+    } else {
+      // 2. Handle Watching / Completed -> Sync to History
+      final historyUrl = Uri.parse("$_baseApiUrl/sync/history")
+          .replace(queryParameters: {'extended': 'full', 'clientId': _clientId});
+      
+      final episodesCount = track.status == TrackStatus.completed &&
+              (track.totalChapter ?? 0) > 0
+          ? track.totalChapter!
+          : (track.lastChapterRead ?? 1);
+
+      final historyBody = isMovie
+          ? {
+              'movies': [
+                {
+                  'watched_at': DateTime.timestamp().toIso8601String(),
+                  'ids': {'trakt': track.mediaId},
+                },
+              ],
+            }
+          : {
+              'shows': [
+                {
+                  'ids': {'trakt': track.mediaId},
+                  'seasons': [
+                    {
+                      'number': 1,
+                      'episodes': [
+                        for (int i = 1; i <= episodesCount; i++)
+                          {
+                            'watched_at':
+                                DateTime.timestamp().toIso8601String(),
+                            'number': i,
+                          },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            };
+      await _makePostRequest(historyUrl, accessToken, historyBody);
+    }
+
+    // 3. Sync rating if user set a score (1-10)
+    if (track.score != null && track.score! > 0) {
+      try {
+        final ratingsUrl = Uri.parse("$_baseApiUrl/sync/ratings")
+            .replace(queryParameters: {'clientId': _clientId});
+        final ratingsBody = isMovie
+            ? {
+                'movies': [
                   {
-                    'number': 1,
-                    'episodes': [
-                      for (int i = 1; i <= (track.lastChapterRead ?? 1); i++)
-                        {
-                          'watched_at': DateTime.timestamp().toIso8601String(),
-                          'number': i,
-                        },
-                    ],
+                    'rating': track.score,
+                    'ids': {'trakt': track.mediaId},
                   },
                 ],
-              },
-            ],
-          };
-    await _makePostRequest(url, accessToken, body);
+              }
+            : {
+                'shows': [
+                  {
+                    'rating': track.score,
+                    'ids': {'trakt': track.mediaId},
+                  },
+                ],
+              };
+        await _makePostRequest(ratingsUrl, accessToken, ratingsBody);
+      } catch (e) {
+        AppLogger.log("Trakt sync rating error: $e");
+      }
+    }
+
     return track;
   }
 
@@ -433,12 +539,12 @@ class TraktTv extends _$TraktTv implements BaseTracker {
 
   @override
   String displayScore(int score) {
-    throw UnimplementedError();
+    return score.toString();
   }
 
   @override
   (int, int) getScoreValue() {
-    throw UnimplementedError();
+    return (10, 1);
   }
 
   @override
