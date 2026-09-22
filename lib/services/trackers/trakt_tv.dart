@@ -347,6 +347,25 @@ class TraktTv extends _$TraktTv implements BaseTracker {
       // 에피소드가 0개이면 Trakt API가 빈 배열 에러를 냄 -> 건너뜀
       if (!isMovie && episodesCount <= 0) return track;
 
+      List<Map<String, dynamic>> seasonPayload = [];
+      if (!isMovie) {
+        final seasons = await _getSeasonStructure(track.mediaId!, accessToken);
+        seasonPayload = seasons.isNotEmpty
+            ? _mapAbsoluteToSeasons(episodesCount, seasons)
+            : [
+                {
+                  'number': 1,
+                  'episodes': [
+                    for (int i = 1; i <= episodesCount; i++)
+                      {
+                        'watched_at': DateTime.timestamp().toIso8601String(),
+                        'number': i,
+                      },
+                  ],
+                }
+              ];
+      }
+
       final historyUrl = Uri.parse("$_baseApiUrl/sync/history")
           .replace(queryParameters: {'extended': 'full', 'clientId': _clientId});
 
@@ -363,19 +382,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
               'shows': [
                 {
                   'ids': {'trakt': track.mediaId},
-                  'seasons': [
-                    {
-                      'number': 1,
-                      'episodes': [
-                        for (int i = 1; i <= episodesCount; i++)
-                          {
-                            'watched_at':
-                                DateTime.timestamp().toIso8601String(),
-                            'number': i,
-                          },
-                      ],
-                    },
-                  ],
+                  'seasons': seasonPayload,
                 },
               ],
             };
@@ -411,6 +418,62 @@ class TraktTv extends _$TraktTv implements BaseTracker {
     }
 
     return track;
+  }
+
+  /// Returns a list of (seasonNumber, episodeCount) pairs, excluding season 0 (specials).
+  /// e.g. [(1, 26), (2, 11), (3, 24)]
+  Future<List<(int, int)>> _getSeasonStructure(
+    int mediaId,
+    String accessToken,
+  ) async {
+    try {
+      final url = Uri.parse('$_baseApiUrl/shows/$mediaId/seasons').replace(
+        queryParameters: {'extended': 'episodes'},
+      );
+      final result = await _makeGetRequest(url, accessToken);
+      final data = jsonDecode(result.body) as List?;
+      if (data == null) return [];
+
+      return data
+          .where((s) => (s['number'] as int? ?? 0) > 0) // 시즌 0(스페셜) 제외
+          .map((s) {
+            final seasonNum = s['number'] as int;
+            final episodes = (s['episodes'] as List?)?.length ?? 0;
+            return (seasonNum, episodes);
+          })
+          .where((s) => s.$2 > 0) // 에피소드가 없는 시즌 제외
+          .toList();
+    } catch (e) {
+      AppLogger.log("Trakt getSeasonStructure error: $e");
+      return [];
+    }
+  }
+
+  /// Maps an absolute episode count to a list of season/episode payloads for Trakt API.
+  /// e.g. absoluteEp=27, seasons=[(1,26),(2,11)] → [{season:1, episodes:[1..26]}, {season:2, episodes:[1]}]
+  List<Map<String, dynamic>> _mapAbsoluteToSeasons(
+    int absoluteEp,
+    List<(int, int)> seasons,
+  ) {
+    final result = <Map<String, dynamic>>[];
+    int remaining = absoluteEp;
+    final now = DateTime.timestamp().toIso8601String();
+
+    for (final (seasonNum, epCount) in seasons) {
+      if (remaining <= 0) break;
+
+      final watchCount = remaining >= epCount ? epCount : remaining;
+      result.add({
+        'number': seasonNum,
+        'episodes': [
+          for (int i = 1; i <= watchCount; i++)
+            {'watched_at': now, 'number': i},
+        ],
+      });
+      remaining -= watchCount;
+    }
+
+    return result;
   }
 
   Future<String> _getAccessToken({bool bypass = false}) async {
