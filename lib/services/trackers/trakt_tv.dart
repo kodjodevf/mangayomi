@@ -203,11 +203,12 @@ class TraktTv extends _$TraktTv implements BaseTracker {
     final historyData = jsonDecode(historyResult.body) as List?;
 
     if (historyData?.isNotEmpty ?? false) {
+      final data = historyData!;
       if (isMovie) {
         track.lastChapterRead = 1;
         track.status = TrackStatus.completed;
       } else {
-        track.lastChapterRead = historyData!
+        track.lastChapterRead = data
             .where((e) => e["type"] == "episode")
             .length;
         if ((track.totalChapter ?? 0) > 0 &&
@@ -218,7 +219,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
         }
       }
       track.finishedReadingDate = DateTime.tryParse(
-        historyData!.firstOrNull?["watched_at"] ?? "",
+        data.firstOrNull?["watched_at"] ?? "",
       )?.millisecondsSinceEpoch;
       return track;
     }
@@ -311,9 +312,8 @@ class TraktTv extends _$TraktTv implements BaseTracker {
         track.trackingUrl?.replaceAll("https://trakt.tv/", "").split("/")[0] ==
         "movies";
 
-    // 1. Handle Plan to Watch -> Sync to Watchlist
-    if (track.status == TrackStatus.planToWatch ||
-        ((track.lastChapterRead ?? 0) == 0 && track.status != TrackStatus.completed)) {
+    // 1. planToWatch 상태 -> Watchlist에 추가
+    if (track.status == TrackStatus.planToWatch) {
       final watchlistUrl = Uri.parse("$_baseApiUrl/sync/watchlist")
           .replace(queryParameters: {'clientId': _clientId});
       final watchlistBody = isMovie
@@ -333,14 +333,19 @@ class TraktTv extends _$TraktTv implements BaseTracker {
             };
       await _makePostRequest(watchlistUrl, accessToken, watchlistBody);
     } else {
-      // 2. Handle Watching / Completed -> Sync to History
-      final historyUrl = Uri.parse("$_baseApiUrl/sync/history")
-          .replace(queryParameters: {'extended': 'full', 'clientId': _clientId});
-      
+      // 2. watching / completed -> History에 동기화
+      // 실제로 본 에피소드 수를 결정: completed이고 totalChapter가 있으면 전체 수, 아니면 lastChapterRead
+      final lastRead = track.lastChapterRead ?? 0;
       final episodesCount = track.status == TrackStatus.completed &&
               (track.totalChapter ?? 0) > 0
           ? track.totalChapter!
-          : (track.lastChapterRead ?? 1);
+          : lastRead;
+
+      // 에피소드가 0개이면 Trakt API가 빈 배열 에러를 냄 -> 건너뜀
+      if (!isMovie && episodesCount <= 0) return track;
+
+      final historyUrl = Uri.parse("$_baseApiUrl/sync/history")
+          .replace(queryParameters: {'extended': 'full', 'clientId': _clientId});
 
       final historyBody = isMovie
           ? {
