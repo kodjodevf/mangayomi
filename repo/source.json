@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.9.6",
-      "versionDate": "2026-09-19T16:50:53Z",
-      "versionDescription": "What's Changed\n* fix(reader): isolate wide page spreads in double\u2022page mode and fix RTL resume order (1008) by @jikkun in https://github.com/kodjodevf/mangayomi/pull/1018\n* feat(novel): add reading mode toggle (continuous vs paged) and scroll\u2022free e\u2022reader double\u2022page support by @jikkun in https://github.com/kodjodevf/mangayomi/pull/1019\n\nNew Contributors\n* @jikkun made their first contribution in https://github.com/kodjodevf/mangayomi/pull/1018\n\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.5...v0.9.6",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.6/Mangayomi-v0.9.6-ios.ipa",
+      "version": "0.9.7",
+      "versionDate": "2026-09-22T11:08:53Z",
+      "versionDescription": "**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.6...v0.9.7",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.7/Mangayomi-v0.9.7-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 114296014,
+      "size": 114301894,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.9.7",
+          "date": "2026-09-22T11:08:53Z",
+          "localizedDescription": "**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.6...v0.9.7",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.7/Mangayomi-v0.9.7-ios.ipa",
+          "size": 114301894
+        },
+        {
           "version": "0.9.6",
           "date": "2026-09-19T16:50:53Z",
-          "localizedDescription": "What's Changed\n* fix(reader): isolate wide page spreads in double\u2022page mode and fix RTL resume order (1008) by @jikkun in https://github.com/kodjodevf/mangayomi/pull/1018\n* feat(novel): add reading mode toggle (continuous vs paged) and scroll\u2022free e\u2022reader double\u2022page support by @jikkun in https://github.com/kodjodevf/mangayomi/pull/1019\n\nNew Contributors\n* @jikkun made their first contribution in https://github.com/kodjodevf/mangayomi/pull/1018\n\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.5...v0.9.6",
+          "localizedDescription": "What's New\r\n\r\n\ud83d\udcd6 Reader & Manga\r\n\r\n* **Intelligent Double\u2022Page Spreads & RTL Reading** (1018, 1008):\r\n  * Wide and landscape double\u2022page spreads are now shown seamlessly on their own full\u2022width screen instead of being awkwardly paired with single pages.\r\n  * Switching between single and double\u2022page view, rotating your device, or changing reading modes no longer resets your progress back to chapter 1.\r\n  * Resuming chapters in Right\u2022to\u2022Left (manga) reading mode now starts in the correct direction without layout flipping.\r\n* **Instant Border Cropping & Cache Improvements**:\r\n  * Turning border crop on or off in Webtoon / continuous reading now applies instantly without re\u2022downloading the images.\r\n  * Fixed an issue where resuming a chapter at a saved page could cause an infinite loading spinner for already cached images.\r\n* **Smoother Reading Experience**:\r\n  * Fixed page flickering and display glitches when scrolling quickly through continuous chapters.\r\n\r\n\u2022\u2022\u2022\r\n\r\nNovel Reader\r\n\r\n* **Scroll\u2022Free E\u2022Reader Paged Mode** (1019):\r\n  * Read novels like a real book with page\u2022turning swipes and taps instead of endless vertical scrolling.\r\n  * Quickly switch between **Continuous Scroll** and **Paged Reading** directly from the novel settings sheet.\r\n* **Single & Double\u2022Page Column Layouts** (1019):\r\n  * Added single\u2022page and side\u2022by\u2022side double\u2022page reading modes, optimized for tablets, foldable devices, and landscape screens.\r\n  * Settings sheet changes (reading mode, page mode) are now applied and previewed instantly.\r\n\r\n\u2022\u2022\u2022\r\n\r\nVideo Player & Anime\r\n\r\n* **Player Screen Lock (Mobile)**:\r\n  * Added a dedicated screen lock button to the mobile controls to prevent accidental touches while watching.\r\n  * When locked, all on\u2022screen controls, touch gestures (swiping to seek, volume/brightness, double\u2022tap jump, 2x speed hold), and the skip button are completely disabled.\r\n  * Protects against accidentally exiting the player with the back button or back gesture.\r\n  * Tap anywhere on the locked screen to display a quick\u2022unlock button in the top\u2022left corner.\r\n* **Cleaner Seek Indicator**:\r\n  * Simplified and streamlined the swipe\u2022to\u2022seek visual overlay on the player.\r\n\r\n\u2022\u2022\u2022\r\n\r\nFeatures & User Experience\r\n\r\n* **Smoother Category Management**:\r\n  * Reordering categories in settings is now much more responsive and intuitive using dedicated drag handles.\r\n* **Details Header Polish**:\r\n  * Improved visual layout and formatting in the manga/anime details header.\r\n\r\n\u2022\u2022\u2022\r\n\r\nFixes & Stability\r\n\r\n* **Reliable Background Sync**:\r\n  * Fixed occasional crashes and errors that could occur when closing screens or navigating away during library synchronization.\r\n\r\n\u2022\u2022\u2022\r\n\r\nLocalization\r\n\r\n* Added translations for the new player screen lock feature across all supported languages.\r\n\r\n\u2022\u2022\u2022\r\n\r\nContributors\r\n\r\n* @kodjodevf\r\n* @jikkun (1018, 1019)\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.5...v0.9.6",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.6/Mangayomi-v0.9.6-ios.ipa",
           "size": 114296014
         },
@@ -231,13 +238,6 @@
           "localizedDescription": "* Increase isolate pool size to enhance concurrent download capabilities\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.95...v0.7.0",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.0/Mangayomi-v0.7.0-ios.ipa",
           "size": 45269466
-        },
-        {
-          "version": "0.6.95",
-          "date": "2026-01-08T13:43:16Z",
-          "localizedDescription": "What's Changed\r\n* Fix \"Show extensions\" Button AND Fix category rearrange bug AND hide ItemType from calendar by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/636\r\n* Add a force landscape mode on mobile by @686udjie in https://github.com/kodjodevf/mangayomi/pull/638\r\n* Fix 637: Importing .epub doesn\u2019t work\r\n* Enhance category management with animation\r\n* Refactor download management with shared isolate pool and optimize concurrent downloads\r\n\r\nNew Contributors\r\n* @686udjie made their first contribution in https://github.com/kodjodevf/mangayomi/pull/638\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.90...v0.6.95",
-          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.95/Mangayomi-v0.6.95-ios.ipa",
-          "size": 45267048
         }
       ],
       "appPermissions": {
@@ -732,6 +732,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.9.6"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.9.7 - 22 Sep",
+      "identifier": "release-0.9.7",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2026-09-22T11:08:53Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.9.7"
     }
   ]
 }
