@@ -704,10 +704,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                 controller: _spreadController,
                                                 itemCount: totalCount,
                                                 onPageChanged: (pageIndex) {
-                                                  setState(() {
-                                                    _currentSpreadIndex =
-                                                        pageIndex;
-                                                  });
+                                                  // Keep the page swipe isolated
+                                                  // from the expensive reader
+                                                  // tree. The bottom bar already
+                                                  // listens to this stream.
+                                                  _currentSpreadIndex = pageIndex;
                                                   final progress = isDouble
                                                       ? pagination
                                                           .progressForSpread(
