@@ -210,6 +210,9 @@ class TraktTv extends _$TraktTv implements BaseTracker {
       } else {
         track.lastChapterRead = data
             .where((e) => e["type"] == "episode")
+            .map((e) => e["episode"]?["ids"]?["trakt"])
+            .whereType<int>()
+            .toSet()
             .length;
         if ((track.totalChapter ?? 0) > 0 &&
             (track.lastChapterRead ?? 0) >= (track.totalChapter ?? 0)) {
