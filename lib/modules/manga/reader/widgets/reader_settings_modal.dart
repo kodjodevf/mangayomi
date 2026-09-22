@@ -245,8 +245,10 @@ class _ReadingModeTab extends ConsumerWidget {
                 },
               ),
 
-            SwitchListTile(
-              value: splitWidePages,
+            if (readerMode != ReaderMode.webtoon &&
+                !readerMode.isHorizontalContinuous) ...[
+              SwitchListTile(
+                value: splitWidePages,
               title: Text(
                 l10n.split_wide_pages,
                 style: TextStyle(
@@ -308,10 +310,13 @@ class _ReadingModeTab extends ConsumerWidget {
                       .set(value);
                 },
               ),
+            ],
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: _SettingSection(
+            if (readerMode != ReaderMode.webtoon &&
+                !readerMode.isHorizontalContinuous)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: _SettingSection(
                 title: l10n.page_mode,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

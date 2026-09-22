@@ -135,7 +135,9 @@ class ReaderPageContent extends ConsumerWidget {
         onFailedToLoadImage: onFailedToLoadImage,
         backgroundColor: backgroundColor,
         isDoublePageMode:
-            pageMode == PageMode.doublePage && !isHorizontalContinuous,
+            pageMode == PageMode.doublePage &&
+            !isHorizontalContinuous &&
+            readerMode != ReaderMode.webtoon,
         isHorizontalContinuous: isHorizontalContinuous,
         readerMode: readerMode,
         webtoonSidePadding: ref.watch(webtoonSidePaddingStateProvider),
@@ -270,7 +272,6 @@ class ReaderPageContent extends ConsumerWidget {
                   backgroundColor: backgroundColor,
                   onFailedToLoadImage: onFailedToLoadImage,
                   onWidePage: onWidePage,
-                  onWideSinglePageLoaded: onWideSinglePageLoaded,
                 );
               },
               itemCount: pages.length,
@@ -293,7 +294,6 @@ class ReaderPagedItem extends ConsumerWidget {
   final BackgroundColor backgroundColor;
   final void Function(int index, bool failed) onFailedToLoadImage;
   final void Function(int index, double width, double height) onWidePage;
-  final void Function(int index) onWideSinglePageLoaded;
 
   const ReaderPagedItem({
     super.key,
@@ -307,7 +307,6 @@ class ReaderPagedItem extends ConsumerWidget {
     required this.backgroundColor,
     required this.onFailedToLoadImage,
     required this.onWidePage,
-    required this.onWideSinglePageLoaded,
   });
 
   @override
@@ -324,9 +323,6 @@ class ReaderPagedItem extends ConsumerWidget {
       onImageLoaded: (width, height) {
         if (ref.read(splitWidePagesStateProvider) && width > height * 1.2) {
           onWidePage(index, width.toDouble(), height.toDouble());
-        }
-        if (width > height) {
-          onWideSinglePageLoaded(index);
         }
       },
       loadStateChanged: (state) {

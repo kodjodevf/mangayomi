@@ -149,9 +149,10 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
           );
           if (attempt < 5) {
             final range = widget.listController.visibleRange;
+            final atMaxScroll = widget.scrollController.position.pixels >=
+                widget.scrollController.position.maxScrollExtent - 2.0;
             if (range == null ||
-                widget.initialScrollIndex < range.$1 ||
-                widget.initialScrollIndex > range.$2) {
+                (range.$1 != widget.initialScrollIndex && !atMaxScroll)) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 jump(attempt + 1);
               });
@@ -425,7 +426,9 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
   }
 
   int _calculateItemCount(bool singleFirst) {
-    if (widget.isDoublePageMode && !widget.isHorizontalContinuous) {
+    if (widget.isDoublePageMode &&
+        !widget.isHorizontalContinuous &&
+        widget.readerMode != ReaderMode.webtoon) {
       if (widget.pages.isEmpty) return 0;
       return ReaderPageIndexMath.buildSpreads(
         widget.pages,
@@ -525,7 +528,12 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
       if (p.loadedWidth != null &&
           p.loadedHeight != null &&
           p.loadedWidth! > 0) {
-        sampleAspect = p.loadedHeight! / p.loadedWidth!;
+        final aspect = p.loadedHeight! / p.loadedWidth!;
+        if (widget.readerMode == ReaderMode.webtoon && aspect < 1.8) {
+          // Skip title banner / cover cards which are wide or square, not typical webtoon strips
+          continue;
+        }
+        sampleAspect = aspect;
         break;
       }
     }
@@ -552,7 +560,9 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     bool dualPageRotateToFitInvert,
   ) {
     Widget item;
-    if (widget.isDoublePageMode && !widget.isHorizontalContinuous) {
+    if (widget.isDoublePageMode &&
+        !widget.isHorizontalContinuous &&
+        widget.readerMode != ReaderMode.webtoon) {
       item = _buildDoublePageItem(context, index, singleFirst);
     } else {
       final currentPage = widget.pages[index];
@@ -626,7 +636,6 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
         rotation: rotation,
         onImageLoaded: (width, height) {
           widget.onImageLoaded?.call(index, width, height);
-          widget.onPageImageLoaded?.call(index);
         },
       ),
     );
