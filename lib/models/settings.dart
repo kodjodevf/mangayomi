@@ -58,6 +58,8 @@ class Settings {
 
   int? flexSchemeColorIndex;
 
+  bool? useMaterialYou;
+
   bool? themeIsDark;
 
   bool? followSystemTheme;
@@ -472,6 +474,7 @@ class Settings {
     this.dateFormat = "M/d/y",
     this.relativeTimesTamps = 2,
     this.flexSchemeColorIndex = 2,
+    this.useMaterialYou = true,
     this.themeIsDark = false,
     this.followSystemTheme = false,
     this.incognitoMode = false,
@@ -744,6 +747,7 @@ class Settings {
         : (json['flexColorSchemeBlendLevel'] as int).toDouble();
     appUiScale = (json['appUiScale'] as num?)?.toDouble() ?? 1.0;
     flexSchemeColorIndex = json['flexSchemeColorIndex'];
+    useMaterialYou = json['useMaterialYou'] ?? true;
     id = json['id'];
     incognitoMode = json['incognitoMode'];
     onboardingCompleted = json['onboardingCompleted'];
@@ -1061,6 +1065,7 @@ class Settings {
     'flexColorSchemeBlendLevel': flexColorSchemeBlendLevel,
     'appUiScale': appUiScale,
     'flexSchemeColorIndex': flexSchemeColorIndex,
+    'useMaterialYou': useMaterialYou,
     'id': id,
     'incognitoMode': incognitoMode,
     'onboardingCompleted': onboardingCompleted,

@@ -48,6 +48,8 @@ import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/client_id.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
+import 'package:dynamic_color/dynamic_color.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/dynamic_color_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
@@ -150,10 +152,41 @@ void main(List<String> args) async {
         AppLogger.log('DB init failed: $e\n$st', logLevel: LogLevel.error);
         startupError = e;
       }
+      ColorScheme? lightDynamic;
+      ColorScheme? darkDynamic;
+      try {
+        final corePalette = await DynamicColorPlugin.getCorePalette();
+        if (corePalette != null) {
+          lightDynamic = corePalette.toColorScheme();
+          darkDynamic = corePalette.toColorScheme(brightness: Brightness.dark);
+        } else {
+          final accentColor = await DynamicColorPlugin.getAccentColor();
+          if (accentColor != null) {
+            lightDynamic = ColorScheme.fromSeed(
+              seedColor: accentColor,
+              brightness: Brightness.light,
+            );
+            darkDynamic = ColorScheme.fromSeed(
+              seedColor: accentColor,
+              brightness: Brightness.dark,
+            );
+          }
+        }
+      } catch (_) {}
+
       runApp(
         startupError != null
             ? _StartupErrorApp(error: startupError.toString())
-            : ProviderScope(child: MyApp(), retry: (retryCount, error) => null),
+            : ProviderScope(
+                overrides: [
+                  dynamicColorSchemesProvider.overrideWith(
+                    () =>
+                        DynamicColorSchemesNotifier((lightDynamic, darkDynamic)),
+                  ),
+                ],
+                retry: (retryCount, error) => null,
+                child: MyApp(),
+              ),
       );
       if (startupError == null) unawaited(_postLaunchInit(storage));
     },
@@ -330,7 +363,21 @@ class _MyAppState extends ConsumerState<MyApp>
     final locale = ref.watch(l10nLocaleStateProvider);
     final router = ref.watch(routerProvider);
 
-    return MaterialApp.router(
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        if (lightDynamic != null || darkDynamic != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              final current = ref.read(dynamicColorSchemesProvider);
+              if (current.$1 != lightDynamic || current.$2 != darkDynamic) {
+                ref
+                    .read(dynamicColorSchemesProvider.notifier)
+                    .set(lightDynamic, darkDynamic);
+              }
+            }
+          });
+        }
+        return MaterialApp.router(
       theme: ref.watch(lightThemeProvider),
       darkTheme: ref.watch(darkThemeProvider),
       themeMode: themeMode,
@@ -420,6 +467,8 @@ class _MyAppState extends ConsumerState<MyApp>
       routeInformationProvider: router.routeInformationProvider,
       title: 'MangaYomi',
       scrollBehavior: AllowScrollBehavior(),
+    );
+      },
     );
   }
 

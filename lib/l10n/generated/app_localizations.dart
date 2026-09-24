@@ -1027,6 +1027,18 @@ abstract class AppLocalizations {
   /// **'Theme'**
   String get theme;
 
+  /// No description provided for @material_you.
+  ///
+  /// In en, this message translates to:
+  /// **'Material You'**
+  String get material_you;
+
+  /// No description provided for @not_supported_on_this_device.
+  ///
+  /// In en, this message translates to:
+  /// **'Not supported on this device'**
+  String get not_supported_on_this_device;
+
   /// No description provided for @dark_mode.
   ///
   /// In en, this message translates to:
