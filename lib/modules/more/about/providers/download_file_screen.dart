@@ -434,16 +434,48 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
     final file = File(
       '${dir!.path}/${url.split("/").lastOrNull ?? "Mangayomi.apk"}',
     );
+
+    // If a file already exists, verify its integrity by comparing its size
+    // against the server's Content-Length. A corrupt or incomplete download
+    // would have a smaller size — delete it and re-download in that case.
     if (await file.exists()) {
-      setState(() {
-        _isInstalling = true;
-      });
-      await _installApk(file);
-      if (mounted) {
-        Navigator.pop(context);
+      bool fileIsValid = false;
+      try {
+        final headResponse = await http.head(Uri.parse(url));
+        final contentLength = int.tryParse(
+          headResponse.headers['content-length'] ?? '',
+        );
+        final localSize = await file.length();
+        if (contentLength != null && localSize == contentLength) {
+          fileIsValid = true;
+        }
+      } catch (_) {
+        // Network unavailable: fall back to assuming the file is valid so the
+        // user can at least attempt installation while offline.
+        fileIsValid = true;
       }
-      return;
+
+      if (fileIsValid) {
+        if (!mounted) return;
+        setState(() {
+          _isInstalling = true;
+        });
+        await _installApk(file);
+        if (mounted) {
+          Navigator.pop(context);
+        }
+        return;
+      } else {
+        // File is corrupted or incomplete — delete and re-download.
+        try {
+          await file.delete();
+        } catch (_) {}
+      }
     }
+
+    _bytes.clear();
+    _received = 0;
+
     _response = await http.Client().send(http.Request('GET', Uri.parse(url)));
     setState(() {
       _total = _response?.contentLength ?? 0;
