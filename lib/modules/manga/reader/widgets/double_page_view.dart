@@ -284,21 +284,10 @@ class _DoublePageViewState extends State<DoublePageView>
   }
 
   Widget _buildPageRow() {
-    final widePage = widget.pages.firstWhereOrNull(
-      (p) =>
-          p != null &&
-          p.loadedWidth != null &&
-          p.loadedHeight != null &&
-          p.loadedWidth! > p.loadedHeight!,
-    );
-    final displayPages = (widePage != null && widget.pages.length > 1)
-        ? [widePage]
-        : widget.pages;
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        for (final page in displayPages)
+        for (final page in widget.pages)
           if (page != null)
             Flexible(
               key: ValueKey(
@@ -327,9 +316,6 @@ class _DoublePageViewState extends State<DoublePageView>
         final idx = pageData.pageIndex ?? pageData.index ?? 0;
         widget.onImageLoaded?.call(idx, width, height);
         if (width > height) {
-          if (mounted && widget.pages.length > 1) {
-            setState(() {});
-          }
           widget.onWideSinglePageLoaded?.call(idx);
         }
       },

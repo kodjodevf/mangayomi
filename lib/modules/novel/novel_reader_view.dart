@@ -119,8 +119,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   bool scrolled = false;
   bool _scrollRestoreScheduled = false;
   bool _isNavigatingChapter = false;
-  double _backwardOverscrollAmount = 0;
-  double _forwardOverscrollAmount = 0;
   double offset = 0;
   double maxOffset = 0;
   int fontSize = 14;
@@ -496,31 +494,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
             }
           } else if (notification is ScrollEndNotification) {
             _isUserDragging = false;
-          }
-          if (notification is OverscrollNotification) {
-            if (notification.overscroll < 0) {
-              _backwardOverscrollAmount += (-notification.overscroll);
-              _forwardOverscrollAmount = 0;
-              if (_backwardOverscrollAmount > 80) {
-                _backwardOverscrollAmount = 0;
-                _goToChapter(false, startAtEnd: true);
-              }
-            } else if (notification.overscroll > 0) {
-              _forwardOverscrollAmount += notification.overscroll;
-              _backwardOverscrollAmount = 0;
-              if (_forwardOverscrollAmount > 80) {
-                _forwardOverscrollAmount = 0;
-                _goToChapter(true, startAtEnd: false);
-              }
-            }
-          } else if (notification is ScrollUpdateNotification) {
-            if (notification.scrollDelta != null) {
-              if (notification.scrollDelta! > 0) {
-                _backwardOverscrollAmount = 0;
-              } else if (notification.scrollDelta! < 0) {
-                _forwardOverscrollAmount = 0;
-              }
-            }
           }
           if (notification is UserScrollNotification) {
             if (notification.direction == ScrollDirection.idle) {
@@ -1216,14 +1189,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     if (_scrollController.hasClients) {
       final currentOffset = _scrollController.offset;
       final maxScroll = _scrollController.position.maxScrollExtent;
-      if (value > 0 && currentOffset >= maxScroll - 20) {
-        _goToChapter(true, startAtEnd: false);
-        return;
-      } else if (value < 0 && currentOffset <= 20) {
-        _goToChapter(false, startAtEnd: true);
-        return;
-      }
-
       final newOffset = currentOffset + value;
       _scrollController.animateTo(
         newOffset.clamp(0.0, maxScroll),

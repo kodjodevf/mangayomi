@@ -149,10 +149,9 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
           );
           if (attempt < 5) {
             final range = widget.listController.visibleRange;
-            final atMaxScroll = widget.scrollController.position.pixels >=
-                widget.scrollController.position.maxScrollExtent - 2.0;
             if (range == null ||
-                (range.$1 != widget.initialScrollIndex && !atMaxScroll)) {
+                widget.initialScrollIndex < range.$1 ||
+                widget.initialScrollIndex > range.$2) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 jump(attempt + 1);
               });
@@ -636,6 +635,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
         rotation: rotation,
         onImageLoaded: (width, height) {
           widget.onImageLoaded?.call(index, width, height);
+          widget.onPageImageLoaded?.call(index);
         },
       ),
     );

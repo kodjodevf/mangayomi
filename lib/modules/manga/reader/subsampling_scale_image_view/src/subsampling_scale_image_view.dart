@@ -7,7 +7,6 @@ import 'dart:ui' as ui;
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:crypto/crypto.dart';
@@ -480,7 +479,6 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
   double _lastNotifiedScale = 0;
   ui.Offset _lastNotifiedCenter = ui.Offset.zero;
   Timer? _resizeTimer;
-  int _autoRetryCount = 0;
 
   @override
   void initState() {
@@ -543,7 +541,6 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     final rotationChanged = widget.rotation != oldWidget.rotation;
 
     if (imageChanged || cropChanged) {
-      _autoRetryCount = 0;
       _isInitialized = false;
       _loadState = LoadState.loading;
       _tilingEngine.dispose();
@@ -779,18 +776,6 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
       }
       _cancelImageStream();
       if (mounted) {
-        if (_autoRetryCount < 3) {
-          _autoRetryCount++;
-          try {
-            await widget.image.evict();
-          } catch (_) {}
-          Future.delayed(Duration(milliseconds: 300 * _autoRetryCount), () {
-            if (mounted) {
-              _loadFromProvider(evictCache: true);
-            }
-          });
-          return;
-        }
         setState(() => _loadState = LoadState.failed);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) widget.onError?.call(e.toString());
@@ -802,10 +787,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
   SubsamplingImageState _makeImageState() => SubsamplingImageState(
     loadState: _loadState,
     loadingProgress: _loadingProgress,
-    reLoadCallback: () {
-      _autoRetryCount = 0;
-      _loadFromProvider(evictCache: true);
-    },
+    reLoadCallback: () => _loadFromProvider(evictCache: true),
   );
 
   // ── Internal Controller ───────────────────────────────────────────────────────
@@ -1286,7 +1268,6 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
               tile.loading = false;
               if (_loadState != LoadState.completed) {
                 _loadState = LoadState.completed;
-                _autoRetryCount = 0;
                 _notifyStateChanged();
                 widget.onReady?.call();
                 widget.onImageLoaded?.call(_sWidth, _sHeight);
@@ -1383,9 +1364,27 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
 
     if (widget.panEnabled && !_isQuickScaling) {
       if (details.pointerCount == 1) {
-        // 1-finger panning using global coordinates delta
+        // 1-finger panning / page scrolling using global coordinates delta
         final proposedTranslate = _vTranslate + globalDelta;
-        newTranslate = _clampTranslate(proposedTranslate, newScale);
+        final clampedTranslate = _clampTranslate(proposedTranslate, newScale);
+
+        if (widget.pageController != null &&
+            widget.pageController!.hasClients &&
+            _scale <= _getMinScale() * 1.01) {
+          final double excessX = proposedTranslate.dx - clampedTranslate.dx;
+          if (excessX != 0) {
+            final pos = widget.pageController!.position;
+            final isReverse = pos.axisDirection == AxisDirection.left;
+            final delta = isReverse ? excessX : -excessX;
+            pos.jumpTo(
+              (pos.pixels + delta).clamp(
+                pos.minScrollExtent,
+                pos.maxScrollExtent,
+              ),
+            );
+          }
+        }
+        newTranslate = clampedTranslate;
       } else if (details.pointerCount > 1) {
         // Multi-finger pinch-to-zoom using standard local focal anchor
         final ui.Offset focalPoint = details.localFocalPoint;
@@ -1424,6 +1423,29 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     }
     _isQuickScaling = false;
     _refreshTiles(load: true);
+
+    // Coordinate PageController snapping
+    if (widget.pageController != null &&
+        widget.pageController!.hasClients &&
+        _scale <= _getMinScale() * 1.01) {
+      final double currentPageValue = widget.pageController!.page ?? 0.0;
+      final pos = widget.pageController!.position;
+      final isReverse = pos.axisDirection == AxisDirection.left;
+      final velocityX = details.velocity.pixelsPerSecond.dx;
+
+      int targetPage = currentPageValue.round();
+      if (velocityX.abs() > 300) {
+        final forward = isReverse ? velocityX > 0 : velocityX < 0;
+        targetPage = forward
+            ? currentPageValue.ceil()
+            : currentPageValue.floor();
+      }
+      widget.pageController!.animateToPage(
+        targetPage.clamp(0, 999999),
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+      );
+    }
   }
 
   void _handleDoubleTapDown(TapDownDetails details) {
@@ -1472,36 +1494,6 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
         );
     _animationController.duration = widget.doubleTapZoomDuration;
     _animationController.forward(from: 0.0);
-  }
-
-  bool _canMove(Offset move, Axis mainAxis) {
-    if (mainAxis != Axis.horizontal) return true;
-    final transformer = CoordinateTransformer(
-      scale: _scale,
-      vTranslate: _vTranslate,
-      rotation: widget.rotation,
-      sWidth: _sWidth,
-      sHeight: _sHeight,
-    );
-    final double imageWidth = transformer.effectiveSWidth * _scale;
-    // If the image fits horizontally within the view, single-finger drag should NOT pan it
-    if (_viewSize.width >= imageWidth) {
-      return false;
-    }
-    if (move.dx == 0) return false;
-    final minTx = _viewSize.width - imageWidth;
-    const maxTx = 0.0;
-    // move.dx > 0: finger moving left -> image wants to translate left.
-    // If already at or beyond the right edge of image, cannot move further left.
-    if (move.dx > 0 && _vTranslate.dx <= minTx + 1.0) {
-      return false;
-    }
-    // move.dx < 0: finger moving right -> image wants to translate right.
-    // If already at or beyond the left edge of image, cannot move further right.
-    if (move.dx < 0 && _vTranslate.dx >= maxTx - 1.0) {
-      return false;
-    }
-    return true;
   }
 
   @override
@@ -1557,7 +1549,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
             ),
             LoadState.failed => Center(
               child: GestureDetector(
-                onTap: _loadFromProvider,
+                onTap: () => _loadFromProvider(evictCache: true),
                 child: const Icon(
                   Icons.broken_image_outlined,
                   color: Colors.grey,
@@ -1569,40 +1561,17 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
           };
         }
 
-        final gestures = <Type, GestureRecognizerFactory>{};
-
-        if (widget.zoomEnabled || widget.panEnabled) {
-          gestures[SubsamplingScaleGestureRecognizer] =
-              GestureRecognizerFactoryWithHandlers<SubsamplingScaleGestureRecognizer>(
-            () => SubsamplingScaleGestureRecognizer(
-              debugOwner: this,
-              canMove: _canMove,
-              validateAxis:
-                  widget.pageController != null ? Axis.horizontal : null,
-            ),
-            (SubsamplingScaleGestureRecognizer instance) {
-              instance
-                ..dragStartBehavior = DragStartBehavior.start
-                ..onStart = _handleScaleStart
-                ..onUpdate = _handleScaleUpdate
-                ..onEnd = _handleScaleEnd;
-            },
-          );
-        }
-
-        if (widget.zoomEnabled) {
-          gestures[DoubleTapGestureRecognizer] =
-              GestureRecognizerFactoryWithHandlers<DoubleTapGestureRecognizer>(
-            () => DoubleTapGestureRecognizer(debugOwner: this),
-            (DoubleTapGestureRecognizer instance) {
-              instance.onDoubleTapDown = _handleDoubleTapDown;
-            },
-          );
-        }
-
-        return RawGestureDetector(
-          behavior: HitTestBehavior.translucent,
-          gestures: gestures,
+        return GestureDetector(
+          onScaleStart: widget.zoomEnabled || widget.panEnabled
+              ? _handleScaleStart
+              : null,
+          onScaleUpdate: widget.zoomEnabled || widget.panEnabled
+              ? _handleScaleUpdate
+              : null,
+          onScaleEnd: widget.zoomEnabled || widget.panEnabled
+              ? _handleScaleEnd
+              : null,
+          onDoubleTapDown: widget.zoomEnabled ? _handleDoubleTapDown : null,
           child: ClipRect(
             child: SubsamplingImageRenderWidget(
               tilingEngine: _tilingEngine,
@@ -1621,86 +1590,5 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
         );
       },
     );
-  }
-}
-
-/// Custom [ScaleGestureRecognizer] that yields 1-finger horizontal dragging to
-/// the parent [PageView] when the image is not zoomed in or has reached its pan boundary.
-class SubsamplingScaleGestureRecognizer extends ScaleGestureRecognizer {
-  SubsamplingScaleGestureRecognizer({
-    super.debugOwner,
-    required this.canMove,
-    required this.validateAxis,
-  });
-
-  final bool Function(Offset move, Axis mainAxis) canMove;
-  final Axis? validateAxis;
-
-  final Map<int, Offset> _pointerLocations = <int, Offset>{};
-  Offset? _initialFocalPoint;
-  Offset? _currentFocalPoint;
-  bool _ready = true;
-
-  @override
-  void addAllowedPointer(PointerDownEvent event) {
-    if (_ready) {
-      _ready = false;
-      _pointerLocations.clear();
-    }
-    super.addAllowedPointer(event);
-  }
-
-  @override
-  void didStopTrackingLastPointer(int pointer) {
-    _ready = true;
-    _pointerLocations.clear();
-    super.didStopTrackingLastPointer(pointer);
-  }
-
-  @override
-  void handleEvent(PointerEvent event) {
-    if (validateAxis != null) {
-      _computeEvent(event);
-      _updateDistances();
-      _decideIfWeAcceptEvent(event);
-    }
-    super.handleEvent(event);
-  }
-
-  void _computeEvent(PointerEvent event) {
-    if (event is PointerMoveEvent) {
-      if (!event.synthesized) {
-        _pointerLocations[event.pointer] = event.position;
-      }
-    } else if (event is PointerDownEvent) {
-      _pointerLocations[event.pointer] = event.position;
-    } else if (event is PointerUpEvent || event is PointerCancelEvent) {
-      _pointerLocations.remove(event.pointer);
-    }
-    _initialFocalPoint = _currentFocalPoint;
-  }
-
-  void _updateDistances() {
-    final int count = _pointerLocations.keys.length;
-    Offset focalPoint = Offset.zero;
-    for (final pointer in _pointerLocations.keys) {
-      focalPoint += _pointerLocations[pointer]!;
-    }
-    _currentFocalPoint =
-        count > 0 ? focalPoint / count.toDouble() : Offset.zero;
-  }
-
-  void _decideIfWeAcceptEvent(PointerEvent event) {
-    if (event is! PointerMoveEvent) return;
-    // Multi-finger pinch gesture: accept immediately!
-    if (_pointerLocations.keys.length > 1) {
-      acceptGesture(event.pointer);
-      return;
-    }
-    final move =
-        (_initialFocalPoint ?? _currentFocalPoint!) - _currentFocalPoint!;
-    if (validateAxis != null && canMove(move, validateAxis!)) {
-      acceptGesture(event.pointer);
-    }
   }
 }
