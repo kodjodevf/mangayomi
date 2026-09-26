@@ -827,6 +827,12 @@ bool decode_region(ImageDecoderContext* ctx, int left, int top, int right, int b
     int raw_right  = right + ctx->crop_left;
     int raw_bottom = bottom + ctx->crop_top;
 
+    if (raw_left < 0) raw_left = 0;
+    if (raw_top < 0) raw_top = 0;
+    if (raw_right > ctx->width) raw_right = ctx->width;
+    if (raw_bottom > ctx->height) raw_bottom = ctx->height;
+    if (raw_left >= raw_right || raw_top >= raw_bottom) return false;
+
     if (ctx->type == TYPE_BMP) {
         return decode_bmp_region(ctx->bmp_ctx, raw_left, raw_top, raw_right, raw_bottom, sample_size, out_rgba_buffer);
     }
@@ -1877,6 +1883,12 @@ bool decode_region(ImageDecoderContext* ctx, int left, int top, int right, int b
     int raw_top    = top    + ctx->crop_top;
     int raw_right  = right  + ctx->crop_left;
     int raw_bottom = bottom + ctx->crop_top;
+
+    if (raw_left < 0) raw_left = 0;
+    if (raw_top < 0) raw_top = 0;
+    if (raw_right > ctx->width) raw_right = ctx->width;
+    if (raw_bottom > ctx->height) raw_bottom = ctx->height;
+    if (raw_left >= raw_right || raw_top >= raw_bottom) return false;
 
     if (ctx->type == TYPE_BMP) {
         return decode_bmp_region(ctx->bmp_ctx, raw_left, raw_top, raw_right, raw_bottom,

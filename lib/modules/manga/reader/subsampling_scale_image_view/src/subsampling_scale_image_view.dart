@@ -538,15 +538,17 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     final scaleTypeChanged =
         widget.minimumScaleType != oldWidget.minimumScaleType ||
         widget.fit != oldWidget.fit;
+    final rotationChanged = widget.rotation != oldWidget.rotation;
 
     if (imageChanged || cropChanged) {
       _isInitialized = false;
+      _loadState = LoadState.loading;
       _tilingEngine.dispose();
       _tilingEngine = TilingEngine();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _loadFromProvider();
       });
-    } else if (scaleTypeChanged && _isInitialized) {
+    } else if ((scaleTypeChanged || rotationChanged) && _isInitialized) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) setState(() => _setupInitialViewState());
       });
@@ -991,6 +993,17 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     if (!mounted || _resolvedFilePath != path) return;
 
     if (outSize == null || outSize[0] == 0 || outSize[1] == 0) {
+      await Future.delayed(const Duration(milliseconds: 150));
+      if (!mounted || _resolvedFilePath != path) return;
+      outSize = await ffiImageDecoder.getImageDimensionsAsync(
+        path!,
+        cropBorders: widget.cropBorders,
+      );
+    }
+
+    if (!mounted || _resolvedFilePath != path) return;
+
+    if (outSize == null || outSize[0] == 0 || outSize[1] == 0) {
       final msg = 'Failed to analyze image: $path';
       if (kDebugMode) {
         debugPrint('SubsamplingScaleImageView: $msg');
@@ -1207,15 +1220,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     if (_resolvedFilePath == null) return;
     tile.loading = true;
 
-    final transformer = CoordinateTransformer(
-      scale: _scale,
-      vTranslate: _vTranslate,
-      rotation: widget.rotation,
-      sWidth: _sWidth,
-      sHeight: _sHeight,
-    );
-
-    var fileRect = transformer.fileSRect(tile.sRect);
+    var fileRect = tile.sRect;
     if (widget.srcRect != null) {
       fileRect = fileRect.translate(widget.srcRect!.left, widget.srcRect!.top);
     }
@@ -1369,8 +1374,10 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
           final double excessX = proposedTranslate.dx - clampedTranslate.dx;
           if (excessX != 0) {
             final pos = widget.pageController!.position;
+            final isReverse = pos.axisDirection == AxisDirection.left;
+            final delta = isReverse ? excessX : -excessX;
             pos.jumpTo(
-              (pos.pixels - excessX).clamp(
+              (pos.pixels + delta).clamp(
                 pos.minScrollExtent,
                 pos.maxScrollExtent,
               ),
@@ -1422,9 +1429,19 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
         widget.pageController!.hasClients &&
         _scale <= _getMinScale() * 1.01) {
       final double currentPageValue = widget.pageController!.page ?? 0.0;
-      final int targetPage = currentPageValue.round();
+      final pos = widget.pageController!.position;
+      final isReverse = pos.axisDirection == AxisDirection.left;
+      final velocityX = details.velocity.pixelsPerSecond.dx;
+
+      int targetPage = currentPageValue.round();
+      if (velocityX.abs() > 300) {
+        final forward = isReverse ? velocityX > 0 : velocityX < 0;
+        targetPage = forward
+            ? currentPageValue.ceil()
+            : currentPageValue.floor();
+      }
       widget.pageController!.animateToPage(
-        targetPage,
+        targetPage.clamp(0, 999999),
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutCubic,
       );
@@ -1479,8 +1496,6 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     _animationController.forward(from: 0.0);
   }
 
-  // ── Build ────────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -1505,26 +1520,15 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
             : (constraints.minWidth > 0 ? constraints.minWidth : screenWidth);
 
         if (_viewSize.width != newWidth || _viewSize.height != newHeight) {
-          final bool isFirstLayout = _viewSize == ui.Size.zero;
           _viewSize = ui.Size(newWidth, newHeight);
-          if (isFirstLayout) {
-            // No debounce for initial layout — start loading immediately
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
             if (_sWidth > 0 && _sHeight > 0) {
               _setupInitialViewState();
             } else if (_resolvedFilePath != null) {
               _initImage();
             }
-          } else {
-            _resizeTimer?.cancel();
-            _resizeTimer = Timer(const Duration(milliseconds: 150), () {
-              if (!mounted) return;
-              if (_sWidth > 0 && _sHeight > 0) {
-                _setupInitialViewState();
-              } else if (_resolvedFilePath != null) {
-                _initImage();
-              }
-            });
-          }
+          });
         }
 
         // Displays custom state widget if image is not ready

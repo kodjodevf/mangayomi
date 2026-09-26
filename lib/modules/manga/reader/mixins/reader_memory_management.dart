@@ -11,6 +11,9 @@ mixin ReaderMemoryManagement {
   /// Whether the preload manager has been initialized.
   bool _isPreloadManagerInitialized = false;
 
+  /// Whether the preload manager has been initialized.
+  bool get isPreloadManagerInitialized => _isPreloadManagerInitialized;
+
   /// Gets the preload manager.
   ChapterPreloadManager get preloadManager => _preloadManager;
 

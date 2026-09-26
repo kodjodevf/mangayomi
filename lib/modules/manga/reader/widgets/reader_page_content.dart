@@ -105,6 +105,9 @@ class ReaderPageContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool isHorizontalContinuous = readerMode.isHorizontalContinuous;
+    final singleFirst = ref.watch(
+      doublePageSingleFirstPageStateProvider,
+    );
 
     if (readerMode.isContinuous) {
       return ImageViewWebtoon(
@@ -132,7 +135,9 @@ class ReaderPageContent extends ConsumerWidget {
         onFailedToLoadImage: onFailedToLoadImage,
         backgroundColor: backgroundColor,
         isDoublePageMode:
-            pageMode == PageMode.doublePage && !isHorizontalContinuous,
+            pageMode == PageMode.doublePage &&
+            !isHorizontalContinuous &&
+            readerMode != ReaderMode.webtoon,
         isHorizontalContinuous: isHorizontalContinuous,
         readerMode: readerMode,
         webtoonSidePadding: ref.watch(webtoonSidePaddingStateProvider),
@@ -174,9 +179,6 @@ class ReaderPageContent extends ConsumerWidget {
                   ? const NeverScrollableScrollPhysics()
                   : const ClampingScrollPhysics(),
               itemBuilder: (context, index) {
-                final singleFirst = ref.watch(
-                  doublePageSingleFirstPageStateProvider,
-                );
                 final spreads = ReaderPageIndexMath.buildSpreads(
                   pages,
                   singleFirst: singleFirst,
@@ -188,12 +190,35 @@ class ReaderPageContent extends ConsumerWidget {
                   if (index1 < pages.length) pages[index1],
                   if (index2 != null && index2 < pages.length) pages[index2],
                 ];
+
+                // If spread is a transition page, render it directly full-screen
+                // without wrapping in PhotoView/DoublePageView zoom machinery.
+                if (pageList.isNotEmpty &&
+                    pageList.any((p) => p?.isTransitionPage ?? false)) {
+                  final transPage =
+                      pageList.firstWhere((p) => p?.isTransitionPage ?? false)!;
+                  return SizedBox.expand(
+                    key: ValueKey(
+                      'trans_${index}_${transPage.chapter?.id}_${transPage.pageIndex}',
+                    ),
+                    child: TransitionViewPaged(
+                      data: transPage,
+                      readerMode: readerMode,
+                    ),
+                  );
+                }
+
+                if (pageList.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+
                 return DoublePageView.paged(
                   key: ValueKey('spread_${index}_${index1}_$index2'),
                   pages: isReverseHorizontal
                       ? pageList.reversed.toList()
                       : pageList,
                   backgroundColor: backgroundColor,
+                  readerMode: readerMode,
                   scrollDirection: scrollDirection,
                   onZoomChanged: (zoomed) {
                     onDoublePageZoomChanged(index, zoomed);
@@ -240,6 +265,7 @@ class ReaderPageContent extends ConsumerWidget {
                   index: index,
                   page: page,
                   chapter: chapter,
+                  readerMode: readerMode,
                   pageController: extendedController,
                   controller: pageControllerFor(index),
                   isVisible: index == currentPageViewIndex,
@@ -262,6 +288,7 @@ class ReaderPagedItem extends ConsumerWidget {
   final int index;
   final UChapDataPreload page;
   final Chapter chapter;
+  final ReaderMode readerMode;
   final PageController pageController;
   final ssiv.SubsamplingScaleImageViewController controller;
   final bool isVisible;
@@ -275,6 +302,7 @@ class ReaderPagedItem extends ConsumerWidget {
     required this.index,
     required this.page,
     required this.chapter,
+    required this.readerMode,
     required this.pageController,
     required this.controller,
     required this.isVisible,
@@ -286,7 +314,9 @@ class ReaderPagedItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (page.isTransitionPage) return TransitionViewPaged(data: page);
+    if (page.isTransitionPage) {
+      return TransitionViewPaged(data: page, readerMode: readerMode);
+    }
 
     return ImageViewPaged(
       data: page,
