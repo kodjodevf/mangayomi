@@ -321,7 +321,7 @@ class ResolveCloudFlareChallenge extends RetryPolicy {
     // resolver below is disabled.
     final proxyUrl = CfProxyStore.url.trim();
     if (proxyUrl.isNotEmpty) {
-      return _solveWithCfProxy(proxyUrl, url);
+      return solveWithCfProxy(proxyUrl, url);
     }
 
     // Fall back to the bundled webview resolver (not available on Linux).
@@ -352,7 +352,7 @@ class ResolveCloudFlareChallenge extends RetryPolicy {
 /// On success it stores the returned `cf_clearance` cookies + user-agent via
 /// [MClient.setCookie] (exactly like the webview resolver does), so the retried
 /// request carries them, and returns `true` to trigger the retry.
-Future<bool> _solveWithCfProxy(String proxyUrl, String targetUrl) async {
+Future<bool> solveWithCfProxy(String proxyUrl, String targetUrl) async {
   try {
     final res = await http
         .post(
