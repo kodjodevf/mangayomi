@@ -341,9 +341,14 @@ class MihonExtensionService implements ExtensionService {
 
   Map<String, String> getCookie() {
     final userAgent = settingsRepository.current.userAgent;
+    final cfProxyUrl = CfProxyStore.url.trim();
     return {
       ...MClient.getCookiesPref(source.baseUrl!),
       'user-agent': ?userAgent,
+      // Lets an extension server that supports it solve the challenge itself,
+      // which is better placed than the retry below: it owns the request and
+      // its cookie jar. Servers that don't support it ignore the header.
+      if (cfProxyUrl.isNotEmpty) 'cf-proxy-url': cfProxyUrl,
     };
   }
 
