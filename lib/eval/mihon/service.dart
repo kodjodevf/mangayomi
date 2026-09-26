@@ -378,6 +378,11 @@ class MihonExtensionService implements ExtensionService {
     return {
       ...MClient.getCookiesPref(source.baseUrl!),
       'user-agent': ?userAgent,
+      // Which source of the extension this call is for. The id sent alongside
+      // it is a Dart hashCode of the original one (see ExtensionStoreService),
+      // which the server cannot reproduce on the JVM, so an extension holding
+      // several sources would otherwise always resolve to the same one.
+      'source-base-url': ?source.baseUrl,
     };
   }
 }
