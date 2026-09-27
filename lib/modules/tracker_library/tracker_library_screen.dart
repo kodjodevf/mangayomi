@@ -234,38 +234,30 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
 
   List<TrackLibrarySection> _sectionsTrakt(int syncId, ItemType itemType) {
     return [
-      // ItemType.manga → isManga=true → Trakt "movies"
-      TrackLibrarySection(
-        name: "Continue watching movies",
-        syncId: syncId,
-        func: _fetchUserData(syncId, ItemType.manga),
-        itemType: ItemType.anime,
-      ),
-      // 신규 추가: Watchlist movies
-      TrackLibrarySection(
-        name: "Watchlist movies",
-        syncId: syncId,
-        func: _fetchWatchlistData(syncId, ItemType.manga),
-        itemType: ItemType.anime,
-      ),
-      // ItemType.anime → isManga=false → Trakt "shows"
+      // Series (애니 / 드라마) 최우선 배치
       TrackLibrarySection(
         name: "Continue watching series",
         syncId: syncId,
         func: _fetchUserData(syncId, ItemType.anime),
         itemType: ItemType.anime,
       ),
-      // 신규 추가: Watchlist series
       TrackLibrarySection(
         name: "Watchlist series",
         syncId: syncId,
         func: _fetchWatchlistData(syncId, ItemType.anime),
         itemType: ItemType.anime,
       ),
+      // Movies (영화) 후순위 배치
       TrackLibrarySection(
-        name: "Trending Movies",
+        name: "Continue watching movies",
         syncId: syncId,
-        func: _fetchGeneralData(syncId, ItemType.manga),
+        func: _fetchUserData(syncId, ItemType.manga),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Watchlist movies",
+        syncId: syncId,
+        func: _fetchWatchlistData(syncId, ItemType.manga),
         itemType: ItemType.anime,
       ),
       TrackLibrarySection(
@@ -275,9 +267,9 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         itemType: ItemType.anime,
       ),
       TrackLibrarySection(
-        name: "Popular Movies",
+        name: "Trending Movies",
         syncId: syncId,
-        func: _fetchGeneralData(syncId, ItemType.manga, rankingType: "popular"),
+        func: _fetchGeneralData(syncId, ItemType.manga),
         itemType: ItemType.anime,
       ),
       TrackLibrarySection(
@@ -287,13 +279,9 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         itemType: ItemType.anime,
       ),
       TrackLibrarySection(
-        name: "Top Movies (All Time)",
+        name: "Popular Movies",
         syncId: syncId,
-        func: _fetchGeneralData(
-          syncId,
-          ItemType.manga,
-          rankingType: "favorited/all",
-        ),
+        func: _fetchGeneralData(syncId, ItemType.manga, rankingType: "popular"),
         itemType: ItemType.anime,
       ),
       TrackLibrarySection(
@@ -302,6 +290,16 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         func: _fetchGeneralData(
           syncId,
           ItemType.anime,
+          rankingType: "favorited/all",
+        ),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Top Movies (All Time)",
+        syncId: syncId,
+        func: _fetchGeneralData(
+          syncId,
+          ItemType.manga,
           rankingType: "favorited/all",
         ),
         itemType: ItemType.anime,

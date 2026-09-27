@@ -8,6 +8,7 @@ import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
@@ -389,46 +390,70 @@ class Anilist extends _$Anilist implements BaseTracker {
 
   Future<Map<String, dynamic>> _executeGraphQL(
     String document,
-    Map<String, dynamic> variables,
-  ) async {
+    Map<String, dynamic> variables, {
+    int maxRetries = 3,
+  }) async {
     // Same host as discovery, so the same outage applies: skip the request
     // rather than wait out a client timeout on a service already known to be
     // refusing.
     final known = ServiceAvailability.outage(DiscoveryService.anilist);
     if (known != null) throw known;
 
-    final response = await http.post(
-      Uri.parse(_baseApiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${await _getAccessToken()}',
-      },
-      body: jsonEncode({'query': document, 'variables': variables}),
-    );
+    int attempt = 0;
+    while (true) {
+      attempt++;
+      final response = await http.post(
+        Uri.parse(_baseApiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${await _getAccessToken()}',
+        },
+        body: jsonEncode({'query': document, 'variables': variables}),
+      );
 
-    Map<String, dynamic>? decoded;
-    try {
-      final parsed = jsonDecode(response.body);
-      if (parsed is Map<String, dynamic>) decoded = parsed;
-    } catch (_) {
-      decoded = null;
-    }
+      // HTTP 429 (Rate Limit): markDown 절대 호출 금지 (10분 차단 방지)
+      // Retry-After 헤더 파싱 또는 점진적 백오프 + 미세 지터(Jitter)로 대기 후 재시도
+      if (response.statusCode == 429) {
+        if (attempt <= maxRetries) {
+          final retryAfterHeader = response.headers['retry-after'];
+          final waitSeconds =
+              int.tryParse(retryAfterHeader ?? '') ?? (attempt * 2);
+          // 동시 요청 연쇄 충돌 방지를 위한 미세 지터(0~800ms) 추가
+          final jitterMs = Random().nextInt(800);
+          await Future.delayed(
+            Duration(seconds: waitSeconds.clamp(1, 30)) +
+                Duration(milliseconds: jitterMs),
+          );
+          continue;
+        }
+        // maxRetries 소진 후에도 429이면 markDown 없이 단순 예외 발생
+        throw Exception('AniList rate limited (429): please wait a moment.');
+      }
 
-    // Without this a refusal reached `decoded['data'] as Map` and died as a
-    // null cast, so a service saying plainly why it will not answer surfaced
-    // as a type error or, through the client's own timeout, as "Request timed
-    // out".
-    final refusal = anilistRefusal(response.statusCode, decoded);
-    if (refusal != null) {
-      throw ServiceAvailability.markDown(DiscoveryService.anilist, refusal);
-    }
+      Map<String, dynamic>? decoded;
+      try {
+        final parsed = jsonDecode(response.body);
+        if (parsed is Map<String, dynamic>) decoded = parsed;
+      } catch (_) {
+        decoded = null;
+      }
 
-    final data = decoded?['data'];
-    if (data is! Map<String, dynamic>) {
-      throw Exception('AniList returned no data: ${response.statusCode}');
+      // Without this a refusal reached `decoded['data'] as Map` and died as a
+      // null cast, so a service saying plainly why it will not answer surfaced
+      // as a type error or, through the client's own timeout, as "Request timed
+      // out".
+      final refusal = anilistRefusal(response.statusCode, decoded);
+      if (refusal != null) {
+        throw ServiceAvailability.markDown(DiscoveryService.anilist, refusal);
+      }
+
+      final data = decoded?['data'];
+      if (data is! Map<String, dynamic>) {
+        throw Exception('AniList returned no data: ${response.statusCode}');
+      }
+      ServiceAvailability.markUp(DiscoveryService.anilist);
+      return data;
     }
-    ServiceAvailability.markUp(DiscoveryService.anilist);
-    return data;
   }
 
   /// The viewer's account, and the score format stored alongside it.
