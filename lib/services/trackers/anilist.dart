@@ -305,17 +305,29 @@ class Anilist extends _$Anilist implements BaseTracker {
 
   @override
   Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
+    return _fetchMediaList(status: "CURRENT", isManga: isManga);
+  }
+
+  // 신규: Plan to read / Plan to watch 전용 메서드
+  Future<List<TrackSearch>> fetchPlanningData({bool isManga = true}) async {
+    return _fetchMediaList(status: "PLANNING", isManga: isManga);
+  }
+
+  // 공통 GraphQL 쿼리 및 파싱 헬퍼
+  Future<List<TrackSearch>> _fetchMediaList({
+    required String status,
+    bool isManga = true,
+  }) async {
     final userId = int.parse(
       widgetRef.read(tracksProvider(syncId: syncId))!.username!,
     );
     final type = isManga ? "MANGA" : "ANIME";
     final contentUnit = isManga ? "chapters" : "episodes";
 
-    final query =
-        '''
+    final query = '''
     query(\$id: Int!) {
       Page {
-        mediaList(userId: \$id, type: $type, status: CURRENT, sort: UPDATED_TIME_DESC) {
+        mediaList(userId: \$id, type: $type, status: $status, sort: UPDATED_TIME_DESC) {
           id
           status
           scoreRaw: score(format: POINT_100)

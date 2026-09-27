@@ -126,64 +126,74 @@ class TraktTv extends _$TraktTv implements BaseTracker {
 
   @override
   Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
+    // NOTE: In Trakt, isManga=true maps to "movies" and isManga=false to "shows".
+    // This follows the existing convention in the Trakt tracker implementation.
     final type = isManga ? "movies" : "shows";
     final accessToken = await _getAccessToken();
 
-    // 1. Fetch watched items
+    // Fetch watched items only
     final watchedUrl = Uri.parse('$_baseApiUrl/sync/watched/$type')
         .replace(queryParameters: {"extended": "full,images"});
     final watchedResult = await _makeGetRequest(watchedUrl, accessToken);
     final watchedData = (jsonDecode(watchedResult.body) as List?) ?? [];
 
-    // 2. Fetch watchlist items
+    return _parseTraktItems(watchedData);
+  }
+
+  // 신규: Watchlist 전용 메서드
+  Future<List<TrackSearch>> fetchWatchlistData({bool isManga = true}) async {
+    // NOTE: isManga=true maps to "movies", isManga=false to "shows" (Trakt convention).
+    final type = isManga ? "movies" : "shows";
+    final accessToken = await _getAccessToken();
+
+    // Fetch watchlist items only
     final watchlistUrl = Uri.parse('$_baseApiUrl/sync/watchlist/$type')
         .replace(queryParameters: {"extended": "full,images"});
     final watchlistResult = await _makeGetRequest(watchlistUrl, accessToken);
     final watchlistData = (jsonDecode(watchlistResult.body) as List?) ?? [];
 
+    return _parseTraktItems(watchlistData);
+  }
+
+  // 공통 Trakt 아이템 파싱 헬퍼 (각 항목의 movie/show 여부를 JSON 키로 직접 식별)
+  List<TrackSearch> _parseTraktItems(List items) {
     final Set<int> seenMediaIds = {};
     final List<TrackSearch> resultList = [];
 
-    void addItems(List items) {
-      for (final e in items) {
-        final itemType = e['movie'] != null ? "movie" : "show";
-        final typeName = itemType == 'movie' ? 'movies' : 'shows';
-        final mediaId = e[itemType]?['ids']?['trakt'] as int?;
-        if (mediaId == null || seenMediaIds.contains(mediaId)) continue;
-        seenMediaIds.add(mediaId);
+    for (final e in items) {
+      final itemType = e['movie'] != null ? "movie" : "show";
+      final typeName = itemType == 'movie' ? 'movies' : 'shows';
+      final mediaId = e[itemType]?['ids']?['trakt'] as int?;
+      if (mediaId == null || seenMediaIds.contains(mediaId)) continue;
+      seenMediaIds.add(mediaId);
 
-        resultList.add(
-          TrackSearch(
-            mediaId: mediaId,
-            summary: e[itemType]?['overview'] ?? 'No summary available.',
-            totalChapter: e[itemType]?['aired_episodes'] ?? 1,
-            coverUrl: (e['images']?['fanart'] as List?)?.isNotEmpty ?? false
-                ? 'https://wsrv.nl/?url=${e['images']?['fanart'][0]}'
-                : (e[itemType]?['images']?['fanart'] as List?)?.isNotEmpty ?? false
-                ? 'https://wsrv.nl/?url=${e[itemType]?['images']?['fanart'][0]}'
-                : (e['images']?['poster'] as List?)?.isNotEmpty ?? false
-                ? 'https://wsrv.nl/?url=${e['images']?['poster'][0]}'
-                : (e[itemType]?['images']?['poster'] as List?)?.isNotEmpty ?? false
-                ? 'https://wsrv.nl/?url=${e[itemType]?['images']?['poster'][0]}'
-                : '',
-            title: e[itemType]['title'] ?? 'Unknown Title',
-            score: double.tryParse(
-              (e[itemType]?["rating"] as num?)?.toDouble().toStringAsFixed(2) ?? "",
-            ),
-            startDate: e[itemType]?["first_aired"] ?? "",
-            publishingType: itemType,
-            publishingStatus: e[itemType]["status"],
-            trackingUrl:
-                "https://trakt.tv/$typeName/${e[itemType]?['ids']?['slug']}",
-            syncId: syncId,
+      resultList.add(
+        TrackSearch(
+          mediaId: mediaId,
+          summary: e[itemType]?['overview'] ?? 'No summary available.',
+          totalChapter: e[itemType]?['aired_episodes'] ?? 1,
+          coverUrl: (e['images']?['fanart'] as List?)?.isNotEmpty ?? false
+              ? 'https://wsrv.nl/?url=${e['images']?['fanart'][0]}'
+              : (e[itemType]?['images']?['fanart'] as List?)?.isNotEmpty ?? false
+              ? 'https://wsrv.nl/?url=${e[itemType]?['images']?['fanart'][0]}'
+              : (e['images']?['poster'] as List?)?.isNotEmpty ?? false
+              ? 'https://wsrv.nl/?url=${e['images']?['poster'][0]}'
+              : (e[itemType]?['images']?['poster'] as List?)?.isNotEmpty ?? false
+              ? 'https://wsrv.nl/?url=${e[itemType]?['images']?['poster'][0]}'
+              : '',
+          title: e[itemType]['title'] ?? 'Unknown Title',
+          score: double.tryParse(
+            (e[itemType]?["rating"] as num?)?.toDouble().toStringAsFixed(2) ?? "",
           ),
-        );
-      }
+          startDate: e[itemType]?["first_aired"] ?? "",
+          publishingType: itemType,
+          publishingStatus: e[itemType]["status"],
+          trackingUrl:
+              "https://trakt.tv/$typeName/${e[itemType]?['ids']?['slug']}",
+          syncId: syncId,
+        ),
+      );
     }
-
-    addItems(watchedData);
-    addItems(watchlistData);
-
     return resultList;
   }
 
