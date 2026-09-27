@@ -234,7 +234,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
 
   List<TrackLibrarySection> _sectionsTrakt(int syncId, ItemType itemType) {
     return [
-      // Series (애니 / 드라마) 최우선 배치
+      // Prioritize Series (anime) sections
       TrackLibrarySection(
         name: "Continue watching series",
         syncId: syncId,
@@ -247,7 +247,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         func: _fetchWatchlistData(syncId, ItemType.anime),
         itemType: ItemType.anime,
       ),
-      // Movies (영화) 후순위 배치
+      // Movies sections
       TrackLibrarySection(
         name: "Continue watching movies",
         syncId: syncId,
@@ -506,7 +506,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
               func: _fetchUserData(syncId, ItemType.anime),
               itemType: ItemType.anime,
             ),
-            // 신규 추가: Plan to watch
+            // Backlog: Plan to watch
             TrackLibrarySection(
               name: "Plan to watch",
               syncId: syncId,
@@ -556,7 +556,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
               syncId: syncId,
               func: _fetchUserData(syncId, ItemType.manga),
             ),
-            // 신규 추가: Plan to read
+            // Backlog: Plan to read
             TrackLibrarySection(
               name: "Plan to read",
               syncId: syncId,

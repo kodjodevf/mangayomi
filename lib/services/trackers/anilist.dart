@@ -309,12 +309,12 @@ class Anilist extends _$Anilist implements BaseTracker {
     return _fetchMediaList(status: "CURRENT", isManga: isManga);
   }
 
-  // 신규: Plan to read / Plan to watch 전용 메서드
+  // Plan to read / Plan to watch backlog fetching
   Future<List<TrackSearch>> fetchPlanningData({bool isManga = true}) async {
     return _fetchMediaList(status: "PLANNING", isManga: isManga);
   }
 
-  // 공통 GraphQL 쿼리 및 파싱 헬퍼
+  // Shared GraphQL query and parsing helper
   Future<List<TrackSearch>> _fetchMediaList({
     required String status,
     bool isManga = true,
@@ -411,14 +411,13 @@ class Anilist extends _$Anilist implements BaseTracker {
         body: jsonEncode({'query': document, 'variables': variables}),
       );
 
-      // HTTP 429 (Rate Limit): markDown 절대 호출 금지 (10분 차단 방지)
-      // Retry-After 헤더 파싱 또는 점진적 백오프 + 미세 지터(Jitter)로 대기 후 재시도
+      // HTTP 429 (Rate Limit): Retry with backoff & jitter; do not mark down service
       if (response.statusCode == 429) {
         if (attempt <= maxRetries) {
           final retryAfterHeader = response.headers['retry-after'];
           final waitSeconds =
               int.tryParse(retryAfterHeader ?? '') ?? (attempt * 2);
-          // 동시 요청 연쇄 충돌 방지를 위한 미세 지터(0~800ms) 추가
+          // Add micro-jitter (0~800ms) to avoid thundering herd on concurrent requests
           final jitterMs = Random().nextInt(800);
           await Future.delayed(
             Duration(seconds: waitSeconds.clamp(1, 30)) +
@@ -426,7 +425,7 @@ class Anilist extends _$Anilist implements BaseTracker {
           );
           continue;
         }
-        // maxRetries 소진 후에도 429이면 markDown 없이 단순 예외 발생
+        // Do not call markDown on 429 to avoid premature 10-minute service outages
         throw Exception('AniList rate limited (429): please wait a moment.');
       }
 

@@ -140,7 +140,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
     return _parseTraktItems(watchedData);
   }
 
-  // 신규: Watchlist 전용 메서드
+  // Watchlist backlog fetching
   Future<List<TrackSearch>> fetchWatchlistData({bool isManga = true}) async {
     // NOTE: isManga=true maps to "movies", isManga=false to "shows" (Trakt convention).
     final type = isManga ? "movies" : "shows";
@@ -155,7 +155,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
     return _parseTraktItems(watchlistData);
   }
 
-  // 공통 Trakt 아이템 파싱 헬퍼 (각 항목의 movie/show 여부를 JSON 키로 직접 식별)
+  // Shared parser helper that identifies items by inspecting JSON keys ('movie' vs 'show')
   List<TrackSearch> _parseTraktItems(List items) {
     final Set<int> seenMediaIds = {};
     final List<TrackSearch> resultList = [];

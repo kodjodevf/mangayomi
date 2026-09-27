@@ -197,7 +197,7 @@ class TrackState extends _$TrackState {
     return await tracker.fetchUserData(isManga: _isManga);
   }
 
-  // AniList 전용: Plan to read / Plan to watch
+  // AniList exclusive: Plan to read / Plan to watch
   Future<List<TrackSearch>?> fetchPlanningData() async {
     final syncId = track!.syncId!;
     if (syncId != TrackerProviders.anilist.syncId) return [];
@@ -211,7 +211,7 @@ class TrackState extends _$TrackState {
     return await tracker.fetchPlanningData(isManga: _isManga);
   }
 
-  // Trakt 전용: Watchlist
+  // Trakt exclusive: Watchlist
   Future<List<TrackSearch>?> fetchWatchlistData() async {
     final syncId = track!.syncId!;
     if (syncId != TrackerProviders.trakt.syncId) return [];
