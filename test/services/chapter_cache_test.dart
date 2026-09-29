@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/services/chapter_cache.dart';
+import 'package:mangayomi/utils/extensions/others.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -125,6 +127,49 @@ void main() {
 
       // After trimming to 1 byte, both or at least chapter1 was evicted
       expect(await cache.getPageListFromCache(chapter1), isNull);
+    });
+
+    test('does not cache a page list from the local image proxy', () async {
+      final chapter = Chapter(name: 'Ch 1', mangaId: 10, url: '/c1');
+      final pages = [
+        PageUrl('http://127.0.0.1:44097/image/first-token'),
+        PageUrl('http://127.0.0.1:44097/image/second-token'),
+      ];
+
+      await cache.putPageListToCache(chapter, pages);
+
+      // The proxy tokens die with the process that issued them, so the list
+      // must not come back from disk on a later run.
+      expect(await cache.getPageListFromCache(chapter), isNull);
+    });
+
+    test('drops an already cached page list from the local image proxy',
+        () async {
+      final chapter = Chapter(name: 'Ch 1', mangaId: 10, url: '/c1');
+      final file = File(
+        '${tempDir.path}/${keyToMd5(cache.getKey(chapter))}.json',
+      );
+      await file.writeAsString(
+        jsonEncode({
+          'timestamp': 0,
+          'chapterUrl': '/c1',
+          'pages': [
+            {'url': 'http://127.0.0.1:44097/image/first-token'},
+          ],
+        }),
+      );
+
+      expect(await cache.getPageListFromCache(chapter), isNull);
+      expect(await file.exists(), isFalse);
+    });
+
+    test('keeps caching loopback URLs that are not the image proxy', () async {
+      final chapter = Chapter(name: 'Ch 1', mangaId: 10, url: '/c1');
+      final pages = [PageUrl('http://127.0.0.1:44097/health')];
+
+      await cache.putPageListToCache(chapter, pages);
+
+      expect(await cache.getPageListFromCache(chapter), isNotNull);
     });
   });
 }
