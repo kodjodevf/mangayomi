@@ -771,10 +771,16 @@ class _MangaChapterPageGalleryState
                   onRefreshPressed:
                       (chapter.manga.value!.isLocalArchive ?? false) == false
                       ? () async {
+                          // Drop the cached page list first: rebuilding the
+                          // reader reads it, and a list left in place would be
+                          // reused as-is.
+                          await ChapterCache().remove(chapter);
+                          ref.invalidate(
+                            getChapterPagesProvider(chapter: chapter),
+                          );
                           if (chapter.id != null) {
                             ref.invalidate(mangaReaderProvider(chapter.id!));
                           }
-                          await ChapterCache().remove(chapter);
                           if (context.mounted) {
                             pushReplacementMangaReaderView(
                               chapter: chapter,
