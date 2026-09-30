@@ -1,0 +1,387 @@
+/* ─────────────────────────────────────────────────────────────────────────
+ * design-systems/mangayomi/tokens.css
+ *
+ * Token bindings for Mangayomi (Flutter, Material 3, phone/tablet/desktop/TV).
+ *
+ * READ THIS BEFORE TRUSTING A COLOUR BELOW.
+ *
+ * Mangayomi has no brand palette. The user picks one at runtime from the whole
+ * FlexColorScheme catalog, in either brightness, at any blend level, with an
+ * optional pure black mode. The colour values in this file are a REFERENCE
+ * INSTANTIATION of the shipped defaults, present so that previews, mockups and
+ * generated artifacts have something concrete to render. They are not the
+ * contract. The contract is the role mapping in DESIGN.md section 3, and the
+ * runtime source of truth is ThemeData as assembled in
+ * lib/modules/more/settings/appearance/providers/theme_provider.dart.
+ *
+ * Reference instantiation = the shipped defaults:
+ *   flexSchemeColorIndex        2      (FlexColor.blue, "Blue delight")
+ *   flexColorSchemeBlendLevel   10.0
+ *   pureBlackDarkMode           false
+ *   appFontFamily               null   (Roboto)
+ *   appUiScale                  1.0
+ * Surface values are approximated from FlexColorScheme's blend at level 10
+ * (highScaffoldLevelSurface in light, level in dark) rather than sampled from a
+ * running build; treat them as indicative, not exact.
+ *
+ * The non colour tokens (type scale, spacing, radius, covers, breakpoints,
+ * alpha ladder) ARE authored here and are the real contract.
+ *
+ * Key decisions encoded here:
+ *   - Every tint is an alpha over --fg or --accent, never a separate colour
+ *   - A label on an accent fill computes its colour from the accent's luminance
+ *   - Covers are 2:3 at every size
+ *   - Compact 11/12/13/14 type scale; weight carries hierarchy, not size
+ *   - 1280px is the TV design canvas, independent of reported density
+ * ─────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* ─── Surface ─────────────────────────────────────────────────────
+   * Runtime: --bg is scaffoldBackgroundColor, --surface is
+   * colorScheme.surface. Mangayomi runs a single surface tier, so the
+   * richer B slot tiers alias to it. */
+  --bg: #f1f5fa;
+  --surface: #fafbfd;
+  --surface-warm: var(--surface);   /* B slot: no warm tier in this system */
+
+  /* ─── Foreground ramp ─────────────────────────────────────────────
+   * Runtime: --fg is textTheme.bodyLarge.color (context.textColor).
+   * The muted and meta tiers are NOT separate colours at runtime; they
+   * are --fg at --alpha-secondary. The hexes here are that alpha
+   * pre-composited against --bg so previews match. */
+  --fg: #1a1c1e;
+  --fg-2: var(--fg);                /* B slot: two level ramp only */
+  --muted: #5c6166;                 /* == --fg at 0.70 over --bg */
+  --meta: var(--muted);             /* B slot: no third text tier */
+
+  /* ─── Border ──────────────────────────────────────────────────────
+   * Runtime: --fg at --alpha-hairline. Never colorScheme.outline
+   * directly, which is too heavy against blended surfaces. */
+  --border: #d3d8dd;
+  --border-soft: var(--border);     /* B slot */
+
+  /* ─── Accent ──────────────────────────────────────────────────────
+   * Runtime: context.primaryColor. THE user controlled value.
+   *
+   * --accent-on is the contrast rule made concrete, and this reference
+   * pair is the clearest possible demonstration of why the rule exists:
+   * the LIGHT theme's accent (#1565c0, luminance 0.13) needs a WHITE
+   * label, while the DARK theme's accent (#90caf9, luminance 0.55)
+   * needs a BLACK one. Deriving the label from the app's brightness
+   * gets both of them backwards. Derive it from the fill:
+   *   accent.computeLuminance() > 0.5 ? Colors.black : Colors.white */
+  --accent: #1565c0;
+  --accent-on: #ffffff;
+  --accent-hover: color-mix(in oklab, var(--accent), black 8%);
+  --accent-active: color-mix(in oklab, var(--accent), black 14%);
+
+  /* ─── Semantic ────────────────────────────────────────────────────
+   * Prefer colorScheme.error at runtime (useMaterial3ErrorColors: true).
+   * Success and warning have no Material 3 role, so they are authored. */
+  --success: #17a34a;
+  --warn: #eab308;
+  --danger: #ba1a1a;
+
+  /* ─── Alpha ladder (C extension) ──────────────────────────────────
+   * The load bearing idea of this system. Tints are an alpha over --fg
+   * or --accent so they survive any palette the user picks. Applied in
+   * Dart with Color.withValues(alpha:), never withOpacity.
+   * Seven values. If you need an eighth, promote it in DESIGN.md first. */
+  --alpha-tint: 0.08;               /* --fg: chip and neutral badge fill */
+  --alpha-hairline: 0.16;           /* --fg: connectors, thin rules */
+  --alpha-focus: 0.14;              /* --accent: InkWell focus wash */
+  --alpha-accent-tint: 0.16;        /* --accent: accent tinted badge fill */
+  --alpha-secondary: 0.70;          /* --fg: secondary text */
+  --alpha-tv-focus: 0.45;           /* --accent: ambient focusColor, TV only */
+
+  /* Composed tints. Derived from the ladder above via calc() so a CSS
+   * consumer never retypes a percentage and the two can never drift.
+   * Dart applies the raw --alpha-* value with Color.withValues(alpha:). */
+  --tint-neutral: color-mix(in oklab, var(--fg) calc(var(--alpha-tint) * 100%), transparent);
+  --tint-hairline: color-mix(in oklab, var(--fg) calc(var(--alpha-hairline) * 100%), transparent);
+  --tint-accent: color-mix(in oklab, var(--accent) calc(var(--alpha-accent-tint) * 100%), transparent);
+  --fg-secondary: color-mix(in oklab, var(--fg) calc(var(--alpha-secondary) * 100%), transparent);
+
+  /* ─── Typography ──────────────────────────────────────────────────
+   * NEVER name a font in Dart. appFontFamily is user selectable (any
+   * Google Font). These families record the shipped default so previews
+   * render; at runtime, inherit or read textTheme.
+   *
+   * Compact scale: Mangayomi is dense (long titles, long synopses, long
+   * chapter lists). Steps are 1px apart, so WEIGHT carries hierarchy. */
+  --font-display: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "Roboto Mono", Menlo, monospace;
+
+  --text-xs: 11px;                  /* badges, pills, chips, overlines */
+  --text-sm: 12px;                  /* synopsis, secondary metadata */
+  --text-base: 13px;                /* list body, download rows */
+  --text-lg: 14px;                  /* card and entry titles */
+  --text-xl: 16px;                  /* section headings */
+  --text-2xl: 20px;                 /* screen titles */
+  --text-3xl: 24px;                 /* rare: empty state headline */
+  --text-4xl: 32px;                 /* rare: onboarding */
+  --text-5xl: 40px;                 /* a screen title that carries the page */
+  --text-6xl: 48px;                 /* the one big moment per screen */
+
+  --leading-body: 1.35;             /* multi line body copy */
+  --leading-tight: 1.1;
+  --tracking-display: 0em;
+
+  /* Weights, as used. w800 is reserved for a number inside a filled pill. */
+  --weight-body: 400;
+  --weight-muted-badge: 600;
+  --weight-title: 700;
+  --weight-numeric: 800;
+
+  /* ─── Spacing (4px base) ──────────────────────────────────────────*/
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  --section-y-desktop: 32px;        /* app UI, not a marketing page: tight */
+  --section-y-tablet: 24px;
+  --section-y-phone: 16px;
+
+  /* ─── Radius ──────────────────────────────────────────────────────
+   * Hand built badge/pill/cover containers use --radius-sm. Real
+   * Material Chip and TextField widgets get --radius-pill from
+   * FlexSubThemesData(inputDecoratorRadius: 24, chipRadius: 24).
+   * Do not mix the two kinds in one row. */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;                /* cards over content */
+  --radius-2xl: 20px;               /* sheets: softer than a 2018 Material card */
+  --radius-pill: 24px;
+
+  /* ─── Elevation ───────────────────────────────────────────────────
+   * Material 3 tonal elevation does most of the work. Explicit shadow
+   * is rare and shallow. */
+  --elev-flat: none;
+  --elev-ring: 0 0 0 1px var(--border);
+  --elev-raised: 0 2px 8px rgba(0, 0, 0, 0.18);
+
+  /* ─── Focus ───────────────────────────────────────────────────────
+   * The wash is the pointer/d-pad state on an InkWell. The ring is the
+   * TV only 2.5px onSurface border applied by _tvFocus() to Text,
+   * Elevated and Filled buttons, which a wash alone cannot mark. */
+  --focus-wash: color-mix(in oklab, var(--accent) calc(var(--alpha-focus) * 100%), transparent);
+  --focus-ring: 0 0 0 2.5px var(--fg);
+  --focus-ring-width: 2.5px;
+
+  /* ─── Motion ──────────────────────────────────────────────────────*/
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --motion-slow: 300ms;             /* crossing the whole screen */
+
+  /* ─── Easing ──────────────────────────────────────────────────────
+   * Every curve in the app is currently written at the call site, so no
+   * two agree. Chrome that leaves and chrome that arrives are not the
+   * same motion: leaving accelerates away, arriving decelerates in. */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  /* ─── Tracking ────────────────────────────────────────────────────
+   * Roboto's default letter spacing is tuned for body copy and reads
+   * slack from 24px up. Nothing above --text-xl should ship without one
+   * of these. This is the single largest reason large type in the app
+   * looks like stock Material. */
+  --weight-display: 750;            /* display headings; title is 700 */
+
+  --track-tight: -0.02em;           /* 24px and up */
+  --track-tighter: -0.03em;         /* 32px and up */
+  --track-display: -0.04em;         /* 40px and up */
+  --track-label: 0.12em;            /* uppercase eyebrows */
+
+  /* ─── Glass ───────────────────────────────────────────────────────
+   * Translucent chrome over content. The blur needs something real
+   * behind it, so a light theme goes nearly opaque instead.
+   *
+   * A blurred surface must never sit inside a layer that forces an
+   * offscreen. A Transform carrying filterQuality does exactly that,
+   * and the blur then samples that layer rather than the page, so it
+   * silently stops working for as long as the transform is applied. */
+  --blur-sm: 12px;                  /* chips */
+  --blur-md: 24px;                  /* sheets */
+  --blur-lg: 40px;                  /* full width chrome over content */
+  --surface-glass: color-mix(in oklab, var(--surface) 62%, transparent);
+  --surface-glass-light: color-mix(in oklab, var(--surface) 94%, transparent);
+
+  /* ─── Elevation, continued ────────────────────────────────────────
+   * --elev-raised above is the resting card. These two are for surfaces
+   * that float over content and must read as separate from it. Cast the
+   * shadow OUTSIDE any clip: a clipped child cannot paint past its own
+   * bounds, and in a light theme the shadow is most of what separates a
+   * floating surface from the page behind it. */
+  --elev-floating: 0 6px 20px rgba(0, 0, 0, 0.16);
+  --elev-sheet: 0 12px 32px rgba(0, 0, 0, 0.24);
+
+  /* ─── Marks (C extension) ─────────────────────────────────────────
+   * Progress, unread and offline: the app's actual subject matter, and
+   * the thing no catalogue app can show, since it needs to know what
+   * you have already read.
+   *
+   * A cover carrying no marks is finished. That is the resting state,
+   * and it means completing something makes the shelf quieter rather
+   * than adding another badge to it. */
+  --mark-progress-h: 3px;           /* hairline along the foot of a cover */
+  --mark-badge-min: 18px;           /* unread count */
+  --mark-badge-radius: 9px;         /* half of badge-min */
+  --mark-dot: 8px;                  /* offline square */
+
+  --mark-progress: var(--accent);   /* in flight */
+  --mark-unread: var(--accent);     /* waiting for you */
+  --mark-offline: var(--fg);        /* deliberately NOT the accent: a fact
+                                     * about the file, not an invitation */
+
+
+  /* ─── Loading (C extension) ───────────────────────────────────────
+   * The pulse tint is the theme foreground at low alpha, never a fixed
+   * grey, so it survives a palette we do not control. Resting value is
+   * --alpha-tint; the pulse rides from there to twice it.
+   * Implemented in lib/modules/widgets/cover_grid_skeleton.dart. */
+  --skeleton-rest: 0.06;
+  --skeleton-peak: 0.12;
+  --skeleton-pulse: 900ms;
+  --skeleton-radius: var(--radius-sm);
+
+  /* ─── Icon ────────────────────────────────────────────────────────
+   * Seven sizes are in use on Icon widgets across lib/modules today
+   * (14, 16, 18, 19, 20, 24, 30) with no rule, plus 56 and 140 for
+   * empty state illustrations, which are not controls. These three are
+   * the intended scale; see the drift note in DESIGN.md section 9. */
+  --icon-sm: 16px;                  /* inline with text */
+  --icon-md: 20px;                  /* the default, and the commonest today */
+  --icon-lg: 24px;                  /* primary actions, app bar */
+
+  /* ─── Interaction floors ──────────────────────────────────────────
+   * A control smaller than this is hard to hit and fails both platform
+   * baselines. `height: 40` appears 7 times in lib/modules; the ones
+   * that are interactive are under both. */
+  --tap-min: 48px;                  /* Material */
+  --tap-min-apple: 44px;            /* Apple HIG */
+
+  /* ─── Emphasis ────────────────────────────────────────────────────
+   * "Dimmed" means three different things in the codebase right now:
+   * alpha 0.5 in 24 places, 0.6 in 7, and Material's own 0.38 in 2.
+   * The contract picks Material's, because disabled text has a contrast
+   * floor to clear and 0.5 does not clear it on every palette. */
+  --alpha-disabled: 0.38;
+
+  /* ─── Density ─────────────────────────────────────────────────────
+   * Four display modes ship with no shared vocabulary, so each screen
+   * re decides its own gaps. Every mark above has to stay readable at
+   * the tightest of these, which is why progress is an edge and not a
+   * ring, and unread is a numeral rather than a dot with a tooltip. */
+  --density-compact-gap: 8px;
+  --density-comfortable-gap: 12px;
+  --density-list-row-h: 72px;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ─── Covers (C extension) ────────────────────────────────────────
+   * Manga and anime covers are 2:3. Holding the ratio at every size
+   * stops a grid of mixed sources from visibly jittering.
+   * --cover-lg is the anchor / current item and carries a 3px accent
+   * ring, the only border in the system with brand colour in it. */
+  --cover-sm-w: 64px;
+  --cover-sm-h: 96px;
+  --cover-md-w: 96px;
+  --cover-md-h: 144px;
+  --cover-lg-w: 120px;
+  --cover-lg-h: 180px;
+  --cover-ratio: 0.6667;
+  --cover-ring-width: 3px;
+
+  /* ─── Layout ──────────────────────────────────────────────────────
+   * --container-max is a reading measure, not a page width: a wide
+   * desktop or TV panel centres inside it rather than stretching one
+   * column across the whole window. --bp-wide is where a single column
+   * reflows to two, and two is the cap for cover plus prose content. */
+  --container-max: 820px;
+  --container-gutter-desktop: 16px;
+  --container-gutter-tablet: 16px;
+  --container-gutter-phone: 8px;
+
+  --bp-tablet: 600px;               /* context.isTablet */
+  --bp-wide: 700px;                 /* one column becomes two */
+  --grid-max-columns: 2;
+
+  /* ─── TV (C extension) ────────────────────────────────────────────
+   * OEMs report wildly inconsistent densities, so AppUiScale lays the
+   * TV UI out against a fixed canvas and scales it to the real panel.
+   * 1280 == Android density 240 on a 1080p screen. */
+  --tv-reference-width: 1280px;
+  --tv-page-inset-x: 16px;
+}
+
+/* ─── Dark reference instantiation ──────────────────────────────────
+ * Same scheme (Blue delight), dark variant, surfaceMode level, blend 10.
+ * Note --accent-on flips to black: the dark theme's accent is the PALE
+ * blue. This is the contrast rule, not a typo.
+ *
+ * Declared twice on purpose: once behind prefers-color-scheme so the
+ * system default resolves, once on an explicit [data-theme="dark"] so a
+ * toggle wins in both directions. Editing one means editing the other. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #16191c;
+    --surface: #1c2024;
+    --surface-warm: var(--surface);
+
+    --fg: #e2e2e6;
+    --fg-2: var(--fg);
+    --muted: #a6abb0;
+    --meta: var(--muted);
+
+    --border: #2f3338;
+    --border-soft: var(--border);
+
+    --accent: #90caf9;
+    --accent-on: #000000;
+    --accent-hover: color-mix(in oklab, var(--accent), white 8%);
+    --accent-active: color-mix(in oklab, var(--accent), white 14%);
+
+    --danger: #ffb4ab;
+
+    --elev-raised: 0 2px 8px rgba(0, 0, 0, 0.45);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #16191c;
+  --surface: #1c2024;
+  --surface-warm: var(--surface);
+
+  --fg: #e2e2e6;
+  --fg-2: var(--fg);
+  --muted: #a6abb0;
+  --meta: var(--muted);
+
+  --border: #2f3338;
+  --border-soft: var(--border);
+
+  --accent: #90caf9;
+  --accent-on: #000000;
+  --accent-hover: color-mix(in oklab, var(--accent), white 8%);
+  --accent-active: color-mix(in oklab, var(--accent), white 14%);
+
+  --danger: #ffb4ab;
+
+  --elev-raised: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+/* ─── Pure black dark mode ──────────────────────────────────────────
+ * pureBlackDarkMode forces scaffoldBackground to Colors.black for OLED.
+ * Only the ground changes; --surface still lifts off it, otherwise
+ * cards disappear entirely. */
+:root[data-theme="dark"][data-pure-black="true"] {
+  --bg: #000000;
+  --surface: #121417;
+}
