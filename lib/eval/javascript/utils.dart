@@ -56,6 +56,12 @@ class JsUtils {
     runtime.onMessage('unpackJs', (dynamic args) {
       return JSPacker(args[0]).unpack() ?? "";
     });
+    runtime.onMessage('parseDates', (dynamic args) {
+      final list = args[0] as List? ?? [];
+      final format = args[1]?.toString() ?? '';
+      final locale = args[2]?.toString() ?? '';
+      return MBridge.parseDates(list, format, locale);
+    });
     runtime.onMessage('evaluateJavascriptViaWebview', (dynamic args) async {
       return http
           .post(
