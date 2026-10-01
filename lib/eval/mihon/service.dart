@@ -12,6 +12,7 @@ import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/services/http/cf_proxy_store.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 
 import '../../models/manga.dart';
@@ -49,20 +50,15 @@ class MihonExtensionService implements ExtensionService {
   @override
   Future<MPages> getPopular(int page) async {
     final name = source.itemType == ItemType.anime ? "Anime" : "Manga";
-    final res = await client.post(
-      Uri.parse("$androidProxyServer/dalvik"),
-      body: jsonEncode({
-        "method": "getPopular$name",
-        "page": page + 1,
-        "search": "",
-        "preferences": getSourcePreferences(),
-        "data": source.sourceCode,
-        "lang": source.lang,
-        "sourceId": source.id?.toString(),
-      }),
-      headers: getCookie(),
-    );
-    hasError(res);
+    final res = await _dalvik({
+      "method": "getPopular$name",
+      "page": page + 1,
+      "search": "",
+      "preferences": getSourcePreferences(),
+      "data": source.sourceCode,
+      "lang": source.lang,
+      "sourceId": source.id?.toString(),
+    });
     final data = jsonDecode(res.body) as Map<String, dynamic>;
     final pages = MangaPages.fromJson(data, source.itemType);
     return MPages(
@@ -88,20 +84,15 @@ class MihonExtensionService implements ExtensionService {
   @override
   Future<MPages> getLatestUpdates(int page) async {
     final name = source.itemType == ItemType.anime ? "Anime" : "Manga";
-    final res = await client.post(
-      Uri.parse("$androidProxyServer/dalvik"),
-      body: jsonEncode({
-        "method": "getLatest$name",
-        "page": page + 1,
-        "search": "",
-        "preferences": getSourcePreferences(),
-        "data": source.sourceCode,
-        "lang": source.lang,
-        "sourceId": source.id?.toString(),
-      }),
-      headers: getCookie(),
-    );
-    hasError(res);
+    final res = await _dalvik({
+      "method": "getLatest$name",
+      "page": page + 1,
+      "search": "",
+      "preferences": getSourcePreferences(),
+      "data": source.sourceCode,
+      "lang": source.lang,
+      "sourceId": source.id?.toString(),
+    });
     final data = jsonDecode(res.body) as Map<String, dynamic>;
     final pages = MangaPages.fromJson(data, source.itemType);
     return MPages(
@@ -127,21 +118,16 @@ class MihonExtensionService implements ExtensionService {
   @override
   Future<MPages> search(String query, int page, List<dynamic> filters) async {
     final name = source.itemType == ItemType.anime ? "Anime" : "Manga";
-    final res = await client.post(
-      Uri.parse("$androidProxyServer/dalvik"),
-      body: jsonEncode({
-        "method": "getSearch$name",
-        "page": max(1, page),
-        "search": query,
-        "filterList": _convertFilters(filters),
-        "preferences": getSourcePreferences(),
-        "data": source.sourceCode,
-        "lang": source.lang,
-        "sourceId": source.id?.toString(),
-      }),
-      headers: getCookie(),
-    );
-    hasError(res);
+    final res = await _dalvik({
+      "method": "getSearch$name",
+      "page": max(1, page),
+      "search": query,
+      "filterList": _convertFilters(filters),
+      "preferences": getSourcePreferences(),
+      "data": source.sourceCode,
+      "lang": source.lang,
+      "sourceId": source.id?.toString(),
+    });
     final data = jsonDecode(res.body) as Map<String, dynamic>;
     final pages = MangaPages.fromJson(data, source.itemType);
     return MPages(
@@ -167,20 +153,15 @@ class MihonExtensionService implements ExtensionService {
   @override
   Future<MManga> getDetail(String url) async {
     final name = source.itemType == ItemType.anime ? "Anime" : "Manga";
-    final res = await client.post(
-      Uri.parse("$androidProxyServer/dalvik"),
-      body: jsonEncode({
-        "method": "getDetails$name",
-        if (source.itemType == ItemType.manga) "mangaData": {"url": url},
-        if (source.itemType == ItemType.anime) "animeData": {"url": url},
-        "preferences": getSourcePreferences(),
-        "data": source.sourceCode,
-        "lang": source.lang,
-        "sourceId": source.id?.toString(),
-      }),
-      headers: getCookie(),
-    );
-    hasError(res);
+    final res = await _dalvik({
+      "method": "getDetails$name",
+      if (source.itemType == ItemType.manga) "mangaData": {"url": url},
+      if (source.itemType == ItemType.anime) "animeData": {"url": url},
+      "preferences": getSourcePreferences(),
+      "data": source.sourceCode,
+      "lang": source.lang,
+      "sourceId": source.id?.toString(),
+    });
     final data = jsonDecode(res.body) as Map<String, dynamic>;
     final chapters = await getChapterList(url);
     return MManga(
@@ -209,22 +190,17 @@ class MihonExtensionService implements ExtensionService {
   }
 
   Future<List<MChapter>> getChapterList(String url) async {
-    final res = await client.post(
-      Uri.parse("$androidProxyServer/dalvik"),
-      body: jsonEncode({
-        "method": source.itemType == ItemType.anime
-            ? "getEpisodeList"
-            : "getChapterList",
-        if (source.itemType == ItemType.manga) "mangaData": {"url": url},
-        if (source.itemType == ItemType.anime) "animeData": {"url": url},
-        "preferences": getSourcePreferences(),
-        "data": source.sourceCode,
-        "lang": source.lang,
-        "sourceId": source.id?.toString(),
-      }),
-      headers: getCookie(),
-    );
-    hasError(res);
+    final res = await _dalvik({
+      "method": source.itemType == ItemType.anime
+          ? "getEpisodeList"
+          : "getChapterList",
+      if (source.itemType == ItemType.manga) "mangaData": {"url": url},
+      if (source.itemType == ItemType.anime) "animeData": {"url": url},
+      "preferences": getSourcePreferences(),
+      "data": source.sourceCode,
+      "lang": source.lang,
+      "sourceId": source.id?.toString(),
+    });
     final data = jsonDecode(res.body) as List;
     return data
         .map(
@@ -242,38 +218,28 @@ class MihonExtensionService implements ExtensionService {
 
   @override
   Future<List<PageUrl>> getPageList(String url) async {
-    final res = await client.post(
-      Uri.parse("$androidProxyServer/dalvik"),
-      body: jsonEncode({
-        "method": "getPageList",
-        "chapterData": {"url": url},
-        "preferences": getSourcePreferences(),
-        "data": source.sourceCode,
-        "lang": source.lang,
-        "sourceId": source.id?.toString(),
-      }),
-      headers: getCookie(),
-    );
-    hasError(res);
+    final res = await _dalvik({
+      "method": "getPageList",
+      "chapterData": {"url": url},
+      "preferences": getSourcePreferences(),
+      "data": source.sourceCode,
+      "lang": source.lang,
+      "sourceId": source.id?.toString(),
+    });
     final data = jsonDecode(res.body) as List;
     return data.map((e) => PageUrl(e['imageUrl'])).toList();
   }
 
   @override
   Future<List<Video>> getVideoList(String url) async {
-    final res = await client.post(
-      Uri.parse("$androidProxyServer/dalvik"),
-      body: jsonEncode({
-        "method": "getVideoList",
-        "episodeData": {"url": url},
-        "preferences": getSourcePreferences(),
-        "data": source.sourceCode,
-        "lang": source.lang,
-        "sourceId": source.id?.toString(),
-      }),
-      headers: getCookie(),
-    );
-    hasError(res);
+    final res = await _dalvik({
+      "method": "getVideoList",
+      "episodeData": {"url": url},
+      "preferences": getSourcePreferences(),
+      "data": source.sourceCode,
+      "lang": source.lang,
+      "sourceId": source.id?.toString(),
+    });
     final data = jsonDecode(res.body) as List;
     return data.map((e) {
       final tempHeaders =
@@ -375,10 +341,58 @@ class MihonExtensionService implements ExtensionService {
 
   Map<String, String> getCookie() {
     final userAgent = settingsRepository.current.userAgent;
+    final cfProxyUrl = CfProxyStore.url.trim();
     return {
       ...MClient.getCookiesPref(source.baseUrl!),
       'user-agent': ?userAgent,
+      // Lets an extension server that supports it solve the challenge itself,
+      // which is better placed than the retry below: it owns the request and
+      // its cookie jar. Servers that don't support it ignore the header.
+      if (cfProxyUrl.isNotEmpty) 'cf-proxy-url': cfProxyUrl,
     };
+  }
+
+  /// Posts [body] to the extension server, retrying once through the
+  /// Cloudflare-bypass proxy configured in Settings > General when the source
+  /// answers with a Cloudflare 403.
+  ///
+  /// These extensions run inside the extension server, so their requests never
+  /// pass through [MClient]'s retry policy and the proxy was never consulted
+  /// for them. That left them with no way past a challenge at all on Linux,
+  /// where the in-app webview resolver is disabled too.
+  Future<Response> _dalvik(Map<String, dynamic> body) async {
+    var res = await _postDalvik(body);
+    if (_isCloudflareBlocked(res)) {
+      final proxyUrl = CfProxyStore.url.trim();
+      if (proxyUrl.isNotEmpty &&
+          await solveWithCfProxy(proxyUrl, source.baseUrl!)) {
+        // solveWithCfProxy persisted the clearance cookies + user-agent, and
+        // getCookie() reads them back, so the retry carries them.
+        res = await _postDalvik(body);
+      }
+    }
+    hasError(res);
+    return res;
+  }
+
+  Future<Response> _postDalvik(Map<String, dynamic> body) {
+    return client.post(
+      Uri.parse("$androidProxyServer/dalvik"),
+      body: jsonEncode(body),
+      headers: getCookie(),
+    );
+  }
+
+  bool _isCloudflareBlocked(Response response) {
+    try {
+      final decoded = jsonDecode(response.body);
+      return decoded is Map<String, dynamic> &&
+          decoded['error'] != null &&
+          decoded['code'] == 403;
+    } catch (_) {
+      // Not JSON: hasError() reports the malformed-response case itself.
+      return false;
+    }
   }
 }
 
