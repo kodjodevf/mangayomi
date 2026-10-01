@@ -113,7 +113,7 @@ class MClient {
   // domain "example.com" a source actually scrapes, leaving Cloudflare
   // looking "unresolved" even right after a successful manual bypass.
   static bool _hostsMatch(String a, String b) {
-    return a == b || a.endsWith('.$b') || b.endsWith('.$a');
+    return a == b || a.endsWith('.$b') || b.endsWith('.$a') || a.contains(b);
   }
 
   static Map<String, String> getCookiesPref(String url) {
