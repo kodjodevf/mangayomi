@@ -120,14 +120,32 @@ class MClient {
     final cookiesList = settingsRepository.currentOrNull?.cookiesList ?? [];
     if (cookiesList.isEmpty) return {};
     final host = Uri.parse(url).host;
-    final cookies = cookiesList
-        .firstWhere(
-          (element) => _hostsMatch(host, element.host!),
-          orElse: () => MCookie(cookie: ""),
-        )
-        .cookie!;
-    if (cookies.isEmpty) return {};
-    return {HttpHeaders.cookieHeader: cookies};
+    final matching = cookiesList.where(
+      (element) =>
+          element.host != null &&
+          element.cookie != null &&
+          element.cookie!.isNotEmpty &&
+          _hostsMatch(host, element.host!),
+    );
+    if (matching.isEmpty) return {};
+    final cookieMap = <String, String>{};
+    for (final entry in matching) {
+      for (final pair in entry.cookie!.split(';')) {
+        final trimmed = pair.trim();
+        if (trimmed.isEmpty) continue;
+        final parts = trimmed.split('=');
+        if (parts.length >= 2) {
+          final key = parts[0].trim();
+          final val = parts.sublist(1).join('=').trim();
+          cookieMap[key] = val;
+        }
+      }
+    }
+    if (cookieMap.isEmpty) return {};
+    final combined = cookieMap.entries
+        .map((e) => '${e.key}=${e.value}')
+        .join('; ');
+    return {HttpHeaders.cookieHeader: combined};
   }
 
   static Future<void> setCookie(
