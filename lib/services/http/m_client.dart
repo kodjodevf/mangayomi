@@ -113,21 +113,39 @@ class MClient {
   // domain "example.com" a source actually scrapes, leaving Cloudflare
   // looking "unresolved" even right after a successful manual bypass.
   static bool _hostsMatch(String a, String b) {
-    return a == b || a.endsWith('.$b') || b.endsWith('.$a');
+    return a == b || a.endsWith('.$b') || b.endsWith('.$a') || a.contains(b);
   }
 
   static Map<String, String> getCookiesPref(String url) {
     final cookiesList = settingsRepository.currentOrNull?.cookiesList ?? [];
     if (cookiesList.isEmpty) return {};
     final host = Uri.parse(url).host;
-    final cookies = cookiesList
-        .firstWhere(
-          (element) => _hostsMatch(host, element.host!),
-          orElse: () => MCookie(cookie: ""),
-        )
-        .cookie!;
-    if (cookies.isEmpty) return {};
-    return {HttpHeaders.cookieHeader: cookies};
+    final matching = cookiesList.where(
+      (element) =>
+          element.host != null &&
+          element.cookie != null &&
+          element.cookie!.isNotEmpty &&
+          _hostsMatch(host, element.host!),
+    );
+    if (matching.isEmpty) return {};
+    final cookieMap = <String, String>{};
+    for (final entry in matching) {
+      for (final pair in entry.cookie!.split(';')) {
+        final trimmed = pair.trim();
+        if (trimmed.isEmpty) continue;
+        final parts = trimmed.split('=');
+        if (parts.length >= 2) {
+          final key = parts[0].trim();
+          final val = parts.sublist(1).join('=').trim();
+          cookieMap[key] = val;
+        }
+      }
+    }
+    if (cookieMap.isEmpty) return {};
+    final combined = cookieMap.entries
+        .map((e) => '${e.key}=${e.value}')
+        .join('; ');
+    return {HttpHeaders.cookieHeader: combined};
   }
 
   static Future<void> setCookie(
@@ -321,7 +339,7 @@ class ResolveCloudFlareChallenge extends RetryPolicy {
     // resolver below is disabled.
     final proxyUrl = CfProxyStore.url.trim();
     if (proxyUrl.isNotEmpty) {
-      return _solveWithCfProxy(proxyUrl, url);
+      return solveWithCfProxy(proxyUrl, url);
     }
 
     // Fall back to the bundled webview resolver (not available on Linux).
@@ -352,7 +370,7 @@ class ResolveCloudFlareChallenge extends RetryPolicy {
 /// On success it stores the returned `cf_clearance` cookies + user-agent via
 /// [MClient.setCookie] (exactly like the webview resolver does), so the retried
 /// request carries them, and returns `true` to trigger the retry.
-Future<bool> _solveWithCfProxy(String proxyUrl, String targetUrl) async {
+Future<bool> solveWithCfProxy(String proxyUrl, String targetUrl) async {
   try {
     final res = await http
         .post(
