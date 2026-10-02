@@ -541,10 +541,12 @@ class MBridge {
       }
     }
 
-    // 2. Direct ISO-8601 check (e.g. 2023-10-15T12:00:00Z or 2023-10-15)
-    final isoDate = DateTime.tryParse(trimmedDate);
-    if (isoDate != null) {
-      return isoDate.millisecondsSinceEpoch.toString();
+    // 2. Direct ISO-8601 with time check (e.g. 2023-10-15T12:00:00Z)
+    if (trimmedDate.contains('T')) {
+      final isoDate = DateTime.tryParse(trimmedDate);
+      if (isoDate != null) {
+        return isoDate.millisecondsSinceEpoch.toString();
+      }
     }
 
     final lowerDate = trimmedDate.toLowerCase();
@@ -664,7 +666,13 @@ class MBridge {
     final rel = _parseRelativeDate(trimmedDate, lowerDate);
     if (rel > 0) return rel.toString();
 
-    // 8. All parsing attempts failed
+    // 8. Fallback to ISO-8601 parsing
+    final isoDate = DateTime.tryParse(trimmedDate);
+    if (isoDate != null) {
+      return isoDate.millisecondsSinceEpoch.toString();
+    }
+
+    // 9. All parsing attempts failed
     newLocale((dateFormat, dateFormatLocale, true));
     return DateTime.now().millisecondsSinceEpoch.toString();
   }
@@ -835,12 +843,12 @@ const List<String> _commonLocales = [
 ];
 
 const List<String> _numericDateFormats = [
+  'yyyy-MM-dd',
   'dd/MM/yyyy',
   'MM/dd/yyyy',
   'yyyy/MM/dd',
   'dd-MM-yyyy',
   'MM-dd-yyyy',
-  'yyyy-MM-dd',
   'dd.MM.yyyy',
   'MM.dd.yyyy',
   'yyyy.MM.dd',
