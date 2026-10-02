@@ -879,10 +879,10 @@ packages:
     dependency: "direct main"
     description:
       name: html
-      sha256: "43b67b8f43321ab066817dfac5619596c98bb1b61624e77203bb4351785f9699"
+      sha256: "6d1264f2dffa1b1101c25a91dff0dc2daee4c18e87cd8538729773c073dbf602"
       url: "https://pub.dev"
     source: hosted
-    version: "0.15.7"
+    version: "0.15.6"
   http:
     dependency: "direct main"
     description:
