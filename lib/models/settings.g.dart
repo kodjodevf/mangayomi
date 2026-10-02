@@ -1127,6 +1127,11 @@ const SettingsSchema = CollectionSchema(
       name: r'useLibass',
       type: IsarType.bool,
     ),
+    r'useMaterialYou': PropertySchema(
+      id: 209,
+      name: r'useMaterialYou',
+      type: IsarType.bool,
+    ),
     r'useMpvConfig': PropertySchema(
       id: 210,
       name: r'useMpvConfig',
@@ -2120,6 +2125,10 @@ void _settingsSerialize(
     UpdateErrorSchema.serialize,
     object.updateErrorsList,
   );
+  writer.writeBool(offsets[206], object.updateProgressAfterReading);
+  writer.writeLong(offsets[207], object.updatedAt);
+  writer.writeBool(offsets[208], object.useLibass);
+  writer.writeBool(offsets[209], object.useMaterialYou);
   writer.writeBool(offsets[207], object.updateProgressAfterReading);
   writer.writeLong(offsets[208], object.updatedAt);
   writer.writeBool(offsets[209], object.useLibass);
@@ -2476,6 +2485,10 @@ Settings _settingsDeserialize(
       allOffsets,
       UpdateError(),
     ),
+    updateProgressAfterReading: reader.readBoolOrNull(offsets[206]),
+    updatedAt: reader.readLongOrNull(offsets[207]),
+    useLibass: reader.readBoolOrNull(offsets[208]),
+    useMaterialYou: reader.readBoolOrNull(offsets[209]),
     updateProgressAfterReading: reader.readBoolOrNull(offsets[207]),
     updatedAt: reader.readLongOrNull(offsets[208]),
     useLibass: reader.readBoolOrNull(offsets[209]),
@@ -17848,6 +17861,34 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  useMaterialYouIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'useMaterialYou'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  useMaterialYouIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'useMaterialYou'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> useMaterialYouEqualTo(
+    bool? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'useMaterialYou', value: value),
+      );
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition> useMpvConfigIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -20935,6 +20976,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseMaterialYou() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useMaterialYou', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseMaterialYouDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useMaterialYou', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseMpvConfig() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'useMpvConfig', Sort.asc);
@@ -23379,6 +23432,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseMaterialYou() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useMaterialYou', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseMaterialYouDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useMaterialYou', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseMpvConfig() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'useMpvConfig', Sort.asc);
@@ -24754,6 +24819,12 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByUseLibass() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'useLibass');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByUseMaterialYou() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'useMaterialYou');
     });
   }
 
@@ -26210,6 +26281,12 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, bool?, QQueryOperations> useLibassProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'useLibass');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations> useMaterialYouProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'useMaterialYou');
     });
   }
 

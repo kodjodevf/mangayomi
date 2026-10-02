@@ -546,6 +546,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get theme => '主题';
 
   @override
+  String get material_you => 'Material You';
+
+  @override
+  String get not_supported_on_this_device => 'Not supported on this device';
+
+  @override
   String get dark_mode => '暗模式';
 
   @override

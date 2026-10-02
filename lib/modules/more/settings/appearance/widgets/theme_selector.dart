@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/dynamic_color_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/material_you_state_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -23,10 +25,23 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
     final selected = ref.watch(
       flexSchemeColorStateProvider.select((t) => t.$2),
     );
+    final useMaterialYou = ref.watch(materialYouStateProvider);
+    final (lightDynamic, darkDynamic) = ref.watch(dynamicColorSchemesProvider);
     const double height = 45;
     const double width = height * 1.5;
     final ThemeData theme = Theme.of(context);
     final isDark = ref.watch(themeModeStateProvider);
+    final dynamicScheme = isDark ? darkDynamic : lightDynamic;
+    final dynamicColors = dynamicScheme == null
+        ? null
+        : FlexSchemeColor(
+            primary: dynamicScheme.primary,
+            secondary: dynamicScheme.secondary,
+            tertiary: dynamicScheme.tertiary,
+          );
+    final selectedIndex = useMaterialYou && dynamicColors != null
+        ? 0
+        : selected + (dynamicColors == null ? 0 : 1);
     return SizedBox(
       height: 130,
       child: Row(
@@ -36,16 +51,32 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
               padding: const EdgeInsetsDirectional.only(start: 8, end: 16),
               physics: const ClampingScrollPhysics(),
               scrollDirection: Axis.horizontal,
-              itemCount: ThemeAA.schemes.length,
+              itemCount:
+                  ThemeAA.schemes.length + (dynamicColors == null ? 0 : 1),
               itemBuilder: (BuildContext context, int index) {
-                final scheme = ThemeAA.schemes[index];
-                final color = isDark ? scheme.dark : scheme.light;
+                final isDynamic = dynamicColors != null && index == 0;
+                final schemeIndex = isDynamic
+                    ? 0
+                    : index - (dynamicColors == null ? 0 : 1);
+                final color = isDynamic
+                    ? dynamicColors
+                    : (isDark
+                          ? ThemeAA.schemes[schemeIndex].dark
+                          : ThemeAA.schemes[schemeIndex].light);
+                final label = isDynamic
+                    ? 'Dynamic'
+                    : ThemeAA.schemes[schemeIndex].name;
 
                 return _TvSwatchFocus(
                   onSelect: () {
-                    ref
-                        .read(flexSchemeColorStateProvider.notifier)
-                        .setTheme(color, index);
+                    if (isDynamic) {
+                      ref.read(materialYouStateProvider.notifier).set(true);
+                    } else {
+                      ref.read(materialYouStateProvider.notifier).set(false);
+                      ref
+                          .read(flexSchemeColorStateProvider.notifier)
+                          .setTheme(color, schemeIndex);
+                    }
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -55,7 +86,7 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                           children: [
                             FlexThemeModeOptionButton(
                               flexSchemeColor: color,
-                              selected: selected == index,
+                              selected: selectedIndex == index,
                               selectedBorder: BorderSide(
                                 color: theme.primaryColorLight,
                                 width: 4,
@@ -67,16 +98,27 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                               padding: EdgeInsets.zero,
                               borderRadius: 0,
                               onSelect: () {
-                                ref
-                                    .read(flexSchemeColorStateProvider.notifier)
-                                    .setTheme(color, index);
+                                if (isDynamic) {
+                                  ref
+                                      .read(materialYouStateProvider.notifier)
+                                      .set(true);
+                                } else {
+                                  ref
+                                      .read(materialYouStateProvider.notifier)
+                                      .set(false);
+                                  ref
+                                      .read(
+                                        flexSchemeColorStateProvider.notifier,
+                                      )
+                                      .setTheme(color, schemeIndex);
+                                }
                               },
                               optionButtonPadding: EdgeInsets.zero,
                               optionButtonMargin: EdgeInsets.zero,
                             ),
                             const SizedBox(height: 3),
                             Text(
-                              ThemeAA.schemes[index].name,
+                              label,
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w300,
@@ -84,7 +126,7 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                             ),
                           ],
                         ),
-                        if (selected == index)
+                        if (selectedIndex == index)
                           Padding(
                             padding: const EdgeInsets.all(5),
                             child: CircleAvatar(

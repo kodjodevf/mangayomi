@@ -295,6 +295,8 @@
   "appearance": "Appearance",
   "appearance_subtitle": "Theme, date & time format",
   "theme": "Theme",
+  "material_you": "Material You",
+  "not_supported_on_this_device": "Not supported on this device",
   "dark_mode": "Dark mode",
   "follow_system_theme": "Follow system theme",
   "on": "On",
