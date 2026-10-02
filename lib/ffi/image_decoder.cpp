@@ -1685,6 +1685,100 @@ static unsigned char* decode_avif_rgba(const char* file_path, int* out_w, int* o
 }
 #endif // HAVE_LIBAVIF
 
+// WebP decoding via libwebp (dynamically loaded for cross-distro compatibility)
+#ifdef HAVE_LIBWEBP
+#include <dlfcn.h>
+#include <stdint.h>
+#include <webp/decode.h>
+
+typedef uint8_t* (*fn_WebPDecodeRGBA)(const uint8_t*, size_t, int*, int*);
+typedef void (*fn_WebPFree)(void*);
+
+static void* s_libwebp_handle = NULL;
+static fn_WebPDecodeRGBA p_WebPDecodeRGBA = NULL;
+static fn_WebPFree p_WebPFree = NULL;
+
+static bool load_libwebp_symbols() {
+    if (p_WebPDecodeRGBA) return true;
+
+    static const char* candidates[] = {
+        "libwebp.so.8",
+        "libwebp.so.7",
+        "libwebp.so.6",
+        "libwebp.so.5",
+        "libwebp.so",
+        NULL
+    };
+
+    for (int i = 0; candidates[i] != NULL; i++) {
+        s_libwebp_handle = dlopen(candidates[i], RTLD_LAZY | RTLD_LOCAL);
+        if (s_libwebp_handle) break;
+    }
+    if (!s_libwebp_handle) return false;
+
+    p_WebPDecodeRGBA = (fn_WebPDecodeRGBA)dlsym(s_libwebp_handle, "WebPDecodeRGBA");
+    p_WebPFree = (fn_WebPFree)dlsym(s_libwebp_handle, "WebPFree");
+    if (!p_WebPDecodeRGBA || !p_WebPFree) {
+        dlclose(s_libwebp_handle);
+        s_libwebp_handle = NULL;
+        p_WebPDecodeRGBA = NULL;
+        p_WebPFree = NULL;
+        return false;
+    }
+    return true;
+}
+
+static unsigned char* decode_webp_rgba(const char* file_path, int* out_w, int* out_h) {
+    if (!load_libwebp_symbols()) return NULL;
+
+    FILE* file = fopen(file_path, "rb");
+    if (!file) return NULL;
+    if (fseek(file, 0, SEEK_END) != 0) {
+        fclose(file);
+        return NULL;
+    }
+    long file_size = ftell(file);
+    if (file_size <= 0 || fseek(file, 0, SEEK_SET) != 0) {
+        fclose(file);
+        return NULL;
+    }
+
+    uint8_t* encoded = (uint8_t*)malloc((size_t)file_size);
+    if (!encoded) {
+        fclose(file);
+        return NULL;
+    }
+    const size_t bytes_read = fread(encoded, 1, (size_t)file_size, file);
+    fclose(file);
+    if (bytes_read != (size_t)file_size) {
+        free(encoded);
+        return NULL;
+    }
+
+    int width = 0;
+    int height = 0;
+    uint8_t* decoded = p_WebPDecodeRGBA(encoded, bytes_read, &width, &height);
+    free(encoded);
+    if (!decoded || width <= 0 || height <= 0 ||
+        (size_t)width > SIZE_MAX / 4 / (size_t)height) {
+        if (decoded) p_WebPFree(decoded);
+        return NULL;
+    }
+
+    const size_t output_size = (size_t)width * (size_t)height * 4;
+    unsigned char* output = (unsigned char*)malloc(output_size);
+    if (!output) {
+        p_WebPFree(decoded);
+        return NULL;
+    }
+    memcpy(output, decoded, output_size);
+    p_WebPFree(decoded);
+    *out_w = width;
+    *out_h = height;
+    return output;
+}
+#endif // HAVE_LIBWEBP
+
 // ---------------------------------------------------------------------------
 // Format detection helpers
 // ---------------------------------------------------------------------------
@@ -1723,6 +1817,17 @@ static int linux_is_avif(const char* file_path) {
     // whether this is an AVIF still image ("avif") or AVIF image sequence ("avis").
     if (memcmp(header + 4, "ftyp", 4) != 0) return 0;
     return (memcmp(header + 8, "avif", 4) == 0 || memcmp(header + 8, "avis", 4) == 0);
+}
+
+static int linux_is_webp(const char* file_path) {
+    FILE* f = fopen(file_path, "rb");
+    if (!f) return 0;
+    unsigned char header[12] = {0};
+    size_t n = fread(header, 1, sizeof(header), f);
+    fclose(f);
+    return n == sizeof(header) &&
+           memcmp(header, "RIFF", 4) == 0 &&
+           memcmp(header + 8, "WEBP", 4) == 0;
 }
 
 // ---------------------------------------------------------------------------
@@ -1793,7 +1898,7 @@ ImageDecoderContext* init_decoder(const char* file_path, bool crop_borders, int*
         return ctx;
     }
 
-    // Try JPEG / PNG / AVIF via system libraries
+    // Try JPEG / PNG / AVIF / WebP via system libraries
     int w = 0, h = 0;
     unsigned char* rgba = NULL;
 
@@ -1803,6 +1908,7 @@ ImageDecoderContext* init_decoder(const char* file_path, bool crop_borders, int*
     int is_jpeg = linux_is_jpeg(file_path);
     int is_png  = linux_is_png(file_path);
     int is_avif = linux_is_avif(file_path);
+    int is_webp = linux_is_webp(file_path);
 
 #ifdef HAVE_LIBJPEG
     if (!rgba && is_jpeg) {
@@ -1819,6 +1925,12 @@ ImageDecoderContext* init_decoder(const char* file_path, bool crop_borders, int*
 #ifdef HAVE_LIBAVIF
     if (!rgba && is_avif) {
         rgba = decode_avif_rgba(file_path, &w, &h);
+    }
+#endif
+
+#ifdef HAVE_LIBWEBP
+    if (!rgba && is_webp) {
+        rgba = decode_webp_rgba(file_path, &w, &h);
     }
 #endif
 
@@ -1843,6 +1955,13 @@ ImageDecoderContext* init_decoder(const char* file_path, bool crop_borders, int*
 #else
             printf("ImageDecoder: AVIF file detected, but libavif support was not compiled in."
                    " Install libavif-dev, then rebuild the app to enable AVIF support.\n");
+#endif
+        } else if (is_webp) {
+#ifdef HAVE_LIBWEBP
+            printf("ImageDecoder: Failed to decode WebP file (it may be corrupt or truncated): %s\n", file_path);
+#else
+            printf("ImageDecoder: WebP file detected, but libwebp support was not compiled in."
+                   " Install libwebp-dev, then rebuild the app to enable WebP support.\n");
 #endif
         } else {
             printf("ImageDecoder: Unsupported or unrecognized file format on Linux: %s\n", file_path);

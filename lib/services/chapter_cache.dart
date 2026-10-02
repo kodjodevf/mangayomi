@@ -49,6 +49,23 @@ class ChapterCache {
     return File('${dir.path}/$hash.json');
   }
 
+  /// Whether [url] points at an image proxy served by a local process, for
+  /// example `http://127.0.0.1:12345/image/<token>`.
+  ///
+  /// The port and the token belong to the process that issued them, so the URL
+  /// stops working as soon as that process is replaced. Such a URL is never
+  /// stable enough to be written to (or read back from) the disk cache.
+  static bool _isProcessLocalImageUrl(String url) {
+    final uri = Uri.tryParse(url);
+    if (uri == null || !uri.hasAuthority) return false;
+    final host = uri.host.toLowerCase();
+    final isLoopbackHost =
+        host == '127.0.0.1' || host == 'localhost' || host == '::1';
+    return isLoopbackHost &&
+        uri.pathSegments.isNotEmpty &&
+        uri.pathSegments.first == 'image';
+  }
+
   /// Retrieves the cached page list for [chapter], if present.
   ///
   /// Returns `null` if the cache file is missing or corrupt.
@@ -79,6 +96,14 @@ class ChapterCache {
         }
       }
 
+      // A page list pointing at the local image proxy was issued by a process
+      // that no longer exists, so every URL in it is dead and the reader would
+      // keep retrying them. Treat it as a miss and drop it.
+      if (pageUrls.any((page) => _isProcessLocalImageUrl(page.url))) {
+        await file.delete();
+        return null;
+      }
+
       return pageUrls.isNotEmpty ? pageUrls : null;
     } catch (e) {
       if (kDebugMode) {
@@ -93,6 +118,11 @@ class ChapterCache {
     try {
       // Do not cache empty or placeholder page lists
       if (pages.isEmpty || pages.every((p) => p.url.isEmpty)) return;
+
+      // Do not cache a list whose URLs point at the local image proxy: those
+      // URLs die with the process that issued them, so the next reader session
+      // would fetch from an address that no longer answers.
+      if (pages.any((p) => _isProcessLocalImageUrl(p.url))) return;
 
       final file = await _getCacheFile(chapter);
       final data = {

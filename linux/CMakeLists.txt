@@ -55,11 +55,12 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK REQUIRED IMPORTED_TARGET gtk+-3.0)
 
 # Optional image decoding libraries for the native Linux image decoder.
-# Install with: sudo apt install libjpeg-dev libpng-dev libavif-dev (Debian/Ubuntu)
-#               sudo dnf install libjpeg-turbo-devel libpng-devel libavif-devel (Fedora/RHEL)
+# Install with: sudo apt install libjpeg-dev libpng-dev libavif-dev libwebp-dev (Debian/Ubuntu)
+#               sudo dnf install libjpeg-turbo-devel libpng-devel libavif-devel libwebp-devel (Fedora/RHEL)
 find_package(JPEG)
 find_package(PNG)
 pkg_check_modules(AVIF IMPORTED_TARGET libavif)
+pkg_check_modules(WEBP IMPORTED_TARGET libwebp)
 
 add_definitions(-DAPPLICATION_ID="${APPLICATION_ID}")
 
@@ -162,6 +163,15 @@ if(AVIF_FOUND)
   message(STATUS "libavif headers found: AVIF dynamic decoding enabled for Linux")
 else()
   message(WARNING "libavif headers not found. Install libavif-dev (Ubuntu) or libavif-devel (Fedora).")
+endif()
+
+# Link libwebp headers if found
+if(WEBP_FOUND)
+  target_include_directories(subsampling_scale_image_view PRIVATE ${WEBP_INCLUDE_DIRS})
+  target_compile_definitions(subsampling_scale_image_view PRIVATE HAVE_LIBWEBP)
+  message(STATUS "libwebp headers found: WebP decoding enabled for Linux")
+else()
+  message(WARNING "libwebp headers not found. Install libwebp-dev (Ubuntu) or libwebp-devel (Fedora).")
 endif()
 
 install(TARGETS subsampling_scale_image_view
