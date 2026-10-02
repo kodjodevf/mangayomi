@@ -668,7 +668,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "87d56838e7d52ea5c8c65996ad930c9a52a5e3f2"
+      resolved-ref: aa6429257261c5fe578df68616c0dbf1a700a05f
       url: "https://github.com/kodjodevf/flutter_qjs.git"
     source: git
     version: "0.0.1"
