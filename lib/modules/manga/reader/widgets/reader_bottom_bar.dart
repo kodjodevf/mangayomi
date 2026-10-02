@@ -43,6 +43,9 @@ class ReaderBottomBar extends ConsumerWidget {
   /// Callback when next chapter button is pressed
   final VoidCallback? onNextChapter;
 
+  /// Callback when slider drag starts
+  final void Function(int value)? onSliderChangeStart;
+
   /// Callback when slider value changes (for updating provider)
   final void Function(int value, WidgetRef ref) onSliderChanged;
 
@@ -89,6 +92,7 @@ class ReaderBottomBar extends ConsumerWidget {
     required this.hasNextChapter,
     this.onPreviousChapter,
     this.onNextChapter,
+    this.onSliderChangeStart,
     required this.onSliderChanged,
     required this.onSliderChangeEnd,
     required this.onReaderModeChanged,
@@ -300,6 +304,9 @@ class ReaderBottomBar extends ConsumerWidget {
                 overlayShape: const RoundSliderOverlayShape(overlayRadius: 5.0),
               ),
               child: Slider(
+                onChangeStart: (value) {
+                  onSliderChangeStart?.call(value.toInt());
+                },
                 onChanged: (value) {
                   onSliderChanged(value.toInt(), ref);
                 },
@@ -397,9 +404,13 @@ class ReaderBottomBar extends ConsumerWidget {
 
           // Double page mode button
           IconButton(
-            onPressed: !isHorizontalContinuous ? onPageModeToggle : null,
+            onPressed: (readerMode != ReaderMode.webtoon && !isHorizontalContinuous)
+                ? onPageModeToggle
+                : null,
             icon: Icon(
-              _isDoublePageMode
+              (_isDoublePageMode &&
+                      readerMode != ReaderMode.webtoon &&
+                      !isHorizontalContinuous)
                   ? CupertinoIcons.book_solid
                   : CupertinoIcons.book,
             ),

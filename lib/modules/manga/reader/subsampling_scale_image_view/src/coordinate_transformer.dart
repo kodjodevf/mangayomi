@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui' as ui;
 
 /// Manages calculations and coordinate transformations between the following spaces:
@@ -48,32 +49,46 @@ class CoordinateTransformer {
 
   /// Converts a source coordinate rectangle (oriented) to raw physical coordinates in the original file
   ui.Rect fileSRect(ui.Rect sRect) {
+    ui.Rect result;
     switch (rotation) {
       case 90:
-        return ui.Rect.fromLTRB(
+        result = ui.Rect.fromLTRB(
           sRect.top,
           sHeight - sRect.right,
           sRect.bottom,
           sHeight - sRect.left,
         );
+        break;
       case 180:
-        return ui.Rect.fromLTRB(
+        result = ui.Rect.fromLTRB(
           sWidth - sRect.right,
           sHeight - sRect.bottom,
           sWidth - sRect.left,
           sHeight - sRect.top,
         );
+        break;
       case 270:
-        return ui.Rect.fromLTRB(
+        result = ui.Rect.fromLTRB(
           sWidth - sRect.bottom,
           sRect.left,
           sWidth - sRect.top,
           sRect.right,
         );
+        break;
       case 0:
       default:
-        return sRect;
+        result = sRect;
     }
+    final l = result.left.clamp(0.0, sWidth.toDouble());
+    final t = result.top.clamp(0.0, sHeight.toDouble());
+    final r = result.right.clamp(0.0, sWidth.toDouble());
+    final b = result.bottom.clamp(0.0, sHeight.toDouble());
+    return ui.Rect.fromLTRB(
+      min(l, r),
+      min(t, b),
+      max(l, r),
+      max(t, b),
+    );
   }
 
   /// Effective width of the source, taking rotation into account
