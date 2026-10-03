@@ -26,6 +26,11 @@ Map<int?, double?> _chapterSortKeys(
     if (pair.$2 == null) continue;
     episodeToSeasons.putIfAbsent(pair.$2!, () => {}).add(pair.$1);
   }
+  final numbered = raw.values.where((pair) => pair.$2 != null).length;
+  final seasonLabelled = raw.values
+      .where((pair) => pair.$2 != null && pair.$1 > 0)
+      .length;
+  final mostlySeasonLabelled = numbered > 0 && seasonLabelled / numbered >= 0.5;
   // A single collision is more likely a stray "S1-5 Recap"-style title
   // falsely matching the season regex than a real reset — require several
   // before trusting it, since a genuine per-season reset repeats numbers
@@ -33,7 +38,7 @@ Map<int?, double?> _chapterSortKeys(
   final collisions = episodeToSeasons.values
       .where((seasons) => seasons.length > 1)
       .length;
-  final resets = collisions >= 3;
+  final resets = collisions >= 3 || (collisions >= 1 && mostlySeasonLabelled);
   return {
     for (final entry in raw.entries)
       entry.key: switch (entry.value.$2) {
