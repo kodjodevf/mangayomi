@@ -351,6 +351,25 @@ jobs:
             mkdir -p AppDir/usr/lib
             ln -s libmpv.so.2 AppDir/usr/lib/libmpv.so
           fi
+          # libavif is dlopen()ed by the native image decoder, so linuxdeploy's
+          # link-time scan never bundles it and AVIF decoding fails on hosts
+          # without libavif. Copy it and its closure into the AppDir.
+          avif="$(ldconfig -p | awk '/libavif\.so\.16 /{print $NF; exit}')"
+          if [ -n "$avif" ]; then
+            copy_avif() {
+              local lib="$1" base
+              base="$(basename "$lib")"
+              [ -e "AppDir/usr/bin/lib/$base" ] && return 0
+              case "$base" in
+                libc.so*|libm.so*|libdl.so*|libpthread.so*|librt.so*|libresolv.so*|libgcc_s.so*|libstdc++.so*|ld-linux*) return 0 ;;
+              esac
+              cp -L "$lib" "AppDir/usr/bin/lib/$base"
+              while read -r dep; do
+                case "$dep" in /*) copy_avif "$dep" ;; esac
+              done < <(ldd "$lib" 2>/dev/null | awk '/=> \//{print $3}')
+            }
+            copy_avif "$avif"
+          fi
           # Scan AppDir/usr/bin/lib for existing libraries to exclude them from linuxdeploy packaging
           EXCLUDE_LIBS=$(find AppDir/usr/bin/lib -type f -name "*.so*" -exec basename {} \; | sort -u)
           # Add --exclude-library flag to each found library
