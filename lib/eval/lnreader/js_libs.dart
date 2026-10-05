@@ -112,7 +112,9 @@ const NovelStatus = {
   "Licensed": "Licensed",
   "PublishingFinished": "Publishing Finished",
   "Cancelled": "Cancelled",
-  "OnHiatus": "On Hiatus"
+  "OnHiatus": "On Hiatus",
+  "STUB": "STUB",
+  "Inactive": "Inactive"
 };
 
 const FilterTypes = {

@@ -16,9 +16,62 @@ class JsCheerio {
     runtime.onMessage('load', (dynamic args) {
       final html = args[0];
       final doc = parse(html);
+      if (_elements.length > 5000) {
+        _elements.clear();
+        _elementKey = 0;
+      }
       _elementKey++;
       _elements[_elementKey] = doc.body;
       return _elementKey;
+    });
+
+    runtime.onMessage('elements_text', (dynamic args) {
+      final keys = (args as List).cast<int>();
+      final buffer = StringBuffer();
+      for (var i = 0; i < keys.length; i++) {
+        final el = _elements[keys[i]];
+        if (el != null) {
+          if (buffer.isNotEmpty) buffer.write('\n');
+          buffer.write(el.text);
+        }
+      }
+      return buffer.toString();
+    });
+
+    runtime.onMessage('elements_find', (dynamic args) {
+      final keys = (args[0] as List).cast<int>();
+      final selector = args[1] as String;
+      final List<int> resultKeys = [];
+      for (final key in keys) {
+        final el = _elements[key];
+        if (el != null) {
+          final matches = el.select(selector);
+          if (matches != null) {
+            for (final match in matches) {
+              _elementKey++;
+              _elements[_elementKey] = match;
+              resultKeys.add(_elementKey);
+            }
+          }
+        }
+      }
+      return jsonEncode(resultKeys);
+    });
+
+    runtime.onMessage('elements_children', (dynamic args) {
+      final keys = (args as List).cast<int>();
+      final List<int> resultKeys = [];
+      for (final key in keys) {
+        final el = _elements[key];
+        if (el != null) {
+          for (final child in el.children) {
+            _elementKey++;
+            _elements[_elementKey] = child;
+            resultKeys.add(_elementKey);
+          }
+        }
+      }
+      return jsonEncode(resultKeys);
     });
 
     runtime.onMessage('element_call', (dynamic args) {
@@ -220,9 +273,10 @@ class ElementCollection {
   }
 
   text() {
-    return this.map(function(i, el) {
-      return el.text();
-    }).toArray().join("\\n") ?? "";
+    if (this.elements.length === 0) return "";
+    if (this.elements.length === 1) return this.elements[0].text();
+    const keys = this.elements.map(el => el._key);
+    return sendMessage("elements_text", JSON.stringify(keys)) ?? "";
   }
 
   html() {
@@ -242,8 +296,16 @@ class ElementCollection {
   }
 
   each(fn) {
-    this.elements.forEach((el, i) => fn(i, el));
+    for (let i = 0; i < this.elements.length; i++) {
+      if (fn(i, this.elements[i]) === false) break;
+    }
     return this;
+  }
+
+  eq(index) {
+    const idx = index < 0 ? this.elements.length + index : index;
+    const el = this.elements[idx];
+    return new ElementCollection(el ? [el] : []);
   }
 
   map(fn) {
@@ -306,19 +368,19 @@ class ElementCollection {
   }
 
   find(selector) {
-    const found = this.elements.flatMap(el => {
-      const keys = JSON.parse(el._call("find", [selector]));
-      return keys.map(k => new Element(k));
-    });
-    return new ElementCollection(found);
+    if (this.elements.length === 0) return new ElementCollection([]);
+    if (this.elements.length === 1) return this.elements[0].find(selector);
+    const keys = this.elements.map(el => el._key);
+    const resultKeys = JSON.parse(sendMessage("elements_find", JSON.stringify([keys, selector])));
+    return new ElementCollection(resultKeys.map(k => new Element(k)));
   }
 
   children() {
-    const children = this.elements.flatMap(el => {
-      const keys = JSON.parse(el._call("children"));
-      return keys.map(k => new Element(k));
-    });
-    return new ElementCollection(children);
+    if (this.elements.length === 0) return new ElementCollection([]);
+    if (this.elements.length === 1) return this.elements[0].children();
+    const keys = this.elements.map(el => el._key);
+    const resultKeys = JSON.parse(sendMessage("elements_children", JSON.stringify(keys)));
+    return new ElementCollection(resultKeys.map(k => new Element(k)));
   }
 
   parent() {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/models/source.dart';
@@ -19,13 +20,15 @@ void setPreferenceSetting(SourcePreference sourcePreference, Source source) {
         .catchError((_) {}),
   );
 
-  if (source.sourceCodeLanguage == SourceCodeLanguage.aidoku &&
+  if ((source.sourceCodeLanguage == SourceCodeLanguage.aidoku ||
+          source.sourceCodeLanguage == SourceCodeLanguage.lnreader) &&
       sourcePreference.key != null) {
     final key = sourcePreference.key!;
     dynamic val;
     if (sourcePreference.listPreference != null) {
       final p = sourcePreference.listPreference!;
-      val = (p.entryValues != null &&
+      val =
+          (p.entryValues != null &&
               p.valueIndex != null &&
               p.valueIndex! < p.entryValues!.length)
           ? p.entryValues![p.valueIndex!]
@@ -40,7 +43,21 @@ void setPreferenceSetting(SourcePreference sourcePreference, Source source) {
       val = sourcePreference.editTextPreference!.value;
     }
     if (val != null) {
-      aidoku.SettingsStore.shared.setValue(key, val);
+      if (source.sourceCodeLanguage == SourceCodeLanguage.aidoku) {
+        aidoku.SettingsStore.shared.setValue(key, val);
+      } else if (source.sourceCodeLanguage == SourceCodeLanguage.lnreader &&
+          source.id != null) {
+        final str = val is String ? val : jsonEncode(val);
+        final existing = sourcePreferenceRepository.findStringValueByKey(
+          source.id,
+          key,
+        );
+        unawaited(
+          sourcePreferenceRepository
+              .saveStringValue(source.id!, key, str, existing)
+              .catchError((_) {}),
+        );
+      }
     }
   }
 }
