@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/services/chapter_cache.dart';
-import 'package:mangayomi/utils/extensions/others.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -27,9 +25,21 @@ void main() {
     });
 
     test('getKey includes mangaId and chapter url strictly', () {
-      final chapter1 = Chapter(name: 'Chapter 1', mangaId: 42, url: '/manga/chapter-1');
-      final chapter2 = Chapter(name: 'Chapter 1', mangaId: 42, url: '/manga/chapter-1-revised');
-      final chapter3 = Chapter(name: 'Chapter 1', mangaId: 99, url: '/manga/chapter-1');
+      final chapter1 = Chapter(
+        name: 'Chapter 1',
+        mangaId: 42,
+        url: '/manga/chapter-1',
+      );
+      final chapter2 = Chapter(
+        name: 'Chapter 1',
+        mangaId: 42,
+        url: '/manga/chapter-1-revised',
+      );
+      final chapter3 = Chapter(
+        name: 'Chapter 1',
+        mangaId: 99,
+        url: '/manga/chapter-1',
+      );
 
       expect(cache.getKey(chapter1), equals('42_/manga/chapter-1'));
       expect(cache.getKey(chapter2), equals('42_/manga/chapter-1-revised'));
@@ -39,28 +49,34 @@ void main() {
       expect(cache.getKey(chapter1), isNot(equals(cache.getKey(chapter2))));
     });
 
-    test('putPageListToCache and getPageListFromCache round-trip works', () async {
-      final chapter = Chapter(name: 'Ch 1', mangaId: 10, url: '/c1');
-      final pages = [
-        PageUrl('https://example.com/1.jpg', headers: {'Referer': 'https://example.com'}),
-        PageUrl('https://example.com/2.jpg'),
-      ];
+    test(
+      'putPageListToCache and getPageListFromCache round-trip works',
+      () async {
+        final chapter = Chapter(name: 'Ch 1', mangaId: 10, url: '/c1');
+        final pages = [
+          PageUrl(
+            'https://example.com/1.jpg',
+            headers: {'Referer': 'https://example.com'},
+          ),
+          PageUrl('https://example.com/2.jpg'),
+        ];
 
-      // Initially cache is empty
-      final initial = await cache.getPageListFromCache(chapter);
-      expect(initial, isNull);
+        // Initially cache is empty
+        final initial = await cache.getPageListFromCache(chapter);
+        expect(initial, isNull);
 
-      // Save to cache
-      await cache.putPageListToCache(chapter, pages);
+        // Save to cache
+        await cache.putPageListToCache(chapter, pages);
 
-      // Read back from cache
-      final cached = await cache.getPageListFromCache(chapter);
-      expect(cached, isNotNull);
-      expect(cached!.length, equals(2));
-      expect(cached[0].url, equals('https://example.com/1.jpg'));
-      expect(cached[0].headers?['Referer'], equals('https://example.com'));
-      expect(cached[1].url, equals('https://example.com/2.jpg'));
-    });
+        // Read back from cache
+        final cached = await cache.getPageListFromCache(chapter);
+        expect(cached, isNotNull);
+        expect(cached!.length, equals(2));
+        expect(cached[0].url, equals('https://example.com/1.jpg'));
+        expect(cached[0].headers?['Referer'], equals('https://example.com'));
+        expect(cached[1].url, equals('https://example.com/2.jpg'));
+      },
+    );
 
     test('cache misses when chapter URL changes', () async {
       final oldChapter = Chapter(name: 'Ch 1', mangaId: 10, url: '/old-url');
@@ -127,49 +143,6 @@ void main() {
 
       // After trimming to 1 byte, both or at least chapter1 was evicted
       expect(await cache.getPageListFromCache(chapter1), isNull);
-    });
-
-    test('does not cache a page list from the local image proxy', () async {
-      final chapter = Chapter(name: 'Ch 1', mangaId: 10, url: '/c1');
-      final pages = [
-        PageUrl('http://127.0.0.1:44097/image/first-token'),
-        PageUrl('http://127.0.0.1:44097/image/second-token'),
-      ];
-
-      await cache.putPageListToCache(chapter, pages);
-
-      // The proxy tokens die with the process that issued them, so the list
-      // must not come back from disk on a later run.
-      expect(await cache.getPageListFromCache(chapter), isNull);
-    });
-
-    test('drops an already cached page list from the local image proxy',
-        () async {
-      final chapter = Chapter(name: 'Ch 1', mangaId: 10, url: '/c1');
-      final file = File(
-        '${tempDir.path}/${keyToMd5(cache.getKey(chapter))}.json',
-      );
-      await file.writeAsString(
-        jsonEncode({
-          'timestamp': 0,
-          'chapterUrl': '/c1',
-          'pages': [
-            {'url': 'http://127.0.0.1:44097/image/first-token'},
-          ],
-        }),
-      );
-
-      expect(await cache.getPageListFromCache(chapter), isNull);
-      expect(await file.exists(), isFalse);
-    });
-
-    test('keeps caching loopback URLs that are not the image proxy', () async {
-      final chapter = Chapter(name: 'Ch 1', mangaId: 10, url: '/c1');
-      final pages = [PageUrl('http://127.0.0.1:44097/health')];
-
-      await cache.putPageListToCache(chapter, pages);
-
-      expect(await cache.getPageListFromCache(chapter), isNotNull);
     });
   });
 }

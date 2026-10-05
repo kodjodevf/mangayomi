@@ -227,7 +227,14 @@ class MihonExtensionService implements ExtensionService {
       "sourceId": source.id?.toString(),
     });
     final data = jsonDecode(res.body) as List;
-    return data.map((e) => PageUrl(e['imageUrl'])).toList();
+    return data
+        .map(
+          (e) => PageUrl(
+            e['imageUrl'] as String? ?? '',
+            headers: (e['headers'] as Map?)?.toMapStringString,
+          ),
+        )
+        .toList();
   }
 
   @override

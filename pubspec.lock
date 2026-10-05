@@ -1153,10 +1153,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: c35dc81293999db19e7daf4cc8566b86cb63ca67
+      resolved-ref: "664fd81aeed63d7d234d95baa907bd285ffa59bc"
       url: "https://github.com/kodjodevf/m_extension_server.git"
     source: git
-    version: "0.1.0"
+    version: "0.1.1"
   marquee:
     dependency: "direct main"
     description:
