@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -213,13 +214,15 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
     }
 
     _hasLandscapeZoomed = true;
-    if (mounted) {
-      controller.animateScaleAndCenter(
-        targetScale,
-        targetPoint,
-        duration: const Duration(milliseconds: 500),
-      );
-    }
+    Future.delayed(Duration(milliseconds: 200), () {
+      if (mounted) {
+        controller.animateScaleAndCenter(
+          targetScale,
+          targetPoint,
+          duration: const Duration(milliseconds: 800),
+        );
+      }
+    });
   }
 
   Duration _doubleTapAnimationDuration() {
