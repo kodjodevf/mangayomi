@@ -76,6 +76,21 @@ class SourceRepository {
       .isActiveEqualTo(true)
       .isNotEmptySync();
 
+  List<Source> getActiveByItemTypeLangName(
+    ItemType itemType,
+    String lang,
+    String name,
+  ) => isar.sources
+      .where()
+      .itemTypeIsAddedEqualTo(itemType, true)
+      .filter()
+      .langContains(lang, caseSensitive: false)
+      .and()
+      .nameContains(name, caseSensitive: false)
+      .and()
+      .isActiveEqualTo(true)
+      .findAllSync();
+
   Stream<List<Source>> watchActiveByItemTypeLangName(
     ItemType itemType,
     String lang,

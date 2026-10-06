@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/detail/manga_details_view.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
@@ -44,12 +45,26 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
     return Scaffold(
       body: manga.when(
         data: (manga) {
-          return StreamBuilder(
-            stream: sourceRepository.watchActiveByItemTypeLangName(
-              manga!.itemType,
-              manga.lang!,
-              manga.source!,
-            ),
+          if (manga == null) {
+            return const ProgressCenter();
+          }
+          final hasSourceInfo =
+              manga.lang != null && manga.source != null;
+          return StreamBuilder<List<Source>>(
+            initialData: hasSourceInfo
+                ? sourceRepository.getActiveByItemTypeLangName(
+                    manga.itemType,
+                    manga.lang!,
+                    manga.source!,
+                  )
+                : const [],
+            stream: hasSourceInfo
+                ? sourceRepository.watchActiveByItemTypeLangName(
+                    manga.itemType,
+                    manga.lang!,
+                    manga.source!,
+                  )
+                : const Stream.empty(),
             builder: (context, snapshot) {
               final sourceExist = snapshot.hasData && snapshot.data!.isNotEmpty;
               return RefreshIndicator(
