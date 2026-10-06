@@ -27,7 +27,7 @@ dependencies:
   intl: ^0.20.2
   google_fonts: ^8.0.2
   url_launcher: ^6.3.1
-  package_info_plus: ^10.2.2
+  package_info_plus: ^9.0.1
   permission_handler: ^12.0.1
   flutter_inappwebview:
     git:
@@ -96,7 +96,7 @@ dependencies:
   win32_registry: ^3.0.3
   protobuf: ^5.0.0
   fixnum: ^1.1.1
-  device_info_plus: ^13.3.0
+  device_info_plus: ^13.2.0
   marquee: ^2.2.3
   d4rt: ^0.2.4
   hive: ^2.2.3
@@ -127,6 +127,16 @@ dependency_overrides:
       url: https://github.com/ThexXTURBOXx/flutter_web_auth_2.git
       ref: 3.x-without-v1
       path: flutter_web_auth_2
+  package_info_plus:
+    git:
+      url: https://github.com/kodjodevf/plus_plugins.git
+      path: packages/package_info_plus/package_info_plus
+      ref: main
+  device_info_plus:
+    git:
+      url: https://github.com/kodjodevf/plus_plugins.git
+      path: packages/device_info_plus/device_info_plus
+      ref: main
 
 dev_dependencies:
   flutter_test:
