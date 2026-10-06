@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.9.7",
-      "versionDate": "2026-09-22T11:08:53Z",
-      "versionDescription": "**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.6...v0.9.7",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.7/Mangayomi-v0.9.7-ios.ipa",
+      "version": "0.9.8",
+      "versionDate": "2026-10-06T13:56:40Z",
+      "versionDescription": "What's Changed\n* fix(tracker): improve Trakt.tv multi\u2022season mapping, watchlist, and ratings sync by @lee\u2022gangjin in https://github.com/kodjodevf/mangayomi/pull/1024\n* feat(tracker): Add backlog sections (Plan to read/Watchlist), handle AniList 429 rate limits, and prioritize Trakt series by @lee\u2022gangjin in https://github.com/kodjodevf/mangayomi/pull/1030\n* fix(mihon): use the Cloudflare proxy for extension\u2022server sources by @matsukiender\u2022star in https://github.com/kodjodevf/mangayomi/pull/1026\n* fix(mihon): identify which source of an extension a call is for by @matsukiender\u2022star in https://github.com/kodjodevf/mangayomi/pull/1027\n* fix: stale chapter page lists and add WebP decoding on Linux by @MenaHere in https://github.com/kodjodevf/mangayomi/pull/1031\n* fix: remember window geometry on Linux; add missing libavif to AppImage to resolve closure by @MenaHere in https://github.com/kodjodevf/mangayomi/pull/1032\n\nNew Contributors\n* @lee\u2022gangjin made their first contribution in https://github.com/kodjodevf/mangayomi/pull/1024\n* @matsukiender\u2022star made their first contribution in https://github.com/kodjodevf/mangayomi/pull/1026\n* @MenaHere made their first contribution in https://github.com/kodjodevf/mangayomi/pull/1031\n\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.7...v0.9.8",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.8/Mangayomi-v0.9.8-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 114301894,
+      "size": 114518028,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.9.8",
+          "date": "2026-10-06T13:56:40Z",
+          "localizedDescription": "What's Changed\n* fix(tracker): improve Trakt.tv multi\u2022season mapping, watchlist, and ratings sync by @lee\u2022gangjin in https://github.com/kodjodevf/mangayomi/pull/1024\n* feat(tracker): Add backlog sections (Plan to read/Watchlist), handle AniList 429 rate limits, and prioritize Trakt series by @lee\u2022gangjin in https://github.com/kodjodevf/mangayomi/pull/1030\n* fix(mihon): use the Cloudflare proxy for extension\u2022server sources by @matsukiender\u2022star in https://github.com/kodjodevf/mangayomi/pull/1026\n* fix(mihon): identify which source of an extension a call is for by @matsukiender\u2022star in https://github.com/kodjodevf/mangayomi/pull/1027\n* fix: stale chapter page lists and add WebP decoding on Linux by @MenaHere in https://github.com/kodjodevf/mangayomi/pull/1031\n* fix: remember window geometry on Linux; add missing libavif to AppImage to resolve closure by @MenaHere in https://github.com/kodjodevf/mangayomi/pull/1032\n\nNew Contributors\n* @lee\u2022gangjin made their first contribution in https://github.com/kodjodevf/mangayomi/pull/1024\n* @matsukiender\u2022star made their first contribution in https://github.com/kodjodevf/mangayomi/pull/1026\n* @MenaHere made their first contribution in https://github.com/kodjodevf/mangayomi/pull/1031\n\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.7...v0.9.8",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.8/Mangayomi-v0.9.8-ios.ipa",
+          "size": 114518028
+        },
+        {
           "version": "0.9.7",
           "date": "2026-09-22T11:08:53Z",
-          "localizedDescription": "**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.6...v0.9.7",
+          "localizedDescription": "What's New\r\n\r\nReader\r\n\r\n* **Reliable Resume to Saved Position** :\r\n  * Reopening a chapter in continuous vertical reading now jumps directly and instantly to the page where you left off, even before all images have finished loading.\r\n  * Eliminated the issue where the reader would land on a neighboring page or spinner instead of the correct saved position.\r\n\r\n* **Smoother Zoomed Panning & Inertia** (1021):\r\n  * Dragging a zoomed page now follows your finger precisely using real movement delta instead of an accumulated offset, making panning far more responsive.\r\n  * Flinging a zoomed page now carries natural momentum with a longer, smoother coast animation.\r\n  * Overscrolling past the edge of a zoomed page automatically transfers the momentum to the page list scroll, allowing seamless continued scrolling without lifting your finger.\r\n\r\n* **Fixed Grey Screen in Double\u2022Page Mode**:\r\n  * Chapter transition pages in vertical double\u2022page reading no longer cause a crash or a blank grey screen when the spread is reached.\r\n\r\n* **Reader Bottom Bar Positioning**:\r\n  * The page slider and quick\u2022action bar now correctly sit above the system gesture area and home indicator on all devices, preventing them from being hidden behind system UI.\r\n\r\n* **Novel Reader Performance**:\r\n  * Page swipes in paged novel mode no longer trigger a full rebuild of the reader tree, making navigation between pages considerably faster.\r\n\r\n\u2022\u2022\u2022\r\n\r\nFixes & Stability\r\n\r\n* Fixed infinite loading spinner when resuming a continuous vertical chapter mid\u2022chapter.\r\n* Corrected the visible range check that was preventing the initial scroll anchor from being applied reliably.\r\n* Page image load events now correctly trigger a re\u2022jump to the saved position if the list had not yet settled on the right page.\r\n\r\n\u2022\u2022\u2022\r\n\r\nContributors\r\n\r\n* @kodjodevf\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.9.6...v0.9.7",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.9.7/Mangayomi-v0.9.7-ios.ipa",
           "size": 114301894
         },
@@ -231,13 +238,6 @@
           "localizedDescription": "What's Changed\r\n* fix/reader\u2022single\u2022pages by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/654\r\n* added option to exclude categories from mass update by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/655\r\n* fix 643 EPUB fails to load when nav.xhtml references missing script (../js/kobo.js)\r\n* feat: update entitlements and plist for file access permissions\r\n* feat: add DNS\u2022over\u2022HTTPS (DoH) support (experimental)\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.7.0...v0.7.1",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.1/Mangayomi-v0.7.1-ios.ipa",
           "size": 45081197
-        },
-        {
-          "version": "0.7.0",
-          "date": "2026-01-09T10:56:42Z",
-          "localizedDescription": "* Increase isolate pool size to enhance concurrent download capabilities\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.95...v0.7.0",
-          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.0/Mangayomi-v0.7.0-ios.ipa",
-          "size": 45269466
         }
       ],
       "appPermissions": {
@@ -743,6 +743,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.9.7"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.9.8 - 06 Oct",
+      "identifier": "release-0.9.8",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2026-10-06T13:56:40Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.9.8"
     }
   ]
 }
