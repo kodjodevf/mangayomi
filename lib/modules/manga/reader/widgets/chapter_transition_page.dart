@@ -8,6 +8,7 @@ class ChapterTransitionPage extends StatelessWidget {
   final Chapter? nextChapter;
   final String mangaName;
   final ReaderMode readerMode;
+  final VoidCallback? onNextChapter;
 
   const ChapterTransitionPage({
     super.key,
@@ -15,6 +16,7 @@ class ChapterTransitionPage extends StatelessWidget {
     required this.nextChapter,
     required this.mangaName,
     required this.readerMode,
+    this.onNextChapter,
   });
 
   @override
@@ -117,6 +119,7 @@ class ChapterTransitionPage extends StatelessWidget {
               label: l10n.next_chapter,
               name: nextChapter!.name ?? 'Chapter ${nextChapter!.id}',
               isPrimary: true,
+              onTap: onNextChapter,
             ),
             const SizedBox(height: 20),
             Text(
@@ -177,6 +180,7 @@ class ChapterTransitionPage extends StatelessWidget {
             label: l10n.next_chapter,
             name: nextChapter!.name ?? 'Chapter ${nextChapter!.id}',
             isPrimary: true,
+            onTap: onNextChapter,
           )
         : _buildEndOfMangaCard(context);
 
@@ -243,6 +247,7 @@ class ChapterTransitionPage extends StatelessWidget {
     required String label,
     required String name,
     required bool isPrimary,
+    VoidCallback? onTap,
   }) {
     final theme = Theme.of(context);
     final bgColor = isPrimary
@@ -256,7 +261,7 @@ class ChapterTransitionPage extends StatelessWidget {
         : theme.colorScheme.onSurface.withValues(alpha: 0.7);
     final nameColor = isPrimary ? theme.colorScheme.onPrimaryContainer : null;
 
-    return Container(
+    final card = Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: bgColor,
@@ -287,6 +292,19 @@ class ChapterTransitionPage extends StatelessWidget {
         ],
       ),
     );
+
+    if (onTap != null) {
+      return Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          child: card,
+        ),
+      );
+    }
+
+    return card;
   }
 
   Widget _buildEndOfMangaCard(BuildContext context) {

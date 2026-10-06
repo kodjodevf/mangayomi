@@ -1,7 +1,9 @@
+import 'dart:ui' as ui;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/utils/reader_page_index_math.dart';
+import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/src/coordinate_transformer.dart';
 
 // Standalone functions mimicking the exact mathematical logic used in ReaderView and ImageViewWebtoon
 
@@ -956,6 +958,180 @@ void main() {
         expect(buggySpread, 0); // Demonstrates the bug jumping back to Chapter 1
         expect(pages[mathDouble.spreads[buggySpread].firstIndex].chapter?.id, ch1.id);
       });
+
+      test('startAtEnd navigates to the final page and correct final spread', () {
+        final ch1 = Chapter(id: 101, mangaId: 101, name: 'Ch1');
+        final pages = List.generate(
+          10,
+          (i) => makePage(ch1, i, i),
+        );
+
+        final mathSingle = ReaderPageIndexMath(
+          isDoublePageActive: false,
+          singleFirst: false,
+          pageCount: pages.length,
+          pages: pages,
+        );
+        final mathDouble = ReaderPageIndexMath(
+          isDoublePageActive: true,
+          singleFirst: false,
+          pageCount: pages.length,
+          pages: pages,
+        );
+
+        // startAtEnd targets index 9 (last page)
+        const targetActual = 9;
+        expect(mathSingle.actualToPageViewIndex(targetActual), 9);
+        // In double page mode (10 pages, pairs: [0,1], [2,3], [4,5], [6,7], [8,9] -> 5 spreads)
+        final lastSpread = mathDouble.actualToPageViewIndex(targetActual);
+        expect(lastSpread, 4);
+        expect(mathDouble.spreads[lastSpread].firstIndex, 8);
+        expect(mathDouble.spreads[lastSpread].secondIndex, 9);
+      });
+
+      test('Pre-detected wide page width > height creates isolated spread immediately', () {
+        final ch = Chapter(id: 201, mangaId: 201, name: 'Ch1');
+        final pages = [
+          makePage(ch, 0, 0),
+          makePage(ch, 1, 1, width: 1920, height: 1080), // Wide landscape page
+          makePage(ch, 2, 2),
+          makePage(ch, 3, 3),
+        ];
+
+        final math = ReaderPageIndexMath(
+          isDoublePageActive: true,
+          singleFirst: false,
+          pageCount: pages.length,
+          pages: pages,
+        );
+
+        // Spread 0: page 0 alone (because page 1 is wide)
+        // Spread 1: page 1 alone (wide)
+        // Spread 2: pages 2 and 3
+        expect(math.spreads.length, 3);
+        expect(math.spreads[0].firstIndex, 0);
+        expect(math.spreads[0].secondIndex, isNull);
+        expect(math.spreads[1].firstIndex, 1);
+        expect(math.spreads[1].secondIndex, isNull);
+        expect(math.spreads[2].firstIndex, 2);
+        expect(math.spreads[2].secondIndex, 3);
+      });
+
+      test('RTL and LTR scroll direction detection logic works correctly', () {
+        // LTR forward scroll is positive delta (drag right to left, pixels increase)
+        bool isForward({required bool isReverseHorizontal, required double delta}) {
+          return isReverseHorizontal ? delta < 0 : delta > 0;
+        }
+
+        expect(isForward(isReverseHorizontal: false, delta: 15.0), isTrue);
+        expect(isForward(isReverseHorizontal: false, delta: -15.0), isFalse);
+
+        // RTL forward scroll is negative delta in PageView coordinates (pixels decrease toward next page)
+        expect(isForward(isReverseHorizontal: true, delta: -15.0), isTrue);
+        expect(isForward(isReverseHorizontal: true, delta: 15.0), isFalse);
+      });
+
+      test('Transition page is mapped to isolated spread at end of chapter', () {
+        final ch1 = Chapter(id: 301, mangaId: 301, name: 'Ch169');
+        final ch2 = Chapter(id: 302, mangaId: 302, name: 'Ch170');
+
+        // 4 content pages + 1 transition page + 2 next chapter content pages
+        final pages = [
+          makePage(ch1, 0, 0),
+          makePage(ch1, 1, 1),
+          makePage(ch1, 2, 2),
+          makePage(ch1, 3, 3),
+          makeTransition(ch1, ch2, 4),
+          makePage(ch2, 5, 0),
+          makePage(ch2, 6, 1),
+        ];
+
+        final math = ReaderPageIndexMath(
+          isDoublePageActive: true,
+          singleFirst: false,
+          pageCount: pages.length,
+          pages: pages,
+        );
+
+        // spreads:
+        // 0: (0, 1)
+        // 1: (2, 3)
+        // 2: (4) -> Transition page!
+        // 3: (5, 6)
+        expect(math.spreads.length, 4);
+        expect(math.spreads[2].firstIndex, 4);
+        expect(math.spreads[2].secondIndex, isNull);
+        expect(pages[math.spreads[2].firstIndex].isTransitionPage, isTrue);
+      });
+
+      test('RTL double page mode with wide image navigates backward 1 page at a time', () {
+        final ch = Chapter(id: 400, mangaId: 400, name: 'Ch1');
+        // pages: 0, 1 (normal), 2 (normal), 3 (WIDE), 4, 5 (normal)
+        final p0 = makePage(ch, 0, 0);
+        final p1 = makePage(ch, 1, 1);
+        final p2 = makePage(ch, 2, 2);
+        final p3 = makePage(ch, 3, 3)..loadedWidth = 1920..loadedHeight = 1080;
+        final p4 = makePage(ch, 4, 4);
+        final p5 = makePage(ch, 5, 5);
+
+        final pages = [p0, p1, p2, p3, p4, p5];
+        final math = ReaderPageIndexMath(
+          isDoublePageActive: true,
+          singleFirst: false,
+          pageCount: pages.length,
+          pages: pages,
+        );
+
+        // spreads:
+        // Spread 0: (0, 1)
+        // Spread 1: (2) - isolated before wide page!
+        // Spread 2: (3) - wide page isolated!
+        // Spread 3: (4, 5)
+        expect(math.spreads.length, 4);
+        expect(math.spreads[0], const DoublePageSpread(0, 1));
+        expect(math.spreads[1], const DoublePageSpread(2));
+        expect(math.spreads[2], const DoublePageSpread(3));
+        expect(math.spreads[3], const DoublePageSpread(4, 5));
+
+        // When navigating backwards from Spread 3:
+        // Step 1 backwards: Spread 3 -> Spread 2 (shows page 3 wide page alone)
+        expect(math.pageViewToActualIndex(2), 3);
+        // Step 2 backwards: Spread 2 -> Spread 1 (shows page 2 alone, NOT skipped!)
+        expect(math.pageViewToActualIndex(1), 2);
+        // Step 3 backwards: Spread 1 -> Spread 0 (shows pages 0 & 1)
+        expect(math.pageViewToActualIndex(0), 0);
+      });
     },
   );
+
+  group('CoordinateTransformer bounds tests', () {
+    test('fileSRect never produces negative coordinates on rotated landscape image', () {
+      final transformer90 = CoordinateTransformer(
+        scale: 1.0,
+        vTranslate: ui.Offset.zero,
+        rotation: 90,
+        sWidth: 1920,
+        sHeight: 1080,
+      );
+
+      final rect = transformer90.fileSRect(const ui.Rect.fromLTRB(0, 0, 1920, 1080));
+      expect(rect.left >= 0, isTrue, reason: 'left must be non-negative');
+      expect(rect.top >= 0, isTrue, reason: 'top must be non-negative');
+      expect(rect.right <= 1920, isTrue, reason: 'right must be <= sWidth');
+      expect(rect.bottom <= 1080, isTrue, reason: 'bottom must be <= sHeight');
+
+      final transformer270 = CoordinateTransformer(
+        scale: 1.0,
+        vTranslate: ui.Offset.zero,
+        rotation: 270,
+        sWidth: 1920,
+        sHeight: 1080,
+      );
+      final rect270 = transformer270.fileSRect(const ui.Rect.fromLTRB(0, 0, 1920, 1080));
+      expect(rect270.left >= 0, isTrue);
+      expect(rect270.top >= 0, isTrue);
+      expect(rect270.right <= 1920, isTrue);
+      expect(rect270.bottom <= 1080, isTrue);
+    });
+  });
 }
