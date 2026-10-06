@@ -438,8 +438,17 @@ class _MyAppState extends ConsumerState<MyApp>
     super.dispose();
   }
 
+  // Linux emits `resize`/`move` while the window is being resized or moved;
+  // Windows and macOS emit `resized`/`moved` once it settles. Handle both, or
+  // the geometry is never saved on Linux and the window size is not remembered.
+  @override
+  void onWindowResize() => WindowGeometry.save();
+
   @override
   void onWindowResized() => WindowGeometry.save();
+
+  @override
+  void onWindowMove() => WindowGeometry.save();
 
   @override
   void onWindowMoved() => WindowGeometry.save();
