@@ -269,57 +269,60 @@ Future<void> pushToMangaReaderDetail({
   bool useMaterialRoute = false,
   bool addToFavourite = false,
 }) async {
-  int? mangaId =
-      (await mangaRepository.findLocalArchiveByName(getManga?.name))?.id;
+  int? mangaId;
+  if (archiveId != null) {
+    mangaId = archiveId;
+  } else if (mangaM?.id != null) {
+    mangaId = mangaM!.id;
+  } else if (source == "local") {
+    mangaId = (await mangaRepository.findLocalArchiveByName(getManga?.name))
+        ?.id;
+  }
 
   if (mangaId == null) {
-    if (archiveId == null) {
-      final manga =
-          mangaM ??
-          Manga(
-            imageUrl: getManga!.imageUrl,
-            name: getManga.name!.trim(),
-            genre: getManga.genre?.map((e) => e.toString()).toList() ?? [],
-            author: getManga.author ?? "",
-            status: getManga.status ?? Status.unknown,
-            description: getManga.description ?? "",
-            link: getManga.link,
-            source: source,
-            lang: lang,
-            lastUpdate: 0,
-            itemType: itemType ?? ItemType.manga,
-            artist: getManga.artist ?? '',
-            sourceId: sourceId,
-          );
-      final empty = await mangaRepository.isEmptyByLangNameSource(
-        lang,
-        manga.name,
-        manga.source,
-      );
-      if (empty) {
-        await mangaRepository.save(manga);
-      }
-
-      final foundMangas = await mangaRepository.findAllByLangNameSource(
-        lang,
-        manga.name,
-        manga.source,
-      );
-      Manga? matchedManga;
-      for (final foundManga in foundMangas) {
-        if (foundManga.sourceId == null || foundManga.sourceId == sourceId) {
-          matchedManga = foundManga;
-          break;
-        }
-      }
-      if (matchedManga == null) {
-        await mangaRepository.save(manga);
-        matchedManga = manga;
-      }
-      mangaId = matchedManga.id!;
-    } else {
-      mangaId = archiveId;
+    final manga =
+        mangaM ??
+        Manga(
+          imageUrl: getManga!.imageUrl,
+          name: getManga.name!.trim(),
+          genre: getManga.genre?.map((e) => e.toString()).toList() ?? [],
+          author: getManga.author ?? "",
+          status: getManga.status ?? Status.unknown,
+          description: getManga.description ?? "",
+          link: getManga.link,
+          source: source,
+          lang: lang,
+          lastUpdate: 0,
+          itemType: itemType ?? ItemType.manga,
+          artist: getManga.artist ?? '',
+          sourceId: sourceId,
+        );
+    final empty = await mangaRepository.isEmptyByLangNameSource(
+      lang,
+      manga.name,
+      manga.source,
+    );
+    if (empty) {
+      await mangaRepository.save(manga);
     }
+
+    final foundMangas = await mangaRepository.findAllByLangNameSource(
+      lang,
+      manga.name,
+      manga.source,
+    );
+    Manga? matchedManga;
+    for (final foundManga in foundMangas) {
+      if (foundManga.sourceId == null || foundManga.sourceId == sourceId) {
+        matchedManga = foundManga;
+        break;
+      }
+    }
+    if (matchedManga == null) {
+      await mangaRepository.save(manga);
+      matchedManga = manga;
+    }
+    mangaId = matchedManga.id!;
   }
 
   final mang = await mangaRepository.findByIdAsync(mangaId);
