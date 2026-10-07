@@ -18,11 +18,10 @@ Media playbackMedia(
     return Media(resource, httpHeaders: httpHeaders, start: start);
   }
 
-  return _LocalFileMedia(
-    resource,
+  return Media(
+    localFileUri(resource, windows: windows ?? Platform.isWindows),
     httpHeaders: httpHeaders,
     start: start,
-    windows: windows ?? Platform.isWindows,
   );
 }
 
@@ -32,18 +31,4 @@ String localFileUri(String resource, {required bool windows}) {
     return uri.toString();
   }
   return Uri.file(resource, windows: windows).toString();
-}
-
-class _LocalFileMedia extends Media {
-  final String _uri;
-
-  _LocalFileMedia(
-    super.resource, {
-    super.httpHeaders,
-    super.start,
-    required bool windows,
-  }) : _uri = localFileUri(resource, windows: windows);
-
-  @override
-  String get uri => _uri;
 }
