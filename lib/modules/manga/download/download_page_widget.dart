@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -238,15 +237,12 @@ class ChapterPageDownload extends ConsumerWidget {
 
               // 4. Queued / paused but not started
               return IconButton(
+                splashRadius: 5,
+                iconSize: 17,
                 onPressed: () {
                   _downloadChapter(context, ref);
                 },
-                icon: FaIcon(
-                  FontAwesomeIcons.circleDown,
-                  color: Theme.of(context).iconTheme.color!
-                      .withValues(alpha: 0.7),
-                  size: 25,
-                ),
+                icon: const _DownloadProgressIcon(isLoading: false),
               );
             }
 
