@@ -71,10 +71,10 @@ void main() {
     expect(pressed, isTrue);
   });
 
-  testWidgets('uses two scroll-safe tiers on a narrow portrait screen', (
+  testWidgets('uses one aligned scroll-safe row on compact portrait', (
     tester,
   ) async {
-    const size = Size(320, 568);
+    const size = Size(390, 844);
     await _setSurfaceSize(tester, size);
 
     await tester.pumpWidget(
@@ -89,19 +89,27 @@ void main() {
               width: 48,
               height: 48,
             ),
-            seekButton: const SizedBox(
-              width: 140,
-              height: 35,
-              child: Text('+85 seconds'),
+            seekButton: PlayerPillButton(
+              key: const ValueKey('compact-seek-control'),
+              isCompact: true,
+              icon: Icons.fast_forward_rounded,
+              label: '+85 seconds',
+              showLabel: false,
+              tooltip: '+85 seconds',
+              onTap: () {},
             ),
-            chapterButton: const SizedBox(
-              width: 240,
-              height: 35,
-              child: Text('A very long chapter marker that must remain usable'),
+            chapterButton: PlayerPillButton(
+              key: const ValueKey('compact-chapter-control'),
+              isCompact: true,
+              icon: Icons.bookmark_outline,
+              label: 'A very long chapter marker that must remain usable',
+              showLabel: false,
+              tooltip: 'A very long chapter marker that must remain usable',
+              onTap: () {},
             ),
             shortcutButtons: const SizedBox(
               key: ValueKey('shortcut-controls'),
-              width: 420,
+              width: 210,
               height: 35,
             ),
           ),
@@ -119,16 +127,80 @@ void main() {
     );
     expect(tester.takeException(), isNull);
 
-    final primary = tester.getRect(
-      find.byKey(const ValueKey('mobile-player-primary-controls')),
+    final row = tester.getRect(
+      find.byKey(const ValueKey('mobile-player-compact-controls-row')),
     );
-    final shortcuts = tester.getRect(
-      find.byKey(const ValueKey('mobile-player-shortcuts-scroll')),
+    final scroll = tester.getRect(
+      find.byKey(const ValueKey('mobile-player-compact-controls-scroll')),
     );
-    expect(primary.left, greaterThanOrEqualTo(12));
-    expect(primary.right, lessThanOrEqualTo(size.width - 12));
-    expect(primary.bottom, lessThanOrEqualTo(shortcuts.top));
-    expect(shortcuts.right, lessThanOrEqualTo(size.width - 12));
+    final lock = find.byKey(const ValueKey('lock-control'));
+    final seek = find.byKey(const ValueKey('compact-seek-control'));
+    final chapter = find.byKey(const ValueKey('compact-chapter-control'));
+    final shortcuts = find.byKey(const ValueKey('shortcut-controls'));
+    final centerY = tester.getCenter(lock).dy;
+
+    expect(row.left, greaterThanOrEqualTo(12));
+    expect(row.right, lessThanOrEqualTo(size.width - 12));
+    expect(scroll.left, greaterThanOrEqualTo(tester.getRect(lock).right));
+    expect(scroll.right, lessThanOrEqualTo(size.width - 12));
+    expect(tester.getCenter(seek).dy, closeTo(centerY, 1));
+    expect(tester.getCenter(chapter).dy, closeTo(centerY, 1));
+    expect(tester.getCenter(shortcuts).dy, closeTo(centerY, 1));
+    expect(find.text('+85 seconds'), findsNothing);
+    expect(
+      find.text('A very long chapter marker that must remain usable'),
+      findsNothing,
+    );
+
+    expect(tester.getRect(seek).left, greaterThanOrEqualTo(scroll.left));
+    expect(tester.getRect(shortcuts).right, lessThanOrEqualTo(scroll.right));
+  });
+
+  testWidgets('keeps the lock pinned when compact actions overflow', (
+    tester,
+  ) async {
+    const size = Size(320, 568);
+    await _setSurfaceSize(tester, size);
+
+    await tester.pumpWidget(
+      _testApp(
+        size: size,
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: MobilePlayerBottomControlsLayout(
+            lockButton: const SizedBox(
+              key: ValueKey('overflow-lock-control'),
+              width: 48,
+              height: 48,
+            ),
+            seekButton: const SizedBox(
+              key: ValueKey('overflow-seek-control'),
+              width: 35,
+              height: 35,
+            ),
+            chapterButton: const SizedBox(width: 35, height: 35),
+            shortcutButtons: const SizedBox(width: 420, height: 35),
+          ),
+        ),
+      ),
+    );
+
+    final lock = find.byKey(const ValueKey('overflow-lock-control'));
+    final scroll = find.byKey(
+      const ValueKey('mobile-player-compact-controls-scroll'),
+    );
+    final seek = find.byKey(const ValueKey('overflow-seek-control'));
+    final lockRectBeforeScroll = tester.getRect(lock);
+    final seekLeftBeforeScroll = tester.getRect(seek).left;
+
+    expect(tester.takeException(), isNull);
+    expect(lockRectBeforeScroll.left, greaterThanOrEqualTo(12));
+    expect(tester.getRect(scroll).right, lessThanOrEqualTo(size.width - 12));
+
+    await tester.drag(scroll, const Offset(160, 0));
+    await tester.pump();
+    expect(tester.getRect(lock), lockRectBeforeScroll);
+    expect(tester.getRect(seek).left, greaterThan(seekLeftBeforeScroll));
   });
 
   testWidgets('keeps one row in landscape', (tester) async {
@@ -201,6 +273,7 @@ void main() {
   });
 
   testWidgets('icon-only shortcut keeps its icon and tooltip', (tester) async {
+    var longPressed = false;
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -212,6 +285,7 @@ void main() {
               showLabel: false,
               tooltip: 'Playback speed',
               onTap: () {},
+              onLongPress: () => longPressed = true,
             ),
           ),
         ),
@@ -234,6 +308,8 @@ void main() {
       semanticsWidgets.any((widget) => widget.properties.value == '1.0x'),
       isTrue,
     );
+    await tester.longPress(find.byType(PlayerPillButton));
+    expect(longPressed, isTrue);
   });
 
   test('uses icon-only controls only below the portrait breakpoint', () {

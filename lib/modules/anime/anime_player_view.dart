@@ -2138,35 +2138,58 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
-  Widget _seekToWidget() {
+  Widget _seekToWidget({bool iconOnly = false}) {
     final defaultSkipIntroLength = ref.watch(
       defaultSkipIntroLengthStateProvider,
     );
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: SizedBox(
-        height: 35,
-        child: ValueListenableBuilder(
-          valueListenable: _customButton,
-          builder: (context, value, child) => (value?.visible ?? true)
-              ? ElevatedButton(
-                  onPressed:
-                      value?.onPress ??
-                      () async => await _seekBy(defaultSkipIntroLength),
-                  onLongPress: value?.onLongPress,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      value != null
-                          ? value.currentTitle
-                          : "+$defaultSkipIntroLength",
-                      style: const TextStyle(fontWeight: FontWeight.w100),
-                    ),
-                  ),
-                )
-              : Container(),
-        ),
-      ),
+    return ValueListenableBuilder(
+      valueListenable: _customButton,
+      builder: (context, value, child) {
+        if (!(value?.visible ?? true)) return const SizedBox.shrink();
+
+        final label = value?.currentTitle ?? "+$defaultSkipIntroLength";
+        void onPressed() {
+          if (value != null) {
+            value.onPress();
+          } else {
+            unawaited(_seekBy(defaultSkipIntroLength));
+          }
+        }
+
+        final onLongPress = value == null ? null : () => value.onLongPress();
+        if (iconOnly) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.5),
+            child: PlayerPillButton(
+              icon: Icons.fast_forward_rounded,
+              label: label,
+              showLabel: false,
+              tooltip: label,
+              isCompact: true,
+              onTap: onPressed,
+              onLongPress: onLongPress,
+            ),
+          );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: SizedBox(
+            height: 35,
+            child: ElevatedButton(
+              onPressed: onPressed,
+              onLongPress: onLongPress,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  label,
+                  style: const TextStyle(fontWeight: FontWeight.w100),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -2178,38 +2201,57 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   int get _chaptersSectionIndex => 4;
   int get _speedSectionIndex => _chapterMarks.value.isNotEmpty ? 5 : 4;
 
-  Widget _chapterMarkWidget() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-      child: SizedBox(
-        height: 35,
-        child: ValueListenableBuilder(
-          valueListenable: _currentChapterMark,
-          builder: (context, value, child) => value != null
-              ? Material(
-                  type: MaterialType.transparency,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(8),
-                    onTap: () => _openPlayerSettings(
-                      context,
-                      initialIndex: _chaptersSectionIndex,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "${_chapterMarks.value[value].$1} - ${Duration(milliseconds: _chapterMarks.value[value].$2).label()}",
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
+  Widget _chapterMarkWidget({bool iconOnly = false}) {
+    return ValueListenableBuilder(
+      valueListenable: _currentChapterMark,
+      builder: (context, value, child) {
+        if (value == null) return const SizedBox.shrink();
+
+        final chapter = _chapterMarks.value[value];
+        final label =
+            "${chapter.$1} - ${Duration(milliseconds: chapter.$2).label()}";
+        void onPressed() =>
+            _openPlayerSettings(context, initialIndex: _chaptersSectionIndex);
+
+        if (iconOnly) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.5),
+            child: PlayerPillButton(
+              icon: Icons.bookmark_outline,
+              label: label,
+              showLabel: false,
+              tooltip: label,
+              isCompact: true,
+              onTap: onPressed,
+            ),
+          );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          child: SizedBox(
+            height: 35,
+            child: Material(
+              type: MaterialType.transparency,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: onPressed,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
-                )
-              : Container(),
-        ),
-      ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -2294,8 +2336,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 _isLocked.value = true;
               },
             ),
-            seekButton: _seekToWidget(),
-            chapterButton: _chapterMarkWidget(),
+            seekButton: _seekToWidget(iconOnly: iconOnlyShortcuts),
+            chapterButton: _chapterMarkWidget(iconOnly: iconOnlyShortcuts),
             shortcutButtons: _buildSettingsButtons(
               context,
               iconOnly: iconOnlyShortcuts,

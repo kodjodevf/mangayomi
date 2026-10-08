@@ -322,6 +322,7 @@ class PlayerPillButton extends StatelessWidget {
   final IconData? icon;
   final String? label;
   final VoidCallback onTap;
+  final GestureLongPressCallback? onLongPress;
   final String? tooltip;
   final bool active;
   final bool isCompact;
@@ -330,6 +331,7 @@ class PlayerPillButton extends StatelessWidget {
   const PlayerPillButton({
     super.key,
     required this.onTap,
+    this.onLongPress,
     this.icon,
     this.label,
     this.tooltip,
@@ -363,6 +365,7 @@ class PlayerPillButton extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
         onTap: onTap,
+        onLongPress: onLongPress,
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: padH, vertical: padV),
           decoration: BoxDecoration(

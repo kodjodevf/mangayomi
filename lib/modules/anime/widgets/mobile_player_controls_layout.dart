@@ -110,38 +110,40 @@ class MobilePlayerBottomControlsLayout extends StatelessWidget {
         return Padding(
           key: const ValueKey('mobile-player-bottom-controls-compact'),
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: Row(
+            key: const ValueKey('mobile-player-compact-controls-row'),
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                key: const ValueKey('mobile-player-primary-controls'),
-                children: [
-                  lockButton,
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [seekButton, chapterButton],
+              lockButton,
+              const SizedBox(width: 4),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, actionConstraints) =>
+                      SingleChildScrollView(
+                        key: const ValueKey(
+                          'mobile-player-compact-controls-scroll',
+                        ),
+                        scrollDirection: Axis.horizontal,
+                        reverse: true,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minWidth: actionConstraints.maxWidth,
+                          ),
+                          child: Row(
+                            key: const ValueKey(
+                              'mobile-player-compact-actions',
+                            ),
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              seekButton,
+                              chapterButton,
+                              shortcutButtons,
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              SingleChildScrollView(
-                key: const ValueKey('mobile-player-shortcuts-scroll'),
-                scrollDirection: Axis.horizontal,
-                reverse: true,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minWidth: constraints.maxWidth - 24,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: shortcutButtons,
-                  ),
                 ),
               ),
             ],
