@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -24,6 +23,7 @@ import 'package:mangayomi/modules/novel/tts/tts_player_bar.dart';
 import 'package:mangayomi/modules/novel/tts/tts_settings_tab.dart';
 import 'package:mangayomi/modules/novel/utils/novel_paginator.dart';
 import 'package:mangayomi/modules/novel/utils/novel_reader_fonts.dart';
+import 'package:mangayomi/modules/novel/widgets/novel_general_settings_tab.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_reader_settings_sheet.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
@@ -42,6 +42,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:flutter/widgets.dart' as widgets;
+import 'package:mangayomi/modules/manga/reader/mixins/reader_auto_scroll.dart';
 
 typedef DoubleClickAnimationListener = void Function();
 
@@ -70,7 +71,18 @@ class NovelWebView extends ConsumerStatefulWidget {
 }
 
 class _NovelWebViewState extends ConsumerState<NovelWebView>
-    with TickerProviderStateMixin, WidgetsBindingObserver {
+    with
+        TickerProviderStateMixin,
+        WidgetsBindingObserver,
+        ReaderAutoScroll {
+  @override
+  ValueNotifier<bool> get autoScrollEnabled => _autoScroll;
+  @override
+  ValueNotifier<double> get autoScrollSpeed => _pageOffset;
+  @override
+  ScrollController get autoScrollController => _scrollController;
+  @override
+  bool get canAutoScroll => _isContinuousMode();
   /// Resolved in [initState], not lazily.
   ///
   /// As a `late` field with an initialiser this was read for the first time
@@ -139,8 +151,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     _scrollController.dispose();
     _spreadController.dispose();
     _rebuildDetail.close();
-    _autoScrollTicker?.dispose();
-    _autoScroll.removeListener(_onAutoScrollChanged);
+    disposeAutoScroll();
+    _autoScroll.removeListener(onAutoScrollChanged);
     _autoScroll.value = false;
     _autoScroll.dispose();
     _autoScrollPage.dispose();
@@ -202,7 +214,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     );
     WidgetsBinding.instance.addObserver(this);
     _readingStopwatch.start();
-    _autoScroll.addListener(_onAutoScrollChanged);
+    _autoScroll.addListener(onAutoScrollChanged);
     _initWakelock();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.addListener(onScroll);
@@ -211,7 +223,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         fontSize = initFontSize;
       });
       if (_autoScroll.value && _isContinuousMode()) {
-        _startAutoScroll();
+        startAutoScroll();
       }
     });
     if (!isDesktop) SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
@@ -285,79 +297,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   );
   late final _autoScrollPage = ValueNotifier(_autoScroll.value);
 
-  Ticker? _autoScrollTicker;
-  Duration _lastAutoScrollTick = Duration.zero;
-  bool _isUserDragging = false;
-
   bool _isContinuousMode() {
     return _readerMode.isContinuous;
   }
 
-  void _onAutoScrollChanged() {
-    if (_autoScroll.value && _isContinuousMode()) {
-      _startAutoScroll();
-    } else {
-      _stopAutoScroll();
-    }
-  }
-
-  void _startAutoScroll() {
-    _autoScrollTicker ??= createTicker(_onAutoScrollTick);
-    _lastAutoScrollTick = Duration.zero;
-    if (!_autoScrollTicker!.isActive) {
-      _autoScrollTicker!.start();
-    }
-  }
-
-  void _stopAutoScroll() {
-    if (_autoScrollTicker != null && _autoScrollTicker!.isActive) {
-      _autoScrollTicker!.stop();
-    }
-    _lastAutoScrollTick = Duration.zero;
-  }
-
-  void _onAutoScrollTick(Duration elapsed) {
-    if (!mounted || !_autoScroll.value || !_isContinuousMode()) {
-      _stopAutoScroll();
-      return;
-    }
-    if (_isUserDragging) {
-      _lastAutoScrollTick = elapsed;
-      return;
-    }
-    if (_lastAutoScrollTick == Duration.zero) {
-      _lastAutoScrollTick = elapsed;
-      return;
-    }
-    final double dt =
-        (elapsed - _lastAutoScrollTick).inMicroseconds / 1000000.0;
-    _lastAutoScrollTick = elapsed;
-
-    if (dt <= 0 || dt > 0.1) return;
-
-    if (_scrollController.hasClients) {
-      final position = _scrollController.position;
-      final double pixelsPerSecond = _pageOffset.value * 10.0;
-      final double delta = pixelsPerSecond * dt;
-      final double currentOffset = position.pixels;
-      final double maxScroll = position.maxScrollExtent;
-      final double minScroll = position.minScrollExtent;
-
-      if (currentOffset >= maxScroll && delta > 0) {
-        _autoScroll.value = false;
-        _stopAutoScroll();
-        return;
-      }
-
-      final double newOffset = (currentOffset + delta).clamp(
-        minScroll,
-        maxScroll,
-      );
-      if (newOffset != currentOffset) {
-        _scrollController.jumpTo(newOffset);
-      }
-    }
-  }
 
   void _scrollToTtsParagraph(int index) {
     if (!_scrollController.hasClients || _ttsTotalBlocks <= 0) return;
@@ -413,7 +356,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     if (prevEffectiveMode != effectivePageMode || prevReaderMode != _readerMode) {
       if (!_readerMode.isContinuous) {
         _autoScroll.value = false;
-        _stopAutoScroll();
+        stopAutoScroll();
         final double progress;
         if (prevReaderMode.isContinuous) {
           progress = maxOffset > 0 ? (offset / maxOffset).clamp(0.0, 1.0) : 0.0;
@@ -448,7 +391,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                 progress * _scrollController.position.maxScrollExtent;
             _scrollController.jumpTo(targetOffset);
             if (_autoScroll.value) {
-              _startAutoScroll();
+              startAutoScroll();
             }
           }
         });
@@ -469,10 +412,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         onNotification: (notification) {
           if (notification is ScrollStartNotification) {
             if (notification.dragDetails != null) {
-              _isUserDragging = true;
+              isUserDragging = true;
             }
           } else if (notification is ScrollEndNotification) {
-            _isUserDragging = false;
+            isUserDragging = false;
           }
           if (notification is UserScrollNotification) {
             if (notification.direction == ScrollDirection.idle) {
@@ -549,7 +492,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                             scrolled = true;
                                             if (_autoScroll.value &&
                                                 _isContinuousMode()) {
-                                              _startAutoScroll();
+                                              startAutoScroll();
                                             }
                                           });
                                     }

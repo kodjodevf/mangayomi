@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/sync_preference.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
+import 'package:mangayomi/modules/more/widgets/dialog_actions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
@@ -46,61 +47,12 @@ class SyncListile extends ConsumerWidget {
             : null),
         enabled: enabled,
         onTap: isLogged
-            ? () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(l10n.log_out_from(l10n.sync_server)),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                surfaceTintColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  side: BorderSide(
-                                    color: context.secondaryColor,
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                l10n.cancel,
-                                style: TextStyle(color: context.secondaryColor),
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red.withValues(
-                                  alpha: 0.7,
-                                ),
-                              ),
-                              onPressed: () {
-                                ref
-                                    .read(synchingProvider(syncId: id).notifier)
-                                    .logout();
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                l10n.log_out,
-                                style: TextStyle(color: context.secondaryColor),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }
+            ? () => showLogOutDialog(
+                context,
+                serviceName: l10n.sync_server,
+                onLogOut: () =>
+                    ref.read(synchingProvider(syncId: id).notifier).logout(),
+              )
             : onTap,
         title: Text(
           text ?? l10n.sync_server,

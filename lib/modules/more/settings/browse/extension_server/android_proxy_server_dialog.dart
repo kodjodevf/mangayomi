@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/modules/more/widgets/outlined_field_decoration.dart';
 
 void showAndroidProxyServerDialog(
   BuildContext context, {
@@ -35,22 +36,8 @@ void showAndroidProxyServerDialog(
                     onChanged: (value) => setState(() {
                       server = value;
                     }),
-                    decoration: InputDecoration(
+                    decoration: outlinedFieldDecoration(
                       hintText: l10n.proxy_server_ip_hint,
-                      filled: false,
-                      contentPadding: const EdgeInsets.all(12),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(width: 0.4),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: const BorderSide(),
-                      ),
                     ),
                   ),
                 ),

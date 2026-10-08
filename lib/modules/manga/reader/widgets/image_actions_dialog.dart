@@ -6,14 +6,14 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/manga_cover_actions.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
+import 'package:mangayomi/modules/widgets/image_actions_sheet.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/downloaded_page_file.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/share.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:path/path.dart' as p;
 
 /// Bottom sheet dialog for long-press actions on manga images.
@@ -69,55 +69,10 @@ class _ImageActionsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SuperListView(
-      shrinkWrap: true,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-            color: context.themeData.scaffoldBackgroundColor,
-          ),
-          child: Column(
-            children: [
-              // Handle bar
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  height: 7,
-                  width: 35,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    color: context.secondaryColor.withValues(alpha: 0.4),
-                  ),
-                ),
-              ),
-              // Action buttons
-              Row(
-                children: [
-                  _ActionButton(
-                    label: context.l10n.set_as_cover,
-                    icon: Icons.image_outlined,
-                    onPressed: () => _setAsCover(context),
-                  ),
-                  _ActionButton(
-                    label: context.l10n.share,
-                    icon: Icons.share_outlined,
-                    onPressed: () => _shareImage(context),
-                  ),
-                  _ActionButton(
-                    label: context.l10n.save,
-                    icon: Icons.save_outlined,
-                    onPressed: () => _saveImage(context),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
+    return ImageActionsSheet(
+      onSetCover: _setAsCover,
+      onShare: _shareImage,
+      onSave: _saveImage,
     );
   }
 
@@ -155,41 +110,5 @@ class _ImageActionsSheet extends StatelessWidget {
     await file.writeAsBytes(imageBytes, flush: true);
 
     if (context.mounted) botToast(context.l10n.picture_saved, second: 3);
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onPressed;
-
-  const _ActionButton({
-    required this.label,
-    required this.icon,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            shadowColor: Colors.transparent,
-          ),
-          onPressed: onPressed,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(padding: const EdgeInsets.all(4), child: Icon(icon)),
-              Text(label),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

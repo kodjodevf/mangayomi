@@ -18,6 +18,7 @@ import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:mangayomi/modules/widgets/tv_escapable_slider.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/modules/onboarding/providers/onboarding_state_provider.dart';
+import 'package:mangayomi/modules/more/widgets/outlined_field_decoration.dart';
 
 class GeneralScreen extends ConsumerStatefulWidget {
   const GeneralScreen({super.key});
@@ -658,23 +659,9 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                       autofocus: true,
                       keyboardType: TextInputType.url,
                       onChanged: (value) => setState(() => url = value),
-                      decoration: InputDecoration(
+                      decoration: outlinedFieldDecoration(
                         hintText: 'https://example.com/dns-query',
                         helperText: context.l10n.custom_doh_url_helper,
-                        filled: false,
-                        contentPadding: const EdgeInsets.all(12),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(width: 0.4),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: const BorderSide(),
-                        ),
                       ),
                     ),
                   ),
@@ -733,26 +720,12 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                       autofocus: true,
                       keyboardType: TextInputType.url,
                       onChanged: (value) => setLocalState(() => url = value),
-                      decoration: InputDecoration(
+                      decoration: outlinedFieldDecoration(
                         hintText: 'http://localhost:8191/v1',
                         helperText:
                             'FlareSolverr / Byparr endpoint. Leave empty to '
                             'disable.',
                         helperMaxLines: 2,
-                        filled: false,
-                        contentPadding: const EdgeInsets.all(12),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(width: 0.4),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: const BorderSide(),
-                        ),
                       ),
                     ),
                   ),
@@ -810,23 +783,7 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                       onChanged: (value) => setState(() {
                         dns = value;
                       }),
-                      decoration: InputDecoration(
-                        hintText: "8.8.8.8",
-                        filled: false,
-                        contentPadding: const EdgeInsets.all(12),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(width: 0.4),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: const BorderSide(),
-                        ),
-                      ),
+                      decoration: outlinedFieldDecoration(hintText: "8.8.8.8"),
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -881,22 +838,8 @@ void _showDefaultUserAgentDialog(
                     controller: uaController,
                     autofocus: true,
 
-                    decoration: InputDecoration(
+                    decoration: outlinedFieldDecoration(
                       hintText: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...",
-                      filled: false,
-                      contentPadding: const EdgeInsets.all(12),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(width: 0.4),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: const BorderSide(),
-                      ),
                     ),
                   ),
                 ),
