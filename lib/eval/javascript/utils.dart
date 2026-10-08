@@ -14,6 +14,7 @@ import 'package:mangayomi/eval/http_response_extensions.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/services/http/hls_proxy.dart';
 import 'package:mangayomi/utils/cryptoaes/js_unpacker.dart';
 
 class JsUtils {
@@ -63,7 +64,7 @@ class JsUtils {
               'url': args[0]!,
               'headers': (args[1]! as Map).toMapStringString!,
               'scripts': (args[2]! as List).map((e) => e.toString()).toList(),
-              "time": args[3] ?? 30,
+              "time": args.length > 3 ? args[3] ?? 30 : 30,
             }),
           )
           .then((res) {
@@ -73,6 +74,13 @@ class JsUtils {
             }
             return '';
           });
+    });
+    runtime.onMessage('createHlsProxyUrl', (dynamic args) async {
+      final url = args[0]?.toString() ?? '';
+      final headers =
+          (args.length > 1 ? args[1] as Map? : null)?.toMapStringString ??
+          const <String, String>{};
+      return HlsProxyService.instance.createUrl(url, headers);
     });
     runtime.onMessage('parseEpub', (dynamic args) async {
       final bytes = await _toBytesResponse(client(), "GET", args);
@@ -146,10 +154,16 @@ function parseDates(value, dateFormat, dateFormatLocale) {
         JSON.stringify([value, dateFormat, dateFormatLocale])
     );
 }
-async function evaluateJavascriptViaWebview(url, headers, scripts) {
+async function evaluateJavascriptViaWebview(url, headers, scripts, time = 30) {
     return await sendMessage(
         "evaluateJavascriptViaWebview",
-        JSON.stringify([url, headers, scripts])
+        JSON.stringify([url, headers, scripts, time])
+    );
+}
+async function createHlsProxyUrl(url, headers = {}) {
+    return await sendMessage(
+        "createHlsProxyUrl",
+        JSON.stringify([url, headers])
     );
 }
 async function parseEpub(bookName, url, headers) {
