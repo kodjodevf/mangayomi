@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class MeasureWidgetSize extends StatefulWidget {
   final Function(Size? size) onCalculateSize;
@@ -36,6 +37,35 @@ class _MeasureWidgetSizeState extends State<MeasureWidgetSize> {
   Widget build(BuildContext context) {
     return Container(key: _key, child: widget.child);
   }
+}
+
+/// The children with room left at the foot for the floating bar.
+///
+/// This sheet is pushed inside the shell rather than over it, so the bar is
+/// drawn on top of it and a tab long enough to reach the bottom has its last
+/// controls behind the bar.
+///
+/// Read from the sheet's own context, not from whatever opened it. The shell
+/// reserves the bar's height as bottom padding on its body, but a screen with
+/// its own Scaffold and its own bottom bar has that stripped again before
+/// anything inside it can read it, and the library is exactly such a screen.
+/// The sheet is pushed on the branch navigator, which sits in the shell's body
+/// where the reservation is still intact.
+///
+/// Only the displayed children get this room, never the ones measured for the
+/// sheet's height: a tab whose content already stops short of the bar would
+/// gain a band of empty space, and a tab long enough to run underneath it is
+/// scrolling anyway, so what it needs is somewhere further to scroll.
+List<Widget> _padded(BuildContext context, List<Widget> children) {
+  final overlap = usesFloatingNav ? MediaQuery.paddingOf(context).bottom : 0.0;
+  if (overlap == 0) return children;
+  return [
+    for (final child in children)
+      Padding(
+        padding: EdgeInsets.only(bottom: overlap),
+        child: child,
+      ),
+  ];
 }
 
 Future<void> customDraggableTabBar({
@@ -168,7 +198,8 @@ Future<void> customDraggableTabBar({
                                       children: [
                                         Flexible(
                                           child: Container(
-                                            color: Theme.of(context).dividerColor,
+                                            color: Theme.of(context)
+                                                .dividerColor,
                                             height: 0.4,
                                           ),
                                         ),
@@ -182,7 +213,7 @@ Future<void> customDraggableTabBar({
                         Flexible(
                           child: TabBarView(
                             controller: tabBarController,
-                            children: children
+                            children: _padded(context, children)
                                 .map(
                                   (e) => SingleChildScrollView(
                                     child: MeasureWidgetSize(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/modules/widgets/floating_nav_bar.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class MainMobileBottomNavigation extends StatelessWidget {
   const MainMobileBottomNavigation({
@@ -14,6 +16,8 @@ class MainMobileBottomNavigation extends StatelessWidget {
     required this.ref,
     required this.buildNavigationWidgetsMobile,
     required this.onDestinationSelected,
+    this.shrink = 0,
+    this.onWake,
   });
 
   final bool isLongPressed;
@@ -25,9 +29,30 @@ class MainMobileBottomNavigation extends StatelessWidget {
   final List<Widget> Function(WidgetRef, List<String>, BuildContext)
   buildNavigationWidgetsMobile;
   final Function(String) onDestinationSelected;
+  final double shrink;
+  final VoidCallback? onWake;
 
   @override
   Widget build(BuildContext context) {
+    if (usesFloatingNav) {
+      return SizedBox(
+        width: context.width(1),
+        height: _getBottomNavigationHeight(isLongPressed, location),
+        child: FloatingNavBar(
+          destinations: buildNavigationWidgetsMobile(
+            ref,
+            dest,
+            context,
+          ).cast<NavigationDestination>(),
+          currentIndex: currentIndex,
+          onSelected: (newIndex) => onDestinationSelected(dest[newIndex]),
+          showLabels: context.isLandscape,
+          shrink: shrink,
+          onWake: onWake,
+        ),
+      );
+    }
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 0),
       width: context.width(1),
@@ -44,6 +69,9 @@ class MainMobileBottomNavigation extends StatelessWidget {
         child: NavigationBar(
           animationDuration: const Duration(milliseconds: 500),
           selectedIndex: currentIndex,
+          labelBehavior: context.width(1) / dest.length < 72
+              ? NavigationDestinationLabelBehavior.onlyShowSelected
+              : NavigationDestinationLabelBehavior.alwaysShow,
           destinations: buildNavigationWidgetsMobile(ref, dest, context),
           onDestinationSelected: (newIndex) {
             onDestinationSelected(dest[newIndex]);

@@ -166,6 +166,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
           // the same per-source request every source's own Popular tab makes,
           // not extra work invented just for this screen.
           : SingleChildScrollView(
+              padding: pageBottomInsets(context),
               child: Column(
                 children: [
                   for (final source in sourceList)
