@@ -15,6 +15,7 @@ import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/error_toast.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:mangayomi/modules/more/widgets/outlined_field_decoration.dart';
 
 class SourceRepositories extends ConsumerStatefulWidget {
   final ItemType itemType;
@@ -402,22 +403,8 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                     }
                   },
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(
+                  decoration: outlinedFieldDecoration(
                     hintText: l10n.url_must_end_with_dot_json_or_dot_pb,
-                    filled: false,
-                    contentPadding: const EdgeInsets.all(12),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(width: 0.4),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide: const BorderSide(),
-                    ),
                   ),
                 ),
                 actions: [

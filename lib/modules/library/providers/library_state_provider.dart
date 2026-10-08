@@ -126,7 +126,7 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState
 
 @riverpod
 class MangaFilterUnreadState extends _$MangaFilterUnreadState
-    with TriStateFilterField {
+    with TriStateFilterField, TriStateFilterCycle {
   @override
   int build({
     required List<Manga> mangaList,
@@ -150,44 +150,11 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState
       _ => s..libraryFilterNovelUnreadType = type,
     },
   );
-
-  List<Manga> getData() {
-    if (getType() == 1) {
-      return mangaList
-          .where((element) => element.chapters.any((chap) => !chap.isRead!))
-          .toList();
-    } else if (getType() == 2) {
-      return mangaList
-          .where((element) => element.chapters.every((chap) => chap.isRead!))
-          .toList();
-    } else {
-      return mangaList;
-    }
-  }
-
-  List<Manga> update() {
-    if (state == 0) {
-      final data = mangaList
-          .where((element) => element.chapters.any((chap) => !chap.isRead!))
-          .toList();
-      setType(1);
-      return data;
-    } else if (state == 1) {
-      final data = mangaList
-          .where((element) => element.chapters.every((chap) => chap.isRead!))
-          .toList();
-      setType(2);
-      return data;
-    } else {
-      setType(0);
-      return mangaList;
-    }
-  }
 }
 
 @riverpod
 class MangaFilterStartedState extends _$MangaFilterStartedState
-    with TriStateFilterField {
+    with TriStateFilterField, TriStateFilterCycle {
   @override
   int build({
     required List<Manga> mangaList,
@@ -211,44 +178,11 @@ class MangaFilterStartedState extends _$MangaFilterStartedState
       _ => s..libraryFilterNovelStartedType = type,
     },
   );
-
-  List<Manga> getData() {
-    if (getType() == 1) {
-      return mangaList
-          .where((element) => element.chapters.any((chap) => !chap.isRead!))
-          .toList();
-    } else if (getType() == 2) {
-      return mangaList
-          .where((element) => element.chapters.every((chap) => chap.isRead!))
-          .toList();
-    } else {
-      return mangaList;
-    }
-  }
-
-  List<Manga> update() {
-    if (state == 0) {
-      final data = mangaList
-          .where((element) => element.chapters.any((chap) => !chap.isRead!))
-          .toList();
-      setType(1);
-      return data;
-    } else if (state == 1) {
-      final data = mangaList
-          .where((element) => element.chapters.every((chap) => chap.isRead!))
-          .toList();
-      setType(2);
-      return data;
-    } else {
-      setType(0);
-      return mangaList;
-    }
-  }
 }
 
 @riverpod
 class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState
-    with TriStateFilterField {
+    with TriStateFilterField, TriStateFilterCycle {
   @override
   int build({
     required List<Manga> mangaList,
@@ -272,47 +206,6 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState
       _ => s..libraryFilterNovelBookMarkedType = type,
     },
   );
-
-  List<Manga> getData() {
-    if (getType() == 1) {
-      return mangaList
-          .where(
-            (element) => element.chapters.any((chap) => chap.isBookmarked!),
-          )
-          .toList();
-    } else if (getType() == 2) {
-      return mangaList
-          .where(
-            (element) => element.chapters.every((chap) => !chap.isBookmarked!),
-          )
-          .toList();
-    } else {
-      return mangaList;
-    }
-  }
-
-  List<Manga> update() {
-    if (state == 0) {
-      final data = mangaList
-          .where(
-            (element) => element.chapters.any((chap) => chap.isBookmarked!),
-          )
-          .toList();
-      setType(1);
-      return data;
-    } else if (state == 1) {
-      final data = mangaList
-          .where(
-            (element) => element.chapters.every((chap) => !chap.isBookmarked!),
-          )
-          .toList();
-      setType(2);
-      return data;
-    } else {
-      setType(0);
-      return mangaList;
-    }
-  }
 }
 
 // ── Completed filter ──────────────────────────────────────────────────────────

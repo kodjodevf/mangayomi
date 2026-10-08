@@ -162,28 +162,7 @@ class Anilist extends _$Anilist implements BaseTracker {
       data['Page']['media'] as List,
     );
     return entries
-        .map(
-          (jsonRes) => TrackSearch(
-            libraryId: jsonRes['id'],
-            syncId: syncId,
-            trackingUrl: "",
-            mediaId: jsonRes['id'],
-            summary: jsonRes['description'] ?? "",
-            totalChapter: jsonRes[contentUnit] ?? 0,
-            coverUrl: jsonRes['coverImage']['large'] ?? "",
-            title: jsonRes['title']['userPreferred'],
-            startDate:
-                jsonRes["start_date"] ??
-                DateTime.fromMillisecondsSinceEpoch(
-                  parseDate(jsonRes, 'startDate'),
-                ).toString(),
-            publishingType: "",
-            publishingStatus: jsonRes['status'],
-            score: jsonRes["averageScore"] != null
-                ? jsonRes["averageScore"] * 1.0
-                : 0,
-          ),
-        )
+        .map((jsonRes) => _mediaToTrackSearch(jsonRes, contentUnit))
         .toList();
   }
 
@@ -279,30 +258,31 @@ class Anilist extends _$Anilist implements BaseTracker {
       data['Page']['media'] as List,
     );
     return entries
-        .map(
-          (jsonRes) => TrackSearch(
-            libraryId: jsonRes['id'],
-            syncId: syncId,
-            trackingUrl: "",
-            mediaId: jsonRes['id'],
-            summary: jsonRes['description'] ?? "",
-            totalChapter: jsonRes[contentUnit] ?? 0,
-            coverUrl: jsonRes['coverImage']['large'] ?? "",
-            title: jsonRes['title']['userPreferred'],
-            startDate:
-                jsonRes["start_date"] ??
-                DateTime.fromMillisecondsSinceEpoch(
-                  parseDate(jsonRes, 'startDate'),
-                ).toString(),
-            publishingType: "",
-            publishingStatus: jsonRes['status'],
-            score: jsonRes["averageScore"] != null
-                ? jsonRes["averageScore"] * 1.0
-                : 0,
-          ),
-        )
+        .map((jsonRes) => _mediaToTrackSearch(jsonRes, contentUnit))
         .toList();
   }
+
+  /// A `media` node from a search or ranking query, as a search result.
+  TrackSearch _mediaToTrackSearch(
+    Map<String, dynamic> jsonRes,
+    String contentUnit,
+  ) => TrackSearch(
+    libraryId: jsonRes['id'],
+    syncId: syncId,
+    trackingUrl: "",
+    mediaId: jsonRes['id'],
+    summary: jsonRes['description'] ?? "",
+    totalChapter: jsonRes[contentUnit] ?? 0,
+    coverUrl: jsonRes['coverImage']['large'] ?? "",
+    title: jsonRes['title']['userPreferred'],
+    startDate:
+        jsonRes["start_date"] ??
+        DateTime.fromMillisecondsSinceEpoch(parseDate(jsonRes, 'startDate'))
+            .toString(),
+    publishingType: "",
+    publishingStatus: jsonRes['status'],
+    score: jsonRes["averageScore"] != null ? jsonRes["averageScore"] * 1.0 : 0,
+  );
 
   @override
   Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
@@ -325,7 +305,8 @@ class Anilist extends _$Anilist implements BaseTracker {
     final type = isManga ? "MANGA" : "ANIME";
     final contentUnit = isManga ? "chapters" : "episodes";
 
-    final query = '''
+    final query =
+        '''
     query(\$id: Int!) {
       Page {
         mediaList(userId: \$id, type: $type, status: $status, sort: UPDATED_TIME_DESC) {

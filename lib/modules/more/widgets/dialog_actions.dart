@@ -125,3 +125,59 @@ void hideBusyDialog(BuildContext context) {
   final navigator = Navigator.of(context, rootNavigator: true);
   if (navigator.canPop()) navigator.pop();
 }
+
+/// Asks before logging out of a tracker or sync server named [serviceName].
+void showLogOutDialog(
+  BuildContext context, {
+  required String serviceName,
+  required VoidCallback onLogOut,
+}) {
+  final l10n = context.l10n;
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text(l10n.log_out_from(serviceName)),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  surfaceTintColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: context.secondaryColor),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  l10n.cancel,
+                  style: TextStyle(color: context.secondaryColor),
+                ),
+              ),
+              const SizedBox(width: 15),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.withValues(alpha: 0.7),
+                ),
+                onPressed: () {
+                  onLogOut();
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  l10n.log_out,
+                  style: TextStyle(color: context.secondaryColor),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    },
+  );
+}

@@ -17,6 +17,7 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:mangayomi/modules/more/widgets/outlined_field_decoration.dart';
 
 class SyncScreen extends ConsumerWidget {
   static const serverUrl = "https://github.com/Schnitzel5/mangayomi-server";
@@ -52,7 +53,8 @@ class SyncScreen extends ConsumerWidget {
             final bool connected =
                 connectionStatus == SyncConnectionStatus.connected;
             final progress = ref.watch(syncProgressProvider(syncId: 1));
-            final enabled = syncPreference.syncOn && connected && !progress.active;
+            final enabled =
+                syncPreference.syncOn && connected && !progress.active;
             return Column(
               children: [
                 // Account comes first: nothing else on this screen means
@@ -456,22 +458,8 @@ class SyncScreen extends ConsumerWidget {
                         onChanged: (value) => setState(() {
                           server = value;
                         }),
-                        decoration: InputDecoration(
+                        decoration: outlinedFieldDecoration(
                           hintText: l10n.sync_server,
-                          filled: false,
-                          contentPadding: const EdgeInsets.all(12),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(width: 0.4),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: const BorderSide(),
-                          ),
                         ),
                       ),
                     ),

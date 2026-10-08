@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/scheduler.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
@@ -49,6 +48,7 @@ import 'package:mangayomi/utils/system_ui.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:mangayomi/modules/manga/reader/mixins/reader_auto_scroll.dart';
 
 typedef DoubleClickAnimationListener = void Function();
 
@@ -162,7 +162,17 @@ class _MangaChapterPageGalleryState
         TickerProviderStateMixin,
         WidgetsBindingObserver,
         ReaderMemoryManagement,
-        PageNavigationMixin {
+        PageNavigationMixin,
+        ReaderAutoScroll {
+  @override
+  ValueNotifier<bool> get autoScrollEnabled => _autoScroll;
+  @override
+  ValueNotifier<double> get autoScrollSpeed => _pageOffset;
+  @override
+  ScrollController get autoScrollController => _continuousScrollController;
+  @override
+  bool get canAutoScroll => _isContinuousMode();
+
   late ReaderController _readerController = ref.read(
     readerControllerProvider(chapter: chapter).notifier,
   );
@@ -189,8 +199,8 @@ class _MangaChapterPageGalleryState
     _hasCurrentPageImageError.dispose();
     _currentPageViewIndex.dispose();
     _panAnimator.dispose();
-    _autoScrollTicker?.dispose();
-    _autoScroll.removeListener(_onAutoScrollChanged);
+    disposeAutoScroll();
+    _autoScroll.removeListener(onAutoScrollChanged);
     _autoScroll.value = false;
     _autoScroll.dispose();
     _autoScrollPage.dispose();
@@ -354,9 +364,9 @@ class _MangaChapterPageGalleryState
     _discordReaderSession = discordRpc?.beginReaderSession();
     discordRpc?.showChapterDetails(ref, chapter);
     WidgetsBinding.instance.addObserver(this);
-    _autoScroll.addListener(_onAutoScrollChanged);
+    _autoScroll.addListener(onAutoScrollChanged);
     if (_autoScroll.value && _isContinuousMode()) {
-      _startAutoScroll();
+      startAutoScroll();
     }
     _initWakelock();
   }
@@ -630,10 +640,10 @@ class _MangaChapterPageGalleryState
         onNotification: (notification) {
           if (notification is ScrollStartNotification) {
             if (notification.dragDetails != null) {
-              _isUserDragging = true;
+              isUserDragging = true;
             }
           } else if (notification is ScrollEndNotification) {
-            _isUserDragging = false;
+            isUserDragging = false;
           }
           if (notification is ScrollUpdateNotification) {
             final delta = notification.scrollDelta ?? 0.0;
@@ -1086,7 +1096,7 @@ class _MangaChapterPageGalleryState
       // estimated extents and images replace their loading placeholders.
       // Until the user drags, keep the persisted index as the anchor instead
       // of turning that transient range into reading progress.
-      if (!_isUserDragging) {
+      if (!isUserDragging) {
         final targetIndex = _initialContinuousTargetIndex;
         if (targetIndex != null && _currentIndex != targetIndex) {
           _currentIndex = targetIndex;
@@ -1537,78 +1547,9 @@ class _MangaChapterPageGalleryState
     _readerController.autoScrollValues().$2,
   );
 
-  Ticker? _autoScrollTicker;
-  Duration _lastAutoScrollTick = Duration.zero;
-  bool _isUserDragging = false;
-
-  void _onAutoScrollChanged() {
-    if (_autoScroll.value && _isContinuousMode()) {
-      _startAutoScroll();
-    } else {
-      _stopAutoScroll();
-    }
-  }
-
-  void _startAutoScroll() {
-    _autoScrollTicker ??= createTicker(_onAutoScrollTick);
-    _lastAutoScrollTick = Duration.zero;
-    if (!_autoScrollTicker!.isActive) {
-      _autoScrollTicker!.start();
-    }
-  }
-
-  void _stopAutoScroll() {
-    if (_autoScrollTicker != null && _autoScrollTicker!.isActive) {
-      _autoScrollTicker!.stop();
-    }
-    _lastAutoScrollTick = Duration.zero;
-  }
-
-  void _onAutoScrollTick(Duration elapsed) {
-    if (!mounted || !_autoScroll.value || !_isContinuousMode()) {
-      _stopAutoScroll();
-      return;
-    }
-    if (_isUserDragging) {
-      _lastAutoScrollTick = elapsed;
-      return;
-    }
-    if (_lastAutoScrollTick == Duration.zero) {
-      _lastAutoScrollTick = elapsed;
-      return;
-    }
-    final double dt =
-        (elapsed - _lastAutoScrollTick).inMicroseconds / 1000000.0;
-    _lastAutoScrollTick = elapsed;
-
-    if (dt <= 0 || dt > 0.1) return;
-
-    if (_continuousScrollController.hasClients) {
-      final position = _continuousScrollController.position;
-      final double pixelsPerSecond = _pageOffset.value * 10.0;
-      final double delta = pixelsPerSecond * dt;
-      final double currentOffset = position.pixels;
-      final double maxScroll = position.maxScrollExtent;
-      final double minScroll = position.minScrollExtent;
-
-      if (currentOffset >= maxScroll && delta > 0) {
-        _autoScroll.value = false;
-        _stopAutoScroll();
-        return;
-      }
-
-      final double newOffset = (currentOffset + delta).clamp(
-        minScroll,
-        maxScroll,
-      );
-      if (newOffset != currentOffset) {
-        _continuousScrollController.jumpTo(newOffset);
-      }
-    }
-  }
 
   void _autoPagescroll() {
-    _onAutoScrollChanged();
+    onAutoScrollChanged();
   }
 
   void _setReaderMode(
