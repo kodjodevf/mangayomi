@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 
+bool usesCompactPortraitPlayerControls({
+  required Orientation orientation,
+  required double width,
+}) =>
+    orientation == Orientation.portrait &&
+    width < MobilePlayerBottomControlsLayout.compactPortraitBreakpoint;
+
 class MobilePlayerTopSafeArea extends StatelessWidget {
   const MobilePlayerTopSafeArea({
     super.key,
@@ -73,9 +80,10 @@ class MobilePlayerBottomControlsLayout extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final compactPortrait =
-            MediaQuery.orientationOf(context) == Orientation.portrait &&
-            constraints.maxWidth < compactPortraitBreakpoint;
+        final compactPortrait = usesCompactPortraitPlayerControls(
+          orientation: MediaQuery.orientationOf(context),
+          width: constraints.maxWidth,
+        );
 
         if (!compactPortrait) {
           return Padding(

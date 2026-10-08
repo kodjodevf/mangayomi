@@ -91,18 +91,18 @@ void main() {
             ),
             seekButton: const SizedBox(
               width: 140,
-              height: 44,
+              height: 35,
               child: Text('+85 seconds'),
             ),
             chapterButton: const SizedBox(
               width: 240,
-              height: 44,
+              height: 35,
               child: Text('A very long chapter marker that must remain usable'),
             ),
             shortcutButtons: const SizedBox(
               key: ValueKey('shortcut-controls'),
               width: 420,
-              height: 44,
+              height: 35,
             ),
           ),
         ),
@@ -146,12 +146,12 @@ void main() {
               width: 48,
               height: 48,
             ),
-            seekButton: const SizedBox(width: 120, height: 44),
-            chapterButton: const SizedBox(width: 100, height: 44),
+            seekButton: const SizedBox(width: 120, height: 35),
+            chapterButton: const SizedBox(width: 100, height: 35),
             shortcutButtons: const SizedBox(
               key: ValueKey('shortcut-controls'),
               width: 240,
-              height: 44,
+              height: 35,
             ),
           ),
         ),
@@ -176,7 +176,7 @@ void main() {
     );
   });
 
-  testWidgets('compact shortcut pills retain a 44 point tap target', (
+  testWidgets('compact shortcut pills use the original visual sizing', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -195,8 +195,69 @@ void main() {
     );
 
     final button = find.byType(PlayerPillButton);
-    expect(tester.getSize(button).height, greaterThanOrEqualTo(44));
-    expect(tester.getSize(button).width, greaterThanOrEqualTo(44));
+    expect(tester.getSize(button).height, lessThan(44));
+    expect(tester.widget<Icon>(find.byIcon(Icons.speed)).size, 14);
+    expect(tester.widget<Text>(find.text('1.0x')).style?.fontSize, 11);
+  });
+
+  testWidgets('icon-only shortcut keeps its icon and tooltip', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: PlayerPillButton(
+              isCompact: true,
+              icon: Icons.speed,
+              label: '1.0x',
+              showLabel: false,
+              tooltip: 'Playback speed',
+              onTap: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.speed), findsOneWidget);
+    expect(find.text('1.0x'), findsNothing);
+    expect(
+      tester.widget<Tooltip>(find.byType(Tooltip)).message,
+      'Playback speed',
+    );
+    final semanticsWidgets = tester.widgetList<Semantics>(
+      find.descendant(
+        of: find.byType(PlayerPillButton),
+        matching: find.byType(Semantics),
+      ),
+    );
+    expect(
+      semanticsWidgets.any((widget) => widget.properties.value == '1.0x'),
+      isTrue,
+    );
+  });
+
+  test('uses icon-only controls only below the portrait breakpoint', () {
+    expect(
+      usesCompactPortraitPlayerControls(
+        orientation: Orientation.portrait,
+        width: 390,
+      ),
+      isTrue,
+    );
+    expect(
+      usesCompactPortraitPlayerControls(
+        orientation: Orientation.portrait,
+        width: 600,
+      ),
+      isFalse,
+    );
+    expect(
+      usesCompactPortraitPlayerControls(
+        orientation: Orientation.landscape,
+        width: 390,
+      ),
+      isFalse,
+    );
   });
 }
 

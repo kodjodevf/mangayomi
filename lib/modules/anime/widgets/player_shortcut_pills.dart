@@ -30,6 +30,7 @@ class PlayerShortcutPills extends StatelessWidget {
     required this.onSettings,
     required this.onChangeFit,
     required this.onToggleFullscreen,
+    this.iconOnly = false,
   });
 
   final List<vid.Video> videos;
@@ -45,6 +46,7 @@ class PlayerShortcutPills extends StatelessWidget {
   final ValueChanged<BuildContext> onSpeed;
   final ValueChanged<BuildContext> onSettings;
   final VoidCallback onChangeFit;
+  final bool iconOnly;
 
   /// Called with whether the player is fullscreen now.
   final ValueChanged<bool> onToggleFullscreen;
@@ -71,6 +73,7 @@ class PlayerShortcutPills extends StatelessWidget {
                   return PlayerPillButton(
                     icon: Icons.high_quality,
                     label: qualityLabel.isNotEmpty ? qualityLabel : null,
+                    showLabel: !iconOnly,
                     tooltip: context.l10n.video_quality,
                     isCompact: isMobile,
                     onTap: () => onQuality(context),
@@ -92,6 +95,7 @@ class PlayerShortcutPills extends StatelessWidget {
             return PlayerPillButton(
               icon: Icons.subtitles_outlined,
               label: !isSubOff && shortLabel.isNotEmpty ? shortLabel : 'Off',
+              showLabel: !iconOnly,
               tooltip: context.l10n.video_subtitle,
               isCompact: isMobile,
               onTap: () => onSubtitles(context),
@@ -118,6 +122,7 @@ class PlayerShortcutPills extends StatelessWidget {
             return PlayerPillButton(
               icon: Icons.audiotrack_outlined,
               label: shortLabel.isNotEmpty ? shortLabel : null,
+              showLabel: !iconOnly,
               tooltip: context.l10n.video_audio,
               isCompact: isMobile,
               onTap: () => onAudio(context),
@@ -134,6 +139,7 @@ class PlayerShortcutPills extends StatelessWidget {
               builder: (context, speed, _) => PlayerPillButton(
                 icon: Icons.speed,
                 label: '${speed}x',
+                showLabel: !iconOnly,
                 tooltip: context.l10n.playback_speed,
                 isCompact: isMobile,
                 onTap: () => onSpeed(context),
@@ -150,6 +156,7 @@ class PlayerShortcutPills extends StatelessWidget {
             builder: (context, fit, _) => PlayerPillButton(
               icon: Icons.fit_screen_outlined,
               label: fitShortLabel(fit),
+              showLabel: !iconOnly,
               tooltip: context.l10n.scale_type_fit_screen,
               isCompact: isMobile,
               onTap: onChangeFit,

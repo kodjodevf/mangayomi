@@ -2145,7 +2145,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: SizedBox(
-        height: 44,
+        height: 35,
         child: ValueListenableBuilder(
           valueListenable: _customButton,
           builder: (context, value, child) => (value?.visible ?? true)
@@ -2182,7 +2182,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       child: SizedBox(
-        height: 44,
+        height: 35,
         child: ValueListenableBuilder(
           valueListenable: _currentChapterMark,
           builder: (context, value, child) => value != null
@@ -2275,6 +2275,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   Widget _mobileBottomButtonBar(BuildContext context) {
+    final iconOnlyShortcuts = usesCompactPortraitPlayerControls(
+      orientation: MediaQuery.orientationOf(context),
+      width: MediaQuery.sizeOf(context).width,
+    );
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
       child: Column(
@@ -2292,7 +2296,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             ),
             seekButton: _seekToWidget(),
             chapterButton: _chapterMarkWidget(),
-            shortcutButtons: _buildSettingsButtons(context),
+            shortcutButtons: _buildSettingsButtons(
+              context,
+              iconOnly: iconOnlyShortcuts,
+            ),
           ),
         ],
       ),
@@ -2432,26 +2439,28 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   /// helper method for _mobileBottomButtonBar() and _desktopBottomButtonBar()
-  Widget _buildSettingsButtons(BuildContext context) => PlayerShortcutPills(
-    videos: widget.videos,
-    video: _video,
-    player: _player,
-    subtitleTrack: () => _effectiveSubtitleTrack,
-    audioTrack: () => _effectiveAudioTrack,
-    playbackSpeed: _playbackSpeed,
-    fit: _fit,
-    onQuality: (context) =>
-        _openPlayerSettings(context, initialIndex: _qualitySectionIndex),
-    onSubtitles: (context) =>
-        _openPlayerSettings(context, initialIndex: _subtitleSectionIndex),
-    onAudio: (context) =>
-        _openPlayerSettings(context, initialIndex: _audioSectionIndex),
-    onSpeed: (context) =>
-        _openPlayerSettings(context, initialIndex: _speedSectionIndex),
-    onSettings: _openPlayerSettings,
-    onChangeFit: () => _changeFitLabel(ref),
-    onToggleFullscreen: _toggleFullscreen,
-  );
+  Widget _buildSettingsButtons(BuildContext context, {bool iconOnly = false}) =>
+      PlayerShortcutPills(
+        videos: widget.videos,
+        video: _video,
+        player: _player,
+        subtitleTrack: () => _effectiveSubtitleTrack,
+        audioTrack: () => _effectiveAudioTrack,
+        playbackSpeed: _playbackSpeed,
+        fit: _fit,
+        iconOnly: iconOnly,
+        onQuality: (context) =>
+            _openPlayerSettings(context, initialIndex: _qualitySectionIndex),
+        onSubtitles: (context) =>
+            _openPlayerSettings(context, initialIndex: _subtitleSectionIndex),
+        onAudio: (context) =>
+            _openPlayerSettings(context, initialIndex: _audioSectionIndex),
+        onSpeed: (context) =>
+            _openPlayerSettings(context, initialIndex: _speedSectionIndex),
+        onSettings: _openPlayerSettings,
+        onChangeFit: () => _changeFitLabel(ref),
+        onToggleFullscreen: _toggleFullscreen,
+      );
 
   Future<void> _toggleFullscreen(bool isFullscreen) async {
     if (isDesktop) {
