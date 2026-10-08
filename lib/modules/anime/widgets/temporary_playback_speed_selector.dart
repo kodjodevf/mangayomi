@@ -32,21 +32,31 @@ class TemporaryPlaybackSpeedSelector extends StatelessWidget {
               side: BorderSide(color: Colors.white.withValues(alpha: 0.16)),
             ),
             clipBehavior: Clip.antiAlias,
-            child: SizedBox(
-              width: _width,
-              height: _height,
-              child: Center(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 100),
-                  transitionBuilder: (child, animation) =>
-                      FadeTransition(opacity: animation, child: child),
-                  child: Text(
-                    temporaryPlaybackSpeedLabel(speed),
-                    key: ValueKey(speed),
-                    style: (textTheme.labelLarge ?? const TextStyle()).copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontFeatures: const [FontFeature.tabularFigures()],
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minWidth: _width,
+                minHeight: _height,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                child: ExcludeSemantics(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 100),
+                    transitionBuilder: (child, animation) =>
+                        FadeTransition(opacity: animation, child: child),
+                    child: Text(
+                      temporaryPlaybackSpeedLabel(speed),
+                      key: ValueKey(speed),
+                      textAlign: TextAlign.center,
+                      style: (textTheme.labelLarge ?? const TextStyle())
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
                     ),
                   ),
                 ),

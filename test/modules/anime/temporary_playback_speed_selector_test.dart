@@ -33,4 +33,32 @@ void main() {
     expect(tester.getCenter(indicator).dx, 400);
     expect(tester.getTopLeft(indicator).dy, 12);
   });
+
+  testWidgets('remains readable and announces once with large text', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: const TextScaler.linear(2)),
+          child: child!,
+        ),
+        home: const Scaffold(
+          body: SizedBox.expand(
+            child: TemporaryPlaybackSpeedSelector(speed: 0.25),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('0.25x'), findsOneWidget);
+    expect(find.bySemanticsLabel('Playback speed: 0.25x'), findsOneWidget);
+    semantics.dispose();
+  });
 }
