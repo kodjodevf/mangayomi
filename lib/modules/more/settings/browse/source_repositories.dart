@@ -11,7 +11,6 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
-import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/error_toast.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -25,9 +24,6 @@ class SourceRepositories extends ConsumerStatefulWidget {
 }
 
 class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
-  final urlRegex = RegExp(
-    r'^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$',
-  );
   List<Repo> _entries = [];
   String urlInput = "";
   bool isRefreshing = false;
@@ -111,11 +107,6 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
             itemBuilder: (context, index) {
               final repo = _entries[index];
               final isHidden = repo.hidden ?? false;
-              final repoAvatar = urlRegex
-                  .firstMatch(repo.jsonUrl ?? "")
-                  ?.group(4)
-                  ?.split("/")
-                  .elementAtOrNull(1);
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Card(
@@ -128,33 +119,17 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              if (repoAvatar != null)
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: cachedNetworkImage(
-                                    imageUrl:
-                                        "https://github.com/$repoAvatar.png?size=64",
-                                    fit: BoxFit.contain,
-                                    width: 64,
-                                    height: 64,
-                                    errorWidget: const Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 15,
-                                      ),
-                                      child: Icon(Icons.label_outline_rounded),
-                                    ),
-                                    useCustomNetworkImage: false,
+                              const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: SizedBox.square(
+                                  dimension: 64,
+                                  child: Icon(
+                                    Icons.source_outlined,
+                                    key: Key('repository-icon'),
+                                    size: 32,
                                   ),
                                 ),
-                              if (repoAvatar == null)
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 15,
-                                  ),
-                                  child: Icon(Icons.label_outline_rounded),
-                                ),
+                              ),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text(
