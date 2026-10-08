@@ -44,14 +44,6 @@ class WebtoonScaleGestureRecognizer extends ScaleGestureRecognizer {
   void resolve(GestureDisposition disposition) {
     super.resolve(resolveDisposition(disposition));
   }
-
-  @override
-  void handleEvent(PointerEvent event) {
-    if (event is PointerMoveEvent && canPanCallback?.call() == true) {
-      resolve(GestureDisposition.accepted);
-    }
-    super.handleEvent(event);
-  }
 }
 
 /// Main widget for virtual reading using SuperListView from super_sliver_list
