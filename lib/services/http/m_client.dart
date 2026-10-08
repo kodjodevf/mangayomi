@@ -184,6 +184,12 @@ class MClient {
       );
       await settingsRepository.update((s) => s.cookiesList = filteredCookies);
     }
+    // On Linux, desktop_webview_window returns evaluateJavaScript results as
+    // JSON, so navigator.userAgent arrives wrapped in literal quotes. Sent as
+    // is, Cloudflare rejects every request carrying it with a 403.
+    if (ua.length >= 2 && ua.startsWith('"') && ua.endsWith('"')) {
+      ua = jsonDecode(ua);
+    }
     if (ua.isNotEmpty) {
       await settingsRepository.update((s) => s.userAgent = ua);
     }
