@@ -324,22 +324,18 @@ class LoggerInterceptor extends InterceptorContract {
         // in one is an offer nobody on Linux can take. A proxy is the only
         // thing that gets past this, so say that instead.
         //
-        // This is also reached by sites nobody thinks of as "having
-        // Cloudflare": a plain proxied site answers every response with
-        // `server: cloudflare`, including a 403 raised for some other reason,
-        // and that is enough to land here.
         final noResolverAvailable =
             Platform.isLinux && CfProxyStore.url.trim().isEmpty;
         try {
           botToast(
             noResolverAvailable
-                ? "${response.statusCode} blocked by Cloudflare. Set a "
-                      "FlareSolverr or Byparr URL in Settings > General to get "
-                      "past it on Linux."
-                : "${response.statusCode} Failed to bypass Cloudflare",
+                ? "Cloudflare check. Add bypass URL: Settings > General."
+                : "Cloudflare verification required "
+                      "(HTTP ${response.statusCode})",
             // The button opens the webview resolver, which does nothing here.
             hasCloudFlare: cloudflare && !noResolverAvailable,
             url: response.request!.url.toString(),
+            maxLines: noResolverAvailable ? 6 : 2,
           );
         } catch (e) {
           throw noResolverAvailable
@@ -354,8 +350,15 @@ class LoggerInterceptor extends InterceptorContract {
 }
 
 bool isCloudflare(BaseResponse response) {
-  return [403, 503].contains(response.statusCode) &&
-      ["cloudflare-nginx", "cloudflare"].contains(response.headers["server"]);
+  // `server: cloudflare` only means Cloudflare proxied the response. The
+  // origin can still return its own ordinary 403 or 503. Cloudflare documents
+  // `cf-mitigated: challenge` as the authoritative Challenge Page signal.
+  for (final entry in response.headers.entries) {
+    if (entry.key.trim().toLowerCase() == 'cf-mitigated') {
+      return entry.value.trim().toLowerCase() == 'challenge';
+    }
+  }
+  return false;
 }
 
 class ResolveCloudFlareChallenge extends RetryPolicy {
