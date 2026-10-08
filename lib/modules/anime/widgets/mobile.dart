@@ -381,7 +381,7 @@ class _MobileControllerWidgetState
     if (widget.isLocked?.value == true || previousPlaybackSpeed != -1) return;
 
     previousPlaybackSpeed = widget.videoController.player.state.rate;
-    final initialSpeed = initialTemporaryPlaybackSpeed(previousPlaybackSpeed);
+    final initialSpeed = initialTemporaryPlaybackSpeed();
 
     setState(() {
       _temporaryPlaybackSpeed = initialSpeed;
@@ -557,6 +557,14 @@ class _MobileControllerWidgetState
                             onDoubleTapSeekBackward();
                           }
                         },
+                        // This detector is above the full-screen background
+                        // detector in the Stack. It must own the long press as
+                        // well as vertical drag so a completed hold wins the
+                        // gesture arena before volume or brightness can start.
+                        onLongPressStart: _startTemporaryPlaybackSpeed,
+                        onLongPressMoveUpdate: _updateTemporaryPlaybackSpeed,
+                        onLongPressEnd: (_) => _restorePlaybackSpeed(),
+                        onLongPressCancel: _restorePlaybackSpeed,
                         onHorizontalDragUpdate: (details) {
                           if (widget.isLocked?.value == true) return;
                           onHorizontalDragUpdate(details);

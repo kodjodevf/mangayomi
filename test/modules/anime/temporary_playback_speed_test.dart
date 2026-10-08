@@ -12,10 +12,8 @@ void main() {
     );
   });
 
-  test('a hold starts at twice the current rate within supported bounds', () {
-    expect(initialTemporaryPlaybackSpeed(1.0), 2.0);
-    expect(initialTemporaryPlaybackSpeed(1.25), 2.5);
-    expect(initialTemporaryPlaybackSpeed(2.0), 3.0);
+  test('a hold starts at 2x before any drag', () {
+    expect(initialTemporaryPlaybackSpeed(), 2.0);
   });
 
   test('moving down selects slower temporary playback speeds', () {
