@@ -7,7 +7,13 @@ part 'aniskip.g.dart';
 // credits: https://github.com/aniyomiorg/aniyomi/blob/master/app/src/main/java/eu/kanade/tachiyomi/util/AniSkipApi.kt
 @riverpod
 class AniSkip extends _$AniSkip {
-  final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
+  // AniSkip is optional playback metadata and deliberately falls back to no
+  // skip markers when its API is unavailable. A challenge here must not imply
+  // that the independently loaded video is blocked.
+  final http = MClient.init(
+    reqcopyWith: {'useDartHttpClient': true},
+    showCloudFlareError: false,
+  );
   @override
   void build() {}
 
