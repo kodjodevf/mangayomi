@@ -1185,7 +1185,7 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String n_episodes(Object n) {
+  String n_episodes(int n) {
     return '$n एपिसोड';
   }
 

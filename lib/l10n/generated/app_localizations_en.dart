@@ -1183,8 +1183,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String n_episodes(Object n) {
-    return '$n episodes';
+  String n_episodes(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n episodes',
+      one: '1 episode',
+    );
+    return '$_temp0';
   }
 
   @override

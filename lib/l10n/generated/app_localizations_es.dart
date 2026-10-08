@@ -1190,7 +1190,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String n_episodes(Object n) {
+  String n_episodes(int n) {
     return '$n episodios';
   }
 
@@ -4755,7 +4755,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   }
 
   @override
-  String n_episodes(Object n) {
+  String n_episodes(int n) {
     return '$n episodios';
   }
 

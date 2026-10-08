@@ -2200,8 +2200,8 @@ abstract class AppLocalizations {
   /// No description provided for @n_episodes.
   ///
   /// In en, this message translates to:
-  /// **'{n} episodes'**
-  String n_episodes(Object n);
+  /// **'{n, plural, =1 {1 episode} other {{n} episodes}}'**
+  String n_episodes(int n);
 
   /// No description provided for @missing_episodes.
   ///

@@ -505,7 +505,14 @@
   "full_screen_player": "Use Fullscreen",
   "full_screen_player_info": "Automatically use fullscreen when playing a video.",
   "episode_progress": "Progress: {n}",
-  "n_episodes": "{n} episodes",
+  "n_episodes": "{n, plural, =1 {1 episode} other {{n} episodes}}",
+  "@n_episodes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "missing_episodes": "Missing {count} episodes",
   "manga_sources": "Manga Sources",
   "anime_sources": "Anime Sources",
