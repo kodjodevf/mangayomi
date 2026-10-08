@@ -2927,9 +2927,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     bottomButtonBarWidget: _mobileBottomButtonBar(context),
                     streamController: _streamController,
                     revealControls: _revealControls,
-                    doubleSpeed: (value) {
-                      _isDoubleSpeed.value = value ?? false;
-                    },
                     chapterMarks: _chapterMarks,
                     isLocked: _isLocked,
                   ),

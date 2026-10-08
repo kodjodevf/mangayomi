@@ -1,11 +1,13 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
+import 'package:mangayomi/modules/anime/utils/temporary_playback_speed.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
@@ -20,7 +22,6 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 
 class MobileControllerWidget extends ConsumerStatefulWidget {
-  final Function(bool?) doubleSpeed;
   final AnimeStreamController streamController;
   final VideoController videoController;
   final Widget topButtonBarWidget;
@@ -37,7 +38,6 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
     required this.bottomButtonBarWidget,
     required this.streamController,
     required this.videoStatekey,
-    required this.doubleSpeed,
     required this.chapterMarks,
     required this.revealControls,
     this.isLocked,
@@ -50,6 +50,8 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
 
 class _MobileControllerWidgetState
     extends ConsumerState<MobileControllerWidget> {
+  static const double _gestureInset = 16;
+
   bool mount = true;
   bool visible = true;
   // Wraps the control buttons; requestFocus()'d on reveal so the d-pad lands on
@@ -82,6 +84,10 @@ class _MobileControllerWidgetState
   int swipeDuration = 0; // Duration to seek in video
   bool showSwipeDuration = false; // Whether to show the seek duration overlay
   double previousPlaybackSpeed = -1;
+  double? _temporaryPlaybackSpeed;
+  double? _temporaryInitialSpeed;
+  double? _temporarySpeedOriginY;
+  Offset? _temporarySpeedPosition;
 
   late bool buffering = widget.videoController.player.state.buffering;
   final controlsHoverDuration = const Duration(seconds: 3);
@@ -185,6 +191,7 @@ class _MobileControllerWidgetState
 
   @override
   void dispose() {
+    _restorePlaybackSpeed(updateUi: false);
     widget.revealControls.removeListener(_onRevealRequest);
     widget.isLocked?.removeListener(_onLockChanged);
     _controlsScope.dispose();
@@ -369,6 +376,64 @@ class _MobileControllerWidgetState
     });
   }
 
+  void _startTemporaryPlaybackSpeed(LongPressStartDetails details) {
+    if (widget.isLocked?.value == true || previousPlaybackSpeed != -1) return;
+
+    previousPlaybackSpeed = widget.videoController.player.state.rate;
+    final initialSpeed = initialTemporaryPlaybackSpeed(previousPlaybackSpeed);
+
+    setState(() {
+      _temporaryPlaybackSpeed = initialSpeed;
+      _temporaryInitialSpeed = initialSpeed;
+      _temporarySpeedOriginY = details.localPosition.dy;
+      _temporarySpeedPosition = details.localPosition;
+    });
+    HapticFeedback.mediumImpact();
+    unawaited(widget.videoController.player.setRate(initialSpeed));
+  }
+
+  void _updateTemporaryPlaybackSpeed(LongPressMoveUpdateDetails details) {
+    final initialSpeed = _temporaryInitialSpeed;
+    final originY = _temporarySpeedOriginY;
+    if (initialSpeed == null || originY == null) return;
+
+    final speed = temporaryPlaybackSpeedForDrag(
+      initialSpeed: initialSpeed,
+      verticalDelta: details.localPosition.dy - originY,
+    );
+    final speedChanged = speed != _temporaryPlaybackSpeed;
+    setState(() {
+      _temporaryPlaybackSpeed = speed;
+      _temporarySpeedPosition = details.localPosition;
+    });
+
+    if (speedChanged) {
+      HapticFeedback.selectionClick();
+      unawaited(widget.videoController.player.setRate(speed));
+    }
+  }
+
+  void _restorePlaybackSpeed({bool updateUi = true}) {
+    if (previousPlaybackSpeed == -1) return;
+
+    final speedToRestore = previousPlaybackSpeed;
+    previousPlaybackSpeed = -1;
+    unawaited(widget.videoController.player.setRate(speedToRestore));
+
+    void clearSelection() {
+      _temporaryPlaybackSpeed = null;
+      _temporaryInitialSpeed = null;
+      _temporarySpeedOriginY = null;
+      _temporarySpeedPosition = null;
+    }
+
+    if (updateUi && mounted) {
+      setState(clearSelection);
+    } else {
+      clearSelection();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -411,6 +476,10 @@ class _MobileControllerWidgetState
                       child: GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: onTap,
+                        onLongPressStart: _startTemporaryPlaybackSpeed,
+                        onLongPressMoveUpdate: _updateTemporaryPlaybackSpeed,
+                        onLongPressEnd: (_) => _restorePlaybackSpeed(),
+                        onLongPressCancel: _restorePlaybackSpeed,
                         child: Stack(
                           children: [
                             if (widget.isLocked?.value != true) ...[
@@ -470,10 +539,10 @@ class _MobileControllerWidgetState
                     // We are adding 16.0 boundary around the actual controls (which contain the vertical drag gesture detectors).
                     // This will make the hit-test on edges (e.g. swiping to: show status-bar, show navigation-bar, go back in navigation) not activate the swipe gesture annoyingly.
                     Positioned.fill(
-                      left: 16.0,
-                      top: 16.0,
-                      right: 16.0,
-                      bottom: 16.0,
+                      left: _gestureInset,
+                      top: _gestureInset,
+                      right: _gestureInset,
+                      bottom: _gestureInset,
                       child: GestureDetector(
                         onTap: onTap,
                         onDoubleTapDown: _handleTapDown,
@@ -485,25 +554,6 @@ class _MobileControllerWidgetState
                             onDoubleTapSeekForward();
                           } else {
                             onDoubleTapSeekBackward();
-                          }
-                        },
-                        onLongPressStart: (e) {
-                          if (widget.isLocked?.value == true) return;
-                          previousPlaybackSpeed =
-                              widget.videoController.player.state.rate;
-                          widget.videoController.player.setRate(
-                            previousPlaybackSpeed * 2,
-                          );
-                          widget.doubleSpeed(true);
-                        },
-                        onLongPressEnd: (e) {
-                          if (widget.isLocked?.value == true) return;
-                          if (previousPlaybackSpeed != -1) {
-                            widget.videoController.player.setRate(
-                              previousPlaybackSpeed,
-                            );
-                            previousPlaybackSpeed = -1;
-                            widget.doubleSpeed(false);
                           }
                         },
                         onHorizontalDragUpdate: (details) {
@@ -685,6 +735,16 @@ class _MobileControllerWidgetState
                       ),
                     ],
                   ),
+              if (_temporaryPlaybackSpeed != null &&
+                  _temporarySpeedPosition != null)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: _TemporaryPlaybackSpeedSelector(
+                      position: _temporarySpeedPosition!,
+                      speed: _temporaryPlaybackSpeed!,
+                    ),
+                  ),
+                ),
               // // Buffering Indicator.
               IgnorePointer(
                 child: Padding(
@@ -896,6 +956,117 @@ class _MobileControllerWidgetState
           ),
         ),
       ],
+    );
+  }
+}
+
+class _TemporaryPlaybackSpeedSelector extends StatelessWidget {
+  const _TemporaryPlaybackSpeedSelector({
+    required this.position,
+    required this.speed,
+  });
+
+  final Offset position;
+  final double speed;
+
+  static const double _width = 88;
+  static const double _edgePadding = 8;
+  static const double _fingerGap = 24;
+  static const double _maximumItemExtent = 34;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final selectedIndex = temporaryPlaybackSpeeds.indexOf(speed);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableHeight = math.max(
+          0.0,
+          constraints.maxHeight - (_edgePadding * 2),
+        );
+        final itemExtent = math.min(
+          _maximumItemExtent,
+          availableHeight / temporaryPlaybackSpeeds.length,
+        );
+        final selectorHeight = itemExtent * temporaryPlaybackSpeeds.length;
+        final maxLeft = math.max(
+          _edgePadding,
+          constraints.maxWidth - _width - _edgePadding,
+        );
+        final preferredLeft =
+            position.dx + _fingerGap + _width <=
+                constraints.maxWidth - _edgePadding
+            ? position.dx + _fingerGap
+            : position.dx - _width - _fingerGap;
+        final left = preferredLeft.clamp(_edgePadding, maxLeft).toDouble();
+        final preferredTop =
+            position.dy - (selectedIndex * itemExtent) - (itemExtent / 2);
+        final maxTop = math.max(
+          _edgePadding,
+          constraints.maxHeight - selectorHeight - _edgePadding,
+        );
+        final top = preferredTop.clamp(_edgePadding, maxTop).toDouble();
+
+        return Stack(
+          children: [
+            Positioned(
+              left: left,
+              top: top,
+              width: _width,
+              child: Semantics(
+                label:
+                    '${context.l10n.playback_speed}: ${temporaryPlaybackSpeedLabel(speed)}',
+                liveRegion: true,
+                child: Material(
+                  color: colorScheme.surfaceContainerHighest.withValues(
+                    alpha: 0.94,
+                  ),
+                  elevation: 8,
+                  shadowColor: Colors.black.withValues(alpha: 0.45),
+                  borderRadius: BorderRadius.circular(18),
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      for (final level in temporaryPlaybackSpeeds)
+                        AnimatedContainer(
+                          key: ValueKey('temporary-speed-$level'),
+                          duration: const Duration(milliseconds: 100),
+                          height: itemExtent,
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: level == speed
+                                ? colorScheme.primary
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Text(
+                            temporaryPlaybackSpeedLabel(level),
+                            style: (textTheme.labelLarge ?? const TextStyle())
+                                .copyWith(
+                                  color: level == speed
+                                      ? colorScheme.onPrimary
+                                      : colorScheme.onSurfaceVariant,
+                                  fontWeight: level == speed
+                                      ? FontWeight.w800
+                                      : FontWeight.w500,
+                                  fontFeatures: const [
+                                    FontFeature.tabularFigures(),
+                                  ],
+                                ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
