@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive_flutter/adapters.dart';
+import 'package:mangayomi/repositories/tracker_library_cache_repository.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
@@ -222,13 +222,9 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
           ).notifier,
         )
         .checkRefresh();
-    final box = await Hive.openBox("tracker_library");
-    final keys = box.keys.where(
-      (e) => (e as String).startsWith(
-        "${trackerProvider.syncId}-${itemType.name}-",
-      ),
+    await trackerLibraryCacheRepository.deleteByPrefix(
+      "${trackerProvider.syncId}-${itemType.name}-",
     );
-    await box.deleteAll(keys);
     setState(() {});
   }
 
