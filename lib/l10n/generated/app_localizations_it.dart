@@ -2010,6 +2010,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get add_repo => 'Aggiungere repository?';
 
   @override
+  String get add_repo_sources_to_add => 'Extension lists that will be added:';
+
+  @override
+  String get add_repo_warning =>
+      'Extensions from these repositories run inside the app. Only add repositories you trust.';
+
+  @override
   String get genre_search_library => 'Cerca genere nella libreria';
 
   @override
@@ -2159,6 +2166,10 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get custom_buttons_startup => 'Codice lua (all\'avvio)';
+
+  @override
+  String get custom_buttons_add_warning =>
+      'This button runs the Lua code below in the video player, which can access your files and run programs. Only add it if you trust where this link came from.';
 
   @override
   String n_days(Object n) {

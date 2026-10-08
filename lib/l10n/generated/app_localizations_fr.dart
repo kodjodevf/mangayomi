@@ -2011,6 +2011,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get add_repo => 'Ajouter un dépôt ?';
 
   @override
+  String get add_repo_sources_to_add =>
+      'Listes d\'extensions qui seront ajoutées :';
+
+  @override
+  String get add_repo_warning =>
+      'Les extensions de ces dépôts s\'exécutent dans l\'application. N\'ajoutez que des dépôts de confiance.';
+
+  @override
   String get genre_search_library => 'Rechercher un genre dans la bibliothèque';
 
   @override
@@ -2160,6 +2168,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get custom_buttons_startup => 'Code lua (au démarrage)';
+
+  @override
+  String get custom_buttons_add_warning =>
+      'Ce bouton exécute le code Lua ci-dessous dans le lecteur vidéo, qui peut accéder à vos fichiers et lancer des programmes. Ne l\'ajoutez que si vous faites confiance à la source de ce lien.';
 
   @override
   String n_days(Object n) {

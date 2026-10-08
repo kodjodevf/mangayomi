@@ -1987,6 +1987,13 @@ class AppLocalizationsAs extends AppLocalizations {
   String get add_repo => 'ৰিপজিটৰী যোগ কৰিবনে?';
 
   @override
+  String get add_repo_sources_to_add => 'Extension lists that will be added:';
+
+  @override
+  String get add_repo_warning =>
+      'Extensions from these repositories run inside the app. Only add repositories you trust.';
+
+  @override
   String get genre_search_library => 'পুথিভঁৰালত ধাৰা বিচাৰক';
 
   @override
@@ -2133,6 +2140,10 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get custom_buttons_startup => 'lua ক\'ড (ষ্টাৰ্টআপত)';
+
+  @override
+  String get custom_buttons_add_warning =>
+      'This button runs the Lua code below in the video player, which can access your files and run programs. Only add it if you trust where this link came from.';
 
   @override
   String n_days(Object n) {

@@ -1948,6 +1948,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get add_repo => '저장소를 추가하시겠습니까?';
 
   @override
+  String get add_repo_sources_to_add => 'Extension lists that will be added:';
+
+  @override
+  String get add_repo_warning =>
+      'Extensions from these repositories run inside the app. Only add repositories you trust.';
+
+  @override
   String get genre_search_library => '보관함에서 장르 검색';
 
   @override
@@ -2085,6 +2092,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get custom_buttons_startup => 'lua 코드 (시작 시)';
+
+  @override
+  String get custom_buttons_add_warning =>
+      'This button runs the Lua code below in the video player, which can access your files and run programs. Only add it if you trust where this link came from.';
 
   @override
   String n_days(Object n) {

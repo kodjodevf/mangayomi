@@ -258,18 +258,47 @@ class MCookieManager extends InterceptorContract {
   }
 }
 
+const _redactedHeaders = {
+  'authorization',
+  'proxy-authorization',
+  'cookie',
+  'set-cookie',
+  'x-api-key',
+  'simkl-api-key',
+  'trakt-api-key',
+};
+
+/// Logs end up in a file users share on bug reports, so tracker bearer
+/// tokens and site session cookies must never be written there.
+@visibleForTesting
+Map<String, String> redactHeaders(Map<String, String> headers) => {
+  for (final MapEntry(:key, :value) in headers.entries)
+    key: _redactedHeaders.contains(key.toLowerCase()) ? '<redacted>' : value,
+};
+
+final _redactedHeaderInText = RegExp(
+  '\\b(${_redactedHeaders.map(RegExp.escape).join('|')}): [^,}]*',
+  caseSensitive: false,
+);
+
+/// [redactHeaders] for a line that already holds a printed header map, such
+/// as the worker isolate's request logs, which reach the main isolate as text.
+String redactHeadersInText(String text) =>
+    text.replaceAllMapped(_redactedHeaderInText, (m) => '${m[1]}: <redacted>');
+
 class LoggerInterceptor extends InterceptorContract {
   LoggerInterceptor(this.showCloudFlareError);
   bool showCloudFlareError;
   @override
   Future<BaseRequest> interceptRequest({required BaseRequest request}) async {
-    final content =
-        "----- Request -----\n${request.toString()}\nheaders: ${request.headers.toString()}";
+    final head = "----- Request -----\n${request.toString()}\nheaders: ";
 
     if (kDebugMode || useLogger) {
+      // The console keeps the real headers for debugging; only the log file,
+      // which gets shared, has them redacted.
       // ignore: avoid_print
-      print(content);
-      Logger.add(LoggerLevel.info, content);
+      print("$head${request.headers}");
+      Logger.add(LoggerLevel.info, "$head${redactHeaders(request.headers)}");
     }
 
     return request;

@@ -1953,6 +1953,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get add_repo => 'リポジトリを追加しますか？';
 
   @override
+  String get add_repo_sources_to_add => 'Extension lists that will be added:';
+
+  @override
+  String get add_repo_warning =>
+      'Extensions from these repositories run inside the app. Only add repositories you trust.';
+
+  @override
   String get genre_search_library => 'ライブラリでジャンル検索';
 
   @override
@@ -2090,6 +2097,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get custom_buttons_startup => 'luaコード（起動時）';
+
+  @override
+  String get custom_buttons_add_warning =>
+      'This button runs the Lua code below in the video player, which can access your files and run programs. Only add it if you trust where this link came from.';
 
   @override
   String n_days(Object n) {

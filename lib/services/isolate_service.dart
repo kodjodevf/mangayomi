@@ -41,13 +41,14 @@ class _IsolateWorker {
         completer.complete(message);
       }
       if (message is String) {
-        if (message.startsWith('LoggerLevel.warning:')) {
+        final logged = redactHeadersInText(message);
+        if (logged.startsWith('LoggerLevel.warning:')) {
           Logger.add(
             LoggerLevel.warning,
-            message.replaceFirst('LoggerLevel.warning:', ''),
+            logged.replaceFirst('LoggerLevel.warning:', ''),
           );
         } else {
-          Logger.add(LoggerLevel.info, message);
+          Logger.add(LoggerLevel.info, logged);
         }
         if (kDebugMode) {
           print(message.replaceFirst('LoggerLevel.warning:', ''));
