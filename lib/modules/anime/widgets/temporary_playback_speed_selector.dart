@@ -10,15 +10,31 @@ class TemporaryPlaybackSpeedSelector extends StatelessWidget {
   static const double _width = 58;
   static const double _height = 34;
 
+  /// Clears the 48-point control row, its 30-point bottom offset, and a
+  /// 12-point visual gap in portrait.
+  static const double portraitBottomClearance = 90;
+  static const double _landscapeTopInset = 12;
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final mediaQuery = MediaQuery.of(context);
+    final isPortrait = mediaQuery.orientation == Orientation.portrait;
+    final edgePadding = isPortrait
+        ? EdgeInsets.only(
+            bottom: mediaQuery.viewPadding.bottom + portraitBottomClearance,
+          )
+        : EdgeInsets.only(
+            top: mediaQuery.viewPadding.top > _landscapeTopInset
+                ? mediaQuery.viewPadding.top
+                : _landscapeTopInset,
+          );
 
-    return SafeArea(
-      minimum: const EdgeInsets.only(top: 12),
+    return Padding(
+      padding: edgePadding,
       child: Align(
-        alignment: Alignment.topCenter,
+        alignment: isPortrait ? Alignment.bottomCenter : Alignment.topCenter,
         child: Semantics(
           container: true,
           label:
