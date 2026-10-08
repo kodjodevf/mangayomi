@@ -319,33 +319,84 @@ class LoggerInterceptor extends InterceptorContract {
         Logger.add(LoggerLevel.info, content);
       }
       if (cloudflare) {
-        // The in-app resolver is disabled on Linux, and cookies cannot be read
-        // back from a webview there either, so the offer to solve it manually
-        // in one is an offer nobody on Linux can take. A proxy is the only
-        // thing that gets past this, so say that instead.
-        //
-        final noResolverAvailable =
-            Platform.isLinux && CfProxyStore.url.trim().isEmpty;
-        try {
-          botToast(
-            noResolverAvailable
-                ? "Cloudflare check. Add bypass URL: Settings > General."
-                : "Cloudflare verification required "
-                      "(HTTP ${response.statusCode})",
-            // The button opens the webview resolver, which does nothing here.
-            hasCloudFlare: cloudflare && !noResolverAvailable,
-            url: response.request!.url.toString(),
-            maxLines: noResolverAvailable ? 6 : 2,
-          );
-        } catch (e) {
-          throw noResolverAvailable
-              ? "Blocked by Cloudflare.\n\n\nThe in-app resolver is not available on Linux. Set a FlareSolverr or Byparr URL in Settings > General.\n\n\nstatusCode: ${response.statusCode}"
-              : "Failed to bypass Cloudflare.\n\n\nYou can try to bypass it manually in the webview \n\n\nstatusCode: ${response.statusCode}";
+        final scope = Zone.current[_cloudflareAlertScopeKey];
+        if (scope is CloudflareAlertScope) {
+          scope._record(response);
+        } else {
+          _showCloudflareAlert(response);
         }
       }
     }
 
     return response;
+  }
+}
+
+final _cloudflareAlertScopeKey = Object();
+
+/// Defers a final Cloudflare alert until a higher-level operation knows
+/// whether that challenged request actually prevented a usable result.
+class CloudflareAlertScope {
+  CloudflareAlertScope({void Function(BaseResponse)? onShow})
+    : _onShow = onShow ?? _showCloudflareAlert;
+
+  final void Function(BaseResponse) _onShow;
+  BaseResponse? _pendingResponse;
+
+  Future<T> run<T>(
+    Future<T> Function() operation, {
+    required bool Function(T result) hasUsableResult,
+  }) async {
+    _pendingResponse = null;
+    try {
+      final result = await runZoned(
+        operation,
+        zoneValues: {_cloudflareAlertScopeKey: this},
+      );
+      _complete(hasUsableResult: hasUsableResult(result));
+      return result;
+    } catch (_) {
+      _complete(hasUsableResult: false);
+      rethrow;
+    }
+  }
+
+  void _record(BaseResponse response) {
+    _pendingResponse = response;
+  }
+
+  void _complete({required bool hasUsableResult}) {
+    if (hasUsableResult) {
+      _pendingResponse = null;
+      return;
+    }
+    final response = _pendingResponse;
+    _pendingResponse = null;
+    if (response != null) _onShow(response);
+  }
+}
+
+void _showCloudflareAlert(BaseResponse response) {
+  // The in-app resolver is disabled on Linux, and cookies cannot be read back
+  // from a webview there either, so the offer to solve it manually in one is
+  // an offer nobody on Linux can take. A proxy is the only thing that gets
+  // past this, so say that instead.
+  final noResolverAvailable =
+      Platform.isLinux && CfProxyStore.url.trim().isEmpty;
+  try {
+    botToast(
+      noResolverAvailable
+          ? "Cloudflare check. Add bypass URL: Settings > General."
+          : "Cloudflare verification required (HTTP ${response.statusCode})",
+      // The button opens the webview resolver, which does nothing on Linux.
+      hasCloudFlare: !noResolverAvailable,
+      url: response.request?.url.toString(),
+      maxLines: noResolverAvailable ? 6 : 2,
+    );
+  } catch (e) {
+    throw noResolverAvailable
+        ? "Blocked by Cloudflare.\n\n\nThe in-app resolver is not available on Linux. Set a FlareSolverr or Byparr URL in Settings > General.\n\n\nstatusCode: ${response.statusCode}"
+        : "Failed to bypass Cloudflare.\n\n\nYou can try to bypass it manually in the webview \n\n\nstatusCode: ${response.statusCode}";
   }
 }
 
