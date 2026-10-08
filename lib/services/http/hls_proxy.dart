@@ -112,6 +112,7 @@ class HlsProxyService {
   final _random = Random.secure();
   final _sessions = <String, _HlsProxySession>{};
   HttpServer? _server;
+  Future<HttpServer>? _startingServer;
 
   Future<String> createUrl(
     String upstreamUrl,
@@ -130,10 +131,28 @@ class HlsProxyService {
     return _buildUrl(server, token, upstream, HlsProxyResourceType.playlist);
   }
 
-  Future<HttpServer> _ensureServer() async {
+  Future<HttpServer> _ensureServer() {
     final existing = _server;
-    if (existing != null) return existing;
+    if (existing != null) return Future.value(existing);
+    final starting = _startingServer;
+    if (starting != null) return starting;
 
+    final future = _bindServer();
+    _startingServer = future;
+    unawaited(
+      future.then<void>(
+        (_) {
+          if (identical(_startingServer, future)) _startingServer = null;
+        },
+        onError: (Object _, StackTrace _) {
+          if (identical(_startingServer, future)) _startingServer = null;
+        },
+      ),
+    );
+    return future;
+  }
+
+  Future<HttpServer> _bindServer() async {
     final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     _server = server;
     unawaited(
@@ -187,6 +206,9 @@ class HlsProxyService {
         request.response.headers.contentType = isPlaylist
             ? ContentType('application', 'vnd.apple.mpegurl', charset: 'utf-8')
             : _contentTypeForPath(segments.length >= 2 ? segments[1] : '');
+        if (!isPlaylist && upstreamResponse.contentLength != null) {
+          request.response.contentLength = upstreamResponse.contentLength!;
+        }
         await request.response.close();
         return;
       }
@@ -219,6 +241,9 @@ class HlsProxyService {
         request.response.headers.contentType = _contentTypeForPath(
           segments.length >= 2 ? segments[1] : '',
         );
+        if (upstreamResponse.contentLength != null) {
+          request.response.contentLength = upstreamResponse.contentLength!;
+        }
         await request.response.addStream(upstreamResponse.stream);
       }
       await request.response.close();

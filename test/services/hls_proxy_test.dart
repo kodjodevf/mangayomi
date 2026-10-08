@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -108,6 +109,56 @@ segments/1.ts
     expect(RegExp(r'/segment\.mp4\?url=').allMatches(result), hasLength(3));
   });
 
+  test('proxies disguised fMP4 bytes with a media type and length', () async {
+    final upstream = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+    addTearDown(() => upstream.close(force: true));
+    upstream.listen((request) async {
+      if (request.uri.path == '/master.m3u8') {
+        request.response.write(
+          '#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=1000\nmedia.m3u8\n',
+        );
+      } else if (request.uri.path == '/media.m3u8') {
+        request.response.write(
+          '#EXTM3U\n#EXT-X-MAP:URI="init.html"\n'
+          '#EXTINF:4,\nchunk.html\n',
+        );
+      } else {
+        request.response
+          ..headers.contentType = ContentType.html
+          ..contentLength = 8
+          ..add([0, 0, 0, 16, 109, 111, 111, 102]);
+      }
+      await request.response.close();
+    });
+
+    final client = HttpClient();
+    addTearDown(() => client.close(force: true));
+    final localMaster = await HlsProxyService.instance.createUrl(
+      'http://127.0.0.1:${upstream.port}/master.m3u8',
+      const {},
+    );
+    final master = await _readText(client, localMaster);
+    final localMedia = master
+        .split('\n')
+        .firstWhere((line) => line.startsWith('http://'));
+    final media = await _readText(client, localMedia);
+    final segmentUrl = RegExp(
+      r'http://[^\s"]+/segment\.mp4\?[^\s"]+',
+    ).allMatches(media).last.group(0)!;
+
+    final request = await client.getUrl(Uri.parse(segmentUrl));
+    final response = await request.close();
+    final bytes = await response.fold<int>(
+      0,
+      (total, chunk) => total + chunk.length,
+    );
+
+    expect(response.statusCode, HttpStatus.ok);
+    expect(response.headers.contentType?.mimeType, 'video/mp4');
+    expect(response.contentLength, 8);
+    expect(bytes, 8);
+  });
+
   test('JavaScript extensions can create a loopback HLS URL', () async {
     final runtime = getJavascriptRuntime();
     JsUtils(runtime).init();
@@ -122,4 +173,11 @@ segments/1.ts
     expect(result.stringResult, startsWith('http://127.0.0.1:'));
     expect(result.stringResult, contains('/playlist.m3u8?url='));
   });
+}
+
+Future<String> _readText(HttpClient client, String url) async {
+  final request = await client.getUrl(Uri.parse(url));
+  final response = await request.close();
+  expect(response.statusCode, HttpStatus.ok);
+  return utf8.decoder.bind(response).join();
 }
