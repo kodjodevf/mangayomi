@@ -88,7 +88,6 @@ class _MobileControllerWidgetState
   double? _temporaryPlaybackSpeed;
   double? _temporaryInitialSpeed;
   double? _temporarySpeedOriginY;
-  Offset? _temporarySpeedPosition;
 
   late bool buffering = widget.videoController.player.state.buffering;
   final controlsHoverDuration = const Duration(seconds: 3);
@@ -387,7 +386,6 @@ class _MobileControllerWidgetState
       _temporaryPlaybackSpeed = initialSpeed;
       _temporaryInitialSpeed = initialSpeed;
       _temporarySpeedOriginY = details.localPosition.dy;
-      _temporarySpeedPosition = details.localPosition;
     });
     HapticFeedback.mediumImpact();
     unawaited(widget.videoController.player.setRate(initialSpeed));
@@ -405,7 +403,6 @@ class _MobileControllerWidgetState
     final speedChanged = speed != _temporaryPlaybackSpeed;
     setState(() {
       _temporaryPlaybackSpeed = speed;
-      _temporarySpeedPosition = details.localPosition;
     });
 
     if (speedChanged) {
@@ -425,7 +422,6 @@ class _MobileControllerWidgetState
       _temporaryPlaybackSpeed = null;
       _temporaryInitialSpeed = null;
       _temporarySpeedOriginY = null;
-      _temporarySpeedPosition = null;
     }
 
     if (updateUi && mounted) {
@@ -744,12 +740,10 @@ class _MobileControllerWidgetState
                       ),
                     ],
                   ),
-              if (_temporaryPlaybackSpeed != null &&
-                  _temporarySpeedPosition != null)
+              if (_temporaryPlaybackSpeed != null)
                 Positioned.fill(
                   child: IgnorePointer(
                     child: TemporaryPlaybackSpeedSelector(
-                      position: _temporarySpeedPosition!,
                       speed: _temporaryPlaybackSpeed!,
                     ),
                   ),

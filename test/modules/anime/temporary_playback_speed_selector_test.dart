@@ -13,10 +13,7 @@ void main() {
         supportedLocales: AppLocalizations.supportedLocales,
         home: const Scaffold(
           body: SizedBox.expand(
-            child: TemporaryPlaybackSpeedSelector(
-              position: Offset(120, 160),
-              speed: 2.0,
-            ),
+            child: TemporaryPlaybackSpeedSelector(speed: 2.0),
           ),
         ),
       ),
@@ -30,5 +27,10 @@ void main() {
     expect(find.text('0.75x'), findsNothing);
     expect(find.text('0.5x'), findsNothing);
     expect(find.text('0.25x'), findsNothing);
+
+    final indicator = find.byKey(const ValueKey('temporary-speed-indicator'));
+    expect(tester.getSize(indicator), const Size(58, 34));
+    expect(tester.getCenter(indicator).dx, 400);
+    expect(tester.getTopLeft(indicator).dy, 12);
   });
 }
