@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:mangayomi/modules/anime/utils/temporary_playback_speed.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:flutter/material.dart';
@@ -14,31 +12,21 @@ class TemporaryPlaybackSpeedSelector extends StatelessWidget {
   final Offset position;
   final double speed;
 
-  static const double _width = 88;
-  static const double _edgePadding = 8;
-  static const double _fingerGap = 24;
-  static const double _maximumItemExtent = 34;
+  static const double _width = 76;
+  static const double _height = 48;
+  static const double _edgePadding = 12;
+  static const double _fingerGap = 20;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final selectedIndex = temporaryPlaybackSpeeds.indexOf(speed);
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final availableHeight = math.max(
-          0.0,
-          constraints.maxHeight - (_edgePadding * 2),
-        );
-        final itemExtent = math.min(
-          _maximumItemExtent,
-          availableHeight / temporaryPlaybackSpeeds.length,
-        );
-        final selectorHeight = itemExtent * temporaryPlaybackSpeeds.length;
-        final maxLeft = math.max(
+        final maxLeft = (constraints.maxWidth - _width - _edgePadding).clamp(
           _edgePadding,
-          constraints.maxWidth - _width - _edgePadding,
+          double.infinity,
         );
         final preferredLeft =
             position.dx + _fingerGap + _width <=
@@ -46,13 +34,13 @@ class TemporaryPlaybackSpeedSelector extends StatelessWidget {
             ? position.dx + _fingerGap
             : position.dx - _width - _fingerGap;
         final left = preferredLeft.clamp(_edgePadding, maxLeft).toDouble();
-        final preferredTop =
-            position.dy - (selectedIndex * itemExtent) - (itemExtent / 2);
-        final maxTop = math.max(
+        final maxTop = (constraints.maxHeight - _height - _edgePadding).clamp(
           _edgePadding,
-          constraints.maxHeight - selectorHeight - _edgePadding,
+          double.infinity,
         );
-        final top = preferredTop.clamp(_edgePadding, maxTop).toDouble();
+        final top = (position.dy - (_height / 2))
+            .clamp(_edgePadding, maxTop)
+            .toDouble();
 
         return Stack(
           children: [
@@ -60,6 +48,7 @@ class TemporaryPlaybackSpeedSelector extends StatelessWidget {
               left: left,
               top: top,
               width: _width,
+              height: _height,
               child: Semantics(
                 label:
                     '${context.l10n.playback_speed}: ${temporaryPlaybackSpeedLabel(speed)}',
@@ -70,41 +59,26 @@ class TemporaryPlaybackSpeedSelector extends StatelessWidget {
                   ),
                   elevation: 8,
                   shadowColor: Colors.black.withValues(alpha: 0.45),
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(_height / 2),
                   clipBehavior: Clip.antiAlias,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (final level in temporaryPlaybackSpeeds)
-                        AnimatedContainer(
-                          key: ValueKey('temporary-speed-$level'),
-                          duration: const Duration(milliseconds: 100),
-                          height: itemExtent,
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: level == speed
-                                ? colorScheme.primary
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Text(
-                            temporaryPlaybackSpeedLabel(level),
-                            style: (textTheme.labelLarge ?? const TextStyle())
-                                .copyWith(
-                                  color: level == speed
-                                      ? colorScheme.onPrimary
-                                      : colorScheme.onSurfaceVariant,
-                                  fontWeight: level == speed
-                                      ? FontWeight.w800
-                                      : FontWeight.w500,
-                                  fontFeatures: const [
-                                    FontFeature.tabularFigures(),
-                                  ],
-                                ),
-                          ),
-                        ),
-                    ],
+                  child: Center(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 100),
+                      transitionBuilder: (child, animation) =>
+                          FadeTransition(opacity: animation, child: child),
+                      child: Text(
+                        temporaryPlaybackSpeedLabel(speed),
+                        key: ValueKey(speed),
+                        style: (textTheme.titleMedium ?? const TextStyle())
+                            .copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                              fontWeight: FontWeight.w800,
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                              ],
+                            ),
+                      ),
+                    ),
                   ),
                 ),
               ),
