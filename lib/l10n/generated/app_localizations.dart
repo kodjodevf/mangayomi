@@ -3673,6 +3673,18 @@ abstract class AppLocalizations {
   /// **'Add Repository?'**
   String get add_repo;
 
+  /// No description provided for @add_repo_sources_to_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Extension lists that will be added:'**
+  String get add_repo_sources_to_add;
+
+  /// No description provided for @add_repo_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Extensions from these repositories run inside the app. Only add repositories you trust.'**
+  String get add_repo_warning;
+
   /// No description provided for @genre_search_library.
   ///
   /// In en, this message translates to:
@@ -3942,6 +3954,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'lua code (on startup)'**
   String get custom_buttons_startup;
+
+  /// No description provided for @custom_buttons_add_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'This button runs the Lua code below in the video player, which can access your files and run programs. Only add it if you trust where this link came from.'**
+  String get custom_buttons_add_warning;
 
   /// No description provided for @n_days.
   ///

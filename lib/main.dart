@@ -475,19 +475,50 @@ class _MyAppState extends ConsumerState<MyApp>
           final context = navigatorKey.currentContext;
           if (context == null || !context.mounted) return;
           final l10n = context.l10n;
+          // repo_name and repo_url are only labels the link chooses for
+          // itself; the *_url lists are what actually gets installed. Show
+          // those, or a link can borrow a trusted repo's name for its own.
+          final sourcesToAdd = [
+            for (final url in mangaRepoUrls ?? const <String>[])
+              (l10n.manga, url),
+            for (final url in animeRepoUrls ?? const <String>[])
+              (l10n.anime, url),
+            for (final url in novelRepoUrls ?? const <String>[])
+              (l10n.novel, url),
+          ];
+          if (sourcesToAdd.isEmpty) return;
           showDialog(
             context: navigatorKey.currentContext!,
             builder: (BuildContext context) {
               return AlertDialog(
                 title: Text(l10n.add_repo),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(l10n.label_value(l10n.name, repoName ?? l10n.unknown)),
-                    const SizedBox(height: 8),
-                    Text(l10n.label_value(l10n.url, repoUrl ?? l10n.unknown)),
-                  ],
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        l10n.label_value(l10n.name, repoName ?? l10n.unknown),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(l10n.label_value(l10n.url, repoUrl ?? l10n.unknown)),
+                      const SizedBox(height: 16),
+                      Text(l10n.add_repo_sources_to_add),
+                      const SizedBox(height: 4),
+                      for (final (type, url) in sourcesToAdd)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: SelectableText(l10n.label_value(type, url)),
+                        ),
+                      const SizedBox(height: 16),
+                      Text(
+                        l10n.add_repo_warning,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 actions: [
                   TextButton(
@@ -569,24 +600,66 @@ class _MyAppState extends ConsumerState<MyApp>
           }
           final l10n = context.l10n;
           for (final buttonRaw in buttonDataRaw) {
-            final buttonData = jsonDecode(
-              utf8.decode(base64.decode(buttonRaw)),
-            );
+            final Object? buttonData;
+            try {
+              buttonData = jsonDecode(utf8.decode(base64.decode(buttonRaw)));
+            } catch (_) {
+              continue;
+            }
             if (buttonData is Map<String, dynamic>) {
               final customButton = CustomButton.fromJson(buttonData);
+              // The button's code becomes an mpv Lua script, which can touch
+              // the filesystem and spawn processes. Show every line of it
+              // before it is saved, not just the title the link picked.
+              final codeSections = [
+                (l10n.custom_buttons_js_code, customButton.codePress),
+                (l10n.custom_buttons_js_code_long, customButton.codeLongPress),
+                (l10n.custom_buttons_startup, customButton.codeStartup),
+              ].where((s) => s.$2?.trim().isNotEmpty ?? false);
               await showDialog(
                 context: navigatorKey.currentContext!,
                 builder: (BuildContext context) {
                   return AlertDialog(
                     title: Text(l10n.custom_buttons_add),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${l10n.name}: ${customButton.title ?? 'Unknown'}",
-                        ),
-                      ],
+                    content: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.label_value(
+                              l10n.name,
+                              customButton.title ?? l10n.unknown,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            l10n.custom_buttons_add_warning,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                          ),
+                          for (final (label, code) in codeSections) ...[
+                            const SizedBox(height: 16),
+                            Text(label),
+                            const SizedBox(height: 4),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(8),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainerHighest,
+                              child: SelectableText(
+                                code!,
+                                style: const TextStyle(
+                                  fontFamily: 'monospace',
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
                     actions: [
                       TextButton(
@@ -622,8 +695,8 @@ class _MyAppState extends ConsumerState<MyApp>
   Future<bool> _checkValidUrls(List<String> urls) async {
     final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
     for (final url in urls) {
-      final req = await http.get(Uri.parse(url));
       try {
+        final req = await http.get(Uri.parse(url));
         final sourceList = (jsonDecode(req.body) as List).map(
           (e) => Source.fromJson(e),
         );
