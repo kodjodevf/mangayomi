@@ -401,14 +401,14 @@ class _MobileControllerWidgetState
       verticalDelta: details.localPosition.dy - originY,
     );
     final speedChanged = speed != _temporaryPlaybackSpeed;
+    if (!speedChanged) return;
+
     setState(() {
       _temporaryPlaybackSpeed = speed;
     });
 
-    if (speedChanged) {
-      HapticFeedback.selectionClick();
-      unawaited(widget.videoController.player.setRate(speed));
-    }
+    HapticFeedback.selectionClick();
+    unawaited(widget.videoController.player.setRate(speed));
   }
 
   void _restorePlaybackSpeed({bool updateUi = true}) {
@@ -529,6 +529,13 @@ class _MobileControllerWidgetState
                                 ),
                               ),
                             ],
+                            Positioned.fill(
+                              child: Listener(
+                                behavior: HitTestBehavior.translucent,
+                                onPointerCancel: (_) => _restorePlaybackSpeed(),
+                                child: const SizedBox.expand(),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -593,7 +600,13 @@ class _MobileControllerWidgetState
                             setVolume(result);
                           }
                         },
-                        child: Container(color: const Color(0x00000000)),
+                        child: Listener(
+                          // A platform interruption can cancel the pointer
+                          // after Flutter has accepted the long press.
+                          behavior: HitTestBehavior.translucent,
+                          onPointerCancel: (_) => _restorePlaybackSpeed(),
+                          child: Container(color: const Color(0x00000000)),
+                        ),
                       ),
                     ),
                     if (mount)

@@ -20,6 +20,7 @@ class TemporaryPlaybackSpeedSelector extends StatelessWidget {
       child: Align(
         alignment: Alignment.topCenter,
         child: Semantics(
+          container: true,
           label:
               '${context.l10n.playback_speed}: ${temporaryPlaybackSpeedLabel(speed)}',
           liveRegion: true,
