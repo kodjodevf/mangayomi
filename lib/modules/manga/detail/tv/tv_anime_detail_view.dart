@@ -20,6 +20,7 @@ import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/utils.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 /// TV-only, d-pad-first anime detail. Equal split, screen-padded: the hero
 /// (cover, title, meta, synopsis) and a vertical list of actions on the left,
@@ -275,7 +276,9 @@ class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
   void _toggleLibrary() {
     final model = manga;
     model.favorite = !(model.favorite ?? false);
-    model.dateAdded = model.favorite! ? DateTime.now().millisecondsSinceEpoch : 0;
+    model.dateAdded = model.favorite!
+        ? DateTime.now().millisecondsSinceEpoch
+        : 0;
     mangaRepository.save(model);
     setState(() {});
   }
@@ -605,49 +608,49 @@ class _LeftInfo extends StatelessWidget {
                       focusNode: actionFocus[2],
                       accent: accent,
                       icon: Icons.label_outline,
-                      label: 'Categories',
+                      label: context.l10n.categories,
                       onPressed: onCategories,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[8],
                       accent: accent,
                       icon: Icons.sync_alt,
-                      label: 'Tracking',
+                      label: context.l10n.tracking,
                       onPressed: onTracking,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[3],
                       accent: accent,
                       icon: Icons.public,
-                      label: 'Open in browser',
+                      label: context.l10n.open_in_browser,
                       onPressed: onBrowser,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[4],
                       accent: accent,
                       icon: Icons.recommend_outlined,
-                      label: 'Recommendations',
+                      label: context.l10n.recommendations,
                       onPressed: onRecommendations,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[5],
                       accent: accent,
                       icon: Icons.format_list_numbered,
-                      label: 'Watch order',
+                      label: context.l10n.watch_order,
                       onPressed: onWatchOrder,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[6],
                       accent: accent,
                       icon: Icons.swap_horiz,
-                      label: 'Migrate',
+                      label: context.l10n.migrate,
                       onPressed: onMigrate,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[7],
                       accent: accent,
                       icon: Icons.dynamic_feed,
-                      label: 'Migrate source',
+                      label: context.l10n.migrate_source,
                       onPressed: onMassMigrate,
                     ),
                   ],

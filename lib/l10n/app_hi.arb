@@ -569,6 +569,7 @@
   "app_locked": "मैंगायोमी लॉक है",
   "auth_to_continue": "जारी रखने के लिए प्रमाणित करें",
   "authenticating": "प्रमाणीकरण चल रहा है...",
+  "lock": "लॉक करें",
   "unlock": "अनलॉक करें",
   "security": "सुरक्षा",
   "auth_to_change_security_setting": "सुरक्षा सेटिंग्स बदलने के लिए प्रमाणित करें",

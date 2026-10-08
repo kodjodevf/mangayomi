@@ -276,16 +276,16 @@ class _SubtitleAppearanceWidgetState
                   ),
                 ),
                 SegmentedButton<String>(
-                  segments: const [
+                  segments: [
                     ButtonSegment(
                       value: 'bold',
-                      icon: Icon(Icons.format_bold, size: 18),
-                      tooltip: 'Bold',
+                      icon: const Icon(Icons.format_bold, size: 18),
+                      tooltip: context.l10n.bold,
                     ),
                     ButtonSegment(
                       value: 'italic',
-                      icon: Icon(Icons.format_italic, size: 18),
-                      tooltip: 'Italic',
+                      icon: const Icon(Icons.format_italic, size: 18),
+                      tooltip: context.l10n.italic,
                     ),
                   ],
                   selected: {
@@ -381,32 +381,32 @@ class _SubtitleAppearanceWidgetState
               children: [
                 _PresetChip(
                   color: const Color(0xFFFFFFFF),
-                  tooltip: 'White',
+                  tooltip: context.l10n.white,
                   onTap: () => _applyPresetColor(255, 255, 255),
                 ),
                 _PresetChip(
                   color: const Color(0xFFFFEB3B),
-                  tooltip: 'Yellow',
+                  tooltip: context.l10n.color_yellow,
                   onTap: () => _applyPresetColor(255, 235, 59),
                 ),
                 _PresetChip(
                   color: const Color(0xFF00E5FF),
-                  tooltip: 'Cyan',
+                  tooltip: context.l10n.color_cyan,
                   onTap: () => _applyPresetColor(0, 229, 255),
                 ),
                 _PresetChip(
                   color: const Color(0xFF69F0AE),
-                  tooltip: 'Green',
+                  tooltip: context.l10n.color_green,
                   onTap: () => _applyPresetColor(105, 240, 174),
                 ),
                 _PresetChip(
                   color: const Color(0xFFFFAB40),
-                  tooltip: 'Orange',
+                  tooltip: context.l10n.color_orange,
                   onTap: () => _applyPresetColor(255, 171, 64),
                 ),
                 _PresetChip(
                   color: const Color(0xFF000000),
-                  tooltip: 'Black',
+                  tooltip: context.l10n.black,
                   onTap: () => _applyPresetColor(0, 0, 0),
                 ),
               ],

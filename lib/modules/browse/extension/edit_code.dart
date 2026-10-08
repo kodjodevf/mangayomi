@@ -488,7 +488,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                                   onPressed: () async {
                                     source?.sourceCode = _controller.text;
                                     if (source != null && context.mounted) {
-                                      sourceRepository.save(source!);
+                                      await sourceRepository.save(source!);
                                     }
                                     setState(() {
                                       result = null;
@@ -892,7 +892,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                               size: 18,
                               color: Colors.grey,
                             ),
-                            tooltip: 'Clear logs',
+                            tooltip: context.l10n.clear_logs,
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(),
                             onPressed: () {

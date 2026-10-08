@@ -928,6 +928,7 @@
   "app_locked": "Mangayomi가 잠겨있습니다",
   "auth_to_continue": "계속하려면 인증하세요",
   "authenticating": "인증 중...",
+  "lock": "잠금",
   "unlock": "잠금 해제",
   "security": "보안",
   "auth_to_change_security_setting": "보안 설정을 변경하려면 인증하세요",

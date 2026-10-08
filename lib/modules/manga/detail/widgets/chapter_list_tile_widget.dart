@@ -357,7 +357,7 @@ class ChapterListTileWidget extends ConsumerWidget {
       case ChapterSwipeAction.toggleBookmark:
         final chap = chapter;
         chap.isBookmarked = !chap.isBookmarked!;
-        chapterRepository.save(chap);
+        await chapterRepository.save(chap);
         break;
       case ChapterSwipeAction.toggleRead:
         final chap = chapter;
@@ -365,7 +365,7 @@ class ChapterListTileWidget extends ConsumerWidget {
         if (!chap.isRead!) {
           chap.lastPageRead = "1";
         }
-        chapterRepository.save(chap);
+        await chapterRepository.save(chap);
         break;
       case ChapterSwipeAction.download:
         final download = downloadRepository.getByChapterId(chapter.id);

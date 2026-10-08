@@ -104,7 +104,7 @@ class AppearanceScreen extends ConsumerWidget {
                 if (isTv)
                   SwitchListTile(
                     secondary: const Icon(Icons.grid_view_outlined),
-                    title: const Text('TV home (beta)'),
+                    title: Text(context.l10n.tv_home_beta),
                     subtitle: const Text(
                       'Rows-based anime home (Continue · New Episodes · '
                       'categories) instead of the flat grid',

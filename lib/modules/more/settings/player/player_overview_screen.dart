@@ -26,7 +26,7 @@ class PlayerOverviewScreen extends StatelessWidget {
                   final useTvPlayer = ref.watch(tvPlayerStyleProvider);
                   return SwitchListTile(
                     secondary: const Icon(Icons.smart_display_outlined),
-                    title: const Text('TV player (beta)'),
+                    title: Text(context.l10n.tv_player_beta),
                     subtitle: const Text(
                       'On: dedicated TV player.  Off: original (desktop) player.',
                     ),

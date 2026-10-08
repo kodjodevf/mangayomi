@@ -13,6 +13,7 @@ import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 /// Resolves the correct [ImageProvider] for a manga entry, preferring a custom
 /// local cover over the remote URL. Remote covers are wrapped in
@@ -165,7 +166,7 @@ class LibraryBadgeWidget extends ConsumerWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (hasLocal) const EntryBadgeChip(label: 'Local'),
+          if (hasLocal) EntryBadgeChip(label: context.l10n.local),
           if (downloadCount > 0)
             EntryBadgeChip(label: downloadCount.toString()),
           if (unreadCount > 0)

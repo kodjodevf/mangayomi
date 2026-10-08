@@ -11,6 +11,6 @@ Future<void> migration(Ref ref) async {
   final orphanedLocalIds = sourceRepository.getOrphanedLocalIds();
 
   if (orphanedLocalIds.isNotEmpty) {
-    sourceRepository.deleteAll(orphanedLocalIds);
+    await sourceRepository.deleteAll(orphanedLocalIds);
   }
 }

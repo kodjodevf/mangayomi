@@ -613,14 +613,14 @@ class _DisplayTab extends ConsumerWidget {
           if (isTv && itemType == ItemType.anime) ...[
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
-              child: Row(children: [const Text('Rows')]),
+              child: Row(children: [Text(context.l10n.tv_home_rows)]),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 5),
               child: Column(
                 children: [
                   ListTileChapterFilter(
-                    label: 'Genre rows',
+                    label: context.l10n.genre_rows,
                     type: ref.watch(tvHomeGenreRowsProvider) ? 1 : 0,
                     onTap: () => ref
                         .read(tvHomeGenreRowsProvider.notifier)

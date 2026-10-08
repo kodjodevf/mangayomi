@@ -82,7 +82,7 @@ Widget btnToShowChapterListDialog(
                             Icons.close_rounded,
                             color: context.primaryColor.withValues(alpha: 0.7),
                           ),
-                          tooltip: 'Fermer',
+                          tooltip: context.l10n.close,
                         ),
                       ],
                     ),

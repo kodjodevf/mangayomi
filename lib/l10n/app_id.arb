@@ -569,6 +569,7 @@
   "app_locked": "Mangayomi terkunci",
   "auth_to_continue": "Autentikasi untuk melanjutkan",
   "authenticating": "Mengautentikasi...",
+  "lock": "Kunci",
   "unlock": "Buka",
   "security": "Keamanan",
   "auth_to_change_security_setting": "Autentikasi untuk mengubah pengaturan keamanan",

@@ -571,6 +571,7 @@
   "app_locked": "Mangayomi مقفول",
   "auth_to_continue": "المصادقة للمتابعة",
   "authenticating": "جاري المصادقة...",
+  "lock": "قفل",
   "unlock": "فتح القفل",
   "security": "الأمان",
   "auth_to_change_security_setting": "المصادقة لتغيير إعدادات الأمان",

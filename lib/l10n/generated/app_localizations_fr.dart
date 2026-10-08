@@ -3475,4 +3475,95 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get chapter_swipe_disabled => 'Désactivé';
+
+  @override
+  String get update_errors => 'Erreurs de mise à jour';
+
+  @override
+  String get no_update_errors => 'Aucune erreur de mise à jour';
+
+  @override
+  String get clear_all => 'Tout effacer';
+
+  @override
+  String get dismiss => 'Ignorer';
+
+  @override
+  String get previous_episode => 'Épisode précédent';
+
+  @override
+  String get clear_logs => 'Effacer les journaux';
+
+  @override
+  String get bold => 'Gras';
+
+  @override
+  String get italic => 'Italique';
+
+  @override
+  String get color_yellow => 'Jaune';
+
+  @override
+  String get color_cyan => 'Cyan';
+
+  @override
+  String get color_green => 'Vert';
+
+  @override
+  String get color_orange => 'Orange';
+
+  @override
+  String get continue_watching => 'Continuer à regarder';
+
+  @override
+  String get search_your_anime => 'Rechercher dans vos animes';
+
+  @override
+  String get category => 'Catégorie';
+
+  @override
+  String get hidden_categories => 'Catégories masquées';
+
+  @override
+  String get new_category => 'Nouvelle catégorie';
+
+  @override
+  String get local => 'Local';
+
+  @override
+  String get tv_home_rows => 'Rangées';
+
+  @override
+  String get genre_rows => 'Rangées par genre';
+
+  @override
+  String get share_backup_file => 'Partager le fichier de sauvegarde Mangayomi';
+
+  @override
+  String get close => 'Fermer';
+
+  @override
+  String get migrate_source => 'Migrer la source';
+
+  @override
+  String get cloudflare_bypass_proxy => 'Proxy de contournement Cloudflare';
+
+  @override
+  String get custom_doh_url => 'URL DoH personnalisée';
+
+  @override
+  String get custom_doh_url_helper =>
+      'Doit être un point d\'accès DoH (JSON) en https';
+
+  @override
+  String get anime_only_tv_layout => 'Disposition TV anime uniquement';
+
+  @override
+  String get anime_only_beta => 'Anime uniquement (bêta)';
+
+  @override
+  String get tv_home_beta => 'Accueil TV (bêta)';
+
+  @override
+  String get tv_player_beta => 'Lecteur TV (bêta)';
 }

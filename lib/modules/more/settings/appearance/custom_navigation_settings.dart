@@ -32,7 +32,7 @@ class _CustomNavigationSettingsState
               children: [
                 SwitchListTile(
                   value: ref.watch(animeOnlyTvModeProvider),
-                  title: const Text('Anime-only TV layout'),
+                  title: Text(context.l10n.anime_only_tv_layout),
                   subtitle: const Text(
                     'Hide the manga & novel libraries (on by default on TV)',
                   ),

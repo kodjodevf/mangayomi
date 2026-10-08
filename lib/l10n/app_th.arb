@@ -572,6 +572,7 @@
   "app_locked": "Mangayomi ถูกล็อก",
   "auth_to_continue": "ยืนยันตัวตนเพื่อดำเนินการต่อ",
   "authenticating": "กำลังยืนยันตัวตน...",
+  "lock": "ล็อก",
   "unlock": "ปลดล็อก",
   "security": "ความปลอดภัย",
   "auth_to_change_security_setting": "ยืนยันตัวตนเพื่อเปลี่ยนการตั้งค่าความปลอดภัย",

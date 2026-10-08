@@ -569,6 +569,7 @@
   "app_locked": "Mangayomi è bloccato",
   "auth_to_continue": "Autenticati per continuare",
   "authenticating": "Autenticazione in corso...",
+  "lock": "Blocca",
   "unlock": "Sblocca",
   "security": "Sicurezza",
   "auth_to_change_security_setting": "Autenticati per modificare le impostazioni di sicurezza",
