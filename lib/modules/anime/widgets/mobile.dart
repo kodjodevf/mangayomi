@@ -1,6 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +8,7 @@ import 'package:mangayomi/modules/anime/providers/anime_player_controller_provid
 import 'package:mangayomi/modules/anime/utils/temporary_playback_speed.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
+import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
@@ -611,45 +611,23 @@ class _MobileControllerWidgetState
                     ),
                     if (mount)
                       if (widget.isLocked?.value == true)
-                        Positioned(
-                          top:
-                              (isFullscreen(context)
-                                  ? MediaQuery.of(context).padding.top
-                                  : 0) +
-                              16,
-                          left:
-                              (isFullscreen(context)
-                                  ? MediaQuery.of(context).padding.left
-                                  : 0) +
-                              16,
-                          child: IconButton.filledTonal(
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.black.withValues(
-                                alpha: 0.55,
-                              ),
-                              foregroundColor: Colors.white,
-                            ),
+                        Positioned.fill(
+                          child: MobilePlayerUnlockControl(
                             tooltip: context.l10n.unlock,
                             onPressed: () {
                               HapticFeedback.lightImpact();
                               widget.isLocked?.value = false;
                               _restartHideTimer();
                             },
-                            icon: const Icon(Icons.lock_outline, size: 24),
                           ),
                         )
                       else
                         Padding(
-                          padding:
-                              (
-                              // Add padding in fullscreen!
-                              isFullscreen(context)
-                              ? MediaQuery.of(context).padding
-                              : Platform.isIOS
-                              ? EdgeInsets.only(
-                                  bottom: MediaQuery.of(context).padding.bottom,
-                                )
-                              : EdgeInsets.zero),
+                          padding: EdgeInsets.only(
+                            left: MediaQuery.viewPaddingOf(context).left,
+                            right: MediaQuery.viewPaddingOf(context).right,
+                            bottom: MediaQuery.viewPaddingOf(context).bottom,
+                          ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -817,6 +795,8 @@ class _MobileControllerWidgetState
                     child: MediaIndicatorBuilder(
                       value: _volumeValue,
                       isVolumeIndicator: true,
+                      adaptiveMobilePlacement: true,
+                      showAtZero: true,
                     ),
                   ),
                 ),
@@ -832,6 +812,8 @@ class _MobileControllerWidgetState
                     child: MediaIndicatorBuilder(
                       value: _brightnessValue,
                       isVolumeIndicator: false,
+                      adaptiveMobilePlacement: true,
+                      showAtZero: true,
                     ),
                   ),
                 ),

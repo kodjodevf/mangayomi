@@ -1,30 +1,51 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 class MediaIndicatorBuilder extends StatelessWidget {
   final bool isVolumeIndicator;
+  final bool adaptiveMobilePlacement;
+  final bool showAtZero;
   final ValueNotifier<double> value;
   const MediaIndicatorBuilder({
     super.key,
     required this.value,
     required this.isVolumeIndicator,
+    this.adaptiveMobilePlacement = false,
+    this.showAtZero = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final mediaQuery = MediaQuery.of(context);
+    final portraitTop = math.max(
+      mediaQuery.viewPadding.top + 72,
+      mediaQuery.size.height * 0.18,
+    );
+    final top = adaptiveMobilePlacement
+        ? (MediaQuery.orientationOf(context) == Orientation.portrait
+              ? portraitTop.clamp(0.0, 240.0).toDouble()
+              : mediaQuery.viewPadding.top + 72)
+        : 80.0;
 
     return ValueListenableBuilder(
       valueListenable: value,
       builder: (context, value, child) => Visibility(
-        visible: value > 0,
+        visible: showAtZero || value > 0,
         child: IgnorePointer(
           child: Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: const EdgeInsets.only(top: 80),
+              padding: EdgeInsets.only(top: top),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
+                  key: ValueKey(
+                    isVolumeIndicator
+                        ? 'volume-indicator-card'
+                        : 'brightness-indicator-card',
+                  ),
                   height: 42,
                   width: 210,
                   decoration: BoxDecoration(

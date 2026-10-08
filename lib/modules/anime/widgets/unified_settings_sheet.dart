@@ -358,6 +358,10 @@ class PlayerPillButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         onTap: onTap,
         child: Container(
+          constraints: isCompact
+              ? const BoxConstraints(minWidth: 44, minHeight: 44)
+              : null,
+          alignment: Alignment.center,
           padding: EdgeInsets.symmetric(horizontal: padH, vertical: padV),
           decoration: BoxDecoration(
             color: bgColor,
@@ -368,7 +372,7 @@ class PlayerPillButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) ...[
-                Icon(icon, size: isCompact ? 14 : 15, color: fgColor),
+                Icon(icon, size: isCompact ? 18 : 15, color: fgColor),
                 if (label != null) SizedBox(width: isCompact ? 4 : 6),
               ],
               if (label != null)
@@ -377,7 +381,7 @@ class PlayerPillButton extends StatelessWidget {
                   style: (textTheme.labelMedium ?? const TextStyle()).copyWith(
                     fontWeight: FontWeight.w600,
                     color: fgColor,
-                    fontSize: isCompact ? 11 : null,
+                    fontSize: isCompact ? 12 : null,
                     fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),

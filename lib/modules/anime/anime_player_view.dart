@@ -43,6 +43,7 @@ import 'package:mangayomi/modules/anime/widgets/subtitle_section_widget.dart';
 import 'package:mangayomi/utils/manga_cover_actions.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
+import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/anime/widgets/unified_settings_sheet.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
@@ -2144,7 +2145,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: SizedBox(
-        height: 35,
+        height: 44,
         child: ValueListenableBuilder(
           valueListenable: _customButton,
           builder: (context, value, child) => (value?.visible ?? true)
@@ -2181,7 +2182,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       child: SizedBox(
-        height: 35,
+        height: 44,
         child: ValueListenableBuilder(
           valueListenable: _currentChapterMark,
           builder: (context, value, child) => value != null
@@ -2273,39 +2274,25 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     ];
   }
 
-
   Widget _mobileBottomButtonBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              children: [
-                IconButton(
-                  tooltip: context.l10n.lock,
-                  icon: const Icon(
-                    Icons.lock_open_outlined,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    _isLocked.value = true;
-                  },
-                ),
-                _seekToWidget(),
-                _chapterMarkWidget(),
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    reverse: true,
-                    child: _buildSettingsButtons(context),
-                  ),
-                ),
-              ],
+          MobilePlayerBottomControlsLayout(
+            lockButton: IconButton(
+              key: const ValueKey('mobile-player-lock-button'),
+              tooltip: context.l10n.lock,
+              icon: const Icon(Icons.lock_open_outlined, color: Colors.white),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                _isLocked.value = true;
+              },
             ),
+            seekButton: _seekToWidget(),
+            chapterButton: _chapterMarkWidget(),
+            shortcutButtons: _buildSettingsButtons(context),
           ),
         ],
       ),
@@ -2479,11 +2466,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   Widget _topButtonBar(BuildContext context) {
-    final fullScreen = ref.watch(fullscreenProvider);
-    return Padding(
-      padding: EdgeInsets.only(
-        top: !isDesktop && !fullScreen ? MediaQuery.of(context).padding.top : 0,
-      ),
+    return MobilePlayerTopSafeArea(
+      isDesktop: isDesktop,
       child: Row(
         children: [
           BackButton(color: Colors.white, onPressed: _goBackToDetail),
