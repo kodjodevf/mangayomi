@@ -19,6 +19,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/sync_preference.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
+import 'package:mangayomi/models/tracker_library_cache.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -336,6 +337,7 @@ class StorageProvider {
         SourcePreferenceSchema,
         SourcePreferenceStringValueSchema,
         BackupPasswordFallbackSchema,
+        TrackerLibraryCacheSchema,
       ],
       directory: dir!.path,
       name: "mangayomiDb",
