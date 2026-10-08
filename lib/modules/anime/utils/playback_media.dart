@@ -18,10 +18,11 @@ Media playbackMedia(
     return Media(resource, httpHeaders: httpHeaders, start: start);
   }
 
-  return Media(
-    localFileUri(resource, windows: windows ?? Platform.isWindows),
+  return _LocalFileMedia(
+    resource,
     httpHeaders: httpHeaders,
     start: start,
+    windows: windows ?? Platform.isWindows,
   );
 }
 
@@ -31,4 +32,59 @@ String localFileUri(String resource, {required bool windows}) {
     return uri.toString();
   }
   return Uri.file(resource, windows: windows).toString();
+}
+
+// Media's constructors are not extendable, so implement its interface instead.
+class _LocalFileMedia implements Media {
+  _LocalFileMedia(
+    String resource, {
+    this.httpHeaders,
+    this.start,
+    this.end,
+    this.extras,
+    required bool windows,
+  }) : uri = localFileUri(resource, windows: windows);
+
+  @override
+  final String uri;
+
+  @override
+  final Map<String, dynamic>? extras;
+
+  @override
+  final Map<String, String>? httpHeaders;
+
+  @override
+  final Duration? start;
+
+  @override
+  final Duration? end;
+
+  @override
+  Media copyWith({
+    String? uri,
+    Map<String, dynamic>? extras,
+    Map<String, String>? httpHeaders,
+    Duration? start,
+    Duration? end,
+  }) {
+    return _LocalFileMedia(
+      uri ?? this.uri,
+      extras: extras ?? this.extras,
+      httpHeaders: httpHeaders ?? this.httpHeaders,
+      start: start ?? this.start,
+      end: end ?? this.end,
+      windows: false,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) => other is Media && other.uri == uri;
+
+  @override
+  int get hashCode => uri.hashCode;
+
+  @override
+  String toString() =>
+      'Media($uri, extras: $extras, httpHeaders: $httpHeaders, start: $start, end: $end)';
 }
