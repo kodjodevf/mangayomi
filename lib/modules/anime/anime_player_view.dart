@@ -2445,7 +2445,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   children: [
                     if (_streamController.hasPreviousEpisode)
                       IconButton(
-                        tooltip: 'Previous episode',
+                        tooltip: context.l10n.previous_episode,
                         onPressed: () {
                           pushToNewEpisode(
                             context,
@@ -2460,7 +2460,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     CustomPlayOrPauseButton(controller: _controller),
                     if (hasNextEpisode)
                       IconButton(
-                        tooltip: 'Next episode',
+                        tooltip: context.l10n.next_episode,
                         onPressed: () async {
                           pushToNewEpisode(
                             context,
@@ -2705,7 +2705,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             builder: (context, fit, _) => PlayerPillButton(
               icon: Icons.fit_screen_outlined,
               label: _fitShortLabel(fit),
-              tooltip: 'Fit screen',
+              tooltip: context.l10n.scale_type_fit_screen,
               isCompact: isMobile,
               onTap: () => _changeFitLabel(ref),
             ),

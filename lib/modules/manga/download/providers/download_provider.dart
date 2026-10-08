@@ -409,7 +409,7 @@ Future<void> downloadChapter(
           !mp4FileExist && itemType == ItemType.anime ||
           !htmlFileExist && itemType == ItemType.novel) {
         final mainDirectory = (await storageProvider.getDirectory())!;
-        storageProvider.createDirectorySafely(mainDirectory.path);
+        await storageProvider.createDirectorySafely(mainDirectory.path);
         for (var index = 0; index < pageUrls.length; index++) {
           if (Platform.isAndroid) {
             if (!(await File(p.join(mainDirectory.path, ".nomedia"))

@@ -68,7 +68,7 @@ Future<void> doBackUp(
                 ShareParams(
                   files: [XFile(zipPath)],
                   subject: p.basename(zipPath),
-                  title: "Share Mangayomi backup file",
+                  title: context.l10n.share_backup_file,
                   sharePositionOrigin: box == null
                       ? null
                       : box.localToGlobal(Offset.zero) & box.size,

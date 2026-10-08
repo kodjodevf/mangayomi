@@ -6,6 +6,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/migrate_screen.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/services/update_errors_provider.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 /// Persistent list of the last library update's failures. Each entry can be
 /// dismissed or migrated away, so recurring source failures don't have to be
@@ -18,18 +19,18 @@ class UpdateErrorsScreen extends ConsumerWidget {
     final errors = ref.watch(updateErrorsProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Update errors'),
+        title: Text(context.l10n.update_errors),
         actions: [
           if (errors.isNotEmpty)
             IconButton(
-              tooltip: 'Clear all',
+              tooltip: context.l10n.clear_all,
               icon: const Icon(Icons.clear_all),
               onPressed: () => ref.read(updateErrorsProvider.notifier).clear(),
             ),
         ],
       ),
       body: errors.isEmpty
-          ? const Center(child: Text('No update errors'))
+          ? Center(child: Text(context.l10n.no_update_errors))
           : ListView.builder(
               itemCount: errors.length,
               itemBuilder: (context, index) {
@@ -52,7 +53,7 @@ class UpdateErrorsScreen extends ConsumerWidget {
                     children: [
                       if (manga != null)
                         IconButton(
-                          tooltip: 'Migrate',
+                          tooltip: context.l10n.migrate,
                           icon: const Icon(Icons.swap_horiz),
                           onPressed: () => Navigator.push(
                             context,
@@ -62,7 +63,7 @@ class UpdateErrorsScreen extends ConsumerWidget {
                           ),
                         ),
                       IconButton(
-                        tooltip: 'Dismiss',
+                        tooltip: context.l10n.dismiss,
                         icon: const Icon(Icons.close),
                         onPressed: () => ref
                             .read(updateErrorsProvider.notifier)

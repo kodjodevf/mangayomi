@@ -569,6 +569,7 @@
   "app_locked": "Mangayomi লক কৰা আছে",
   "auth_to_continue": "অব্যাহত ৰাখিবলৈ প্রমাণ কৰক",
   "authenticating": "প্রমাণ কৰা হৈ আছে...",
+  "lock": "লক কৰক",
   "unlock": "আনলক",
   "security": "নিৰাপত্তা",
   "auth_to_change_security_setting": "নিৰাপত্তা সেটিং পৰিৱৰ্তন কৰিবলৈ প্রমাণ কৰক",

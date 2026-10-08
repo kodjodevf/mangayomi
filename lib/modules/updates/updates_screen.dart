@@ -63,7 +63,7 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
       if (ref.watch(updateErrorsProvider).isNotEmpty)
         IconButton(
           splashRadius: 20,
-          tooltip: 'Update errors',
+          tooltip: context.l10n.update_errors,
           icon: Icon(
             Icons.error_outline,
             color: Theme.of(context).colorScheme.error,
@@ -203,8 +203,7 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
                 .toSet()
                 .toList();
             final mangaById = {
-              for (final m in mangaRepository.getAllByIds(mangaIds))
-                m?.id!: m!,
+              for (final m in mangaRepository.getAllByIds(mangaIds)) m?.id!: m!,
             };
 
             // Both maps above skip an entry that no longer resolves, and the

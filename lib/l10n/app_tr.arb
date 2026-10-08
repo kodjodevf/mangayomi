@@ -569,6 +569,7 @@
   "app_locked": "Mangayomi kilitli",
   "auth_to_continue": "Devam etmek için kimliğinizi doğrulayın",
   "authenticating": "Kimlik doğrulanıyor...",
+  "lock": "Kilitle",
   "unlock": "Kilit Aç",
   "security": "Güvenlik",
   "auth_to_change_security_setting": "Güvenlik ayarlarını değiştirmek için kimliğinizi doğrulayın",

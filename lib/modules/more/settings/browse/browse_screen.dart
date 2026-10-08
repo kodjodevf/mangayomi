@@ -42,7 +42,7 @@ class BrowseSScreen extends ConsumerWidget {
             // TV-only gates (shows manga & novel again across the app).
             if (isTv)
               SwitchListTile(
-                title: const Text('Anime only (beta)'),
+                title: Text(context.l10n.anime_only_beta),
                 subtitle: const Text(
                   'Hide manga & novel across the app. Turn off to show everything.',
                 ),
@@ -452,14 +452,16 @@ void _showClearLibraryDialog(BuildContext context, WidgetRef ref) {
                         : () {
                             final mangasList = mangaRepository
                                 .getByItemTypeNames(
-                                  textController.text.split(",").map(
-                                    (e) => switch (e) {
-                                      "manga" => ItemType.manga,
-                                      "anime" => ItemType.anime,
-                                      "novel" => ItemType.novel,
-                                      _ => null,
-                                    },
-                                  ),
+                                  textController.text
+                                      .split(",")
+                                      .map(
+                                        (e) => switch (e) {
+                                          "manga" => ItemType.manga,
+                                          "anime" => ItemType.anime,
+                                          "novel" => ItemType.novel,
+                                          _ => null,
+                                        },
+                                      ),
                                 );
                             mangaRepository.wipeMangas(ref, mangasList);
                             botToast(
@@ -508,7 +510,8 @@ void _showClearLocalLibraryDialog(BuildContext context, WidgetRef ref) {
               ),
               TextButton(
                 onPressed: () {
-                  final mangasList = mangaRepository.getBySourceLocalOrArchive();
+                  final mangasList = mangaRepository
+                      .getBySourceLocalOrArchive();
                   mangaRepository.wipeMangas(ref, mangasList);
                   botToast(context.l10n.cleaned_database(mangasList.length));
                   Navigator.pop(context);

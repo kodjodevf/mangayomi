@@ -32,6 +32,7 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 // Poster width per density scale (0 compact · 1 comfortable · 2 large); row
 // height keeps a poster-plus-title aspect.
@@ -550,7 +551,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
                       child: FocusScope(
                         node: _scopeRows[0],
                         child: _TvHomeRow(
-                          title: 'Continue Watching',
+                          title: context.l10n.continue_watching,
                           items: catContinue,
                         ),
                       ),
@@ -692,7 +693,7 @@ class _TvHomeTopBar extends StatelessWidget {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  hintText: 'Search your anime',
+                  hintText: context.l10n.search_your_anime,
                   prefixIcon: const Icon(Icons.search, size: 20),
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 12,
@@ -1347,7 +1348,7 @@ class _CategoryPillsState extends State<_CategoryPills> {
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
                     child: TvPill(
-                      label: 'Category',
+                      label: context.l10n.category,
                       icon: Icons.add,
                       onTap: () =>
                           _showAddCategoryDialog(context, widget.categories),
@@ -1380,7 +1381,7 @@ void _showHiddenCategoriesDialog(BuildContext context, List<Category> hidden) {
   showDialog(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      title: const Text('Hidden categories'),
+      title: Text(context.l10n.hidden_categories),
       content: SizedBox(
         width: 380,
         child: Column(
@@ -1402,7 +1403,7 @@ void _showHiddenCategoriesDialog(BuildContext context, List<Category> hidden) {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(dialogContext),
-          child: const Text('Close'),
+          child: Text(context.l10n.close),
         ),
       ],
     ),
@@ -1416,7 +1417,7 @@ void _showAddCategoryDialog(BuildContext context, List<Category> existing) {
     context: context,
     builder: (context) => StatefulBuilder(
       builder: (context, setState) => AlertDialog(
-        title: const Text('New category'),
+        title: Text(context.l10n.new_category),
         content: CustomTextFormField(
           controller: controller,
           entries: existing,
@@ -1428,7 +1429,7 @@ void _showAddCategoryDialog(BuildContext context, List<Category> existing) {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.cancel),
           ),
           TextButton(
             onPressed: controller.text.trim().isEmpty || isExist

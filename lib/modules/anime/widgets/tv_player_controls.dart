@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 /// A dedicated, Netflix-style controls overlay for the anime player on TV.
 ///
@@ -572,7 +573,7 @@ class _PillBar extends StatelessWidget {
                   _TrackPill(
                     accent: accent,
                     icon: Icons.settings,
-                    label: 'Settings',
+                    label: context.l10n.settings,
                     selected: false,
                     onTap: onSettings,
                   ),
@@ -704,7 +705,7 @@ class _SpeedMenuState extends State<_SpeedMenu> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Playback speed'),
+      title: Text(context.l10n.playback_speed),
       contentPadding: const EdgeInsets.symmetric(vertical: 8),
       content: SizedBox(
         width: 300,

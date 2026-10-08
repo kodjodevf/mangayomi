@@ -815,6 +815,7 @@
   "app_locked": "Mangayomi ist gesperrt",
   "auth_to_continue": "Authentifizieren Sie sich, um fortzufahren",
   "authenticating": "Authentifizierung läuft...",
+  "lock": "Sperren",
   "unlock": "Entsperren",
   "security": "Sicherheit",
   "auth_to_change_security_setting": "Authentifizieren Sie sich, um die Sicherheitseinstellungen zu ändern",

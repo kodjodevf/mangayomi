@@ -572,6 +572,7 @@
   "app_locked": "Mangayomi已锁定",
   "auth_to_continue": "验证以继续",
   "authenticating": "正在验证...",
+  "lock": "锁定",
   "unlock": "解锁",
   "security": "安全",
   "auth_to_change_security_setting": "验证以更改安全设置",

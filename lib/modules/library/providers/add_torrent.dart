@@ -56,7 +56,7 @@ Future addTorrentFromUrlOrFromFile(
 
     if (url != null) {
       manga.customCoverImage = null;
-      mangaRepository.writeTransaction(() {
+      await mangaRepository.writeTransaction(() {
         mangaRepository.putSync(manga);
         final chapters = Chapter(
           name: torrentName,
@@ -75,7 +75,7 @@ Future addTorrentFromUrlOrFromFile(
           manga.customCoverImage = null;
         }
 
-        mangaRepository.writeTransaction(() {
+        await mangaRepository.writeTransaction(() {
           mangaRepository.putSync(manga);
           final chapters = Chapter(
             name: name,
