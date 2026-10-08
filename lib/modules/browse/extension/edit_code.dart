@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:json_view/json_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,7 @@ import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/home/widget/filter_widget.dart';
+import 'package:mangayomi/modules/browse/extension/widgets/extension_code_selection_toolbar.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -39,6 +41,8 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
       ? null
       : sourceRepository.getById(widget.sourceId!);
   final CodeLineEditingController _controller = CodeLineEditingController();
+  late final SelectionToolbarController _selectionToolbarController =
+      createExtensionCodeSelectionToolbar();
   Timer? _saveDebounceTimer;
 
   void _persistSourceCodeNow() {
@@ -268,6 +272,11 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                         bottomLeft: Radius.circular(12),
                       ),
                       child: CodeEditor(
+                        toolbarController:
+                            defaultTargetPlatform == TargetPlatform.iOS ||
+                                defaultTargetPlatform == TargetPlatform.android
+                            ? _selectionToolbarController
+                            : null,
                         style: CodeEditorStyle(
                           fontSize: 15,
                           fontFamily: appFontFamily,
