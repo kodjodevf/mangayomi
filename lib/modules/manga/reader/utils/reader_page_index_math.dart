@@ -223,6 +223,24 @@ class ReaderPageIndexMath {
     return spreads.length;
   }
 
+  /// [currentIndexLabel] for a page given by its number within its chapter
+  /// ([UChapDataPreload.index]), which is what the reader tracks as the
+  /// current page. It differs from the position in [pages] once a previous
+  /// chapter or a transition page sits before it, or a wide page was split.
+  String chapterPageLabel(int pageInChapter, int? chapterId, int totalPages) {
+    if (!isDoublePageActive || pages == null) {
+      return currentIndexLabel(pageInChapter, totalPages);
+    }
+    final actual = pages!.indexWhere(
+      (p) =>
+          !p.isTransitionPage &&
+          p.chapter?.id == chapterId &&
+          p.index == pageInChapter,
+    );
+    if (actual == -1) return "${pageInChapter + 1}";
+    return currentIndexLabel(actual, totalPages);
+  }
+
   /// The page-number label for the bottom bar / page indicator, e.g. "12"
   /// or "12-13" for a double-page spread. [totalPages] is the manga-visible
   /// page count (`ReaderController.getPageLength`), which can differ from

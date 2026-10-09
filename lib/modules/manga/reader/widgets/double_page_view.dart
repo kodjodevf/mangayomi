@@ -48,8 +48,10 @@ class DoublePageView extends StatefulWidget {
   /// Callback when the zoom state changes.
   final Function(bool isZoomed)? onZoomChanged;
 
-  /// Callback when the PhotoViewController is created/disposed.
-  final void Function(PhotoViewController? controller)? onControllerCreated;
+  /// Called with this view's PhotoViewController and true once it exists,
+  /// then with false when the view is disposed.
+  final void Function(PhotoViewController controller, bool attached)?
+  onControllerChanged;
 
   /// Callback when an image finishes loading with its dimensions.
   final void Function(int index, double width, double height)? onImageLoaded;
@@ -67,7 +69,7 @@ class DoublePageView extends StatefulWidget {
     this.addTopPadding = true,
     this.scrollDirection = Axis.horizontal,
     this.onZoomChanged,
-    this.onControllerCreated,
+    this.onControllerChanged,
     this.onImageLoaded,
     this.onWideSinglePageLoaded,
   });
@@ -81,7 +83,7 @@ class DoublePageView extends StatefulWidget {
     this.onFailedToLoadImage,
     required this.scrollDirection,
     this.onZoomChanged,
-    this.onControllerCreated,
+    this.onControllerChanged,
     this.onImageLoaded,
     this.onWideSinglePageLoaded,
   }) : isPagedMode = true,
@@ -98,7 +100,7 @@ class DoublePageView extends StatefulWidget {
   }) : isPagedMode = false,
        scrollDirection = Axis.vertical,
        onZoomChanged = null,
-       onControllerCreated = null,
+       onControllerChanged = null,
        onImageLoaded = null,
        onWideSinglePageLoaded = null;
 
@@ -171,14 +173,14 @@ class _DoublePageViewState extends State<DoublePageView>
         widget.onZoomChanged?.call(isZoomed);
       });
 
-      widget.onControllerCreated?.call(_photoViewController);
+      widget.onControllerChanged?.call(_photoViewController, true);
     }
   }
 
   @override
   void dispose() {
     if (widget.isPagedMode) {
-      widget.onControllerCreated?.call(null);
+      widget.onControllerChanged?.call(_photoViewController, false);
       _animation.removeListener(_animationListener);
       _scaleAnimationController.dispose();
       _zoomSubscription?.cancel();
@@ -280,7 +282,7 @@ class _DoublePageViewState extends State<DoublePageView>
           if (page != null)
             Flexible(
               key: ValueKey(
-                'dp_page_${page.chapter?.id}_${page.index}_${page.pageUrl?.url}',
+                'dp_page_${page.widgetKey(-1)}_${page.pageUrl?.url}',
               ),
               child: _buildPageImage(page),
             ),

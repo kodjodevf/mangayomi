@@ -396,6 +396,10 @@ class ChapterPreloadManager {
     _pages.removeAt(index);
     _pages.insert(index, page1);
     _pages.insert(index + 1, page2);
+    // Every page after the split moved one slot down.
+    for (int i = index; i < _pages.length; i++) {
+      _pages[i].pageIndex = i;
+    }
     onPagesUpdated?.call();
   }
 

@@ -104,8 +104,11 @@ class SubsamplingScaleImageViewController extends ChangeNotifier {
     _state = state;
   }
 
-  void _detach() {
-    _state = null;
+  /// Only [state]'s own detach counts: when a page moves to another slot,
+  /// its replacement attaches before the old view is disposed, and the old
+  /// view must not unhook it.
+  void _detach(_SubsamplingScaleImageViewState state) {
+    if (identical(_state, state)) _state = null;
   }
 
   // ── State Getters ──────────────────────────────────────────────────────────
@@ -516,7 +519,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
   void dispose() {
     _resizeTimer?.cancel();
     _cancelImageStream();
-    widget.controller?._detach();
+    widget.controller?._detach(this);
     _animationController.dispose();
     _tilingEngine.dispose();
     super.dispose();
@@ -527,7 +530,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.controller != widget.controller) {
-      oldWidget.controller?._detach();
+      oldWidget.controller?._detach(this);
       widget.controller?._attach(this);
     }
 
