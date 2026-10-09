@@ -979,6 +979,34 @@ class _FloatingNavItem extends StatelessWidget {
     final color = light
         ? (selected ? scheme.primary : scheme.onSurfaceVariant)
         : (selected ? scheme.onSecondaryContainer : scheme.onSurface);
+    Widget themedItem(double size, Color resolvedColor) => IconTheme(
+      data: IconThemeData(
+        size: size,
+        color: resolvedColor,
+        // Several destinations (history, more) have an "outlined" variant
+        // that is the same drawing, so filling cannot show selection.
+        shadows: selected
+            ? [Shadow(color: resolvedColor, blurRadius: 0.9)]
+            : null,
+      ),
+      child: label == null
+          ? icon
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                icon,
+                const SizedBox(width: FloatingNavBar._labelGap),
+                Flexible(
+                  child: Text(
+                    label!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: labelStyle?.copyWith(color: resolvedColor),
+                  ),
+                ),
+              ],
+            ),
+    );
     return Semantics(
       // The label is gone visually, so it has to survive for screen readers.
       label: destination.label,
@@ -990,45 +1018,18 @@ class _FloatingNavItem extends StatelessWidget {
         child: Center(
           child: Transform.translate(
             offset: Offset(nudge, 0),
-            child: TweenAnimationBuilder<Color?>(
-              tween: ColorTween(end: color),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(end: iconSize),
               duration: FloatingNavBar._duration,
               curve: FloatingNavBar._curve,
-              builder: (context, animatedColor, _) {
-                final resolvedColor = animatedColor ?? color;
-                return IconTheme(
-                  data: IconThemeData(
-                    size: iconSize,
-                    color: resolvedColor,
-                    // Several destinations (history, more) have an "outlined"
-                    // variant that is the same drawing, so filling cannot show
-                    // selection. Thickening the stroke does, and it is harmless on
-                    // the icons that do fill.
-                    shadows: selected
-                        ? [Shadow(color: resolvedColor, blurRadius: 0.9)]
-                        : null,
-                  ),
-                  child: label == null
-                      ? icon
-                      : Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            icon,
-                            const SizedBox(width: FloatingNavBar._labelGap),
-                            // Flexible so a long label in a narrow window ellipsises
-                            // rather than overflowing the bar.
-                            Flexible(
-                              child: Text(
-                                label!,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: labelStyle?.copyWith(
-                                  color: resolvedColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+              builder: (context, size, _) {
+                if (!light) return themedItem(size, color);
+                return TweenAnimationBuilder<Color?>(
+                  tween: ColorTween(end: color),
+                  duration: FloatingNavBar._duration,
+                  curve: FloatingNavBar._curve,
+                  builder: (context, animatedColor, _) =>
+                      themedItem(size, animatedColor ?? color),
                 );
               },
             ),
