@@ -14,6 +14,7 @@ import 'package:mangayomi/modules/more/widgets/dialog_actions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/error_toast.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 /// Whether there's a sync server configured to ask about (regardless of
@@ -151,8 +152,14 @@ Future<bool> performRestore(BuildContext context, WidgetRef ref) async {
             description: resultDescription,
           ),
         );
-      } catch (_) {
+      } catch (e, s) {
         safetyBackupPath = null;
+        recordError(
+          e,
+          stack: s,
+          source: "safety_backup",
+          level: LogLevel.warning,
+        );
       }
 
       // false, not a bare return: performRestore reports whether anything was
@@ -199,7 +206,13 @@ Future<bool> _performMangayomiRestore(
     final Map<String, dynamic> backup;
     try {
       backup = await decodeMangayomiBackup(path, context);
-    } catch (e) {
+    } catch (e, s) {
+      recordError(
+        e,
+        stack: s,
+        source: 'restore_decode',
+        level: LogLevel.warning,
+      );
       if (context.mounted) botToast("$e");
       return false;
     }
@@ -270,8 +283,14 @@ Future<bool> _performMangayomiRestore(
             description: resultDescription,
           ),
         );
-      } catch (_) {
+      } catch (e, s) {
         safetyBackupPath = null;
+        recordError(
+          e,
+          stack: s,
+          source: "safety_backup",
+          level: LogLevel.warning,
+        );
       }
 
       if (!context.mounted) return false;

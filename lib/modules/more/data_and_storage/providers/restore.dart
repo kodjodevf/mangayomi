@@ -13,6 +13,7 @@ import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/history.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -194,7 +195,8 @@ Future<void> _uploadToSyncServerIfConnected(
     if (success) {
       botToast(l10n.restore_sync_upload_success);
     }
-  } catch (e) {
+  } catch (e, s) {
+    recordError(e, stack: s, source: 'restore_sync_upload');
     botToast(
       "Backup restored, but couldn't push it to your sync server: $e. "
       "The server still has the old data until the next successful sync.",
