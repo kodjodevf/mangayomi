@@ -19,6 +19,7 @@ import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
+import 'package:mangayomi/services/discovery/media_lookup_context.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
@@ -721,19 +722,6 @@ class _DetailActions extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;
 
-    final recommendations = _DetailAction(
-      icon: Icons.auto_awesome_outlined,
-      label: l10n.recommendations,
-      onPressed: () => context.push(
-        "/recommendations",
-        extra: (
-          manga.name,
-          manga.itemType,
-          ref.read(algorithmWeightsStateProvider),
-        ),
-      ),
-    );
-
     // Everything this title is related to, including the one thing that
     // cannot be reached any other way from in here: its adaptation in the
     // other medium.
@@ -745,14 +733,10 @@ class _DetailActions extends ConsumerWidget {
     );
 
     if (manga.itemType != ItemType.anime) {
+      final media = MediaLookupContext.fromManga(manga);
+      final recommendations = _recommendationsAction(context, ref, media);
       return _strip(context, [recommendations, related]);
     }
-
-    final watchOrder = _DetailAction(
-      icon: Icons.format_list_numbered_outlined,
-      label: l10n.watch_order,
-      onPressed: () => context.push("/watchOrder", extra: (manga.name, null)),
-    );
 
     // Sequels needs a MyAnimeList or AniList track to look anything up, so it
     // only appears once there is one.
@@ -760,26 +744,53 @@ class _DetailActions extends ConsumerWidget {
       stream: trackRepository.watchByMangaId(manga.id!),
       builder: (context, snapshot) {
         final tracks = snapshot.data ?? const <Track>[];
-        final syncId = tracks.firstOrNull?.syncId;
-        final supported =
-            syncId == TrackerProviders.myAnimeList.syncId ||
-            syncId == TrackerProviders.anilist.syncId;
+        Track? sequelTrack;
+        for (final track in tracks) {
+          final mediaId = track.mediaId;
+          if (mediaId != null &&
+              mediaId > 0 &&
+              (track.syncId == TrackerProviders.myAnimeList.syncId ||
+                  track.syncId == TrackerProviders.anilist.syncId)) {
+            sequelTrack ??= track;
+          }
+        }
+        final media = MediaLookupContext.fromManga(manga, tracks: tracks);
+        final recommendations = _recommendationsAction(context, ref, media);
+        final watchOrder = _DetailAction(
+          icon: Icons.format_list_numbered_outlined,
+          label: l10n.watch_order,
+          onPressed: () =>
+              context.push("/watchOrder", extra: (media, null as Track?)),
+        );
 
         return _strip(context, [
           recommendations,
           related,
           watchOrder,
-          if (tracks.isNotEmpty && supported)
+          if (sequelTrack != null)
             _DetailAction(
               icon: Icons.playlist_play_outlined,
               label: l10n.sequels,
-              onPressed: () => context.push(
-                "/watchOrder",
-                extra: (manga.name, tracks.firstOrNull),
-              ),
+              onPressed: () =>
+                  context.push("/watchOrder", extra: (media, sequelTrack)),
             ),
         ]);
       },
+    );
+  }
+
+  _DetailAction _recommendationsAction(
+    BuildContext context,
+    WidgetRef ref,
+    MediaLookupContext media,
+  ) {
+    return _DetailAction(
+      icon: Icons.auto_awesome_outlined,
+      label: context.l10n.recommendations,
+      onPressed: () => context.push(
+        "/recommendations",
+        extra: (media, ref.read(algorithmWeightsStateProvider)),
+      ),
     );
   }
 

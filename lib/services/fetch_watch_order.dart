@@ -2,7 +2,12 @@ import 'dart:convert';
 
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/anilist_discovery.dart';
+import 'package:mangayomi/services/discovery/media_catalog_resolver.dart';
+import 'package:mangayomi/services/discovery/media_lookup_context.dart';
+import 'package:mangayomi/services/discovery/search_target.dart';
 import 'package:mangayomi/services/discovery/service_availability.dart';
+import 'package:mangayomi/services/discovery/trakt_discovery.dart';
+import 'package:mangayomi/services/discovery/western_watch_order.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/constant.dart';
 
@@ -67,12 +72,18 @@ Future<List<WatchOrderSearch>> searchWatchOrder(String name) async {
 /// adapted from and loose shared-character links; and (2) order by release date
 /// rather than relation type, which is the reliable watch order for most
 /// franchises (AniList's relation graph has no order of its own).
-Future<List<WatchOrderItem>> fetchWatchOrder(
+Future<WatchOrderPlan> fetchWatchOrder(
   String id, {
   DiscoveryService source = DiscoveryService.anilist,
 }) async {
   final rootId = int.tryParse(id);
-  if (rootId == null) return [];
+  final provenance = WatchOrderSource(
+    kind: WatchOrderSourceKind.animeReleaseOrder,
+    service: source.label,
+  );
+  if (rootId == null) {
+    return WatchOrderPlan(source: provenance, items: const []);
+  }
 
   // AniList relations are a single hop, so a chained franchise (S1 -> Cour 2 ->
   // S2 -> S3, each a SEQUEL of the previous) needs a graph walk. Traverse the
@@ -129,35 +140,149 @@ Future<List<WatchOrderItem>> fetchWatchOrder(
         : i == currentIndex
         ? WatchOrderRole.current
         : WatchOrderRole.next;
-    final meta = [
-      if (m.format != null) m.format!,
-      if (m.episodes != null) "${m.episodes} eps",
-      if (m.startYear != null) "${m.startYear}",
-    ].join(" | ");
     items.add(
       WatchOrderItem(
-        id: m.id.toString(),
-        anilistId: m.id.toString(),
+        key: '${m.source.name}:${m.id}',
+        kind: WatchOrderItemKind.anime,
         image: m.coverImage ?? "",
         name: m.romaji ?? m.title,
         nameEnglish: m.english,
-        text: meta,
+        format: m.format,
+        year: m.startYear,
+        episodeCount: m.episodes,
+        searchTarget: SearchTarget(
+          query: m.english ?? m.romaji ?? m.native ?? m.title,
+          itemType: ItemType.anime,
+        ),
         role: role,
       ),
     );
   }
-  return items;
+  return WatchOrderPlan(source: provenance, items: List.unmodifiable(items));
 }
 
 /// Resolve an anime name to its AniList id and build its watch order directly,
 /// with no manual pick step. The resolved title becomes the "current" anchor.
-Future<List<WatchOrderItem>> fetchWatchOrderByName(String name) async {
+Future<WatchOrderPlan> fetchWatchOrderByName(String name) async {
   // searchMediaRef falls back to Kitsu when AniList will not answer, and says
   // which of them resolved the name so the walk below asks the same service.
   final ref = await searchMediaRef(ItemType.anime, name);
-  if (ref == null) return [];
+  if (ref == null) {
+    return const WatchOrderPlan(
+      source: WatchOrderSource(
+        kind: WatchOrderSourceKind.animeReleaseOrder,
+        service: 'AniList',
+      ),
+      items: [],
+    );
+  }
   final (source, mediaId) = ref;
   return fetchWatchOrder(mediaId.toString(), source: source);
+}
+
+/// Build a truthful western franchise order from validated Trakt lists.
+///
+/// Shows fall back to their own seasons when no credible public list exists.
+/// Movies return null in that situation, rather than treating similar titles
+/// as an invented viewing order.
+Future<WatchOrderPlan?> fetchWesternWatchOrder(
+  MediaLookupContext media, {
+  String? selectedSourceKey,
+  WesternWatchOrderPlanner? planner,
+  TraktRootMedia? resolvedRoot,
+}) async {
+  final western = await (planner ?? WesternWatchOrderPlanner()).build(
+    media,
+    selectedCandidateKey: selectedSourceKey,
+    resolvedRoot: resolvedRoot,
+  );
+  if (western == null) return null;
+
+  final source = switch (western.source.kind) {
+    WesternWatchOrderSourceKind.showSeasons => WatchOrderSource(
+      kind: WatchOrderSourceKind.traktSeasons,
+      service: 'Trakt',
+      name: western.source.name,
+    ),
+    WesternWatchOrderSourceKind.publicList => WatchOrderSource(
+      kind: western.source.isOfficial
+          ? WatchOrderSourceKind.traktOfficialList
+          : WatchOrderSourceKind.traktCommunityList,
+      service: 'Trakt',
+      name: western.source.name,
+      author: western.source.author,
+      url: western.source.url,
+    ),
+  };
+
+  return WatchOrderPlan(
+    source: source,
+    items: List.unmodifiable(
+      western.items.map(
+        (item) => WatchOrderItem(
+          key: item.key,
+          kind: switch (item.kind) {
+            WesternWatchOrderItemKind.movie => WatchOrderItemKind.movie,
+            WesternWatchOrderItemKind.show => WatchOrderItemKind.show,
+            WesternWatchOrderItemKind.season => WatchOrderItemKind.season,
+            WesternWatchOrderItemKind.episode => WatchOrderItemKind.episode,
+          },
+          image: item.image ?? '',
+          name: item.title,
+          nameEnglish: null,
+          depth: item.depth.clamp(0, 2),
+          role: switch (item.role) {
+            WesternWatchOrderItemRole.previous => WatchOrderRole.previous,
+            WesternWatchOrderItemRole.current => WatchOrderRole.current,
+            WesternWatchOrderItemRole.next => WatchOrderRole.next,
+            WesternWatchOrderItemRole.neutral => WatchOrderRole.neutral,
+          },
+          searchTarget: item.searchTarget,
+          rank: item.sourceRank,
+          year: item.year,
+          seasonNumber: item.seasonNumber,
+          episodeNumber: item.episodeNumber,
+          episodeCount: item.episodeCount,
+        ),
+      ),
+    ),
+    options: List.unmodifiable(
+      western.options.map(
+        (option) => WatchOrderOption(
+          key: option.key,
+          name: option.name,
+          author: option.author,
+          url: option.url,
+          isOfficial: option.isOfficial,
+        ),
+      ),
+    ),
+    selectedOptionKey: western.selectedCandidateKey,
+  );
+}
+
+/// Choose AniList or Trakt once, then build the matching watch-order plan.
+Future<WatchOrderPlan?> fetchWatchOrderForMedia(
+  MediaLookupContext media, {
+  String? selectedSourceKey,
+  WesternWatchOrderPlanner? planner,
+  MediaCatalogResolver? catalogResolver,
+}) async {
+  final resolved = await (catalogResolver ?? MediaCatalogResolver()).resolve(
+    media,
+  );
+  if (resolved.catalog == DiscoveryCatalog.anilist) {
+    final id = resolved.anilistId;
+    return id == null
+        ? fetchWatchOrderByName(media.title)
+        : fetchWatchOrder(id.toString());
+  }
+  return fetchWesternWatchOrder(
+    media,
+    selectedSourceKey: selectedSourceKey,
+    planner: planner,
+    resolvedRoot: resolved.traktRoot,
+  );
 }
 
 class SequelItem {
@@ -253,25 +378,94 @@ class WatchOrderSearch {
   }
 }
 
-/// Where an entry sits relative to the one the user opened watch order from.
-enum WatchOrderRole { previous, current, next }
+enum WatchOrderSourceKind {
+  animeReleaseOrder,
+  traktOfficialList,
+  traktCommunityList,
+  traktSeasons,
+}
+
+class WatchOrderSource {
+  const WatchOrderSource({
+    required this.kind,
+    required this.service,
+    this.name,
+    this.author,
+    this.url,
+  });
+
+  final WatchOrderSourceKind kind;
+  final String service;
+  final String? name;
+  final String? author;
+  final String? url;
+}
+
+class WatchOrderOption {
+  const WatchOrderOption({
+    required this.key,
+    required this.name,
+    required this.isOfficial,
+    this.author,
+    this.url,
+  });
+
+  final String key;
+  final String name;
+  final bool isOfficial;
+  final String? author;
+  final String? url;
+}
+
+class WatchOrderPlan {
+  const WatchOrderPlan({
+    required this.source,
+    required this.items,
+    this.options = const [],
+    this.selectedOptionKey,
+  });
+
+  final WatchOrderSource source;
+  final List<WatchOrderItem> items;
+  final List<WatchOrderOption> options;
+  final String? selectedOptionKey;
+}
+
+enum WatchOrderItemKind { anime, movie, show, season, episode }
+
+/// Where an entry sits relative to the title that opened watch order.
+enum WatchOrderRole { previous, current, next, neutral }
 
 class WatchOrderItem {
-  final String id;
-  final String anilistId;
-  final String image;
-  final String name;
-  final String? nameEnglish;
-  final String text;
-  final WatchOrderRole role;
-
-  WatchOrderItem({
-    required this.id,
-    required this.anilistId,
+  const WatchOrderItem({
+    required this.key,
+    required this.kind,
     required this.image,
     required this.name,
     required this.nameEnglish,
-    required this.text,
-    this.role = WatchOrderRole.next,
+    required this.searchTarget,
+    this.depth = 0,
+    this.role = WatchOrderRole.neutral,
+    this.format,
+    this.rank,
+    this.year,
+    this.seasonNumber,
+    this.episodeNumber,
+    this.episodeCount,
   });
+
+  final String key;
+  final WatchOrderItemKind kind;
+  final String image;
+  final String name;
+  final String? nameEnglish;
+  final SearchTarget? searchTarget;
+  final int depth;
+  final WatchOrderRole role;
+  final String? format;
+  final int? rank;
+  final int? year;
+  final int? seasonNumber;
+  final int? episodeNumber;
+  final int? episodeCount;
 }

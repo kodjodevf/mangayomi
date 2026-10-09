@@ -8,6 +8,9 @@ import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/discovery/media_catalog_resolver.dart';
+import 'package:mangayomi/services/discovery/media_lookup_context.dart';
+import 'package:mangayomi/services/discovery/western_watch_order.dart';
 import 'package:mangayomi/services/fetch_watch_order.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/design_tokens.dart';
@@ -27,10 +30,10 @@ import 'package:mangayomi/utils/platform_utils.dart';
 const double _coverAspect = 320 / 230;
 
 class WatchOrderScreen extends StatefulWidget {
-  final String name;
+  final MediaLookupContext media;
   final Track? track;
 
-  const WatchOrderScreen({super.key, required this.name, required this.track});
+  const WatchOrderScreen({super.key, required this.media, required this.track});
 
   @override
   State<WatchOrderScreen> createState() => _WatchOrderScreenState();
@@ -40,8 +43,10 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
   String _errorMessage = "";
   bool _isLoading = true;
   List<SequelItem>? sequels;
-  List<WatchOrderSearch>? dataSearch;
-  List<WatchOrderItem>? data;
+  WatchOrderPlan? plan;
+  final WesternWatchOrderPlanner _westernPlanner = WesternWatchOrderPlanner();
+  final MediaCatalogResolver _catalogResolver = MediaCatalogResolver();
+  String? _requestedSourceKey;
 
   bool get isSequels => widget.track != null;
 
@@ -95,25 +100,28 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
   Future<void> _init() async {
     try {
       _errorMessage = "";
+      _didAnchorOnCurrent = false;
       if (isSequels) {
-        final mediaId = widget.track!.mediaId!.toString();
-        final mal = await trackRepository.findPreferenceBySyncIdAsync(
-          TrackerProviders.myAnimeList.syncId,
-        );
-        final anilist = await trackRepository.findPreferenceBySyncIdAsync(
-          TrackerProviders.anilist.syncId,
-        );
-        // chiaki.site is sent `user=` and looks it up by handle, so AniList
-        // has to pass its display name here. Its `username` is a numeric
-        // viewer id, which the lookup silently answers nothing for.
-        final data = await fetchSequels(mal?.username, anilist?.displayName);
-        sequels = data
-            .where((e) => e.reason.any((r) => r.id == mediaId))
-            .toList();
+        final mediaId = widget.track?.mediaId;
+        if (mediaId == null || mediaId <= 0) {
+          sequels = const [];
+        } else {
+          final mal = await trackRepository.findPreferenceBySyncIdAsync(
+            TrackerProviders.myAnimeList.syncId,
+          );
+          final anilist = await trackRepository.findPreferenceBySyncIdAsync(
+            TrackerProviders.anilist.syncId,
+          );
+          // chiaki.site is sent `user=` and looks it up by handle, so AniList
+          // has to pass its display name here. Its `username` is a numeric
+          // viewer id, which the lookup silently answers nothing for.
+          final data = await fetchSequels(mal?.username, anilist?.displayName);
+          sequels = data
+              .where((e) => e.reason.any((r) => r.id == mediaId.toString()))
+              .toList();
+        }
       } else {
-        // Auto-build: resolve the anime and show its chronological franchise
-        // directly (no pick step); the opened title is marked "current".
-        data = await fetchWatchOrderByName(widget.name);
+        plan = await _fetchPlan(selectedSourceKey: _requestedSourceKey);
       }
       if (mounted) {
         setState(() {
@@ -148,6 +156,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
                         setState(() {
                           _isLoading = true;
                           _errorMessage = "";
+                          _didAnchorOnCurrent = false;
                         });
                         _init();
                       },
@@ -211,123 +220,297 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
   }
 
   Widget _buildWatchOrder() {
-    if (data != null && data!.isNotEmpty) return _timeline(data!);
-    if (dataSearch != null && dataSearch!.isNotEmpty) {
-      return _searchList(dataSearch!);
+    final value = plan;
+    if (value != null && value.items.isNotEmpty) {
+      return Column(
+        children: [
+          _sourceSelector(value),
+          Expanded(child: _timeline(value.items)),
+        ],
+      );
     }
     return Center(child: Text(context.l10n.no_result));
   }
 
-  // Chronological franchise as a rail: a vertical timeline on phones, and a
-  // horizontal one on TV/desktop where a single stretched column would leave the
-  // width empty. "Current" is the anchor (enlarged cover + accent ring + a filled
-  // badge); position carries previous vs up next.
-  Widget _timeline(List<WatchOrderItem> items) {
-    // One layout on every form factor: a vertical rail. On a wide TV/desktop
-    // window it centres at a comfortable width with side padding rather than
-    // stretching a single column across the whole panel.
-    _anchorOnCurrent();
+  Future<WatchOrderPlan?> _fetchPlan({String? selectedSourceKey}) {
+    return fetchWatchOrderForMedia(
+      widget.media,
+      selectedSourceKey: selectedSourceKey,
+      planner: _westernPlanner,
+      catalogResolver: _catalogResolver,
+    );
+  }
+
+  Future<void> _selectSource(String key) async {
+    if (key == plan?.selectedOptionKey) return;
+    _requestedSourceKey = key;
+    setState(() {
+      _isLoading = true;
+      _errorMessage = "";
+      _didAnchorOnCurrent = false;
+    });
+    try {
+      final next = await _fetchPlan(selectedSourceKey: key);
+      if (!mounted) return;
+      setState(() {
+        plan = next;
+        _isLoading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = error.toString();
+        _isLoading = false;
+      });
+    }
+  }
+
+  Widget _sourceSelector(WatchOrderPlan value) {
+    final label = _sourceLabel(value.source);
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 820),
-        // Every row is built rather than lazily: a franchise timeline is
-        // short, and the current entry needs a laid out context for
-        // ensureVisible to reach it while it is still off screen.
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 4),
+          child: value.options.length < 2
+              ? Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: context.textColor.withValues(
+                        alpha: Alphas.secondary,
+                      ),
+                    ),
+                  ),
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: context.textColor.withValues(
+                          alpha: Alphas.secondary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    DropdownButtonFormField<String>(
+                      initialValue: value.selectedOptionKey,
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        labelText: context.l10n.watch_order_select_source,
+                        border: const OutlineInputBorder(),
+                        isDense: true,
+                      ),
+                      items: [
+                        for (final option in value.options)
+                          DropdownMenuItem(
+                            value: option.key,
+                            child: Text(
+                              _optionLabel(option),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                      ],
+                      onChanged: (key) {
+                        if (key != null) _selectSource(key);
+                      },
+                    ),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+
+  String _sourceLabel(WatchOrderSource source) {
+    final l10n = context.l10n;
+    return switch (source.kind) {
+      WatchOrderSourceKind.animeReleaseOrder =>
+        '${l10n.watch_order_source_release_order} • ${source.service}',
+      WatchOrderSourceKind.traktOfficialList =>
+        l10n.watch_order_source_official_collection(
+          source.name ?? source.service,
+        ),
+      WatchOrderSourceKind.traktCommunityList when source.author != null =>
+        l10n.watch_order_source_community_list(
+          source.name ?? source.service,
+          source.author!,
+        ),
+      WatchOrderSourceKind.traktCommunityList =>
+        l10n.watch_order_source_trakt_collection(source.name ?? source.service),
+      WatchOrderSourceKind.traktSeasons => l10n.watch_order_source_seasons(
+        widget.media.title,
+      ),
+    };
+  }
+
+  String _optionLabel(WatchOrderOption option) {
+    final l10n = context.l10n;
+    if (option.isOfficial) {
+      return l10n.watch_order_source_official_collection(option.name);
+    }
+    final author = option.author;
+    return author == null
+        ? l10n.watch_order_source_trakt_collection(option.name)
+        : l10n.watch_order_source_community_list(option.name, author);
+  }
+
+  // A vertical franchise rail on every form factor. Movies, shows and anime
+  // remain poster rows. Seasons and episodes are compact children so a long
+  // show does not become a wall of repeated artwork.
+  Widget _timeline(List<WatchOrderItem> items) {
+    if (items.any((item) => item.role == WatchOrderRole.current)) {
+      _anchorOnCurrent();
+    }
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 820),
         child: SingleChildScrollView(
           padding: tvPageInsets.add(pageBottomInsets(context)),
           child: Column(
             children: [
               for (var index = 0; index < items.length; index++)
-                Builder(
-                  builder: (context) {
-                    final item = items[index];
-                    final isLast = index == items.length - 1;
-                    final isCurrent = item.role == WatchOrderRole.current;
-                    // The focus tint belongs to the entry, not to the rail.
-                    // The connector stub is drawn after the ink surface rather
-                    // than inside it, so the highlight stops at the entry, the
-                    // gap between rows stays readable, and the tint does not
-                    // paint a block over the connector.
-                    return Column(
-                      children: [
-                        Material(
-                          // The anchor the timeline opens on, and on TV the row
-                          // the remote lands on. Row 0 would make a mid
-                          // franchise position look like the beginning.
-                          key: isCurrent ? _currentRowKey : null,
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(12),
-                          clipBehavior: Clip.antiAlias,
-                          child: InkWell(
-                            autofocus: isTv && isCurrent,
-                            borderRadius: BorderRadius.circular(12),
-                            focusColor: context.primaryColor.withValues(
-                              alpha: Alphas.focus,
-                            ),
-                            onTap: () => _openWatchOrder(item),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 132,
-                                    // Centre it, or the rail's width is a
-                                    // tight constraint and the cover is
-                                    // stretched to 132 no matter what width it
-                                    // asks for. That is what made every cover
-                                    // near square and made width changes look
-                                    // like they did nothing.
-                                    child: Center(
-                                      child: _cover(
-                                        context,
-                                        item.image,
-                                        isCurrent: isCurrent,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 14),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 6),
-                                      child: _timelineBody(context, item),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                if (items[index].depth == 0)
+                  _topLevelRow(items, index)
+                else
+                  _childRow(items[index]),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _topLevelRow(List<WatchOrderItem> items, int index) {
+    final item = items[index];
+    final isCurrent = item.role == WatchOrderRole.current;
+    final hasLaterTitle = items
+        .skip(index + 1)
+        .any((candidate) => candidate.depth == 0);
+    return Column(
+      children: [
+        Material(
+          key: isCurrent ? _currentRowKey : ValueKey(item.key),
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            autofocus: isTv && isCurrent,
+            borderRadius: BorderRadius.circular(12),
+            focusColor: context.primaryColor.withValues(alpha: Alphas.focus),
+            onTap: item.searchTarget == null
+                ? null
+                : () => _openWatchOrder(item),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 132,
+                    child: Center(
+                      child: _cover(context, item.image, isCurrent: isCurrent),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: _timelineBody(context, item),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if (hasLaterTitle)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 132,
+                  child: Center(
+                    child: Container(
+                      width: 2,
+                      height: 18,
+                      color: context.textColor.withValues(
+                        alpha: Alphas.hairline,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _childRow(WatchOrderItem item) {
+    final depth = item.depth.clamp(1, 2);
+    final metadata = _metadata(item);
+    return Padding(
+      key: ValueKey(item.key),
+      padding: EdgeInsetsDirectional.fromSTEB(depth == 1 ? 52 : 76, 2, 8, 2),
+      child: Material(
+        color: context.textColor.withValues(alpha: Alphas.tint),
+        borderRadius: BorderRadius.circular(10),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          focusColor: context.primaryColor.withValues(alpha: Alphas.focus),
+          onTap: item.searchTarget == null ? null : () => _openWatchOrder(item),
+          child: Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(12, 9, 12, 9),
+            child: Row(
+              children: [
+                Icon(
+                  item.kind == WatchOrderItemKind.episode
+                      ? Icons.play_circle_outline
+                      : Icons.calendar_view_month_outlined,
+                  size: 20,
+                  color: context.primaryColor,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      if (metadata.isNotEmpty)
+                        Text(
+                          metadata,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: context.textColor.withValues(
+                              alpha: Alphas.secondary,
                             ),
                           ),
                         ),
-                        // Outside the ink surface, aligned under the cover by
-                        // reusing the same padding and rail width.
-                        if (!isLast)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 132,
-                                  child: Center(
-                                    child: Container(
-                                      width: 2,
-                                      height: 22,
-                                      color: context.textColor.withValues(
-                                        alpha: Alphas.hairline,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
-                    );
-                  },
+                    ],
+                  ),
                 ),
-            ],
+                const Icon(Icons.chevron_right, size: 18),
+              ],
+            ),
           ),
         ),
       ),
@@ -356,11 +539,11 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
               color: context.textColor.withValues(alpha: Alphas.secondary),
             ),
           ),
-        if (item.text.isNotEmpty)
+        if (_metadata(item).isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 1),
             child: Text(
-              item.text,
+              _metadata(item),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
@@ -369,10 +552,30 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
               ),
             ),
           ),
-        const SizedBox(height: 7),
-        _roleBadge(context, item.role),
+        if (item.role != WatchOrderRole.neutral) ...[
+          const SizedBox(height: 7),
+          _roleBadge(context, item.role),
+        ],
       ],
     );
+  }
+
+  String _metadata(WatchOrderItem item) {
+    final parts = <String>[];
+    if (item.format case String format when format.isNotEmpty) {
+      parts.add(format);
+    }
+    if (item.seasonNumber case int season) {
+      parts.add(context.l10n.watch_order_season(season));
+    }
+    if (item.episodeNumber case int episode) {
+      parts.add(context.l10n.watch_order_episode(episode));
+    }
+    if (item.episodeCount case int count) {
+      parts.add('$count ${context.l10n.episodes}');
+    }
+    if (item.year case int year) parts.add('$year');
+    return parts.join(' • ');
   }
 
   Widget _cover(
@@ -406,54 +609,9 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
   }
 
   void _openWatchOrder(WatchOrderItem item) {
-    context.push(
-      '/globalSearch',
-      extra: (item.nameEnglish ?? item.name, ItemType.anime),
-    );
-  }
-
-  Widget _searchList(List<WatchOrderSearch> results) {
-    return SuperListView.builder(
-      padding: tvPageInsets.add(pageBottomInsets(context)),
-      extentPrecalculationPolicy: SuperPrecalculationPolicy(),
-      itemCount: results.length,
-      itemBuilder: (context, index) {
-        final search = results[index];
-        return ListTile(
-          onTap: () async {
-            if (mounted) {
-              setState(() {
-                _isLoading = true;
-                _errorMessage = "";
-              });
-              data = await fetchWatchOrder(search.id);
-              setState(() {
-                _isLoading = false;
-              });
-            }
-          },
-          title: Row(
-            children: [
-              _thumbnailPreview(context, search.image),
-              const SizedBox(width: 15),
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTitle(search.name, context),
-                    Text(
-                      "${search.type} - ${search.year}",
-                      style: const TextStyle(fontSize: 11),
-                      overflow: TextOverflow.clip,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    final target = item.searchTarget;
+    if (target == null) return;
+    context.push('/globalSearch', extra: (target.query, target.itemType));
   }
 
   Widget _roleBadge(BuildContext context, WatchOrderRole role) {
@@ -473,7 +631,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
-            "Currently watching",
+            context.l10n.watch_order_role_current,
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -489,7 +647,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
-            "Up next",
+            context.l10n.watch_order_role_next,
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -506,7 +664,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
-            "Previous",
+            context.l10n.watch_order_role_previous,
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -514,6 +672,8 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
             ),
           ),
         );
+      case WatchOrderRole.neutral:
+        return const SizedBox.shrink();
     }
   }
 

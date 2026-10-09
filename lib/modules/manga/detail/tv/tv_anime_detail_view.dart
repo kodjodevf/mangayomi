@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracking_menu.dart';
 import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
@@ -15,6 +16,7 @@ import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
+import 'package:mangayomi/services/discovery/media_lookup_context.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
@@ -135,7 +137,6 @@ class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
     final reading = manga.getChapterListForReading();
     final resume = _resumeEpisode(reading);
     final watched = episodes.where((c) => c.isRead ?? false).length;
-
     final cover = resolveCoverImage(manga, ref);
     final bg = Theme.of(context).scaffoldBackgroundColor;
 
@@ -224,18 +225,21 @@ class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
                               ),
                               onTracking: _openTracking,
                               onBrowser: _openInBrowser,
-                              onRecommendations: () => context.push(
-                                '/recommendations',
-                                extra: (
-                                  manga.name,
-                                  manga.itemType,
-                                  ref.read(algorithmWeightsStateProvider),
-                                ),
-                              ),
-                              onWatchOrder: () => context.push(
-                                '/watchOrder',
-                                extra: (manga.name, null),
-                              ),
+                              onRecommendations: () {
+                                context.push(
+                                  '/recommendations',
+                                  extra: (
+                                    _mediaContext(),
+                                    ref.read(algorithmWeightsStateProvider),
+                                  ),
+                                );
+                              },
+                              onWatchOrder: () {
+                                context.push(
+                                  '/watchOrder',
+                                  extra: (_mediaContext(), null as Track?),
+                                );
+                              },
                               onMigrate: () =>
                                   context.push('/migrate', extra: manga),
                               // Seeded: this manga's source floats to the top.
@@ -272,6 +276,11 @@ class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
       ),
     );
   }
+
+  MediaLookupContext _mediaContext() => MediaLookupContext.fromManga(
+    manga,
+    tracks: trackRepository.getAllByMangaId(manga.id),
+  );
 
   void _toggleLibrary() {
     final model = manga;

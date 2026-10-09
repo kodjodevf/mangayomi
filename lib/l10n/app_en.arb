@@ -840,9 +840,79 @@
   "clear_library_desc": "Choose to clear all manga, anime and/or novel entries",
   "clear_library_input": "Type 'manga', 'anime' and/or 'novel' (separated by a comma) to remove all related entries",
   "watch_order": "Watch order",
+  "watch_order_role_current": "Current",
+  "@watch_order_role_current": {
+    "description": "Role label for the title currently being viewed in a watch order."
+  },
+  "watch_order_role_previous": "Previous",
+  "@watch_order_role_previous": {
+    "description": "Role label for an earlier title in a watch order."
+  },
+  "watch_order_role_next": "Next",
+  "@watch_order_role_next": {
+    "description": "Role label for a later title in a watch order."
+  },
+  "watch_order_source_release_order": "Release order",
+  "@watch_order_source_release_order": {
+    "description": "Source label for a watch order based on release dates."
+  },
+  "watch_order_source_community_list": "{name} by {author}",
+  "@watch_order_source_community_list": {
+    "description": "Source label for a community-created Trakt list.",
+    "placeholders": {
+      "name": {"type": "String"},
+      "author": {"type": "String"}
+    }
+  },
+  "watch_order_source_official_collection": "Official Trakt collection: {name}",
+  "@watch_order_source_official_collection": {
+    "description": "Source label for an official Trakt collection.",
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "watch_order_source_trakt_collection": "Trakt collection: {name}",
+  "@watch_order_source_trakt_collection": {
+    "description": "Source label for a Trakt collection when it is not marked as official.",
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "watch_order_source_seasons": "Seasons for {title}",
+  "@watch_order_source_seasons": {
+    "description": "Fallback source label when the watch order contains a show's seasons.",
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "watch_order_select_source": "Order source",
+  "@watch_order_select_source": {
+    "description": "Label for choosing among available watch-order sources."
+  },
+  "watch_order_season": "Season {number}",
+  "@watch_order_season": {
+    "description": "Season metadata shown in a watch order.",
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
+  "watch_order_episode": "Episode {number}",
+  "@watch_order_episode": {
+    "description": "Episode metadata shown in a watch order.",
+    "placeholders": {
+      "number": {"type": "int"}
+    }
+  },
   "sequels": "Sequels",
   "recommendations": "Recommendations",
   "recommendations_similarity": "Similarity:",
+  "recommendation_rating_accessibility": "Rating {rating}",
+  "@recommendation_rating_accessibility": {
+    "description": "Accessible label for a recommendation rating in the provider's display format.",
+    "placeholders": {
+      "rating": {"type": "String"}
+    }
+  },
   "local_folder_structure": "Structure of a local folder",
   "local_folder": "Local folders",
   "add_local_folder": "Add local folder",

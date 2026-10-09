@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/discovery/media_lookup_context.dart';
 import 'package:mangayomi/services/recommendation.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -24,14 +24,12 @@ const double _cardExtent = _coverHeight + 12;
 const double _twoColumnBreakpoint = 700;
 
 class RecommendationScreen extends StatefulWidget {
-  final String name;
-  final ItemType itemType;
+  final MediaLookupContext media;
   final AlgorithmWeights algorithmWeights;
 
   const RecommendationScreen({
     super.key,
-    required this.name,
-    required this.itemType,
+    required this.media,
     required this.algorithmWeights,
   });
 
@@ -53,11 +51,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
   Future<void> _init() async {
     try {
       _errorMessage = "";
-      data = await getRecommendations(
-        widget.name,
-        widget.itemType,
-        widget.algorithmWeights,
-      );
+      data = await getRecommendations(widget.media, widget.algorithmWeights);
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -94,7 +88,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
             )
           : (data == null || data!.isEmpty)
           ? Center(child: Text(l10n.no_result))
-          // Poster list: a cover, the similarity score as a filled pill, the
+          // Poster list: a cover, the catalog rating as a filled pill, the
           // title, a two-line capped synopsis and genre chips. Rows used to
           // stretch the full width of a TV or desktop panel; the grid reflows
           // to two columns instead so they never run into empty space.
@@ -121,7 +115,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
   }
 
   Widget _card(BuildContext context, RecommendationResult rec, int index) {
-    final title = rec.titleEnglish ?? rec.titleRomaji ?? rec.titleNative ?? "";
+    final title = rec.title;
     final coverUrl = rec.imgURLs.isNotEmpty ? rec.imgURLs.first : "";
     return Material(
       color: Colors.transparent,
@@ -132,8 +126,10 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
         // user guessed a direction. The first card claims focus on a TV.
         autofocus: isTv && index == 0,
         focusColor: context.primaryColor.withValues(alpha: Alphas.focus),
-        onTap: () =>
-            context.push('/globalSearch', extra: (title, widget.itemType)),
+        onTap: () => context.push(
+          '/globalSearch',
+          extra: (rec.searchTarget.query, rec.searchTarget.itemType),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(6),
           child: Row(
@@ -156,8 +152,10 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _scorePill(context, rec.score),
-                        const SizedBox(width: 8),
+                        if (rec.rating case CatalogRating rating) ...[
+                          _ratingPill(context, rating),
+                          const SizedBox(width: 8),
+                        ],
                         Expanded(
                           child: Text(
                             title,
@@ -210,23 +208,29 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
   /// Filled with the accent. The label colour is computed against the accent
   /// rather than the theme, so it stays readable whichever hue the user picked
   /// and in either brightness.
-  Widget _scorePill(BuildContext context, int score) {
+  Widget _ratingPill(BuildContext context, CatalogRating rating) {
     final accent = context.primaryColor;
     final onAccent = accent.computeLuminance() > 0.5
         ? Colors.black
         : Colors.white;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: accent,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        "$score%",
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w800,
-          color: onAccent,
+    final label = rating.valueLabel;
+    return Semantics(
+      label: context.l10n.recommendation_rating_accessibility(label),
+      child: ExcludeSemantics(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: accent,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              color: onAccent,
+            ),
+          ),
         ),
       ),
     );

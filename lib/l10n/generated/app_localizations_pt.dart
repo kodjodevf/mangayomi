@@ -2283,10 +2283,60 @@ class AppLocalizationsPt extends AppLocalizations {
   String get watch_order => 'Ordem de visualização';
 
   @override
+  String get watch_order_role_current => 'Current';
+
+  @override
+  String get watch_order_role_previous => 'Previous';
+
+  @override
+  String get watch_order_role_next => 'Next';
+
+  @override
+  String get watch_order_source_release_order => 'Release order';
+
+  @override
+  String watch_order_source_community_list(String name, String author) {
+    return '$name by $author';
+  }
+
+  @override
+  String watch_order_source_official_collection(String name) {
+    return 'Official Trakt collection: $name';
+  }
+
+  @override
+  String watch_order_source_trakt_collection(String name) {
+    return 'Trakt collection: $name';
+  }
+
+  @override
+  String watch_order_source_seasons(String title) {
+    return 'Seasons for $title';
+  }
+
+  @override
+  String get watch_order_select_source => 'Order source';
+
+  @override
+  String watch_order_season(int number) {
+    return 'Season $number';
+  }
+
+  @override
+  String watch_order_episode(int number) {
+    return 'Episode $number';
+  }
+
+  @override
   String get sequels => 'Sequências';
 
   @override
   String get recommendations_similarity => 'Similaridade:';
+
+  @override
+  String recommendation_rating_accessibility(String rating) {
+    return 'Rating $rating';
+  }
 
   @override
   String get local_folder_structure => 'Estrutura de uma pasta local';
