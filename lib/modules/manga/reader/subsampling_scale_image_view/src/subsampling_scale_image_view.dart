@@ -14,6 +14,7 @@ import 'package:mangayomi/utils/avif.dart';
 import 'package:mangayomi/utils/downloaded_page_file.dart';
 
 import 'coordinate_transformer.dart';
+import 'page_pan_forwarding.dart';
 import 'ffi_image_decoder.dart';
 import 'subsampling_image_painter.dart';
 import 'tiling_engine.dart';
@@ -103,8 +104,11 @@ class SubsamplingScaleImageViewController extends ChangeNotifier {
     _state = state;
   }
 
-  void _detach() {
-    _state = null;
+  /// Only [state]'s own detach counts: when a page moves to another slot,
+  /// its replacement attaches before the old view is disposed, and the old
+  /// view must not unhook it.
+  void _detach(_SubsamplingScaleImageViewState state) {
+    if (identical(_state, state)) _state = null;
   }
 
   // ── State Getters ──────────────────────────────────────────────────────────
@@ -515,7 +519,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
   void dispose() {
     _resizeTimer?.cancel();
     _cancelImageStream();
-    widget.controller?._detach();
+    widget.controller?._detach(this);
     _animationController.dispose();
     _tilingEngine.dispose();
     super.dispose();
@@ -526,7 +530,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.controller != widget.controller) {
-      oldWidget.controller?._detach();
+      oldWidget.controller?._detach(this);
       widget.controller?._attach(this);
     }
 
@@ -1366,11 +1370,14 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
         if (widget.pageController != null &&
             widget.pageController!.hasClients &&
             _scale <= _getMinScale() * 1.01) {
-          final double excessX = proposedTranslate.dx - clampedTranslate.dx;
-          if (excessX != 0) {
-            final pos = widget.pageController!.position;
+          final pos = widget.pageController!.position;
+          final double delta = pageScrollDeltaForPan(
+            pos.axisDirection,
+            proposedTranslate - clampedTranslate,
+          );
+          if (delta != 0) {
             pos.jumpTo(
-              (pos.pixels - excessX).clamp(
+              (pos.pixels + delta).clamp(
                 pos.minScrollExtent,
                 pos.maxScrollExtent,
               ),
@@ -1422,7 +1429,11 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
         widget.pageController!.hasClients &&
         _scale <= _getMinScale() * 1.01) {
       final double currentPageValue = widget.pageController!.page ?? 0.0;
-      final int targetPage = currentPageValue.round();
+      final int targetPage = settlePage(
+        currentPageValue,
+        widget.pageController!.position.axisDirection,
+        details.velocity.pixelsPerSecond,
+      );
       widget.pageController!.animateToPage(
         targetPage,
         duration: const Duration(milliseconds: 250),

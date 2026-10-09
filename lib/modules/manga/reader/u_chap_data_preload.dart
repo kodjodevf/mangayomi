@@ -56,6 +56,14 @@ class UChapDataPreload {
     this.localImagePath,
   });
 
+  /// Identifies this page among its neighbours in a list or page view, for
+  /// widget keys. The two halves of a split wide page share [index] and only
+  /// differ by [srcRect].
+  String widgetKey(int fallbackIndex) {
+    final half = srcRect == null ? '' : '-${srcRect!.left.round()}';
+    return '${chapter?.id ?? "trans"}-${index ?? fallbackIndex}$half';
+  }
+
   UChapDataPreload.transition({
     required Chapter currentChapter,
     required this.nextChapter,

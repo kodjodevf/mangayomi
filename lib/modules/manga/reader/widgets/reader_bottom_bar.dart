@@ -217,8 +217,8 @@ class ReaderBottomBar extends ConsumerWidget {
                       ),
                     ),
 
-                    // Slider
-                    if (isVisible)
+                    // Slider (needs at least one page for a valid range)
+                    if (isVisible && totalPages > 0)
                       Flexible(
                         flex: 14,
                         child: _buildSlider(

@@ -215,7 +215,13 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
 
     _hasLandscapeZoomed = true;
     Future.delayed(Duration(milliseconds: 200), () {
-      if (mounted) {
+      // The PageView keeps the previous page mounted, so mounted alone would
+      // still zoom a page the reader has already swiped away from.
+      if (!mounted || !widget.isVisible || !controller.isReady) {
+        _hasLandscapeZoomed = false;
+        return;
+      }
+      if ((controller.scale - controller.minScale).abs() <= 0.01) {
         controller.animateScaleAndCenter(
           targetScale,
           targetPoint,

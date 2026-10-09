@@ -71,8 +71,8 @@ class ReaderPageContent extends ConsumerWidget {
   final void Function(int index) onWideSinglePageLoaded;
 
   final void Function(int index, bool zoomed) onDoublePageZoomChanged;
-  final void Function(int index, PhotoViewController? controller)
-  onDoublePageControllerCreated;
+  final void Function(int index, PhotoViewController controller, bool attached)
+  onDoublePageControllerChanged;
   final Future<void> Function(int index) onPageChanged;
 
   const ReaderPageContent({
@@ -98,7 +98,7 @@ class ReaderPageContent extends ConsumerWidget {
     required this.onPageImageLoaded,
     required this.onWideSinglePageLoaded,
     required this.onDoublePageZoomChanged,
-    required this.onDoublePageControllerCreated,
+    required this.onDoublePageControllerChanged,
     required this.onPageChanged,
   });
 
@@ -198,8 +198,8 @@ class ReaderPageContent extends ConsumerWidget {
                   onZoomChanged: (zoomed) {
                     onDoublePageZoomChanged(index, zoomed);
                   },
-                  onControllerCreated: (controller) {
-                    onDoublePageControllerCreated(index, controller);
+                  onControllerChanged: (controller, attached) {
+                    onDoublePageControllerChanged(index, controller, attached);
                   },
                   onFailedToLoadImage: (val) {
                     onFailedToLoadImage(index, val);
@@ -234,9 +234,7 @@ class ReaderPageContent extends ConsumerWidget {
               itemBuilder: (BuildContext context, int index) {
                 final page = pages[index];
                 return ReaderPagedItem(
-                  key: ValueKey(
-                    'paged-${page.chapter?.id ?? "trans"}-${page.index ?? index}',
-                  ),
+                  key: ValueKey('paged-${page.widgetKey(index)}'),
                   index: index,
                   page: page,
                   chapter: chapter,
