@@ -47,11 +47,15 @@ import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/utils/error_toast.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'restore.g.dart';
 
+/// Restores the backup at [path], replacing or merging into the library.
+///
+/// Throws when the restore fails, and leaves reporting it to the caller: the
+/// restore flows announce the outcome themselves, so an error swallowed here
+/// used to be followed by their success message.
 @riverpod
 Future<void> doRestore(
   Ref ref, {
@@ -158,8 +162,6 @@ Future<void> doRestore(
     } else {
       showBotToast("Backup Type not supported!");
     }
-  } catch (e, s) {
-    toastError(e, stack: s, source: 'restore');
   } finally {
     if (!uploadStarted) {
       ref.read(restoreSyncGuardProvider.notifier).finish();

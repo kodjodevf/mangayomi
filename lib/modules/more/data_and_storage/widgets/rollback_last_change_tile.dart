@@ -6,6 +6,7 @@ import 'package:mangayomi/modules/more/data_and_storage/providers/restore.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/more/widgets/dialog_actions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class RollbackLastChangeTile extends ConsumerWidget {
@@ -119,6 +120,11 @@ Future<void> offerLibraryRollback(
         syncAfterRestore: syncAfterRestore,
       ).future,
     );
+  } catch (e, s) {
+    // Keep the snapshot: the roll back did not happen, so it is still the
+    // way back.
+    toastError(e, stack: s, source: 'rollback');
+    return;
   } finally {
     if (context.mounted) hideBusyDialog(context);
   }
