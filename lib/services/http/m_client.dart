@@ -148,6 +148,14 @@ class MClient {
     return {HttpHeaders.cookieHeader: combined};
   }
 
+  /// On Linux, desktop_webview_window returns evaluateJavaScript results as
+  /// JSON, so navigator.userAgent arrives wrapped in literal quotes. Sent as
+  /// is, Cloudflare rejects every request carrying it with a 403.
+  static String unquoteUserAgent(String ua) =>
+      ua.length >= 2 && ua.startsWith('"') && ua.endsWith('"')
+      ? jsonDecode(ua) as String
+      : ua;
+
   static Future<void> setCookie(
     String url,
     String ua,
@@ -184,12 +192,7 @@ class MClient {
       );
       await settingsRepository.update((s) => s.cookiesList = filteredCookies);
     }
-    // On Linux, desktop_webview_window returns evaluateJavaScript results as
-    // JSON, so navigator.userAgent arrives wrapped in literal quotes. Sent as
-    // is, Cloudflare rejects every request carrying it with a 403.
-    if (ua.length >= 2 && ua.startsWith('"') && ua.endsWith('"')) {
-      ua = jsonDecode(ua);
-    }
+    ua = unquoteUserAgent(ua);
     if (ua.isNotEmpty) {
       await settingsRepository.update((s) => s.userAgent = ua);
     }

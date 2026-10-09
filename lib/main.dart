@@ -14,6 +14,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:isar_community/isar.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -144,6 +145,16 @@ void main(List<String> args) async {
       Object? startupError;
       try {
         isar = await storage.initDB(null, inspector: kDebugMode);
+        // Earlier Linux builds saved the WebView's user agent quoted (see
+        // MClient.unquoteUserAgent). Clean it before anything reads it: the
+        // extension server, the HTTP client and the image loader all do.
+        final userAgent = settingsRepository.currentOrNull?.userAgent;
+        if (userAgent != null) {
+          final clean = MClient.unquoteUserAgent(userAgent);
+          if (clean != userAgent) {
+            await settingsRepository.update((s) => s.userAgent = clean);
+          }
+        }
       } catch (e, st) {
         AppLogger.log('DB init failed: $e\n$st', logLevel: LogLevel.error);
         startupError = e;
