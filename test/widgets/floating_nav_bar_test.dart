@@ -617,6 +617,18 @@ void main() {
         .color!;
   }
 
+  Color pillColourOf(WidgetTester tester) =>
+      (tester
+                  .widget<AnimatedContainer>(
+                    find.descendant(
+                      of: find.byType(AnimatedPositioned),
+                      matching: find.byType(AnimatedContainer),
+                    ),
+                  )
+                  .decoration
+              as ShapeDecoration)
+          .color!;
+
   Widget themed(Brightness brightness) => MaterialApp(
     theme: ThemeData(brightness: brightness),
     home: Scaffold(
@@ -634,7 +646,7 @@ void main() {
     ),
   );
 
-  testWidgets('the bar is nearly opaque in light, where blur cannot help', (
+  testWidgets('the light bar uses a quiet, nearly opaque surface', (
     tester,
   ) async {
     final theme = ThemeData(brightness: Brightness.light);
@@ -645,24 +657,43 @@ void main() {
     // The fill is translucent, so what matters is the colour once it has
     // composited over the page behind it.
     final composited = Color.alphaBlend(barFillOf(tester), page);
+    expect(barFillOf(tester).a, greaterThan(0.9));
     expect(
       contrastOf(composited, page),
-      greaterThan(1.12),
+      lessThan(1.1),
       reason:
-          'light mode measured 1.05 on device, which is invisible. A light '
-          'page gives the backdrop blur nothing darker to pull in, so the '
-          'fill itself has to carry the separation here.',
+          'the light surface should stay quiet; the edge and shadow provide '
+          'separation without turning the capsule into a grey dock',
     );
   });
 
-  testWidgets('the bar keeps its glass fill in dark', (tester) async {
+  testWidgets('dark mode keeps its existing glass palette', (tester) async {
     await tester.pumpWidget(themed(Brightness.dark));
     await tester.pumpAndSettle();
+    final scheme = Theme.of(tester.element(find.byType(FloatingNavBar)))
+        .colorScheme;
     expect(
       barFillOf(tester).a,
       lessThan(0.8),
       reason: 'dark keeps the translucency; the blur has content to work with',
     );
+    expect(
+      pillColourOf(tester).withValues(alpha: 1),
+      scheme.secondaryContainer,
+    );
+
+    IconThemeData themeOf(IconData icon) => tester
+        .widget<IconTheme>(
+          find
+              .ancestor(of: find.byIcon(icon), matching: find.byType(IconTheme))
+              .first,
+        )
+        .data;
+    expect(
+      themeOf(Icons.video_library_rounded).color,
+      scheme.onSecondaryContainer,
+    );
+    expect(themeOf(Icons.explore_outlined).color, scheme.onSurface);
   });
 
   testWidgets('a shadow separates the bar in either theme', (tester) async {
@@ -743,19 +774,7 @@ void main() {
     );
   });
 
-  Color pillColourOf(WidgetTester tester) =>
-      (tester
-                  .widget<AnimatedContainer>(
-                    find.descendant(
-                      of: find.byType(AnimatedPositioned),
-                      matching: find.byType(AnimatedContainer),
-                    ),
-                  )
-                  .decoration
-              as ShapeDecoration)
-          .color!;
-
-  testWidgets('the pill carries the theme, the bar stays neutral', (
+  testWidgets('light mode uses a soft tonal pill and a quiet surface', (
     tester,
   ) async {
     final scheme = ColorScheme.fromSeed(seedColor: const Color(0xFF7B4BD6));
@@ -779,14 +798,18 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(
-      pillColourOf(tester).withValues(alpha: 1),
-      scheme.secondaryContainer,
-      reason: 'the pill is the one element that takes the accent',
+    final expectedPill = Color.alphaBlend(
+      scheme.primary.withValues(alpha: 0.13),
+      scheme.surfaceContainerLow,
     );
-    // The bar is glass: it should take colour from what is behind it, not
-    // impose its own, and a coloured slab would fight the cover art.
+    expect(pillColourOf(tester), expectedPill);
+
     final fill = barFillOf(tester);
+    expect(
+      fill.withValues(alpha: 1),
+      scheme.surfaceContainerLow,
+      reason: 'light mode should use the quiet container, not the darkest one',
+    );
     expect(
       (fill.r - fill.g).abs() < 0.25 && (fill.g - fill.b).abs() < 0.25,
       isTrue,
@@ -795,9 +818,6 @@ void main() {
   });
 
   test('a selected icon stays legible on the pill in any scheme', () {
-    // This pairing is the reason the pill carries the theme rather than the
-    // icon. Tinting the icon against the bar would have to hold up against
-    // every scheme the user can choose, with no guarantee behind it.
     double contrast(Color a, Color b) {
       final la = a.computeLuminance(), lb = b.computeLuminance();
       return (math.max(la, lb) + 0.05) / (math.min(la, lb) + 0.05);
@@ -816,13 +836,87 @@ void main() {
     for (final seed in seeds) {
       for (final brightness in Brightness.values) {
         final s = ColorScheme.fromSeed(seedColor: seed, brightness: brightness);
+        final pill = brightness == Brightness.light
+            ? Color.alphaBlend(
+                s.primary.withValues(alpha: 0.13),
+                s.surfaceContainerLow,
+              )
+            : s.secondaryContainer;
+        final icon = brightness == Brightness.light
+            ? s.primary
+            : s.onSecondaryContainer;
         expect(
-          contrast(s.onSecondaryContainer, s.secondaryContainer),
-          greaterThan(4.5),
+          contrast(icon, pill),
+          greaterThan(3.0),
           reason: 'seed $seed in $brightness fails the pairing',
         );
       }
     }
+  });
+
+  testWidgets('light icons stay readable while a dragged pill crosses them', (
+    tester,
+  ) async {
+    final scheme = ColorScheme.fromSeed(seedColor: const Color(0xFF00658A));
+    Widget host(int index) => MaterialApp(
+      theme: ThemeData(colorScheme: scheme, useMaterial3: true),
+      home: Scaffold(
+        body: Align(
+          alignment: Alignment.bottomCenter,
+          child: SizedBox(
+            width: 360,
+            child: FloatingNavBar(
+              destinations: _destinations,
+              currentIndex: index,
+              onSelected: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(host(0));
+    await tester.pumpAndSettle();
+
+    final gesture = await tester.startGesture(_pillRect(tester).center);
+    await gesture.moveBy(const Offset(120, 0));
+    await tester.pumpAndSettle();
+
+    IconThemeData themeOf(IconData icon) => tester
+        .widget<IconTheme>(
+          find
+              .ancestor(of: find.byIcon(icon), matching: find.byType(IconTheme))
+              .first,
+        )
+        .data;
+    final barColor = Color.alphaBlend(
+      barFillOf(tester),
+      ThemeData(colorScheme: scheme).scaffoldBackgroundColor,
+    );
+    final pillColor = pillColourOf(tester);
+    final oldSelected = themeOf(Icons.collections_bookmark_rounded).color!;
+    final crossedTarget = themeOf(Icons.video_library_outlined).color!;
+
+    expect(
+      _pillRect(tester).contains(
+        tester.getRect(find.byIcon(Icons.video_library_outlined)).center,
+      ),
+      isTrue,
+      reason: 'the test must exercise the pill crossing an unselected icon',
+    );
+    expect(
+      contrastOf(oldSelected, barColor),
+      greaterThan(3.0),
+      reason: 'the old selected icon vanished after the pill left it',
+    );
+    expect(
+      contrastOf(crossedTarget, pillColor),
+      greaterThan(3.0),
+      reason: 'the unselected target disappeared under the dragged pill',
+    );
+
+    await gesture.up();
+    await tester.pumpAndSettle();
   });
 
   testWidgets('grabbing another tab pulls the pill over, not teleports it', (

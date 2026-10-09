@@ -585,6 +585,15 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
         const TextStyle(fontSize: 12, fontWeight: FontWeight.w600);
     final dragging = _dragX != null;
     final lifted = dragging || _tapped;
+    final barColor = light
+        ? scheme.surfaceContainerLow.withValues(alpha: 0.97)
+        : scheme.surface.withValues(alpha: 0.62);
+    final pillColor = light
+        ? Color.alphaBlend(
+            scheme.primary.withValues(alpha: dragging ? 0.18 : 0.13),
+            scheme.surfaceContainerLow,
+          )
+        : scheme.secondaryContainer.withValues(alpha: dragging ? 1.0 : 0.9);
 
     return _Zoom(
       zoom: lifted ? FloatingNavBar._dragZoom : 1.0,
@@ -599,9 +608,11 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
             borderRadius: BorderRadius.circular(height / 2),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: light ? 0.16 : 0.34),
-                blurRadius: 20,
-                offset: const Offset(0, 6),
+                color: (light ? scheme.shadow : Colors.black).withValues(
+                  alpha: light ? 0.10 : 0.34,
+                ),
+                blurRadius: light ? 16 : 20,
+                offset: Offset(0, light ? 4 : 6),
               ),
             ],
           ),
@@ -611,13 +622,12 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
                 decoration: BoxDecoration(
-                  // A light theme has nothing darker behind it for the
-                  // blur to pull in, so translucency alone leaves the bar
-                  // invisible against the page. Go nearly opaque there and
-                  // keep the glass effect for dark.
-                  color: light
-                      ? scheme.surfaceContainerHighest.withValues(alpha: 0.94)
-                      : scheme.surface.withValues(alpha: 0.62),
+                  // Keep light mode close to the page surface instead of using
+                  // the darkest container tone, which made the whole capsule
+                  // look like a heavy grey dock. It stays nearly opaque so the
+                  // icons remain stable over cover art. Dark mode keeps the
+                  // more translucent glass treatment.
+                  color: barColor,
                   borderRadius: BorderRadius.circular(height / 2),
                 ),
 
@@ -705,18 +715,14 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                                   duration: FloatingNavBar._duration,
                                   curve: FloatingNavBar._curve,
                                   decoration: ShapeDecoration(
-                                    // The one element that carries the
-                                    // theme. Pairing it with
-                                    // onSecondaryContainer for the icon is
-                                    // what guarantees the icon stays legible
-                                    // across every scheme the user can pick,
-                                    // which tinting the icon against the bar
-                                    // could not.
-                                    color: scheme.secondaryContainer.withValues(
-                                      // Slightly more solid in hand, so
-                                      // it still reads as picked up.
-                                      alpha: dragging ? 1.0 : 0.9,
-                                    ),
+                                    // A solid secondary container can become a
+                                    // very dark block in custom light themes.
+                                    // Blending a small amount of the primary
+                                    // into the bar surface gives light mode a
+                                    // quieter tonal selection while keeping the
+                                    // user's accent. Dark mode keeps its current
+                                    // Material container pairing.
+                                    color: pillColor,
                                     // A stadium is a full capsule at any
                                     // size, so the pill stays as round as the
                                     // bar's own caps however it scales.
@@ -731,7 +737,9 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                             Positioned.fill(
                               child: IgnorePointer(
                                 child: _GlassEdge(
-                                  color: scheme.onSurface,
+                                  color: light
+                                      ? scheme.outlineVariant
+                                      : scheme.onSurface,
                                   light: light,
                                   radius: height / 2,
                                 ),
@@ -770,6 +778,7 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                                             ? widget.destinations[i].label
                                             : null,
                                         labelStyle: labelStyle,
+                                        light: light,
                                         // Only the icon-only layout nudges: there
                                         // the pill is clamped inwards at the ends
                                         // and the icon follows it. Labelled slots
@@ -939,6 +948,7 @@ class _FloatingNavItem extends StatelessWidget {
     required this.iconSize,
     required this.nudge,
     required this.onTap,
+    required this.light,
     this.label,
     this.labelStyle,
   });
@@ -946,6 +956,7 @@ class _FloatingNavItem extends StatelessWidget {
   final NavigationDestination destination;
   final bool selected;
   final double iconSize;
+  final bool light;
 
   /// Horizontal shift so the icon lands on the pill's centre rather than its
   /// slot's. Zero everywhere except the two end slots.
@@ -962,13 +973,12 @@ class _FloatingNavItem extends StatelessWidget {
     final icon = selected
         ? (destination.selectedIcon ?? destination.icon)
         : destination.icon;
-    // A selected icon sits on the pill, so it takes the pill's paired colour
-    // rather than the bar's. Unselected ones stay neutral, so only the active
-    // tab carries the theme.
-    // Both states at full strength: the pill, the fill and the stroke weight
-    // already say which tab is active, so dimming the rest only made them
-    // harder to read.
-    final color = selected ? scheme.onSecondaryContainer : scheme.onSurface;
+    // Light mode keeps both icon states dark enough to survive while the pill
+    // slides between them: the selected icon uses the accent and the others a
+    // quieter neutral. Dark mode retains the container's paired foreground.
+    final color = light
+        ? (selected ? scheme.primary : scheme.onSurfaceVariant)
+        : (selected ? scheme.onSecondaryContainer : scheme.onSurface);
     return Semantics(
       // The label is gone visually, so it has to survive for screen readers.
       label: destination.label,
@@ -980,43 +990,47 @@ class _FloatingNavItem extends StatelessWidget {
         child: Center(
           child: Transform.translate(
             offset: Offset(nudge, 0),
-            child: TweenAnimationBuilder<double>(
-              tween: Tween(end: iconSize),
+            child: TweenAnimationBuilder<Color?>(
+              tween: ColorTween(end: color),
               duration: FloatingNavBar._duration,
               curve: FloatingNavBar._curve,
-              builder: (context, size, child) => IconTheme(
-                data: IconThemeData(
-                  size: size,
-                  color: color,
-                  // Several destinations (history, more) have an "outlined"
-                  // variant that is the same drawing, so filling cannot show
-                  // selection. Thickening the stroke does, and it is harmless on
-                  // the icons that do fill.
-                  shadows: selected
-                      ? [Shadow(color: color, blurRadius: 0.9)]
-                      : null,
-                ),
-                child: child!,
-              ),
-              child: label == null
-                  ? icon
-                  : Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        icon,
-                        const SizedBox(width: FloatingNavBar._labelGap),
-                        // Flexible so a long label in a narrow window ellipsises
-                        // rather than overflowing the bar.
-                        Flexible(
-                          child: Text(
-                            label!,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: labelStyle?.copyWith(color: color),
-                          ),
+              builder: (context, animatedColor, _) {
+                final resolvedColor = animatedColor ?? color;
+                return IconTheme(
+                  data: IconThemeData(
+                    size: iconSize,
+                    color: resolvedColor,
+                    // Several destinations (history, more) have an "outlined"
+                    // variant that is the same drawing, so filling cannot show
+                    // selection. Thickening the stroke does, and it is harmless on
+                    // the icons that do fill.
+                    shadows: selected
+                        ? [Shadow(color: resolvedColor, blurRadius: 0.9)]
+                        : null,
+                  ),
+                  child: label == null
+                      ? icon
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            icon,
+                            const SizedBox(width: FloatingNavBar._labelGap),
+                            // Flexible so a long label in a narrow window ellipsises
+                            // rather than overflowing the bar.
+                            Flexible(
+                              child: Text(
+                                label!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: labelStyle?.copyWith(
+                                  color: resolvedColor,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                );
+              },
             ),
           ),
         ),
