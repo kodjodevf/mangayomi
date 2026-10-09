@@ -23,7 +23,7 @@ void main() {
     test('a TV never takes the floating bar', () {
       debugIsTvOverride = true;
       expect(
-        usesFloatingNav,
+        supportsFloatingNav,
         isFalse,
         reason:
             'the capsule holds no focus handling, so a remote cannot reach it',
@@ -32,9 +32,9 @@ void main() {
 
     test('anything that is not a TV keeps whatever its platform says', () {
       debugIsTvOverride = true;
-      final onTv = usesFloatingNav;
+      final onTv = supportsFloatingNav;
       debugIsTvOverride = false;
-      final offTv = usesFloatingNav;
+      final offTv = supportsFloatingNav;
       expect(onTv, isFalse);
       expect(
         offTv,
@@ -48,10 +48,10 @@ void main() {
       // still says "not a TV". A top-level final would cache that answer for
       // the rest of the process and put the capsule on a television.
       debugIsTvOverride = false;
-      expect(usesFloatingNav, isTrue);
+      expect(supportsFloatingNav, isTrue);
       debugIsTvOverride = true;
       expect(
-        usesFloatingNav,
+        supportsFloatingNav,
         isFalse,
         reason: 'must re-read isTv, not cache the first answer',
       );
@@ -59,8 +59,48 @@ void main() {
 
     test('a TV falls through to the size rule and keeps its rail', () {
       debugIsTvOverride = true;
-      expect(usesFloatingNav, isFalse);
+      expect(supportsFloatingNav, isFalse);
       expect(sizeWantsNavRail(const Size(1920, 1080)), isTrue);
     });
+
+    test('the floating bar remains opt-in on a supported platform', () {
+      debugIsTvOverride = false;
+      expect(shouldUseFloatingNav(enabled: false), isFalse);
+      expect(shouldUseFloatingNav(enabled: true), isTrue);
+    });
+
+    test('the preference cannot enable the floating bar on a TV', () {
+      debugIsTvOverride = true;
+      expect(shouldUseFloatingNav(enabled: true), isFalse);
+    });
+  });
+
+  testWidgets('a tablet keeps its rail until floating navigation is enabled', (
+    tester,
+  ) async {
+    late bool withStandardNavigation;
+    late bool withFloatingNavigation;
+
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(size: Size(1024, 768)),
+        child: MaterialApp(
+          home: Builder(
+            builder: (context) {
+              withStandardNavigation = context.prefersNavRail(
+                useFloatingNav: false,
+              );
+              withFloatingNavigation = context.prefersNavRail(
+                useFloatingNav: true,
+              );
+              return const SizedBox();
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(withStandardNavigation, isTrue);
+    expect(withFloatingNavigation, isFalse);
   });
 }

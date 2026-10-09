@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 /// Where the shell's reserved bottom inset is still readable, and where it is
 /// not.
@@ -80,5 +81,36 @@ void main() {
     // The sheet is pushed here, a sibling of the screen rather than a child of
     // its Scaffold, so the shell's reservation is intact.
     expect(pushedInset, reserved);
+  });
+
+  testWidgets('floating-only bottom room follows the shell toggle', (
+    tester,
+  ) async {
+    var inset = -1.0;
+
+    Future<void> pumpProbe(bool enabled) async {
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(
+            padding: EdgeInsets.only(bottom: reserved),
+          ),
+          child: FloatingNavigationScope(
+            enabled: enabled,
+            child: Builder(
+              builder: (context) {
+                inset = pageBottomInsets(context).bottom;
+                return const SizedBox();
+              },
+            ),
+          ),
+        ),
+      );
+    }
+
+    await pumpProbe(false);
+    expect(inset, 0);
+
+    await pumpProbe(true);
+    expect(inset, reserved + 8);
   });
 }

@@ -1189,6 +1189,13 @@ class AppLocalizationsRu extends AppLocalizations {
       'Перестройте и настройте каждую навигацию в соответствии с вашими потребностями.';
 
   @override
+  String get floating_navigation_bar => 'Floating navigation bar';
+
+  @override
+  String get floating_navigation_bar_description =>
+      'Use a floating capsule instead of the standard attached navigation bar.';
+
+  @override
   String get full_screen_player => 'Использовать полноэкранный режим';
 
   @override

@@ -1181,6 +1181,13 @@ class AppLocalizationsIt extends AppLocalizations {
       'Riorganizza e regola ogni navigazione in base alle tue esigenze.';
 
   @override
+  String get floating_navigation_bar => 'Floating navigation bar';
+
+  @override
+  String get floating_navigation_bar_description =>
+      'Use a floating capsule instead of the standard attached navigation bar.';
+
+  @override
   String get full_screen_player => 'Usa schermo intero';
 
   @override

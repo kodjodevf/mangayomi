@@ -1173,6 +1173,13 @@ class AppLocalizationsHi extends AppLocalizations {
       'अपनी आवश्यकताओं के अनुसार प्रत्येक नेविगेशन को पुनर्व्यवस्थित और टॉगल करें।';
 
   @override
+  String get floating_navigation_bar => 'Floating navigation bar';
+
+  @override
+  String get floating_navigation_bar_description =>
+      'Use a floating capsule instead of the standard attached navigation bar.';
+
+  @override
   String get full_screen_player => 'पूर्ण स्क्रीन का उपयोग करें';
 
   @override

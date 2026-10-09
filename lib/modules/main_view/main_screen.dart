@@ -15,6 +15,7 @@ import 'package:mangayomi/repositories/history_repository.dart';
 import 'package:mangayomi/modules/more/about/providers/download_file_screen.dart';
 import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/floating_navigation_bar_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
@@ -296,8 +297,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   final NavShrink _navShrink = NavShrink();
 
-  bool _onPageScroll(ScrollNotification notification) {
-    if (!usesFloatingNav || notification.metrics.axis != Axis.vertical) {
+  bool _onPageScroll(
+    ScrollNotification notification, {
+    required bool useFloatingNav,
+  }) {
+    if (!useFloatingNav || notification.metrics.axis != Axis.vertical) {
       return false;
     }
 
@@ -332,6 +336,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       _clearCache();
       setState(() {});
     });
+    ref.listen<bool>(floatingNavigationBarStateProvider, (previous, next) {
+      if (!next) _wakeNav();
+    });
 
     final l10n = context.l10n;
     final route = GoRouter.of(context);
@@ -345,9 +352,15 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         .when(
           data: (_) => Consumer(
             builder: (context, ref, child) {
+              final useFloatingNav = shouldUseFloatingNav(
+                enabled: ref.watch(floatingNavigationBarStateProvider),
+              );
+              final prefersNavRail = context.prefersNavRail(
+                useFloatingNav: useFloatingNav,
+              );
               final isReadingScreen = _isReadingScreen(location);
               bool uniqueSwitch = false;
-              List<String> dest = !context.prefersNavRail && isLibSwitch
+              List<String> dest = !prefersNavRail && isLibSwitch
                   ? [
                       "_disableLibSwitch",
                       ...navigationOrder.where(
@@ -363,9 +376,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 dest = dest.where(_isNotHiddenLibOnTv).toList();
               }
 
-              if (mergeLibraryNavMobile &&
-                  !context.prefersNavRail &&
-                  !isLibSwitch) {
+              if (mergeLibraryNavMobile && !prefersNavRail && !isLibSwitch) {
                 dest = dest
                     .map((nav) {
                       if ([
@@ -389,9 +400,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 currentIndex = 0;
               } else {
                 String? libLocation;
-                if (mergeLibraryNavMobile &&
-                    !context.prefersNavRail &&
-                    !isLibSwitch) {
+                if (mergeLibraryNavMobile && !prefersNavRail && !isLibSwitch) {
                   libLocation = location?.replaceAll(
                     libLocationRegex,
                     "_enableLibSwitch",
@@ -409,103 +418,117 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               final downloadedOnly = ref.watch(downloadedOnlyStateProvider);
               final isLongPressed = ref.watch(isLongPressedStateProvider);
 
-              return Column(
-                children: [
-                  if (!isReadingScreen)
-                    DownloadedOnlyBar(
-                      downloadedOnly: downloadedOnly,
-                      l10n: l10n,
-                    ),
-                  if (!isReadingScreen)
-                    IncognitoModeBar(incognitoMode: incognitoMode, l10n: l10n),
-                  Flexible(
-                    child: Scaffold(
-                      extendBody: usesFloatingNav,
-                      body: NotificationListener<ScrollNotification>(
-                        onNotification: _onPageScroll,
-                        child: context.prefersNavRail
-                            ? MainTabletLayout(
+              return FloatingNavigationScope(
+                enabled: useFloatingNav,
+                child: Column(
+                  children: [
+                    if (!isReadingScreen)
+                      DownloadedOnlyBar(
+                        downloadedOnly: downloadedOnly,
+                        l10n: l10n,
+                      ),
+                    if (!isReadingScreen)
+                      IncognitoModeBar(
+                        incognitoMode: incognitoMode,
+                        l10n: l10n,
+                      ),
+                    Flexible(
+                      child: Scaffold(
+                        extendBody: useFloatingNav,
+                        body: NotificationListener<ScrollNotification>(
+                          onNotification: (notification) => _onPageScroll(
+                            notification,
+                            useFloatingNav: useFloatingNav,
+                          ),
+                          child: prefersNavRail
+                              ? MainTabletLayout(
+                                  isLongPressed: isLongPressed,
+                                  location: location,
+                                  dest: dest,
+                                  currentIndex: currentIndex,
+                                  route: route,
+                                  ref: ref,
+                                  buildNavigationWidgetsDesktop:
+                                      _buildNavigationWidgetsDesktop,
+                                  child: widget.child,
+                                )
+                              : widget.child,
+                        ),
+                        bottomNavigationBar: prefersNavRail
+                            ? null
+                            : MainMobileBottomNavigation(
                                 isLongPressed: isLongPressed,
                                 location: location,
-                                dest: dest,
                                 currentIndex: currentIndex,
+                                dest: dest,
                                 route: route,
                                 ref: ref,
-                                buildNavigationWidgetsDesktop:
-                                    _buildNavigationWidgetsDesktop,
-                                child: widget.child,
-                              )
-                            : widget.child,
+                                useFloatingNav: useFloatingNav,
+                                shrink: _navShrink.shrunk ? 1.0 : 0.0,
+                                onWake: _wakeNav,
+                                buildNavigationWidgetsMobile:
+                                    _buildNavigationWidgetsMobile,
+                                onDestinationSelected: (destination) {
+                                  if (destination == "_enableLibSwitch") {
+                                    setState(() {
+                                      isLibSwitch = true;
+                                    });
+                                    if (!libLocationRegex.hasMatch(
+                                      location ?? "",
+                                    )) {
+                                      final target = _firstVisibleLibrary();
+                                      if (target != null) route.go(target);
+                                    }
+                                  } else if (destination ==
+                                      "_disableLibSwitch") {
+                                    setState(() {
+                                      isLibSwitch = false;
+                                    });
+                                  } else {
+                                    final now = DateTime.now();
+                                    final isDoubleTap = isNavDoubleTap(
+                                      destination,
+                                      _lastMobileNavDest,
+                                      _lastMobileNavTapTime,
+                                      now,
+                                    );
+                                    if (isDoubleTap &&
+                                        destination == '/history') {
+                                      _lastMobileNavDest = null;
+                                      _lastMobileNavTapTime = null;
+                                      final activeType = ref.read(
+                                        activeHistoryItemTypeStateProvider,
+                                      );
+                                      unawaited(
+                                        resumeLatestHistory(
+                                          context,
+                                          activeType,
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    final itemType = itemTypeForNavDest(
+                                      destination,
+                                    );
+                                    if (isDoubleTap && itemType != null) {
+                                      _lastMobileNavDest = null;
+                                      _lastMobileNavTapTime = null;
+                                      context.push(
+                                        '/globalSearch',
+                                        extra: (null, itemType),
+                                      );
+                                      return;
+                                    }
+                                    _lastMobileNavDest = destination;
+                                    _lastMobileNavTapTime = now;
+                                    route.go(destination);
+                                  }
+                                },
+                              ),
                       ),
-                      bottomNavigationBar: context.prefersNavRail
-                          ? null
-                          : MainMobileBottomNavigation(
-                              isLongPressed: isLongPressed,
-                              location: location,
-                              currentIndex: currentIndex,
-                              dest: dest,
-                              route: route,
-                              ref: ref,
-                              shrink: _navShrink.shrunk ? 1.0 : 0.0,
-                              onWake: _wakeNav,
-                              buildNavigationWidgetsMobile:
-                                  _buildNavigationWidgetsMobile,
-                              onDestinationSelected: (destination) {
-                                if (destination == "_enableLibSwitch") {
-                                  setState(() {
-                                    isLibSwitch = true;
-                                  });
-                                  if (!libLocationRegex.hasMatch(
-                                    location ?? "",
-                                  )) {
-                                    final target = _firstVisibleLibrary();
-                                    if (target != null) route.go(target);
-                                  }
-                                } else if (destination == "_disableLibSwitch") {
-                                  setState(() {
-                                    isLibSwitch = false;
-                                  });
-                                } else {
-                                  final now = DateTime.now();
-                                  final isDoubleTap = isNavDoubleTap(
-                                    destination,
-                                    _lastMobileNavDest,
-                                    _lastMobileNavTapTime,
-                                    now,
-                                  );
-                                  if (isDoubleTap &&
-                                      destination == '/history') {
-                                    _lastMobileNavDest = null;
-                                    _lastMobileNavTapTime = null;
-                                    final activeType = ref.read(
-                                      activeHistoryItemTypeStateProvider,
-                                    );
-                                    unawaited(
-                                      resumeLatestHistory(context, activeType),
-                                    );
-                                    return;
-                                  }
-                                  final itemType = itemTypeForNavDest(
-                                    destination,
-                                  );
-                                  if (isDoubleTap && itemType != null) {
-                                    _lastMobileNavDest = null;
-                                    _lastMobileNavTapTime = null;
-                                    context.push(
-                                      '/globalSearch',
-                                      extra: (null, itemType),
-                                    );
-                                    return;
-                                  }
-                                  _lastMobileNavDest = destination;
-                                  _lastMobileNavTapTime = now;
-                                  route.go(destination);
-                                }
-                              },
-                            ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           ),

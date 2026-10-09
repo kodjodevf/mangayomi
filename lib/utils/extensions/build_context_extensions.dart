@@ -1,4 +1,3 @@
-import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 
 /// Whether a viewport of this size is rail-shaped.
@@ -8,9 +7,7 @@ import 'package:flutter/material.dart';
 /// a rail the moment it rotated.
 ///
 /// Separate from [BuildContextExtensions.prefersNavRail] so the rule can be
-/// exercised on its own. That getter short-circuits on platforms using the
-/// floating bar, which on an Apple test host is always, leaving nothing to
-/// test.
+/// exercised on its own.
 bool sizeWantsNavRail(Size size) => size.shortestSide >= 600;
 
 extension BuildContextExtensions on BuildContext {
@@ -67,8 +64,8 @@ extension BuildContextExtensions on BuildContext {
   /// A TV is the case this ordering exists for: it is excluded from the
   /// floating bar, so it falls through to the size rule and keeps the rail its
   /// remote can actually focus.
-  bool get prefersNavRail {
-    if (usesFloatingNav) return false;
+  bool prefersNavRail({required bool useFloatingNav}) {
+    if (useFloatingNav) return false;
     return sizeWantsNavRail(MediaQuery.of(this).size);
   }
 

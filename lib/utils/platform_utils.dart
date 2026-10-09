@@ -14,8 +14,7 @@ final bool isMobile = Platform.isAndroid || Platform.isIOS;
 /// macOS or iOS
 final bool isApple = Platform.isMacOS || Platform.isIOS;
 
-/// Whether navigation here is the floating capsule bar rather than the
-/// material one.
+/// Whether this device can use the floating capsule navigation bar.
 ///
 /// Everywhere touch-first plus the two desktops that already match it: Apple,
 /// Android and Linux. Windows is left on the material bar and the rail for
@@ -27,8 +26,36 @@ final bool isApple = Platform.isMacOS || Platform.isIOS;
 /// [initIsTv]. A top-level final is initialised on first read and cached for
 /// the rest of the process, so on a TV it would latch whatever detection had
 /// answered by then, which early in startup is "not a TV".
-bool get usesFloatingNav =>
+bool get supportsFloatingNav =>
     (isApple || Platform.isAndroid || Platform.isLinux) && !isTv;
+
+/// Resolves the opt-in preference against platform and input support.
+bool shouldUseFloatingNav({required bool enabled}) =>
+    enabled && supportsFloatingNav;
+
+/// Shares the shell's effective navigation mode with screens and overlays.
+///
+/// It defaults to false outside the main shell, so a standalone route or test
+/// never gains floating-bar spacing just because it runs on a supported host.
+class FloatingNavigationScope extends InheritedWidget {
+  const FloatingNavigationScope({
+    super.key,
+    required this.enabled,
+    required super.child,
+  });
+
+  final bool enabled;
+
+  static bool enabledOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<FloatingNavigationScope>()
+          ?.enabled ??
+      false;
+
+  @override
+  bool updateShouldNotify(FloatingNavigationScope oldWidget) =>
+      enabled != oldWidget.enabled;
+}
 
 /// What the device reported, hydrated once at startup by [initIsTv].
 bool _isTvDetected = false;
@@ -90,4 +117,6 @@ EdgeInsets get tvPageInsets =>
 /// rather than adding to it, which is how a list ends up running underneath
 /// the bar; adding this back is what fixes it.
 EdgeInsets pageBottomInsets(BuildContext context) =>
-    EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom + 8);
+    FloatingNavigationScope.enabledOf(context)
+    ? EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom + 8)
+    : EdgeInsets.zero;

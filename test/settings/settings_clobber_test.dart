@@ -8,6 +8,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/floating_navigation_bar_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
@@ -59,6 +60,22 @@ void main() {
   });
 
   Settings stored() => isar.settings.getSync(227)!;
+
+  test(
+    'floating navigation preference persists across provider lifetimes',
+    () async {
+      expect(container.read(floatingNavigationBarStateProvider), isFalse);
+
+      container.read(floatingNavigationBarStateProvider.notifier).set(true);
+      await settingsRepository.transaction(() {});
+
+      expect(stored().useFloatingNavigationBar, isTrue);
+
+      final restarted = ProviderContainer();
+      addTearDown(restarted.dispose);
+      expect(restarted.read(floatingNavigationBarStateProvider), isTrue);
+    },
+  );
 
   test('following the system theme survives the write that turns it on', () async {
     // The system is light and the app is dark, so turning this on has to leave

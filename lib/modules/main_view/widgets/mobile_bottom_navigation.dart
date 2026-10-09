@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/widgets/floating_nav_bar.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:mangayomi/utils/platform_utils.dart';
 
 class MainMobileBottomNavigation extends StatelessWidget {
   const MainMobileBottomNavigation({
@@ -16,6 +15,7 @@ class MainMobileBottomNavigation extends StatelessWidget {
     required this.ref,
     required this.buildNavigationWidgetsMobile,
     required this.onDestinationSelected,
+    required this.useFloatingNav,
     this.shrink = 0,
     this.onWake,
   });
@@ -29,12 +29,13 @@ class MainMobileBottomNavigation extends StatelessWidget {
   final List<Widget> Function(WidgetRef, List<String>, BuildContext)
   buildNavigationWidgetsMobile;
   final Function(String) onDestinationSelected;
+  final bool useFloatingNav;
   final double shrink;
   final VoidCallback? onWake;
 
   @override
   Widget build(BuildContext context) {
-    if (usesFloatingNav) {
+    if (useFloatingNav) {
       return SizedBox(
         width: context.width(1),
         height: _getBottomNavigationHeight(isLongPressed, location),

@@ -1183,6 +1183,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'أعد ترتيب وتبديل كل تنقل حسب احتياجاتك.';
 
   @override
+  String get floating_navigation_bar => 'Floating navigation bar';
+
+  @override
+  String get floating_navigation_bar_description =>
+      'Use a floating capsule instead of the standard attached navigation bar.';
+
+  @override
   String get full_screen_player => 'استخدام الشاشة الكاملة';
 
   @override

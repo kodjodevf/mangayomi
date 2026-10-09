@@ -4,9 +4,9 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-/// The floating capsule bar used on Apple platforms in place of the material
-/// NavigationBar. Icons only, with a single highlight pill that slides between
-/// slots, and a shrunk state for when the user is scrolling down.
+/// The optional floating capsule used in place of the material NavigationBar
+/// on supported devices. Icons only, with a single highlight pill that slides
+/// between slots, and a shrunk state for when the user is scrolling down.
 ///
 /// The pill can also be dragged: it follows the pointer freely and the tab only
 /// changes once it is let go, so a drag can be taken back by returning to the

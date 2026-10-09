@@ -57,7 +57,9 @@ class _MeasureWidgetSizeState extends State<MeasureWidgetSize> {
 /// gain a band of empty space, and a tab long enough to run underneath it is
 /// scrolling anyway, so what it needs is somewhere further to scroll.
 List<Widget> _padded(BuildContext context, List<Widget> children) {
-  final overlap = usesFloatingNav ? MediaQuery.paddingOf(context).bottom : 0.0;
+  final overlap = FloatingNavigationScope.enabledOf(context)
+      ? MediaQuery.paddingOf(context).bottom
+      : 0.0;
   if (overlap == 0) return children;
   return [
     for (final child in children)

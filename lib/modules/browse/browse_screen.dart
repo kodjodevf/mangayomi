@@ -227,7 +227,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
         // content pass under the translucent bar rather than stopping short of
         // it, and keeps the last row reachable either way.
         body: SafeArea(
-          bottom: false,
+          bottom: !FloatingNavigationScope.enabledOf(context),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

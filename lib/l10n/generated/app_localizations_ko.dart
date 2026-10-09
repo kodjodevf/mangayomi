@@ -1154,6 +1154,13 @@ class AppLocalizationsKo extends AppLocalizations {
       '필요에 따라 내비게이션 순서를 변경하고 켜거나 끌 수 있습니다.';
 
   @override
+  String get floating_navigation_bar => 'Floating navigation bar';
+
+  @override
+  String get floating_navigation_bar_description =>
+      'Use a floating capsule instead of the standard attached navigation bar.';
+
+  @override
   String get full_screen_player => '전체 화면 사용';
 
   @override
