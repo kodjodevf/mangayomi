@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/floating_navigation_bar_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/widgets/follow_system_theme_button.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -163,6 +164,22 @@ class AppearanceScreen extends ConsumerWidget {
                 ),
                 _buildLanguageTile(context, ref, l10n),
                 _buildFontTile(context, ref, l10n),
+                if (supportsFloatingNav)
+                  SwitchListTile(
+                    secondary: const Icon(Icons.call_to_action_outlined),
+                    title: Text(l10n.floating_navigation_bar),
+                    subtitle: Text(
+                      l10n.floating_navigation_bar_description,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.secondaryColor,
+                      ),
+                    ),
+                    value: ref.watch(floatingNavigationBarStateProvider),
+                    onChanged: (value) => ref
+                        .read(floatingNavigationBarStateProvider.notifier)
+                        .set(value),
+                  ),
                 ListTile(
                   title: Text(l10n.reorder_navigation),
                   subtitle: Text(

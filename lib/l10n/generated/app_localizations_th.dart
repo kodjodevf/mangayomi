@@ -1171,6 +1171,13 @@ class AppLocalizationsTh extends AppLocalizations {
       'จัดเรียงและปรับแต่งการนำทางแต่ละรายการตามความต้องการของคุณ';
 
   @override
+  String get floating_navigation_bar => 'Floating navigation bar';
+
+  @override
+  String get floating_navigation_bar_description =>
+      'Use a floating capsule instead of the standard attached navigation bar.';
+
+  @override
   String get full_screen_player => 'ใช้โหมดเต็มหน้าจอ';
 
   @override
@@ -1183,7 +1190,7 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String n_episodes(Object n) {
+  String n_episodes(int n) {
     return '$n ตอน';
   }
 

@@ -1147,6 +1147,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reorder_navigation_description => '根据需要重新排序和切换每个导航。';
 
   @override
+  String get floating_navigation_bar => 'Floating navigation bar';
+
+  @override
+  String get floating_navigation_bar_description =>
+      'Use a floating capsule instead of the standard attached navigation bar.';
+
+  @override
   String get full_screen_player => '使用全屏';
 
   @override
@@ -1158,7 +1165,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String n_episodes(Object n) {
+  String n_episodes(int n) {
     return '$n集';
   }
 

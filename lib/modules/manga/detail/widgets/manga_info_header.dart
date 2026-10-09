@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
@@ -132,107 +133,7 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
                                 i < widget.manga.genre!.length;
                                 i++
                               )
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 2,
-                                    right: 2,
-                                    bottom: 5,
-                                  ),
-                                  child: SizedBox(
-                                    height: 30,
-                                    child: PopupMenuButton(
-                                      popUpAnimationStyle: popupAnimationStyle,
-                                      itemBuilder: (context) {
-                                        return [
-                                          // 48 rather than 40: these are the
-                                          // only two menu rows in the app that
-                                          // set their own height, and 40 is
-                                          // under the minimum target on both
-                                          // Material and Apple.
-                                          PopupMenuItem<int>(
-                                            height: 48,
-                                            value: 0,
-                                            child: Text(
-                                              context.l10n.genre_search_library,
-                                            ),
-                                          ),
-                                          PopupMenuItem<int>(
-                                            height: 48,
-                                            value: 1,
-                                            child: Text(
-                                              context.l10n.genre_search_source,
-                                            ),
-                                          ),
-                                        ];
-                                      },
-                                      onSelected: (value) async {
-                                        final source = getSource(
-                                          widget.manga.lang!,
-                                          widget.manga.source!,
-                                          widget.manga.sourceId,
-                                        );
-                                        if (source == null) {
-                                          botToast(l10n.source_not_added);
-                                          return;
-                                        }
-                                        if (value == 0) {
-                                          final genre = widget.manga.genre![i];
-                                          switch (widget.manga.itemType) {
-                                            case ItemType.manga:
-                                              context.pushReplacement(
-                                                '/MangaLibrary',
-                                                extra: genre,
-                                              );
-                                              break;
-                                            case ItemType.anime:
-                                              context.pushReplacement(
-                                                '/AnimeLibrary',
-                                                extra: genre,
-                                              );
-                                              break;
-                                            case ItemType.novel:
-                                              context.pushReplacement(
-                                                '/NovelLibrary',
-                                                extra: genre,
-                                              );
-                                              break;
-                                          }
-                                        } else {
-                                          context.pushReplacement(
-                                            '/mangaHome',
-                                            extra: (source, false),
-                                          );
-                                        }
-                                      },
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          elevation: 0,
-                                          backgroundColor: Colors.grey
-                                              .withValues(alpha: 0.2),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              5,
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed: null,
-                                        child: Text(
-                                          widget.manga.genre![i],
-                                          style: TextStyle(
-                                            // 11 is the chip step. 11.5 is not
-                                            // on the scale and renders
-                                            // inconsistently across platforms.
-                                            fontSize: 11,
-                                            // The theme already answers this;
-                                            // picking black or white by hand
-                                            // ignores the palette.
-                                            color: context.textColor,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                _genreChip(i, l10n),
                             ],
                           )
                         : SingleChildScrollView(
@@ -245,42 +146,7 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
                                   i < widget.manga.genre!.length;
                                   i++
                                 )
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 2,
-                                      right: 2,
-                                      bottom: 5,
-                                    ),
-                                    child: SizedBox(
-                                      height: 30,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          elevation: 0,
-                                          backgroundColor: Colors.grey
-                                              .withValues(alpha: 0.2),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              5,
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed: () {},
-                                        child: Text(
-                                          widget.manga.genre![i],
-                                          style: TextStyle(
-                                            // 11 is the chip step. 11.5 is not
-                                            // on the scale and renders
-                                            // inconsistently across platforms.
-                                            fontSize: 11,
-                                            // The theme already answers this;
-                                            // picking black or white by hand
-                                            // ignores the palette.
-                                            color: context.textColor,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                  _genreChip(i, l10n),
                               ],
                             ),
                           ),
@@ -403,6 +269,44 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
         ),
       ],
     );
+  }
+
+  Widget _genreChip(int index, AppLocalizations l10n) {
+    return DetailGenreChip(
+      label: widget.manga.genre![index],
+      libraryLabel: l10n.genre_search_library,
+      sourceLabel: l10n.genre_search_source,
+      onSelected: (value) => _selectGenre(index, value, l10n),
+    );
+  }
+
+  void _selectGenre(int index, int value, AppLocalizations l10n) {
+    if (value == 0) {
+      final genre = widget.manga.genre![index];
+      switch (widget.manga.itemType) {
+        case ItemType.manga:
+          context.pushReplacement('/MangaLibrary', extra: genre);
+          break;
+        case ItemType.anime:
+          context.pushReplacement('/AnimeLibrary', extra: genre);
+          break;
+        case ItemType.novel:
+          context.pushReplacement('/NovelLibrary', extra: genre);
+          break;
+      }
+      return;
+    }
+
+    final source = getSource(
+      widget.manga.lang!,
+      widget.manga.source!,
+      widget.manga.sourceId,
+    );
+    if (source == null) {
+      botToast(l10n.source_not_added);
+      return;
+    }
+    context.pushReplacement('/mangaHome', extra: (source, false));
   }
 
   Widget _coverCard() {
@@ -725,6 +629,65 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
   }
 }
 
+/// A genre chip that exposes the same search menu in every detail layout.
+class DetailGenreChip extends StatelessWidget {
+  const DetailGenreChip({
+    super.key,
+    required this.label,
+    required this.libraryLabel,
+    required this.sourceLabel,
+    required this.onSelected,
+  });
+
+  final String label;
+  final String libraryLabel;
+  final String sourceLabel;
+  final ValueChanged<int> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 2, right: 2, bottom: 5),
+      child: SizedBox(
+        height: 30,
+        child: PopupMenuButton<int>(
+          popUpAnimationStyle: popupAnimationStyle,
+          itemBuilder: (context) => [
+            // These are the only two menu rows in the app that set their own
+            // height, and 40 is under the minimum target on Material and Apple.
+            PopupMenuItem<int>(height: 48, value: 0, child: Text(libraryLabel)),
+            PopupMenuItem<int>(height: 48, value: 1, child: Text(sourceLabel)),
+          ],
+          onSelected: onSelected,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: Colors.grey.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Align(
+                widthFactor: 1,
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    // 11 is the chip step. 11.5 is not on the scale and
+                    // renders inconsistently across platforms.
+                    fontSize: 11,
+                    // The theme already answers this; picking black or white
+                    // by hand ignores the palette.
+                    color: context.textColor,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// One action on the detail page.
 class _DetailAction {
   const _DetailAction({
@@ -864,7 +827,7 @@ class _DetailActions extends ConsumerWidget {
     return InkWell(
       onTap: action.onPressed,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,

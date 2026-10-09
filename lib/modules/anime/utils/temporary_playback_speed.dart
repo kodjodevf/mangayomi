@@ -19,13 +19,7 @@ double nearestTemporaryPlaybackSpeed(double speed) {
   );
 }
 
-double initialTemporaryPlaybackSpeed(double currentSpeed) {
-  return nearestTemporaryPlaybackSpeed(
-    (currentSpeed * 2)
-        .clamp(temporaryPlaybackSpeeds.last, temporaryPlaybackSpeeds.first)
-        .toDouble(),
-  );
-}
+double initialTemporaryPlaybackSpeed() => 2.0;
 
 double temporaryPlaybackSpeedForDrag({
   required double initialSpeed,

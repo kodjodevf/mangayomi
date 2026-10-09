@@ -15,10 +15,12 @@ import 'package:mangayomi/repositories/history_repository.dart';
 import 'package:mangayomi/modules/more/about/providers/download_file_screen.dart';
 import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/floating_navigation_bar_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
+import 'package:mangayomi/modules/main_view/nav_shrink.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
@@ -187,6 +189,18 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
   }
 
+  /// The first library the user actually has visible, in their own nav order.
+  String? _firstVisibleLibrary() {
+    final hidden = ref.read(hideItemsStateProvider);
+    final order = ref.read(animeOnlyTvModeProvider)
+        ? _navigationOrder.where(_isNotHiddenLibOnTv)
+        : _navigationOrder;
+    for (final nav in order) {
+      if (libLocationRegex.hasMatch(nav) && !hidden.contains(nav)) return nav;
+    }
+    return null;
+  }
+
   void _initializeTimers() {
     _backupTimer = Timer.periodic(
       const Duration(minutes: 5),
@@ -280,6 +294,35 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   int currentIndex = 0;
   bool isLibSwitch = false;
+
+  final NavShrink _navShrink = NavShrink();
+
+  bool _onPageScroll(
+    ScrollNotification notification, {
+    required bool useFloatingNav,
+  }) {
+    if (!useFloatingNav || notification.metrics.axis != Axis.vertical) {
+      return false;
+    }
+
+    var changed = false;
+    if (notification is ScrollUpdateNotification) {
+      final metrics = notification.metrics;
+      if (metrics.maxScrollExtent <= 0 ||
+          metrics.pixels <= metrics.minScrollExtent) {
+        changed = _navShrink.reset();
+      } else {
+        changed = _navShrink.update(notification.scrollDelta ?? 0);
+      }
+    }
+    if (changed) setState(() {});
+    return false;
+  }
+
+  void _wakeNav() {
+    if (_navShrink.reset()) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen<Locale>(l10nLocaleStateProvider, (previous, next) {
@@ -292,6 +335,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     ref.listen<bool>(showNavDoubleTapTooltipStateProvider, (previous, next) {
       _clearCache();
       setState(() {});
+    });
+    ref.listen<bool>(floatingNavigationBarStateProvider, (previous, next) {
+      if (!next) _wakeNav();
     });
 
     final l10n = context.l10n;
@@ -306,9 +352,15 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         .when(
           data: (_) => Consumer(
             builder: (context, ref, child) {
+              final useFloatingNav = shouldUseFloatingNav(
+                enabled: ref.watch(floatingNavigationBarStateProvider),
+              );
+              final prefersNavRail = context.prefersNavRail(
+                useFloatingNav: useFloatingNav,
+              );
               final isReadingScreen = _isReadingScreen(location);
               bool uniqueSwitch = false;
-              List<String> dest = !context.isTablet && isLibSwitch
+              List<String> dest = !prefersNavRail && isLibSwitch
                   ? [
                       "_disableLibSwitch",
                       ...navigationOrder.where(
@@ -324,7 +376,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 dest = dest.where(_isNotHiddenLibOnTv).toList();
               }
 
-              if (mergeLibraryNavMobile && !context.isTablet && !isLibSwitch) {
+              if (mergeLibraryNavMobile && !prefersNavRail && !isLibSwitch) {
                 dest = dest
                     .map((nav) {
                       if ([
@@ -348,9 +400,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 currentIndex = 0;
               } else {
                 String? libLocation;
-                if (mergeLibraryNavMobile &&
-                    !context.isTablet &&
-                    !isLibSwitch) {
+                if (mergeLibraryNavMobile && !prefersNavRail && !isLibSwitch) {
                   libLocation = location?.replaceAll(
                     libLocationRegex,
                     "_enableLibSwitch",
@@ -368,91 +418,117 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               final downloadedOnly = ref.watch(downloadedOnlyStateProvider);
               final isLongPressed = ref.watch(isLongPressedStateProvider);
 
-              return Column(
-                children: [
-                  if (!isReadingScreen)
-                    DownloadedOnlyBar(
-                      downloadedOnly: downloadedOnly,
-                      l10n: l10n,
-                    ),
-                  if (!isReadingScreen)
-                    IncognitoModeBar(incognitoMode: incognitoMode, l10n: l10n),
-                  Flexible(
-                    child: Scaffold(
-                      body: context.isTablet
-                          ? MainTabletLayout(
-                              isLongPressed: isLongPressed,
-                              location: location,
-                              dest: dest,
-                              currentIndex: currentIndex,
-                              route: route,
-                              ref: ref,
-                              buildNavigationWidgetsDesktop:
-                                  _buildNavigationWidgetsDesktop,
-                              child: widget.child,
-                            )
-                          : widget.child,
-                      bottomNavigationBar: context.isTablet
-                          ? null
-                          : MainMobileBottomNavigation(
-                              isLongPressed: isLongPressed,
-                              location: location,
-                              currentIndex: currentIndex,
-                              dest: dest,
-                              route: route,
-                              ref: ref,
-                              buildNavigationWidgetsMobile:
-                                  _buildNavigationWidgetsMobile,
-                              onDestinationSelected: (destination) {
-                                if (destination == "_enableLibSwitch") {
-                                  setState(() {
-                                    isLibSwitch = true;
-                                  });
-                                } else if (destination == "_disableLibSwitch") {
-                                  setState(() {
-                                    isLibSwitch = false;
-                                  });
-                                } else {
-                                  final now = DateTime.now();
-                                  final isDoubleTap = isNavDoubleTap(
-                                    destination,
-                                    _lastMobileNavDest,
-                                    _lastMobileNavTapTime,
-                                    now,
-                                  );
-                                  if (isDoubleTap &&
-                                      destination == '/history') {
-                                    _lastMobileNavDest = null;
-                                    _lastMobileNavTapTime = null;
-                                    final activeType = ref.read(
-                                      activeHistoryItemTypeStateProvider,
+              return FloatingNavigationScope(
+                enabled: useFloatingNav,
+                child: Column(
+                  children: [
+                    if (!isReadingScreen)
+                      DownloadedOnlyBar(
+                        downloadedOnly: downloadedOnly,
+                        l10n: l10n,
+                      ),
+                    if (!isReadingScreen)
+                      IncognitoModeBar(
+                        incognitoMode: incognitoMode,
+                        l10n: l10n,
+                      ),
+                    Flexible(
+                      child: Scaffold(
+                        extendBody: useFloatingNav,
+                        body: NotificationListener<ScrollNotification>(
+                          onNotification: (notification) => _onPageScroll(
+                            notification,
+                            useFloatingNav: useFloatingNav,
+                          ),
+                          child: prefersNavRail
+                              ? MainTabletLayout(
+                                  isLongPressed: isLongPressed,
+                                  location: location,
+                                  dest: dest,
+                                  currentIndex: currentIndex,
+                                  route: route,
+                                  ref: ref,
+                                  buildNavigationWidgetsDesktop:
+                                      _buildNavigationWidgetsDesktop,
+                                  child: widget.child,
+                                )
+                              : widget.child,
+                        ),
+                        bottomNavigationBar: prefersNavRail
+                            ? null
+                            : MainMobileBottomNavigation(
+                                isLongPressed: isLongPressed,
+                                location: location,
+                                currentIndex: currentIndex,
+                                dest: dest,
+                                route: route,
+                                ref: ref,
+                                useFloatingNav: useFloatingNav,
+                                shrink: _navShrink.shrunk ? 1.0 : 0.0,
+                                onWake: _wakeNav,
+                                buildNavigationWidgetsMobile:
+                                    _buildNavigationWidgetsMobile,
+                                onDestinationSelected: (destination) {
+                                  if (destination == "_enableLibSwitch") {
+                                    setState(() {
+                                      isLibSwitch = true;
+                                    });
+                                    if (!libLocationRegex.hasMatch(
+                                      location ?? "",
+                                    )) {
+                                      final target = _firstVisibleLibrary();
+                                      if (target != null) route.go(target);
+                                    }
+                                  } else if (destination ==
+                                      "_disableLibSwitch") {
+                                    setState(() {
+                                      isLibSwitch = false;
+                                    });
+                                  } else {
+                                    final now = DateTime.now();
+                                    final isDoubleTap = isNavDoubleTap(
+                                      destination,
+                                      _lastMobileNavDest,
+                                      _lastMobileNavTapTime,
+                                      now,
                                     );
-                                    unawaited(
-                                      resumeLatestHistory(context, activeType),
+                                    if (isDoubleTap &&
+                                        destination == '/history') {
+                                      _lastMobileNavDest = null;
+                                      _lastMobileNavTapTime = null;
+                                      final activeType = ref.read(
+                                        activeHistoryItemTypeStateProvider,
+                                      );
+                                      unawaited(
+                                        resumeLatestHistory(
+                                          context,
+                                          activeType,
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    final itemType = itemTypeForNavDest(
+                                      destination,
                                     );
-                                    return;
+                                    if (isDoubleTap && itemType != null) {
+                                      _lastMobileNavDest = null;
+                                      _lastMobileNavTapTime = null;
+                                      context.push(
+                                        '/globalSearch',
+                                        extra: (null, itemType),
+                                      );
+                                      return;
+                                    }
+                                    _lastMobileNavDest = destination;
+                                    _lastMobileNavTapTime = now;
+                                    route.go(destination);
                                   }
-                                  final itemType = itemTypeForNavDest(
-                                    destination,
-                                  );
-                                  if (isDoubleTap && itemType != null) {
-                                    _lastMobileNavDest = null;
-                                    _lastMobileNavTapTime = null;
-                                    context.push(
-                                      '/globalSearch',
-                                      extra: (null, itemType),
-                                    );
-                                    return;
-                                  }
-                                  _lastMobileNavDest = destination;
-                                  _lastMobileNavTapTime = now;
-                                  route.go(destination);
-                                }
-                              },
-                            ),
+                                },
+                              ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           ),
@@ -506,12 +582,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         selectedIcon: _navTooltipIcon(
           showTooltip,
           l10n.double_tap_search_hint(l10n.manga),
-          const Icon(Icons.collections_bookmark),
+          const Icon(Icons.book_rounded),
         ),
         icon: _navTooltipIcon(
           showTooltip,
           l10n.double_tap_search_hint(l10n.manga),
-          const Icon(Icons.collections_bookmark_outlined),
+          const Icon(Icons.book_outlined),
         ),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -526,7 +602,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         selectedIcon: _navTooltipIcon(
           showTooltip,
           l10n.double_tap_search_hint(l10n.anime),
-          const Icon(Icons.video_collection),
+          const Icon(Icons.video_collection_rounded),
         ),
         icon: _navTooltipIcon(
           showTooltip,
@@ -546,12 +622,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         selectedIcon: _navTooltipIcon(
           showTooltip,
           l10n.double_tap_search_hint(l10n.novel),
-          const Icon(Icons.local_library),
+          const Icon(Icons.auto_stories_rounded),
         ),
         icon: _navTooltipIcon(
           showTooltip,
           l10n.double_tap_search_hint(l10n.novel),
-          const Icon(Icons.local_library_outlined),
+          const Icon(Icons.auto_stories_outlined),
         ),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -564,7 +640,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: UpdatesBadgeWidget(
-          icon: const Icon(Icons.new_releases),
+          icon: const Icon(Icons.new_releases_rounded),
           ref: ref,
         ),
         icon: UpdatesBadgeWidget(
@@ -587,7 +663,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/history")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.history),
+        selectedIcon: const Icon(Icons.history_rounded),
         icon: const Icon(Icons.history_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -600,7 +676,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: ExtensionBadgeWidget(
-          icon: const Icon(Icons.explore),
+          icon: const Icon(Icons.explore_rounded),
           ref: ref,
         ),
         icon: ExtensionBadgeWidget(
@@ -617,7 +693,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/more")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.more_horiz),
+        selectedIcon: const Icon(Icons.more_horiz_rounded),
         icon: const Icon(Icons.more_horiz_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -629,7 +705,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/trackerLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.account_tree),
+        selectedIcon: const Icon(Icons.account_tree_rounded),
         icon: const Icon(Icons.account_tree_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -662,29 +738,29 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
     if (dest.contains("_disableLibSwitch")) {
       destinations[dest.indexOf("_disableLibSwitch")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.arrow_back),
-        icon: const Icon(Icons.arrow_back),
+        selectedIcon: const Icon(Icons.arrow_back_rounded),
+        icon: const Icon(Icons.arrow_back_rounded),
         label: l10n.go_back,
       );
     }
     if (dest.contains("_enableLibSwitch")) {
       destinations[dest.indexOf("_enableLibSwitch")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.collections_bookmark),
+        selectedIcon: const Icon(Icons.collections_bookmark_rounded),
         icon: const Icon(Icons.collections_bookmark_outlined),
         label: l10n.library,
       );
     }
     if (dest.contains("/MangaLibrary")) {
       destinations[dest.indexOf("/MangaLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.collections_bookmark),
-        icon: const Icon(Icons.collections_bookmark_outlined),
+        selectedIcon: const Icon(Icons.book_rounded),
+        icon: const Icon(Icons.book_outlined),
         label: l10n.manga,
         tooltip: showTooltip ? l10n.double_tap_search_hint(l10n.manga) : '',
       );
     }
     if (dest.contains("/AnimeLibrary")) {
       destinations[dest.indexOf("/AnimeLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.video_collection),
+        selectedIcon: const Icon(Icons.video_collection_rounded),
         icon: const Icon(Icons.video_collection_outlined),
         label: l10n.anime,
         tooltip: showTooltip ? l10n.double_tap_search_hint(l10n.anime) : '',
@@ -692,8 +768,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/NovelLibrary")) {
       destinations[dest.indexOf("/NovelLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.local_library),
-        icon: const Icon(Icons.local_library_outlined),
+        selectedIcon: const Icon(Icons.auto_stories_rounded),
+        icon: const Icon(Icons.auto_stories_outlined),
         label: l10n.novel,
         tooltip: showTooltip ? l10n.double_tap_search_hint(l10n.novel) : '',
       );
@@ -701,7 +777,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     if (dest.contains("/updates")) {
       destinations[dest.indexOf("/updates")] = NavigationDestination(
         selectedIcon: UpdatesBadgeWidget(
-          icon: const Icon(Icons.new_releases),
+          icon: const Icon(Icons.new_releases_rounded),
           ref: ref,
         ),
         icon: UpdatesBadgeWidget(
@@ -713,7 +789,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/history")) {
       destinations[dest.indexOf("/history")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.history),
+        selectedIcon: const Icon(Icons.history_rounded),
         icon: const Icon(Icons.history_outlined),
         label: l10n.history,
       );
@@ -721,7 +797,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     if (dest.contains("/browse")) {
       destinations[dest.indexOf("/browse")] = NavigationDestination(
         selectedIcon: ExtensionBadgeWidget(
-          icon: const Icon(Icons.explore),
+          icon: const Icon(Icons.explore_rounded),
           ref: ref,
         ),
         icon: ExtensionBadgeWidget(
@@ -733,14 +809,14 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/more")) {
       destinations[dest.indexOf("/more")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.more_horiz),
+        selectedIcon: const Icon(Icons.more_horiz_rounded),
         icon: const Icon(Icons.more_horiz_outlined),
         label: l10n.more,
       );
     }
     if (dest.contains("/trackerLibrary")) {
       destinations[dest.indexOf("/trackerLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.account_tree),
+        selectedIcon: const Icon(Icons.account_tree_rounded),
         icon: const Icon(Icons.account_tree_outlined),
         label: l10n.tracking,
       );

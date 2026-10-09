@@ -2179,6 +2179,18 @@ abstract class AppLocalizations {
   /// **'Reorder and toggle each navigation to your needs.'**
   String get reorder_navigation_description;
 
+  /// No description provided for @floating_navigation_bar.
+  ///
+  /// In en, this message translates to:
+  /// **'Floating navigation bar'**
+  String get floating_navigation_bar;
+
+  /// No description provided for @floating_navigation_bar_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a floating capsule instead of the standard attached navigation bar.'**
+  String get floating_navigation_bar_description;
+
   /// No description provided for @full_screen_player.
   ///
   /// In en, this message translates to:
@@ -2200,8 +2212,8 @@ abstract class AppLocalizations {
   /// No description provided for @n_episodes.
   ///
   /// In en, this message translates to:
-  /// **'{n} episodes'**
-  String n_episodes(Object n);
+  /// **'{n, plural, =1 {1 episode} other {{n} episodes}}'**
+  String n_episodes(int n);
 
   /// No description provided for @missing_episodes.
   ///

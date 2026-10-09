@@ -1,6 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +8,7 @@ import 'package:mangayomi/modules/anime/providers/anime_player_controller_provid
 import 'package:mangayomi/modules/anime/utils/temporary_playback_speed.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
+import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
@@ -88,7 +88,6 @@ class _MobileControllerWidgetState
   double? _temporaryPlaybackSpeed;
   double? _temporaryInitialSpeed;
   double? _temporarySpeedOriginY;
-  Offset? _temporarySpeedPosition;
 
   late bool buffering = widget.videoController.player.state.buffering;
   final controlsHoverDuration = const Duration(seconds: 3);
@@ -381,13 +380,12 @@ class _MobileControllerWidgetState
     if (widget.isLocked?.value == true || previousPlaybackSpeed != -1) return;
 
     previousPlaybackSpeed = widget.videoController.player.state.rate;
-    final initialSpeed = initialTemporaryPlaybackSpeed(previousPlaybackSpeed);
+    final initialSpeed = initialTemporaryPlaybackSpeed();
 
     setState(() {
       _temporaryPlaybackSpeed = initialSpeed;
       _temporaryInitialSpeed = initialSpeed;
       _temporarySpeedOriginY = details.localPosition.dy;
-      _temporarySpeedPosition = details.localPosition;
     });
     HapticFeedback.mediumImpact();
     unawaited(widget.videoController.player.setRate(initialSpeed));
@@ -403,15 +401,14 @@ class _MobileControllerWidgetState
       verticalDelta: details.localPosition.dy - originY,
     );
     final speedChanged = speed != _temporaryPlaybackSpeed;
+    if (!speedChanged) return;
+
     setState(() {
       _temporaryPlaybackSpeed = speed;
-      _temporarySpeedPosition = details.localPosition;
     });
 
-    if (speedChanged) {
-      HapticFeedback.selectionClick();
-      unawaited(widget.videoController.player.setRate(speed));
-    }
+    HapticFeedback.selectionClick();
+    unawaited(widget.videoController.player.setRate(speed));
   }
 
   void _restorePlaybackSpeed({bool updateUi = true}) {
@@ -425,7 +422,6 @@ class _MobileControllerWidgetState
       _temporaryPlaybackSpeed = null;
       _temporaryInitialSpeed = null;
       _temporarySpeedOriginY = null;
-      _temporarySpeedPosition = null;
     }
 
     if (updateUi && mounted) {
@@ -533,6 +529,13 @@ class _MobileControllerWidgetState
                                 ),
                               ),
                             ],
+                            Positioned.fill(
+                              child: Listener(
+                                behavior: HitTestBehavior.translucent,
+                                onPointerCancel: (_) => _restorePlaybackSpeed(),
+                                child: const SizedBox.expand(),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -557,6 +560,14 @@ class _MobileControllerWidgetState
                             onDoubleTapSeekBackward();
                           }
                         },
+                        // This detector is above the full-screen background
+                        // detector in the Stack. It must own the long press as
+                        // well as vertical drag so a completed hold wins the
+                        // gesture arena before volume or brightness can start.
+                        onLongPressStart: _startTemporaryPlaybackSpeed,
+                        onLongPressMoveUpdate: _updateTemporaryPlaybackSpeed,
+                        onLongPressEnd: (_) => _restorePlaybackSpeed(),
+                        onLongPressCancel: _restorePlaybackSpeed,
                         onHorizontalDragUpdate: (details) {
                           if (widget.isLocked?.value == true) return;
                           onHorizontalDragUpdate(details);
@@ -589,50 +600,34 @@ class _MobileControllerWidgetState
                             setVolume(result);
                           }
                         },
-                        child: Container(color: const Color(0x00000000)),
+                        child: Listener(
+                          // A platform interruption can cancel the pointer
+                          // after Flutter has accepted the long press.
+                          behavior: HitTestBehavior.translucent,
+                          onPointerCancel: (_) => _restorePlaybackSpeed(),
+                          child: Container(color: const Color(0x00000000)),
+                        ),
                       ),
                     ),
                     if (mount)
                       if (widget.isLocked?.value == true)
-                        Positioned(
-                          top:
-                              (isFullscreen(context)
-                                  ? MediaQuery.of(context).padding.top
-                                  : 0) +
-                              16,
-                          left:
-                              (isFullscreen(context)
-                                  ? MediaQuery.of(context).padding.left
-                                  : 0) +
-                              16,
-                          child: IconButton.filledTonal(
-                            style: IconButton.styleFrom(
-                              backgroundColor: Colors.black.withValues(
-                                alpha: 0.55,
-                              ),
-                              foregroundColor: Colors.white,
-                            ),
+                        Positioned.fill(
+                          child: MobilePlayerUnlockControl(
                             tooltip: context.l10n.unlock,
                             onPressed: () {
                               HapticFeedback.lightImpact();
                               widget.isLocked?.value = false;
                               _restartHideTimer();
                             },
-                            icon: const Icon(Icons.lock_outline, size: 24),
                           ),
                         )
                       else
                         Padding(
-                          padding:
-                              (
-                              // Add padding in fullscreen!
-                              isFullscreen(context)
-                              ? MediaQuery.of(context).padding
-                              : Platform.isIOS
-                              ? EdgeInsets.only(
-                                  bottom: MediaQuery.of(context).padding.bottom,
-                                )
-                              : EdgeInsets.zero),
+                          padding: EdgeInsets.only(
+                            left: MediaQuery.viewPaddingOf(context).left,
+                            right: MediaQuery.viewPaddingOf(context).right,
+                            bottom: MediaQuery.viewPaddingOf(context).bottom,
+                          ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -736,12 +731,10 @@ class _MobileControllerWidgetState
                       ),
                     ],
                   ),
-              if (_temporaryPlaybackSpeed != null &&
-                  _temporarySpeedPosition != null)
+              if (_temporaryPlaybackSpeed != null)
                 Positioned.fill(
                   child: IgnorePointer(
                     child: TemporaryPlaybackSpeedSelector(
-                      position: _temporarySpeedPosition!,
                       speed: _temporaryPlaybackSpeed!,
                     ),
                   ),
@@ -802,6 +795,8 @@ class _MobileControllerWidgetState
                     child: MediaIndicatorBuilder(
                       value: _volumeValue,
                       isVolumeIndicator: true,
+                      adaptiveMobilePlacement: true,
+                      showAtZero: true,
                     ),
                   ),
                 ),
@@ -817,6 +812,8 @@ class _MobileControllerWidgetState
                     child: MediaIndicatorBuilder(
                       value: _brightnessValue,
                       isVolumeIndicator: false,
+                      adaptiveMobilePlacement: true,
+                      showAtZero: true,
                     ),
                   ),
                 ),

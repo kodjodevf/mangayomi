@@ -342,16 +342,16 @@ class ExpandableTextState extends State<ExpandableText>
                     ),
                 ],
               ),
-              // Collapse icon when expanded
-              if (widget.showExpandCollapseIcon &&
-                  _expanded &&
-                  hasExceededMaxLines)
+              if (widget.showExpandCollapseIcon && hasExceededMaxLines)
                 GestureDetector(
                   onTap: _linkTapped,
                   child: SizedBox(
                     height: 20,
                     child: Icon(
-                      widget.collapseIcon ?? Icons.keyboard_arrow_up_sharp,
+                      _expanded
+                          ? widget.collapseIcon ?? Icons.keyboard_arrow_up_sharp
+                          : widget.expandIcon ??
+                                Icons.keyboard_arrow_down_sharp,
                       color: Theme.of(context).iconTheme.color,
                     ),
                   ),

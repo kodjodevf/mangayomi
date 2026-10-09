@@ -25,6 +25,7 @@ import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupMi
 import 'package:mangayomi/modules/more/data_and_storage/providers/kotatsu_backup.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/floating_navigation_bar_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
@@ -957,6 +958,7 @@ void _invalidateCommonState(Ref ref) {
   ref.invalidate(blendLevelStateProvider);
   ref.invalidate(flexSchemeColorStateProvider);
   ref.invalidate(pureBlackDarkModeStateProvider);
+  ref.invalidate(floatingNavigationBarStateProvider);
   ref.invalidate(l10nLocaleStateProvider);
   ref.invalidate(navigationOrderStateProvider);
   ref.invalidate(hideItemsStateProvider);

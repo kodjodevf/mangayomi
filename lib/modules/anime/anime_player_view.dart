@@ -43,6 +43,7 @@ import 'package:mangayomi/modules/anime/widgets/subtitle_section_widget.dart';
 import 'package:mangayomi/utils/manga_cover_actions.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
+import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/anime/widgets/unified_settings_sheet.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
@@ -2137,35 +2138,58 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
-  Widget _seekToWidget() {
+  Widget _seekToWidget({bool iconOnly = false}) {
     final defaultSkipIntroLength = ref.watch(
       defaultSkipIntroLengthStateProvider,
     );
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: SizedBox(
-        height: 35,
-        child: ValueListenableBuilder(
-          valueListenable: _customButton,
-          builder: (context, value, child) => (value?.visible ?? true)
-              ? ElevatedButton(
-                  onPressed:
-                      value?.onPress ??
-                      () async => await _seekBy(defaultSkipIntroLength),
-                  onLongPress: value?.onLongPress,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      value != null
-                          ? value.currentTitle
-                          : "+$defaultSkipIntroLength",
-                      style: const TextStyle(fontWeight: FontWeight.w100),
-                    ),
-                  ),
-                )
-              : Container(),
-        ),
-      ),
+    return ValueListenableBuilder(
+      valueListenable: _customButton,
+      builder: (context, value, child) {
+        if (!(value?.visible ?? true)) return const SizedBox.shrink();
+
+        final label = value?.currentTitle ?? "+$defaultSkipIntroLength";
+        void onPressed() {
+          if (value != null) {
+            value.onPress();
+          } else {
+            unawaited(_seekBy(defaultSkipIntroLength));
+          }
+        }
+
+        final onLongPress = value == null ? null : () => value.onLongPress();
+        if (iconOnly) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.5),
+            child: PlayerPillButton(
+              icon: Icons.fast_forward_rounded,
+              label: label,
+              showLabel: false,
+              tooltip: label,
+              isCompact: true,
+              onTap: onPressed,
+              onLongPress: onLongPress,
+            ),
+          );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: SizedBox(
+            height: 35,
+            child: ElevatedButton(
+              onPressed: onPressed,
+              onLongPress: onLongPress,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  label,
+                  style: const TextStyle(fontWeight: FontWeight.w100),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -2177,38 +2201,57 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   int get _chaptersSectionIndex => 4;
   int get _speedSectionIndex => _chapterMarks.value.isNotEmpty ? 5 : 4;
 
-  Widget _chapterMarkWidget() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-      child: SizedBox(
-        height: 35,
-        child: ValueListenableBuilder(
-          valueListenable: _currentChapterMark,
-          builder: (context, value, child) => value != null
-              ? Material(
-                  type: MaterialType.transparency,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(8),
-                    onTap: () => _openPlayerSettings(
-                      context,
-                      initialIndex: _chaptersSectionIndex,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "${_chapterMarks.value[value].$1} - ${Duration(milliseconds: _chapterMarks.value[value].$2).label()}",
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
+  Widget _chapterMarkWidget({bool iconOnly = false}) {
+    return ValueListenableBuilder(
+      valueListenable: _currentChapterMark,
+      builder: (context, value, child) {
+        if (value == null) return const SizedBox.shrink();
+
+        final chapter = _chapterMarks.value[value];
+        final label =
+            "${chapter.$1} - ${Duration(milliseconds: chapter.$2).label()}";
+        void onPressed() =>
+            _openPlayerSettings(context, initialIndex: _chaptersSectionIndex);
+
+        if (iconOnly) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.5),
+            child: PlayerPillButton(
+              icon: Icons.bookmark_outline,
+              label: label,
+              showLabel: false,
+              tooltip: label,
+              isCompact: true,
+              onTap: onPressed,
+            ),
+          );
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+          child: SizedBox(
+            height: 35,
+            child: Material(
+              type: MaterialType.transparency,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: onPressed,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
                   ),
-                )
-              : Container(),
-        ),
-      ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -2273,38 +2316,31 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     ];
   }
 
-
   Widget _mobileBottomButtonBar(BuildContext context) {
+    final iconOnlyShortcuts = usesCompactPortraitPlayerControls(
+      orientation: MediaQuery.orientationOf(context),
+      width: MediaQuery.sizeOf(context).width,
+    );
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Row(
-              children: [
-                IconButton(
-                  tooltip: context.l10n.lock,
-                  icon: const Icon(
-                    Icons.lock_open_outlined,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    _isLocked.value = true;
-                  },
-                ),
-                _seekToWidget(),
-                _chapterMarkWidget(),
-                Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    reverse: true,
-                    child: _buildSettingsButtons(context),
-                  ),
-                ),
-              ],
+          MobilePlayerBottomControlsLayout(
+            lockButton: IconButton(
+              key: const ValueKey('mobile-player-lock-button'),
+              tooltip: context.l10n.lock,
+              icon: const Icon(Icons.lock_open_outlined, color: Colors.white),
+              onPressed: () {
+                HapticFeedback.lightImpact();
+                _isLocked.value = true;
+              },
+            ),
+            seekButton: _seekToWidget(iconOnly: iconOnlyShortcuts),
+            chapterButton: _chapterMarkWidget(iconOnly: iconOnlyShortcuts),
+            shortcutButtons: _buildSettingsButtons(
+              context,
+              iconOnly: iconOnlyShortcuts,
             ),
           ),
         ],
@@ -2445,26 +2481,28 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   /// helper method for _mobileBottomButtonBar() and _desktopBottomButtonBar()
-  Widget _buildSettingsButtons(BuildContext context) => PlayerShortcutPills(
-    videos: widget.videos,
-    video: _video,
-    player: _player,
-    subtitleTrack: () => _effectiveSubtitleTrack,
-    audioTrack: () => _effectiveAudioTrack,
-    playbackSpeed: _playbackSpeed,
-    fit: _fit,
-    onQuality: (context) =>
-        _openPlayerSettings(context, initialIndex: _qualitySectionIndex),
-    onSubtitles: (context) =>
-        _openPlayerSettings(context, initialIndex: _subtitleSectionIndex),
-    onAudio: (context) =>
-        _openPlayerSettings(context, initialIndex: _audioSectionIndex),
-    onSpeed: (context) =>
-        _openPlayerSettings(context, initialIndex: _speedSectionIndex),
-    onSettings: _openPlayerSettings,
-    onChangeFit: () => _changeFitLabel(ref),
-    onToggleFullscreen: _toggleFullscreen,
-  );
+  Widget _buildSettingsButtons(BuildContext context, {bool iconOnly = false}) =>
+      PlayerShortcutPills(
+        videos: widget.videos,
+        video: _video,
+        player: _player,
+        subtitleTrack: () => _effectiveSubtitleTrack,
+        audioTrack: () => _effectiveAudioTrack,
+        playbackSpeed: _playbackSpeed,
+        fit: _fit,
+        iconOnly: iconOnly,
+        onQuality: (context) =>
+            _openPlayerSettings(context, initialIndex: _qualitySectionIndex),
+        onSubtitles: (context) =>
+            _openPlayerSettings(context, initialIndex: _subtitleSectionIndex),
+        onAudio: (context) =>
+            _openPlayerSettings(context, initialIndex: _audioSectionIndex),
+        onSpeed: (context) =>
+            _openPlayerSettings(context, initialIndex: _speedSectionIndex),
+        onSettings: _openPlayerSettings,
+        onChangeFit: () => _changeFitLabel(ref),
+        onToggleFullscreen: _toggleFullscreen,
+      );
 
   Future<void> _toggleFullscreen(bool isFullscreen) async {
     if (isDesktop) {
@@ -2479,11 +2517,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   Widget _topButtonBar(BuildContext context) {
-    final fullScreen = ref.watch(fullscreenProvider);
-    return Padding(
-      padding: EdgeInsets.only(
-        top: !isDesktop && !fullScreen ? MediaQuery.of(context).padding.top : 0,
-      ),
+    return MobilePlayerTopSafeArea(
+      isDesktop: isDesktop,
       child: Row(
         children: [
           BackButton(color: Colors.white, onPressed: _goBackToDetail),

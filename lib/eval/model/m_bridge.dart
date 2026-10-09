@@ -24,6 +24,7 @@ import 'package:mangayomi/services/anime_extractors/sibnet_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/streamlare_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/streamtape_extractor.dart';
 import 'package:mangayomi/models/video.dart';
+import 'package:mangayomi/modules/widgets/toast_notification_content.dart';
 import 'package:mangayomi/services/anime_extractors/streamwish_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/vidbom_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/voe_extractor.dart';
@@ -929,35 +930,48 @@ void Function() botToast(
             height: 25,
           )
         : null,
-    // Capped, because some callers pass an exception and a caller that passes
-    // a stack trace would otherwise paint one over the whole screen.
-    title: (_) => Text(
-      title,
-      style: TextStyle(fontSize: fontSize),
-      maxLines: maxLines,
-      overflow: TextOverflow.ellipsis,
-    ),
-    trailing: hasCloudFlare
-        ? (_) => OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(elevation: 10),
-            onPressed: () {
-              context?.push("/mangawebview", extra: {'url': url, 'title': ''});
-            },
-            label: Text(
-              "Resolve Cloudflare challenge",
-              style: TextStyle(color: context?.secondaryColor),
-            ),
-            icon: const Icon(Icons.public),
-          )
-        : onDetails == null
-        ? null
-        : (cancel) => TextButton(
-            onPressed: () {
-              cancel();
-              onDetails();
-            },
-            child: Text(detailsLabel ?? 'Details'),
-          ),
+    // ListTile gives a trailing action its full intrinsic width before laying
+    // out the title. A labelled action there can squeeze an error down to one
+    // or two characters per line on a phone, so actions live below the message
+    // inside the title column instead.
+    title: (cancel) {
+      void resolveChallenge() {
+        cancel();
+        context?.push("/mangawebview", extra: {'url': url, 'title': ''});
+      }
+
+      return ToastNotificationContent(
+        message: title,
+        fontSize: fontSize,
+        maxLines: maxLines,
+        action: hasCloudFlare
+            ? Semantics(
+                button: true,
+                label: 'Resolve Cloudflare challenge',
+                excludeSemantics: true,
+                onTap: resolveChallenge,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: context?.secondaryColor,
+                    minimumSize: const Size(0, 44),
+                  ),
+                  onPressed: resolveChallenge,
+                  label: const Text('Resolve challenge'),
+                  icon: const Icon(Icons.public, size: 18),
+                ),
+              )
+            : onDetails == null
+            ? null
+            : TextButton(
+                onPressed: () {
+                  cancel();
+                  onDetails();
+                },
+                child: Text(detailsLabel ?? 'Details'),
+              ),
+      );
+    },
+    trailing: null,
   );
 }
 

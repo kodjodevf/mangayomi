@@ -1122,53 +1122,58 @@ const SettingsSchema = CollectionSchema(
       name: r'updatedAt',
       type: IsarType.long,
     ),
-    r'useLibass': PropertySchema(
+    r'useFloatingNavigationBar': PropertySchema(
       id: 209,
+      name: r'useFloatingNavigationBar',
+      type: IsarType.bool,
+    ),
+    r'useLibass': PropertySchema(
+      id: 210,
       name: r'useLibass',
       type: IsarType.bool,
     ),
     r'useMpvConfig': PropertySchema(
-      id: 210,
+      id: 211,
       name: r'useMpvConfig',
       type: IsarType.bool,
     ),
     r'usePageTapZones': PropertySchema(
-      id: 211,
+      id: 212,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
     r'useYUV420P': PropertySchema(
-      id: 212,
+      id: 213,
       name: r'useYUV420P',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 213,
+      id: 214,
       name: r'userAgent',
       type: IsarType.string,
     ),
     r'volumeBoostCap': PropertySchema(
-      id: 214,
+      id: 215,
       name: r'volumeBoostCap',
       type: IsarType.long,
     ),
     r'webtoonDisableZoomOut': PropertySchema(
-      id: 215,
+      id: 216,
       name: r'webtoonDisableZoomOut',
       type: IsarType.bool,
     ),
     r'webtoonDoubleTapZoomEnabled': PropertySchema(
-      id: 216,
+      id: 217,
       name: r'webtoonDoubleTapZoomEnabled',
       type: IsarType.bool,
     ),
     r'webtoonSidePadding': PropertySchema(
-      id: 217,
+      id: 218,
       name: r'webtoonSidePadding',
       type: IsarType.long,
     ),
     r'zoomStartPosition': PropertySchema(
-      id: 218,
+      id: 219,
       name: r'zoomStartPosition',
       type: IsarType.long,
     ),
@@ -2122,16 +2127,17 @@ void _settingsSerialize(
   );
   writer.writeBool(offsets[207], object.updateProgressAfterReading);
   writer.writeLong(offsets[208], object.updatedAt);
-  writer.writeBool(offsets[209], object.useLibass);
-  writer.writeBool(offsets[210], object.useMpvConfig);
-  writer.writeBool(offsets[211], object.usePageTapZones);
-  writer.writeBool(offsets[212], object.useYUV420P);
-  writer.writeString(offsets[213], object.userAgent);
-  writer.writeLong(offsets[214], object.volumeBoostCap);
-  writer.writeBool(offsets[215], object.webtoonDisableZoomOut);
-  writer.writeBool(offsets[216], object.webtoonDoubleTapZoomEnabled);
-  writer.writeLong(offsets[217], object.webtoonSidePadding);
-  writer.writeLong(offsets[218], object.zoomStartPosition);
+  writer.writeBool(offsets[209], object.useFloatingNavigationBar);
+  writer.writeBool(offsets[210], object.useLibass);
+  writer.writeBool(offsets[211], object.useMpvConfig);
+  writer.writeBool(offsets[212], object.usePageTapZones);
+  writer.writeBool(offsets[213], object.useYUV420P);
+  writer.writeString(offsets[214], object.userAgent);
+  writer.writeLong(offsets[215], object.volumeBoostCap);
+  writer.writeBool(offsets[216], object.webtoonDisableZoomOut);
+  writer.writeBool(offsets[217], object.webtoonDoubleTapZoomEnabled);
+  writer.writeLong(offsets[218], object.webtoonSidePadding);
+  writer.writeLong(offsets[219], object.zoomStartPosition);
 }
 
 Settings _settingsDeserialize(
@@ -2478,16 +2484,17 @@ Settings _settingsDeserialize(
     ),
     updateProgressAfterReading: reader.readBoolOrNull(offsets[207]),
     updatedAt: reader.readLongOrNull(offsets[208]),
-    useLibass: reader.readBoolOrNull(offsets[209]),
-    useMpvConfig: reader.readBoolOrNull(offsets[210]),
-    usePageTapZones: reader.readBoolOrNull(offsets[211]),
-    useYUV420P: reader.readBoolOrNull(offsets[212]),
-    userAgent: reader.readStringOrNull(offsets[213]),
-    volumeBoostCap: reader.readLongOrNull(offsets[214]),
-    webtoonDisableZoomOut: reader.readBoolOrNull(offsets[215]),
-    webtoonDoubleTapZoomEnabled: reader.readBoolOrNull(offsets[216]),
-    webtoonSidePadding: reader.readLongOrNull(offsets[217]),
-    zoomStartPosition: reader.readLongOrNull(offsets[218]),
+    useFloatingNavigationBar: reader.readBoolOrNull(offsets[209]),
+    useLibass: reader.readBoolOrNull(offsets[210]),
+    useMpvConfig: reader.readBoolOrNull(offsets[211]),
+    usePageTapZones: reader.readBoolOrNull(offsets[212]),
+    useYUV420P: reader.readBoolOrNull(offsets[213]),
+    userAgent: reader.readStringOrNull(offsets[214]),
+    volumeBoostCap: reader.readLongOrNull(offsets[215]),
+    webtoonDisableZoomOut: reader.readBoolOrNull(offsets[216]),
+    webtoonDoubleTapZoomEnabled: reader.readBoolOrNull(offsets[217]),
+    webtoonSidePadding: reader.readLongOrNull(offsets[218]),
+    zoomStartPosition: reader.readLongOrNull(offsets[219]),
   );
   object.chapterFilterBookmarkedList = reader
       .readObjectList<ChapterFilterBookmarked>(
@@ -3136,16 +3143,18 @@ P _settingsDeserializeProp<P>(
     case 212:
       return (reader.readBoolOrNull(offset)) as P;
     case 213:
-      return (reader.readStringOrNull(offset)) as P;
-    case 214:
-      return (reader.readLongOrNull(offset)) as P;
-    case 215:
       return (reader.readBoolOrNull(offset)) as P;
+    case 214:
+      return (reader.readStringOrNull(offset)) as P;
+    case 215:
+      return (reader.readLongOrNull(offset)) as P;
     case 216:
       return (reader.readBoolOrNull(offset)) as P;
     case 217:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 218:
+      return (reader.readLongOrNull(offset)) as P;
+    case 219:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -17822,6 +17831,36 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  useFloatingNavigationBarIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'useFloatingNavigationBar'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  useFloatingNavigationBarIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'useFloatingNavigationBar'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  useFloatingNavigationBarEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'useFloatingNavigationBar',
+          value: value,
+        ),
+      );
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition> useLibassIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -20923,6 +20962,20 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+  sortByUseFloatingNavigationBar() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useFloatingNavigationBar', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+  sortByUseFloatingNavigationBarDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useFloatingNavigationBar', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseLibass() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'useLibass', Sort.asc);
@@ -23367,6 +23420,20 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+  thenByUseFloatingNavigationBar() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useFloatingNavigationBar', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+  thenByUseFloatingNavigationBarDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useFloatingNavigationBar', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseLibass() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'useLibass', Sort.asc);
@@ -24748,6 +24815,13 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updatedAt');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct>
+  distinctByUseFloatingNavigationBar() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'useFloatingNavigationBar');
     });
   }
 
@@ -26204,6 +26278,13 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, int?, QQueryOperations> updatedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'updatedAt');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+  useFloatingNavigationBarProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'useFloatingNavigationBar');
     });
   }
 

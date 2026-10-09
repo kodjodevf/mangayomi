@@ -325,6 +325,11 @@ class Settings {
 
   bool? showNavDoubleTapTooltip;
 
+  /// Uses the optional floating capsule for primary navigation.
+  ///
+  /// False by default so existing installs keep the standard attached bar.
+  bool? useFloatingNavigationBar;
+
   bool? enableDiscordRpc;
 
   bool? hideDiscordRpcInIncognito;
@@ -592,6 +597,7 @@ class Settings {
     this.lastTrackerLibraryLocation,
     this.mergeLibraryNavMobile = false,
     this.showNavDoubleTapTooltip = true,
+    this.useFloatingNavigationBar = false,
     this.enableDiscordRpc = true,
     this.hideDiscordRpcInIncognito = true,
     this.rpcShowReadingWatchingProgress = true,
@@ -928,6 +934,7 @@ class Settings {
     lastTrackerLibraryLocation = json['lastTrackerLibraryLocation'];
     mergeLibraryNavMobile = json['mergeLibraryNavMobile'];
     showNavDoubleTapTooltip = json['showNavDoubleTapTooltip'];
+    useFloatingNavigationBar = json['useFloatingNavigationBar'] ?? false;
     enableDiscordRpc = json['enableDiscordRpc'];
     hideDiscordRpcInIncognito = json['hideDiscordRpcInIncognito'];
     rpcShowReadingWatchingProgress = json['rpcShowReadingWatchingProgress'];
@@ -1177,6 +1184,7 @@ class Settings {
     'lastTrackerLibraryLocation': lastTrackerLibraryLocation,
     'mergeLibraryNavMobile': mergeLibraryNavMobile,
     'showNavDoubleTapTooltip': showNavDoubleTapTooltip,
+    'useFloatingNavigationBar': useFloatingNavigationBar,
     'enableDiscordRpc': enableDiscordRpc,
     'hideDiscordRpcInIncognito': hideDiscordRpcInIncognito,
     'rpcShowReadingWatchingProgress': rpcShowReadingWatchingProgress,

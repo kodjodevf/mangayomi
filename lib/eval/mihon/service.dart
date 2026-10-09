@@ -364,17 +364,16 @@ class MihonExtensionService implements ExtensionService {
     };
   }
 
-  /// Posts [body] to the extension server, retrying once through the
-  /// Cloudflare-bypass proxy configured in Settings > General when the source
-  /// answers with a Cloudflare 403.
+  /// Posts [body] to the extension server, with one best-effort compatibility
+  /// retry through the configured bypass proxy for legacy bridge servers.
   ///
   /// These extensions run inside the extension server, so their requests never
-  /// pass through [MClient]'s retry policy and the proxy was never consulted
-  /// for them. That left them with no way past a challenge at all on Linux,
-  /// where the in-app webview resolver is disabled too.
+  /// pass through [MClient]'s retry policy. The legacy bridge response contains
+  /// only an HTTP status and no challenge header, so this fallback must never
+  /// be presented to the user as proof that Cloudflare caused the error.
   Future<Response> _dalvik(Map<String, dynamic> body) async {
     var res = await _postDalvik(body);
-    if (_isCloudflareBlocked(res)) {
+    if (_isForbiddenResponse(res)) {
       final proxyUrl = CfProxyStore.url.trim();
       if (proxyUrl.isNotEmpty &&
           await solveWithCfProxy(proxyUrl, source.baseUrl!)) {
@@ -395,7 +394,7 @@ class MihonExtensionService implements ExtensionService {
     );
   }
 
-  bool _isCloudflareBlocked(Response response) {
+  bool _isForbiddenResponse(Response response) {
     try {
       final decoded = jsonDecode(response.body);
       return decoded is Map<String, dynamic> &&
@@ -433,9 +432,6 @@ void hasError(Response response) {
   final errorMessage = decoded?['error'];
   final code = decoded?['code'];
   if (errorMessage != null && code != null) {
-    if (code == 403) {
-      throw "Failed to bypass Cloudflare.\n\n\nYou can try to bypass it manually in the webview \n\n\nstatusCode: 403";
-    }
     throw "$errorMessage \n\n\nstatusCode: $code";
   }
 }

@@ -1178,6 +1178,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'Reordena y ajusta cada navegación según tus necesidades.';
 
   @override
+  String get floating_navigation_bar => 'Floating navigation bar';
+
+  @override
+  String get floating_navigation_bar_description =>
+      'Use a floating capsule instead of the standard attached navigation bar.';
+
+  @override
   String get full_screen_player => 'Usar pantalla completa';
 
   @override
@@ -1190,7 +1197,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String n_episodes(Object n) {
+  String n_episodes(int n) {
     return '$n episodios';
   }
 
@@ -4755,7 +4762,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   }
 
   @override
-  String n_episodes(Object n) {
+  String n_episodes(int n) {
     return '$n episodios';
   }
 

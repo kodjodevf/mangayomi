@@ -322,19 +322,26 @@ class PlayerPillButton extends StatelessWidget {
   final IconData? icon;
   final String? label;
   final VoidCallback onTap;
+  final GestureLongPressCallback? onLongPress;
   final String? tooltip;
   final bool active;
   final bool isCompact;
+  final bool showLabel;
 
   const PlayerPillButton({
     super.key,
     required this.onTap,
+    this.onLongPress,
     this.icon,
     this.label,
     this.tooltip,
     this.active = false,
     this.isCompact = false,
-  }) : assert(icon != null || label != null, 'Must provide icon or label');
+    this.showLabel = true,
+  }) : assert(
+         icon != null || (showLabel && label != null),
+         'Must provide a visible icon or label',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -348,6 +355,7 @@ class PlayerPillButton extends StatelessWidget {
         ? colorScheme.primary.withValues(alpha: 0.60)
         : colorScheme.outlineVariant.withValues(alpha: 0.35);
     final fgColor = active ? colorScheme.onPrimaryContainer : Colors.white;
+    final visibleLabel = showLabel ? label : null;
 
     final padH = isCompact ? 8.0 : 10.0;
     final padV = isCompact ? 4.5 : 6.0;
@@ -357,6 +365,7 @@ class PlayerPillButton extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
         onTap: onTap,
+        onLongPress: onLongPress,
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: padH, vertical: padV),
           decoration: BoxDecoration(
@@ -369,11 +378,11 @@ class PlayerPillButton extends StatelessWidget {
             children: [
               if (icon != null) ...[
                 Icon(icon, size: isCompact ? 14 : 15, color: fgColor),
-                if (label != null) SizedBox(width: isCompact ? 4 : 6),
+                if (visibleLabel != null) SizedBox(width: isCompact ? 4 : 6),
               ],
-              if (label != null)
+              if (visibleLabel != null)
                 Text(
-                  label!,
+                  visibleLabel,
                   style: (textTheme.labelMedium ?? const TextStyle()).copyWith(
                     fontWeight: FontWeight.w600,
                     color: fgColor,
@@ -386,7 +395,12 @@ class PlayerPillButton extends StatelessWidget {
         ),
       ),
     );
-    return tooltip != null ? Tooltip(message: tooltip!, child: button) : button;
+    final accessibleButton = !showLabel && label != null
+        ? Semantics(value: label, child: button)
+        : button;
+    return tooltip != null
+        ? Tooltip(message: tooltip!, child: accessibleButton)
+        : accessibleButton;
   }
 }
 

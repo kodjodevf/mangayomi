@@ -20,7 +20,12 @@ class JsHttpClient {
       final map = (reqcopyWith as Map?)?.toMapStringDynamic;
       return clientCache.putIfAbsent(
         jsonEncode(map ?? const <String, dynamic>{}),
-        () => MClient.init(reqcopyWith: map),
+        // Linux source catalogue requests otherwise carry no browser identity.
+        // Keep other platforms unchanged and preserve any explicit source UA.
+        () => MClient.init(
+          reqcopyWith: map,
+          useDefaultUserAgent: Platform.isLinux,
+        ),
       );
     }
 
