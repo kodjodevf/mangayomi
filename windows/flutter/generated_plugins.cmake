@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
   connectivity_plus
+  dynamic_color
   flutter_inappwebview_windows
   flutter_qjs
   flutter_secure_storage_windows

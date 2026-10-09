@@ -3,7 +3,9 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'blend_level_state_provider.dart';
+import 'dynamic_color_provider.dart';
 import 'flex_scheme_color_state_provider.dart';
+import 'material_you_state_provider.dart';
 import 'pure_black_dark_mode_state_provider.dart';
 import 'app_font_family.dart';
 
@@ -43,15 +45,22 @@ ThemeData _tvFocus(ThemeData theme) {
 }
 
 /// Provides the light theme for the app, recomputed only when
-/// flex scheme colors, blend level, or font family change.
+/// flex scheme colors, blend level, font family, or dynamic Material You change.
 final lightThemeProvider = Provider<ThemeData>((ref) {
-  final colors = ref.watch(flexSchemeColorStateProvider.select((t) => t.$1));
+  final useMaterialYou = ref.watch(materialYouStateProvider);
+  final (lightDynamic, _) = ref.watch(dynamicColorSchemesProvider);
+  final isDynamic = useMaterialYou && lightDynamic != null;
+
+  final colors = isDynamic
+      ? null
+      : ref.watch(flexSchemeColorStateProvider.select((t) => t.$1));
   final blendLevel = ref.watch(blendLevelStateProvider).toInt();
   final fontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$2));
 
   return _tvFocus(
     FlexThemeData.light(
-      colors: colors,
+      colorScheme: isDynamic ? lightDynamic : null,
+      colors: isDynamic ? null : colors,
       surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
       blendLevel: blendLevel,
       appBarOpacity: 0.00,
@@ -71,16 +80,23 @@ final lightThemeProvider = Provider<ThemeData>((ref) {
 });
 
 /// Provides the dark theme for the app, recomputed only when
-/// flex scheme colors, blend level, font family, or pure-black toggle change.
+/// flex scheme colors, blend level, font family, pure-black toggle, or dynamic Material You change.
 final darkThemeProvider = Provider<ThemeData>((ref) {
-  final colors = ref.watch(flexSchemeColorStateProvider.select((t) => t.$1));
+  final useMaterialYou = ref.watch(materialYouStateProvider);
+  final (_, darkDynamic) = ref.watch(dynamicColorSchemesProvider);
+  final isDynamic = useMaterialYou && darkDynamic != null;
+
+  final colors = isDynamic
+      ? null
+      : ref.watch(flexSchemeColorStateProvider.select((t) => t.$1));
   final blendLevel = ref.watch(blendLevelStateProvider).toInt();
   final fontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$2));
   final pureBlack = ref.watch(pureBlackDarkModeStateProvider);
 
   return _tvFocus(
     FlexThemeData.dark(
-      colors: colors,
+      colorScheme: isDynamic ? darkDynamic : null,
+      colors: isDynamic ? null : colors,
       surfaceMode: FlexSurfaceMode.level,
       // Pure black means pure black. The slider that sets this is hidden while
       // the toggle is on, but hiding a control does not stop it applying, so a
