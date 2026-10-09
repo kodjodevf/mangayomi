@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const double mobilePlayerPortraitControlIconSize = 24;
+
 bool usesCompactPortraitPlayerControls({
   required Orientation orientation,
   required double width,
@@ -64,9 +66,15 @@ class MobilePlayerTopControlsLayout extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
-          key: const ValueKey('mobile-player-portrait-actions-row'),
+          key: const ValueKey('mobile-player-portrait-title-row'),
           children: [
             backButton,
+            Expanded(child: title),
+          ],
+        ),
+        Row(
+          key: const ValueKey('mobile-player-portrait-actions-row'),
+          children: [
             Expanded(
               child: LayoutBuilder(
                 builder: (context, actionConstraints) => SingleChildScrollView(
@@ -87,11 +95,28 @@ class MobilePlayerTopControlsLayout extends StatelessWidget {
             ),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: title,
-        ),
       ],
+    );
+  }
+}
+
+class MobilePlayerPortraitActionTheme extends StatelessWidget {
+  const MobilePlayerPortraitActionTheme({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButtonTheme(
+      data: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          iconSize: mobilePlayerPortraitControlIconSize,
+          minimumSize: const Size.square(48),
+          maximumSize: const Size.square(48),
+          padding: EdgeInsets.zero,
+        ),
+      ),
+      child: child,
     );
   }
 }
@@ -121,6 +146,81 @@ class MobilePlayerUnlockControl extends StatelessWidget {
           tooltip: tooltip,
           onPressed: onPressed,
           icon: const Icon(Icons.lock_outline, size: 24),
+        ),
+      ),
+    );
+  }
+}
+
+class MobilePlayerCompactSeekControl extends StatelessWidget {
+  const MobilePlayerCompactSeekControl({
+    super.key,
+    required this.tooltip,
+    required this.onPressed,
+    this.onLongPress,
+    this.seconds,
+  });
+
+  final String tooltip;
+  final VoidCallback onPressed;
+  final GestureLongPressCallback? onLongPress;
+  final int? seconds;
+
+  @override
+  Widget build(BuildContext context) {
+    final secondsLabel = seconds?.toString();
+    final icon = secondsLabel == null
+        ? const Icon(
+            Icons.fast_forward_rounded,
+            size: mobilePlayerPortraitControlIconSize,
+            color: Colors.white,
+          )
+        : SizedBox.square(
+            dimension: mobilePlayerPortraitControlIconSize,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                const Icon(
+                  Icons.rotate_right_outlined,
+                  size: mobilePlayerPortraitControlIconSize,
+                  color: Colors.white,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 1),
+                  child: Text(
+                    secondsLabel,
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: secondsLabel.length > 2 ? 6 : 7.5,
+                      fontWeight: FontWeight.w700,
+                      height: 1,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+
+    return Tooltip(
+      message: tooltip,
+      child: Semantics(
+        button: true,
+        label: tooltip,
+        onTap: onPressed,
+        onLongPress: onLongPress,
+        child: ExcludeSemantics(
+          child: Material(
+            type: MaterialType.transparency,
+            child: InkResponse(
+              onTap: onPressed,
+              onLongPress: onLongPress,
+              radius: 24,
+              containedInkWell: true,
+              highlightShape: BoxShape.circle,
+              child: SizedBox.square(dimension: 48, child: Center(child: icon)),
+            ),
+          ),
         ),
       ),
     );
@@ -179,9 +279,9 @@ class MobilePlayerBottomControlsLayout extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               lockButton,
-              const SizedBox(width: 8),
-              seekButton,
               const Spacer(),
+              seekButton,
+              const SizedBox(width: 8),
               shortcutButtons,
             ],
           ),

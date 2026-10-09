@@ -1,6 +1,9 @@
+import 'dart:ui' show SemanticsAction;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
+import 'package:mangayomi/modules/anime/widgets/tv_player_pills.dart';
 import 'package:mangayomi/modules/anime/widgets/unified_settings_sheet.dart';
 
 void main() {
@@ -84,12 +87,20 @@ void main() {
       find.byKey(const ValueKey('mobile-player-portrait-actions-scroll')),
       findsOneWidget,
     );
-    expect(
-      tester.getTopLeft(find.byKey(const ValueKey('portrait-title'))).dy,
-      greaterThanOrEqualTo(
-        tester.getBottomLeft(find.byKey(const ValueKey('portrait-back'))).dy,
-      ),
+    final portrait = tester.getRect(
+      find.byKey(const ValueKey('mobile-player-top-controls-portrait')),
     );
+    final back = tester.getRect(find.byKey(const ValueKey('portrait-back')));
+    final title = tester.getRect(find.byKey(const ValueKey('portrait-title')));
+    final actions = tester.getRect(
+      find.byKey(const ValueKey('portrait-top-actions')),
+    );
+    expect(title.left, greaterThanOrEqualTo(back.right));
+    expect(title.center.dy, closeTo(back.center.dy, 1));
+    expect(actions.top, greaterThanOrEqualTo(back.bottom));
+    expect(actions.top, greaterThanOrEqualTo(title.bottom));
+    expect(actions.center.dx, greaterThan(portrait.center.dx));
+    expect(actions.right, lessThanOrEqualTo(portrait.right));
     expect(tester.takeException(), isNull);
   });
 
@@ -277,6 +288,12 @@ void main() {
 
     expect(row.left, greaterThanOrEqualTo(12));
     expect(row.right, lessThanOrEqualTo(size.width - 12));
+    expect(tester.getCenter(lock).dx, lessThan(row.center.dx));
+    expect(tester.getCenter(seek).dx, greaterThan(row.center.dx));
+    expect(
+      tester.getRect(seek).right,
+      lessThanOrEqualTo(tester.getRect(shortcuts).left),
+    );
     expect(tester.getCenter(seek).dy, closeTo(centerY, 1));
     expect(tester.getCenter(shortcuts).dy, closeTo(centerY, 1));
     expect(chapter, findsNothing);
@@ -333,13 +350,140 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(tester.getRect(lock).left, greaterThanOrEqualTo(12));
-    expect(tester.getRect(seek).left, greaterThan(tester.getRect(lock).right));
+    final row = tester.getRect(
+      find.byKey(const ValueKey('mobile-player-compact-controls-row')),
+    );
+    expect(tester.getCenter(lock).dx, lessThan(row.center.dx));
+    expect(tester.getCenter(seek).dx, greaterThan(row.center.dx));
+    expect(
+      tester.getRect(seek).right,
+      lessThanOrEqualTo(tester.getRect(fullscreen).left),
+    );
     expect(
       tester.getRect(fullscreen).right,
       lessThanOrEqualTo(size.width - 12),
     );
     expect(find.byKey(const ValueKey('hidden-small-chapter')), findsNothing);
   });
+
+  testWidgets(
+    'uses one icon size for portrait actions without changing autoplay',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: MobilePlayerPortraitActionTheme(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      key: const ValueKey('episode-action'),
+                      onPressed: () {},
+                      icon: const Icon(Icons.format_list_numbered_outlined),
+                    ),
+                    IconButton(
+                      key: const ValueKey('caption-action'),
+                      onPressed: () {},
+                      icon: const Icon(Icons.closed_caption_outlined),
+                    ),
+                    IconButton(
+                      key: const ValueKey('settings-action'),
+                      onPressed: () {},
+                      icon: const Icon(Icons.settings_outlined),
+                    ),
+                    const AutoplaySwitch(
+                      key: ValueKey('portrait-autoplay'),
+                      on: true,
+                      accent: Colors.blue,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      for (final icon in <IconData>[
+        Icons.format_list_numbered_outlined,
+        Icons.closed_caption_outlined,
+        Icons.settings_outlined,
+      ]) {
+        expect(
+          tester.getSize(find.byIcon(icon)),
+          const Size.square(mobilePlayerPortraitControlIconSize),
+        );
+      }
+      for (final key in <String>[
+        'episode-action',
+        'caption-action',
+        'settings-action',
+      ]) {
+        expect(
+          tester.getSize(find.byKey(ValueKey(key))),
+          const Size.square(48),
+        );
+      }
+      expect(
+        tester.getSize(find.byKey(const ValueKey('portrait-autoplay'))),
+        const Size(52, 28),
+      );
+    },
+  );
+
+  testWidgets(
+    'compact seek control shows the duration and keeps both actions',
+    (tester) async {
+      final semantics = tester.ensureSemantics();
+      var taps = 0;
+      var longPresses = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: MobilePlayerCompactSeekControl(
+                tooltip: '+85 seconds',
+                seconds: 85,
+                onPressed: () => taps++,
+                onLongPress: () => longPresses++,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final control = find.byType(MobilePlayerCompactSeekControl);
+      expect(tester.getSize(control), const Size.square(48));
+      expect(find.text('85'), findsOneWidget);
+      expect(find.byIcon(Icons.rotate_right_outlined), findsOneWidget);
+      expect(
+        tester.getSize(find.byIcon(Icons.rotate_right_outlined)),
+        const Size.square(mobilePlayerPortraitControlIconSize),
+      );
+      expect(
+        tester.widget<Tooltip>(find.byType(Tooltip)).message,
+        '+85 seconds',
+      );
+      final semanticControl = find.bySemanticsLabel('+85 seconds');
+      expect(semanticControl, findsOneWidget);
+      final semanticsData = tester
+          .getSemantics(semanticControl)
+          .getSemanticsData();
+      expect(semanticsData.hasAction(SemanticsAction.tap), isTrue);
+      expect(semanticsData.hasAction(SemanticsAction.longPress), isTrue);
+
+      await tester.tap(control);
+      await tester.pump();
+      expect(taps, 1);
+
+      await tester.longPress(control);
+      await tester.pump();
+      expect(longPresses, 1);
+      semantics.dispose();
+    },
+  );
 
   testWidgets('keeps one row in landscape', (tester) async {
     const size = Size(568, 320);

@@ -2168,17 +2168,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
         final onLongPress = value == null ? null : () => value.onLongPress();
         if (iconOnly) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2.5),
-            child: PlayerPillButton(
-              icon: Icons.fast_forward_rounded,
-              label: label,
-              showLabel: false,
-              tooltip: label,
-              isCompact: true,
-              onTap: onPressed,
-              onLongPress: onLongPress,
-            ),
+          return MobilePlayerCompactSeekControl(
+            key: const ValueKey('mobile-player-portrait-seek-button'),
+            tooltip: value?.currentTitle ?? '+$defaultSkipIntroLength seconds',
+            seconds: value == null ? defaultSkipIntroLength : null,
+            onPressed: onPressed,
+            onLongPress: onLongPress,
           );
         }
 
@@ -2347,7 +2342,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             lockButton: IconButton(
               key: const ValueKey('mobile-player-lock-button'),
               tooltip: context.l10n.lock,
-              icon: const Icon(Icons.lock_open_outlined, color: Colors.white),
+              icon: const Icon(
+                Icons.lock_open_outlined,
+                size: mobilePlayerPortraitControlIconSize,
+                color: Colors.white,
+              ),
               onPressed: () {
                 HapticFeedback.lightImpact();
                 _isLocked.value = true;
@@ -2376,6 +2375,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           onPressed: () => _toggleFullscreen(isFullscreen),
           icon: Icon(
             isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
+            size: mobilePlayerPortraitControlIconSize,
             color: Colors.white,
           ),
         );
@@ -2552,6 +2552,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   Widget _topButtonBar(BuildContext context) {
+    final compactPortrait = _usesCompactPortraitControls(context);
+
     Widget autoplayButton({bool portrait = false}) {
       return Consumer(
         builder: (context, ref, _) {
@@ -2611,6 +2613,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
     final title = ListTile(
       dense: true,
+      contentPadding: compactPortrait ? EdgeInsets.zero : null,
       title: Text(
         widget.episode.manga.value?.name ?? '',
         style: const TextStyle(
@@ -2633,7 +2636,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     return MobilePlayerTopSafeArea(
       isDesktop: isDesktop,
       child: MobilePlayerTopControlsLayout(
-        compactPortrait: _usesCompactPortraitControls(context),
+        compactPortrait: compactPortrait,
         backButton: BackButton(color: Colors.white, onPressed: _goBackToDetail),
         title: title,
         wideActions: Row(
@@ -2652,34 +2655,45 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             shareButton(),
           ],
         ),
-        portraitActions: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            autoplayButton(portrait: true),
-            episodesButton(),
-            Builder(
-              builder: (buttonContext) => IconButton(
-                key: const ValueKey('mobile-player-portrait-subtitles'),
-                tooltip: context.l10n.video_subtitle,
-                onPressed: () => _openPlayerSettings(
-                  buttonContext,
-                  initialIndex: _subtitleSectionIndex,
-                ),
-                icon: const Icon(
-                  Icons.closed_caption_outlined,
-                  color: Colors.white,
+        portraitActions: MobilePlayerPortraitActionTheme(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              KeyedSubtree(
+                key: const ValueKey('mobile-player-portrait-autoplay'),
+                child: autoplayButton(portrait: true),
+              ),
+              KeyedSubtree(
+                key: const ValueKey('mobile-player-portrait-episodes'),
+                child: episodesButton(),
+              ),
+              Builder(
+                builder: (buttonContext) => IconButton(
+                  key: const ValueKey('mobile-player-portrait-subtitles'),
+                  tooltip: context.l10n.video_subtitle,
+                  onPressed: () => _openPlayerSettings(
+                    buttonContext,
+                    initialIndex: _subtitleSectionIndex,
+                  ),
+                  icon: const Icon(
+                    Icons.closed_caption_outlined,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-            ),
-            Builder(
-              builder: (buttonContext) => IconButton(
-                key: const ValueKey('mobile-player-portrait-settings'),
-                tooltip: context.l10n.settings,
-                onPressed: () => _openPlayerSettings(buttonContext),
-                icon: const Icon(Icons.settings_outlined, color: Colors.white),
+              Builder(
+                builder: (buttonContext) => IconButton(
+                  key: const ValueKey('mobile-player-portrait-settings'),
+                  tooltip: context.l10n.settings,
+                  onPressed: () => _openPlayerSettings(buttonContext),
+                  icon: const Icon(
+                    Icons.settings_outlined,
+                    color: Colors.white,
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
