@@ -760,9 +760,12 @@ class Settings {
     libraryFilterAnimeUnreadType = json['libraryFilterAnimeUnreadType'];
     libraryFilterMangasBookMarkedType =
         json['libraryFilterMangasBookMarkedType'];
-    libraryFilterMangasSourceIds = json['libraryFilterMangasSourceIds'];
-    libraryFilterAnimeSourceIds = json['libraryFilterAnimeSourceIds'];
-    libraryFilterNovelSourceIds = json['libraryFilterNovelSourceIds'];
+    libraryFilterMangasSourceIds =
+        (json['libraryFilterMangasSourceIds'] as List?)?.cast<String>();
+    libraryFilterAnimeSourceIds = (json['libraryFilterAnimeSourceIds'] as List?)
+        ?.cast<String>();
+    libraryFilterNovelSourceIds = (json['libraryFilterNovelSourceIds'] as List?)
+        ?.cast<String>();
     libraryFilterMangasDownloadType = json['libraryFilterMangasDownloadType'];
     libraryFilterMangasStartedType = json['libraryFilterMangasStartedType'];
     libraryFilterMangasUnreadType = json['libraryFilterMangasUnreadType'];
