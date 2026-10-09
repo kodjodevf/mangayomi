@@ -44,6 +44,38 @@ class WebtoonScaleGestureRecognizer extends ScaleGestureRecognizer {
   void resolve(GestureDisposition disposition) {
     super.resolve(resolveDisposition(disposition));
   }
+
+  /// How far a pointer must move, while zoomed, before the pan claims the
+  /// gesture. Under the list's own drag slop, so a zoomed page pans instead
+  /// of the list scrolling, but above the jitter of a tap, so a double tap
+  /// can still reset the zoom.
+  static const double zoomedPanSlop = kTouchSlop / 2;
+
+  final Map<int, Offset> _pointerDownAt = {};
+
+  @override
+  void addAllowedPointer(PointerDownEvent event) {
+    _pointerDownAt[event.pointer] = event.position;
+    super.addAllowedPointer(event);
+  }
+
+  @override
+  void handleEvent(PointerEvent event) {
+    if (event is PointerMoveEvent && canPanCallback?.call() == true) {
+      final downAt = _pointerDownAt[event.pointer];
+      if (downAt != null &&
+          (event.position - downAt).distance > zoomedPanSlop) {
+        resolve(GestureDisposition.accepted);
+      }
+    }
+    super.handleEvent(event);
+  }
+
+  @override
+  void stopTrackingPointer(int pointer) {
+    _pointerDownAt.remove(pointer);
+    super.stopTrackingPointer(pointer);
+  }
 }
 
 /// Main widget for virtual reading using SuperListView from super_sliver_list
