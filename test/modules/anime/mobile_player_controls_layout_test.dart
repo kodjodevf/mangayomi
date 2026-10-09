@@ -36,8 +36,10 @@ void main() {
     );
   });
 
-  testWidgets('uses a two-row top bar on compact portrait', (tester) async {
-    const size = Size(300, 568);
+  testWidgets('keeps title and actions in one compact portrait row', (
+    tester,
+  ) async {
+    const size = Size(320, 568);
     await _setSurfaceSize(tester, size);
 
     await tester.pumpWidget(
@@ -56,7 +58,11 @@ void main() {
             title: SizedBox(
               key: ValueKey('portrait-title'),
               height: 48,
-              child: Text('A long title that still has its own row'),
+              child: Text(
+                'A long title that must truncate before the actions',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             wideActions: SizedBox(
               key: ValueKey('wide-top-actions'),
@@ -65,7 +71,7 @@ void main() {
             ),
             portraitActions: SizedBox(
               key: ValueKey('portrait-top-actions'),
-              width: 260,
+              width: 196,
               height: 48,
             ),
           ),
@@ -83,10 +89,6 @@ void main() {
     );
     expect(find.byKey(const ValueKey('portrait-top-actions')), findsOneWidget);
     expect(find.byKey(const ValueKey('wide-top-actions')), findsNothing);
-    expect(
-      find.byKey(const ValueKey('mobile-player-portrait-actions-scroll')),
-      findsOneWidget,
-    );
     final portrait = tester.getRect(
       find.byKey(const ValueKey('mobile-player-top-controls-portrait')),
     );
@@ -97,12 +99,127 @@ void main() {
     );
     expect(title.left, greaterThanOrEqualTo(back.right));
     expect(title.center.dy, closeTo(back.center.dy, 1));
-    expect(actions.top, greaterThanOrEqualTo(back.bottom));
-    expect(actions.top, greaterThanOrEqualTo(title.bottom));
-    expect(actions.center.dx, greaterThan(portrait.center.dx));
+    expect(actions.left, greaterThanOrEqualTo(title.right));
+    expect(actions.center.dy, closeTo(title.center.dy, 1));
     expect(actions.right, lessThanOrEqualTo(portrait.right));
+    expect(title.width, greaterThan(0));
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('centers compact primary controls on the full player surface', (
+    tester,
+  ) async {
+    const size = Size(320, 568);
+    const insets = EdgeInsets.only(left: 5, right: 7, bottom: 34);
+    await _setSurfaceSize(tester, size);
+
+    await tester.pumpWidget(
+      _testApp(
+        size: size,
+        insets: insets,
+        child: const MobilePlayerControlsOverlayLayout(
+          compactPortrait: true,
+          safeInsets: insets,
+          topControls: SizedBox(
+            key: ValueKey('asymmetric-top-controls'),
+            height: 112,
+          ),
+          primaryControls: Center(
+            child: SizedBox(
+              key: ValueKey('centered-primary-controls'),
+              width: 120,
+              height: 56,
+            ),
+          ),
+          bottomControls: SizedBox(
+            key: ValueKey('asymmetric-bottom-controls'),
+            height: 72,
+          ),
+        ),
+      ),
+    );
+
+    final primary = tester.getRect(
+      find.byKey(const ValueKey('centered-primary-controls')),
+    );
+    final top = tester.getRect(
+      find.byKey(const ValueKey('asymmetric-top-controls')),
+    );
+    final bottom = tester.getRect(
+      find.byKey(const ValueKey('asymmetric-bottom-controls')),
+    );
+    expect(primary.center.dx, closeTo(size.width / 2, 0.1));
+    expect(primary.center.dy, closeTo(size.height / 2, 0.1));
+    expect(top.left, insets.left);
+    expect(top.right, size.width - insets.right);
+    expect(bottom.left, insets.left);
+    expect(bottom.right, size.width - insets.right);
+    expect(bottom.bottom, size.height - insets.bottom);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'preserves the stacked controls layout outside compact portrait',
+    (tester) async {
+      const size = Size(568, 320);
+      const insets = EdgeInsets.only(left: 5, right: 7, bottom: 9);
+      await _setSurfaceSize(tester, size);
+
+      await tester.pumpWidget(
+        _testApp(
+          size: size,
+          insets: insets,
+          child: const MobilePlayerControlsOverlayLayout(
+            compactPortrait: false,
+            safeInsets: insets,
+            topControls: SizedBox(
+              key: ValueKey('wide-overlay-top'),
+              width: double.infinity,
+              height: 48,
+            ),
+            primaryControls: Center(
+              child: SizedBox(
+                key: ValueKey('wide-overlay-primary'),
+                width: 120,
+                height: 56,
+              ),
+            ),
+            bottomControls: SizedBox(
+              key: ValueKey('wide-overlay-bottom'),
+              width: double.infinity,
+              height: 72,
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        find.byKey(const ValueKey('mobile-player-controls-overlay-wide')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('mobile-player-controls-overlay-portrait')),
+        findsNothing,
+      );
+      final top = tester.getRect(
+        find.byKey(const ValueKey('wide-overlay-top')),
+      );
+      final primary = tester.getRect(
+        find.byKey(const ValueKey('wide-overlay-primary')),
+      );
+      final bottom = tester.getRect(
+        find.byKey(const ValueKey('wide-overlay-bottom')),
+      );
+      expect(top.left, insets.left);
+      expect(top.right, size.width - insets.right);
+      expect(primary.top, greaterThanOrEqualTo(top.bottom));
+      expect(primary.bottom, lessThanOrEqualTo(bottom.top));
+      expect(bottom.left, insets.left);
+      expect(bottom.right, size.width - insets.right);
+      expect(bottom.bottom, size.height - insets.bottom);
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('keeps the original one-row top bar in landscape', (
     tester,

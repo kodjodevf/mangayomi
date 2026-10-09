@@ -2568,7 +2568,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   ref.read(autoPlayNextEpisodeProvider.notifier).toggle(),
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: 8,
+                  horizontal: portrait ? 0 : 8,
                   vertical: portrait ? 10 : 8,
                 ),
                 child: AutoplaySwitch(

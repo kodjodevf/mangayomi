@@ -60,41 +60,13 @@ class MobilePlayerTopControlsLayout extends StatelessWidget {
       );
     }
 
-    return Column(
+    return Row(
       key: const ValueKey('mobile-player-top-controls-portrait'),
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          key: const ValueKey('mobile-player-portrait-title-row'),
-          children: [
-            backButton,
-            Expanded(child: title),
-          ],
-        ),
-        Row(
-          key: const ValueKey('mobile-player-portrait-actions-row'),
-          children: [
-            Expanded(
-              child: LayoutBuilder(
-                builder: (context, actionConstraints) => SingleChildScrollView(
-                  key: const ValueKey('mobile-player-portrait-actions-scroll'),
-                  scrollDirection: Axis.horizontal,
-                  reverse: true,
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minWidth: actionConstraints.maxWidth,
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: portraitActions,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+        backButton,
+        Expanded(child: title),
+        portraitActions,
       ],
     );
   }
@@ -117,6 +89,67 @@ class MobilePlayerPortraitActionTheme extends StatelessWidget {
         ),
       ),
       child: child,
+    );
+  }
+}
+
+class MobilePlayerControlsOverlayLayout extends StatelessWidget {
+  const MobilePlayerControlsOverlayLayout({
+    super.key,
+    required this.compactPortrait,
+    required this.safeInsets,
+    required this.topControls,
+    required this.primaryControls,
+    required this.bottomControls,
+  });
+
+  final bool compactPortrait;
+  final EdgeInsets safeInsets;
+  final Widget topControls;
+  final Widget primaryControls;
+  final Widget bottomControls;
+
+  @override
+  Widget build(BuildContext context) {
+    if (compactPortrait) {
+      return Stack(
+        key: const ValueKey('mobile-player-controls-overlay-portrait'),
+        fit: StackFit.expand,
+        children: [
+          Positioned(
+            top: 0,
+            left: safeInsets.left,
+            right: safeInsets.right,
+            child: topControls,
+          ),
+          Positioned.fill(child: primaryControls),
+          Positioned(
+            left: safeInsets.left,
+            right: safeInsets.right,
+            bottom: safeInsets.bottom,
+            child: bottomControls,
+          ),
+        ],
+      );
+    }
+
+    return Padding(
+      key: const ValueKey('mobile-player-controls-overlay-wide'),
+      padding: EdgeInsets.only(
+        left: safeInsets.left,
+        right: safeInsets.right,
+        bottom: safeInsets.bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          topControls,
+          Expanded(child: primaryControls),
+          bottomControls,
+        ],
+      ),
     );
   }
 }
