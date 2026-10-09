@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class MobileSeekIndicator extends StatefulWidget {
-  static const submitDelay = Duration(milliseconds: 400);
+  static const submitDelay = Duration(milliseconds: 550);
 
   final void Function(Duration) onChanged;
   final void Function(Duration) onSubmitted;
@@ -24,8 +24,12 @@ class MobileSeekIndicator extends StatefulWidget {
   State<MobileSeekIndicator> createState() => _SeekIndicatorState();
 }
 
-class _SeekIndicatorState extends State<MobileSeekIndicator> {
+class _SeekIndicatorState extends State<MobileSeekIndicator>
+    with SingleTickerProviderStateMixin {
+  static const _chevronAnimationDuration = Duration(milliseconds: 220);
+
   late Duration _value;
+  late final AnimationController _chevronController;
   Timer? _submitTimer;
   bool _submitted = false;
 
@@ -33,6 +37,10 @@ class _SeekIndicatorState extends State<MobileSeekIndicator> {
   void initState() {
     super.initState();
     _value = Duration(seconds: widget.skipDuration);
+    _chevronController = AnimationController(
+      vsync: this,
+      duration: _chevronAnimationDuration,
+    )..forward();
     _scheduleSubmit();
   }
 
@@ -42,6 +50,7 @@ class _SeekIndicatorState extends State<MobileSeekIndicator> {
     setState(() {
       _value += Duration(seconds: widget.skipDuration);
     });
+    _chevronController.forward(from: 0);
     widget.onChanged(_value);
     _scheduleSubmit();
   }
@@ -60,44 +69,106 @@ class _SeekIndicatorState extends State<MobileSeekIndicator> {
   @override
   void dispose() {
     _submitTimer?.cancel();
+    _chevronController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final isRepeated = _value.inSeconds.abs() > widget.skipDuration.abs();
     final valueLabel = '${widget.forward ? '+' : '-'}${_value.inSeconds.abs()}';
     final directionLabel = widget.forward ? 'Seek forward' : 'Seek backward';
-    final chevron = Icon(
-      widget.forward
-          ? isRepeated
-                ? Icons.keyboard_double_arrow_right_rounded
-                : Icons.keyboard_arrow_right_rounded
-          : isRepeated
-          ? Icons.keyboard_double_arrow_left_rounded
-          : Icons.keyboard_arrow_left_rounded,
-      key: ValueKey(
-        'mobile-seek-${widget.forward ? 'forward' : 'backward'}-'
-        '${isRepeated ? 'double' : 'single'}-chevron',
+    final direction = widget.forward ? 1.0 : -1.0;
+    final chevrons = SizedBox(
+      width: 54,
+      height: 42,
+      child: AnimatedBuilder(
+        animation: _chevronController,
+        builder: (context, child) {
+          final progress = _chevronController.value;
+          final trailingOpacity = progress <= 0.55
+              ? progress / 0.55
+              : (1 - progress) / 0.45;
+          final leadingOpacity =
+              0.7 + (Curves.easeOut.transform(progress) * 0.3);
+          return Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              Transform.translate(
+                offset: Offset(direction * (-18 + (progress * 10)), 0),
+                child: Opacity(
+                  key: ValueKey(
+                    'mobile-seek-${widget.forward ? 'forward' : 'backward'}-'
+                    'chevron-0',
+                  ),
+                  opacity: trailingOpacity,
+                  child: Icon(
+                    widget.forward
+                        ? Icons.keyboard_arrow_right_rounded
+                        : Icons.keyboard_arrow_left_rounded,
+                    size: 32,
+                    color: Colors.white,
+                    shadows: const [
+                      Shadow(
+                        color: Colors.black87,
+                        blurRadius: 8,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Transform.translate(
+                offset: Offset(direction * 12, 0),
+                child: Opacity(
+                  key: ValueKey(
+                    'mobile-seek-${widget.forward ? 'forward' : 'backward'}-'
+                    'chevron-1',
+                  ),
+                  opacity: leadingOpacity,
+                  child: Icon(
+                    widget.forward
+                        ? Icons.keyboard_arrow_right_rounded
+                        : Icons.keyboard_arrow_left_rounded,
+                    size: 32,
+                    color: Colors.white,
+                    shadows: const [
+                      Shadow(
+                        color: Colors.black87,
+                        blurRadius: 8,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
-      size: 38,
-      color: Colors.white,
-      shadows: const [
-        Shadow(color: Colors.black87, blurRadius: 8, offset: Offset(0, 2)),
-      ],
     );
-    final value = Text(
-      valueLabel,
-      key: const ValueKey('mobile-seek-value'),
-      style: (textTheme.titleLarge ?? const TextStyle()).copyWith(
-        color: Colors.white,
-        fontSize: 24,
-        fontWeight: FontWeight.w700,
-        fontFeatures: const [FontFeature.tabularFigures()],
-        shadows: const [
-          Shadow(color: Colors.black87, blurRadius: 8, offset: Offset(0, 2)),
-        ],
+    final value = TweenAnimationBuilder<double>(
+      key: ValueKey('mobile-seek-value-${_value.inSeconds}'),
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 90),
+      curve: Curves.easeOut,
+      builder: (context, progress, child) => Opacity(
+        opacity: progress,
+        child: Transform.scale(scale: 0.96 + (progress * 0.04), child: child),
+      ),
+      child: Text(
+        valueLabel,
+        key: const ValueKey('mobile-seek-value'),
+        style: (textTheme.titleLarge ?? const TextStyle()).copyWith(
+          color: Colors.white,
+          fontSize: 24,
+          fontWeight: FontWeight.w700,
+          fontFeatures: const [FontFeature.tabularFigures()],
+          shadows: const [
+            Shadow(color: Colors.black87, blurRadius: 8, offset: Offset(0, 2)),
+          ],
+        ),
       ),
     );
 
@@ -108,29 +179,26 @@ class _SeekIndicatorState extends State<MobileSeekIndicator> {
       value: '${_value.inSeconds.abs()} seconds',
       onTap: increment,
       child: ExcludeSemantics(
-        child: Material(
-          type: MaterialType.transparency,
-          child: InkWell(
-            splashColor: Colors.white.withValues(alpha: 0.12),
-            highlightColor: Colors.transparent,
-            onTap: increment,
-            child: Align(
-              alignment: widget.forward
-                  ? Alignment.centerRight
-                  : Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: widget.forward
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: widget.forward
-                        ? [value, const SizedBox(width: 2), chevron]
-                        : [chevron, const SizedBox(width: 2), value],
-                  ),
+        child: GestureDetector(
+          key: const ValueKey('mobile-seek-gesture-surface'),
+          behavior: HitTestBehavior.opaque,
+          onTap: increment,
+          child: Align(
+            alignment: widget.forward
+                ? Alignment.centerRight
+                : Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: widget.forward
+                    ? Alignment.centerRight
+                    : Alignment.centerLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: widget.forward
+                      ? [value, const SizedBox(width: 2), chevrons]
+                      : [chevrons, const SizedBox(width: 2), value],
                 ),
               ),
             ),

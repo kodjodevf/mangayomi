@@ -17,10 +17,14 @@ void main() {
     expect(find.text('10s'), findsNothing);
     expect(find.byIcon(Icons.forward_10), findsNothing);
     expect(
-      find.byKey(const ValueKey('mobile-seek-forward-single-chevron')),
+      find.byKey(const ValueKey('mobile-seek-forward-chevron-0')),
       findsOneWidget,
     );
-    expect(tester.getCenter(find.text('+10')).dx, greaterThanOrEqualTo(220));
+    expect(
+      find.byKey(const ValueKey('mobile-seek-forward-chevron-1')),
+      findsOneWidget,
+    );
+    expect(tester.getCenter(find.text('+10')).dx, greaterThanOrEqualTo(210));
     expect(tester.takeException(), isNull);
   });
 
@@ -32,10 +36,14 @@ void main() {
 
     expect(find.text('-10'), findsOneWidget);
     expect(
-      find.byKey(const ValueKey('mobile-seek-backward-single-chevron')),
+      find.byKey(const ValueKey('mobile-seek-backward-chevron-0')),
       findsOneWidget,
     );
-    expect(tester.getCenter(find.text('-10')).dx, lessThanOrEqualTo(100));
+    expect(
+      find.byKey(const ValueKey('mobile-seek-backward-chevron-1')),
+      findsOneWidget,
+    );
+    expect(tester.getCenter(find.text('-10')).dx, lessThanOrEqualTo(110));
     expect(tester.takeException(), isNull);
   });
 
@@ -54,13 +62,17 @@ void main() {
     );
 
     for (var index = 0; index < 3; index++) {
-      await tester.tap(find.byType(InkWell));
+      await tester.tap(_gestureSurface);
       await tester.pump();
     }
 
     expect(find.text('+40'), findsOneWidget);
     expect(
-      find.byKey(const ValueKey('mobile-seek-forward-double-chevron')),
+      find.byKey(const ValueKey('mobile-seek-forward-chevron-0')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('mobile-seek-forward-chevron-1')),
       findsOneWidget,
     );
     expect(changed, const [
@@ -90,11 +102,11 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byType(InkWell));
+    await tester.tap(_gestureSurface);
     await tester.pump(
       MobileSeekIndicator.submitDelay - const Duration(milliseconds: 1),
     );
-    await tester.tap(find.byType(InkWell));
+    await tester.tap(_gestureSurface);
     await tester.pump(
       MobileSeekIndicator.submitDelay - const Duration(milliseconds: 1),
     );
@@ -138,7 +150,7 @@ void main() {
     );
 
     await tester.pump(MobileSeekIndicator.submitDelay);
-    await tester.tap(find.byType(InkWell));
+    await tester.tap(_gestureSurface);
     await tester.pump(MobileSeekIndicator.submitDelay);
 
     expect(changed, isEmpty);
@@ -165,12 +177,40 @@ void main() {
       MediaQuery.textScalerOf(tester.element(find.text('+5'))).scale(10),
       20,
     );
-    await tester.tap(find.byType(InkWell));
+    await tester.tap(_gestureSurface);
     await tester.pump();
     expect(find.text('+10'), findsOneWidget);
     expect(changed, const [Duration(seconds: 10)]);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('keeps the tap surface clear and restarts the chevron pulse', (
+    tester,
+  ) async {
+    await _setSurfaceSize(tester, surfaceSize);
+    await tester.pumpWidget(
+      _indicatorApp(forward: true, onChanged: (_) {}, onSubmitted: (_) {}),
+    );
+
+    expect(find.byType(InkWell), findsNothing);
+    await tester.pump(const Duration(milliseconds: 220));
+    expect(_opacity(tester, 'mobile-seek-forward-chevron-0'), 0);
+
+    await tester.tap(_gestureSurface);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(_opacity(tester, 'mobile-seek-forward-chevron-0'), greaterThan(0.8));
+    expect(find.text('+20'), findsOneWidget);
+  });
+}
+
+final _gestureSurface = find.byKey(
+  const ValueKey('mobile-seek-gesture-surface'),
+);
+
+double _opacity(WidgetTester tester, String key) {
+  return tester.widget<Opacity>(find.byKey(ValueKey(key))).opacity;
 }
 
 Widget _indicatorApp({
