@@ -76,4 +76,74 @@ void main() {
       await tester.pump(kDoubleTapTimeout);
     },
   );
+
+  group('a drag over a webtoon page', () {
+    late int panUpdates;
+    late int listDrags;
+
+    // The webtoon list's vertical drag, competing with the page's pan the
+    // way SuperListView does in the reader.
+    Future<void> pumpPage(WidgetTester tester, {required bool zoomed}) async {
+      panUpdates = 0;
+      listDrags = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: RawGestureDetector(
+            behavior: HitTestBehavior.opaque,
+            gestures: <Type, GestureRecognizerFactory>{
+              VerticalDragGestureRecognizer:
+                  GestureRecognizerFactoryWithHandlers<
+                    VerticalDragGestureRecognizer
+                  >(() => VerticalDragGestureRecognizer(), (instance) {
+                    instance.onUpdate = (_) => listDrags++;
+                  }),
+            },
+            child: RawGestureDetector(
+              behavior: HitTestBehavior.opaque,
+              gestures: <Type, GestureRecognizerFactory>{
+                WebtoonScaleGestureRecognizer:
+                    GestureRecognizerFactoryWithHandlers<
+                      WebtoonScaleGestureRecognizer
+                    >(() => WebtoonScaleGestureRecognizer(), (instance) {
+                      instance.canPanCallback = () => zoomed;
+                      instance.onUpdate = (_) => panUpdates++;
+                    }),
+              },
+              child: const SizedBox.expand(),
+            ),
+          ),
+        ),
+      );
+    }
+
+    Future<void> diagonalDrag(WidgetTester tester) async {
+      final gesture = await tester.startGesture(const Offset(200, 300));
+      for (var i = 0; i < 10; i++) {
+        await gesture.moveBy(const Offset(6, 8));
+        await tester.pump();
+      }
+      await gesture.up();
+    }
+
+    testWidgets('pans a zoomed page instead of scrolling the list', (
+      tester,
+    ) async {
+      // Without claiming the drag early, the list's smaller slop won every
+      // vertical or diagonal drag and the zoomed page could not move
+      // sideways (#1021).
+      await pumpPage(tester, zoomed: true);
+      await diagonalDrag(tester);
+
+      expect(panUpdates, greaterThan(0));
+      expect(listDrags, 0);
+    });
+
+    testWidgets('scrolls the list when the page is not zoomed', (tester) async {
+      await pumpPage(tester, zoomed: false);
+      await diagonalDrag(tester);
+
+      expect(listDrags, greaterThan(0));
+      expect(panUpdates, 0);
+    });
+  });
 }
