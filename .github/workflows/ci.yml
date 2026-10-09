@@ -1,6 +1,6 @@
 name: CI
 
-# Build/compile checks for pull requests and main branch for Android, Android TV, iOS, macOS, Windows & Linux in debug mode.
+# Analysis, tests, and build/compile checks for pull requests and main branch for Android, Android TV, iOS, macOS, Windows & Linux in debug mode.
 on:
   pull_request:
     branches: [main]
@@ -33,6 +33,29 @@ jobs:
       # (e.g. undefined symbols / type errors), not pre-existing infos/warnings.
       - name: Analyze
         run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Repository tests open a real Isar database and download its native
+      # core on first use; the C++ image decoder is built by hook/build.dart
+      # with the runner's clang. Neither needs the Rust toolchain.
+      - name: Run tests
+        run: flutter test
 
   build-android:
     name: Build (Android debug)
