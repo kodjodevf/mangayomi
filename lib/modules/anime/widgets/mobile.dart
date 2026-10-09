@@ -433,6 +433,10 @@ class _MobileControllerWidgetState
 
   @override
   Widget build(BuildContext context) {
+    final compactPortrait = usesCompactPortraitPlayerControls(
+      orientation: MediaQuery.orientationOf(context),
+      width: MediaQuery.sizeOf(context).width,
+    );
     return Stack(
       children: [
         Consumer(
@@ -484,7 +488,7 @@ class _MobileControllerWidgetState
                                 top: 0,
                                 left: 0,
                                 right: 0,
-                                height: 140,
+                                height: compactPortrait ? 200 : 140,
                                 child: IgnorePointer(
                                   child: Container(
                                     decoration: BoxDecoration(

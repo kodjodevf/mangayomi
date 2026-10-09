@@ -1860,6 +1860,16 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           icon: Icons.terminal_outlined,
           contentBuilder: (context) => _customButtonsSectionWidget(context),
         ),
+      if (_usesCompactPortraitControls(context))
+        SettingsEntry(
+          label: context.l10n.share,
+          icon: Icons.adaptive.share,
+          onTap: (sheetContext) {
+            unawaited(
+              _showShareScreenshotActions(sheetContext, widget.episode),
+            );
+          },
+        ),
     ];
   }
 
@@ -2316,17 +2326,24 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     ];
   }
 
+  bool _usesCompactPortraitControls(BuildContext context) {
+    return !isDesktop &&
+        !isTv &&
+        usesCompactPortraitPlayerControls(
+          orientation: MediaQuery.orientationOf(context),
+          width: MediaQuery.sizeOf(context).width,
+        );
+  }
+
   Widget _mobileBottomButtonBar(BuildContext context) {
-    final iconOnlyShortcuts = usesCompactPortraitPlayerControls(
-      orientation: MediaQuery.orientationOf(context),
-      width: MediaQuery.sizeOf(context).width,
-    );
+    final compactPortrait = _usesCompactPortraitControls(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           MobilePlayerBottomControlsLayout(
+            compactPortrait: compactPortrait,
             lockButton: IconButton(
               key: const ValueKey('mobile-player-lock-button'),
               tooltip: context.l10n.lock,
@@ -2336,15 +2353,33 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 _isLocked.value = true;
               },
             ),
-            seekButton: _seekToWidget(iconOnly: iconOnlyShortcuts),
-            chapterButton: _chapterMarkWidget(iconOnly: iconOnlyShortcuts),
-            shortcutButtons: _buildSettingsButtons(
-              context,
-              iconOnly: iconOnlyShortcuts,
-            ),
+            seekButton: _seekToWidget(iconOnly: compactPortrait),
+            chapterButton: compactPortrait
+                ? const SizedBox.shrink()
+                : _chapterMarkWidget(),
+            shortcutButtons: compactPortrait
+                ? _portraitFullscreenButton(context)
+                : _buildSettingsButtons(context),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _portraitFullscreenButton(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, _) {
+        final isFullscreen = ref.watch(fullscreenProvider);
+        return IconButton(
+          key: const ValueKey('mobile-player-portrait-fullscreen'),
+          tooltip: context.l10n.fullscreen,
+          onPressed: () => _toggleFullscreen(isFullscreen),
+          icon: Icon(
+            isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
+            color: Colors.white,
+          ),
+        );
+      },
     );
   }
 
@@ -2517,97 +2552,135 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   Widget _topButtonBar(BuildContext context) {
-    return MobilePlayerTopSafeArea(
-      isDesktop: isDesktop,
-      child: Row(
-        children: [
-          BackButton(color: Colors.white, onPressed: _goBackToDetail),
-          Flexible(
-            child: ListTile(
-              dense: true,
-              title: Text(
-                widget.episode.manga.value?.name ?? '',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+    Widget autoplayButton({bool portrait = false}) {
+      return Consumer(
+        builder: (context, ref, _) {
+          final autoPlay = ref.watch(autoPlayNextEpisodeProvider);
+          return Tooltip(
+            message: autoPlay
+                ? 'Autoplay next episode: on'
+                : 'Autoplay next episode: off',
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: () =>
+                  ref.read(autoPlayNextEpisodeProvider.notifier).toggle(),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: portrait ? 10 : 8,
                 ),
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Text(
-                widget.episode.name ?? '',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white.withValues(alpha: 0.7),
+                child: AutoplaySwitch(
+                  on: autoPlay,
+                  accent: Theme.of(context).colorScheme.primary,
                 ),
-                overflow: TextOverflow.ellipsis,
               ),
             ),
-          ),
-          Row(
-            children: [
-              Consumer(
-                builder: (context, ref, _) {
-                  final autoPlay = ref.watch(autoPlayNextEpisodeProvider);
-                  // Same drawn play/pause switch as the TV player, for a
-                  // consistent autoplay toggle across all players.
-                  return Tooltip(
-                    message: autoPlay
-                        ? 'Autoplay next episode: on'
-                        : 'Autoplay next episode: off',
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(20),
-                      onTap: () => ref
-                          .read(autoPlayNextEpisodeProvider.notifier)
-                          .toggle(),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 8,
-                        ),
-                        child: AutoplaySwitch(
-                          on: autoPlay,
-                          accent: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              if (supportsAlwaysOnTop)
-                IconButton(
-                  icon: Icon(
-                    alwaysOnTop ? Icons.push_pin : Icons.push_pin_outlined,
-                    color: Colors.white,
-                  ),
-                  onPressed: toggleAlwaysOnTop,
+          );
+        },
+      );
+    }
+
+    Widget episodesButton() {
+      return btnToShowChapterListDialog(
+        context,
+        context.l10n.episodes,
+        widget.episode,
+        onChanged: (v) {
+          if (v) {
+            _player.play();
+          } else {
+            _player.pause();
+          }
+        },
+        iconColor: Colors.white,
+      );
+    }
+
+    Widget shareButton() {
+      return btnToShowShareScreenshot(
+        widget.episode,
+        onChanged: (v) {
+          if (v) {
+            _player.play();
+          } else {
+            _player.pause();
+          }
+        },
+      );
+    }
+
+    final title = ListTile(
+      dense: true,
+      title: Text(
+        widget.episode.manga.value?.name ?? '',
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        overflow: TextOverflow.ellipsis,
+      ),
+      subtitle: Text(
+        widget.episode.name ?? '',
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          color: Colors.white.withValues(alpha: 0.7),
+        ),
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+
+    return MobilePlayerTopSafeArea(
+      isDesktop: isDesktop,
+      child: MobilePlayerTopControlsLayout(
+        compactPortrait: _usesCompactPortraitControls(context),
+        backButton: BackButton(color: Colors.white, onPressed: _goBackToDetail),
+        title: title,
+        wideActions: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            autoplayButton(),
+            if (supportsAlwaysOnTop)
+              IconButton(
+                icon: Icon(
+                  alwaysOnTop ? Icons.push_pin : Icons.push_pin_outlined,
+                  color: Colors.white,
                 ),
-              btnToShowChapterListDialog(
-                context,
-                context.l10n.episodes,
-                widget.episode,
-                onChanged: (v) {
-                  if (v) {
-                    _player.play();
-                  } else {
-                    _player.pause();
-                  }
-                },
-                iconColor: Colors.white,
+                onPressed: toggleAlwaysOnTop,
               ),
-              btnToShowShareScreenshot(
-                widget.episode,
-                onChanged: (v) {
-                  if (v) {
-                    _player.play();
-                  } else {
-                    _player.pause();
-                  }
-                },
+            episodesButton(),
+            shareButton(),
+          ],
+        ),
+        portraitActions: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            autoplayButton(portrait: true),
+            episodesButton(),
+            Builder(
+              builder: (buttonContext) => IconButton(
+                key: const ValueKey('mobile-player-portrait-subtitles'),
+                tooltip: context.l10n.video_subtitle,
+                onPressed: () => _openPlayerSettings(
+                  buttonContext,
+                  initialIndex: _subtitleSectionIndex,
+                ),
+                icon: const Icon(
+                  Icons.closed_caption_outlined,
+                  color: Colors.white,
+                ),
               ),
-            ],
-          ),
-        ],
+            ),
+            Builder(
+              builder: (buttonContext) => IconButton(
+                key: const ValueKey('mobile-player-portrait-settings'),
+                tooltip: context.l10n.settings,
+                onPressed: () => _openPlayerSettings(buttonContext),
+                icon: const Icon(Icons.settings_outlined, color: Colors.white),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -2805,81 +2878,85 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
-  Widget btnToShowShareScreenshot(
+  Future<void> _showShareScreenshotActions(
+    BuildContext sheetContext,
     Chapter episode, {
     void Function(bool)? onChanged,
-  }) {
+  }) async {
     Future<Uint8List?> screenshot() => _player.screenshot(
       format: "image/png",
       includeLibassSubtitles: _includeSubtitles,
     );
-    return IconButton(
-      onPressed: () async {
-        onChanged?.call(false);
-        final name =
-            "${episode.manga.value!.name} ${episode.name} - ${_currentPosition.value.toString()}"
-                .replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_');
-        await showModalBottomSheet(
-          context: context,
-          constraints: BoxConstraints(maxWidth: context.width(1)),
-          builder: (context) => ImageActionsSheet(
-            onSetCover: (context) async {
-              final imageBytes = await screenshot();
-              if (!context.mounted) return;
-              final confirmed = await confirmUseAsMangaCover(context);
-              if (!confirmed || !context.mounted) return;
-              await applyMangaCover(
-                context,
-                episode.manga.value!,
-                imageBytes,
-              );
-              if (context.mounted) Navigator.pop(context);
-            },
-            onShare: (context) async {
-              final imageBytes = await screenshot();
-              if (context.mounted) {
-                final box = context.findRenderObject() as RenderBox?;
-                await shareOrCopy(
-                  ShareParams(
-                    files: [
-                      XFile.fromData(
-                        imageBytes!,
-                        name: name,
-                        mimeType: 'image/png',
-                      ),
-                    ],
-                    sharePositionOrigin:
-                        box!.localToGlobal(Offset.zero) & box.size,
+    onChanged?.call(false);
+    final name =
+        "${episode.manga.value!.name} ${episode.name} - ${_currentPosition.value.toString()}"
+            .replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_');
+    await showModalBottomSheet(
+      context: sheetContext,
+      constraints: BoxConstraints(
+        maxWidth: MediaQuery.sizeOf(sheetContext).width,
+      ),
+      builder: (context) => ImageActionsSheet(
+        onSetCover: (context) async {
+          final imageBytes = await screenshot();
+          if (!context.mounted) return;
+          final confirmed = await confirmUseAsMangaCover(context);
+          if (!confirmed || !context.mounted) return;
+          await applyMangaCover(context, episode.manga.value!, imageBytes);
+          if (context.mounted) Navigator.pop(context);
+        },
+        onShare: (context) async {
+          final imageBytes = await screenshot();
+          if (context.mounted) {
+            final box = context.findRenderObject() as RenderBox?;
+            await shareOrCopy(
+              ShareParams(
+                files: [
+                  XFile.fromData(
+                    imageBytes!,
+                    name: name,
+                    mimeType: 'image/png',
                   ),
-                  fallbackName: name,
-                );
-              }
-            },
-            onSave: (context) async {
-              final imageBytes = await screenshot();
-              final dir = await StorageProvider().getGalleryDirectory();
-              final file = File(path.join(dir!.path, "$name.png"));
-              file.writeAsBytesSync(imageBytes!);
-              if (context.mounted) {
-                botToast(context.l10n.picture_saved, second: 3);
-              }
-            },
-            // The sheet is its own route, so the player's setState alone
-            // would leave the switch showing the old value.
-            footer: StatefulBuilder(
-              builder: (context, setSheetState) => SwitchListTile(
-                onChanged: (value) {
-                  setState(() => _includeSubtitles = value);
-                  setSheetState(() {});
-                },
-                title: Text(context.l10n.include_subtitles),
-                value: _includeSubtitles,
+                ],
+                sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
               ),
-            ),
+              fallbackName: name,
+            );
+          }
+        },
+        onSave: (context) async {
+          final imageBytes = await screenshot();
+          final dir = await StorageProvider().getGalleryDirectory();
+          final file = File(path.join(dir!.path, "$name.png"));
+          file.writeAsBytesSync(imageBytes!);
+          if (context.mounted) {
+            botToast(context.l10n.picture_saved, second: 3);
+          }
+        },
+        // The sheet is its own route, so the player's setState alone
+        // would leave the switch showing the old value.
+        footer: StatefulBuilder(
+          builder: (context, setSheetState) => SwitchListTile(
+            onChanged: (value) {
+              setState(() => _includeSubtitles = value);
+              setSheetState(() {});
+            },
+            title: Text(context.l10n.include_subtitles),
+            value: _includeSubtitles,
           ),
-        );
-        onChanged?.call(true);
-      },
+        ),
+      ),
+    );
+    onChanged?.call(true);
+  }
+
+  Widget btnToShowShareScreenshot(
+    Chapter episode, {
+    void Function(bool)? onChanged,
+  }) {
+    return IconButton(
+      onPressed: () =>
+          _showShareScreenshotActions(context, episode, onChanged: onChanged),
       icon: Icon(Icons.adaptive.share, color: Colors.white),
     );
   }
