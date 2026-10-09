@@ -24,6 +24,14 @@ void main() {
       find.byKey(const ValueKey('mobile-seek-forward-chevron-1')),
       findsOneWidget,
     );
+    final counterShadow = tester
+        .widget<Text>(find.text('+10'))
+        .style!
+        .shadows!
+        .single;
+    expect(counterShadow.color, const Color(0x30000000));
+    expect(counterShadow.blurRadius, 3);
+    expect(counterShadow.offset, const Offset(0, 1));
     expect(tester.getCenter(find.text('+10')).dx, greaterThanOrEqualTo(210));
     expect(tester.takeException(), isNull);
   });

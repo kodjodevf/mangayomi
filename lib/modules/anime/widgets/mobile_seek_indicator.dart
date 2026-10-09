@@ -2,6 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+const _seekFeedbackShadow = Shadow(
+  color: Color(0x30000000),
+  blurRadius: 3,
+  offset: Offset(0, 1),
+);
+
 class MobileSeekIndicator extends StatefulWidget {
   static const submitDelay = Duration(milliseconds: 550);
 
@@ -109,13 +115,7 @@ class _SeekIndicatorState extends State<MobileSeekIndicator>
                         : Icons.keyboard_arrow_left_rounded,
                     size: 32,
                     color: Colors.white,
-                    shadows: const [
-                      Shadow(
-                        color: Colors.black87,
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+                    shadows: const [_seekFeedbackShadow],
                   ),
                 ),
               ),
@@ -133,13 +133,7 @@ class _SeekIndicatorState extends State<MobileSeekIndicator>
                         : Icons.keyboard_arrow_left_rounded,
                     size: 32,
                     color: Colors.white,
-                    shadows: const [
-                      Shadow(
-                        color: Colors.black87,
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+                    shadows: const [_seekFeedbackShadow],
                   ),
                 ),
               ),
@@ -165,9 +159,7 @@ class _SeekIndicatorState extends State<MobileSeekIndicator>
           fontSize: 24,
           fontWeight: FontWeight.w700,
           fontFeatures: const [FontFeature.tabularFigures()],
-          shadows: const [
-            Shadow(color: Colors.black87, blurRadius: 8, offset: Offset(0, 2)),
-          ],
+          shadows: const [_seekFeedbackShadow],
         ),
       ),
     );
