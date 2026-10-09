@@ -10,6 +10,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/floating_navigation_bar_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 
@@ -166,4 +167,20 @@ void main() {
       expect(stored().themeIsDark, false);
     },
   );
+
+  test('light and dark themes always use their matching palette', () {
+    final scheme = ThemeAA.schemes[3];
+
+    // The stored/manual mode is dark, but MaterialApp may still request the
+    // light theme when Follow System observes a light platform.
+    expect(container.read(themeModeStateProvider), isTrue);
+    expect(
+      container.read(lightThemeProvider).colorScheme.primary,
+      scheme.light.primary,
+    );
+    expect(
+      container.read(darkThemeProvider).colorScheme.primary,
+      scheme.dark.primary,
+    );
+  });
 }

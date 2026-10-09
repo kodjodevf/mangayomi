@@ -586,13 +586,15 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
     final dragging = _dragX != null;
     final lifted = dragging || _tapped;
     final barColor = light
-        ? scheme.surfaceContainerLow.withValues(alpha: 0.97)
+        ? scheme.surfaceContainerHigh.withValues(alpha: 0.98)
         : scheme.surface.withValues(alpha: 0.62);
     final pillColor = light
-        ? Color.alphaBlend(
-            scheme.primary.withValues(alpha: dragging ? 0.18 : 0.13),
-            scheme.surfaceContainerLow,
-          )
+        ? (dragging
+              ? Color.alphaBlend(
+                  scheme.primary.withValues(alpha: 0.08),
+                  scheme.primaryContainer,
+                )
+              : scheme.primaryContainer)
         : scheme.secondaryContainer.withValues(alpha: dragging ? 1.0 : 0.9);
 
     return _Zoom(
@@ -609,10 +611,10 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
             boxShadow: [
               BoxShadow(
                 color: (light ? scheme.shadow : Colors.black).withValues(
-                  alpha: light ? 0.10 : 0.34,
+                  alpha: light ? 0.18 : 0.34,
                 ),
-                blurRadius: light ? 16 : 20,
-                offset: Offset(0, light ? 4 : 6),
+                blurRadius: 20,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
@@ -622,9 +624,9 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
                 decoration: BoxDecoration(
-                  // Keep light mode close to the page surface instead of using
-                  // the darkest container tone, which made the whole capsule
-                  // look like a heavy grey dock. It stays nearly opaque so the
+                  // A medium container tone separates the light capsule from
+                  // the page without turning it into the heavy grey dock made
+                  // by the highest container tone. It stays nearly opaque so
                   // icons remain stable over cover art. Dark mode keeps the
                   // more translucent glass treatment.
                   color: barColor,
@@ -715,13 +717,10 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                                   duration: FloatingNavBar._duration,
                                   curve: FloatingNavBar._curve,
                                   decoration: ShapeDecoration(
-                                    // A solid secondary container can become a
-                                    // very dark block in custom light themes.
-                                    // Blending a small amount of the primary
-                                    // into the bar surface gives light mode a
-                                    // quieter tonal selection while keeping the
-                                    // user's accent. Dark mode keeps its current
-                                    // Material container pairing.
+                                    // Light mode uses Material's paired tonal
+                                    // container so the selected icon has a
+                                    // guaranteed foreground. Dark mode keeps
+                                    // its existing secondary pairing.
                                     color: pillColor,
                                     // A stadium is a full capsule at any
                                     // size, so the pill stays as round as the
@@ -738,7 +737,7 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                               child: IgnorePointer(
                                 child: _GlassEdge(
                                   color: light
-                                      ? scheme.outlineVariant
+                                      ? scheme.outline
                                       : scheme.onSurface,
                                   light: light,
                                   radius: height / 2,
@@ -876,11 +875,11 @@ class _GlassEdgePainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          color.withValues(alpha: light ? 0.22 : 0.36),
+          color.withValues(alpha: light ? 0.34 : 0.36),
           // Never zero: this is where the caps are, and they should keep a
           // trace of light rather than breaking the outline.
-          color.withValues(alpha: light ? 0.04 : 0.07),
-          color.withValues(alpha: light ? 0.11 : 0.18),
+          color.withValues(alpha: light ? 0.08 : 0.07),
+          color.withValues(alpha: light ? 0.20 : 0.18),
         ],
         stops: const [0.0, 0.5, 1.0],
       ).createShader(rect);
@@ -973,11 +972,10 @@ class _FloatingNavItem extends StatelessWidget {
     final icon = selected
         ? (destination.selectedIcon ?? destination.icon)
         : destination.icon;
-    // Light mode keeps both icon states dark enough to survive while the pill
-    // slides between them: the selected icon uses the accent and the others a
-    // quieter neutral. Dark mode retains the container's paired foreground.
+    // Each selected icon uses the foreground paired with its pill. Unselected
+    // icons stay neutral and remain readable while the pill crosses them.
     final color = light
-        ? (selected ? scheme.primary : scheme.onSurfaceVariant)
+        ? (selected ? scheme.onPrimaryContainer : scheme.onSurfaceVariant)
         : (selected ? scheme.onSecondaryContainer : scheme.onSurface);
     Widget themedItem(double size, Color resolvedColor) => IconTheme(
       data: IconThemeData(

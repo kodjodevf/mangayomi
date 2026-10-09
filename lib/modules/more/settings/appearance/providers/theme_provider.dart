@@ -45,7 +45,10 @@ ThemeData _tvFocus(ThemeData theme) {
 /// Provides the light theme for the app, recomputed only when
 /// flex scheme colors, blend level, or font family change.
 final lightThemeProvider = Provider<ThemeData>((ref) {
-  final colors = ref.watch(flexSchemeColorStateProvider.select((t) => t.$1));
+  final schemeIndex = ref.watch(
+    flexSchemeColorStateProvider.select((theme) => theme.$2),
+  );
+  final colors = ThemeAA.schemes[schemeIndex].light;
   final blendLevel = ref.watch(blendLevelStateProvider).toInt();
   final fontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$2));
 
@@ -73,7 +76,10 @@ final lightThemeProvider = Provider<ThemeData>((ref) {
 /// Provides the dark theme for the app, recomputed only when
 /// flex scheme colors, blend level, font family, or pure-black toggle change.
 final darkThemeProvider = Provider<ThemeData>((ref) {
-  final colors = ref.watch(flexSchemeColorStateProvider.select((t) => t.$1));
+  final schemeIndex = ref.watch(
+    flexSchemeColorStateProvider.select((theme) => theme.$2),
+  );
+  final colors = ThemeAA.schemes[schemeIndex].dark;
   final blendLevel = ref.watch(blendLevelStateProvider).toInt();
   final fontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$2));
   final pureBlack = ref.watch(pureBlackDarkModeStateProvider);

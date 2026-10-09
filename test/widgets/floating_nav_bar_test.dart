@@ -646,7 +646,7 @@ void main() {
     ),
   );
 
-  testWidgets('the light bar uses a quiet, nearly opaque surface', (
+  testWidgets('the light bar uses a distinct, nearly opaque surface', (
     tester,
   ) async {
     final theme = ThemeData(brightness: Brightness.light);
@@ -660,10 +660,10 @@ void main() {
     expect(barFillOf(tester).a, greaterThan(0.9));
     expect(
       contrastOf(composited, page),
-      lessThan(1.1),
+      greaterThan(1.1),
       reason:
-          'the light surface should stay quiet; the edge and shadow provide '
-          'separation without turning the capsule into a grey dock',
+          'the surface itself must separate from a flat light page; blur and '
+          'shadow alone disappear in bright screenshots',
     );
   });
 
@@ -774,7 +774,7 @@ void main() {
     );
   });
 
-  testWidgets('light mode uses a soft tonal pill and a quiet surface', (
+  testWidgets('light mode uses a clear tonal pill and a distinct surface', (
     tester,
   ) async {
     final scheme = ColorScheme.fromSeed(seedColor: const Color(0xFF7B4BD6));
@@ -798,17 +798,15 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final expectedPill = Color.alphaBlend(
-      scheme.primary.withValues(alpha: 0.13),
-      scheme.surfaceContainerLow,
-    );
-    expect(pillColourOf(tester), expectedPill);
+    expect(pillColourOf(tester), scheme.primaryContainer);
 
     final fill = barFillOf(tester);
     expect(
       fill.withValues(alpha: 1),
-      scheme.surfaceContainerLow,
-      reason: 'light mode should use the quiet container, not the darkest one',
+      scheme.surfaceContainerHigh,
+      reason:
+          'the medium container separates the bar without using the heaviest '
+          'available surface tone',
     );
     expect(
       (fill.r - fill.g).abs() < 0.25 && (fill.g - fill.b).abs() < 0.25,
@@ -837,17 +835,14 @@ void main() {
       for (final brightness in Brightness.values) {
         final s = ColorScheme.fromSeed(seedColor: seed, brightness: brightness);
         final pill = brightness == Brightness.light
-            ? Color.alphaBlend(
-                s.primary.withValues(alpha: 0.13),
-                s.surfaceContainerLow,
-              )
+            ? s.primaryContainer
             : s.secondaryContainer;
         final icon = brightness == Brightness.light
-            ? s.primary
+            ? s.onPrimaryContainer
             : s.onSecondaryContainer;
         expect(
           contrast(icon, pill),
-          greaterThan(3.0),
+          greaterThan(4.5),
           reason: 'seed $seed in $brightness fails the pairing',
         );
       }
