@@ -12,11 +12,11 @@ import 'package:mangayomi/modules/browse/sources/sources_screen.dart';
 import 'package:mangayomi/modules/widgets/tv_row_button.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
-import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/modules/browse/providers/browse_initial_tab_provider.dart';
+import 'package:mangayomi/modules/browse/widgets/tv_browse_tab_strip.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 
 class BrowseScreen extends ConsumerStatefulWidget {
@@ -218,6 +218,13 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     bool isExtensionTab,
     AppLocalizations l10n,
   ) {
+    final horizontalInsets = tvOverscanHorizontalInsets(context);
+    final tabLabels = [
+      for (final tab in _tabList)
+        tab.kind == BrowseTabKind.extensions
+            ? tab.type.localizedExtensions(l10n)
+            : tab.type.localizedSources(l10n),
+    ];
     return DefaultTabController(
       animationDuration: Duration.zero,
       length: _tabList.length,
@@ -232,7 +239,9 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(8, 6, 8, 2),
+                padding: horizontalInsets.add(
+                  const EdgeInsets.only(top: 6, bottom: 2),
+                ),
                 child: Row(
                   children: [
                     Text(
@@ -248,28 +257,19 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                   ],
                 ),
               ),
-              // Pills centred on screen, matching the home category filter.
+              // Centred when they fit, horizontally scrollable when long
+              // translations or a compact TV viewport need more room.
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (int i = 0; i < _tabList.length; i++) ...[
-                        if (i > 0) const SizedBox(width: 8),
-                        TvPill(
-                          label: _tabList[i].kind == BrowseTabKind.extensions
-                              ? _tabList[i].type.localizedExtensions(l10n)
-                              : _tabList[i].type.localizedSources(l10n),
-                          selected: i == _tabBarController.index,
-                          onTap: () {
-                            _tabBarController.animateTo(i);
-                            setState(() {});
-                          },
-                        ),
-                      ],
-                    ],
-                  ),
+                padding: horizontalInsets.add(
+                  const EdgeInsets.symmetric(vertical: 6),
+                ),
+                child: TvBrowseTabStrip(
+                  labels: tabLabels,
+                  selectedIndex: _tabBarController.index,
+                  onSelected: (index) {
+                    _tabBarController.animateTo(index);
+                    setState(() {});
+                  },
                 ),
               ),
               Expanded(

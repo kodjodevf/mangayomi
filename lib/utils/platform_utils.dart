@@ -108,6 +108,21 @@ Future<void> initIsTv() async {
 EdgeInsets get tvPageInsets =>
     isTv ? const EdgeInsets.symmetric(horizontal: 16) : EdgeInsets.zero;
 
+/// Horizontal inset for primary TV controls and scrolling content.
+///
+/// Television panels can crop a small part of the picture, and content viewed
+/// from across the room needs more edge separation than a handheld layout.
+/// Five percent scales naturally from compact TV viewports to 4K while the
+/// clamp avoids wasting space at either extreme. Off-TV this is zero so shared
+/// screens keep their existing phone and desktop layout.
+double tvHorizontalSafeInset(BuildContext context) {
+  if (!isTv) return 0;
+  return (MediaQuery.sizeOf(context).width * 0.05).clamp(24.0, 64.0);
+}
+
+EdgeInsets tvOverscanHorizontalInsets(BuildContext context) =>
+    EdgeInsets.symmetric(horizontal: tvHorizontalSafeInset(context));
+
 /// Bottom room a scrolling page should leave clear.
 ///
 /// On Apple the nav bar floats over the content, and the shell sets
