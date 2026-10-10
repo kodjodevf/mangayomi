@@ -408,19 +408,24 @@ typedef SettingsSectionBuilder = Widget Function(BuildContext context);
 
 /// One entry in the settings home list ("Qualité", "Vitesse"...): an icon, a
 /// label, an optional live current-value widget shown to the right of it
-/// (e.g. "1.0×"), and the content shown after drilling into it.
+/// (e.g. "1.0×"), and either drill-down content or a direct action.
 class SettingsEntry {
   final String label;
   final IconData icon;
   final WidgetBuilder? valueBuilder;
-  final SettingsSectionBuilder contentBuilder;
+  final SettingsSectionBuilder? contentBuilder;
+  final ValueChanged<BuildContext>? onTap;
 
   const SettingsEntry({
     required this.label,
     required this.icon,
-    required this.contentBuilder,
+    this.contentBuilder,
+    this.onTap,
     this.valueBuilder,
-  });
+  }) : assert(
+         (contentBuilder == null) != (onTap == null),
+         'Provide either contentBuilder or onTap',
+       );
 }
 
 class _SettingsHomeRow extends StatelessWidget {
@@ -723,7 +728,11 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
   bool _forward = true;
 
   int? _clampActive(int index) =>
-      index >= 0 && index < widget.entries.length ? index : null;
+      index >= 0 &&
+          index < widget.entries.length &&
+          widget.entries[index].contentBuilder != null
+      ? index
+      : null;
 
   @override
   void didUpdateWidget(SettingsDrilldown oldWidget) {
@@ -859,14 +868,21 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
                               for (var i = 0; i < widget.entries.length; i++)
                                 _SettingsHomeRow(
                                   entry: widget.entries[i],
-                                  onTap: () => _open(i),
+                                  onTap: () {
+                                    final action = widget.entries[i].onTap;
+                                    if (action != null) {
+                                      action(context);
+                                    } else {
+                                      _open(i);
+                                    }
+                                  },
                                 ),
                               const SizedBox(height: 4),
                             ],
                           )
                         : Padding(
                             padding: const EdgeInsets.only(bottom: 6),
-                            child: widget.entries[active].contentBuilder(
+                            child: widget.entries[active].contentBuilder!(
                               context,
                             ),
                           ),

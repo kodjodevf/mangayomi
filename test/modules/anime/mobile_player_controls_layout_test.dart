@@ -1,6 +1,9 @@
+import 'dart:ui' show SemanticsAction;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
+import 'package:mangayomi/modules/anime/widgets/tv_player_pills.dart';
 import 'package:mangayomi/modules/anime/widgets/unified_settings_sheet.dart';
 
 void main() {
@@ -31,6 +34,282 @@ void main() {
       tester.getTopLeft(find.byKey(const ValueKey('top-bar-content'))).dy,
       insets.top,
     );
+  });
+
+  testWidgets('keeps title and actions in one compact portrait row', (
+    tester,
+  ) async {
+    const size = Size(320, 568);
+    await _setSurfaceSize(tester, size);
+
+    await tester.pumpWidget(
+      _testApp(
+        size: size,
+        textScaler: const TextScaler.linear(2),
+        child: const Align(
+          alignment: Alignment.topCenter,
+          child: MobilePlayerTopControlsLayout(
+            compactPortrait: true,
+            backButton: SizedBox(
+              key: ValueKey('portrait-back'),
+              width: 48,
+              height: 48,
+            ),
+            title: SizedBox(
+              key: ValueKey('portrait-title'),
+              height: 48,
+              child: Text(
+                'A long title that must truncate before the actions',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            wideActions: SizedBox(
+              key: ValueKey('wide-top-actions'),
+              width: 160,
+              height: 48,
+            ),
+            portraitActions: SizedBox(
+              key: ValueKey('portrait-top-actions'),
+              width: 196,
+              height: 48,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('mobile-player-top-controls-portrait')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('mobile-player-top-controls-wide')),
+      findsNothing,
+    );
+    expect(find.byKey(const ValueKey('portrait-top-actions')), findsOneWidget);
+    expect(find.byKey(const ValueKey('wide-top-actions')), findsNothing);
+    final portrait = tester.getRect(
+      find.byKey(const ValueKey('mobile-player-top-controls-portrait')),
+    );
+    final back = tester.getRect(find.byKey(const ValueKey('portrait-back')));
+    final title = tester.getRect(find.byKey(const ValueKey('portrait-title')));
+    final actions = tester.getRect(
+      find.byKey(const ValueKey('portrait-top-actions')),
+    );
+    expect(title.left, greaterThanOrEqualTo(back.right));
+    expect(title.center.dy, closeTo(back.center.dy, 1));
+    expect(actions.left, greaterThanOrEqualTo(title.right));
+    expect(actions.center.dy, closeTo(title.center.dy, 1));
+    expect(actions.right, lessThanOrEqualTo(portrait.right));
+    expect(title.width, greaterThan(0));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('centers compact primary controls on the full player surface', (
+    tester,
+  ) async {
+    const size = Size(320, 568);
+    const insets = EdgeInsets.only(left: 5, right: 7, bottom: 34);
+    await _setSurfaceSize(tester, size);
+
+    await tester.pumpWidget(
+      _testApp(
+        size: size,
+        insets: insets,
+        child: const MobilePlayerControlsOverlayLayout(
+          compactPortrait: true,
+          safeInsets: insets,
+          topControls: SizedBox(
+            key: ValueKey('asymmetric-top-controls'),
+            height: 112,
+          ),
+          primaryControls: Center(
+            child: SizedBox(
+              key: ValueKey('centered-primary-controls'),
+              width: 120,
+              height: 56,
+            ),
+          ),
+          bottomControls: SizedBox(
+            key: ValueKey('asymmetric-bottom-controls'),
+            height: 72,
+          ),
+        ),
+      ),
+    );
+
+    final primary = tester.getRect(
+      find.byKey(const ValueKey('centered-primary-controls')),
+    );
+    final top = tester.getRect(
+      find.byKey(const ValueKey('asymmetric-top-controls')),
+    );
+    final bottom = tester.getRect(
+      find.byKey(const ValueKey('asymmetric-bottom-controls')),
+    );
+    expect(primary.center.dx, closeTo(size.width / 2, 0.1));
+    expect(primary.center.dy, closeTo(size.height / 2, 0.1));
+    expect(top.left, insets.left);
+    expect(top.right, size.width - insets.right);
+    expect(bottom.left, insets.left);
+    expect(bottom.right, size.width - insets.right);
+    expect(bottom.bottom, size.height - insets.bottom);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('centers landscape controls between the title and seek rows', (
+    tester,
+  ) async {
+    const size = Size(568, 320);
+    const insets = EdgeInsets.only(left: 47, right: 21, bottom: 9);
+    await _setSurfaceSize(tester, size);
+
+    await tester.pumpWidget(
+      _testApp(
+        size: size,
+        insets: insets,
+        child: const MobilePlayerControlsOverlayLayout(
+          compactPortrait: false,
+          safeInsets: insets,
+          topControls: SizedBox(
+            key: ValueKey('wide-overlay-top'),
+            width: double.infinity,
+            height: 48,
+          ),
+          primaryControls: Center(
+            child: SizedBox(
+              key: ValueKey('wide-overlay-primary'),
+              width: 120,
+              height: 56,
+            ),
+          ),
+          bottomControls: SizedBox(
+            key: ValueKey('wide-overlay-bottom'),
+            width: double.infinity,
+            height: 72,
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('mobile-player-controls-overlay-wide')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('mobile-player-controls-overlay-portrait')),
+      findsNothing,
+    );
+    final top = tester.getRect(find.byKey(const ValueKey('wide-overlay-top')));
+    final primary = tester.getRect(
+      find.byKey(const ValueKey('wide-overlay-primary')),
+    );
+    final bottom = tester.getRect(
+      find.byKey(const ValueKey('wide-overlay-bottom')),
+    );
+    expect(top.left, insets.left);
+    expect(top.right, size.width - insets.right);
+    expect(primary.center.dx, closeTo(size.width / 2, 0.1));
+    expect(primary.center.dy, closeTo((top.bottom + bottom.top) / 2, 0.1));
+    expect(primary.center.dy, lessThan(size.height / 2));
+    expect(bottom.left, insets.left);
+    expect(bottom.right, size.width - insets.right);
+    expect(bottom.bottom, size.height - insets.bottom);
+    expect(tester.takeException(), isNull);
+  });
+
+  test('keeps episode navigation buttons free of a resting tint', () {
+    final style = mobilePlayerEpisodeNavigationButtonStyle();
+
+    expect(style.backgroundColor?.resolve({}), Colors.transparent);
+    expect(
+      style.backgroundColor?.resolve({WidgetState.disabled}),
+      Colors.transparent,
+    );
+    expect(style.foregroundColor?.resolve({}), Colors.white);
+    expect(
+      style.foregroundColor?.resolve({WidgetState.disabled}),
+      Colors.white.withValues(alpha: 0.35),
+    );
+  });
+
+  testWidgets('keeps the original one-row top bar in landscape', (
+    tester,
+  ) async {
+    const size = Size(568, 320);
+    await _setSurfaceSize(tester, size);
+
+    await tester.pumpWidget(
+      _testApp(
+        size: size,
+        child: const Align(
+          alignment: Alignment.topCenter,
+          child: MobilePlayerTopControlsLayout(
+            compactPortrait: false,
+            backButton: SizedBox(width: 48, height: 48),
+            title: SizedBox(key: ValueKey('wide-title'), height: 48),
+            wideActions: SizedBox(
+              key: ValueKey('wide-top-actions'),
+              width: 160,
+              height: 48,
+            ),
+            portraitActions: SizedBox(
+              key: ValueKey('portrait-top-actions'),
+              width: 240,
+              height: 48,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('mobile-player-top-controls-wide')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('mobile-player-top-controls-portrait')),
+      findsNothing,
+    );
+    expect(find.byKey(const ValueKey('wide-top-actions')), findsOneWidget);
+    expect(find.byKey(const ValueKey('portrait-top-actions')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('uses the caller top layout decision at the 600px breakpoint', (
+    tester,
+  ) async {
+    const size = Size(600, 800);
+    await _setSurfaceSize(tester, size);
+
+    await tester.pumpWidget(
+      _testApp(
+        size: size,
+        child: const Center(
+          child: SizedBox(
+            width: 580,
+            child: MobilePlayerTopControlsLayout(
+              compactPortrait: false,
+              backButton: SizedBox(width: 48, height: 48),
+              title: SizedBox(height: 48),
+              wideActions: SizedBox(width: 120, height: 48),
+              portraitActions: SizedBox(width: 240, height: 48),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('mobile-player-top-controls-wide')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('mobile-player-top-controls-portrait')),
+      findsNothing,
+    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('keeps the locked-player control safe and center-left', (
@@ -71,7 +350,7 @@ void main() {
     expect(pressed, isTrue);
   });
 
-  testWidgets('uses one aligned scroll-safe row on compact portrait', (
+  testWidgets('keeps only curated actions in the compact portrait footer', (
     tester,
   ) async {
     const size = Size(390, 844);
@@ -84,6 +363,7 @@ void main() {
         child: Align(
           alignment: Alignment.bottomCenter,
           child: MobilePlayerBottomControlsLayout(
+            compactPortrait: true,
             lockButton: const SizedBox(
               key: ValueKey('lock-control'),
               width: 48,
@@ -109,8 +389,8 @@ void main() {
             ),
             shortcutButtons: const SizedBox(
               key: ValueKey('shortcut-controls'),
-              width: 210,
-              height: 35,
+              width: 48,
+              height: 48,
             ),
           ),
         ),
@@ -130,9 +410,6 @@ void main() {
     final row = tester.getRect(
       find.byKey(const ValueKey('mobile-player-compact-controls-row')),
     );
-    final scroll = tester.getRect(
-      find.byKey(const ValueKey('mobile-player-compact-controls-scroll')),
-    );
     final lock = find.byKey(const ValueKey('lock-control'));
     final seek = find.byKey(const ValueKey('compact-seek-control'));
     final chapter = find.byKey(const ValueKey('compact-chapter-control'));
@@ -141,22 +418,24 @@ void main() {
 
     expect(row.left, greaterThanOrEqualTo(12));
     expect(row.right, lessThanOrEqualTo(size.width - 12));
-    expect(scroll.left, greaterThanOrEqualTo(tester.getRect(lock).right));
-    expect(scroll.right, lessThanOrEqualTo(size.width - 12));
+    expect(tester.getCenter(lock).dx, lessThan(row.center.dx));
+    expect(tester.getCenter(seek).dx, greaterThan(row.center.dx));
+    expect(
+      tester.getRect(seek).right,
+      lessThanOrEqualTo(tester.getRect(shortcuts).left),
+    );
     expect(tester.getCenter(seek).dy, closeTo(centerY, 1));
-    expect(tester.getCenter(chapter).dy, closeTo(centerY, 1));
     expect(tester.getCenter(shortcuts).dy, closeTo(centerY, 1));
+    expect(chapter, findsNothing);
     expect(find.text('+85 seconds'), findsNothing);
     expect(
       find.text('A very long chapter marker that must remain usable'),
       findsNothing,
     );
-
-    expect(tester.getRect(seek).left, greaterThanOrEqualTo(scroll.left));
-    expect(tester.getRect(shortcuts).right, lessThanOrEqualTo(scroll.right));
+    expect(tester.getRect(shortcuts).right, lessThanOrEqualTo(size.width - 12));
   });
 
-  testWidgets('keeps the lock pinned when compact actions overflow', (
+  testWidgets('compact portrait footer fits a 320px screen at 2x text', (
     tester,
   ) async {
     const size = Size(320, 568);
@@ -165,43 +444,176 @@ void main() {
     await tester.pumpWidget(
       _testApp(
         size: size,
+        textScaler: const TextScaler.linear(2),
         child: Align(
           alignment: Alignment.bottomCenter,
           child: MobilePlayerBottomControlsLayout(
+            compactPortrait: true,
             lockButton: const SizedBox(
               key: ValueKey('overflow-lock-control'),
               width: 48,
               height: 48,
             ),
             seekButton: const SizedBox(
-              key: ValueKey('overflow-seek-control'),
-              width: 35,
-              height: 35,
+              key: ValueKey('small-seek-control'),
+              width: 48,
+              height: 48,
             ),
-            chapterButton: const SizedBox(width: 35, height: 35),
-            shortcutButtons: const SizedBox(width: 420, height: 35),
+            chapterButton: const SizedBox(
+              key: ValueKey('hidden-small-chapter'),
+              width: 48,
+              height: 48,
+            ),
+            shortcutButtons: const SizedBox(
+              key: ValueKey('small-fullscreen-control'),
+              width: 48,
+              height: 48,
+            ),
           ),
         ),
       ),
     );
 
     final lock = find.byKey(const ValueKey('overflow-lock-control'));
-    final scroll = find.byKey(
-      const ValueKey('mobile-player-compact-controls-scroll'),
-    );
-    final seek = find.byKey(const ValueKey('overflow-seek-control'));
-    final lockRectBeforeScroll = tester.getRect(lock);
-    final seekLeftBeforeScroll = tester.getRect(seek).left;
+    final seek = find.byKey(const ValueKey('small-seek-control'));
+    final fullscreen = find.byKey(const ValueKey('small-fullscreen-control'));
 
     expect(tester.takeException(), isNull);
-    expect(lockRectBeforeScroll.left, greaterThanOrEqualTo(12));
-    expect(tester.getRect(scroll).right, lessThanOrEqualTo(size.width - 12));
-
-    await tester.drag(scroll, const Offset(160, 0));
-    await tester.pump();
-    expect(tester.getRect(lock), lockRectBeforeScroll);
-    expect(tester.getRect(seek).left, greaterThan(seekLeftBeforeScroll));
+    expect(tester.getRect(lock).left, greaterThanOrEqualTo(12));
+    final row = tester.getRect(
+      find.byKey(const ValueKey('mobile-player-compact-controls-row')),
+    );
+    expect(tester.getCenter(lock).dx, lessThan(row.center.dx));
+    expect(tester.getCenter(seek).dx, greaterThan(row.center.dx));
+    expect(
+      tester.getRect(seek).right,
+      lessThanOrEqualTo(tester.getRect(fullscreen).left),
+    );
+    expect(
+      tester.getRect(fullscreen).right,
+      lessThanOrEqualTo(size.width - 12),
+    );
+    expect(find.byKey(const ValueKey('hidden-small-chapter')), findsNothing);
   });
+
+  testWidgets(
+    'uses one icon size for portrait actions without changing autoplay',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: MobilePlayerPortraitActionTheme(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      key: const ValueKey('episode-action'),
+                      onPressed: () {},
+                      icon: const Icon(Icons.format_list_numbered_outlined),
+                    ),
+                    IconButton(
+                      key: const ValueKey('caption-action'),
+                      onPressed: () {},
+                      icon: const Icon(Icons.closed_caption_outlined),
+                    ),
+                    IconButton(
+                      key: const ValueKey('settings-action'),
+                      onPressed: () {},
+                      icon: const Icon(Icons.settings_outlined),
+                    ),
+                    const AutoplaySwitch(
+                      key: ValueKey('portrait-autoplay'),
+                      on: true,
+                      accent: Colors.blue,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      for (final icon in <IconData>[
+        Icons.format_list_numbered_outlined,
+        Icons.closed_caption_outlined,
+        Icons.settings_outlined,
+      ]) {
+        expect(
+          tester.getSize(find.byIcon(icon)),
+          const Size.square(mobilePlayerPortraitControlIconSize),
+        );
+      }
+      for (final key in <String>[
+        'episode-action',
+        'caption-action',
+        'settings-action',
+      ]) {
+        expect(
+          tester.getSize(find.byKey(ValueKey(key))),
+          const Size.square(48),
+        );
+      }
+      expect(
+        tester.getSize(find.byKey(const ValueKey('portrait-autoplay'))),
+        const Size(52, 28),
+      );
+    },
+  );
+
+  testWidgets(
+    'compact seek control shows the duration and keeps both actions',
+    (tester) async {
+      final semantics = tester.ensureSemantics();
+      var taps = 0;
+      var longPresses = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: MobilePlayerCompactSeekControl(
+                tooltip: '+85 seconds',
+                seconds: 85,
+                onPressed: () => taps++,
+                onLongPress: () => longPresses++,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final control = find.byType(MobilePlayerCompactSeekControl);
+      expect(tester.getSize(control), const Size.square(48));
+      expect(find.text('85'), findsOneWidget);
+      expect(find.byIcon(Icons.rotate_right_outlined), findsOneWidget);
+      expect(
+        tester.getSize(find.byIcon(Icons.rotate_right_outlined)),
+        const Size.square(mobilePlayerPortraitControlIconSize),
+      );
+      expect(
+        tester.widget<Tooltip>(find.byType(Tooltip)).message,
+        '+85 seconds',
+      );
+      final semanticControl = find.bySemanticsLabel('+85 seconds');
+      expect(semanticControl, findsOneWidget);
+      final semanticsData = tester
+          .getSemantics(semanticControl)
+          .getSemanticsData();
+      expect(semanticsData.hasAction(SemanticsAction.tap), isTrue);
+      expect(semanticsData.hasAction(SemanticsAction.longPress), isTrue);
+
+      await tester.tap(control);
+      await tester.pump();
+      expect(taps, 1);
+
+      await tester.longPress(control);
+      await tester.pump();
+      expect(longPresses, 1);
+      semantics.dispose();
+    },
+  );
 
   testWidgets('keeps one row in landscape', (tester) async {
     const size = Size(568, 320);
@@ -213,6 +625,7 @@ void main() {
         child: Align(
           alignment: Alignment.bottomCenter,
           child: MobilePlayerBottomControlsLayout(
+            compactPortrait: false,
             lockButton: const SizedBox(
               key: ValueKey('lock-control'),
               width: 48,
@@ -246,6 +659,41 @@ void main() {
         1,
       ),
     );
+  });
+
+  testWidgets('uses the caller layout decision at the 600px breakpoint', (
+    tester,
+  ) async {
+    const size = Size(600, 800);
+    await _setSurfaceSize(tester, size);
+
+    await tester.pumpWidget(
+      _testApp(
+        size: size,
+        child: Center(
+          child: SizedBox(
+            width: 580,
+            child: MobilePlayerBottomControlsLayout(
+              compactPortrait: false,
+              lockButton: const SizedBox(width: 48, height: 48),
+              seekButton: const SizedBox(width: 80, height: 35),
+              chapterButton: const SizedBox(width: 80, height: 35),
+              shortcutButtons: const SizedBox(width: 300, height: 35),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('mobile-player-bottom-controls-wide')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('mobile-player-bottom-controls-compact')),
+      findsNothing,
+    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('compact shortcut pills use the original visual sizing', (
@@ -334,6 +782,36 @@ void main() {
       ),
       isFalse,
     );
+  });
+
+  testWidgets('settings home can run a portrait-only action', (tester) async {
+    var actionCalled = false;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SettingsDrilldown(
+            title: 'Settings',
+            entries: [
+              SettingsEntry(
+                label: 'Share',
+                icon: Icons.share_outlined,
+                onTap: (_) => actionCalled = true,
+              ),
+            ],
+            onClose: () {},
+            initialIndex: 0,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Share'));
+    await tester.pump();
+
+    expect(actionCalled, isTrue);
+    expect(find.byKey(const ValueKey('home')), findsOneWidget);
+    expect(find.byKey(const ValueKey('section-0')), findsNothing);
   });
 }
 
