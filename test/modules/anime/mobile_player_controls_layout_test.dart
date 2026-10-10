@@ -158,68 +158,80 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets(
-    'preserves the stacked controls layout outside compact portrait',
-    (tester) async {
-      const size = Size(568, 320);
-      const insets = EdgeInsets.only(left: 5, right: 7, bottom: 9);
-      await _setSurfaceSize(tester, size);
+  testWidgets('centers landscape primary controls on the full player surface', (
+    tester,
+  ) async {
+    const size = Size(568, 320);
+    const insets = EdgeInsets.only(left: 47, right: 21, bottom: 9);
+    await _setSurfaceSize(tester, size);
 
-      await tester.pumpWidget(
-        _testApp(
-          size: size,
-          insets: insets,
-          child: const MobilePlayerControlsOverlayLayout(
-            compactPortrait: false,
-            safeInsets: insets,
-            topControls: SizedBox(
-              key: ValueKey('wide-overlay-top'),
-              width: double.infinity,
-              height: 48,
-            ),
-            primaryControls: Center(
-              child: SizedBox(
-                key: ValueKey('wide-overlay-primary'),
-                width: 120,
-                height: 56,
-              ),
-            ),
-            bottomControls: SizedBox(
-              key: ValueKey('wide-overlay-bottom'),
-              width: double.infinity,
-              height: 72,
+    await tester.pumpWidget(
+      _testApp(
+        size: size,
+        insets: insets,
+        child: const MobilePlayerControlsOverlayLayout(
+          compactPortrait: false,
+          safeInsets: insets,
+          topControls: SizedBox(
+            key: ValueKey('wide-overlay-top'),
+            width: double.infinity,
+            height: 48,
+          ),
+          primaryControls: Center(
+            child: SizedBox(
+              key: ValueKey('wide-overlay-primary'),
+              width: 120,
+              height: 56,
             ),
           ),
+          bottomControls: SizedBox(
+            key: ValueKey('wide-overlay-bottom'),
+            width: double.infinity,
+            height: 72,
+          ),
         ),
-      );
+      ),
+    );
 
-      expect(
-        find.byKey(const ValueKey('mobile-player-controls-overlay-wide')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey('mobile-player-controls-overlay-portrait')),
-        findsNothing,
-      );
-      final top = tester.getRect(
-        find.byKey(const ValueKey('wide-overlay-top')),
-      );
-      final primary = tester.getRect(
-        find.byKey(const ValueKey('wide-overlay-primary')),
-      );
-      final bottom = tester.getRect(
-        find.byKey(const ValueKey('wide-overlay-bottom')),
-      );
-      expect(top.left, insets.left);
-      expect(top.right, size.width - insets.right);
-      expect(primary.top, greaterThanOrEqualTo(top.bottom));
-      expect(primary.bottom, lessThanOrEqualTo(bottom.top));
-      expect(bottom.left, insets.left);
-      expect(bottom.right, size.width - insets.right);
-      expect(bottom.bottom, size.height - insets.bottom);
-      expect(tester.takeException(), isNull);
-    },
-  );
+    expect(
+      find.byKey(const ValueKey('mobile-player-controls-overlay-wide')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('mobile-player-controls-overlay-portrait')),
+      findsNothing,
+    );
+    final top = tester.getRect(find.byKey(const ValueKey('wide-overlay-top')));
+    final primary = tester.getRect(
+      find.byKey(const ValueKey('wide-overlay-primary')),
+    );
+    final bottom = tester.getRect(
+      find.byKey(const ValueKey('wide-overlay-bottom')),
+    );
+    expect(top.left, insets.left);
+    expect(top.right, size.width - insets.right);
+    expect(primary.center.dx, closeTo(size.width / 2, 0.1));
+    expect(primary.center.dy, closeTo(size.height / 2, 0.1));
+    expect(bottom.left, insets.left);
+    expect(bottom.right, size.width - insets.right);
+    expect(bottom.bottom, size.height - insets.bottom);
+    expect(tester.takeException(), isNull);
+  });
+
+  test('keeps episode navigation buttons free of a resting tint', () {
+    final style = mobilePlayerEpisodeNavigationButtonStyle();
+
+    expect(style.backgroundColor?.resolve({}), Colors.transparent);
+    expect(
+      style.backgroundColor?.resolve({WidgetState.disabled}),
+      Colors.transparent,
+    );
+    expect(style.foregroundColor?.resolve({}), Colors.white);
+    expect(
+      style.foregroundColor?.resolve({WidgetState.disabled}),
+      Colors.white.withValues(alpha: 0.35),
+    );
+  });
 
   testWidgets('keeps the original one-row top bar in landscape', (
     tester,

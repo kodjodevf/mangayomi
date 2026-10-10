@@ -2,6 +2,13 @@ import 'package:flutter/material.dart';
 
 const double mobilePlayerPortraitControlIconSize = 24;
 
+ButtonStyle mobilePlayerEpisodeNavigationButtonStyle() => IconButton.styleFrom(
+  backgroundColor: Colors.transparent,
+  disabledBackgroundColor: Colors.transparent,
+  foregroundColor: Colors.white,
+  disabledForegroundColor: Colors.white.withValues(alpha: 0.35),
+);
+
 bool usesCompactPortraitPlayerControls({
   required Orientation orientation,
   required double width,
@@ -133,23 +140,24 @@ class MobilePlayerControlsOverlayLayout extends StatelessWidget {
       );
     }
 
-    return Padding(
+    return Stack(
       key: const ValueKey('mobile-player-controls-overlay-wide'),
-      padding: EdgeInsets.only(
-        left: safeInsets.left,
-        right: safeInsets.right,
-        bottom: safeInsets.bottom,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          topControls,
-          Expanded(child: primaryControls),
-          bottomControls,
-        ],
-      ),
+      fit: StackFit.expand,
+      children: [
+        Positioned(
+          top: 0,
+          left: safeInsets.left,
+          right: safeInsets.right,
+          child: topControls,
+        ),
+        Positioned.fill(child: primaryControls),
+        Positioned(
+          left: safeInsets.left,
+          right: safeInsets.right,
+          bottom: safeInsets.bottom,
+          child: bottomControls,
+        ),
+      ],
     );
   }
 }

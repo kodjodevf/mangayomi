@@ -979,11 +979,8 @@ List<Widget> mobilePrimaryButtonBar(
   final isFullScreen = isFullscreen(context);
   return [
     const Spacer(flex: 3),
-    IconButton.filledTonal(
-      style: IconButton.styleFrom(
-        backgroundColor: Colors.white.withValues(alpha: 0.15),
-        disabledBackgroundColor: Colors.white.withValues(alpha: 0.05),
-      ),
+    IconButton(
+      style: mobilePlayerEpisodeNavigationButtonStyle(),
       onPressed: hasPrevEpisode
           ? () {
               if (isFullScreen) {
@@ -995,22 +992,13 @@ List<Widget> mobilePrimaryButtonBar(
               );
             }
           : null,
-      icon: Icon(
-        Icons.skip_previous,
-        size: 28,
-        color: hasPrevEpisode
-            ? Colors.white
-            : Colors.white.withValues(alpha: 0.35),
-      ),
+      icon: const Icon(Icons.skip_previous, size: 28),
     ),
     const Spacer(),
     CustomPlayOrPauseButton(controller: controller, focusNode: playPauseFocus),
     const Spacer(),
-    IconButton.filledTonal(
-      style: IconButton.styleFrom(
-        backgroundColor: Colors.white.withValues(alpha: 0.15),
-        disabledBackgroundColor: Colors.white.withValues(alpha: 0.05),
-      ),
+    IconButton(
+      style: mobilePlayerEpisodeNavigationButtonStyle(),
       onPressed: hasNextEpisode
           ? () {
               if (isFullScreen) {
@@ -1022,13 +1010,7 @@ List<Widget> mobilePrimaryButtonBar(
               );
             }
           : null,
-      icon: Icon(
-        Icons.skip_next,
-        size: 28,
-        color: hasNextEpisode
-            ? Colors.white
-            : Colors.white.withValues(alpha: 0.35),
-      ),
+      icon: const Icon(Icons.skip_next, size: 28),
     ),
     const Spacer(flex: 3),
   ];
