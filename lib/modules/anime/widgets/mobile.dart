@@ -879,6 +879,7 @@ class _MobileControllerWidgetState
                                   },
                                   child: MobileSeekIndicator(
                                     forward: false,
+                                    compactPortrait: compactPortrait,
                                     onChanged: (value) {
                                       setState(() {
                                         _seekBarDeltaValueNotifier =
@@ -928,6 +929,7 @@ class _MobileControllerWidgetState
                                   },
                                   child: MobileSeekIndicator(
                                     forward: true,
+                                    compactPortrait: compactPortrait,
                                     onChanged: (value) {
                                       setState(() {
                                         _seekBarDeltaValueNotifier =

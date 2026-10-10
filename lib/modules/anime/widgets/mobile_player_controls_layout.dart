@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const double mobilePlayerPortraitControlIconSize = 24;
+const double mobilePlayerBottomControlsBottomPadding = 30;
 
 ButtonStyle mobilePlayerEpisodeNavigationButtonStyle() => IconButton.styleFrom(
   backgroundColor: Colors.transparent,

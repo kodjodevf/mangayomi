@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 
 const _seekFeedbackShadow = Shadow(
   color: Color(0x30000000),
@@ -14,6 +15,7 @@ class MobileSeekIndicator extends StatefulWidget {
   final void Function(Duration) onChanged;
   final void Function(Duration) onSubmitted;
   final int skipDuration;
+  final bool compactPortrait;
 
   /// Forward sits on the right edge and fades in from the left; backward
   /// is the mirror image.
@@ -24,6 +26,7 @@ class MobileSeekIndicator extends StatefulWidget {
     required this.onSubmitted,
     required this.skipDuration,
     required this.forward,
+    required this.compactPortrait,
   });
 
   @override
@@ -83,6 +86,12 @@ class _SeekIndicatorState extends State<MobileSeekIndicator>
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final safeInsets = MediaQuery.viewPaddingOf(context);
+    final visualPadding = widget.compactPortrait
+        ? EdgeInsets.zero
+        : EdgeInsets.only(
+            top: safeInsets.top,
+            bottom: safeInsets.bottom + mobilePlayerBottomControlsBottomPadding,
+          );
     final valueLabel = '${widget.forward ? '+' : '-'}${_value.inSeconds.abs()}';
     final directionLabel = widget.forward ? 'Seek forward' : 'Seek backward';
     final direction = widget.forward ? 1.0 : -1.0;
@@ -176,25 +185,28 @@ class _SeekIndicatorState extends State<MobileSeekIndicator>
           key: const ValueKey('mobile-seek-gesture-surface'),
           behavior: HitTestBehavior.opaque,
           onTap: increment,
-          child: Align(
-            alignment: widget.forward
-                ? Alignment.centerRight
-                : Alignment.centerLeft,
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: 18 + (widget.forward ? 0 : safeInsets.left),
-                right: 18 + (widget.forward ? safeInsets.right : 0),
-              ),
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: widget.forward
-                    ? Alignment.centerRight
-                    : Alignment.centerLeft,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: widget.forward
-                      ? [value, const SizedBox(width: 2), chevrons]
-                      : [chevrons, const SizedBox(width: 2), value],
+          child: Padding(
+            padding: visualPadding,
+            child: Align(
+              alignment: widget.forward
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 18 + (widget.forward ? 0 : safeInsets.left),
+                  right: 18 + (widget.forward ? safeInsets.right : 0),
+                ),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: widget.forward
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: widget.forward
+                        ? [value, const SizedBox(width: 2), chevrons]
+                        : [chevrons, const SizedBox(width: 2), value],
+                  ),
                 ),
               ),
             ),

@@ -2333,7 +2333,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   Widget _mobileBottomButtonBar(BuildContext context) {
     final compactPortrait = _usesCompactPortraitControls(context);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 30),
+      padding: const EdgeInsets.only(
+        bottom: mobilePlayerBottomControlsBottomPadding,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

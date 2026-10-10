@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile_seek_indicator.dart';
 
 void main() {
@@ -33,6 +34,10 @@ void main() {
     expect(counterShadow.blurRadius, 3);
     expect(counterShadow.offset, const Offset(0, 1));
     expect(tester.getCenter(find.text('+10')).dx, greaterThanOrEqualTo(210));
+    expect(
+      tester.getCenter(find.text('+10')).dy,
+      closeTo(surfaceSize.height / 2, 0.1),
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -65,6 +70,7 @@ void main() {
     await tester.pumpWidget(
       _indicatorApp(
         forward: false,
+        compactPortrait: false,
         indicatorWidth: landscapeSize.width / 2,
         viewPadding: insets,
         onChanged: (_) {},
@@ -83,6 +89,7 @@ void main() {
     await tester.pumpWidget(
       _indicatorApp(
         forward: true,
+        compactPortrait: false,
         indicatorWidth: landscapeSize.width / 2,
         viewPadding: insets,
         onChanged: (_) {},
@@ -100,6 +107,37 @@ void main() {
         lessThanOrEqualTo(landscapeSize.width - insets.right),
       );
     }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('aligns landscape feedback with the player control band', (
+    tester,
+  ) async {
+    const landscapeSize = Size(844, 390);
+    const insets = EdgeInsets.only(left: 59, right: 47, bottom: 21);
+    await _setSurfaceSize(tester, landscapeSize);
+
+    await tester.pumpWidget(
+      _indicatorApp(
+        forward: true,
+        compactPortrait: false,
+        indicatorWidth: landscapeSize.width / 2,
+        viewPadding: insets,
+        onChanged: (_) {},
+        onSubmitted: (_) {},
+      ),
+    );
+
+    final expectedCenter =
+        (insets.top +
+            landscapeSize.height -
+            insets.bottom -
+            mobilePlayerBottomControlsBottomPadding) /
+        2;
+    final feedbackCenter = tester.getCenter(find.text('+10')).dy;
+    expect(feedbackCenter, closeTo(expectedCenter, 0.1));
+    expect(feedbackCenter, lessThan(landscapeSize.height / 2));
+    expect(tester.getSize(_gestureSurface).height, landscapeSize.height);
     expect(tester.takeException(), isNull);
   });
 
@@ -277,11 +315,13 @@ Widget _indicatorApp({
   TextScaler textScaler = TextScaler.noScaling,
   EdgeInsets viewPadding = EdgeInsets.zero,
   double indicatorWidth = 160,
+  bool compactPortrait = true,
 }) {
   final indicator = SizedBox(
     width: indicatorWidth,
     child: MobileSeekIndicator(
       forward: forward,
+      compactPortrait: compactPortrait,
       skipDuration: skipDuration,
       onChanged: onChanged,
       onSubmitted: onSubmitted,
