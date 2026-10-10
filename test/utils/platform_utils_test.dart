@@ -40,4 +40,50 @@ void main() {
       expect(tvPageInsets, const EdgeInsets.symmetric(horizontal: 16));
     });
   });
+
+  group('tvHorizontalSafeInset', () {
+    testWidgets('is zero away from TV layouts', (tester) async {
+      late double inset;
+
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(size: Size(960, 540)),
+          child: Builder(
+            builder: (context) {
+              inset = tvHorizontalSafeInset(context);
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+
+      expect(inset, 0);
+    });
+
+    testWidgets('uses five percent with compact and large TV clamps', (
+      tester,
+    ) async {
+      debugIsTvOverride = true;
+
+      Future<double> insetFor(Size size) async {
+        late double inset;
+        await tester.pumpWidget(
+          MediaQuery(
+            data: MediaQueryData(size: size),
+            child: Builder(
+              builder: (context) {
+                inset = tvHorizontalSafeInset(context);
+                return const SizedBox();
+              },
+            ),
+          ),
+        );
+        return inset;
+      }
+
+      expect(await insetFor(const Size(400, 300)), 24);
+      expect(await insetFor(const Size(960, 540)), 48);
+      expect(await insetFor(const Size(1920, 1080)), 64);
+    });
+  });
 }
