@@ -55,6 +55,54 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('keeps landscape feedback outside display cutouts', (
+    tester,
+  ) async {
+    const landscapeSize = Size(844, 390);
+    const insets = EdgeInsets.only(left: 59, right: 47);
+    await _setSurfaceSize(tester, landscapeSize);
+
+    await tester.pumpWidget(
+      _indicatorApp(
+        forward: false,
+        indicatorWidth: landscapeSize.width / 2,
+        viewPadding: insets,
+        onChanged: (_) {},
+        onSubmitted: (_) {},
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 220));
+
+    for (var index = 0; index < 2; index++) {
+      final chevron = tester.getRect(
+        find.byKey(ValueKey('mobile-seek-backward-chevron-$index')),
+      );
+      expect(chevron.left, greaterThanOrEqualTo(insets.left));
+    }
+
+    await tester.pumpWidget(
+      _indicatorApp(
+        forward: true,
+        indicatorWidth: landscapeSize.width / 2,
+        viewPadding: insets,
+        onChanged: (_) {},
+        onSubmitted: (_) {},
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 220));
+
+    for (var index = 0; index < 2; index++) {
+      final chevron = tester.getRect(
+        find.byKey(ValueKey('mobile-seek-forward-chevron-$index')),
+      );
+      expect(
+        chevron.right,
+        lessThanOrEqualTo(landscapeSize.width - insets.right),
+      );
+    }
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('accumulates consecutive taps and submits the latest total', (
     tester,
   ) async {
@@ -227,9 +275,11 @@ Widget _indicatorApp({
   required ValueChanged<Duration> onSubmitted,
   int skipDuration = 10,
   TextScaler textScaler = TextScaler.noScaling,
+  EdgeInsets viewPadding = EdgeInsets.zero,
+  double indicatorWidth = 160,
 }) {
   final indicator = SizedBox(
-    width: 160,
+    width: indicatorWidth,
     child: MobileSeekIndicator(
       forward: forward,
       skipDuration: skipDuration,
@@ -240,7 +290,8 @@ Widget _indicatorApp({
 
   return MaterialApp(
     builder: (context, child) => MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaler: textScaler),
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: textScaler, viewPadding: viewPadding),
       child: child!,
     ),
     home: Scaffold(

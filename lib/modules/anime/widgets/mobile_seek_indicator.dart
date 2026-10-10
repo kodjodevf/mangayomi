@@ -82,6 +82,7 @@ class _SeekIndicatorState extends State<MobileSeekIndicator>
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final safeInsets = MediaQuery.viewPaddingOf(context);
     final valueLabel = '${widget.forward ? '+' : '-'}${_value.inSeconds.abs()}';
     final directionLabel = widget.forward ? 'Seek forward' : 'Seek backward';
     final direction = widget.forward ? 1.0 : -1.0;
@@ -180,7 +181,10 @@ class _SeekIndicatorState extends State<MobileSeekIndicator>
                 ? Alignment.centerRight
                 : Alignment.centerLeft,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18),
+              padding: EdgeInsets.only(
+                left: 18 + (widget.forward ? 0 : safeInsets.left),
+                right: 18 + (widget.forward ? safeInsets.right : 0),
+              ),
               child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: widget.forward
