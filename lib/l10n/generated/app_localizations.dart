@@ -4165,6 +4165,72 @@ abstract class AppLocalizations {
   /// **'Watch order'**
   String get watch_order;
 
+  /// Role label for the title currently being viewed in a watch order.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get watch_order_role_current;
+
+  /// Role label for an earlier title in a watch order.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get watch_order_role_previous;
+
+  /// Role label for a later title in a watch order.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get watch_order_role_next;
+
+  /// Source label for a watch order based on release dates.
+  ///
+  /// In en, this message translates to:
+  /// **'Release order'**
+  String get watch_order_source_release_order;
+
+  /// Source label for a community-created Trakt list.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} by {author}'**
+  String watch_order_source_community_list(String name, String author);
+
+  /// Source label for an official Trakt collection.
+  ///
+  /// In en, this message translates to:
+  /// **'Official Trakt collection: {name}'**
+  String watch_order_source_official_collection(String name);
+
+  /// Source label for a Trakt collection when it is not marked as official.
+  ///
+  /// In en, this message translates to:
+  /// **'Trakt collection: {name}'**
+  String watch_order_source_trakt_collection(String name);
+
+  /// Fallback source label when the watch order contains a show's seasons.
+  ///
+  /// In en, this message translates to:
+  /// **'Seasons for {title}'**
+  String watch_order_source_seasons(String title);
+
+  /// Label for choosing among available watch-order sources.
+  ///
+  /// In en, this message translates to:
+  /// **'Order source'**
+  String get watch_order_select_source;
+
+  /// Season metadata shown in a watch order.
+  ///
+  /// In en, this message translates to:
+  /// **'Season {number}'**
+  String watch_order_season(int number);
+
+  /// Episode metadata shown in a watch order.
+  ///
+  /// In en, this message translates to:
+  /// **'Episode {number}'**
+  String watch_order_episode(int number);
+
   /// No description provided for @sequels.
   ///
   /// In en, this message translates to:
@@ -4176,6 +4242,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Similarity:'**
   String get recommendations_similarity;
+
+  /// Accessible label for a recommendation rating in the provider's display format.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating {rating}'**
+  String recommendation_rating_accessibility(String rating);
 
   /// No description provided for @local_folder_structure.
   ///

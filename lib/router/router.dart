@@ -9,6 +9,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
+import 'package:mangayomi/services/discovery/media_lookup_context.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
 import 'package:mangayomi/modules/browse/extension/edit_code.dart';
 import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
@@ -319,17 +320,14 @@ class RouterNotifier extends ChangeNotifier {
       name: "related",
       builder: (data) => RelatedScreen(name: data.$1, itemType: data.$2),
     ),
-    _genericRoute<(String, ItemType, AlgorithmWeights)>(
+    _genericRoute<(MediaLookupContext, AlgorithmWeights)>(
       name: "recommendations",
-      builder: (data) => RecommendationScreen(
-        name: data.$1,
-        itemType: data.$2,
-        algorithmWeights: data.$3,
-      ),
+      builder: (data) =>
+          RecommendationScreen(media: data.$1, algorithmWeights: data.$2),
     ),
-    _genericRoute<(String, Track?)>(
+    _genericRoute<(MediaLookupContext, Track?)>(
       name: "watchOrder",
-      builder: (data) => WatchOrderScreen(name: data.$1, track: data.$2),
+      builder: (data) => WatchOrderScreen(media: data.$1, track: data.$2),
     ),
   ];
 
