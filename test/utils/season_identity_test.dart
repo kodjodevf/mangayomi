@@ -57,6 +57,33 @@ void main() {
     });
   });
 
+  group('Spanish season and episode names', () {
+    // Cuevana names episodes "T1 - Episodio 3". Neither word was recognised,
+    // so the first bare number, the season, became the episode: every
+    // episode of a season was episode 1 and all but one were dropped. Loki
+    // showed two episodes, one per season.
+    (int, double?) parsed(String name) =>
+        recognition.rawSeasonAndNumber('Loki', name);
+
+    test('"T" is a season and "Episodio" an episode', () {
+      expect(parsed('T1 - Episodio 3'), (1, 3.0));
+      expect(parsed('T2 - Episodio 6'), (2, 6.0));
+    });
+
+    test('two seasons of Loki keep all their episodes', () {
+      final keys = <String?>{
+        for (var e = 1; e <= 6; e++) identity('Loki', 'T1 - Episodio $e'),
+        for (var e = 1; e <= 6; e++) identity('Loki', 'T2 - Episodio $e'),
+      };
+      expect(keys, hasLength(12));
+    });
+
+    test('words merely containing a "t" are not seasons', () {
+      expect(parsed('Part 2'), (0, 2.0));
+      expect(parsed('Chapter 12'), (0, 12.0));
+    });
+  });
+
   group('what the key refuses to answer', () {
     test('a name with no number is not an identity', () {
       // Otherwise every Special is the same chapter as every other one, which
