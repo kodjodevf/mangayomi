@@ -158,7 +158,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('centers landscape primary controls on the full player surface', (
+  testWidgets('centers landscape controls between the title and seek rows', (
     tester,
   ) async {
     const size = Size(568, 320);
@@ -211,7 +211,8 @@ void main() {
     expect(top.left, insets.left);
     expect(top.right, size.width - insets.right);
     expect(primary.center.dx, closeTo(size.width / 2, 0.1));
-    expect(primary.center.dy, closeTo(size.height / 2, 0.1));
+    expect(primary.center.dy, closeTo((top.bottom + bottom.top) / 2, 0.1));
+    expect(primary.center.dy, lessThan(size.height / 2));
     expect(bottom.left, insets.left);
     expect(bottom.right, size.width - insets.right);
     expect(bottom.bottom, size.height - insets.bottom);

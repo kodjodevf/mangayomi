@@ -140,21 +140,23 @@ class MobilePlayerControlsOverlayLayout extends StatelessWidget {
       );
     }
 
-    return Stack(
+    return Column(
       key: const ValueKey('mobile-player-controls-overlay-wide'),
-      fit: StackFit.expand,
       children: [
-        Positioned(
-          top: 0,
-          left: safeInsets.left,
-          right: safeInsets.right,
+        Padding(
+          padding: EdgeInsets.only(
+            left: safeInsets.left,
+            right: safeInsets.right,
+          ),
           child: topControls,
         ),
-        Positioned.fill(child: primaryControls),
-        Positioned(
-          left: safeInsets.left,
-          right: safeInsets.right,
-          bottom: safeInsets.bottom,
+        Expanded(child: primaryControls),
+        Padding(
+          padding: EdgeInsets.only(
+            left: safeInsets.left,
+            right: safeInsets.right,
+            bottom: safeInsets.bottom,
+          ),
           child: bottomControls,
         ),
       ],
