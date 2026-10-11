@@ -16,7 +16,7 @@ import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:mangayomi/modules/more/widgets/outlined_field_decoration.dart';
 
 class SyncScreen extends ConsumerWidget {
@@ -213,10 +213,7 @@ class SyncScreen extends ConsumerWidget {
                       ),
                       child: OutlinedButton.icon(
                         onPressed: () async {
-                          if (!await launchUrl(
-                            Uri.parse(serverUrl),
-                            mode: LaunchMode.externalApplication,
-                          )) {
+                          if (!await ExternalBrowser.open(serverUrl)) {
                             AppLogger.log(
                               'Could not launch $serverUrl',
                               logLevel: LogLevel.error,

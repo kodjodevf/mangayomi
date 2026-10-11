@@ -1,0 +1,134 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+/// A browser the user can pick to open external links on Linux.
+class BrowserApp {
+  const BrowserApp({required this.id, required this.name});
+
+  /// The `.desktop` file's basename, including `.desktop` -- this is the name
+  /// `gtk-launch` accepts.
+  final String id;
+
+  /// The user-visible name from the `.desktop` file's `Name=` entry.
+  final String name;
+}
+
+/// Routes external links through a browser the user chose on Linux, and through
+/// the platform default handler everywhere else.
+///
+/// `url_launcher`'s [LaunchMode.externalApplication] always uses the OS default
+/// handler and cannot name an app, so on Linux the saved `.desktop` id is
+/// launched directly with `gtk-launch`.
+class ExternalBrowser {
+  const ExternalBrowser._();
+
+  /// The saved browser id, or an empty string for "system default".
+  static String get savedId => settingsRepository.current.externalBrowser ?? '';
+
+  /// Persists [id] as the browser to open external links with. An empty string
+  /// means the system default.
+  static void save(String id) {
+    settingsRepository.update((s) => s.externalBrowser = id);
+  }
+
+  /// The browsers installed on this machine, sorted by name. Empty off Linux.
+  static List<BrowserApp> available() {
+    if (!Platform.isLinux) return [];
+    final apps = <BrowserApp>[];
+    final seen = <String>{};
+    for (final dir in _applicationDirs()) {
+      final directory = Directory(dir);
+      if (!directory.existsSync()) continue;
+      List<FileSystemEntity> entries;
+      try {
+        entries = directory.listSync();
+      } catch (error) {
+        debugPrint('[ExternalBrowser] listing $dir failed: $error');
+        continue;
+      }
+      for (final entity in entries) {
+        if (entity is! File) continue;
+        final basename = entity.uri.pathSegments.last;
+        if (!basename.endsWith('.desktop') || seen.contains(basename)) continue;
+        try {
+          final entry = _parseDesktopFile(entity.readAsStringSync());
+          if (!entry.isBrowser) continue;
+          seen.add(basename);
+          apps.add(BrowserApp(id: basename, name: entry.name));
+        } catch (error) {
+          debugPrint('[ExternalBrowser] reading ${entity.path} failed: $error');
+        }
+      }
+    }
+    apps.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    return apps;
+  }
+
+  /// Opens [url] with the saved browser, or the system default when none is
+  /// saved or the saved one is no longer installed.
+  static Future<bool> open(String url) async {
+    final id = savedId;
+    if (Platform.isLinux && id.isNotEmpty) {
+      if (available().any((app) => app.id == id)) {
+        try {
+          final result = await Process.run('gtk-launch', [id, url]);
+          if (result.exitCode == 0) return true;
+          debugPrint(
+            '[ExternalBrowser] gtk-launch $id exited ${result.exitCode}: '
+            '${result.stderr}',
+          );
+        } catch (error) {
+          debugPrint('[ExternalBrowser] gtk-launch $id failed: $error');
+        }
+      } else {
+        debugPrint(
+          '[ExternalBrowser] saved browser "$id" is not installed; '
+          'using the system default',
+        );
+      }
+    }
+    try {
+      return await launchUrl(
+        Uri.parse(url),
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (error) {
+      debugPrint('[ExternalBrowser] launching $url failed: $error');
+      return false;
+    }
+  }
+
+  static List<String> _applicationDirs() => [
+    '/usr/share/applications',
+    '${Platform.environment['HOME'] ?? ''}/.local/share/applications',
+  ];
+
+  static _DesktopEntry _parseDesktopFile(String contents) {
+    var isBrowser = false;
+    var noDisplay = false;
+    String? name;
+    for (final rawLine in contents.split('\n')) {
+      final line = rawLine.trim();
+      if (line.startsWith('Name=') && name == null) {
+        name = line.substring('Name='.length).trim();
+      } else if (line.startsWith('Categories=')) {
+        final categories = line.substring('Categories='.length).split(';');
+        if (categories.contains('WebBrowser')) isBrowser = true;
+      } else if (line.startsWith('NoDisplay=')) {
+        noDisplay =
+            line.substring('NoDisplay='.length).trim().toLowerCase() == 'true';
+      }
+    }
+    return _DesktopEntry(isBrowser: isBrowser && !noDisplay, name: name ?? '');
+  }
+}
+
+class _DesktopEntry {
+  const _DesktopEntry({required this.isBrowser, required this.name});
+
+  final bool isBrowser;
+  final String name;
+}

@@ -11,9 +11,9 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:mangayomi/utils/error_toast.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:mangayomi/modules/more/widgets/outlined_field_decoration.dart';
 
 class SourceRepositories extends ConsumerStatefulWidget {
@@ -30,7 +30,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
   bool isRefreshing = false;
 
   Future<void> _launchInBrowser(Uri url) async {
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+    if (!await ExternalBrowser.open(url.toString())) {
       throw 'Could not launch $url';
     }
   }
