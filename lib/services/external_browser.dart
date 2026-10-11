@@ -110,6 +110,11 @@ class ExternalBrowser {
     }
   }
 
+  /// The in-flight OAuth loopback server and its timeout. A login that never
+  /// completes keeps its port; close it before the next attempt binds.
+  static HttpServer? _oauthServer;
+  static Timer? _oauthTimer;
+
   /// Opens an OAuth authorize page in the chosen browser and waits for the
   /// redirect to hit the local loopback server bound to [port]. Returns the
   /// callback URI (the code is in its query), or null on failure/timeout.
@@ -117,9 +122,15 @@ class ExternalBrowser {
   /// Replicates what `flutter_web_auth_2` does on desktop, except the page is
   /// opened with [open] so the user's chosen browser is used.
   static Future<Uri?> openOAuth(String authUrl, {required int port}) async {
+    // A previous, still-waiting login owns the port; close it before retrying
+    // (binding the same port twice throws "shared flag needs to be true").
+    await _oauthServer?.close(force: true);
+    _oauthServer = null;
+    _oauthTimer?.cancel();
     HttpServer server;
     try {
       server = await HttpServer.bind('127.0.0.1', port);
+      _oauthServer = server;
     } catch (error) {
       debugPrint('[ExternalBrowser] could not bind oauth port $port: $error');
       return null;
@@ -129,6 +140,7 @@ class ExternalBrowser {
       debugPrint('[ExternalBrowser] oauth wait on port $port timed out');
       server.close(force: true);
     });
+    _oauthTimer = timer;
     try {
       debugPrint('[ExternalBrowser] oauth opening $authUrl on port $port');
       final opened = await open(authUrl);
@@ -152,6 +164,8 @@ class ExternalBrowser {
       return null;
     } finally {
       timer.cancel();
+      if (identical(_oauthServer, server)) _oauthServer = null;
+      _oauthTimer = null;
       await server.close(force: true);
     }
   }
