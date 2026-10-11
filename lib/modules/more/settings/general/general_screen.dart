@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +13,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/doh_provider_notifier.dart';
 import 'package:mangayomi/services/http/doh/doh_custom_store.dart';
 import 'package:mangayomi/services/http/cf_proxy_store.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/services/http/doh/doh_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -242,6 +245,15 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
+            if (Platform.isLinux)
+              ListTile(
+                onTap: () => _showExternalBrowserDialog(context),
+                title: Text(context.l10n.external_browser),
+                subtitle: Text(
+                  _externalBrowserLabel(context),
+                  style: TextStyle(fontSize: 11, color: context.secondaryColor),
+                ),
+              ),
             Container(
               margin: const EdgeInsets.all(20.0),
               padding: const EdgeInsets.all(10.0),
@@ -750,6 +762,73 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
         },
       ),
     );
+  }
+
+  /// The label for the current external-browser choice: the browser's name, or
+  /// "System default" when nothing is saved or the saved browser is gone.
+  String _externalBrowserLabel(BuildContext context) {
+    final id = ExternalBrowser.savedId;
+    if (id.isEmpty) return context.l10n.system_default;
+    for (final browser in ExternalBrowser.available()) {
+      if (browser.id == id) return browser.name;
+    }
+    return context.l10n.system_default;
+  }
+
+  void _showExternalBrowserDialog(BuildContext context) {
+    final l10n = context.l10n;
+    final current = ExternalBrowser.savedId;
+    final browsers = ExternalBrowser.available();
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.external_browser),
+        content: SizedBox(
+          width: context.width(0.8),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              ListTile(
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                title: Text(l10n.system_default),
+                trailing: current.isEmpty ? const Icon(Icons.check) : null,
+                onTap: () => _selectExternalBrowser(dialogContext, ''),
+              ),
+              if (browsers.isEmpty)
+                ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  enabled: false,
+                  title: Text(l10n.no_browsers_detected),
+                ),
+              for (final browser in browsers)
+                ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(browser.name),
+                  trailing: current == browser.id
+                      ? const Icon(Icons.check)
+                      : null,
+                  onTap: () => _selectExternalBrowser(dialogContext, browser.id),
+                ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.cancel),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _selectExternalBrowser(BuildContext dialogContext, String id) {
+    ExternalBrowser.save(id);
+    Navigator.pop(dialogContext);
+    if (mounted) setState(() {});
   }
 
   void _showCustomDnsDialog(

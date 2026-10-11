@@ -6432,6 +6432,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TV player (beta)'**
   String get tv_player_beta;
+
+  /// No description provided for @external_browser.
+  ///
+  /// In en, this message translates to:
+  /// **'Open external links with'**
+  String get external_browser;
+
+  /// No description provided for @system_default.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get system_default;
+
+  /// No description provided for @no_browsers_detected.
+  ///
+  /// In en, this message translates to:
+  /// **'No browsers detected'**
+  String get no_browsers_detected;
 }
 
 class _AppLocalizationsDelegate

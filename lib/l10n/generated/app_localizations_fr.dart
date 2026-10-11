@@ -3635,4 +3635,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'Lecteur TV (bêta)';
+
+  @override
+  String get external_browser => 'Open external links with';
+
+  @override
+  String get system_default => 'System default';
+
+  @override
+  String get no_browsers_detected => 'No browsers detected';
 }
