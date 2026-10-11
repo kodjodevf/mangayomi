@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -106,6 +107,52 @@ class ExternalBrowser {
     } catch (error) {
       debugPrint('[ExternalBrowser] launching $url failed: $error');
       return false;
+    }
+  }
+
+  /// Opens an OAuth authorize page in the chosen browser and waits for the
+  /// redirect to hit the local loopback server bound to [port]. Returns the
+  /// callback URI (the code is in its query), or null on failure/timeout.
+  ///
+  /// Replicates what `flutter_web_auth_2` does on desktop, except the page is
+  /// opened with [open] so the user's chosen browser is used.
+  static Future<Uri?> openOAuth(String authUrl, {required int port}) async {
+    HttpServer server;
+    try {
+      server = await HttpServer.bind('127.0.0.1', port);
+    } catch (error) {
+      debugPrint('[ExternalBrowser] could not bind oauth port $port: $error');
+      return null;
+    }
+    Uri? result;
+    final timer = Timer(const Duration(minutes: 5), () {
+      debugPrint('[ExternalBrowser] oauth wait on port $port timed out');
+      server.close(force: true);
+    });
+    try {
+      debugPrint('[ExternalBrowser] oauth opening $authUrl on port $port');
+      final opened = await open(authUrl);
+      if (!opened) {
+        debugPrint('[ExternalBrowser] oauth could not open the auth page');
+        return null;
+      }
+      await server.listen((request) async {
+        request.response.headers.add('Content-Type', 'text/html');
+        request.response.write(
+          '<html><body>You can close this window and return to the app.</body></html>',
+        );
+        await request.response.close();
+        result = request.requestedUri;
+        await server.close(force: true);
+      }).asFuture();
+      debugPrint('[ExternalBrowser] oauth callback: $result');
+      return result;
+    } catch (error) {
+      debugPrint('[ExternalBrowser] oauth on port $port failed: $error');
+      return null;
+    } finally {
+      timer.cancel();
+      await server.close(force: true);
     }
   }
 

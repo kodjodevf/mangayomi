@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
@@ -52,12 +53,16 @@ class Anilist extends _$Anilist implements BaseTracker {
         '&redirect_uri=$_redirectUri&response_type=code';
 
     try {
-      final uri = await FlutterWebAuth2.authenticate(
-        url: loginUrl,
-        callbackUrlScheme: callbackUrlScheme,
-      );
+      final uri = _isDesktop
+          ? await ExternalBrowser.openOAuth(loginUrl, port: 43824)
+          : Uri.parse(
+              await FlutterWebAuth2.authenticate(
+                url: loginUrl,
+                callbackUrlScheme: callbackUrlScheme,
+              ),
+            );
 
-      final code = Uri.parse(uri).queryParameters['code'];
+      final code = uri?.queryParameters['code'];
       final response = await http.post(
         Uri.parse('https://anilist.co/api/v2/oauth/token'),
         body: {
