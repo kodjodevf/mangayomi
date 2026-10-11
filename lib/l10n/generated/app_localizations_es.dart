@@ -3631,6 +3631,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get system_default => 'System default';
+
+  @override
+  String get no_browsers_detected => 'No browsers detected';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

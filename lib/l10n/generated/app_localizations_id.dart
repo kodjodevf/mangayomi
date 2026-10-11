@@ -3596,4 +3596,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get system_default => 'System default';
+
+  @override
+  String get no_browsers_detected => 'No browsers detected';
 }

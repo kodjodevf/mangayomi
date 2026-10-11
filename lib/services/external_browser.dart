@@ -103,7 +103,13 @@ class ExternalBrowser {
 
   static List<String> _applicationDirs() => [
     '/usr/share/applications',
+    '/usr/local/share/applications',
     '${Platform.environment['HOME'] ?? ''}/.local/share/applications',
+    // Ubuntu ships Firefox/Chromium as snaps, and many users install browsers
+    // through Flatpak; both live outside the usual desktop-file directories.
+    '/var/lib/snapd/desktop/applications',
+    '/var/lib/flatpak/exports/share/applications',
+    '${Platform.environment['HOME'] ?? ''}/.local/share/flatpak/exports/share/applications',
   ];
 
   static _DesktopEntry _parseDesktopFile(String contents) {

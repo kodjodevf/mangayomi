@@ -795,6 +795,13 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                 trailing: current.isEmpty ? const Icon(Icons.check) : null,
                 onTap: () => _selectExternalBrowser(dialogContext, ''),
               ),
+              if (browsers.isEmpty)
+                ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  enabled: false,
+                  title: Text(l10n.no_browsers_detected),
+                ),
               for (final browser in browsers)
                 ListTile(
                   dense: true,

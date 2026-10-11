@@ -6444,6 +6444,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'System default'**
   String get system_default;
+
+  /// No description provided for @no_browsers_detected.
+  ///
+  /// In en, this message translates to:
+  /// **'No browsers detected'**
+  String get no_browsers_detected;
 }
 
 class _AppLocalizationsDelegate
