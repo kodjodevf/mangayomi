@@ -826,6 +826,7 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
   }
 
   void _selectExternalBrowser(BuildContext dialogContext, String id) {
+    debugPrint('[ExternalBrowser] picker saved id="$id"');
     ExternalBrowser.save(id);
     Navigator.pop(dialogContext);
     if (mounted) setState(() {});

@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/global_style.dart';
@@ -359,10 +360,10 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                                     "javascript",
                                     "about",
                                   ].contains(uri.scheme)) {
-                                    if (await canLaunchUrl(uri)) {
-                                      await launchUrl(uri);
-                                      return NavigationActionPolicy.CANCEL;
-                                    }
+if (await canLaunchUrl(uri)) {
+                                    await ExternalBrowser.open(uri.toString());
+                                    return NavigationActionPolicy.CANCEL;
+                                  }
                                   }
                                   return NavigationActionPolicy.ALLOW;
                                 },
@@ -474,7 +475,7 @@ class MyInAppBrowser extends InAppBrowser {
       "about",
     ].contains(uri.scheme)) {
       if (await canLaunchUrl(uri)) {
-        await launchUrl(uri);
+        await ExternalBrowser.open(uri.toString());
         return NavigationActionPolicy.CANCEL;
       }
     }

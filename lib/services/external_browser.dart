@@ -64,6 +64,10 @@ class ExternalBrowser {
       }
     }
     apps.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    debugPrint(
+      '[ExternalBrowser] available: '
+      '${apps.map((a) => '${a.name}=${a.id}').join(', ')}',
+    );
     return apps;
   }
 
@@ -71,30 +75,34 @@ class ExternalBrowser {
   /// saved or the saved one is no longer installed.
   static Future<bool> open(String url) async {
     final id = savedId;
+    debugPrint('[ExternalBrowser] open url="$url" savedId="$id"');
     if (Platform.isLinux && id.isNotEmpty) {
-      if (available().any((app) => app.id == id)) {
+      final installed = available().map((a) => a.id).toList();
+      if (installed.contains(id)) {
         try {
           final result = await Process.run('gtk-launch', [id, url]);
-          if (result.exitCode == 0) return true;
           debugPrint(
-            '[ExternalBrowser] gtk-launch $id exited ${result.exitCode}: '
-            '${result.stderr}',
+            '[ExternalBrowser] gtk-launch exit=${result.exitCode} '
+            'out=${result.stdout} err=${result.stderr}',
           );
+          if (result.exitCode == 0) return true;
         } catch (error) {
-          debugPrint('[ExternalBrowser] gtk-launch $id failed: $error');
+          debugPrint('[ExternalBrowser] gtk-launch threw: $error');
         }
       } else {
         debugPrint(
-          '[ExternalBrowser] saved browser "$id" is not installed; '
-          'using the system default',
+          '[ExternalBrowser] saved id "$id" not in installed list '
+          '(${installed.join(', ')}); falling back',
         );
       }
     }
     try {
-      return await launchUrl(
+      final ok = await launchUrl(
         Uri.parse(url),
         mode: LaunchMode.externalApplication,
       );
+      debugPrint('[ExternalBrowser] fallback launchUrl -> $ok');
+      return ok;
     } catch (error) {
       debugPrint('[ExternalBrowser] launching $url failed: $error');
       return false;
