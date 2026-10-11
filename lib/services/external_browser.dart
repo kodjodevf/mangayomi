@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -19,6 +18,10 @@ class BrowserApp {
 
 /// Routes external links through a browser the user chose on Linux, and through
 /// the platform default handler everywhere else.
+///
+/// TODO(platforms): only Linux is implemented (browsers listed from `.desktop`
+/// files, launched via `gtk-launch`). Windows and macOS could enumerate their
+/// installed browsers the same way; Android/iOS have no user-selectable browser.
 ///
 /// `url_launcher`'s [LaunchMode.externalApplication] always uses the OS default
 /// handler and cannot name an app, so on Linux the saved `.desktop` id is
@@ -46,8 +49,7 @@ class ExternalBrowser {
       List<FileSystemEntity> entries;
       try {
         entries = directory.listSync();
-      } catch (error) {
-        debugPrint('[ExternalBrowser] listing $dir failed: $error');
+      } catch (_) {
         continue;
       }
       for (final entity in entries) {
@@ -59,16 +61,12 @@ class ExternalBrowser {
           if (!entry.isBrowser) continue;
           seen.add(basename);
           apps.add(BrowserApp(id: basename, name: entry.name));
-        } catch (error) {
-          debugPrint('[ExternalBrowser] reading ${entity.path} failed: $error');
+        } catch (_) {
+          continue;
         }
       }
     }
     apps.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-    debugPrint(
-      '[ExternalBrowser] available: '
-      '${apps.map((a) => '${a.name}=${a.id}').join(', ')}',
-    );
     return apps;
   }
 
@@ -76,36 +74,23 @@ class ExternalBrowser {
   /// saved or the saved one is no longer installed.
   static Future<bool> open(String url) async {
     final id = savedId;
-    debugPrint('[ExternalBrowser] open url="$url" savedId="$id"');
     if (Platform.isLinux && id.isNotEmpty) {
       final installed = available().map((a) => a.id).toList();
       if (installed.contains(id)) {
         try {
           final result = await Process.run('gtk-launch', [id, url]);
-          debugPrint(
-            '[ExternalBrowser] gtk-launch exit=${result.exitCode} '
-            'out=${result.stdout} err=${result.stderr}',
-          );
           if (result.exitCode == 0) return true;
-        } catch (error) {
-          debugPrint('[ExternalBrowser] gtk-launch threw: $error');
+        } catch (_) {
+          // Fall through to the system default when gtk-launch is unavailable.
         }
-      } else {
-        debugPrint(
-          '[ExternalBrowser] saved id "$id" not in installed list '
-          '(${installed.join(', ')}); falling back',
-        );
       }
     }
     try {
-      final ok = await launchUrl(
+      return await launchUrl(
         Uri.parse(url),
         mode: LaunchMode.externalApplication,
       );
-      debugPrint('[ExternalBrowser] fallback launchUrl -> $ok');
-      return ok;
-    } catch (error) {
-      debugPrint('[ExternalBrowser] launching $url failed: $error');
+    } catch (_) {
       return false;
     }
   }
@@ -131,23 +116,17 @@ class ExternalBrowser {
     try {
       server = await HttpServer.bind('127.0.0.1', port);
       _oauthServer = server;
-    } catch (error) {
-      debugPrint('[ExternalBrowser] could not bind oauth port $port: $error');
+    } catch (_) {
       return null;
     }
     Uri? result;
     final timer = Timer(const Duration(minutes: 5), () {
-      debugPrint('[ExternalBrowser] oauth wait on port $port timed out');
       server.close(force: true);
     });
     _oauthTimer = timer;
     try {
-      debugPrint('[ExternalBrowser] oauth opening $authUrl on port $port');
       final opened = await open(authUrl);
-      if (!opened) {
-        debugPrint('[ExternalBrowser] oauth could not open the auth page');
-        return null;
-      }
+      if (!opened) return null;
       await server.listen((request) async {
         request.response.headers.add('Content-Type', 'text/html');
         request.response.write(
@@ -157,10 +136,8 @@ class ExternalBrowser {
         result = request.requestedUri;
         await server.close(force: true);
       }).asFuture();
-      debugPrint('[ExternalBrowser] oauth callback: $result');
       return result;
-    } catch (error) {
-      debugPrint('[ExternalBrowser] oauth on port $port failed: $error');
+    } catch (_) {
       return null;
     } finally {
       timer.cancel();
