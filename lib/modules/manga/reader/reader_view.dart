@@ -648,6 +648,7 @@ class _MangaChapterPageGalleryState
       onFullScreen: () => _setFullScreen(),
       onNextChapter: () => _goToChapter(true),
       onPreviousChapter: () => _goToChapter(false),
+      onToggleUI: _isViewFunction,
     ).wrapWithKeyboardListener(
       isReverseHorizontal: _isReverseHorizontal,
       focusNode: _keyboardFocusNode,

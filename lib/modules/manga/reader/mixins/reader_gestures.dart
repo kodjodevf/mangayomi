@@ -9,6 +9,7 @@ class ReaderKeyboardHandler {
   final VoidCallback? onNextPage;
   final VoidCallback? onNextChapter;
   final VoidCallback? onPreviousChapter;
+  final VoidCallback? onToggleUI;
 
   const ReaderKeyboardHandler({
     this.onEscape,
@@ -17,6 +18,7 @@ class ReaderKeyboardHandler {
     this.onNextPage,
     this.onNextChapter,
     this.onPreviousChapter,
+    this.onToggleUI,
   });
 
   /// Handles a key event and returns true if it was handled.
@@ -60,6 +62,13 @@ class ReaderKeyboardHandler {
       case LogicalKeyboardKey.pageDown:
       case LogicalKeyboardKey.shiftRight:
         onNextChapter?.call();
+        return true;
+
+      // "M" for menu: the same as clicking the middle of the page, for
+      // readers who scroll with the wheel and keep the mouse still.
+      case LogicalKeyboardKey.keyM:
+        if (onToggleUI == null) return false;
+        onToggleUI!.call();
         return true;
 
       case LogicalKeyboardKey.keyP:
