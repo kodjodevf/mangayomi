@@ -70,9 +70,7 @@ class MainMobileBottomNavigation extends StatelessWidget {
         child: NavigationBar(
           animationDuration: const Duration(milliseconds: 500),
           selectedIndex: currentIndex,
-          labelBehavior: context.width(1) / dest.length < 72
-              ? NavigationDestinationLabelBehavior.onlyShowSelected
-              : NavigationDestinationLabelBehavior.alwaysShow,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: buildNavigationWidgetsMobile(ref, dest, context),
           onDestinationSelected: (newIndex) {
             onDestinationSelected(dest[newIndex]);

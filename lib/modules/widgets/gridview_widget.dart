@@ -27,9 +27,11 @@ class GridViewWidget extends StatelessWidget {
         // and the grid ran to the screen edges. On TV the focused cover scales
         // up, and with no gap it had nowhere to grow: give it room, and keep
         // the edge columns off the panel edge.
-        padding: isTv
-            ? const EdgeInsets.fromLTRB(12, 13, 12, 12)
-            : const EdgeInsets.only(top: 13),
+        padding:
+            (isTv
+                    ? const EdgeInsets.fromLTRB(12, 13, 12, 12)
+                    : const EdgeInsets.only(top: 13))
+                .add(pageBottomInsets(context)),
         controller: controller,
         gridDelegate: (gridSize == null || gridSize == 0)
             ? SliverGridDelegateWithMaxCrossAxisExtent(

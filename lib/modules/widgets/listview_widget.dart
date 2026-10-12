@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 class SuperListViewWidget extends StatelessWidget {
@@ -19,7 +20,7 @@ class SuperListViewWidget extends StatelessWidget {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: SuperListView.builder(
-        padding: const EdgeInsets.only(top: 13),
+        padding: const EdgeInsets.only(top: 13).add(pageBottomInsets(context)),
         controller: controller,
         itemCount: itemCount,
         itemBuilder: itemBuilder,
