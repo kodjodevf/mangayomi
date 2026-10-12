@@ -14,6 +14,7 @@ import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
 import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/keyboard_shortcuts_screen.dart';
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/shortcuts.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
@@ -3023,11 +3024,17 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       _player.seek(_player.state.position + Duration(seconds: seconds));
     }
 
+    final shortcuts = ref.watch(keyboardShortcutsStateProvider);
+    final actions = <ShortcutAction, VoidCallback>{
+      ShortcutAction.playPause: _player.playOrPause,
+      ShortcutAction.seekBack10: () => seekBy(-10),
+      ShortcutAction.seekForward10: () => seekBy(10),
+    };
     return CallbackShortcuts(
       bindings: <ShortcutActivator, VoidCallback>{
-        const SingleActivator(LogicalKeyboardKey.space): () {
-          _player.playOrPause();
-        },
+        for (final MapEntry(key: action, value: callback) in actions.entries)
+          for (final combo in shortcuts[action]!)
+            KeyComboActivator(combo): callback,
         const SingleActivator(LogicalKeyboardKey.mediaPlayPause): () {
           _player.playOrPause();
         },
@@ -3037,11 +3044,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         const SingleActivator(LogicalKeyboardKey.mediaPause): () {
           _player.pause();
         },
-        // Seek via J/L and the dedicated media keys only. Arrow keys are left
-        // unbound so they keep driving d-pad focus traversal on Android TV
-        // (and arrow-key focus movement with a keyboard) instead of seeking.
-        const SingleActivator(LogicalKeyboardKey.keyJ): () => seekBy(-10),
-        const SingleActivator(LogicalKeyboardKey.keyL): () => seekBy(10),
+        // Seek via J/L (rebindable) and the dedicated media keys only. Arrow
+        // keys are left unbound by default so they keep driving d-pad focus
+        // traversal on Android TV (and arrow-key focus movement with a
+        // keyboard) instead of seeking.
         const SingleActivator(LogicalKeyboardKey.mediaRewind): () =>
             seekBy(-10),
         const SingleActivator(LogicalKeyboardKey.mediaFastForward): () =>

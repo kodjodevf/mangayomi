@@ -1413,5 +1413,8 @@
   "shortcut_skip_intro": "इंट्रो छोड़ें",
   "shortcut_exit_fullscreen": "पूर्ण स्क्रीन से बाहर निकलें",
   "shortcut_anime4k": "Anime4K शेडर (0 इन्हें बंद करता है)",
-  "shortcut_show_controls": "कंट्रोल दिखाएँ"
+  "shortcut_show_controls": "कंट्रोल दिखाएँ",
+  "shortcut_reset_all": "सभी शॉर्टकट रीसेट करें",
+  "shortcut_press_key": "कोई कुंजी दबाएँ…",
+  "shortcut_key_in_use": "पहले से उपयोग में: {action}"
 }

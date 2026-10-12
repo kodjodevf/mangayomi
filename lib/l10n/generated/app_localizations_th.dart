@@ -3615,4 +3615,15 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => 'แสดงตัวควบคุม';
+
+  @override
+  String get shortcut_reset_all => 'รีเซ็ตแป้นพิมพ์ลัดทั้งหมด';
+
+  @override
+  String get shortcut_press_key => 'กดปุ่ม…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'ถูกใช้แล้วโดย: $action';
+  }
 }

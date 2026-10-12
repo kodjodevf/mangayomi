@@ -1383,5 +1383,8 @@
   "shortcut_skip_intro": "ইন্ট্ৰ' এৰি যাওক",
   "shortcut_exit_fullscreen": "সম্পূৰ্ণ স্ক্ৰীনৰ পৰা ওলাওক",
   "shortcut_anime4k": "Anime4K শ্বেডাৰ (0 এ বন্ধ কৰে)",
-  "shortcut_show_controls": "নিয়ন্ত্ৰণসমূহ দেখুৱাওক"
+  "shortcut_show_controls": "নিয়ন্ত্ৰণসমূহ দেখুৱাওক",
+  "shortcut_reset_all": "সকলো শ্বৰ্টকাট ৰিছেট কৰক",
+  "shortcut_press_key": "এটা কী টিপক…",
+  "shortcut_key_in_use": "ইতিমধ্যে ব্যৱহৃত: {action}"
 }

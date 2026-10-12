@@ -1375,5 +1375,8 @@
   "shortcut_skip_intro": "인트로 건너뛰기",
   "shortcut_exit_fullscreen": "전체 화면 종료",
   "shortcut_anime4k": "Anime4K 셰이더 (0은 끄기)",
-  "shortcut_show_controls": "컨트롤 표시"
+  "shortcut_show_controls": "컨트롤 표시",
+  "shortcut_reset_all": "모든 단축키 초기화",
+  "shortcut_press_key": "키를 누르세요…",
+  "shortcut_key_in_use": "이미 사용 중: {action}"
 }

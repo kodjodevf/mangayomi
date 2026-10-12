@@ -3684,4 +3684,15 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => 'Afficher les commandes';
+
+  @override
+  String get shortcut_reset_all => 'Réinitialiser tous les raccourcis';
+
+  @override
+  String get shortcut_press_key => 'Appuyez sur une touche…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Déjà utilisée par : $action';
+  }
 }

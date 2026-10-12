@@ -1486,5 +1486,15 @@
   "shortcut_skip_intro": "Skip intro",
   "shortcut_exit_fullscreen": "Exit fullscreen",
   "shortcut_anime4k": "Anime4K shaders (0 turns them off)",
-  "shortcut_show_controls": "Show the controls"
+  "shortcut_show_controls": "Show the controls",
+  "shortcut_reset_all": "Reset all shortcuts",
+  "shortcut_press_key": "Press a key…",
+  "shortcut_key_in_use": "Already used by: {action}",
+  "@shortcut_key_in_use": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  }
 }

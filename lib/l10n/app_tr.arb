@@ -1383,5 +1383,8 @@
   "shortcut_skip_intro": "İntroyu atla",
   "shortcut_exit_fullscreen": "Tam ekrandan çık",
   "shortcut_anime4k": "Anime4K gölgelendiricileri (0 kapatır)",
-  "shortcut_show_controls": "Kontrolleri göster"
+  "shortcut_show_controls": "Kontrolleri göster",
+  "shortcut_reset_all": "Tüm kısayolları sıfırla",
+  "shortcut_press_key": "Bir tuşa basın…",
+  "shortcut_key_in_use": "Zaten kullanılıyor: {action}"
 }

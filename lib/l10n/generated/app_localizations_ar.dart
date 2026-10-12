@@ -3628,4 +3628,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => 'إظهار عناصر التحكم';
+
+  @override
+  String get shortcut_reset_all => 'إعادة تعيين كل الاختصارات';
+
+  @override
+  String get shortcut_press_key => 'اضغط على مفتاح…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'مستخدم بالفعل في: $action';
+  }
 }

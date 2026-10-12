@@ -3500,4 +3500,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => '显示控件';
+
+  @override
+  String get shortcut_reset_all => '重置所有快捷键';
+
+  @override
+  String get shortcut_press_key => '请按一个键…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return '已被占用：$action';
+  }
 }

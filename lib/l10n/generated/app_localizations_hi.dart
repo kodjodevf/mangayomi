@@ -3632,4 +3632,15 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => 'कंट्रोल दिखाएँ';
+
+  @override
+  String get shortcut_reset_all => 'सभी शॉर्टकट रीसेट करें';
+
+  @override
+  String get shortcut_press_key => 'कोई कुंजी दबाएँ…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'पहले से उपयोग में: $action';
+  }
 }

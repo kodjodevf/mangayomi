@@ -6522,6 +6522,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show the controls'**
   String get shortcut_show_controls;
+
+  /// No description provided for @shortcut_reset_all.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset all shortcuts'**
+  String get shortcut_reset_all;
+
+  /// No description provided for @shortcut_press_key.
+  ///
+  /// In en, this message translates to:
+  /// **'Press a key…'**
+  String get shortcut_press_key;
+
+  /// No description provided for @shortcut_key_in_use.
+  ///
+  /// In en, this message translates to:
+  /// **'Already used by: {action}'**
+  String shortcut_key_in_use(String action);
 }
 
 class _AppLocalizationsDelegate

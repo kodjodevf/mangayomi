@@ -1383,5 +1383,8 @@
   "shortcut_skip_intro": "Pular abertura",
   "shortcut_exit_fullscreen": "Sair da tela cheia",
   "shortcut_anime4k": "Shaders Anime4K (0 desativa)",
-  "shortcut_show_controls": "Mostrar os controles"
+  "shortcut_show_controls": "Mostrar os controles",
+  "shortcut_reset_all": "Redefinir todos os atalhos",
+  "shortcut_press_key": "Pressione uma tecla…",
+  "shortcut_key_in_use": "Já usada por: {action}"
 }

@@ -3627,4 +3627,15 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => 'নিয়ন্ত্ৰণসমূহ দেখুৱাওক';
+
+  @override
+  String get shortcut_reset_all => 'সকলো শ্বৰ্টকাট ৰিছেট কৰক';
+
+  @override
+  String get shortcut_press_key => 'এটা কী টিপক…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'ইতিমধ্যে ব্যৱহৃত: $action';
+  }
 }

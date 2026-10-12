@@ -1415,5 +1415,8 @@
   "shortcut_skip_intro": "تخطي المقدمة",
   "shortcut_exit_fullscreen": "الخروج من وضع ملء الشاشة",
   "shortcut_anime4k": "مظللات Anime4K (0 يوقفها)",
-  "shortcut_show_controls": "إظهار عناصر التحكم"
+  "shortcut_show_controls": "إظهار عناصر التحكم",
+  "shortcut_reset_all": "إعادة تعيين كل الاختصارات",
+  "shortcut_press_key": "اضغط على مفتاح…",
+  "shortcut_key_in_use": "مستخدم بالفعل في: {action}"
 }

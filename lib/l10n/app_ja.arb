@@ -1487,5 +1487,8 @@
   "shortcut_skip_intro": "イントロをスキップ",
   "shortcut_exit_fullscreen": "フルスクリーンを終了",
   "shortcut_anime4k": "Anime4K シェーダー（0 でオフ）",
-  "shortcut_show_controls": "コントロールを表示"
+  "shortcut_show_controls": "コントロールを表示",
+  "shortcut_reset_all": "すべてのショートカットをリセット",
+  "shortcut_press_key": "キーを押してください…",
+  "shortcut_key_in_use": "すでに使用中: {action}"
 }

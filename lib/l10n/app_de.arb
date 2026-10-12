@@ -1386,5 +1386,8 @@
   "shortcut_skip_intro": "Intro überspringen",
   "shortcut_exit_fullscreen": "Vollbild beenden",
   "shortcut_anime4k": "Anime4K-Shader (0 schaltet sie aus)",
-  "shortcut_show_controls": "Steuerelemente anzeigen"
+  "shortcut_show_controls": "Steuerelemente anzeigen",
+  "shortcut_reset_all": "Alle Tastenkürzel zurücksetzen",
+  "shortcut_press_key": "Drücke eine Taste…",
+  "shortcut_key_in_use": "Bereits belegt durch: {action}"
 }

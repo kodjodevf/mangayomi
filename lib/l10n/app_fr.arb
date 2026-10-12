@@ -1446,5 +1446,8 @@
   "shortcut_skip_intro": "Passer l'intro",
   "shortcut_exit_fullscreen": "Quitter le plein écran",
   "shortcut_anime4k": "Shaders Anime4K (0 les désactive)",
-  "shortcut_show_controls": "Afficher les commandes"
+  "shortcut_show_controls": "Afficher les commandes",
+  "shortcut_reset_all": "Réinitialiser tous les raccourcis",
+  "shortcut_press_key": "Appuyez sur une touche…",
+  "shortcut_key_in_use": "Déjà utilisée par : {action}"
 }

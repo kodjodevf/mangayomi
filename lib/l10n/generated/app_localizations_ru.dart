@@ -3679,4 +3679,15 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => 'Показать элементы управления';
+
+  @override
+  String get shortcut_reset_all => 'Сбросить все сочетания';
+
+  @override
+  String get shortcut_press_key => 'Нажмите клавишу…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Уже используется: $action';
+  }
 }

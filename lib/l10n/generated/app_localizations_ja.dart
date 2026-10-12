@@ -3548,4 +3548,15 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => 'コントロールを表示';
+
+  @override
+  String get shortcut_reset_all => 'すべてのショートカットをリセット';
+
+  @override
+  String get shortcut_press_key => 'キーを押してください…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'すでに使用中: $action';
+  }
 }

@@ -3668,4 +3668,15 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => 'Mostra i controlli';
+
+  @override
+  String get shortcut_reset_all => 'Ripristina tutte le scorciatoie';
+
+  @override
+  String get shortcut_press_key => 'Premi un tasto…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Già usato da: $action';
+  }
 }

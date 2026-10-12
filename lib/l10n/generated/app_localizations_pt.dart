@@ -3665,6 +3665,17 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => 'Mostrar os controlos';
+
+  @override
+  String get shortcut_reset_all => 'Repor todos os atalhos';
+
+  @override
+  String get shortcut_press_key => 'Prima uma tecla…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Já usada por: $action';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -7170,4 +7181,15 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get shortcut_show_controls => 'Mostrar os controles';
+
+  @override
+  String get shortcut_reset_all => 'Redefinir todos os atalhos';
+
+  @override
+  String get shortcut_press_key => 'Pressione uma tecla…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Já usada por: $action';
+  }
 }

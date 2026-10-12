@@ -1413,5 +1413,8 @@
   "shortcut_skip_intro": "Пропустить заставку",
   "shortcut_exit_fullscreen": "Выйти из полноэкранного режима",
   "shortcut_anime4k": "Шейдеры Anime4K (0 отключает)",
-  "shortcut_show_controls": "Показать элементы управления"
+  "shortcut_show_controls": "Показать элементы управления",
+  "shortcut_reset_all": "Сбросить все сочетания",
+  "shortcut_press_key": "Нажмите клавишу…",
+  "shortcut_key_in_use": "Уже используется: {action}"
 }

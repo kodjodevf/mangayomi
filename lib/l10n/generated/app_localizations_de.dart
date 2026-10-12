@@ -3661,4 +3661,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => 'Steuerelemente anzeigen';
+
+  @override
+  String get shortcut_reset_all => 'Alle Tastenkürzel zurücksetzen';
+
+  @override
+  String get shortcut_press_key => 'Drücke eine Taste…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Bereits belegt durch: $action';
+  }
 }

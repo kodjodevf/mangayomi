@@ -3674,6 +3674,17 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => 'Mostrar los controles';
+
+  @override
+  String get shortcut_reset_all => 'Restablecer todos los atajos';
+
+  @override
+  String get shortcut_press_key => 'Presiona una tecla…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Ya la usa: $action';
+  }
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -7186,4 +7197,15 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get shortcut_show_controls => 'Mostrar los controles';
+
+  @override
+  String get shortcut_reset_all => 'Restablecer todos los atajos';
+
+  @override
+  String get shortcut_press_key => 'Presiona una tecla…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Ya la usa: $action';
+  }
 }

@@ -3639,4 +3639,15 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => 'Tampilkan kontrol';
+
+  @override
+  String get shortcut_reset_all => 'Atur ulang semua pintasan';
+
+  @override
+  String get shortcut_press_key => 'Tekan sebuah tombol…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Sudah dipakai oleh: $action';
+  }
 }

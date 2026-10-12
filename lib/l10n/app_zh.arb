@@ -1416,5 +1416,8 @@
   "shortcut_skip_intro": "跳过片头",
   "shortcut_exit_fullscreen": "退出全屏",
   "shortcut_anime4k": "Anime4K 着色器（0 为关闭）",
-  "shortcut_show_controls": "显示控件"
+  "shortcut_show_controls": "显示控件",
+  "shortcut_reset_all": "重置所有快捷键",
+  "shortcut_press_key": "请按一个键…",
+  "shortcut_key_in_use": "已被占用：{action}"
 }

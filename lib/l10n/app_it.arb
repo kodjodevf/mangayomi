@@ -1383,5 +1383,8 @@
   "shortcut_skip_intro": "Salta intro",
   "shortcut_exit_fullscreen": "Esci da schermo intero",
   "shortcut_anime4k": "Shader Anime4K (0 li disattiva)",
-  "shortcut_show_controls": "Mostra i controlli"
+  "shortcut_show_controls": "Mostra i controlli",
+  "shortcut_reset_all": "Ripristina tutte le scorciatoie",
+  "shortcut_press_key": "Premi un tasto…",
+  "shortcut_key_in_use": "Già usato da: {action}"
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/shortcuts.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
@@ -649,6 +650,7 @@ class _MangaChapterPageGalleryState
       onNextChapter: () => _goToChapter(true),
       onPreviousChapter: () => _goToChapter(false),
       onToggleUI: _isViewFunction,
+      shortcuts: ref.watch(keyboardShortcutsStateProvider),
     ).wrapWithKeyboardListener(
       isReverseHorizontal: _isReverseHorizontal,
       focusNode: _keyboardFocusNode,
@@ -1570,7 +1572,6 @@ class _MangaChapterPageGalleryState
   late final _pageOffset = ValueNotifier(
     _readerController.autoScrollValues().$2,
   );
-
 
   void _autoPagescroll() {
     onAutoScrollChanged();

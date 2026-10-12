@@ -1386,5 +1386,8 @@
   "shortcut_skip_intro": "ข้ามอินโทร",
   "shortcut_exit_fullscreen": "ออกจากโหมดเต็มจอ",
   "shortcut_anime4k": "เชดเดอร์ Anime4K (0 คือปิด)",
-  "shortcut_show_controls": "แสดงตัวควบคุม"
+  "shortcut_show_controls": "แสดงตัวควบคุม",
+  "shortcut_reset_all": "รีเซ็ตแป้นพิมพ์ลัดทั้งหมด",
+  "shortcut_press_key": "กดปุ่ม…",
+  "shortcut_key_in_use": "ถูกใช้แล้วโดย: {action}"
 }

@@ -3560,4 +3560,15 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get shortcut_show_controls => '컨트롤 표시';
+
+  @override
+  String get shortcut_reset_all => '모든 단축키 초기화';
+
+  @override
+  String get shortcut_press_key => '키를 누르세요…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return '이미 사용 중: $action';
+  }
 }
