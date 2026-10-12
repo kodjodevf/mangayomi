@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/keyboard_shortcuts_screen.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
@@ -1859,6 +1860,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           label: context.l10n.custom_buttons,
           icon: Icons.terminal_outlined,
           contentBuilder: (context) => _customButtonsSectionWidget(context),
+        ),
+      if (hasShortcutKeys)
+        SettingsEntry(
+          label: context.l10n.keyboard_shortcuts,
+          icon: Icons.keyboard_outlined,
+          contentBuilder: (context) =>
+              Column(children: playerShortcutRows(context)),
         ),
       if (_usesCompactPortraitControls(context))
         SettingsEntry(

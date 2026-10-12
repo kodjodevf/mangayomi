@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/keyboard_shortcuts_screen.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/reader/providers/color_filter_provider.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/color_filter_widget.dart';
@@ -69,6 +70,7 @@ class ReaderSettingsModal {
         Tab(text: l10n.reading_mode),
         Tab(text: l10n.general),
         Tab(text: l10n.custom_filter),
+        if (hasShortcutKeys) Tab(text: l10n.keyboard_shortcuts),
       ],
       children: [
         // Reading Mode Tab
@@ -88,6 +90,10 @@ class ReaderSettingsModal {
 
         // Custom Filter Tab
         const _CustomFilterTab(),
+        if (hasShortcutKeys)
+          SingleChildScrollView(
+            child: Column(children: readerShortcutRows(context)),
+          ),
       ],
       context: context,
       vsync: vsync,
