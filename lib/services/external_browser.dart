@@ -116,7 +116,14 @@ class ExternalBrowser {
     final isWeb = uri.scheme == 'http' || uri.scheme == 'https';
     if (id.isNotEmpty && isWeb && available().any((a) => a.id == id)) {
       try {
-        final result = await Process.run('gtk-launch', [id, url]);
+        final result = await Process.run(
+          'gtk-launch',
+          [id, url],
+          // An AppImage points LD_LIBRARY_PATH/LD_PRELOAD at its own bundled
+          // libraries. An empty value stops the launched browser inheriting
+          // them and loading the wrong shared objects.
+          environment: {'LD_LIBRARY_PATH': '', 'LD_PRELOAD': ''},
+        );
         if (result.exitCode == 0) return true;
       } catch (_) {
         // Fall through to the system default when gtk-launch is unavailable.
@@ -224,20 +231,39 @@ class ExternalBrowser {
 
   // --- linux desktop files ------------------------------------------------
 
-  static List<String> _applicationDirs() => [
-    '/usr/share/applications',
-    '/usr/local/share/applications',
-    '${Platform.environment['HOME'] ?? ''}/.local/share/applications',
+  /// The directories that hold `.desktop` files, highest priority first.
+  ///
+  /// XDG_DATA_HOME/XDG_DATA_DIRS are the standard source; the snap and Flatpak
+  /// export directories are added explicitly because they are not always
+  /// present in the app's own environment.
+  static List<String> _applicationDirs() {
+    final home = Platform.environment['HOME'] ?? '';
+    final dataHome =
+        Platform.environment['XDG_DATA_HOME'] ?? '$home/.local/share';
+    final dataDirs =
+        Platform.environment['XDG_DATA_DIRS'] ?? '/usr/local/share:/usr/share';
+    final dirs = <String>[];
+    void add(String base) {
+      if (base.isEmpty) return;
+      final path = '$base/applications';
+      if (!dirs.contains(path)) dirs.add(path);
+    }
+
+    add(dataHome);
+    for (final base in dataDirs.split(':')) {
+      add(base);
+    }
     // Ubuntu ships Firefox/Chromium as snaps, and many users install browsers
     // through Flatpak; both live outside the usual desktop-file directories.
-    '/var/lib/snapd/desktop/applications',
-    '/var/lib/flatpak/exports/share/applications',
-    '${Platform.environment['HOME'] ?? ''}/.local/share/flatpak/exports/share/applications',
-  ];
+    add('/var/lib/snapd/desktop');
+    add('/var/lib/flatpak/exports/share');
+    add('$home/.local/share/flatpak/exports/share');
+    return dirs;
+  }
 
   static _DesktopEntry _parseDesktopFile(String contents) {
     var isBrowser = false;
-    var noDisplay = false;
+    var hidden = false;
     String? name;
     for (final rawLine in contents.split('\n')) {
       final line = rawLine.trim();
@@ -246,12 +272,13 @@ class ExternalBrowser {
       } else if (line.startsWith('Categories=')) {
         final categories = line.substring('Categories='.length).split(';');
         if (categories.contains('WebBrowser')) isBrowser = true;
-      } else if (line.startsWith('NoDisplay=')) {
-        noDisplay =
-            line.substring('NoDisplay='.length).trim().toLowerCase() == 'true';
+      } else if (line.startsWith('NoDisplay=') || line.startsWith('Hidden=')) {
+        // NoDisplay hides the entry from menus; Hidden marks it removed.
+        final value = line.substring(line.indexOf('=') + 1).trim();
+        if (value.toLowerCase() == 'true') hidden = true;
       }
     }
-    return _DesktopEntry(isBrowser: isBrowser && !noDisplay, name: name ?? '');
+    return _DesktopEntry(isBrowser: isBrowser && !hidden, name: name ?? '');
   }
 }
 
