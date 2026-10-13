@@ -3566,4 +3566,64 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => 'แป้นพิมพ์ลัด';
+
+  @override
+  String get shortcut_next_page => 'หน้าถัดไป';
+
+  @override
+  String get shortcut_previous_page => 'หน้าก่อนหน้า';
+
+  @override
+  String get shortcut_toggle_menu => 'แสดงหรือซ่อนเมนู';
+
+  @override
+  String get shortcut_close_reader => 'ปิดตัวอ่าน';
+
+  @override
+  String get shortcut_play_pause => 'เล่นหรือหยุดชั่วคราว';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return 'ย้อนกลับ $seconds วินาที';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return 'ข้ามไปข้างหน้า $seconds วินาที';
+  }
+
+  @override
+  String get shortcut_volume_up => 'เพิ่มเสียง';
+
+  @override
+  String get shortcut_volume_down => 'ลดเสียง';
+
+  @override
+  String get shortcut_mute => 'ปิดเสียง';
+
+  @override
+  String get shortcut_skip_intro => 'ข้ามอินโทร';
+
+  @override
+  String get shortcut_exit_fullscreen => 'ออกจากโหมดเต็มจอ';
+
+  @override
+  String get shortcut_anime4k => 'เชดเดอร์ Anime4K (0 คือปิด)';
+
+  @override
+  String get shortcut_show_controls => 'แสดงตัวควบคุม';
+
+  @override
+  String get shortcut_reset_all => 'รีเซ็ตแป้นพิมพ์ลัดทั้งหมด';
+
+  @override
+  String get shortcut_press_key => 'กดปุ่ม…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'ถูกใช้แล้วโดย: $action';
+  }
 }

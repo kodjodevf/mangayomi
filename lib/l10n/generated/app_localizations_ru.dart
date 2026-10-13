@@ -3630,4 +3630,64 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => 'Сочетания клавиш';
+
+  @override
+  String get shortcut_next_page => 'Следующая страница';
+
+  @override
+  String get shortcut_previous_page => 'Предыдущая страница';
+
+  @override
+  String get shortcut_toggle_menu => 'Показать или скрыть меню';
+
+  @override
+  String get shortcut_close_reader => 'Закрыть читалку';
+
+  @override
+  String get shortcut_play_pause => 'Воспроизвести или приостановить';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return 'Назад на $seconds с';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return 'Вперёд на $seconds с';
+  }
+
+  @override
+  String get shortcut_volume_up => 'Громче';
+
+  @override
+  String get shortcut_volume_down => 'Тише';
+
+  @override
+  String get shortcut_mute => 'Без звука';
+
+  @override
+  String get shortcut_skip_intro => 'Пропустить заставку';
+
+  @override
+  String get shortcut_exit_fullscreen => 'Выйти из полноэкранного режима';
+
+  @override
+  String get shortcut_anime4k => 'Шейдеры Anime4K (0 отключает)';
+
+  @override
+  String get shortcut_show_controls => 'Показать элементы управления';
+
+  @override
+  String get shortcut_reset_all => 'Сбросить все сочетания';
+
+  @override
+  String get shortcut_press_key => 'Нажмите клавишу…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Уже используется: $action';
+  }
 }

@@ -6432,6 +6432,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'TV player (beta)'**
   String get tv_player_beta;
+
+  /// No description provided for @keyboard_shortcuts.
+  ///
+  /// In en, this message translates to:
+  /// **'Keyboard shortcuts'**
+  String get keyboard_shortcuts;
+
+  /// No description provided for @shortcut_next_page.
+  ///
+  /// In en, this message translates to:
+  /// **'Next page'**
+  String get shortcut_next_page;
+
+  /// No description provided for @shortcut_previous_page.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous page'**
+  String get shortcut_previous_page;
+
+  /// No description provided for @shortcut_toggle_menu.
+  ///
+  /// In en, this message translates to:
+  /// **'Show or hide the menu'**
+  String get shortcut_toggle_menu;
+
+  /// No description provided for @shortcut_close_reader.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the reader'**
+  String get shortcut_close_reader;
+
+  /// No description provided for @shortcut_play_pause.
+  ///
+  /// In en, this message translates to:
+  /// **'Play or pause'**
+  String get shortcut_play_pause;
+
+  /// No description provided for @shortcut_seek_back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back {seconds} s'**
+  String shortcut_seek_back(int seconds);
+
+  /// No description provided for @shortcut_seek_forward.
+  ///
+  /// In en, this message translates to:
+  /// **'Forward {seconds} s'**
+  String shortcut_seek_forward(int seconds);
+
+  /// No description provided for @shortcut_volume_up.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume up'**
+  String get shortcut_volume_up;
+
+  /// No description provided for @shortcut_volume_down.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume down'**
+  String get shortcut_volume_down;
+
+  /// No description provided for @shortcut_mute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get shortcut_mute;
+
+  /// No description provided for @shortcut_skip_intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip intro'**
+  String get shortcut_skip_intro;
+
+  /// No description provided for @shortcut_exit_fullscreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit fullscreen'**
+  String get shortcut_exit_fullscreen;
+
+  /// No description provided for @shortcut_anime4k.
+  ///
+  /// In en, this message translates to:
+  /// **'Anime4K shaders (0 turns them off)'**
+  String get shortcut_anime4k;
+
+  /// No description provided for @shortcut_show_controls.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the controls'**
+  String get shortcut_show_controls;
+
+  /// No description provided for @shortcut_reset_all.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset all shortcuts'**
+  String get shortcut_reset_all;
+
+  /// No description provided for @shortcut_press_key.
+  ///
+  /// In en, this message translates to:
+  /// **'Press a key…'**
+  String get shortcut_press_key;
+
+  /// No description provided for @shortcut_key_in_use.
+  ///
+  /// In en, this message translates to:
+  /// **'Already used by: {action}'**
+  String shortcut_key_in_use(String action);
 }
 
 class _AppLocalizationsDelegate

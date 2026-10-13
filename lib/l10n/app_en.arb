@@ -1457,5 +1457,44 @@
   "anime_only_tv_layout": "Anime-only TV layout",
   "anime_only_beta": "Anime only (beta)",
   "tv_home_beta": "TV home (beta)",
-  "tv_player_beta": "TV player (beta)"
+  "tv_player_beta": "TV player (beta)",
+  "keyboard_shortcuts": "Keyboard shortcuts",
+  "shortcut_next_page": "Next page",
+  "shortcut_previous_page": "Previous page",
+  "shortcut_toggle_menu": "Show or hide the menu",
+  "shortcut_close_reader": "Close the reader",
+  "shortcut_play_pause": "Play or pause",
+  "shortcut_seek_back": "Back {seconds} s",
+  "@shortcut_seek_back": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "shortcut_seek_forward": "Forward {seconds} s",
+  "@shortcut_seek_forward": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "shortcut_volume_up": "Volume up",
+  "shortcut_volume_down": "Volume down",
+  "shortcut_mute": "Mute",
+  "shortcut_skip_intro": "Skip intro",
+  "shortcut_exit_fullscreen": "Exit fullscreen",
+  "shortcut_anime4k": "Anime4K shaders (0 turns them off)",
+  "shortcut_show_controls": "Show the controls",
+  "shortcut_reset_all": "Reset all shortcuts",
+  "shortcut_press_key": "Press a key…",
+  "shortcut_key_in_use": "Already used by: {action}",
+  "@shortcut_key_in_use": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  }
 }

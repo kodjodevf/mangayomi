@@ -3592,4 +3592,64 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => 'Klavye kısayolları';
+
+  @override
+  String get shortcut_next_page => 'Sonraki sayfa';
+
+  @override
+  String get shortcut_previous_page => 'Önceki sayfa';
+
+  @override
+  String get shortcut_toggle_menu => 'Menüyü göster veya gizle';
+
+  @override
+  String get shortcut_close_reader => 'Okuyucuyu kapat';
+
+  @override
+  String get shortcut_play_pause => 'Oynat veya duraklat';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return '$seconds sn geri';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return '$seconds sn ileri';
+  }
+
+  @override
+  String get shortcut_volume_up => 'Sesi aç';
+
+  @override
+  String get shortcut_volume_down => 'Sesi kıs';
+
+  @override
+  String get shortcut_mute => 'Sessize al';
+
+  @override
+  String get shortcut_skip_intro => 'İntroyu atla';
+
+  @override
+  String get shortcut_exit_fullscreen => 'Tam ekrandan çık';
+
+  @override
+  String get shortcut_anime4k => 'Anime4K gölgelendiricileri (0 kapatır)';
+
+  @override
+  String get shortcut_show_controls => 'Kontrolleri göster';
+
+  @override
+  String get shortcut_reset_all => 'Tüm kısayolları sıfırla';
+
+  @override
+  String get shortcut_press_key => 'Bir tuşa basın…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Zaten kullanılıyor: $action';
+  }
 }

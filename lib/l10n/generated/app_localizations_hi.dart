@@ -3583,4 +3583,64 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => 'कीबोर्ड शॉर्टकट';
+
+  @override
+  String get shortcut_next_page => 'अगला पेज';
+
+  @override
+  String get shortcut_previous_page => 'पिछला पेज';
+
+  @override
+  String get shortcut_toggle_menu => 'मेनू दिखाएँ या छिपाएँ';
+
+  @override
+  String get shortcut_close_reader => 'रीडर बंद करें';
+
+  @override
+  String get shortcut_play_pause => 'चलाएँ या रोकें';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return '$seconds सेकंड पीछे';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return '$seconds सेकंड आगे';
+  }
+
+  @override
+  String get shortcut_volume_up => 'आवाज़ बढ़ाएँ';
+
+  @override
+  String get shortcut_volume_down => 'आवाज़ घटाएँ';
+
+  @override
+  String get shortcut_mute => 'म्यूट करें';
+
+  @override
+  String get shortcut_skip_intro => 'इंट्रो छोड़ें';
+
+  @override
+  String get shortcut_exit_fullscreen => 'पूर्ण स्क्रीन से बाहर निकलें';
+
+  @override
+  String get shortcut_anime4k => 'Anime4K शेडर (0 इन्हें बंद करता है)';
+
+  @override
+  String get shortcut_show_controls => 'कंट्रोल दिखाएँ';
+
+  @override
+  String get shortcut_reset_all => 'सभी शॉर्टकट रीसेट करें';
+
+  @override
+  String get shortcut_press_key => 'कोई कुंजी दबाएँ…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'पहले से उपयोग में: $action';
+  }
 }

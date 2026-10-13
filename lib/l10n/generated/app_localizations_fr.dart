@@ -3635,4 +3635,64 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'Lecteur TV (bêta)';
+
+  @override
+  String get keyboard_shortcuts => 'Raccourcis clavier';
+
+  @override
+  String get shortcut_next_page => 'Page suivante';
+
+  @override
+  String get shortcut_previous_page => 'Page précédente';
+
+  @override
+  String get shortcut_toggle_menu => 'Afficher ou masquer le menu';
+
+  @override
+  String get shortcut_close_reader => 'Fermer le lecteur';
+
+  @override
+  String get shortcut_play_pause => 'Lecture ou pause';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return 'Reculer de $seconds s';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return 'Avancer de $seconds s';
+  }
+
+  @override
+  String get shortcut_volume_up => 'Augmenter le volume';
+
+  @override
+  String get shortcut_volume_down => 'Baisser le volume';
+
+  @override
+  String get shortcut_mute => 'Couper le son';
+
+  @override
+  String get shortcut_skip_intro => 'Passer l\'intro';
+
+  @override
+  String get shortcut_exit_fullscreen => 'Quitter le plein écran';
+
+  @override
+  String get shortcut_anime4k => 'Shaders Anime4K (0 les désactive)';
+
+  @override
+  String get shortcut_show_controls => 'Afficher les commandes';
+
+  @override
+  String get shortcut_reset_all => 'Réinitialiser tous les raccourcis';
+
+  @override
+  String get shortcut_press_key => 'Appuyez sur une touche…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Déjà utilisée par : $action';
+  }
 }

@@ -3579,4 +3579,64 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => 'اختصارات لوحة المفاتيح';
+
+  @override
+  String get shortcut_next_page => 'الصفحة التالية';
+
+  @override
+  String get shortcut_previous_page => 'الصفحة السابقة';
+
+  @override
+  String get shortcut_toggle_menu => 'إظهار القائمة أو إخفاؤها';
+
+  @override
+  String get shortcut_close_reader => 'إغلاق القارئ';
+
+  @override
+  String get shortcut_play_pause => 'تشغيل أو إيقاف مؤقت';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return 'الرجوع $seconds ث';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return 'التقديم $seconds ث';
+  }
+
+  @override
+  String get shortcut_volume_up => 'رفع الصوت';
+
+  @override
+  String get shortcut_volume_down => 'خفض الصوت';
+
+  @override
+  String get shortcut_mute => 'كتم الصوت';
+
+  @override
+  String get shortcut_skip_intro => 'تخطي المقدمة';
+
+  @override
+  String get shortcut_exit_fullscreen => 'الخروج من وضع ملء الشاشة';
+
+  @override
+  String get shortcut_anime4k => 'مظللات Anime4K (0 يوقفها)';
+
+  @override
+  String get shortcut_show_controls => 'إظهار عناصر التحكم';
+
+  @override
+  String get shortcut_reset_all => 'إعادة تعيين كل الاختصارات';
+
+  @override
+  String get shortcut_press_key => 'اضغط على مفتاح…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'مستخدم بالفعل في: $action';
+  }
 }

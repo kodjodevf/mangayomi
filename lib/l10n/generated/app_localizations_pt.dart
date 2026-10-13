@@ -3616,6 +3616,66 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => 'Atalhos de teclado';
+
+  @override
+  String get shortcut_next_page => 'Próxima página';
+
+  @override
+  String get shortcut_previous_page => 'Página anterior';
+
+  @override
+  String get shortcut_toggle_menu => 'Mostrar ou ocultar o menu';
+
+  @override
+  String get shortcut_close_reader => 'Fechar o leitor';
+
+  @override
+  String get shortcut_play_pause => 'Reproduzir ou pausar';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return 'Recuar $seconds s';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return 'Avançar $seconds s';
+  }
+
+  @override
+  String get shortcut_volume_up => 'Aumentar o volume';
+
+  @override
+  String get shortcut_volume_down => 'Diminuir o volume';
+
+  @override
+  String get shortcut_mute => 'Silenciar';
+
+  @override
+  String get shortcut_skip_intro => 'Saltar a introdução';
+
+  @override
+  String get shortcut_exit_fullscreen => 'Sair do ecrã inteiro';
+
+  @override
+  String get shortcut_anime4k => 'Shaders Anime4K (0 desativa-os)';
+
+  @override
+  String get shortcut_show_controls => 'Mostrar os controlos';
+
+  @override
+  String get shortcut_reset_all => 'Repor todos os atalhos';
+
+  @override
+  String get shortcut_press_key => 'Prima uma tecla…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Já usada por: $action';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -7072,4 +7132,64 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get chapter_swipe_disabled => 'Desativado';
+
+  @override
+  String get keyboard_shortcuts => 'Atalhos de teclado';
+
+  @override
+  String get shortcut_next_page => 'Próxima página';
+
+  @override
+  String get shortcut_previous_page => 'Página anterior';
+
+  @override
+  String get shortcut_toggle_menu => 'Mostrar ou ocultar o menu';
+
+  @override
+  String get shortcut_close_reader => 'Fechar o leitor';
+
+  @override
+  String get shortcut_play_pause => 'Reproduzir ou pausar';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return 'Voltar $seconds s';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return 'Avançar $seconds s';
+  }
+
+  @override
+  String get shortcut_volume_up => 'Aumentar o volume';
+
+  @override
+  String get shortcut_volume_down => 'Diminuir o volume';
+
+  @override
+  String get shortcut_mute => 'Silenciar';
+
+  @override
+  String get shortcut_skip_intro => 'Pular abertura';
+
+  @override
+  String get shortcut_exit_fullscreen => 'Sair da tela cheia';
+
+  @override
+  String get shortcut_anime4k => 'Shaders Anime4K (0 desativa)';
+
+  @override
+  String get shortcut_show_controls => 'Mostrar os controles';
+
+  @override
+  String get shortcut_reset_all => 'Redefinir todos os atalhos';
+
+  @override
+  String get shortcut_press_key => 'Pressione uma tecla…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Já usada por: $action';
+  }
 }

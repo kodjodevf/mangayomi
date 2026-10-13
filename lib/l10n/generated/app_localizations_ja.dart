@@ -3499,4 +3499,64 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => 'キーボードショートカット';
+
+  @override
+  String get shortcut_next_page => '次のページ';
+
+  @override
+  String get shortcut_previous_page => '前のページ';
+
+  @override
+  String get shortcut_toggle_menu => 'メニューの表示/非表示';
+
+  @override
+  String get shortcut_close_reader => 'リーダーを閉じる';
+
+  @override
+  String get shortcut_play_pause => '再生/一時停止';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return '$seconds秒戻る';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return '$seconds秒進む';
+  }
+
+  @override
+  String get shortcut_volume_up => '音量を上げる';
+
+  @override
+  String get shortcut_volume_down => '音量を下げる';
+
+  @override
+  String get shortcut_mute => 'ミュート';
+
+  @override
+  String get shortcut_skip_intro => 'イントロをスキップ';
+
+  @override
+  String get shortcut_exit_fullscreen => 'フルスクリーンを終了';
+
+  @override
+  String get shortcut_anime4k => 'Anime4K シェーダー（0 でオフ）';
+
+  @override
+  String get shortcut_show_controls => 'コントロールを表示';
+
+  @override
+  String get shortcut_reset_all => 'すべてのショートカットをリセット';
+
+  @override
+  String get shortcut_press_key => 'キーを押してください…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'すでに使用中: $action';
+  }
 }

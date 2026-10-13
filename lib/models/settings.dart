@@ -317,6 +317,9 @@ class Settings {
 
   List<String>? hideItems;
 
+  /// Keys the user rebound, as `action=keyId,keyId`; see `resolveShortcuts`.
+  List<String>? keyboardShortcuts;
+
   bool? clearChapterCacheOnAppLaunch;
 
   String? lastTrackerLibraryLocation;
@@ -586,6 +589,7 @@ class Settings {
     this.novelTapToScroll = false,
     this.navigationOrder,
     this.hideItems,
+    this.keyboardShortcuts,
     this.clearChapterCacheOnAppLaunch = false,
     this.mangaExtensionsRepo,
     this.animeExtensionsRepo,
@@ -908,6 +912,9 @@ class Settings {
     if (json['hideItems'] != null) {
       hideItems = (json['hideItems'] as List).cast<String>();
     }
+    if (json['keyboardShortcuts'] != null) {
+      keyboardShortcuts = (json['keyboardShortcuts'] as List).cast<String>();
+    }
     clearChapterCacheOnAppLaunch = json['clearChapterCacheOnAppLaunch'];
     if (json['mangaExtensionsRepo'] != null) {
       mangaExtensionsRepo = json['mangaExtensionsRepo'] is String
@@ -1176,6 +1183,7 @@ class Settings {
     'novelTapToScroll': novelTapToScroll,
     'navigationOrder': navigationOrder,
     'hideItems': hideItems,
+    'keyboardShortcuts': keyboardShortcuts,
     'clearChapterCacheOnAppLaunch': clearChapterCacheOnAppLaunch,
     'mangaExtensionsRepo': mangaExtensionsRepo?.map((e) => e.toJson()).toList(),
     'animeExtensionsRepo': animeExtensionsRepo?.map((e) => e.toJson()).toList(),

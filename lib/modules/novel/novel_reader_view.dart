@@ -16,6 +16,7 @@ import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_gestures.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/auto_scroll_button.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_app_bar.dart';
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/shortcuts.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
 import 'package:mangayomi/modules/novel/tts/novel_tts_service.dart';
@@ -407,6 +408,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       onPreviousChapter: () => _goToChapter(false),
       onNextPage: () => _onBtnTapped(100),
       onPreviousPage: () => _onBtnTapped(-100),
+      shortcuts: ref.watch(keyboardShortcutsStateProvider),
     ).wrapWithKeyboardListener(
       child: NotificationListener<ScrollNotification>(
         onNotification: (notification) {

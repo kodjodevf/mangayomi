@@ -3578,4 +3578,64 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => 'কীব\'ৰ্ড শ্বৰ্টকাট';
+
+  @override
+  String get shortcut_next_page => 'পৰৱৰ্তী পৃষ্ঠা';
+
+  @override
+  String get shortcut_previous_page => 'পূৰ্বৱৰ্তী পৃষ্ঠা';
+
+  @override
+  String get shortcut_toggle_menu => 'মেনু দেখুৱাওক বা লুকুৱাওক';
+
+  @override
+  String get shortcut_close_reader => 'পাঠক বন্ধ কৰক';
+
+  @override
+  String get shortcut_play_pause => 'প্লে বা পজ';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return '$seconds ছেকেণ্ড পিছলৈ';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return '$seconds ছেকেণ্ড আগলৈ';
+  }
+
+  @override
+  String get shortcut_volume_up => 'ভলিউম বঢ়াওক';
+
+  @override
+  String get shortcut_volume_down => 'ভলিউম কমাওক';
+
+  @override
+  String get shortcut_mute => 'মিউট';
+
+  @override
+  String get shortcut_skip_intro => 'ইন্ট্ৰ\' এৰি যাওক';
+
+  @override
+  String get shortcut_exit_fullscreen => 'সম্পূৰ্ণ স্ক্ৰীনৰ পৰা ওলাওক';
+
+  @override
+  String get shortcut_anime4k => 'Anime4K শ্বেডাৰ (0 এ বন্ধ কৰে)';
+
+  @override
+  String get shortcut_show_controls => 'নিয়ন্ত্ৰণসমূহ দেখুৱাওক';
+
+  @override
+  String get shortcut_reset_all => 'সকলো শ্বৰ্টকাট ৰিছেট কৰক';
+
+  @override
+  String get shortcut_press_key => 'এটা কী টিপক…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'ইতিমধ্যে ব্যৱহৃত: $action';
+  }
 }

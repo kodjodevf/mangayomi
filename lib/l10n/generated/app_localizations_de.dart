@@ -3612,4 +3612,64 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => 'Tastenkürzel';
+
+  @override
+  String get shortcut_next_page => 'Nächste Seite';
+
+  @override
+  String get shortcut_previous_page => 'Vorherige Seite';
+
+  @override
+  String get shortcut_toggle_menu => 'Menü ein- oder ausblenden';
+
+  @override
+  String get shortcut_close_reader => 'Reader schließen';
+
+  @override
+  String get shortcut_play_pause => 'Abspielen oder pausieren';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return '$seconds s zurück';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return '$seconds s vor';
+  }
+
+  @override
+  String get shortcut_volume_up => 'Lauter';
+
+  @override
+  String get shortcut_volume_down => 'Leiser';
+
+  @override
+  String get shortcut_mute => 'Stummschalten';
+
+  @override
+  String get shortcut_skip_intro => 'Intro überspringen';
+
+  @override
+  String get shortcut_exit_fullscreen => 'Vollbild beenden';
+
+  @override
+  String get shortcut_anime4k => 'Anime4K-Shader (0 schaltet sie aus)';
+
+  @override
+  String get shortcut_show_controls => 'Steuerelemente anzeigen';
+
+  @override
+  String get shortcut_reset_all => 'Alle Tastenkürzel zurücksetzen';
+
+  @override
+  String get shortcut_press_key => 'Drücke eine Taste…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Bereits belegt durch: $action';
+  }
 }

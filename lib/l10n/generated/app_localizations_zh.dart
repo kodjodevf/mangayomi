@@ -3451,4 +3451,64 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => '键盘快捷键';
+
+  @override
+  String get shortcut_next_page => '下一页';
+
+  @override
+  String get shortcut_previous_page => '上一页';
+
+  @override
+  String get shortcut_toggle_menu => '显示或隐藏菜单';
+
+  @override
+  String get shortcut_close_reader => '关闭阅读器';
+
+  @override
+  String get shortcut_play_pause => '播放或暂停';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return '后退 $seconds 秒';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return '前进 $seconds 秒';
+  }
+
+  @override
+  String get shortcut_volume_up => '增大音量';
+
+  @override
+  String get shortcut_volume_down => '减小音量';
+
+  @override
+  String get shortcut_mute => '静音';
+
+  @override
+  String get shortcut_skip_intro => '跳过片头';
+
+  @override
+  String get shortcut_exit_fullscreen => '退出全屏';
+
+  @override
+  String get shortcut_anime4k => 'Anime4K 着色器（0 为关闭）';
+
+  @override
+  String get shortcut_show_controls => '显示控件';
+
+  @override
+  String get shortcut_reset_all => '重置所有快捷键';
+
+  @override
+  String get shortcut_press_key => '请按一个键…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return '已被占用：$action';
+  }
 }

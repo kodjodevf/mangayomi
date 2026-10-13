@@ -3511,4 +3511,64 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => '키보드 단축키';
+
+  @override
+  String get shortcut_next_page => '다음 페이지';
+
+  @override
+  String get shortcut_previous_page => '이전 페이지';
+
+  @override
+  String get shortcut_toggle_menu => '메뉴 표시/숨기기';
+
+  @override
+  String get shortcut_close_reader => '리더 닫기';
+
+  @override
+  String get shortcut_play_pause => '재생/일시정지';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return '$seconds초 뒤로';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return '$seconds초 앞으로';
+  }
+
+  @override
+  String get shortcut_volume_up => '볼륨 높이기';
+
+  @override
+  String get shortcut_volume_down => '볼륨 낮추기';
+
+  @override
+  String get shortcut_mute => '음소거';
+
+  @override
+  String get shortcut_skip_intro => '인트로 건너뛰기';
+
+  @override
+  String get shortcut_exit_fullscreen => '전체 화면 종료';
+
+  @override
+  String get shortcut_anime4k => 'Anime4K 셰이더 (0은 끄기)';
+
+  @override
+  String get shortcut_show_controls => '컨트롤 표시';
+
+  @override
+  String get shortcut_reset_all => '모든 단축키 초기화';
+
+  @override
+  String get shortcut_press_key => '키를 누르세요…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return '이미 사용 중: $action';
+  }
 }

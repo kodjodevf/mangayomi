@@ -3590,4 +3590,64 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => 'Pintasan keyboard';
+
+  @override
+  String get shortcut_next_page => 'Halaman berikutnya';
+
+  @override
+  String get shortcut_previous_page => 'Halaman sebelumnya';
+
+  @override
+  String get shortcut_toggle_menu => 'Tampilkan atau sembunyikan menu';
+
+  @override
+  String get shortcut_close_reader => 'Tutup pembaca';
+
+  @override
+  String get shortcut_play_pause => 'Putar atau jeda';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return 'Mundur $seconds dtk';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return 'Maju $seconds dtk';
+  }
+
+  @override
+  String get shortcut_volume_up => 'Naikkan volume';
+
+  @override
+  String get shortcut_volume_down => 'Turunkan volume';
+
+  @override
+  String get shortcut_mute => 'Bisukan';
+
+  @override
+  String get shortcut_skip_intro => 'Lewati intro';
+
+  @override
+  String get shortcut_exit_fullscreen => 'Keluar dari layar penuh';
+
+  @override
+  String get shortcut_anime4k => 'Shader Anime4K (0 mematikannya)';
+
+  @override
+  String get shortcut_show_controls => 'Tampilkan kontrol';
+
+  @override
+  String get shortcut_reset_all => 'Atur ulang semua pintasan';
+
+  @override
+  String get shortcut_press_key => 'Tekan sebuah tombol…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Sudah dipakai oleh: $action';
+  }
 }

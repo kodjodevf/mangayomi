@@ -3583,4 +3583,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => 'Keyboard shortcuts';
+
+  @override
+  String get shortcut_next_page => 'Next page';
+
+  @override
+  String get shortcut_previous_page => 'Previous page';
+
+  @override
+  String get shortcut_toggle_menu => 'Show or hide the menu';
+
+  @override
+  String get shortcut_close_reader => 'Close the reader';
+
+  @override
+  String get shortcut_play_pause => 'Play or pause';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return 'Back $seconds s';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return 'Forward $seconds s';
+  }
+
+  @override
+  String get shortcut_volume_up => 'Volume up';
+
+  @override
+  String get shortcut_volume_down => 'Volume down';
+
+  @override
+  String get shortcut_mute => 'Mute';
+
+  @override
+  String get shortcut_skip_intro => 'Skip intro';
+
+  @override
+  String get shortcut_exit_fullscreen => 'Exit fullscreen';
+
+  @override
+  String get shortcut_anime4k => 'Anime4K shaders (0 turns them off)';
+
+  @override
+  String get shortcut_show_controls => 'Show the controls';
+
+  @override
+  String get shortcut_reset_all => 'Reset all shortcuts';
+
+  @override
+  String get shortcut_press_key => 'Press a key…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Already used by: $action';
+  }
 }

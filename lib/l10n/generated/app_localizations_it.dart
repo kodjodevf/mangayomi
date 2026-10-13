@@ -3619,4 +3619,64 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get keyboard_shortcuts => 'Scorciatoie da tastiera';
+
+  @override
+  String get shortcut_next_page => 'Pagina successiva';
+
+  @override
+  String get shortcut_previous_page => 'Pagina precedente';
+
+  @override
+  String get shortcut_toggle_menu => 'Mostra o nascondi il menu';
+
+  @override
+  String get shortcut_close_reader => 'Chiudi il lettore';
+
+  @override
+  String get shortcut_play_pause => 'Riproduci o metti in pausa';
+
+  @override
+  String shortcut_seek_back(int seconds) {
+    return 'Indietro di $seconds s';
+  }
+
+  @override
+  String shortcut_seek_forward(int seconds) {
+    return 'Avanti di $seconds s';
+  }
+
+  @override
+  String get shortcut_volume_up => 'Alza il volume';
+
+  @override
+  String get shortcut_volume_down => 'Abbassa il volume';
+
+  @override
+  String get shortcut_mute => 'Disattiva audio';
+
+  @override
+  String get shortcut_skip_intro => 'Salta intro';
+
+  @override
+  String get shortcut_exit_fullscreen => 'Esci da schermo intero';
+
+  @override
+  String get shortcut_anime4k => 'Shader Anime4K (0 li disattiva)';
+
+  @override
+  String get shortcut_show_controls => 'Mostra i controlli';
+
+  @override
+  String get shortcut_reset_all => 'Ripristina tutte le scorciatoie';
+
+  @override
+  String get shortcut_press_key => 'Premi un tasto…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Già usato da: $action';
+  }
 }
