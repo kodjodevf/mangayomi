@@ -37,7 +37,6 @@ import 'package:mangayomi/utils/system_ui.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -72,10 +71,7 @@ class NovelWebView extends ConsumerStatefulWidget {
 }
 
 class _NovelWebViewState extends ConsumerState<NovelWebView>
-    with
-        TickerProviderStateMixin,
-        WidgetsBindingObserver,
-        ReaderAutoScroll {
+    with TickerProviderStateMixin, WidgetsBindingObserver, ReaderAutoScroll {
   @override
   ValueNotifier<bool> get autoScrollEnabled => _autoScroll;
   @override
@@ -84,6 +80,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   ScrollController get autoScrollController => _scrollController;
   @override
   bool get canAutoScroll => _isContinuousMode();
+
   /// Resolved in [initState], not lazily.
   ///
   /// As a `late` field with an initialiser this was read for the first time
@@ -302,7 +299,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     return _readerMode.isContinuous;
   }
 
-
   void _scrollToTtsParagraph(int index) {
     if (!_scrollController.hasClients || _ttsTotalBlocks <= 0) return;
     final maxScroll = _scrollController.position.maxScrollExtent;
@@ -354,14 +350,16 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
 
     final prevEffectiveMode = _lastEffectivePageMode ?? effectivePageMode;
     final prevReaderMode = _lastReaderMode ?? _readerMode;
-    if (prevEffectiveMode != effectivePageMode || prevReaderMode != _readerMode) {
+    if (prevEffectiveMode != effectivePageMode ||
+        prevReaderMode != _readerMode) {
       if (!_readerMode.isContinuous) {
         _autoScroll.value = false;
         stopAutoScroll();
         final double progress;
         if (prevReaderMode.isContinuous) {
           progress = maxOffset > 0 ? (offset / maxOffset).clamp(0.0, 1.0) : 0.0;
-        } else if (_cachedPagination != null && _cachedPagination!.pageCount > 0) {
+        } else if (_cachedPagination != null &&
+            _cachedPagination!.pageCount > 0) {
           progress = prevEffectiveMode == PageMode.doublePage
               ? _cachedPagination!.progressForSpread(_currentSpreadIndex)
               : _cachedPagination!.progressForPage(_currentSpreadIndex);
@@ -380,10 +378,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
           }
         });
       } else {
-        final progress = _cachedPagination != null && _cachedPagination!.pageCount > 0
+        final progress =
+            _cachedPagination != null && _cachedPagination!.pageCount > 0
             ? (prevEffectiveMode == PageMode.doublePage
-                ? _cachedPagination!.progressForSpread(_currentSpreadIndex)
-                : _cachedPagination!.progressForPage(_currentSpreadIndex))
+                  ? _cachedPagination!.progressForSpread(_currentSpreadIndex)
+                  : _cachedPagination!.progressForPage(_currentSpreadIndex))
             : (maxOffset > 0 ? (offset / maxOffset).clamp(0.0, 1.0) : 0.0);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted) return;
@@ -547,7 +546,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                 PageMode.doublePage;
                                             final singlePageWidth = isDouble
                                                 ? (constraints.maxWidth - 1.0) /
-                                                    2
+                                                      2
                                                 : constraints.maxWidth;
                                             final pageHeight =
                                                 constraints.maxHeight;
@@ -613,15 +612,14 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                   0.0;
                                               final targetIndex = isDouble
                                                   ? _cachedPagination!
-                                                      .spreadForProgress(
-                                                        progress,
-                                                      )
+                                                        .spreadForProgress(
+                                                          progress,
+                                                        )
                                                   : _cachedPagination!
-                                                      .pageForProgress(
-                                                        progress,
-                                                      );
-                                              _currentSpreadIndex =
-                                                  targetIndex;
+                                                        .pageForProgress(
+                                                          progress,
+                                                        );
+                                              _currentSpreadIndex = targetIndex;
                                               WidgetsBinding.instance
                                                   .addPostFrameCallback((_) {
                                                     if (!mounted) return;
@@ -652,16 +650,17 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                   // from the expensive reader
                                                   // tree. The bottom bar already
                                                   // listens to this stream.
-                                                  _currentSpreadIndex = pageIndex;
+                                                  _currentSpreadIndex =
+                                                      pageIndex;
                                                   final progress = isDouble
                                                       ? pagination
-                                                          .progressForSpread(
-                                                            pageIndex,
-                                                          )
+                                                            .progressForSpread(
+                                                              pageIndex,
+                                                            )
                                                       : pagination
-                                                          .progressForPage(
-                                                            pageIndex,
-                                                          );
+                                                            .progressForPage(
+                                                              pageIndex,
+                                                            );
                                                   offset =
                                                       progress *
                                                       (maxOffset > 0
@@ -700,14 +699,18 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                               physics:
                                                                   const NeverScrollableScrollPhysics(),
                                                               child: _buildNovelHtmlWidget(
-                                                                context: context,
-                                                                htmlData: leftHtml,
+                                                                context:
+                                                                    context,
+                                                                htmlData:
+                                                                    leftHtml,
                                                                 fontFamily:
                                                                     fontFamily,
-                                                                fontSize: fontSize,
+                                                                fontSize:
+                                                                    fontSize,
                                                                 lineHeight:
                                                                     lineHeight,
-                                                                padding: padding,
+                                                                padding:
+                                                                    padding,
                                                                 textAlign:
                                                                     textAlignEnum,
                                                                 removeExtraSpacing:
@@ -716,7 +719,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                                     parsedTextColor,
                                                                 backgroundColor:
                                                                     parsedBackgroundColor,
-                                                                showTts: _showTts,
+                                                                showTts:
+                                                                    _showTts,
                                                                 tts: tts,
                                                               ),
                                                             ),
@@ -731,7 +735,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                               ),
                                                         ),
                                                         Expanded(
-                                                          child: rightHtml != null
+                                                          child:
+                                                              rightHtml != null
                                                               ? ClipRect(
                                                                   child: SingleChildScrollView(
                                                                     physics:
@@ -780,14 +785,18 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                         child: _buildNovelHtmlWidget(
                                                           context: context,
                                                           htmlData: pageHtml,
-                                                          fontFamily: fontFamily,
+                                                          fontFamily:
+                                                              fontFamily,
                                                           fontSize: fontSize,
-                                                          lineHeight: lineHeight,
+                                                          lineHeight:
+                                                              lineHeight,
                                                           padding: padding,
-                                                          textAlign: textAlignEnum,
+                                                          textAlign:
+                                                              textAlignEnum,
                                                           removeExtraSpacing:
                                                               removeExtraSpacing,
-                                                          textColor: parsedTextColor,
+                                                          textColor:
+                                                              parsedTextColor,
                                                           backgroundColor:
                                                               parsedBackgroundColor,
                                                           showTts: _showTts,
@@ -861,16 +870,14 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                   if (!_readerMode.isContinuous &&
                                       _cachedPagination != null &&
                                       _cachedPagination!.pageCount > 0) {
-                                    displayLabel = effectivePageMode ==
-                                            PageMode.doublePage
-                                        ? _cachedPagination!
-                                            .pageLabelForSpread(
-                                              _currentSpreadIndex,
-                                            )
-                                        : _cachedPagination!
-                                            .pageLabelForIndex(
-                                              _currentSpreadIndex,
-                                            );
+                                    displayLabel =
+                                        effectivePageMode == PageMode.doublePage
+                                        ? _cachedPagination!.pageLabelForSpread(
+                                            _currentSpreadIndex,
+                                          )
+                                        : _cachedPagination!.pageLabelForIndex(
+                                            _currentSpreadIndex,
+                                          );
                                   } else {
                                     final scrollPercentage = maxOffset > 0
                                         ? ((offset / maxOffset) * 100)
@@ -1135,13 +1142,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                   ? '${source.baseUrl}/${chapter.url!}'
                   : chapter.url!;
               if (Platform.isLinux) {
-                final uri = Uri.parse(url);
-                await launchUrl(
-                  uri,
-                  mode: LaunchMode.inAppBrowserView,
-                ).catchError(
-                  (_) => ExternalBrowser.open(url),
-                );
+                await ExternalBrowser.open(url);
               } else {
                 context.push(
                   '/mangawebview',
@@ -1428,16 +1429,15 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                     builder: (context, ref, child) {
                                       if (!_readerMode.isContinuous) {
                                         final pagination = _cachedPagination;
-                                        final isDouble = effectivePageMode ==
+                                        final isDouble =
+                                            effectivePageMode ==
                                             PageMode.doublePage;
                                         final totalItems = isDouble
                                             ? (pagination?.spreadCount ?? 1)
                                             : (pagination?.pageCount ?? 1);
-                                        final currentIndex =
-                                            _currentSpreadIndex.clamp(
-                                              0,
-                                              max(0, totalItems - 1),
-                                            ).toInt();
+                                        final currentIndex = _currentSpreadIndex
+                                            .clamp(0, max(0, totalItems - 1))
+                                            .toInt();
                                         final currentLabel = isDouble
                                             ? (pagination?.spreadLabelForSpread(
                                                     currentIndex,
@@ -1464,27 +1464,23 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                             ),
                                             Expanded(
                                               child: SliderTheme(
-                                                data: SliderTheme.of(context)
-                                                    .copyWith(
-                                                      trackHeight: 2.5,
-                                                      thumbShape:
-                                                          const RoundSliderThumbShape(
-                                                            enabledThumbRadius:
-                                                                6.0,
-                                                          ),
-                                                      overlayShape:
-                                                          const RoundSliderOverlayShape(
-                                                            overlayRadius: 12.0,
-                                                          ),
-                                                      activeTrackColor:
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .primary,
-                                                      thumbColor:
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .primary,
-                                                    ),
+                                                data: SliderTheme.of(context).copyWith(
+                                                  trackHeight: 2.5,
+                                                  thumbShape:
+                                                      const RoundSliderThumbShape(
+                                                        enabledThumbRadius: 6.0,
+                                                      ),
+                                                  overlayShape:
+                                                      const RoundSliderOverlayShape(
+                                                        overlayRadius: 12.0,
+                                                      ),
+                                                  activeTrackColor: Theme.of(
+                                                    context,
+                                                  ).colorScheme.primary,
+                                                  thumbColor: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                ),
                                                 child: Slider(
                                                   onChanged: (value) {
                                                     if (totalItems > 1 &&
@@ -1539,26 +1535,23 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                           ),
                                           Expanded(
                                             child: SliderTheme(
-                                              data: SliderTheme.of(context)
-                                                  .copyWith(
-                                                    trackHeight: 2.5,
-                                                    thumbShape:
-                                                        const RoundSliderThumbShape(
-                                                          enabledThumbRadius:
-                                                              6.0,
-                                                        ),
-                                                    overlayShape:
-                                                        const RoundSliderOverlayShape(
-                                                          overlayRadius: 12.0,
-                                                        ),
-                                                    activeTrackColor: Theme.of(
-                                                      context,
-                                                    ).colorScheme.primary,
-                                                    thumbColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .primary,
-                                                  ),
+                                              data: SliderTheme.of(context).copyWith(
+                                                trackHeight: 2.5,
+                                                thumbShape:
+                                                    const RoundSliderThumbShape(
+                                                      enabledThumbRadius: 6.0,
+                                                    ),
+                                                overlayShape:
+                                                    const RoundSliderOverlayShape(
+                                                      overlayRadius: 12.0,
+                                                    ),
+                                                activeTrackColor: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                                thumbColor: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary,
+                                              ),
                                               child: Slider(
                                                 onChanged: (value) {
                                                   if (_scrollController
@@ -1667,7 +1660,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                     PageMode.onePage,
                                   );
                                   ref
-                                      .read(doublePageAutoStateProvider.notifier)
+                                      .read(
+                                        doublePageAutoStateProvider.notifier,
+                                      )
                                       .set(false);
                                   setState(() {
                                     _readerMode = ReaderMode.ltr;
@@ -1679,7 +1674,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                     PageMode.doublePage,
                                   );
                                   ref
-                                      .read(doublePageAutoStateProvider.notifier)
+                                      .read(
+                                        doublePageAutoStateProvider.notifier,
+                                      )
                                       .set(false);
                                   setState(() {
                                     _pageMode = PageMode.doublePage;
@@ -1689,8 +1686,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                     ReaderMode.verticalContinuous,
                                   );
                                   setState(() {
-                                    _readerMode =
-                                        ReaderMode.verticalContinuous;
+                                    _readerMode = ReaderMode.verticalContinuous;
                                   });
                                 }
                               },
@@ -1707,8 +1703,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                               ),
                               tooltip: _readerMode.isContinuous
                                   ? context
-                                      .l10n
-                                      .reading_mode_vertical_continuous
+                                        .l10n
+                                        .reading_mode_vertical_continuous
                                   : (effectivePageMode == PageMode.doublePage
                                         ? context.l10n.double_page
                                         : context.l10n.single_page),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
@@ -233,9 +233,7 @@ class TrackerItemCard extends StatelessWidget {
         ),
       ),
       TextButton.icon(
-        onPressed: () async => await InAppBrowser.openWithSystemBrowser(
-          url: WebUri(track.trackingUrl!),
-        ),
+        onPressed: () async => await ExternalBrowser.open(track.trackingUrl!),
         label: Text(l10n.open_in_browser),
         icon: Icon(Icons.public),
       ),

@@ -256,7 +256,9 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           IconButton(
                             icon: Icon(
                               Icons.arrow_back,
-                              color: _canGoback ? null : Theme.of(context).disabledColor,
+                              color: _canGoback
+                                  ? null
+                                  : Theme.of(context).disabledColor,
                             ),
                             onPressed: _canGoback
                                 ? () {
@@ -267,7 +269,9 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           IconButton(
                             icon: Icon(
                               Icons.arrow_forward,
-                              color: _canGoForward ? null : Theme.of(context).disabledColor,
+                              color: _canGoForward
+                                  ? null
+                                  : Theme.of(context).disabledColor,
                             ),
                             onPressed: _canGoForward
                                 ? () {
@@ -312,9 +316,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                                   ),
                                 );
                               } else if (value == 2) {
-                                await InAppBrowser.openWithSystemBrowser(
-                                  url: WebUri(_url),
-                                );
+                                await ExternalBrowser.open(_url);
                               } else if (value == 3) {
                                 CookieManager.instance().deleteAllCookies();
                                 MClient.deleteAllCookies(_url);
@@ -360,10 +362,10 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                                     "javascript",
                                     "about",
                                   ].contains(uri.scheme)) {
-if (await canLaunchUrl(uri)) {
-                                    await ExternalBrowser.open(uri.toString());
-                                    return NavigationActionPolicy.CANCEL;
-                                  }
+                                    if (await canLaunchUrl(uri)) {
+                                      await launchUrl(uri);
+                                      return NavigationActionPolicy.CANCEL;
+                                    }
                                   }
                                   return NavigationActionPolicy.ALLOW;
                                 },
@@ -475,7 +477,7 @@ class MyInAppBrowser extends InAppBrowser {
       "about",
     ].contains(uri.scheme)) {
       if (await canLaunchUrl(uri)) {
-        await ExternalBrowser.open(uri.toString());
+        await launchUrl(uri);
         return NavigationActionPolicy.CANCEL;
       }
     }

@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// A browser the user can pick to open external links on Linux.
+/// A browser the user can pick to open external links.
 class BrowserApp {
   const BrowserApp({required this.id, required this.name});
 
@@ -16,16 +17,17 @@ class BrowserApp {
   final String name;
 }
 
-/// Routes external links through a browser the user chose on Linux, and through
-/// the platform default handler everywhere else.
+/// Routes external links through a browser the user chose.
 ///
-/// TODO(platforms): only Linux is implemented (browsers listed from `.desktop`
-/// files, launched via `gtk-launch`). Windows and macOS could enumerate their
-/// installed browsers the same way; Android/iOS have no user-selectable browser.
+/// Each public entry point only dispatches on the platform and hands off to a
+/// small per-platform function. Only Linux has a real implementation (browsers
+/// listed from `.desktop` files, launched via `gtk-launch`); every other
+/// platform falls to the shared `_default` function, which is where a Windows
+/// or macOS implementation goes.
 ///
 /// `url_launcher`'s [LaunchMode.externalApplication] always uses the OS default
-/// handler and cannot name an app, so on Linux the saved `.desktop` id is
-/// launched directly with `gtk-launch`.
+/// handler and cannot name an app, so Linux launches the saved `.desktop` id
+/// directly with `gtk-launch`.
 class ExternalBrowser {
   const ExternalBrowser._();
 
@@ -38,9 +40,31 @@ class ExternalBrowser {
     settingsRepository.update((s) => s.externalBrowser = id);
   }
 
-  /// The browsers installed on this machine, sorted by name. Empty off Linux.
-  static List<BrowserApp> available() {
-    if (!Platform.isLinux) return [];
+  // --- installed browsers -------------------------------------------------
+
+  /// The browsers installed on this machine, sorted by name.
+  ///
+  /// Cached: this is read on every external link, and re-scanning the `.desktop`
+  /// directories each time is wasteful. [refreshAvailable] forces a fresh scan
+  /// (used when the picker opens, so a newly installed browser still shows).
+  static List<BrowserApp> available() => _cache ??= _listBrowsers();
+
+  static void refreshAvailable() => _cache = null;
+
+  static List<BrowserApp>? _cache;
+
+  static List<BrowserApp> _listBrowsers() {
+    if (Platform.isLinux) return _listBrowsersLinux();
+    // TODO(platforms): implement the macOS and Windows browser enumeration.
+    if (Platform.isMacOS) return _listBrowsersDefault();
+    if (Platform.isWindows) return _listBrowsersDefault();
+    return _listBrowsersDefault();
+  }
+
+  /// Mobile (and any platform without enumeration): none.
+  static List<BrowserApp> _listBrowsersDefault() => const [];
+
+  static List<BrowserApp> _listBrowsersLinux() {
     final apps = <BrowserApp>[];
     final seen = <String>{};
     for (final dir in _applicationDirs()) {
@@ -70,21 +94,39 @@ class ExternalBrowser {
     return apps;
   }
 
-  /// Opens [url] with the saved browser, or the system default when none is
+  // --- open an external link ----------------------------------------------
+
+  /// Opens [url] with the chosen browser, or the system default when none is
   /// saved or the saved one is no longer installed.
-  static Future<bool> open(String url) async {
+  static Future<bool> open(String url) {
+    if (Platform.isLinux) return _openLinux(url);
+    // TODO(platforms): implement the macOS and Windows chosen-browser launch.
+    if (Platform.isMacOS) return _openDefault(url);
+    if (Platform.isWindows) return _openDefault(url);
+    return _openDefault(url);
+  }
+
+  /// Linux: a normal web link goes to the chosen browser; anything else (and any
+  /// failure) goes to the system default.
+  static Future<bool> _openLinux(String url) async {
+    final uri = Uri.parse(url);
     final id = savedId;
-    if (Platform.isLinux && id.isNotEmpty) {
-      final installed = available().map((a) => a.id).toList();
-      if (installed.contains(id)) {
-        try {
-          final result = await Process.run('gtk-launch', [id, url]);
-          if (result.exitCode == 0) return true;
-        } catch (_) {
-          // Fall through to the system default when gtk-launch is unavailable.
-        }
+    // Only normal web links go to the chosen browser. Any other scheme
+    // (mailto:, magnet:, tg:, ...) must reach the OS handler that owns it.
+    final isWeb = uri.scheme == 'http' || uri.scheme == 'https';
+    if (id.isNotEmpty && isWeb && available().any((a) => a.id == id)) {
+      try {
+        final result = await Process.run('gtk-launch', [id, url]);
+        if (result.exitCode == 0) return true;
+      } catch (_) {
+        // Fall through to the system default when gtk-launch is unavailable.
       }
     }
+    return _openDefault(url);
+  }
+
+  /// The system default handler (mobile, and macOS/Windows until implemented).
+  static Future<bool> _openDefault(String url) async {
     try {
       return await launchUrl(
         Uri.parse(url),
@@ -95,18 +137,37 @@ class ExternalBrowser {
     }
   }
 
+  // --- oauth login --------------------------------------------------------
+
   /// The in-flight OAuth loopback server and its timeout. A login that never
   /// completes keeps its port; close it before the next attempt binds.
   static HttpServer? _oauthServer;
   static Timer? _oauthTimer;
 
-  /// Opens an OAuth authorize page in the chosen browser and waits for the
-  /// redirect to hit the local loopback server bound to [port]. Returns the
-  /// callback URI (the code is in its query), or null on failure/timeout.
-  ///
-  /// Replicates what `flutter_web_auth_2` does on desktop, except the page is
-  /// opened with [open] so the user's chosen browser is used.
-  static Future<Uri?> openOAuth(String authUrl, {required int port}) async {
+  /// Runs an OAuth login and returns the callback URI (the code is in its
+  /// query), or null on failure/timeout.
+  static Future<Uri?> openOAuth(
+    String authUrl, {
+    required int port,
+    required String callbackUrlScheme,
+  }) {
+    if (Platform.isLinux) return _openOAuthLinux(authUrl, port: port);
+    // TODO(platforms): implement the macOS and Windows chosen-browser login.
+    if (Platform.isMacOS) {
+      return _openOAuthDefault(authUrl, callbackUrlScheme: callbackUrlScheme);
+    }
+    if (Platform.isWindows) {
+      return _openOAuthDefault(authUrl, callbackUrlScheme: callbackUrlScheme);
+    }
+    return _openOAuthDefault(authUrl, callbackUrlScheme: callbackUrlScheme);
+  }
+
+  /// Linux: open the authorize page in the chosen browser and catch the
+  /// redirect on a local loopback server bound to [port].
+  static Future<Uri?> _openOAuthLinux(
+    String authUrl, {
+    required int port,
+  }) async {
     // A previous, still-waiting login owns the port; close it before retrying
     // (binding the same port twice throws "shared flag needs to be true").
     await _oauthServer?.close(force: true);
@@ -142,10 +203,26 @@ class ExternalBrowser {
     } finally {
       timer.cancel();
       if (identical(_oauthServer, server)) _oauthServer = null;
-      _oauthTimer = null;
+      if (identical(_oauthTimer, timer)) _oauthTimer = null;
       await server.close(force: true);
     }
   }
+
+  /// The original `flutter_web_auth_2` flow (mobile, and macOS/Windows until
+  /// implemented).
+  static Future<Uri?> _openOAuthDefault(
+    String authUrl, {
+    required String callbackUrlScheme,
+  }) async {
+    return Uri.parse(
+      await FlutterWebAuth2.authenticate(
+        url: authUrl,
+        callbackUrlScheme: callbackUrlScheme,
+      ),
+    );
+  }
+
+  // --- linux desktop files ------------------------------------------------
 
   static List<String> _applicationDirs() => [
     '/usr/share/applications',

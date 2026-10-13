@@ -810,7 +810,8 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                   trailing: current == browser.id
                       ? const Icon(Icons.check)
                       : null,
-                  onTap: () => _selectExternalBrowser(dialogContext, browser.id),
+                  onTap: () =>
+                      _selectExternalBrowser(dialogContext, browser.id),
                 ),
             ],
           ),
