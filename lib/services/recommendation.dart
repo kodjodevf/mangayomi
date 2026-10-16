@@ -5,6 +5,7 @@ import 'package:mangayomi/services/discovery/media_catalog_resolver.dart';
 import 'package:mangayomi/services/discovery/media_lookup_context.dart';
 import 'package:mangayomi/services/discovery/search_target.dart';
 import 'package:mangayomi/services/discovery/trakt_discovery.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 /// Recommendations for the title represented by [media].
 ///
@@ -171,7 +172,7 @@ class RecommendationResult {
     titleRomaji: media.romaji,
     titleEnglish: media.english,
     titleNative: media.native,
-    description: media.description,
+    description: media.description?.htmlToPlainText(),
     imgURLs: media.coverImage != null ? [media.coverImage!] : const [],
     genres: media.genres,
   );
