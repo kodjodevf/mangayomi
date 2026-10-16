@@ -223,13 +223,22 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
             color: accent,
             borderRadius: BorderRadius.circular(6),
           ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-              color: onAccent,
-            ),
+          // The star marks this as the catalog's average score, not a match
+          // percentage; the order of the list is the provider's own ranking.
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.star_rounded, size: 12, color: onAccent),
+              const SizedBox(width: 2),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: onAccent,
+                ),
+              ),
+            ],
           ),
         ),
       ),
