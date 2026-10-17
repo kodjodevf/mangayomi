@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
@@ -88,7 +89,7 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
 
     return Padding(
       padding: EdgeInsets.only(
-        top: 10,
+        top: ShioriSpace.s12,
         left: tvHorizontalInset,
         right: tvHorizontalInset,
       ),
@@ -103,42 +104,23 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const ExtensionServerWarningBanner(),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(context.l10n.no_sources_installed),
+                ShioriEmptyState(
+                  icon: Symbols.extension_rounded,
+                  title: context.l10n.no_sources_installed,
+                  compact: true,
+                  actionLabel: context.l10n.show_extensions,
+                  onAction: () {
+                    final extensionIndex = widget.tabs.indexWhere(
+                      (t) =>
+                          t.type == widget.itemType &&
+                          t.kind == BrowseTabKind.extensions,
+                    );
+                    if (extensionIndex != -1) {
+                      widget.tabIndex(extensionIndex);
+                    }
+                  },
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      final extensionIndex = widget.tabs.indexWhere(
-                        (t) =>
-                            t.type == widget.itemType &&
-                            t.kind == BrowseTabKind.extensions,
-                      );
-
-                      if (extensionIndex != -1) {
-                        widget.tabIndex(extensionIndex);
-                      }
-                    },
-                    icon: const Icon(Icons.extension_rounded),
-                    label: Text(context.l10n.show_extensions),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 12),
-                  child: Row(
-                    children: [
-                      Text(
-                        l10n.other,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                ShioriSectionHeader(title: l10n.other, overline: true),
                 SourceListTile(
                   source: Source(
                     name: "local",
@@ -162,7 +144,7 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
             interactive: true,
             controller: controller,
             thickness: 12,
-            radius: const Radius.circular(10),
+            radius: const Radius.circular(ShioriShape.card),
             child: CustomScrollView(
               controller: controller,
               slivers: [
@@ -173,20 +155,11 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                 CustomSliverGroupedListView<Source, String>(
                   elements: lastUsedEntries,
                   groupBy: (element) => "",
-                  groupSeparatorBuilder: (String groupByValue) => Padding(
-                    padding: const EdgeInsets.only(left: 12),
-                    child: Row(
-                      children: [
-                        Text(
-                          l10n.last_used,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  groupSeparatorBuilder: (String groupByValue) =>
+                      ShioriSectionHeader(
+                        title: l10n.last_used,
+                        overline: true,
+                      ),
                   itemBuilder: (context, Source element) {
                     return _row(element, shareNodes: false);
                   },
@@ -198,20 +171,8 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                 CustomSliverGroupedListView<Source, String>(
                   elements: isPinnedEntries,
                   groupBy: (element) => "",
-                  groupSeparatorBuilder: (String groupByValue) => Padding(
-                    padding: const EdgeInsets.only(left: 12),
-                    child: Row(
-                      children: [
-                        Text(
-                          l10n.pinned,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  groupSeparatorBuilder: (String groupByValue) =>
+                      ShioriSectionHeader(title: l10n.pinned, overline: true),
                   itemBuilder: (context, Source element) {
                     return _row(element);
                   },
@@ -223,21 +184,9 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                 CustomSliverGroupedListView<Source, String>(
                   elements: allEntriesWithoutIspinned,
                   groupBy: (element) =>
-                      completeLanguageName(element.lang!.toLowerCase()),
-                  groupSeparatorBuilder: (String groupByValue) => Padding(
-                    padding: const EdgeInsets.only(left: 12),
-                    child: Row(
-                      children: [
-                        Text(
-                          groupByValue,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                      languageName(context, element.lang!.toLowerCase()),
+                  groupSeparatorBuilder: (String groupByValue) =>
+                      ShioriSectionHeader(title: groupByValue, overline: true),
                   itemBuilder: (context, Source element) {
                     return _row(element);
                   },
@@ -249,20 +198,7 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                 SliverToBoxAdapter(
                   child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 12),
-                        child: Row(
-                          children: [
-                            Text(
-                              l10n.other,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      ShioriSectionHeader(title: l10n.other, overline: true),
                       SourceListTile(
                         source: Source(
                           name: "local",
@@ -289,7 +225,7 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
           onRetry: () =>
               ref.invalidate(getSourcesStreamProvider(widget.itemType)),
         ),
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const ShioriLoading(),
       ),
     );
   }

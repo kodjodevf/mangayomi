@@ -1,8 +1,80 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/eval/model/filter.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/chapter_sort_list_tile_widget.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
+/// The inside of a filters sheet: Reset and Filter above the filters.
+///
+/// As tall as the filters, up to what the sheet allows; it grows smoothly
+/// as a group opens. It used to hold three quarters of the screen whatever
+/// the source's few filters, to keep from jumping.
+class FilterSheetBody extends StatelessWidget {
+  const FilterSheetBody({
+    super.key,
+    required this.filters,
+    required this.onChanged,
+    required this.onReset,
+    required this.onApply,
+    required this.resetLabel,
+    required this.applyLabel,
+  });
+
+  final List<dynamic> filters;
+  final Function(List<dynamic>) onChanged;
+  final VoidCallback onReset;
+  final VoidCallback onApply;
+  final String resetLabel;
+  final String applyLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSize(
+      duration: ShioriMotion.of(context, ShioriMotion.standard),
+      curve: ShioriMotion.standardCurve,
+      alignment: Alignment.topCenter,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: ShioriSpace.s16,
+              vertical: ShioriSpace.s8,
+            ),
+            child: Row(
+              children: [
+                ShioriButton.quiet(
+                  icon: Symbols.restart_alt_rounded,
+                  label: resetLabel,
+                  onPressed: onReset,
+                ),
+                const Spacer(),
+                ShioriButton(
+                  icon: Symbols.filter_list_rounded,
+                  label: applyLabel,
+                  onPressed: onApply,
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          Flexible(
+            child: FilterWidget(filterList: filters, onChanged: onChanged),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// A source's filters, as the extension declares them: text, a box to tick
+/// or to cycle through include and exclude, groups, a sort, one value of a
+/// list.
+///
+/// Built from the same rows as a series' chapter filters, so "excluded" is
+/// the same cross on both, and a sort is the same accent label and arrow.
 class FilterWidget extends StatelessWidget {
   final List<dynamic> filterList;
   final Function(List<dynamic>) onChanged;
@@ -14,8 +86,9 @@ class FilterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.shiori;
     return SuperListView.builder(
-      padding: const EdgeInsets.all(0),
+      padding: EdgeInsets.zero,
       itemCount: filterList.length,
       primary: false,
       shrinkWrap: true,
@@ -32,45 +105,43 @@ class FilterWidget extends StatelessWidget {
             labelText: filterState.name,
           );
         } else if (filterState is HeaderFilter) {
-          widget = ListTile(dense: true, title: Text(filterState.name));
+          widget = Padding(
+            padding: const EdgeInsets.fromLTRB(
+              ShioriSpace.s16,
+              ShioriSpace.s16,
+              ShioriSpace.s16,
+              ShioriSpace.s4,
+            ),
+            child: ShioriGroupLabel(filterState.name, maxLines: 2),
+          );
         } else if (filterState is SeparatorFilter) {
-          widget = const Divider();
+          widget = const Divider(height: ShioriSpace.s16);
         } else if (filterState is TriStateFilter) {
-          final state = filterState.state;
-          widget = CheckboxListTile(
-            dense: true,
-            value: switch (state) {
-              0 => false,
-              1 => true,
-              _ => null,
-            },
-            onChanged: (value) {
+          // Off, only these, all but these, and round again.
+          widget = ListTileChapterFilter(
+            label: filterState.name,
+            type: filterState.state,
+            onTap: () {
               filterList[idx] = filterState
-                ..state = switch (value) {
-                  null => 2,
-                  true => 1,
-                  _ => 0,
-                };
+                ..state = (filterState.state + 1) % 3;
               onChanged(filterList);
             },
-            title: Text(filterState.name),
-            controlAffinity: ListTileControlAffinity.leading,
-            tristate: true,
           );
         } else if (filterState is CheckBoxFilter) {
-          widget = CheckboxListTile(
-            dense: true,
-            value: filterState.state,
-            onChanged: (value) {
-              filterList[idx] = filterState..state = value!;
+          widget = ListTileChapterFilter(
+            label: filterState.name,
+            type: filterState.state ? 1 : 0,
+            onTap: () {
+              filterList[idx] = filterState..state = !filterState.state;
               onChanged(filterList);
             },
-            title: Text(filterState.name),
-            controlAffinity: ListTileControlAffinity.leading,
           );
         } else if (filterState is GroupFilter) {
           widget = ExpansionTile(
-            title: Text(filterState.name, style: const TextStyle(fontSize: 13)),
+            title: Text(
+              filterState.name,
+              style: tokens.text.row.copyWith(color: tokens.color.fg),
+            ),
             children: [
               FilterWidget(
                 filterList: filterState.state,
@@ -84,79 +155,45 @@ class FilterWidget extends StatelessWidget {
         } else if (filterState is SortFilter) {
           final ascending = filterState.state.ascending;
           widget = ExpansionTile(
-            title: Text(filterState.name, style: const TextStyle(fontSize: 13)),
-            children: filterState.values.map((e) {
-              final selected = filterState.values[filterState.state.index] == e;
-              return ListTile(
-                dense: true,
-                leading: Icon(
-                  ascending
-                      ? Icons.arrow_upward_rounded
-                      : Icons.arrow_downward_rounded,
-                  color: selected ? null : Colors.transparent,
+            title: Text(
+              filterState.name,
+              style: tokens.text.row.copyWith(color: tokens.color.fg),
+            ),
+            children: [
+              for (final (i, e) in filterState.values.indexed)
+                ListTileChapterSort(
+                  label: e.name,
+                  // An upward arrow is ascending.
+                  reverse: ascending,
+                  showLeading: filterState.state.index == i,
+                  onTap: () {
+                    if (filterState.state.index == i) {
+                      filterState.state.ascending = !ascending;
+                    } else {
+                      filterState.state.index = i;
+                    }
+                    filterList[idx] = filterState;
+                    onChanged(filterList);
+                  },
                 ),
-                title: Text(e.name),
-                onTap: () {
-                  if (selected) {
-                    filterState.state.ascending = !ascending;
-                  } else {
-                    filterState.state.index = filterState.values.indexWhere(
-                      (element) => element == e,
-                    );
-                  }
-                  filterList[idx] = filterState;
-                  onChanged(filterList);
-                },
-              );
-            }).toList(),
+            ],
           );
         } else if (filterState is SelectFilter) {
-          widget = SizedBox(
-            width: context.width(1),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                  child: ListTile(dense: true, title: Text(filterState.name)),
-                ),
-                Expanded(
-                  child: DropdownButtonHideUnderline(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 25,
-                      ),
-                      child: DropdownButton(
-                        icon: const Icon(Icons.keyboard_arrow_down),
-                        isExpanded: true,
-                        value: filterState.values[filterState.state],
-                        hint: Text(
-                          filterState.name,
-                          style: const TextStyle(fontSize: 13),
-                        ),
-                        items: filterState.values
-                            .map(
-                              (e) => DropdownMenuItem(
-                                value: e,
-                                child: Text(
-                                  e.name,
-                                  style: const TextStyle(fontSize: 13),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) {
-                          filterState.state = filterState.values.indexWhere(
-                            (element) => element == value,
-                          );
-                          onChanged(filterList);
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          widget = ShioriValueRow<int>(
+            title: filterState.name,
+            value: filterState.state,
+            options: [
+              for (final (i, e) in filterState.values.indexed)
+                ShioriChoice(i, e.name as String),
+            ],
+            // A long list (genres, years) gets a search field.
+            searchHint: filterState.values.length > 10
+                ? MaterialLocalizations.of(context).searchFieldLabel
+                : null,
+            onChanged: (i) {
+              filterState.state = i;
+              onChanged(filterList);
+            },
           );
         }
         return widget ?? const SizedBox.shrink();
@@ -195,22 +232,14 @@ class _SeachFormTextFieldWidgetState extends State<SeachFormTextFieldWidget> {
       _controller.clear();
     }
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: ShioriSpace.s16,
+        vertical: ShioriSpace.s8,
+      ),
       child: TextField(
         controller: _controller,
         onChanged: widget.onChanged,
-        decoration: InputDecoration(
-          isDense: true,
-          filled: false,
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: context.secondaryColor),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: context.primaryColor),
-          ),
-          border: const OutlineInputBorder(borderSide: BorderSide()),
-          labelText: widget.labelText,
-        ),
+        decoration: InputDecoration(labelText: widget.labelText),
       ),
     );
   }

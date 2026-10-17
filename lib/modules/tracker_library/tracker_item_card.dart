@@ -1,16 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/readmore.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
+/// Opens a tracker entry from the tracker library in a sheet.
+Future<void> showTrackerItemSheet(
+  BuildContext context, {
+  required TrackSearch track,
+  required ItemType itemType,
+  int? mangaId,
+}) {
+  return showShioriSheet<void>(
+    context,
+    builder: (_) =>
+        TrackerItemCard(track: track, itemType: itemType, mangaId: mangaId),
+  );
+}
+
+/// A tracker entry: its cover, title, score and length, its summary, and
+/// what can be done with it — add it to the library, open it there when it
+/// already is, or open it on the tracker's site.
+///
+/// It was a full-screen dialog over the blurred cover, laid out in fractions
+/// of the screen's width; it is the inside of a sheet now, as every other
+/// look at one entry.
 class TrackerItemCard extends StatelessWidget {
   final TrackSearch track;
   final ItemType itemType;
@@ -25,246 +44,104 @@ class TrackerItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = l10nLocalizations(context)!;
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      child: _cardContent(context, l10n),
-    );
-  }
-
-  Widget _cardContent(BuildContext context, AppLocalizations l10n) {
-    return Stack(
-      children: [
-        Consumer(
-          builder: (context, ref, child) {
-            return Positioned(
-              top: 0,
-              child: Stack(
-                children: [
-                  cachedNetworkImage(
-                    imageUrl: toImgUrl(track.coverUrl ?? ""),
-                    width: context.width(1),
-                    height: context.height(1),
-                    fit: BoxFit.cover,
-                  ),
-                  Stack(
-                    children: [
-                      Column(
-                        children: [
-                          Container(
-                            width: context.width(1),
-                            height: AppBar().preferredSize.height,
-                            color: Theme.of(context).scaffoldBackgroundColor
-                                .withValues(alpha: 0.9),
-                          ),
-                          Container(
-                            width: context.width(1),
-                            height: context.height(1),
-                            color: Theme.of(context).scaffoldBackgroundColor
-                                .withValues(alpha: 0.9),
-                          ),
-                        ],
+    final l10n = context.l10n;
+    final tokens = context.shiori;
+    final c = tokens.color;
+    final meta = [
+      if (track.score != null) '★ ${track.score}',
+      if (track.totalChapter != null && track.totalChapter! > 0)
+        '${track.totalChapter} ${itemType == ItemType.anime ? l10n.episodes : l10n.chapters}',
+      ?track.publishingType,
+      ?track.publishingStatus,
+    ].where((s) => s.isNotEmpty).join(' · ');
+    final cover = track.coverUrl ?? '';
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(
+        ShioriSpace.s16,
+        ShioriSpace.s8,
+        ShioriSpace.s16,
+        ShioriSpace.s16 + MediaQuery.paddingOf(context).bottom,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: ShioriSpace.s16,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: ShioriSpace.s16,
+            children: [
+              ShioriThumbnail(
+                height: tokens.scaled(132),
+                child: cover.isEmpty
+                    ? Icon(Symbols.image_rounded, color: c.fgMuted)
+                    : Image(
+                        image: coverProvider(toImgUrl(cover)),
+                        fit: BoxFit.cover,
                       ),
-                    ],
-                  ),
-                ],
               ),
-            );
-          },
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          extendBodyBehindAppBar: true,
-          appBar: PreferredSize(
-            preferredSize: Size.fromHeight(AppBar().preferredSize.height),
-            child: AppBar(
-              title: Text(track.title ?? ""),
-              backgroundColor: Colors.transparent,
-            ),
-          ),
-          body: SafeArea(
-            child: Row(
-              children: [
-                SizedBox(
-                  width: context.width(0.8),
-                  height: context.height(1),
-                  child: SingleChildScrollView(
-                    child: context.isTablet
-                        ? _buildContentDesktop(context, l10n)
-                        : _buildContentMobile(context, l10n),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildContentMobile(BuildContext context, AppLocalizations l10n) {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            SizedBox(
-              width: context.width(0.8),
-              child: Row(
-                children: [
-                  _coverCard(),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      spacing: 6,
-                      children: _infoRow(context, l10n),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: ShioriSpace.s4,
+                  children: [
+                    Text(
+                      track.title ?? '',
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: tokens.text.seriesTitle.copyWith(color: c.fg),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        Padding(
-          padding: EdgeInsets.all(20),
-          child: SizedBox(
-            width: context.width(0.6),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              spacing: 6,
-              children: [
-                ReadMoreWidget(
-                  text: track.summary ?? "",
-                  initExpanded: false,
-                  onChanged: (value) {},
+                    if (meta.isNotEmpty) Text(meta, style: tokens.caption),
+                  ],
                 ),
-                if (mangaId != null)
-                  TextButton.icon(
-                    onPressed: () => _pushLocalLibrary(context),
-                    label: Text(l10n.track_library_navigate),
-                    icon: Icon(Icons.north_east),
-                  ),
-                TextButton.icon(
-                  onPressed: () => _pushMigrationScreen(context),
-                  label: Text(l10n.track_library_add),
-                  icon: Icon(Icons.add),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildContentDesktop(BuildContext context, AppLocalizations l10n) {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            SizedBox(
-              width: context.width(0.8),
-              child: Row(
-                children: [
-                  _coverCard(),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [SelectableText(track.summary ?? "")],
-                    ),
-                  ),
-                ],
               ),
-            ),
-          ],
-        ),
-        Padding(
-          padding: EdgeInsets.all(20),
-          child: SizedBox(
-            width: context.width(0.6),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                if (mangaId != null)
-                  TextButton.icon(
-                    onPressed: () => _pushLocalLibrary(context),
-                    label: Text(l10n.track_library_navigate),
-                    icon: Icon(Icons.north_east),
-                  ),
-                TextButton.icon(
-                  onPressed: () => _pushMigrationScreen(context),
-                  label: Text(l10n.track_library_add),
-                  icon: Icon(Icons.add),
-                ),
-                ..._infoRow(context, l10n),
-              ],
-            ),
+            ],
           ),
-        ),
-      ],
-    );
-  }
-
-  List<Widget> _infoRow(BuildContext context, AppLocalizations l10n) {
-    return [
-      Text.rich(
-        TextSpan(
-          children: [
-            WidgetSpan(child: Icon(Icons.star, color: context.primaryColor)),
-            TextSpan(text: " ${track.score ?? "?"}"),
-          ],
-        ),
-      ),
-      Text.rich(
-        TextSpan(
-          children: [
-            WidgetSpan(
-              child: Icon(
-                itemType == ItemType.anime
-                    ? Icons.video_library
-                    : Icons.local_library,
-                color: context.primaryColor,
+          if ((track.summary ?? '').isNotEmpty)
+            ReadMoreWidget(text: track.summary!, onChanged: (_) {}),
+          Wrap(
+            spacing: ShioriSpace.s8,
+            runSpacing: ShioriSpace.s8,
+            children: [
+              ShioriButton(
+                onPressed: () => _go(context, _migrationRoute),
+                label: l10n.track_library_add,
+                icon: Symbols.add_rounded,
               ),
-            ),
-            TextSpan(text: " ${track.totalChapter ?? "?"}"),
-          ],
-        ),
-      ),
-      TextButton.icon(
-        onPressed: () async => await InAppBrowser.openWithSystemBrowser(
-          url: WebUri(track.trackingUrl!),
-        ),
-        label: Text(l10n.open_in_browser),
-        icon: Icon(Icons.public),
-      ),
-    ];
-  }
-
-  Widget _coverCard() {
-    final imageProvider = coverProvider(toImgUrl(track.coverUrl ?? ""));
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: SizedBox(
-        width: 140,
-        height: 220,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(5)),
-            image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+              if (mangaId != null)
+                ShioriButton.secondary(
+                  onPressed: () => _go(
+                    context,
+                    (router) =>
+                        router.push('/manga-reader/detail', extra: mangaId),
+                  ),
+                  label: l10n.track_library_navigate,
+                  icon: Symbols.north_east_rounded,
+                ),
+              if ((track.trackingUrl ?? '').isNotEmpty)
+                ShioriButton.quiet(
+                  onPressed: () => InAppBrowser.openWithSystemBrowser(
+                    url: WebUri(track.trackingUrl!),
+                  ),
+                  label: l10n.open_in_browser,
+                  icon: Symbols.public_rounded,
+                ),
+            ],
           ),
-        ),
+        ],
       ),
     );
   }
 
-  void _pushLocalLibrary(BuildContext context) {
-    context.push('/manga-reader/detail', extra: mangaId);
+  /// Closes the sheet, then goes where [push] says: the new screen opens
+  /// on its own rather than over a sheet left behind it.
+  void _go(BuildContext context, void Function(GoRouter router) push) {
+    final router = GoRouter.of(context);
+    Navigator.pop(context);
+    push(router);
   }
 
-  void _pushMigrationScreen(BuildContext context) {
-    context.push(
+  void _migrationRoute(GoRouter router) {
+    router.push(
       "/migrate/tracker",
       extra: (
         Manga(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 /// One row in a [showTvMenu].
 class TvMenuOption {
@@ -78,7 +78,7 @@ class _TvMenuState extends State<_TvMenu> {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.primaryColor;
+    final accent = context.shiori.color.accentInk;
     return AlertDialog(
       title: Text(widget.title),
       contentPadding: const EdgeInsets.symmetric(vertical: 8),
@@ -164,12 +164,12 @@ class _TvMenuRowState extends State<_TvMenuRow> {
       child: GestureDetector(
         onTap: widget.onPick,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
+          duration: ShioriMotion.fast,
           curve: Curves.easeOut,
           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(ShioriShape.card),
             color: _focused
                 ? widget.accent.withValues(alpha: 0.30)
                 : Colors.transparent,
@@ -184,12 +184,18 @@ class _TvMenuRowState extends State<_TvMenuRow> {
                 child: Text(
                   o.label,
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: ShioriType.reference.body.fontSize,
                     fontWeight: o.selected ? FontWeight.w700 : FontWeight.w400,
                   ),
                 ),
               ),
-              if (o.selected) Icon(Icons.check, size: 18, color: widget.accent),
+              if (o.selected)
+                Icon(
+                  Symbols.check_rounded,
+                  fill: 1,
+                  size: 18,
+                  color: widget.accent,
+                ),
             ],
           ),
         ),

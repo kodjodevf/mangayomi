@@ -15,6 +15,10 @@ analyzer:
     # dependencies that aren't resolved in the app's analysis context, so it
     # reports false errors. It's build-time only, not app code.
     - rust_builder/**
+    # Shiori and its catalogue are their own packages, analysed (and tested)
+    # from their own directories.
+    - packages/**
+    - widgetbook/**
     - build/**
     - android/**
     - ios/**

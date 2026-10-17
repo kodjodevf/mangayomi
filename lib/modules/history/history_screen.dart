@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/main_view/nav_groups.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
@@ -9,6 +12,7 @@ import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -20,9 +24,10 @@ import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
-import 'package:mangayomi/modules/widgets/error_text.dart';
-import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/modules/widgets/deferred_cover_image.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/widgets/tv_row_button.dart';
+import 'package:shiori/shiori.dart';
 
 class HistoryScreen extends ConsumerStatefulWidget {
   const HistoryScreen({super.key});
@@ -63,6 +68,9 @@ class _HistoryScreenState extends BaseLibraryTabScreenState<HistoryScreen> {
   String get title => l10nLocalizations(context)!.history;
 
   @override
+  String? get navRoute => '/history';
+
+  @override
   Widget buildTab(ItemType type) {
     return HistoryTab(itemType: type, query: textEditingController.text);
   }
@@ -75,31 +83,18 @@ class _HistoryScreenState extends BaseLibraryTabScreenState<HistoryScreen> {
       IconButton(
         splashRadius: 20,
         focusColor: tvIconFocusColor(context),
-        icon: Icon(
-          Icons.delete_sweep_outlined,
-          color: Theme.of(context).hintColor,
-        ),
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (dialogContext) => AlertDialog(
-              title: Text(l10n.remove_everything),
-              content: Text(l10n.remove_everything_msg),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: Text(l10n.cancel),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    Navigator.of(dialogContext).pop();
-                    await _clearHistory();
-                  },
-                  child: Text(l10n.ok),
-                ),
-              ],
-            ),
+        tooltip: l10n.remove_everything,
+        icon: const Icon(Symbols.delete_sweep_rounded),
+        onPressed: () async {
+          final confirmed = await showShioriConfirm(
+            context,
+            title: l10n.remove_everything,
+            message: l10n.remove_everything_msg,
+            confirmLabel: l10n.ok,
+            cancelLabel: l10n.cancel,
+            destructive: true,
           );
+          if (confirmed) await _clearHistory();
         },
       ),
     ];
@@ -127,15 +122,23 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
   @override
   bool get wantKeepAlive => true;
 
-  // Accent overlay when a history row / cover button holds d-pad focus on
-  // Android TV so it is clearly visible on a remote; `null` (default) off-TV.
-  WidgetStateProperty<Color?>? _tvFocusOverlay(BuildContext context) => isTv
-      ? WidgetStateProperty.resolveWith(
-          (states) => states.contains(WidgetState.focused)
-              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.2)
-              : null,
-        )
-      : null;
+  /// Rows removed but not yet deleted, so "Undo" can bring them back: the
+  /// deletion is only written once the toast has gone, or the screen has.
+  final _pendingRemoval = <int>{};
+  final _removalTimers = <int, Timer>{};
+
+  /// Read while the screen is alive: a removal still pending when it goes
+  /// is written from dispose, where the ref can no longer be used.
+  late final Synching _sync = ref.read(synchingProvider(syncId: 1).notifier);
+
+  @override
+  void dispose() {
+    for (final MapEntry(key: id, value: timer) in _removalTimers.entries) {
+      timer.cancel();
+      historyRepository.deleteRecorded(_sync, id);
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,6 +173,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
           for (final m in mangaRepository.getAllByIds(mangaIds)) m?.id!: m!,
         };
         final entries = allEntries.where((e) {
+          if (_pendingRemoval.contains(e.id)) return false;
           final c = chapterById[e.chapterId];
           return c != null && mangaById[c.mangaId] != null;
         }).toList();
@@ -185,24 +189,20 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
                   forHistoryValue: true,
                   useRelativeTimesTamps: false,
                 ),
-                groupSeparatorBuilder: (String groupByValue) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8, left: 12),
-                  child: Row(
-                    children: [
-                      Text(
-                        dateFormat(
-                          null,
-                          context: context,
-                          stringDate: groupByValue,
-                          ref: ref,
-                        ),
+                groupSeparatorBuilder: (String groupByValue) =>
+                    ShioriSectionHeader(
+                      overline: true,
+                      title: dateFormat(
+                        null,
+                        context: context,
+                        stringDate: groupByValue,
+                        ref: ref,
                       ),
-                    ],
-                  ),
-                ),
+                    ),
                 itemBuilder: (context, History element) {
                   final chapter = chapterById[element.chapterId]!;
                   final manga = mangaById[chapter.mangaId]!;
+                  final remove = l10n.remove;
                   // Two focusable targets on TV, matching the Browse source
                   // rows: the entry itself, and remove. The cover's own
                   // tap-to-detail folds into the entry rather than becoming a
@@ -213,209 +213,32 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
                         Expanded(
                           child: TvRowButton(
                             onTap: () => chapter.pushToReaderView(context),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 6,
-                              ),
-                              child: SizedBox(
-                                height: 92,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 60,
-                                      height: 90,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(7),
-                                        child: _getCoverImage(manga),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            manga.name!,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge!
-                                                  .color,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            "${chapter.name!} - ${dateFormatHour(element.date!, context)}",
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              color: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge!
-                                                  .color,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                            child: _row(manga, chapter.name!, element.date!),
                           ),
                         ),
                         TvRowButton(
-                          onTap: () =>
-                              _openDeleteDialog(l10n, manga, element.id),
+                          onTap: () => _remove(l10n, element.id),
                           child: Padding(
-                            padding: const EdgeInsets.all(14),
+                            padding: const EdgeInsets.all(ShioriSpace.s12),
                             child: Icon(
-                              Icons.delete_outline,
-                              size: 25,
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .bodyLarge!
-                                  .color,
+                              Symbols.delete_rounded,
+                              semanticLabel: remove,
                             ),
                           ),
                         ),
                       ],
                     );
                   }
-                  return ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.all(0),
-                      backgroundColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0),
-                      ),
-                      elevation: 0,
-                      shadowColor: Colors.transparent,
-                    ).copyWith(overlayColor: _tvFocusOverlay(context)),
-                    onPressed: () async {
-                      await chapter.pushToReaderView(context);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: SizedBox(
-                        height: 105,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 60,
-                              height: 90,
-                              child: ElevatedButton(
-                                style:
-                                    ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.all(0),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(7),
-                                      ),
-                                    ).copyWith(
-                                      overlayColor: _tvFocusOverlay(context),
-                                    ),
-                                onPressed: () {
-                                  context.push(
-                                    '/manga-reader/detail',
-                                    extra: manga.id,
-                                  );
-                                },
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(7),
-                                  child: _getCoverImage(manga),
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      color: Colors.transparent,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              manga.name!,
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyLarge!
-                                                    .color,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              textAlign: TextAlign.start,
-                                            ),
-                                            Wrap(
-                                              crossAxisAlignment:
-                                                  WrapCrossAlignment.end,
-                                              children: [
-                                                Text(
-                                                  chapter.name!,
-                                                  style: TextStyle(
-                                                    fontSize: 11,
-                                                    color: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyLarge!
-                                                        .color,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  " - ${dateFormatHour(element.date!, context)}",
-                                                  style: TextStyle(
-                                                    fontSize: 11,
-                                                    color: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyLarge!
-                                                        .color,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    focusColor: isTv
-                                        ? Theme.of(context).colorScheme.primary
-                                              .withValues(alpha: 0.4)
-                                        : null,
-                                    onPressed: () => _openDeleteDialog(
-                                      l10n,
-                                      manga,
-                                      element.id,
-                                    ),
-                                    icon: Icon(
-                                      Icons.delete_outline,
-                                      size: 25,
-                                      color: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .color,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                  return _row(
+                    manga,
+                    chapter.name!,
+                    element.date!,
+                    openDetail: true,
+                    onTap: () => chapter.pushToReaderView(context),
+                    trailing: IconButton(
+                      tooltip: remove,
+                      onPressed: () => _remove(l10n, element.id),
+                      icon: const Icon(Symbols.delete_rounded),
                     ),
                   );
                 },
@@ -426,23 +249,64 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
             ],
           );
         }
-        return Center(child: Text(l10n.nothing_read_recently));
+        return ShioriEmptyState(
+          icon: Symbols.history_rounded,
+          title: l10n.nothing_read_recently,
+          actionLabel: l10n.library,
+          onAction: () => context.go(libraryRouteFor(widget.itemType)),
+        );
       },
       error: (Object error, StackTrace stackTrace) {
-        return ErrorText(error);
+        return ErrorState(detail: error.toString());
       },
       loading: () {
-        return const ProgressCenter();
+        return ListView(
+          physics: const NeverScrollableScrollPhysics(),
+          children: [for (var i = 0; i < 8; i++) const ShioriSkeletonRow()],
+        );
       },
     );
   }
 
+  /// History rows carry a larger cover than other lists: the series is
+  /// what a reader scans this screen for.
+  static const _thumbHeight = 72.0;
+
+  Widget _row(
+    Manga manga,
+    String chapterName,
+    String date, {
+    bool openDetail = false,
+    VoidCallback? onTap,
+    Widget? trailing,
+  }) {
+    return ShioriListRow(
+      leading: ShioriThumbnail(
+        height: _thumbHeight,
+        semanticLabel: openDetail ? manga.name : null,
+        onTap: openDetail
+            ? () => context.push('/manga-reader/detail', extra: manga.id)
+            : null,
+        child: _getCoverImage(manga),
+      ),
+      title: manga.name!,
+      titleMaxLines: 2,
+      subtitle: '$chapterName · ${dateFormatHour(date, context)}',
+      onTap: onTap,
+      trailing: trailing,
+    );
+  }
+
   Widget _getCoverImage(Manga manga) {
-    return _DeferredCoverImage(
-      width: 60,
-      height: 90,
+    const width = _thumbHeight * coverAspect;
+    return DeferredCoverImage(
+      width: width,
+      height: _thumbHeight,
       builder: (context) => manga.customCoverImage != null
-          ? Image.memory(manga.customCoverImage as Uint8List)
+          ? Image.memory(
+              manga.customCoverImage as Uint8List,
+              fit: BoxFit.cover,
+            )
           : cachedCompressedNetworkImage(
               headers: ref.watch(
                 headersProvider(
@@ -454,103 +318,34 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
               imageUrl: toImgUrl(
                 manga.customCoverFromTracker ?? manga.imageUrl ?? "",
               ),
-              width: 60,
-              height: 90,
+              width: width,
+              height: _thumbHeight,
               fit: BoxFit.cover,
             ),
     );
   }
 
-  void _openDeleteDialog(AppLocalizations l10n, Manga manga, int? deleteId) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(l10n.remove),
-          content: Text(l10n.remove_history_msg),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(l10n.cancel),
-                ),
-                const SizedBox(width: 15),
-                TextButton(
-                  onPressed: () async => deleteManga(context, manga, deleteId),
-                  child: Text(l10n.remove),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
+  /// Removes one row at once, with "Undo" in the toast. Removing a line of
+  /// history is easy to take back, so it no longer asks first.
+  void _remove(AppLocalizations l10n, int? id) {
+    if (id == null) return;
+    const window = Duration(seconds: 5);
+    final sync = _sync;
+    setState(() => _pendingRemoval.add(id));
+    _removalTimers[id] = Timer(window, () {
+      _removalTimers.remove(id);
+      historyRepository.deleteRecorded(sync, id);
+    });
+    botToast(
+      l10n.removed_from_history,
+      second: window.inSeconds,
+      tone: ShioriToastTone.success,
+      actions: [
+        ShioriToastAction(l10n.undo, () {
+          _removalTimers.remove(id)?.cancel();
+          if (mounted) setState(() => _pendingRemoval.remove(id));
+        }),
+      ],
     );
-  }
-
-  Future<void> deleteManga(
-    BuildContext context,
-    Manga manga,
-    int? deleteId,
-  ) async {
-    historyRepository.delete(ref, deleteId!);
-    if (context.mounted) {
-      Navigator.pop(context);
-    }
-  }
-}
-
-/// Skips building the real cover — a network fetch + decode — while the
-/// nearest Scrollable is flinging fast, showing an empty box of the same
-/// size instead. Swaps in the real image once scrolling settles, using
-/// ScrollerNotif to know when to re-check.
-class _DeferredCoverImage extends StatefulWidget {
-  final Widget Function(BuildContext context) builder;
-  final double width;
-  final double height;
-
-  const _DeferredCoverImage({
-    required this.builder,
-    required this.width,
-    required this.height,
-  });
-
-  @override
-  State<_DeferredCoverImage> createState() => _DeferredCoverImageState();
-}
-
-class _DeferredCoverImageState extends State<_DeferredCoverImage> {
-  ScrollPosition? _scrollPosition;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final position = Scrollable.maybeOf(context)?.position;
-    if (!identical(position, _scrollPosition)) {
-      _scrollPosition?.isScrollingNotifier.removeListener(_onScrollingChanged);
-      _scrollPosition = position;
-      _scrollPosition?.isScrollingNotifier.addListener(_onScrollingChanged);
-    }
-  }
-
-  void _onScrollingChanged() {
-    if (mounted) setState(() {});
-  }
-
-  @override
-  void dispose() {
-    _scrollPosition?.isScrollingNotifier.removeListener(_onScrollingChanged);
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (Scrollable.recommendDeferredLoadingForContext(context)) {
-      return SizedBox(width: widget.width, height: widget.height);
-    }
-    return widget.builder(context);
   }
 }

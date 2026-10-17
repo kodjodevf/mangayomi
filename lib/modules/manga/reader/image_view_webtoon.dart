@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/double_page_view.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
@@ -391,7 +392,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
 
     // 1. Rebound spring if zoomed out below 1.0
     if (_scale < 1.0) {
-      _animateTo(1.0, Offset.zero, duration: const Duration(milliseconds: 250));
+      _animateTo(1.0, Offset.zero, duration: ShioriMotion.standard);
       return;
     }
 
@@ -598,8 +599,8 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
         index < itemCount - 1) {
       item = Padding(
         padding: widget.isHorizontalContinuous
-            ? const EdgeInsets.only(right: 6)
-            : const EdgeInsets.only(bottom: 6),
+            ? const EdgeInsets.only(right: ShioriSpace.s8)
+            : const EdgeInsets.only(bottom: ShioriSpace.s8),
         child: item,
       );
     }

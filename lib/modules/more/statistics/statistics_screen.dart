@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/statistics/statistics_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/item_type_filters.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
@@ -48,7 +49,11 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     if (_visibleTabTypes.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Text(context.l10n.statistics)),
-        body: Center(child: Text(context.l10n.no_result)),
+        body: ShioriEmptyState(
+          icon: Symbols.query_stats_rounded,
+          title: context.l10n.no_result,
+          compact: true,
+        ),
       );
     }
     final l10n = context.l10n;
@@ -83,11 +88,18 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
       ItemType.anime => l10n.unwatched,
       _ => l10n.unread,
     };
+    // A count's word: "read" here is the past, not the button's "Read".
+    final readLabel = switch (itemType) {
+      ItemType.anime => l10n.watched_count,
+      _ => l10n.read_count,
+    };
 
     return stats.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) =>
-          Center(child: Text(context.l10n.error_with_message(err))),
+      loading: () => ListView(
+        physics: const NeverScrollableScrollPhysics(),
+        children: [for (var i = 0; i < 6; i++) const ShioriSkeletonRow()],
+      ),
+      error: (err, stack) => ErrorState(detail: err.toString()),
       data: (stats) {
         final totalItems = stats.totalItems;
         final totalChapters = stats.totalChapters;
@@ -105,7 +117,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
             : 0;
         final totalReadingTimeSeconds = stats.totalReadingTimeSeconds;
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(ShioriSpace.s16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -115,7 +127,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                 completedItems: completedItems,
                 completedPercentage: completedPercentage.toDouble(),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: ShioriSpace.s12),
               _buildSectionHeader(chapterLabel),
               _buildChaptersCard(
                 totalChapters: totalChapters,
@@ -127,9 +139,10 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                 title: itemType.localized(l10n),
                 context: context,
                 unreadLabel: unreadLabel,
+                readLabel: readLabel,
                 l10n: l10n,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: ShioriSpace.s12),
               _buildSectionHeader(_trackingTimeLabel(itemType, l10n)),
               _buildTrackingTimeCard(
                 totalSeconds: totalReadingTimeSeconds,
@@ -145,9 +158,15 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
   }
 
   Widget _buildSectionHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+    return ShioriSectionHeader(
+      title: title,
+      overline: true,
+      padding: const EdgeInsets.fromLTRB(
+        ShioriSpace.s4,
+        ShioriSpace.s16,
+        ShioriSpace.s4,
+        ShioriSpace.s8,
+      ),
     );
   }
 
@@ -158,26 +177,24 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
   }) {
     final l10n = context.l10n;
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(ShioriSpace.s8),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildStatisticColumn(
               value: "$totalItems",
               label: l10n.in_library,
-              icon: Icons.collections_bookmark_outlined,
+              icon: Symbols.collections_bookmark_rounded,
             ),
             _buildStatisticColumn(
               value: "$completedItems",
               label: l10n.completed,
-              icon: Icons.local_library_outlined,
+              icon: Symbols.local_library_rounded,
             ),
             _buildStatisticColumn(
-              value: "${completedPercentage.toStringAsFixed(1)}%",
+              value: "${completedPercentage.round()} %",
               label: l10n.completion_rate,
-              icon: Icons.percent,
+              icon: Symbols.percent_rounded,
             ),
           ],
         ),
@@ -195,130 +212,119 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     required String title,
     required BuildContext context,
     required String unreadLabel,
+    required String readLabel,
     required AppLocalizations l10n,
   }) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(ShioriSpace.s8),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildStatisticColumn(
                   value: "$totalChapters",
                   label: l10n.total,
-                  icon: Icons.format_list_numbered,
+                  icon: Symbols.format_list_numbered_rounded,
                 ),
                 _buildStatisticColumn(
                   value: "$readChapters",
-                  label: l10n.read,
-                  icon: Icons.done_all,
+                  label: readLabel,
+                  icon: Symbols.done_all_rounded,
                 ),
                 _buildStatisticColumn(
                   value: "$unreadChapters",
                   label: unreadLabel,
-                  icon: Icons.remove,
+                  icon: Symbols.pending_rounded,
                 ),
                 _buildStatisticColumn(
                   value: "$downloadedItems",
                   label: context.l10n.downloaded,
-                  icon: Icons.download_done,
+                  icon: Symbols.download_done_rounded,
                 ),
               ],
             ),
           ),
-          ListTile(
-            title: Text(l10n.average_chapters_per_title(title)),
-            subtitle: Text(averageChapters.toStringAsFixed(2)),
-            leading: Icon(Icons.bar_chart, color: context.primaryColor),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              ShioriSpace.s16,
+              0,
+              ShioriSpace.s16,
+              ShioriSpace.s16,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: ShioriSpace.s12,
+              children: [
+                _line(
+                  l10n.average_chapters_per_title(title),
+                  averageChapters.toStringAsFixed(1),
+                ),
+                _line(l10n.read_percentage, "${readPercentage.round()} %"),
+                ShioriProgressBar(value: readPercentage / 100),
+              ],
+            ),
           ),
-          _buildReadPercentageGraph(readPercentage, context),
         ],
       ),
     );
   }
 
+  /// One number: a small icon, the figure large and tabular, its label
+  /// under it.
   Widget _buildStatisticColumn({
     required String value,
     required String label,
     required IconData icon,
   }) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(4),
-          child: Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        Text(label, style: const TextStyle(fontSize: 10)),
-        Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 8),
-          child: Icon(icon, color: context.primaryColor),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildReadPercentageGraph(
-    double readPercentage,
-    BuildContext context,
-  ) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    final tokens = context.shiori;
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s12),
+        child: Column(
+          spacing: ShioriSpace.s4,
           children: [
-            Icon(Icons.pie_chart, color: context.primaryColor),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(context.l10n.read_percentage),
+            Icon(icon, size: tokens.scaled(18), color: tokens.color.fgMuted),
+            Text(
+              value,
+              style: tokens.text.seriesTitle.copyWith(
+                color: tokens.color.fg,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+            ),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: tokens.caption,
             ),
           ],
         ),
-        const SizedBox(height: 10),
-        Center(
-          child: SizedBox(
-            width: 120,
-            height: 120,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withValues(alpha: 0.5),
-                        blurRadius: 10,
-                        spreadRadius: 5,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: CircularProgressIndicator(
-                    value: readPercentage / 100,
-                    strokeWidth: 10,
-                    backgroundColor: Colors.grey.shade300,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      context.primaryColor,
-                    ),
-                  ),
-                ),
-                Text(
-                  "${readPercentage.toStringAsFixed(1)}%",
-                  style: TextStyle(fontSize: 18, color: context.secondaryColor),
-                ),
-              ],
-            ),
+      ),
+    );
+  }
+
+  /// A label and its figure across the card.
+  Widget _line(String label, String value) {
+    final tokens = context.shiori;
+    return Row(
+      spacing: ShioriSpace.s12,
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: tokens.text.row.copyWith(color: tokens.color.fg),
           ),
         ),
-        const SizedBox(height: 10),
+        Text(
+          value,
+          style: tokens.text.row.copyWith(
+            color: tokens.color.fg,
+            fontWeight: FontWeight.w700,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
+        ),
       ],
     );
   }
@@ -353,21 +359,21 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
         : 0;
     final isAnime = itemType == ItemType.anime;
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(ShioriSpace.s8),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildStatisticColumn(
               value: _formatDuration(totalSeconds),
               label: l10n.total,
-              icon: isAnime ? Icons.play_circle_outline : Icons.auto_stories,
+              icon: isAnime
+                  ? Symbols.play_circle_rounded
+                  : Symbols.auto_stories_rounded,
             ),
             _buildStatisticColumn(
               value: _formatDuration(averagePerTitle),
               label: l10n.mean_per_title,
-              icon: Icons.timer_outlined,
+              icon: Symbols.timer_rounded,
             ),
           ],
         ),

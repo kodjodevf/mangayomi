@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
 
@@ -54,7 +55,7 @@ class _TvFocusableState extends State<TvFocusable> {
       child: GestureDetector(
         onTap: widget.onPressed,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
+          duration: ShioriMotion.fast,
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -62,7 +63,16 @@ class _TvFocusableState extends State<TvFocusable> {
                 ? widget.accent
                 : Colors.black.withValues(alpha: 0.35),
           ),
-          child: Opacity(opacity: enabled ? 1.0 : 0.4, child: widget.child),
+          // The icon is white on the video and takes the colour read on the
+          // accent once focused: white on a light accent was unreadable.
+          child: IconTheme.merge(
+            data: IconThemeData(
+              color: _focused
+                  ? ShioriColors.onFill(widget.accent)
+                  : Colors.white,
+            ),
+            child: Opacity(opacity: enabled ? 1.0 : 0.4, child: widget.child),
+          ),
         ),
       ),
     );
@@ -96,8 +106,8 @@ class TvPlayPauseButton extends StatelessWidget {
           autofocus: true,
           onPressed: player.playOrPause,
           child: Icon(
-            playing ? Icons.pause : Icons.play_arrow,
-            color: Colors.white,
+            fill: 1,
+            playing ? Symbols.pause_rounded : Symbols.play_arrow_rounded,
             size: 34,
           ),
         );

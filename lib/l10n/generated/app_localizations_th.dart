@@ -268,7 +268,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String mass_migration_finding_matches(Object source, Object language) {
-    return 'Finding matches in $source • $language';
+    return 'Finding matches in $source · $language';
   }
 
   @override
@@ -575,6 +575,20 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get pure_black_dark_mode => 'โหมดดำสนิท';
+
+  @override
+  String get tint_surfaces_with_palette => 'ย้อมสีพื้นผิวด้วยชุดสี';
+
+  @override
+  String get tint_surfaces_with_palette_subtitle =>
+      'ย้อมพื้นหลัง การ์ด และแถบด้วยชุดสีที่เลือกเหมือนเดิม เมื่อปิด จะคงเป็นสีกลางและชุดสีจะใช้กับสีเน้นเท่านั้น';
+
+  @override
+  String get novel_reader_font => 'แบบอักษรตัวอ่านนิยาย';
+
+  @override
+  String get novel_reader_font_subtitle =>
+      'ใช้กับแบบอักษรเริ่มต้นของตัวอ่านนิยาย ส่วนอื่นของแอปใช้ Figtree';
 
   @override
   String get timestamp => 'ลงเวลา';
@@ -1171,11 +1185,11 @@ class AppLocalizationsTh extends AppLocalizations {
       'จัดเรียงและปรับแต่งการนำทางแต่ละรายการตามความต้องการของคุณ';
 
   @override
-  String get floating_navigation_bar => 'Floating navigation bar';
+  String get floating_navigation_bar => 'แถบนำทางแบบลอย';
 
   @override
   String get floating_navigation_bar_description =>
-      'Use a floating capsule instead of the standard attached navigation bar.';
+      'ใช้แคปซูลลอยแทนแถบนำทางแบบติดขอบ';
 
   @override
   String get full_screen_player => 'ใช้โหมดเต็มหน้าจอ';
@@ -1994,11 +2008,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get add_repo => 'เพิ่มที่เก็บข้อมูล?';
 
   @override
-  String get add_repo_sources_to_add => 'Extension lists that will be added:';
+  String get add_repo_sources_to_add => 'รายการส่วนขยายที่จะเพิ่ม:';
 
   @override
   String get add_repo_warning =>
-      'Extensions from these repositories run inside the app. Only add repositories you trust.';
+      'ส่วนขยายจากที่เก็บเหล่านี้ทำงานภายในแอป เพิ่มเฉพาะที่เก็บที่คุณไว้ใจเท่านั้น';
 
   @override
   String get genre_search_library => 'ค้นหาประเภทในห้องสมุด';
@@ -2145,7 +2159,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get custom_buttons_add_warning =>
-      'This button runs the Lua code below in the video player, which can access your files and run programs. Only add it if you trust where this link came from.';
+      'ปุ่มนี้รันโค้ด Lua ด้านล่างในตัวเล่นวิดีโอ ซึ่งเข้าถึงไฟล์และรันโปรแกรมได้ เพิ่มเฉพาะเมื่อคุณไว้ใจที่มาของลิงก์นี้';
 
   @override
   String n_days(Object n) {
@@ -2256,48 +2270,48 @@ class AppLocalizationsTh extends AppLocalizations {
   String get watch_order => 'ลำดับการดู';
 
   @override
-  String get watch_order_role_current => 'Current';
+  String get watch_order_role_current => 'ปัจจุบัน';
 
   @override
-  String get watch_order_role_previous => 'Previous';
+  String get watch_order_role_previous => 'ก่อนหน้า';
 
   @override
-  String get watch_order_role_next => 'Next';
+  String get watch_order_role_next => 'ถัดไป';
 
   @override
-  String get watch_order_source_release_order => 'Release order';
+  String get watch_order_source_release_order => 'ลำดับการฉาย';
 
   @override
   String watch_order_source_community_list(String name, String author) {
-    return '$name by $author';
+    return '$name โดย $author';
   }
 
   @override
   String watch_order_source_official_collection(String name) {
-    return 'Official Trakt collection: $name';
+    return 'คอลเลกชัน Trakt อย่างเป็นทางการ: $name';
   }
 
   @override
   String watch_order_source_trakt_collection(String name) {
-    return 'Trakt collection: $name';
+    return 'คอลเลกชัน Trakt: $name';
   }
 
   @override
   String watch_order_source_seasons(String title) {
-    return 'Seasons for $title';
+    return 'ซีซันของ $title';
   }
 
   @override
-  String get watch_order_select_source => 'Order source';
+  String get watch_order_select_source => 'แหล่งลำดับ';
 
   @override
   String watch_order_season(int number) {
-    return 'Season $number';
+    return 'ซีซัน $number';
   }
 
   @override
   String watch_order_episode(int number) {
-    return 'Episode $number';
+    return 'ตอนที่ $number';
   }
 
   @override
@@ -2308,7 +2322,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String recommendation_rating_accessibility(String rating) {
-    return 'Rating $rating';
+    return 'คะแนน $rating';
   }
 
   @override
@@ -3478,92 +3492,835 @@ class AppLocalizationsTh extends AppLocalizations {
   String get chapter_swipe_disabled => 'ปิดใช้งาน';
 
   @override
-  String get update_errors => 'Update errors';
+  String get update_errors => 'ข้อผิดพลาดในการอัปเดต';
 
   @override
-  String get no_update_errors => 'No update errors';
+  String get no_update_errors => 'ไม่มีข้อผิดพลาดในการอัปเดต';
 
   @override
-  String get clear_all => 'Clear all';
+  String get clear_all => 'ล้างทั้งหมด';
 
   @override
-  String get dismiss => 'Dismiss';
+  String get dismiss => 'ปิด';
 
   @override
-  String get previous_episode => 'Previous episode';
+  String get previous_episode => 'ตอนก่อนหน้า';
 
   @override
-  String get clear_logs => 'Clear logs';
+  String get clear_logs => 'ล้างบันทึก';
 
   @override
-  String get bold => 'Bold';
+  String get bold => 'ตัวหนา';
 
   @override
-  String get italic => 'Italic';
+  String get italic => 'ตัวเอียง';
 
   @override
-  String get color_yellow => 'Yellow';
+  String get color_yellow => 'เหลือง';
 
   @override
-  String get color_cyan => 'Cyan';
+  String get color_cyan => 'ฟ้าอมเขียว';
 
   @override
-  String get color_green => 'Green';
+  String get color_green => 'เขียว';
 
   @override
-  String get color_orange => 'Orange';
+  String get color_orange => 'ส้ม';
 
   @override
-  String get continue_watching => 'Continue Watching';
+  String get continue_watching => 'ดูต่อ';
 
   @override
-  String get search_your_anime => 'Search your anime';
+  String get search_your_anime => 'ค้นหาอนิเมะของคุณ';
 
   @override
-  String get category => 'Category';
+  String get category => 'หมวดหมู่';
 
   @override
-  String get hidden_categories => 'Hidden categories';
+  String get hidden_categories => 'หมวดหมู่ที่ซ่อน';
 
   @override
-  String get new_category => 'New category';
+  String get new_category => 'หมวดหมู่ใหม่';
 
   @override
-  String get local => 'Local';
+  String get local => 'ในเครื่อง';
 
   @override
-  String get tv_home_rows => 'Rows';
+  String get tv_home_rows => 'แถว';
 
   @override
-  String get genre_rows => 'Genre rows';
+  String get genre_rows => 'แถวตามประเภท';
 
   @override
-  String get share_backup_file => 'Share Mangayomi backup file';
+  String get share_backup_file => 'แชร์ไฟล์สำรอง Mangayomi';
 
   @override
-  String get close => 'Close';
+  String get close => 'ปิด';
 
   @override
-  String get migrate_source => 'Migrate source';
+  String get migrate_source => 'ย้ายแหล่ง';
 
   @override
-  String get cloudflare_bypass_proxy => 'Cloudflare bypass proxy';
+  String get cloudflare_bypass_proxy => 'พร็อกซีเลี่ยง Cloudflare';
 
   @override
-  String get custom_doh_url => 'Custom DoH URL';
+  String get custom_doh_url => 'URL DoH ที่กำหนดเอง';
 
   @override
-  String get custom_doh_url_helper => 'Must be an https DoH (JSON) endpoint';
+  String get custom_doh_url_helper => 'ต้องเป็นปลายทาง DoH (JSON) แบบ https';
 
   @override
-  String get anime_only_tv_layout => 'Anime-only TV layout';
+  String get anime_only_tv_layout => 'เลย์เอาต์ทีวีเฉพาะอนิเมะ';
 
   @override
-  String get anime_only_beta => 'Anime only (beta)';
+  String get anime_only_beta => 'อนิเมะเท่านั้น (เบต้า)';
 
   @override
-  String get tv_home_beta => 'TV home (beta)';
+  String get tv_home_beta => 'หน้าแรกทีวี (เบต้า)';
 
   @override
-  String get tv_player_beta => 'TV player (beta)';
+  String get tv_player_beta => 'ตัวเล่นทีวี (เบต้า)';
+
+  @override
+  String get mark_as_read => 'ทำเครื่องหมายว่าอ่านแล้ว';
+
+  @override
+  String get mark_as_unread => 'ทำเครื่องหมายว่ายังไม่อ่าน';
+
+  @override
+  String get bookmark => 'บุ๊กมาร์ก';
+
+  @override
+  String get remove_bookmark => 'เอาบุ๊กมาร์กออก';
+
+  @override
+  String get mark_below_as_read => 'ทำเครื่องหมายด้านล่างว่าอ่านแล้ว';
+
+  @override
+  String get previous_chapter => 'ตอนก่อนหน้า';
+
+  @override
+  String get pin => 'ปักหมุด';
+
+  @override
+  String get go_forward => 'ไปข้างหน้า';
+
+  @override
+  String get invert_selection => 'กลับการเลือก';
+
+  @override
+  String get show_password => 'แสดงรหัสผ่าน';
+
+  @override
+  String get hide_password => 'ซ่อนรหัสผ่าน';
+
+  @override
+  String get always_on_top => 'อยู่ด้านบนเสมอ';
+
+  @override
+  String get mute => 'ปิดเสียง';
+
+  @override
+  String get unmute => 'เปิดเสียง';
+
+  @override
+  String get exit_fullscreen => 'ออกจากเต็มหน้าจอ';
+
+  @override
+  String get play => 'เล่น';
+
+  @override
+  String get pause => 'หยุดชั่วคราว';
+
+  @override
+  String get switch_tracker => 'สลับตัวติดตาม';
+
+  @override
+  String get rename => 'เปลี่ยนชื่อ';
+
+  @override
+  String get show_category => 'แสดงหมวดหมู่';
+
+  @override
+  String get hide_category => 'ซ่อนหมวดหมู่';
+
+  @override
+  String get update_with_library => 'อัปเดตพร้อมคลัง';
+
+  @override
+  String get skip_updates => 'ข้ามเมื่ออัปเดตคลัง';
+
+  @override
+  String get show_repository => 'แสดงที่เก็บ';
+
+  @override
+  String get hide_repository => 'ซ่อนที่เก็บ';
+
+  @override
+  String get set_as_default => 'ตั้งเป็นค่าเริ่มต้น';
+
+  @override
+  String get change_display_mode => 'เปลี่ยนโหมดการแสดงผล';
+
+  @override
+  String get back_to_results => 'กลับไปที่ผลลัพธ์';
+
+  @override
+  String get activity => 'กิจกรรม';
+
+  @override
+  String get group_nav_destinations => 'จัดกลุ่มการนำทาง';
+
+  @override
+  String get group_nav_destinations_subtitle =>
+      'แท็บคลังหนึ่งแท็บพร้อมตัวสลับมังงะ อนิเมะ และนิยาย และแท็บกิจกรรมหนึ่งแท็บสำหรับอัปเดตและประวัติ';
+
+  @override
+  String get search_all_sources => 'ค้นหาทุกแหล่ง';
+
+  @override
+  String get continue_reading => 'อ่านต่อ';
+
+  @override
+  String get show_continue_shelf => 'แสดงเรื่องที่คุณกำลังอ่าน';
+
+  @override
+  String get show_continue_shelf_subtitle =>
+      'แถวของเรื่องที่กำลังอ่านอยู่ด้านบนของคลัง';
+
+  @override
+  String get excluded => 'ยกเว้น';
+
+  @override
+  String get remove_filter => 'เอาตัวกรองออก';
+
+  @override
+  String get current_chapter => 'ตอนปัจจุบัน';
+
+  @override
+  String get series => 'เรื่อง';
+
+  @override
+  String get chapters_read => 'ตอนที่อ่านแล้ว';
+
+  @override
+  String get search_settings => 'ค้นหาการตั้งค่า';
+
+  @override
+  String get search_settings_hint => 'พิมพ์ชื่อการตั้งค่า หรือคำจากคำอธิบาย';
+
+  @override
+  String reading_mode_for(String name) {
+    return 'โหมดการอ่านสำหรับ $name';
+  }
+
+  @override
+  String default_is(String name) {
+    return 'ค่าเริ่มต้น: $name';
+  }
+
+  @override
+  String get use_default => 'ใช้ค่าเริ่มต้น';
+
+  @override
+  String get is_the_default => 'นี่คือโหมดการอ่านเริ่มต้นของคุณ';
+
+  @override
+  String get page_layout => 'เลย์เอาต์หน้าและการซูม';
+
+  @override
+  String get reader_section_mode_summary =>
+      'โหมดเริ่มต้น สเกล พื้นหลัง โหลดล่วงหน้า เต็มหน้าจอ';
+
+  @override
+  String get reader_section_layout_summary => 'หน้ากว้าง หน้าคู่ ซูมแนวนอน';
+
+  @override
+  String get reader_section_navigation_summary =>
+      'โซนแตะ เลย์เอาต์ การซ่อนเมนู แฟลชหน้า';
+
+  @override
+  String get reader_section_swipe_summary =>
+      'สิ่งที่เกิดขึ้นเมื่อปัดตอนในรายการ';
+
+  @override
+  String get all_reader_settings => 'การตั้งค่าตัวอ่านทั้งหมด';
+
+  @override
+  String get undo => 'เลิกทำ';
+
+  @override
+  String get removed_from_history => 'ลบออกจากประวัติแล้ว';
+
+  @override
+  String n_new_chapters(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ตอนใหม่',
+      one: '1 ตอนใหม่',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get page_color_white => 'ขาว';
+
+  @override
+  String get page_color_black => 'ดำ';
+
+  @override
+  String get page_color_night => 'กลางคืน';
+
+  @override
+  String get page_color_sepia => 'ซีเปีย';
+
+  @override
+  String get page_color_coffee => 'กาแฟ';
+
+  @override
+  String get page_color_silver => 'เงิน';
+
+  @override
+  String get page_color_graphite => 'กราไฟต์';
+
+  @override
+  String get page_color_mist => 'หมอก';
+
+  @override
+  String get page_color_paper => 'กระดาษ';
+
+  @override
+  String get page_color_sky => 'ท้องฟ้า';
+
+  @override
+  String get page_color_mint => 'มิ้นต์';
+
+  @override
+  String get page_color_honey => 'น้ำผึ้ง';
+
+  @override
+  String next_episode_in(int seconds) {
+    return 'ตอนถัดไปใน $seconds วิ';
+  }
+
+  @override
+  String get stay_on_this_episode => 'อยู่ที่ตอนนี้';
+
+  @override
+  String get got_it => 'เข้าใจแล้ว';
+
+  @override
+  String get gesture_brightness => 'ปัดขึ้นหรือลงด้านซ้ายเพื่อปรับความสว่าง';
+
+  @override
+  String get gesture_volume => 'ปัดขึ้นหรือลงด้านขวาเพื่อปรับเสียง';
+
+  @override
+  String get gesture_double_tap_skip =>
+      'แตะสองครั้งที่ด้านใดด้านหนึ่งเพื่อย้อนหรือข้าม';
+
+  @override
+  String get gesture_drag_seek => 'ลากไปด้านข้างเพื่อเลื่อนในวิดีโอ';
+
+  @override
+  String get gesture_long_press_speed => 'กดค้างเพื่อเร่งความเร็ว';
+
+  @override
+  String get tap_to_continue => 'แตะที่ใดก็ได้เพื่อดำเนินการต่อ';
+
+  @override
+  String get empty_library_hint =>
+      'หาเรื่องในหน้าเรียกดูแล้วเพิ่มลงในคลังของคุณ';
+
+  @override
+  String get more_filters => 'ตัวกรองเพิ่มเติม';
+
+  @override
+  String get resume_all_downloads => 'ดาวน์โหลดทั้งหมดต่อ';
+
+  @override
+  String get download_failed => 'ล้มเหลว';
+
+  @override
+  String get download_all => 'ดาวน์โหลดทั้งหมด';
+
+  @override
+  String n_chapters_queued(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ตอนอยู่ในคิว',
+      one: '1 ตอนอยู่ในคิว',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String n_selected(int count) {
+    return 'เลือก $count รายการ';
+  }
+
+  @override
+  String get settings_general_summary => 'ภาษา การอัปเดตคลัง เครือข่าย';
+
+  @override
+  String get settings_appearance_summary => 'ธีม ชุดสี การนำทาง แบบอักษร';
+
+  @override
+  String get settings_novel_reader_summary => 'แบบอักษร สีหน้า การอ่านออกเสียง';
+
+  @override
+  String get settings_player_summary => 'การเล่น คำบรรยาย เสียง ตัวถอดรหัส';
+
+  @override
+  String get settings_downloads_summary =>
+      'ตำแหน่ง Wi-Fi เท่านั้น ดาวน์โหลดพร้อมกัน';
+
+  @override
+  String get settings_tracking_summary =>
+      'MyAnimeList, AniList, Kitsu และอื่น ๆ';
+
+  @override
+  String get settings_syncing_summary =>
+      'ซิงค์ความคืบหน้าบนเซิร์ฟเวอร์ของคุณเอง';
+
+  @override
+  String get settings_browse_summary => 'ส่วนขยาย ที่เก็บ แหล่ง';
+
+  @override
+  String get settings_security_summary => 'ล็อกแอป';
+
+  @override
+  String get settings_about_summary => 'เวอร์ชัน การอัปเดต รายงานข้อผิดพลาด';
+
+  @override
+  String minutes_left(int minutes) {
+    return '≈ เหลือ $minutes นาที';
+  }
+
+  @override
+  String get group_playback => 'การเล่น';
+
+  @override
+  String get group_subtitles => 'คำบรรยาย';
+
+  @override
+  String get group_screen => 'หน้าจอ';
+
+  @override
+  String get aniskip => 'AniSkip';
+
+  @override
+  String seconds_short(int n) {
+    return '$n วิ';
+  }
+
+  @override
+  String unknown_language_codes(String codes) {
+    return 'รหัสภาษาที่ไม่รู้จัก: $codes';
+  }
+
+  @override
+  String get group_network => 'เครือข่าย';
+
+  @override
+  String get group_discord => 'Discord';
+
+  @override
+  String invalid_url(String scheme) {
+    return 'ป้อน URL ที่ขึ้นต้นด้วย $scheme';
+  }
+
+  @override
+  String get group_cleanup => 'ล้างข้อมูล';
+
+  @override
+  String remove_entries_confirm(int n) {
+    return 'ลบ $n รายการและประวัติของรายการเหล่านั้นใช่ไหม? ไม่สามารถเลิกทำได้';
+  }
+
+  @override
+  String get group_library_maintenance => 'การดูแลคลัง';
+
+  @override
+  String get group_diagnostics => 'การวินิจฉัย';
+
+  @override
+  String get update_no_notes => 'ไม่มีบันทึกประจำรุ่น';
+
+  @override
+  String update_download_failed(String error) {
+    return 'ดาวน์โหลดล้มเหลว: $error';
+  }
+
+  @override
+  String get update_network_error => 'เกิดข้อผิดพลาดของเครือข่ายขณะดาวน์โหลด';
+
+  @override
+  String get update_write_failed => 'ไม่สามารถเขียนไฟล์ APK ได้';
+
+  @override
+  String get deselect_all => 'ยกเลิกการเลือกทั้งหมด';
+
+  @override
+  String update_failed_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'อัปเดต $count รายการไม่ได้',
+      one: 'อัปเดต 1 รายการไม่ได้',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sort_ascending => 'จากน้อยไปมาก';
+
+  @override
+  String get sort_descending => 'จากมากไปน้อย';
+
+  @override
+  String get not_downloaded => 'ยังไม่ได้ดาวน์โหลด';
+
+  @override
+  String n_tracked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ติดตาม $count รายการ',
+      one: 'ติดตาม 1 รายการ',
+      zero: 'ยังไม่มีรายการที่ติดตาม',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get no_tracker_connected => 'ไม่มีตัวติดตามที่เชื่อมต่อ';
+
+  @override
+  String get no_tracker_connected_message =>
+      'เข้าสู่ระบบบริการในการตั้งค่า › การติดตาม เพื่อดูรายการที่นี่';
+
+  @override
+  String get edit_metadata => 'แก้ไขข้อมูลเมตา';
+
+  @override
+  String get group_modes => 'โหมด';
+
+  @override
+  String get group_app => 'แอป';
+
+  @override
+  String get group_sources_services => 'แหล่งและบริการ';
+
+  @override
+  String n_sources(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count แหล่ง',
+      one: '1 แหล่ง',
+      zero: 'ไม่มีแหล่ง',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tv_player_beta_subtitle =>
+      'เปิด: ตัวเล่นที่ทำมาสำหรับรีโมตทีวี ปิด: ตัวเล่นเดิม';
+
+  @override
+  String get anime_only_beta_subtitle =>
+      'ซ่อนมังงะและนิยายทั่วทั้งแอป ปิดเพื่อแสดงทุกอย่าง';
+
+  @override
+  String download_queue_start_failed(String error) {
+    return 'ไม่สามารถเริ่มคิวดาวน์โหลดได้: $error';
+  }
+
+  @override
+  String get group_interface => 'อินเทอร์เฟซ';
+
+  @override
+  String get group_navigation => 'การนำทาง';
+
+  @override
+  String get tv_home_beta_subtitle =>
+      'หน้าแรกอนิเมะแบบแถว (ดูต่อ ตอนใหม่ หมวดหมู่) แทนตารางแบบเรียบ';
+
+  @override
+  String get cloudflare_bypass_proxy_hint =>
+      'ที่อยู่ FlareSolverr หรือ Byparr (ไม่บังคับ)';
+
+  @override
+  String get cloudflare_bypass_proxy_message =>
+      'ปลายทาง FlareSolverr หรือ Byparr เว้นว่างเพื่อปิด';
+
+  @override
+  String get group_explore => 'สำรวจ';
+
+  @override
+  String get explore_recommendations_subtitle => 'เรื่องที่คล้ายกัน';
+
+  @override
+  String get explore_related_subtitle => 'ฉบับดัดแปลง ภาคแยก และเวอร์ชันอื่น';
+
+  @override
+  String get explore_watch_order_subtitle => 'ลำดับการดูเรื่องทั้งหมด';
+
+  @override
+  String get explore_sequels_subtitle => 'ภาคต่อ จากตัวติดตามของคุณ';
+
+  @override
+  String get tap_zone_menu => 'เมนู';
+
+  @override
+  String get tap_zone_previous => 'ก่อนหน้า';
+
+  @override
+  String get tap_zone_next => 'ถัดไป';
+
+  @override
+  String get back_to_series => 'กลับไปที่เรื่อง';
+
+  @override
+  String get keyboard_shortcuts => 'แป้นพิมพ์ลัด';
+
+  @override
+  String get shortcut_previous_page => 'หน้าก่อนหน้า';
+
+  @override
+  String get shortcut_next_page => 'หน้าถัดไป';
+
+  @override
+  String get shortcut_toggle_bars => 'แสดงหรือซ่อนแถบ';
+
+  @override
+  String get shortcut_zoom_in => 'ซูมเข้า';
+
+  @override
+  String get shortcut_zoom_out => 'ซูมออก';
+
+  @override
+  String get shortcut_zoom_reset => 'พอดีหน้า';
+
+  @override
+  String get shortcut_leave => 'ออกจากตัวอ่าน';
+
+  @override
+  String get shortcut_show => 'แสดงแป้นพิมพ์ลัดเหล่านี้';
+
+  @override
+  String get color_red => 'แดง';
+
+  @override
+  String get color_blue => 'น้ำเงิน';
+
+  @override
+  String get color_opacity => 'ความทึบ';
+
+  @override
+  String get volume_keys_paging => 'พลิกหน้าด้วยปุ่มเสียง';
+
+  @override
+  String get volume_keys_paging_ios =>
+      'ระหว่างอ่าน ระดับเสียงจะถูกคงไว้ครึ่งหนึ่งเพื่อให้ใช้ได้ทั้งสองปุ่ม และกลับเป็นเหมือนเดิมเมื่อออก';
+
+  @override
+  String get volume_keys_inverted => 'สลับปุ่มเสียง';
+
+  @override
+  String get reader_orientation => 'การวางแนวหน้าจอ';
+
+  @override
+  String get orientation_free => 'ตามอุปกรณ์';
+
+  @override
+  String get orientation_portrait => 'แนวตั้ง';
+
+  @override
+  String get orientation_landscape => 'แนวนอน';
+
+  @override
+  String get screen_brightness => 'ความสว่างหน้าจอ';
+
+  @override
+  String get screen_brightness_system => 'ตามระบบ';
+
+  @override
+  String get shortcut_play_pause => 'เล่นหรือหยุดชั่วคราว';
+
+  @override
+  String shortcut_seek_back(int n) {
+    return 'ย้อน $n วิ';
+  }
+
+  @override
+  String shortcut_seek_forward(int n) {
+    return 'ข้าม $n วิ';
+  }
+
+  @override
+  String get shortcut_volume_up => 'เพิ่มเสียง';
+
+  @override
+  String get shortcut_volume_down => 'ลดเสียง';
+
+  @override
+  String get shortcut_mute => 'ปิดหรือเปิดเสียง';
+
+  @override
+  String shortcut_skip_intro(int n) {
+    return 'ข้ามช่วงเปิด ($n วิ)';
+  }
+
+  @override
+  String get shortcut_previous_frame => 'เฟรมก่อนหน้า';
+
+  @override
+  String get shortcut_next_frame => 'เฟรมถัดไป';
+
+  @override
+  String get shortcut_shaders => 'เชเดอร์ Anime4K';
+
+  @override
+  String get shortcut_shaders_off => 'ปิดเชเดอร์';
+
+  @override
+  String get autoplay_next_on => 'เล่นตอนถัดไปอัตโนมัติ: เปิด';
+
+  @override
+  String get autoplay_next_off => 'เล่นตอนถัดไปอัตโนมัติ: ปิด';
+
+  @override
+  String get subtitle_preview_sample => 'การเดินทางยังดำเนินต่อไป';
+
+  @override
+  String get text_style => 'สไตล์';
+
+  @override
+  String get code_editor => 'ตัวแก้ไขโค้ด';
+
+  @override
+  String get code_view_code => 'โค้ด';
+
+  @override
+  String get code_view_test => 'ทดสอบ';
+
+  @override
+  String get code_view_console => 'คอนโซล';
+
+  @override
+  String get code_function => 'ฟังก์ชัน';
+
+  @override
+  String get code_page => 'หน้า';
+
+  @override
+  String get code_query => 'คำค้นหา';
+
+  @override
+  String get code_url => 'URL';
+
+  @override
+  String get code_html => 'HTML';
+
+  @override
+  String get code_execute => 'รัน';
+
+  @override
+  String get code_executing => 'กำลังรัน…';
+
+  @override
+  String get code_no_result => 'ยังไม่มีผลลัพธ์';
+
+  @override
+  String get code_no_result_message => 'รันฟังก์ชันเพื่อดูว่าคืนค่าอะไร';
+
+  @override
+  String get code_console => 'คอนโซล';
+
+  @override
+  String get code_no_logs => 'ยังไม่มีบันทึก';
+
+  @override
+  String get tv_empty_anime_library => 'คลังอนิเมะของคุณว่างเปล่า';
+
+  @override
+  String get tv_empty_anime_library_hint =>
+      'เพิ่มอนิเมะจากหน้าเรียกดูเพื่อเติมหน้าแรก';
+
+  @override
+  String get browse_anime => 'เรียกดูอนิเมะ';
+
+  @override
+  String get no_episodes_yet => 'ยังไม่มีตอน';
+
+  @override
+  String get filler => 'ฟิลเลอร์';
+
+  @override
+  String get obsolete => 'ล้าสมัย';
+
+  @override
+  String every_n_days(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'ทุก $n วัน',
+      one: 'ทุกวัน',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get update_interval_unknown => 'ไม่มีการประมาณ';
+
+  @override
+  String get group_reading => 'การอ่าน';
+
+  @override
+  String get group_reading_watching => 'การอ่านและการดู';
+
+  @override
+  String get novel_reader => 'ตัวอ่านนิยาย';
+
+  @override
+  String get all_languages => 'ทุกภาษา';
+
+  @override
+  String get custom_dns_title => 'DNS ที่กำหนดเอง';
+
+  @override
+  String get custom_dns_system => 'DNS ของระบบ';
+
+  @override
+  String get calendar_format_month => 'เดือน';
+
+  @override
+  String get calendar_format_two_weeks => '2 สัปดาห์';
+
+  @override
+  String get calendar_format_week => 'สัปดาห์';
+
+  @override
+  String get read_count => 'อ่านแล้ว';
+
+  @override
+  String get watched_count => 'ดูแล้ว';
+
+  @override
+  String get source_code_error_title => 'โค้ดของแหล่งนี้ไม่ทำงาน';
+
+  @override
+  String source_code_error_failed(String what) {
+    return '$what ล้มเหลว: หน้าจอใช้ค่าสำรองเพื่อให้ใช้งานต่อได้';
+  }
+
+  @override
+  String get copy_error => 'คัดลอก';
+
+  @override
+  String get error_copied => 'คัดลอกข้อผิดพลาดแล้ว';
 }

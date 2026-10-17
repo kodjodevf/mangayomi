@@ -1,5 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 
 /// Default upper bound on the encoded byte size of a thumbnail-sized cover
@@ -51,7 +52,7 @@ Widget cachedNetworkImage({
   required BoxFit? fit,
   AlignmentGeometry? alignment,
   bool useCustomNetworkImage = true,
-  Widget errorWidget = const Icon(Icons.error, size: 50),
+  Widget errorWidget = const Icon(Symbols.error_rounded, fill: 1, size: 50),
 }) {
   return ExtendedImage(
     image: useCustomNetworkImage
@@ -80,7 +81,7 @@ Widget cachedCompressedNetworkImage({
   required BoxFit? fit,
   AlignmentGeometry? alignment,
   bool useCustomNetworkImage = true,
-  Widget errorWidget = const Icon(Icons.error, size: 50),
+  Widget errorWidget = const Icon(Symbols.error_rounded, fill: 1, size: 50),
   int maxBytes = 5 << 10,
 }) {
   return ExtendedImage(

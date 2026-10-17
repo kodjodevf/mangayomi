@@ -1,27 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
+/// Marks a feature still in beta, in the accent, as a badge.
 class BetaBadge extends StatelessWidget {
   const BetaBadge({super.key});
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final accent = context.primaryColor;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+    final tokens = context.shiori;
+    final accent = tokens.color.accentInk;
+    return DecoratedBox(
       decoration: BoxDecoration(
-        color: accent.withValues(alpha: 0.18),
-        borderRadius: BorderRadius.circular(5),
+        color: tokens.color.accent.withValues(alpha: Alphas.accentTint),
+        borderRadius: BorderRadius.circular(ShioriShape.badge),
       ),
-      child: Text(
-        l10n.beta.toUpperCase(),
-        style: TextStyle(
-          color: accent,
-          fontSize: 9,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1.0,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: ShioriSpace.s8,
+          vertical: 2,
+        ),
+        child: Text(
+          l10n.beta.toUpperCase(),
+          style: tokens.text.badge.copyWith(
+            color: accent,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );

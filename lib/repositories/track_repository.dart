@@ -99,6 +99,10 @@ class TrackRepository {
 
   List<Track> getAll() => isar.tracks.filter().idIsNotNull().findAllSync();
 
+  /// How many entries are tracked on the tracker [syncId].
+  int countBySyncId(int syncId) =>
+      isar.tracks.filter().syncIdEqualTo(syncId).countSync();
+
   List<Track> getChangedSince(int since) => isar.tracks
       .filter()
       .updatedAtGreaterThan(since, include: true)
