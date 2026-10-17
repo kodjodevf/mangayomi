@@ -87,6 +87,12 @@ class MemoryOverlay extends StatelessWidget {
           style: style,
         ),
         Text(
+          'pages ${formatBytes(latest.decodedBytes)}'
+          ' / ${formatBytes(latest.decodedMaxBytes)}'
+          '   n ${latest.decodedCount}   peak ${formatBytes(stats.peakDecodedBytes)}',
+          style: style,
+        ),
+        Text(
           'full  ${(pressure * 100).toStringAsFixed(0)}% of '
           '${stats.samples} samples',
           style: style.copyWith(color: pressureColour),

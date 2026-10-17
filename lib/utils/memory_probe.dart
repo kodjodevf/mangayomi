@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
+import 'package:mangayomi/modules/manga/reader/utils/decoded_image_budget.dart';
 
 /// One reading of what the app is holding.
 @immutable
@@ -14,6 +15,9 @@ class MemorySample {
     required this.imageCacheCount,
     required this.imageCacheMaxCount,
     required this.liveImages,
+    this.decodedBytes = 0,
+    this.decodedCount = 0,
+    this.decodedMaxBytes = 0,
   });
 
   /// Resident set size: what the operating system says the process is using.
@@ -32,6 +36,12 @@ class MemorySample {
   /// Images currently on screen. The gap between this and [imageCacheCount] is
   /// what the cache is holding purely in case you scroll back.
   final int liveImages;
+
+  /// Reader pages holding decoded pixels outside Flutter's imageCache
+  /// (see DecodedImageBudget), which the cache numbers above cannot see.
+  final int decodedBytes;
+  final int decodedCount;
+  final int decodedMaxBytes;
 
   /// How full the byte budget is, 0 to 1.
   double get cacheFullness =>
@@ -55,6 +65,9 @@ class MemorySample {
       imageCacheCount: cache.currentSize,
       imageCacheMaxCount: cache.maximumSize,
       liveImages: cache.liveImageCount,
+      decodedBytes: DecodedImageBudget.instance.totalBytes,
+      decodedCount: DecodedImageBudget.instance.count,
+      decodedMaxBytes: DecodedImageBudget.instance.maxBytes,
     );
   }
 
@@ -81,6 +94,7 @@ class MemoryStats {
     this.peakRssBytes = 0,
     this.peakCacheBytes = 0,
     this.peakCacheCount = 0,
+    this.peakDecodedBytes = 0,
     this.latest,
   });
 
@@ -89,6 +103,7 @@ class MemoryStats {
   final int peakRssBytes;
   final int peakCacheBytes;
   final int peakCacheCount;
+  final int peakDecodedBytes;
   final MemorySample? latest;
 
   /// The share of readings taken while the cache was full, 0 to 1.
@@ -109,6 +124,9 @@ class MemoryStats {
     peakCacheCount: sample.imageCacheCount > peakCacheCount
         ? sample.imageCacheCount
         : peakCacheCount,
+    peakDecodedBytes: sample.decodedBytes > peakDecodedBytes
+        ? sample.decodedBytes
+        : peakDecodedBytes,
     latest: sample,
   );
 }
