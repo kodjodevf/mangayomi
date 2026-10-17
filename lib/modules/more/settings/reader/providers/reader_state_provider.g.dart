@@ -380,251 +380,6 @@ abstract class _$BackgroundColorState extends $Notifier<BackgroundColor> {
   }
 }
 
-/// The screen's brightness while a reader is open, 1 to 100, or -1 to
-/// leave it to the system.
-
-@ProviderFor(ReaderScreenBrightnessState)
-final readerScreenBrightnessStateProvider =
-    ReaderScreenBrightnessStateProvider._();
-
-/// The screen's brightness while a reader is open, 1 to 100, or -1 to
-/// leave it to the system.
-final class ReaderScreenBrightnessStateProvider
-    extends $NotifierProvider<ReaderScreenBrightnessState, int> {
-  /// The screen's brightness while a reader is open, 1 to 100, or -1 to
-  /// leave it to the system.
-  ReaderScreenBrightnessStateProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'readerScreenBrightnessStateProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$readerScreenBrightnessStateHash();
-
-  @$internal
-  @override
-  ReaderScreenBrightnessState create() => ReaderScreenBrightnessState();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(int value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<int>(value),
-    );
-  }
-}
-
-String _$readerScreenBrightnessStateHash() =>
-    r'f9447aa65f3fadbe03ccdceb4c9bd547909c0b72';
-
-/// The screen's brightness while a reader is open, 1 to 100, or -1 to
-/// leave it to the system.
-
-abstract class _$ReaderScreenBrightnessState extends $Notifier<int> {
-  int build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<int, int>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<int, int>,
-              int,
-              Object?,
-              Object?
-            >;
-    element.handleCreate(ref, build);
-  }
-}
-
-/// How the readers hold the screen: 0 follows the device, 1 portrait,
-/// 2 landscape.
-
-@ProviderFor(ReaderOrientationState)
-final readerOrientationStateProvider = ReaderOrientationStateProvider._();
-
-/// How the readers hold the screen: 0 follows the device, 1 portrait,
-/// 2 landscape.
-final class ReaderOrientationStateProvider
-    extends $NotifierProvider<ReaderOrientationState, int> {
-  /// How the readers hold the screen: 0 follows the device, 1 portrait,
-  /// 2 landscape.
-  ReaderOrientationStateProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'readerOrientationStateProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$readerOrientationStateHash();
-
-  @$internal
-  @override
-  ReaderOrientationState create() => ReaderOrientationState();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(int value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<int>(value),
-    );
-  }
-}
-
-String _$readerOrientationStateHash() =>
-    r'656e212b6d32b2840c0797c36cfcf6cec61e9d46';
-
-/// How the readers hold the screen: 0 follows the device, 1 portrait,
-/// 2 landscape.
-
-abstract class _$ReaderOrientationState extends $Notifier<int> {
-  int build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<int, int>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<int, int>,
-              int,
-              Object?,
-              Object?
-            >;
-    element.handleCreate(ref, build);
-  }
-}
-
-/// Whether the volume buttons turn the reader's pages.
-
-@ProviderFor(VolumeKeysPagingState)
-final volumeKeysPagingStateProvider = VolumeKeysPagingStateProvider._();
-
-/// Whether the volume buttons turn the reader's pages.
-final class VolumeKeysPagingStateProvider
-    extends $NotifierProvider<VolumeKeysPagingState, bool> {
-  /// Whether the volume buttons turn the reader's pages.
-  VolumeKeysPagingStateProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'volumeKeysPagingStateProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$volumeKeysPagingStateHash();
-
-  @$internal
-  @override
-  VolumeKeysPagingState create() => VolumeKeysPagingState();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
-}
-
-String _$volumeKeysPagingStateHash() =>
-    r'e4f94ebf2781ed82b54b928838bec4097a70efd5';
-
-/// Whether the volume buttons turn the reader's pages.
-
-abstract class _$VolumeKeysPagingState extends $Notifier<bool> {
-  bool build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<bool, bool>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<bool, bool>,
-              bool,
-              Object?,
-              Object?
-            >;
-    element.handleCreate(ref, build);
-  }
-}
-
-/// Whether volume up turns forward rather than back.
-
-@ProviderFor(VolumeKeysInvertedState)
-final volumeKeysInvertedStateProvider = VolumeKeysInvertedStateProvider._();
-
-/// Whether volume up turns forward rather than back.
-final class VolumeKeysInvertedStateProvider
-    extends $NotifierProvider<VolumeKeysInvertedState, bool> {
-  /// Whether volume up turns forward rather than back.
-  VolumeKeysInvertedStateProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'volumeKeysInvertedStateProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$volumeKeysInvertedStateHash();
-
-  @$internal
-  @override
-  VolumeKeysInvertedState create() => VolumeKeysInvertedState();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
-}
-
-String _$volumeKeysInvertedStateHash() =>
-    r'392b9bbfd8dfb4532f8300b267a43876f439ab27';
-
-/// Whether volume up turns forward rather than back.
-
-abstract class _$VolumeKeysInvertedState extends $Notifier<bool> {
-  bool build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<bool, bool>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<bool, bool>,
-              bool,
-              Object?,
-              Object?
-            >;
-    element.handleCreate(ref, build);
-  }
-}
-
 @ProviderFor(UsePageTapZonesState)
 final usePageTapZonesStateProvider = UsePageTapZonesStateProvider._();
 
@@ -1429,7 +1184,7 @@ abstract class _$NovelTapToScrollState extends $Notifier<bool> {
 final showPagesNumberStateProvider = ShowPagesNumberStateProvider._();
 
 final class ShowPagesNumberStateProvider
-    extends $NotifierProvider<ShowPagesNumberState, bool> {
+    extends $NotifierProvider<ShowPagesNumberState, dynamic> {
   ShowPagesNumberStateProvider._()
     : super(
         from: null,
@@ -1449,28 +1204,28 @@ final class ShowPagesNumberStateProvider
   ShowPagesNumberState create() => ShowPagesNumberState();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
+  Override overrideWithValue(dynamic value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
+      providerOverride: $SyncValueProvider<dynamic>(value),
     );
   }
 }
 
 String _$showPagesNumberStateHash() =>
-    r'2f0da463ab4d00ba519fd662813106aaaa0a4fb8';
+    r'428ad72f71e7400e46299b0d7c549b4975d02410';
 
-abstract class _$ShowPagesNumberState extends $Notifier<bool> {
-  bool build();
+abstract class _$ShowPagesNumberState extends $Notifier<dynamic> {
+  dynamic build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<bool, bool>;
+    final ref = this.ref as $Ref<dynamic, dynamic>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<bool, bool>,
-              bool,
+              AnyNotifier<dynamic, dynamic>,
+              dynamic,
               Object?,
               Object?
             >;

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/library/tv_home/tv_home_layout.dart';
 
 /// Shown when the anime library is empty — carries a *focusable* action so the
@@ -22,24 +21,21 @@ class _EmptyHomeState extends State<TvEmptyHome> {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.shiori.color.accentInk;
-    final hint = context.shiori.color.fgMuted;
+    final accent = context.primaryColor;
+    final hint = Theme.of(context).hintColor;
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Symbols.video_library_rounded, size: 56, color: accent),
+          Icon(Icons.video_library_outlined, size: 56, color: accent),
           const SizedBox(height: 16),
-          Text(
-            context.l10n.tv_empty_anime_library,
-            style: TextStyle(
-              fontSize: ShioriType.reference.section.fontSize,
-              fontWeight: FontWeight.w600,
-            ),
+          const Text(
+            'Your anime library is empty',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
-            context.l10n.tv_empty_anime_library_hint,
+            'Add anime from Browse to fill your home',
             style: TextStyle(color: hint),
           ),
           const SizedBox(height: 22),
@@ -56,16 +52,14 @@ class _EmptyHomeState extends State<TvEmptyHome> {
             child: GestureDetector(
               onTap: _browse,
               child: AnimatedContainer(
-                duration: ShioriMotion.fast,
+                duration: const Duration(milliseconds: 120),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 26,
                   vertical: 13,
                 ),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(ShioriShape.sheet),
-                  color: _focused
-                      ? accent
-                      : accent.withValues(alpha: Alphas.focus),
+                  borderRadius: BorderRadius.circular(28),
+                  color: _focused ? accent : accent.withValues(alpha: 0.12),
                   border: Border.all(
                     color: _focused ? accent : accent.withValues(alpha: 0.5),
                     width: 1.5,
@@ -75,14 +69,14 @@ class _EmptyHomeState extends State<TvEmptyHome> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Symbols.explore_rounded,
-                      color: _focused ? ShioriColors.onFill(accent) : accent,
+                      Icons.explore_outlined,
+                      color: _focused ? Colors.white : accent,
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      context.l10n.browse_anime,
+                      'Browse anime',
                       style: TextStyle(
-                        color: _focused ? ShioriColors.onFill(accent) : accent,
+                        color: _focused ? Colors.white : accent,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

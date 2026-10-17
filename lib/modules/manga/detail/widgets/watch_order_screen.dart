@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/widgets/in_library_badge.dart';
-import 'package:shiori/shiori.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
@@ -15,6 +13,8 @@ import 'package:mangayomi/services/discovery/media_lookup_context.dart';
 import 'package:mangayomi/services/discovery/western_watch_order.dart';
 import 'package:mangayomi/services/fetch_watch_order.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/design_tokens.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:marquee/marquee.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -144,7 +144,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(isSequels ? l10n.sequels : l10n.watch_order)),
       body: Padding(
-        padding: const EdgeInsets.all(ShioriSpace.s4),
+        padding: EdgeInsetsGeometry.all(5),
         child: _isLoading
             ? const ProgressCenter()
             : Builder(
@@ -194,15 +194,15 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
                 title: Row(
                   children: [
                     _thumbnailPreview(context, sequel.image, hasData: hasData),
-                    const SizedBox(width: ShioriSpace.s16),
+                    const SizedBox(width: 15),
                     Flexible(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _buildTitle(sequel.title, context),
                           Text(
-                            "${sequel.period} · ${sequel.type} · ${sequel.episodes} ${context.l10n.episodes} · ★${sequel.score} (${sequel.scoreUsers})",
-                            style: context.shiori.caption,
+                            "${sequel.period} | ${sequel.type} | ${sequel.episodes} episodes | ★${sequel.score} (${sequel.scoreUsers})",
+                            style: const TextStyle(fontSize: 11),
                             overflow: TextOverflow.clip,
                           ),
                         ],
@@ -216,11 +216,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
         },
       );
     }
-    return ShioriEmptyState(
-      icon: Symbols.format_list_numbered_rounded,
-      title: context.l10n.no_result,
-      compact: true,
-    );
+    return Center(child: Text(context.l10n.no_result));
   }
 
   Widget _buildWatchOrder() {
@@ -233,11 +229,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
         ],
       );
     }
-    return ShioriEmptyState(
-      icon: Symbols.format_list_numbered_rounded,
-      title: context.l10n.no_result,
-      compact: true,
-    );
+    return Center(child: Text(context.l10n.no_result));
   }
 
   Future<WatchOrderPlan?> _fetchPlan({String? selectedSourceKey}) {
@@ -279,27 +271,39 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 820),
         child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(
-            ShioriSpace.s16,
-            ShioriSpace.s8,
-            ShioriSpace.s16,
-            ShioriSpace.s4,
-          ),
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 4),
           child: value.options.length < 2
               ? Align(
                   alignment: AlignmentDirectional.centerStart,
-                  child: Text(label, style: context.shiori.caption),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: context.textColor.withValues(
+                        alpha: Alphas.secondary,
+                      ),
+                    ),
+                  ),
                 )
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(label, style: context.shiori.caption),
-                    const SizedBox(height: ShioriSpace.s8),
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: context.textColor.withValues(
+                          alpha: Alphas.secondary,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
                       initialValue: value.selectedOptionKey,
                       isExpanded: true,
                       decoration: InputDecoration(
                         labelText: context.l10n.watch_order_select_source,
+                        border: const OutlineInputBorder(),
                         isDense: true,
                       ),
                       items: [
@@ -328,7 +332,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
     final l10n = context.l10n;
     return switch (source.kind) {
       WatchOrderSourceKind.animeReleaseOrder =>
-        '${l10n.watch_order_source_release_order} · ${source.service}',
+        '${l10n.watch_order_source_release_order} • ${source.service}',
       WatchOrderSourceKind.traktOfficialList =>
         l10n.watch_order_source_official_collection(
           source.name ?? source.service,
@@ -394,22 +398,17 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
         Material(
           key: isCurrent ? _currentRowKey : ValueKey(item.key),
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(ShioriShape.card),
+          borderRadius: BorderRadius.circular(12),
           clipBehavior: Clip.antiAlias,
           child: InkWell(
             autofocus: isTv && isCurrent,
-            borderRadius: BorderRadius.circular(ShioriShape.card),
-            focusColor: context.shiori.color.accent.withValues(
-              alpha: Alphas.focus,
-            ),
+            borderRadius: BorderRadius.circular(12),
+            focusColor: context.primaryColor.withValues(alpha: Alphas.focus),
             onTap: item.searchTarget == null
                 ? null
                 : () => _openWatchOrder(item),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: ShioriSpace.s8,
-                vertical: ShioriSpace.s4,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -419,10 +418,10 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
                       child: _cover(context, item.image, isCurrent: isCurrent),
                     ),
                   ),
-                  const SizedBox(width: ShioriSpace.s12),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: ShioriSpace.s8),
+                      padding: const EdgeInsets.only(top: 6),
                       child: _timelineBody(context, item),
                     ),
                   ),
@@ -433,7 +432,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
         ),
         if (hasLaterTitle)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s8),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
               children: [
                 SizedBox(
@@ -442,7 +441,9 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
                     child: Container(
                       width: 2,
                       height: 18,
-                      color: context.shiori.color.hairline,
+                      color: context.textColor.withValues(
+                        alpha: Alphas.hairline,
+                      ),
                     ),
                   ),
                 ),
@@ -460,32 +461,25 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
       key: ValueKey(item.key),
       padding: EdgeInsetsDirectional.fromSTEB(depth == 1 ? 52 : 76, 2, 8, 2),
       child: Material(
-        color: context.shiori.color.ink2,
-        borderRadius: BorderRadius.circular(ShioriShape.card),
+        color: context.textColor.withValues(alpha: Alphas.tint),
+        borderRadius: BorderRadius.circular(10),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          borderRadius: BorderRadius.circular(ShioriShape.card),
-          focusColor: context.shiori.color.accent.withValues(
-            alpha: Alphas.focus,
-          ),
+          borderRadius: BorderRadius.circular(10),
+          focusColor: context.primaryColor.withValues(alpha: Alphas.focus),
           onTap: item.searchTarget == null ? null : () => _openWatchOrder(item),
           child: Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(
-              ShioriSpace.s12,
-              ShioriSpace.s8,
-              ShioriSpace.s12,
-              ShioriSpace.s8,
-            ),
+            padding: const EdgeInsetsDirectional.fromSTEB(12, 9, 12, 9),
             child: Row(
               children: [
                 Icon(
                   item.kind == WatchOrderItemKind.episode
-                      ? Symbols.play_circle_rounded
-                      : Symbols.calendar_view_month_rounded,
+                      ? Icons.play_circle_outline
+                      : Icons.calendar_view_month_outlined,
                   size: 20,
-                  color: context.shiori.color.accentInk,
+                  color: context.primaryColor,
                 ),
-                const SizedBox(width: ShioriSpace.s12),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -494,8 +488,8 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
                         item.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: context.shiori.text.row.copyWith(
-                          color: context.shiori.color.fg,
+                        style: const TextStyle(
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -504,16 +498,17 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
                           metadata,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: context.shiori.caption,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: context.textColor.withValues(
+                              alpha: Alphas.secondary,
+                            ),
+                          ),
                         ),
                     ],
                   ),
                 ),
-                Icon(
-                  Symbols.chevron_forward_rounded,
-                  size: 18,
-                  color: context.shiori.color.fgMuted,
-                ),
+                const Icon(Icons.chevron_right, size: 18),
               ],
             ),
           ),
@@ -530,10 +525,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
           item.name,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: context.shiori.text.row.copyWith(
-            color: context.shiori.color.fg,
-            fontWeight: FontWeight.w700,
-          ),
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
         if (item.nameEnglish != null &&
             item.nameEnglish!.isNotEmpty &&
@@ -542,7 +534,10 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
             item.nameEnglish!,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: context.shiori.caption,
+            style: TextStyle(
+              fontSize: 11,
+              color: context.textColor.withValues(alpha: Alphas.secondary),
+            ),
           ),
         if (_metadata(item).isNotEmpty)
           Padding(
@@ -551,11 +546,14 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
               _metadata(item),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: context.shiori.caption,
+              style: TextStyle(
+                fontSize: 11,
+                color: context.textColor.withValues(alpha: Alphas.secondary),
+              ),
             ),
           ),
         if (item.role != WatchOrderRole.neutral) ...[
-          const SizedBox(height: ShioriSpace.s8),
+          const SizedBox(height: 7),
           _roleBadge(context, item.role),
         ],
       ],
@@ -577,7 +575,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
       parts.add('$count ${context.l10n.episodes}');
     }
     if (item.year case int year) parts.add('$year');
-    return parts.join(' · ');
+    return parts.join(' • ');
   }
 
   Widget _cover(
@@ -598,9 +596,9 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(ShioriShape.cover),
+        borderRadius: BorderRadius.circular(6),
         border: isCurrent
-            ? Border.all(color: context.shiori.color.accentInk, width: 3)
+            ? Border.all(color: context.primaryColor, width: 3)
             : null,
         image: DecorationImage(
           image: CustomExtendedNetworkImageProvider(toImgUrl(imageUrl ?? "")),
@@ -616,49 +614,67 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
     context.push('/globalSearch', extra: (target.query, target.itemType));
   }
 
-  /// Where an entry stands against the one being watched: the current one
-  /// filled in the accent, the next tinted with it, the earlier ones quiet.
   Widget _roleBadge(BuildContext context, WatchOrderRole role) {
-    final c = context.shiori.color;
-    final l10n = context.l10n;
-    final (String label, Color background, Color foreground) = switch (role) {
-      WatchOrderRole.current => (
-        l10n.watch_order_role_current,
-        c.accentInk,
-        ShioriColors.onFill(c.accentInk),
-      ),
-      WatchOrderRole.next => (
-        l10n.watch_order_role_next,
-        c.accent.withValues(alpha: Alphas.accentTint),
-        c.accentInk,
-      ),
-      WatchOrderRole.previous => (
-        l10n.watch_order_role_previous,
-        c.ink2,
-        c.fgMuted,
-      ),
-      WatchOrderRole.neutral => ('', Colors.transparent, c.fg),
-    };
-    if (role == WatchOrderRole.neutral) return const SizedBox.shrink();
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(ShioriShape.badge),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: ShioriSpace.s8,
-          vertical: ShioriSpace.s4,
-        ),
-        child: Text(
-          label,
-          style: context.shiori.text.badge.copyWith(
-            color: foreground,
-            fontWeight: FontWeight.w700,
+    final accent = context.primaryColor;
+    switch (role) {
+      case WatchOrderRole.current:
+        // Filled accent + a label colour computed for contrast against the
+        // accent (not the theme): legible on any accent hue and in either theme.
+        // The old grey / blue-grey tags washed out on dark with a light accent.
+        final onAccent = accent.computeLuminance() > 0.5
+            ? Colors.black
+            : Colors.white;
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: accent,
+            borderRadius: BorderRadius.circular(6),
           ),
-        ),
-      ),
-    );
+          child: Text(
+            context.l10n.watch_order_role_current,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: onAccent,
+            ),
+          ),
+        );
+      case WatchOrderRole.next:
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: accent.withValues(alpha: Alphas.accentTint),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            context.l10n.watch_order_role_next,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: accent,
+            ),
+          ),
+        );
+      case WatchOrderRole.previous:
+        final neutral = context.textColor;
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: neutral.withValues(alpha: Alphas.tint),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            context.l10n.watch_order_role_previous,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: neutral.withValues(alpha: Alphas.secondary),
+            ),
+          ),
+        );
+      case WatchOrderRole.neutral:
+        return const SizedBox.shrink();
+    }
   }
 
   Widget _buildTitle(String text, BuildContext context) {
@@ -667,7 +683,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
         // Make sure that (constraints.maxWidth - (35 + 5)) is strictly positive.
         final double availableWidth = constraints.maxWidth - (35 + 5);
         final textPainter = TextPainter(
-          text: TextSpan(text: text, style: context.shiori.text.row),
+          text: TextSpan(text: text, style: const TextStyle(fontSize: 13)),
           maxLines: 1,
           textDirection: TextDirection.ltr,
         )..layout(maxWidth: availableWidth > 0 ? availableWidth : 1.0); // - Download icon size (download_page_widget.dart, Widget Build SizedBox width: 35)
@@ -679,10 +695,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
             height: 20,
             child: Marquee(
               text: text,
-              style: context.shiori.text.row.copyWith(
-                color: context.shiori.color.fg,
-                fontWeight: FontWeight.w700,
-              ),
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
               blankSpace: 40.0,
               velocity: 30.0,
               pauseAfterRound: const Duration(seconds: 1),
@@ -692,10 +705,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
         } else {
           return Text(
             text,
-            style: context.shiori.text.row.copyWith(
-              color: context.shiori.color.fg,
-              fontWeight: FontWeight.w700,
-            ),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             overflow: TextOverflow.ellipsis,
           );
         }
@@ -712,7 +722,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
       toImgUrl(imageUrl ?? ""),
     );
     return Padding(
-      padding: const EdgeInsets.all(ShioriSpace.s4),
+      padding: const EdgeInsets.all(3),
       child: GestureDetector(
         onTap: () {
           _openImage(context, imageProvider);
@@ -724,9 +734,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
               height: 150,
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(ShioriShape.cover),
-                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
                   image: DecorationImage(
                     image: imageProvider,
                     fit: BoxFit.cover,
@@ -737,13 +745,19 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
             Container(
               width: 100,
               height: 150,
-              color: hasData ? inLibraryVeil : null,
+              color: hasData ? Colors.black.withValues(alpha: 0.7) : null,
             ),
             if (hasData)
-              const PositionedDirectional(
-                top: ShioriSpace.s4,
-                start: ShioriSpace.s4,
-                child: InLibraryBadge(),
+              Positioned(
+                top: 0,
+                left: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Icon(
+                    Icons.collections_bookmark,
+                    color: context.primaryColor,
+                  ),
+                ),
               ),
           ],
         ),

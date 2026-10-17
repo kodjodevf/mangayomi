@@ -1,6 +1,5 @@
 import 'package:flutter/animation.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:shiori/shiori.dart';
 
 /// Pure geometry for "pan to the edge, then turn the page" in a zoomed
 /// double-page spread: given how far the current pan already is from the
@@ -91,7 +90,7 @@ class DoublePagePanAnimator {
     final dy = controller.position.dy;
 
     final animationController = AnimationController(
-      duration: ShioriMotion.standard,
+      duration: const Duration(milliseconds: 250),
       vsync: _vsync,
     );
     _controller = animationController;

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/utils/language.dart';
 
-/// Turns a language's extensions on or off.
 class ExtensionLangListTileWidget extends StatelessWidget {
   final String lang;
   final bool value;
@@ -16,10 +14,17 @@ class ExtensionLangListTileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShioriSwitchRow(
-      title: languageName(context, lang.toLowerCase()),
-      value: value,
-      onChanged: onChanged,
+    return ListTile(
+      onTap: () {
+        onChanged(!value);
+      },
+      title: Text(completeLanguageName(lang.toLowerCase())),
+      trailing: Switch(
+        value: value,
+        onChanged: (value) {
+          onChanged(value);
+        },
+      ),
     );
   }
 }

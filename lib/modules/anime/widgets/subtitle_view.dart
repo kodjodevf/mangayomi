@@ -9,7 +9,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/anime/providers/state_provider.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -33,7 +32,7 @@ class _CustomSubtitleViewState extends ConsumerState<CustomSubtitleView> {
   late TextStyle style = widget.configuration.style;
   late TextAlign textAlign = widget.configuration.textAlign;
   late EdgeInsets padding = widget.configuration.padding;
-  late Duration duration = ShioriMotion.fast;
+  late Duration duration = const Duration(milliseconds: 100);
 
   StreamSubscription<List<String>>? subscription;
 
@@ -56,7 +55,10 @@ class _CustomSubtitleViewState extends ConsumerState<CustomSubtitleView> {
     super.dispose();
   }
 
-  void setPadding(EdgeInsets padding, {Duration duration = ShioriMotion.fast}) {
+  void setPadding(
+    EdgeInsets padding, {
+    Duration duration = const Duration(milliseconds: 100),
+  }) {
     if (this.duration != duration) {
       setState(() {
         this.duration = duration;

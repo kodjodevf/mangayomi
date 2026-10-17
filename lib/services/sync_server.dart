@@ -31,7 +31,6 @@ import 'package:mangayomi/utils/platform_utils.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/tint_surfaces_state_provider.dart';
 part 'sync_server.g.dart';
 
 /// Matches the server's SYNC.maxRowsPerEntity. A changed-row batch larger
@@ -373,7 +372,6 @@ class SyncServer extends _$SyncServer {
     ref.invalidate(blendLevelStateProvider);
     ref.invalidate(flexSchemeColorStateProvider);
     ref.invalidate(pureBlackDarkModeStateProvider);
-    ref.invalidate(tintSurfacesStateProvider);
     ref.invalidate(floatingNavigationBarStateProvider);
     ref.invalidate(l10nLocaleStateProvider);
     ref.invalidate(extensionsRepoStateProvider(ItemType.manga));

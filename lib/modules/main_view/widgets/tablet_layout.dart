@@ -1,10 +1,13 @@
+import 'dart:async';
+
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/modules/history/providers/isar_providers.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/main_view/main_screen.dart';
 
 class MainTabletLayout extends StatefulWidget {
@@ -68,19 +71,26 @@ class _TabletLayoutState extends State<MainTabletLayout> {
       now,
     );
 
-    if (isDoubleTap) {
+    final dest = widget.dest[newIndex];
+    if (isDoubleTap && dest == '/history') {
       _lastNavTapIndex = null;
       _lastNavTapTime = null;
-    } else {
-      _lastNavTapIndex = newIndex;
-      _lastNavTapTime = now;
+      final activeType = widget.ref.read(activeHistoryItemTypeStateProvider);
+      unawaited(resumeLatestHistory(context, activeType));
+      return;
     }
-    openNavDestination(
-      context,
-      widget.ref,
-      widget.dest[newIndex],
-      isDoubleTap: isDoubleTap,
-    );
+
+    final itemType = itemTypeForNavDest(dest);
+    if (isDoubleTap && itemType != null) {
+      _lastNavTapIndex = null;
+      _lastNavTapTime = null;
+      context.push('/globalSearch', extra: (null, itemType));
+      return;
+    }
+
+    _lastNavTapIndex = newIndex;
+    _lastNavTapTime = now;
+    widget.route.go(widget.dest[newIndex]);
   }
 
   @override
@@ -158,20 +168,17 @@ class _TabletLayoutState extends State<MainTabletLayout> {
           ? IconThemeData(size: 28, color: scheme.onSecondaryContainer)
           : null,
       unselectedIconTheme: isTv
-          ? IconThemeData(size: 28, color: context.shiori.color.fgMuted)
+          ? IconThemeData(size: 28, color: scheme.onSurfaceVariant)
           : null,
       selectedLabelTextStyle: isTv
           ? TextStyle(
-              fontSize: context.shiori.text.meta.fontSize,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: context.shiori.color.fg,
+              color: scheme.onSurface,
             )
           : null,
       unselectedLabelTextStyle: isTv
-          ? TextStyle(
-              fontSize: context.shiori.text.meta.fontSize,
-              color: context.shiori.color.fgMuted,
-            )
+          ? TextStyle(fontSize: 12, color: scheme.onSurfaceVariant)
           : null,
       destinations: destinations,
       selectedIndex:
@@ -205,7 +212,7 @@ class _TabletLayoutState extends State<MainTabletLayout> {
               NavigationRailTheme(
                 data: NavigationRailThemeData(
                   indicatorShape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(ShioriShape.sheet),
+                    borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 // On Android TV the rail destination's default d-pad focus
@@ -216,7 +223,7 @@ class _TabletLayoutState extends State<MainTabletLayout> {
                 child: Theme(
                   data: Theme.of(context).copyWith(
                     focusColor: isTv
-                        ? context.shiori.color.accent.withValues(alpha: 0.45)
+                        ? context.primaryColor.withValues(alpha: 0.45)
                         : Theme.of(context).focusColor,
                   ),
                   child: navRail,
@@ -270,11 +277,11 @@ class _TvRailHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.shiori.color.accentInk;
+    final accent = Theme.of(context).colorScheme.primary;
     return Padding(
       // Tight under the glyph: the first destination already carries its
       // own vertical padding, so this only needs to clear the beta pill.
-      padding: const EdgeInsets.only(top: ShioriSpace.s12, bottom: 2),
+      padding: const EdgeInsets.only(top: 14, bottom: 2),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -285,21 +292,18 @@ class _TvRailHeader extends StatelessWidget {
             color: accent,
             filterQuality: FilterQuality.medium,
           ),
-          const SizedBox(height: ShioriSpace.s8),
+          const SizedBox(height: 8),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: ShioriSpace.s8,
-              vertical: 2,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
             decoration: BoxDecoration(
               color: accent.withValues(alpha: 0.18),
-              borderRadius: BorderRadius.circular(ShioriShape.cover),
+              borderRadius: BorderRadius.circular(5),
             ),
             child: Text(
               'BETA',
               style: TextStyle(
                 color: accent,
-                fontSize: context.shiori.text.badge.fontSize,
+                fontSize: 8,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.2,
               ),

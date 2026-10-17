@@ -1,8 +1,8 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:bot_toast/bot_toast.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:html/dom.dart' hide Text;
@@ -24,13 +24,16 @@ import 'package:mangayomi/services/anime_extractors/sibnet_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/streamlare_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/streamtape_extractor.dart';
 import 'package:mangayomi/models/video.dart';
+import 'package:mangayomi/modules/widgets/toast_notification_content.dart';
 import 'package:mangayomi/services/anime_extractors/streamwish_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/vidbom_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/voe_extractor.dart';
 import 'package:mangayomi/services/anime_extractors/your_upload_extractor.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/cryptoaes/crypto_aes.dart';
 import 'package:mangayomi/utils/cryptoaes/deobfuscator.dart';
 import 'package:mangayomi/utils/cryptoaes/js_unpacker.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
@@ -891,13 +894,6 @@ const List<String> _textualDateFormats = [
   'MMM dd,yyyy',
 ];
 
-/// Shows a brief message over the app, drawn as a Shiori toast.
-///
-/// BotToast still hosts it (the overlay, the queue, swipe to dismiss, the
-/// timer); Shiori draws it. [tone] sets the icon and tint, and
-/// [hasCloudFlare] adds a "Resolve challenge" action that opens [url] in the
-/// webview. [actions] add buttons under the message; each one dismisses the
-/// toast before it runs. Returns a function that dismisses the toast.
 void Function() botToast(
   String title, {
   int second = 10,
@@ -912,58 +908,70 @@ void Function() botToast(
     DismissDirection.down,
   ],
   bool onlyOne = true,
+  bool? themeDark,
   bool showIcon = true,
   int maxLines = 6,
   VoidCallback? onDetails,
   String? detailsLabel,
-  ShioriToastTone? tone,
-  List<ShioriToastAction> actions = const [],
 }) {
   final context = navigatorKey.currentState?.context;
-  return BotToast.showCustomNotification(
+  return BotToast.showNotification(
     onlyOne: onlyOne,
     dismissDirections: dismissDirections,
     align: Alignment(alignX, alignY),
     duration: Duration(seconds: second),
     animationDuration: Duration(milliseconds: animationDuration),
     animationReverseDuration: Duration(milliseconds: animationDuration),
-    toastBuilder: (cancel) {
+    leading: showIcon
+        ? (_) => Image.asset(
+            (themeDark == null
+                ? appIconAssets[Random().nextInt(2)]
+                : appIconAssets[themeDark ? 0 : 1]),
+            height: 25,
+          )
+        : null,
+    // ListTile gives a trailing action its full intrinsic width before laying
+    // out the title. A labelled action there can squeeze an error down to one
+    // or two characters per line on a phone, so actions live below the message
+    // inside the title column instead.
+    title: (cancel) {
       void resolveChallenge() {
         cancel();
         context?.push("/mangawebview", extra: {'url': url, 'title': ''});
       }
 
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s16),
-        child: ShioriToastCard(
-          message: title,
-          fontSize: fontSize,
-          maxLines: maxLines,
-          showIcon: showIcon,
-          tone:
-              tone ??
-              (hasCloudFlare ? ShioriToastTone.warning : ShioriToastTone.info),
-          actions: [
-            if (hasCloudFlare)
-              ShioriToastAction(
-                'Resolve challenge',
-                resolveChallenge,
-                semanticLabel: 'Resolve Cloudflare challenge',
+      return ToastNotificationContent(
+        message: title,
+        fontSize: fontSize,
+        maxLines: maxLines,
+        action: hasCloudFlare
+            ? Semantics(
+                button: true,
+                label: 'Resolve Cloudflare challenge',
+                excludeSemantics: true,
+                onTap: resolveChallenge,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: context?.secondaryColor,
+                    minimumSize: const Size(0, 44),
+                  ),
+                  onPressed: resolveChallenge,
+                  label: const Text('Resolve challenge'),
+                  icon: const Icon(Icons.public, size: 18),
+                ),
               )
-            else if (onDetails != null)
-              ShioriToastAction(detailsLabel ?? 'Details', () {
-                cancel();
-                onDetails();
-              }),
-            for (final action in actions)
-              ShioriToastAction(action.label, () {
-                cancel();
-                action.onPressed();
-              }, semanticLabel: action.semanticLabel),
-          ],
-        ),
+            : onDetails == null
+            ? null
+            : TextButton(
+                onPressed: () {
+                  cancel();
+                  onDetails();
+                },
+                child: Text(detailsLabel ?? 'Details'),
+              ),
       );
     },
+    trailing: null,
   );
 }
 

@@ -1,14 +1,3 @@
-import 'package:flutter/widgets.dart';
-import 'package:mangayomi/providers/l10n_providers.dart';
-
-/// [completeLanguageName] for the interface: a language under its own name
-/// ("Français"), and the sources that cover them all in the app's language,
-/// where "All" stood in English for everyone.
-String languageName(BuildContext context, String lang) =>
-    lang.trim().toLowerCase() == 'all'
-    ? context.l10n.all_languages
-    : completeLanguageName(lang);
-
 String completeLanguageName(String lang) {
   lang = lang.toLowerCase();
   for (var element in languagesMap.entries) {

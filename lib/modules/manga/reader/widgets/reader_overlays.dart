@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/navigation_overlay.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_gesture_handler.dart';
@@ -69,7 +68,7 @@ class ReaderOverlays extends ConsumerWidget {
           child: IgnorePointer(
             child: AnimatedOpacity(
               opacity: isFlashing ? 1.0 : 0.0,
-              duration: ShioriMotion.fast,
+              duration: const Duration(milliseconds: 150),
               curve: Curves.easeInOut,
               child: Container(color: flashOverlayColor),
             ),

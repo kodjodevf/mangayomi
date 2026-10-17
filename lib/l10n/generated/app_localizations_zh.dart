@@ -261,7 +261,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String mass_migration_finding_matches(Object source, Object language) {
-    return '正在 $source · $language 中寻找匹配项';
+    return '正在 $source • $language 中寻找匹配项';
   }
 
   @override
@@ -559,19 +559,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pure_black_dark_mode => '纯黑暗模式';
-
-  @override
-  String get tint_surfaces_with_palette => '用调色板为界面着色';
-
-  @override
-  String get tint_surfaces_with_palette_subtitle =>
-      '像以前一样，用所选调色板为背景、卡片和栏着色。关闭时它们保持中性色，调色板只用于强调色。';
-
-  @override
-  String get novel_reader_font => '小说阅读器字体';
-
-  @override
-  String get novel_reader_font_subtitle => '供小说阅读器的“默认”字体使用。应用的其他部分使用 Figtree。';
 
   @override
   String get timestamp => '时间戳';
@@ -1160,10 +1147,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get reorder_navigation_description => '根据需要重新排序和切换每个导航。';
 
   @override
-  String get floating_navigation_bar => '悬浮导航栏';
+  String get floating_navigation_bar => 'Floating navigation bar';
 
   @override
-  String get floating_navigation_bar_description => '使用悬浮胶囊代替固定的导航栏。';
+  String get floating_navigation_bar_description =>
+      'Use a floating capsule instead of the standard attached navigation bar.';
 
   @override
   String get full_screen_player => '使用全屏';
@@ -1951,10 +1939,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get add_repo => '添加库';
 
   @override
-  String get add_repo_sources_to_add => '将添加以下扩展列表：';
+  String get add_repo_sources_to_add => 'Extension lists that will be added:';
 
   @override
-  String get add_repo_warning => '这些仓库中的扩展会在应用内运行。请只添加你信任的仓库。';
+  String get add_repo_warning =>
+      'Extensions from these repositories run inside the app. Only add repositories you trust.';
 
   @override
   String get genre_search_library => '按类别搜索图书馆';
@@ -2095,7 +2084,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get custom_buttons_add_warning =>
-      '此按钮会在视频播放器中运行下面的 Lua 代码，这些代码可以访问你的文件并运行程序。只有在你信任此链接的来源时才添加。';
+      'This button runs the Lua code below in the video player, which can access your files and run programs. Only add it if you trust where this link came from.';
 
   @override
   String n_days(Object n) {
@@ -2202,48 +2191,48 @@ class AppLocalizationsZh extends AppLocalizations {
   String get watch_order => '观看顺序';
 
   @override
-  String get watch_order_role_current => '当前';
+  String get watch_order_role_current => 'Current';
 
   @override
-  String get watch_order_role_previous => '上一部';
+  String get watch_order_role_previous => 'Previous';
 
   @override
-  String get watch_order_role_next => '下一部';
+  String get watch_order_role_next => 'Next';
 
   @override
-  String get watch_order_source_release_order => '上映顺序';
+  String get watch_order_source_release_order => 'Release order';
 
   @override
   String watch_order_source_community_list(String name, String author) {
-    return '$author 的 $name';
+    return '$name by $author';
   }
 
   @override
   String watch_order_source_official_collection(String name) {
-    return 'Trakt 官方合集：$name';
+    return 'Official Trakt collection: $name';
   }
 
   @override
   String watch_order_source_trakt_collection(String name) {
-    return 'Trakt 合集：$name';
+    return 'Trakt collection: $name';
   }
 
   @override
   String watch_order_source_seasons(String title) {
-    return '$title 的各季';
+    return 'Seasons for $title';
   }
 
   @override
-  String get watch_order_select_source => '顺序来源';
+  String get watch_order_select_source => 'Order source';
 
   @override
   String watch_order_season(int number) {
-    return '第 $number 季';
+    return 'Season $number';
   }
 
   @override
   String watch_order_episode(int number) {
-    return '第 $number 集';
+    return 'Episode $number';
   }
 
   @override
@@ -2254,7 +2243,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String recommendation_rating_accessibility(String rating) {
-    return '评分 $rating';
+    return 'Rating $rating';
   }
 
   @override
@@ -3374,819 +3363,92 @@ class AppLocalizationsZh extends AppLocalizations {
   String get chapter_swipe_disabled => '已禁用';
 
   @override
-  String get update_errors => '更新错误';
+  String get update_errors => 'Update errors';
 
   @override
-  String get no_update_errors => '没有更新错误';
+  String get no_update_errors => 'No update errors';
 
   @override
-  String get clear_all => '全部清除';
+  String get clear_all => 'Clear all';
 
   @override
-  String get dismiss => '关闭';
+  String get dismiss => 'Dismiss';
 
   @override
-  String get previous_episode => '上一集';
+  String get previous_episode => 'Previous episode';
 
   @override
-  String get clear_logs => '清除日志';
+  String get clear_logs => 'Clear logs';
 
   @override
-  String get bold => '粗体';
+  String get bold => 'Bold';
 
   @override
-  String get italic => '斜体';
+  String get italic => 'Italic';
 
   @override
-  String get color_yellow => '黄色';
+  String get color_yellow => 'Yellow';
 
   @override
-  String get color_cyan => '青色';
+  String get color_cyan => 'Cyan';
 
   @override
-  String get color_green => '绿色';
+  String get color_green => 'Green';
 
   @override
-  String get color_orange => '橙色';
+  String get color_orange => 'Orange';
 
   @override
-  String get continue_watching => '继续观看';
+  String get continue_watching => 'Continue Watching';
 
   @override
-  String get search_your_anime => '搜索你的动画';
+  String get search_your_anime => 'Search your anime';
 
   @override
-  String get category => '分类';
+  String get category => 'Category';
 
   @override
-  String get hidden_categories => '隐藏的分类';
+  String get hidden_categories => 'Hidden categories';
 
   @override
-  String get new_category => '新建分类';
+  String get new_category => 'New category';
 
   @override
-  String get local => '本地';
+  String get local => 'Local';
 
   @override
-  String get tv_home_rows => '行';
+  String get tv_home_rows => 'Rows';
 
   @override
-  String get genre_rows => '类型行';
+  String get genre_rows => 'Genre rows';
 
   @override
-  String get share_backup_file => '分享 Mangayomi 备份';
+  String get share_backup_file => 'Share Mangayomi backup file';
 
   @override
-  String get close => '关闭';
+  String get close => 'Close';
 
   @override
-  String get migrate_source => '迁移来源';
+  String get migrate_source => 'Migrate source';
 
   @override
-  String get cloudflare_bypass_proxy => 'Cloudflare 绕过代理';
+  String get cloudflare_bypass_proxy => 'Cloudflare bypass proxy';
 
   @override
-  String get custom_doh_url => '自定义 DoH 地址';
+  String get custom_doh_url => 'Custom DoH URL';
 
   @override
-  String get custom_doh_url_helper => '必须是 https 的 DoH（JSON）端点';
+  String get custom_doh_url_helper => 'Must be an https DoH (JSON) endpoint';
 
   @override
-  String get anime_only_tv_layout => '仅动画的电视布局';
+  String get anime_only_tv_layout => 'Anime-only TV layout';
 
   @override
-  String get anime_only_beta => '仅动画（测试版）';
+  String get anime_only_beta => 'Anime only (beta)';
 
   @override
-  String get tv_home_beta => '电视主页（测试版）';
+  String get tv_home_beta => 'TV home (beta)';
 
   @override
-  String get tv_player_beta => '电视播放器（测试版）';
-
-  @override
-  String get mark_as_read => '标为已读';
-
-  @override
-  String get mark_as_unread => '标为未读';
-
-  @override
-  String get bookmark => '书签';
-
-  @override
-  String get remove_bookmark => '移除书签';
-
-  @override
-  String get mark_below_as_read => '将下方标为已读';
-
-  @override
-  String get previous_chapter => '上一章';
-
-  @override
-  String get pin => '固定';
-
-  @override
-  String get go_forward => '前进';
-
-  @override
-  String get invert_selection => '反选';
-
-  @override
-  String get show_password => '显示密码';
-
-  @override
-  String get hide_password => '隐藏密码';
-
-  @override
-  String get always_on_top => '窗口置顶';
-
-  @override
-  String get mute => '静音';
-
-  @override
-  String get unmute => '取消静音';
-
-  @override
-  String get exit_fullscreen => '退出全屏';
-
-  @override
-  String get play => '播放';
-
-  @override
-  String get pause => '暂停';
-
-  @override
-  String get switch_tracker => '切换追踪器';
-
-  @override
-  String get rename => '重命名';
-
-  @override
-  String get show_category => '显示分类';
-
-  @override
-  String get hide_category => '隐藏分类';
-
-  @override
-  String get update_with_library => '随书库一起更新';
-
-  @override
-  String get skip_updates => '更新书库时跳过';
-
-  @override
-  String get show_repository => '显示仓库';
-
-  @override
-  String get hide_repository => '隐藏仓库';
-
-  @override
-  String get set_as_default => '设为默认';
-
-  @override
-  String get change_display_mode => '更改显示模式';
-
-  @override
-  String get back_to_results => '返回结果';
-
-  @override
-  String get activity => '动态';
-
-  @override
-  String get group_nav_destinations => '合并导航';
-
-  @override
-  String get group_nav_destinations_subtitle =>
-      '一个可在漫画、动画和小说之间切换的“书库”标签，以及一个包含更新和历史的“动态”标签';
-
-  @override
-  String get search_all_sources => '搜索所有来源';
-
-  @override
-  String get continue_reading => '继续';
-
-  @override
-  String get show_continue_shelf => '显示正在阅读的作品';
-
-  @override
-  String get show_continue_shelf_subtitle => '在书库顶部显示一行进行中的系列';
-
-  @override
-  String get excluded => '已排除';
-
-  @override
-  String get remove_filter => '移除筛选';
-
-  @override
-  String get current_chapter => '当前章节';
-
-  @override
-  String get series => '系列';
-
-  @override
-  String get chapters_read => '已读章节';
-
-  @override
-  String get search_settings => '搜索设置';
-
-  @override
-  String get search_settings_hint => '输入设置名称，或其说明中的一个词';
-
-  @override
-  String reading_mode_for(String name) {
-    return '$name 的阅读模式';
-  }
-
-  @override
-  String default_is(String name) {
-    return '默认：$name';
-  }
-
-  @override
-  String get use_default => '使用默认';
-
-  @override
-  String get is_the_default => '这是你的默认阅读模式';
-
-  @override
-  String get page_layout => '页面布局与缩放';
-
-  @override
-  String get reader_section_mode_summary => '默认模式、缩放、背景、预加载、全屏';
-
-  @override
-  String get reader_section_layout_summary => '宽页面、双页、横屏缩放';
-
-  @override
-  String get reader_section_navigation_summary => '点击区域、布局、隐藏菜单、翻页闪烁';
-
-  @override
-  String get reader_section_swipe_summary => '在列表中滑动章节时的操作';
-
-  @override
-  String get all_reader_settings => '所有阅读器设置';
-
-  @override
-  String get undo => '撤销';
-
-  @override
-  String get removed_from_history => '已从历史中移除';
-
-  @override
-  String n_new_chapters(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count 个新章节',
-      one: '1 个新章节',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get page_color_white => '白色';
-
-  @override
-  String get page_color_black => '黑色';
-
-  @override
-  String get page_color_night => '夜间';
-
-  @override
-  String get page_color_sepia => '棕褐';
-
-  @override
-  String get page_color_coffee => '咖啡';
-
-  @override
-  String get page_color_silver => '银色';
-
-  @override
-  String get page_color_graphite => '石墨';
-
-  @override
-  String get page_color_mist => '薄雾';
-
-  @override
-  String get page_color_paper => '纸张';
-
-  @override
-  String get page_color_sky => '天空';
-
-  @override
-  String get page_color_mint => '薄荷';
-
-  @override
-  String get page_color_honey => '蜂蜜';
-
-  @override
-  String next_episode_in(int seconds) {
-    return '$seconds 秒后播放下一集';
-  }
-
-  @override
-  String get stay_on_this_episode => '停留在本集';
-
-  @override
-  String get got_it => '知道了';
-
-  @override
-  String get gesture_brightness => '在左侧上下滑动调节亮度';
-
-  @override
-  String get gesture_volume => '在右侧上下滑动调节音量';
-
-  @override
-  String get gesture_double_tap_skip => '双击一侧可后退或快进';
-
-  @override
-  String get gesture_drag_seek => '左右拖动以调整播放位置';
-
-  @override
-  String get gesture_long_press_speed => '长按加速播放';
-
-  @override
-  String get tap_to_continue => '点按任意位置继续';
-
-  @override
-  String get empty_library_hint => '在“浏览”中找到系列并添加到书库。';
-
-  @override
-  String get more_filters => '更多筛选';
-
-  @override
-  String get resume_all_downloads => '继续所有下载';
-
-  @override
-  String get download_failed => '失败';
-
-  @override
-  String get download_all => '全部下载';
-
-  @override
-  String n_chapters_queued(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count 章已加入队列',
-      one: '1 章已加入队列',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String n_selected(int count) {
-    return '已选择 $count 项';
-  }
-
-  @override
-  String get settings_general_summary => '语言、书库更新、网络';
-
-  @override
-  String get settings_appearance_summary => '主题、调色板、导航、字体';
-
-  @override
-  String get settings_novel_reader_summary => '字体、页面颜色、朗读';
-
-  @override
-  String get settings_player_summary => '播放、字幕、音频、解码器';
-
-  @override
-  String get settings_downloads_summary => '位置、仅限 Wi-Fi、同时下载';
-
-  @override
-  String get settings_tracking_summary => 'MyAnimeList、AniList、Kitsu 等';
-
-  @override
-  String get settings_syncing_summary => '在你自己的服务器上同步进度';
-
-  @override
-  String get settings_browse_summary => '扩展、仓库、来源';
-
-  @override
-  String get settings_security_summary => '应用锁';
-
-  @override
-  String get settings_about_summary => '版本、更新、错误报告';
-
-  @override
-  String minutes_left(int minutes) {
-    return '约剩 $minutes 分钟';
-  }
-
-  @override
-  String get group_playback => '播放';
-
-  @override
-  String get group_subtitles => '字幕';
-
-  @override
-  String get group_screen => '屏幕';
-
-  @override
-  String get aniskip => 'AniSkip';
-
-  @override
-  String seconds_short(int n) {
-    return '$n 秒';
-  }
-
-  @override
-  String unknown_language_codes(String codes) {
-    return '未知语言代码：$codes';
-  }
-
-  @override
-  String get group_network => '网络';
-
-  @override
-  String get group_discord => 'Discord';
-
-  @override
-  String invalid_url(String scheme) {
-    return '请输入以 $scheme 开头的网址';
-  }
-
-  @override
-  String get group_cleanup => '清理';
-
-  @override
-  String remove_entries_confirm(int n) {
-    return '要移除 $n 个条目及其历史吗？此操作无法撤销。';
-  }
-
-  @override
-  String get group_library_maintenance => '书库维护';
-
-  @override
-  String get group_diagnostics => '诊断';
-
-  @override
-  String get update_no_notes => '没有发行说明。';
-
-  @override
-  String update_download_failed(String error) {
-    return '下载失败：$error';
-  }
-
-  @override
-  String get update_network_error => '下载时发生网络错误。';
-
-  @override
-  String get update_write_failed => '无法写入 APK 文件。';
-
-  @override
-  String get deselect_all => '取消全选';
-
-  @override
-  String update_failed_count(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count 个条目无法更新',
-      one: '1 个条目无法更新',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get sort_ascending => '升序';
-
-  @override
-  String get sort_descending => '降序';
-
-  @override
-  String get not_downloaded => '未下载';
-
-  @override
-  String n_tracked(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '正在追踪 $count 个条目',
-      one: '正在追踪 1 个条目',
-      zero: '尚未追踪任何条目',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get no_tracker_connected => '未连接追踪器';
-
-  @override
-  String get no_tracker_connected_message => '在 设置 › 追踪 中登录服务后，其列表会显示在这里。';
-
-  @override
-  String get edit_metadata => '编辑元数据';
-
-  @override
-  String get group_modes => '模式';
-
-  @override
-  String get group_app => '应用';
-
-  @override
-  String get group_sources_services => '来源与服务';
-
-  @override
-  String n_sources(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count 个来源',
-      one: '1 个来源',
-      zero: '没有来源',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get tv_player_beta_subtitle => '开启：为电视遥控器设计的播放器。关闭：原来的播放器。';
-
-  @override
-  String get anime_only_beta_subtitle => '在整个应用中隐藏漫画和小说。关闭即可显示全部。';
-
-  @override
-  String download_queue_start_failed(String error) {
-    return '无法启动下载队列：$error';
-  }
-
-  @override
-  String get group_interface => '界面';
-
-  @override
-  String get group_navigation => '导航';
-
-  @override
-  String get tv_home_beta_subtitle => '按行排列的动画主页（继续观看、新剧集、分类），代替平铺网格';
-
-  @override
-  String get cloudflare_bypass_proxy_hint => '可选的 FlareSolverr 或 Byparr 地址';
-
-  @override
-  String get cloudflare_bypass_proxy_message =>
-      'FlareSolverr 或 Byparr 端点。留空即关闭。';
-
-  @override
-  String get group_explore => '探索';
-
-  @override
-  String get explore_recommendations_subtitle => '与此类似的作品';
-
-  @override
-  String get explore_related_subtitle => '其改编、衍生作品和其他版本';
-
-  @override
-  String get explore_watch_order_subtitle => '观看完整故事的顺序';
-
-  @override
-  String get explore_sequels_subtitle => '来自追踪器的后续作品';
-
-  @override
-  String get tap_zone_menu => '菜单';
-
-  @override
-  String get tap_zone_previous => '上一页';
-
-  @override
-  String get tap_zone_next => '下一页';
-
-  @override
-  String get back_to_series => '返回系列';
-
-  @override
-  String get keyboard_shortcuts => '键盘快捷键';
-
-  @override
-  String get shortcut_previous_page => '上一页';
-
-  @override
-  String get shortcut_next_page => '下一页';
-
-  @override
-  String get shortcut_toggle_bars => '显示或隐藏栏';
-
-  @override
-  String get shortcut_zoom_in => '放大';
-
-  @override
-  String get shortcut_zoom_out => '缩小';
-
-  @override
-  String get shortcut_zoom_reset => '适应页面';
-
-  @override
-  String get shortcut_leave => '退出阅读器';
-
-  @override
-  String get shortcut_show => '显示这些快捷键';
-
-  @override
-  String get color_red => '红色';
-
-  @override
-  String get color_blue => '蓝色';
-
-  @override
-  String get color_opacity => '不透明度';
-
-  @override
-  String get volume_keys_paging => '用音量键翻页';
-
-  @override
-  String get volume_keys_paging_ios => '阅读时音量保持在一半，以便两个按键都能使用，离开时恢复原样。';
-
-  @override
-  String get volume_keys_inverted => '反转音量键';
-
-  @override
-  String get reader_orientation => '屏幕方向';
-
-  @override
-  String get orientation_free => '跟随设备';
-
-  @override
-  String get orientation_portrait => '竖屏';
-
-  @override
-  String get orientation_landscape => '横屏';
-
-  @override
-  String get screen_brightness => '屏幕亮度';
-
-  @override
-  String get screen_brightness_system => '跟随系统';
-
-  @override
-  String get shortcut_play_pause => '播放或暂停';
-
-  @override
-  String shortcut_seek_back(int n) {
-    return '后退 $n 秒';
-  }
-
-  @override
-  String shortcut_seek_forward(int n) {
-    return '前进 $n 秒';
-  }
-
-  @override
-  String get shortcut_volume_up => '调高音量';
-
-  @override
-  String get shortcut_volume_down => '调低音量';
-
-  @override
-  String get shortcut_mute => '静音或取消静音';
-
-  @override
-  String shortcut_skip_intro(int n) {
-    return '跳过片头（$n 秒）';
-  }
-
-  @override
-  String get shortcut_previous_frame => '上一帧';
-
-  @override
-  String get shortcut_next_frame => '下一帧';
-
-  @override
-  String get shortcut_shaders => 'Anime4K 着色器';
-
-  @override
-  String get shortcut_shaders_off => '关闭着色器';
-
-  @override
-  String get autoplay_next_on => '自动播放下一集：开';
-
-  @override
-  String get autoplay_next_off => '自动播放下一集：关';
-
-  @override
-  String get subtitle_preview_sample => '旅程仍在继续。';
-
-  @override
-  String get text_style => '样式';
-
-  @override
-  String get code_editor => '代码编辑器';
-
-  @override
-  String get code_view_code => '代码';
-
-  @override
-  String get code_view_test => '测试';
-
-  @override
-  String get code_view_console => '控制台';
-
-  @override
-  String get code_function => '函数';
-
-  @override
-  String get code_page => '页码';
-
-  @override
-  String get code_query => '查询';
-
-  @override
-  String get code_url => 'URL';
-
-  @override
-  String get code_html => 'HTML';
-
-  @override
-  String get code_execute => '运行';
-
-  @override
-  String get code_executing => '正在运行…';
-
-  @override
-  String get code_no_result => '暂无结果';
-
-  @override
-  String get code_no_result_message => '运行一个函数，查看它返回的内容。';
-
-  @override
-  String get code_console => '控制台';
-
-  @override
-  String get code_no_logs => '暂无日志';
-
-  @override
-  String get tv_empty_anime_library => '你的动画书库是空的';
-
-  @override
-  String get tv_empty_anime_library_hint => '从“浏览”添加动画来充实你的主页';
-
-  @override
-  String get browse_anime => '浏览动画';
-
-  @override
-  String get no_episodes_yet => '暂无剧集';
-
-  @override
-  String get filler => '填充集';
-
-  @override
-  String get obsolete => '已过时';
-
-  @override
-  String every_n_days(int n) {
-    String _temp0 = intl.Intl.pluralLogic(
-      n,
-      locale: localeName,
-      other: '每 $n 天',
-      one: '每天',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get update_interval_unknown => '无法估计';
-
-  @override
-  String get group_reading => '阅读';
-
-  @override
-  String get group_reading_watching => '阅读与观看';
-
-  @override
-  String get novel_reader => '小说阅读器';
-
-  @override
-  String get all_languages => '所有语言';
-
-  @override
-  String get custom_dns_title => '自定义 DNS';
-
-  @override
-  String get custom_dns_system => '系统 DNS';
-
-  @override
-  String get calendar_format_month => '月';
-
-  @override
-  String get calendar_format_two_weeks => '两周';
-
-  @override
-  String get calendar_format_week => '周';
-
-  @override
-  String get read_count => '已读';
-
-  @override
-  String get watched_count => '已看';
-
-  @override
-  String get source_code_error_title => '此来源的代码未能运行';
-
-  @override
-  String source_code_error_failed(String what) {
-    return '$what 失败：界面已改用备用值，以便继续使用';
-  }
-
-  @override
-  String get copy_error => '复制';
-
-  @override
-  String get error_copied => '已复制错误';
+  String get tv_player_beta => 'TV player (beta)';
 }

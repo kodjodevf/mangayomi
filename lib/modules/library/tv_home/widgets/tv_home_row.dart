@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -26,10 +25,7 @@ class TvHomeRow extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(22, 0, 22, 10),
             child: Text(
               title,
-              style: TextStyle(
-                fontSize: ShioriType.reference.section.fontSize,
-                fontWeight: FontWeight.w700,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
             ),
           ),
           SizedBox(

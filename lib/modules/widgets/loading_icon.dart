@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/utils/constant.dart';
 
 /// The full screen shown while the app finishes starting up.
@@ -13,12 +12,13 @@ class LoadingIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: context.shiori.color.ink0,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
         child: Image.asset(
           appIconAssets[2],
-          color: context.shiori.color.fg,
+          color: theme.colorScheme.onSurface,
           fit: BoxFit.cover,
           height: 100,
         ),

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/widgets/error_state.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -65,18 +63,17 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         title: Text(l10n.calendar),
         actions: [
           IconButton(
-            icon: const Icon(Symbols.help_rounded),
+            icon: const Icon(Icons.help_outline),
             tooltip: l10n.calendar_info,
             onPressed: () {
               showDialog(
                 context: context,
-                builder: (ctx) => ShioriDialog(
-                  title: l10n.calendar,
+                builder: (ctx) => AlertDialog(
                   content: Text(l10n.calendar_info),
                   actions: [
-                    ShioriButton(
-                      label: MaterialLocalizations.of(ctx).okButtonLabel,
+                    TextButton(
                       onPressed: () => Navigator.of(ctx).pop(),
+                      child: Text(MaterialLocalizations.of(ctx).okButtonLabel),
                     ),
                   ],
                 ),
@@ -99,10 +96,14 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
           return _buildContent(items, events);
         },
-        error: (error, stackTrace) => ErrorState(
-          message: l10n.calendar_no_data,
-          detail: error.toString(),
-        ),
+        error: (error, stackTrace) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(l10n.calendar_no_data, textAlign: TextAlign.center),
+            ),
+          );
+        },
         loading: () => const ProgressCenter(),
       ),
     );
@@ -117,18 +118,32 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         if (_visibleTypes.length > 1)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: ShioriSpace.s16,
-                vertical: ShioriSpace.s8,
-              ),
-              // The same switcher as the library's media.
-              child: ShioriSegmentedControl<ItemType>(
-                segments: [
-                  for (final type in _visibleTypes)
-                    ShioriSegment(value: type, label: type.localized(l10n)),
-                ],
-                selected: itemType ?? _visibleTypes.first,
-                onSelected: (type) => setState(() => itemType = type),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: SegmentedButton(
+                emptySelectionAllowed: true,
+                showSelectedIcon: false,
+                style: TextButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+                segments: _visibleTypes.map((type) {
+                  return ButtonSegment(
+                    value: type.index,
+                    label: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Text(type.localized(l10n)),
+                    ),
+                  );
+                }).toList(),
+                selected: {itemType?.index},
+                onSelectionChanged: (newSelection) {
+                  if (newSelection.isNotEmpty && newSelection.first != null) {
+                    setState(() {
+                      itemType = ItemType.values[newSelection.first!];
+                    });
+                  }
+                },
               ),
             ),
           ),
@@ -146,15 +161,21 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           ),
         ),
 
-        const SliverToBoxAdapter(child: SizedBox(height: ShioriSpace.s8)),
+        const SliverToBoxAdapter(child: SizedBox(height: 8)),
 
         // All upcoming items (date headers + manga tiles)
         if (items.isEmpty)
           SliverToBoxAdapter(
-            child: ShioriEmptyState(
-              icon: Symbols.event_busy_rounded,
-              title: l10n.calendar_no_data,
-              compact: true,
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Center(
+                child: Text(
+                  l10n.calendar_no_data,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
             ),
           )
         else
@@ -176,7 +197,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             }, childCount: items.length),
           ),
 
-        const SliverToBoxAdapter(child: SizedBox(height: ShioriSpace.s16)),
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
       ],
     );
   }
@@ -187,7 +208,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     if (key?.currentContext != null) {
       Scrollable.ensureVisible(
         key!.currentContext!,
-        duration: ShioriMotion.enter,
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     }
@@ -301,17 +322,33 @@ class _DateHeading extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // A day's group as the history and the updates title theirs.
-    return ShioriSectionHeader(
-      overline: true,
-      title: dateFormat(
-        date.millisecondsSinceEpoch.toString(),
-        context: context,
-        ref: ref,
-        useRelativeTimesTamps: true,
-        showInDaysFuture: true,
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        children: [
+          Text(
+            dateFormat(
+              date.millisecondsSinceEpoch.toString(),
+              context: context,
+              ref: ref,
+              useRelativeTimesTamps: true,
+              showInDaysFuture: true,
+            ),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Badge(
+            backgroundColor: theme.colorScheme.primary,
+            textColor: theme.colorScheme.onPrimary,
+            label: Text('$mangaCount'),
+          ),
+        ],
       ),
-      count: mangaCount,
     );
   }
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
-/// The inside of a bottom sheet (open it with showShioriSheet) offering to set an image as the cover, share it or save it
+/// Bottom sheet offering to set an image as the cover, share it or save it
 /// to the gallery. Used for reader pages and for player screenshots.
 ///
 /// Each action gets the sheet's own context, to pop it or to anchor the
@@ -25,34 +26,55 @@ class ImageActionsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // The sheet (showShioriSheet) brings the handle and the surface.
-    return SafeArea(
-      top: false,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
+    return SuperListView(
+      shrinkWrap: true,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            color: context.themeData.scaffoldBackgroundColor,
+          ),
+          child: Column(
             children: [
-              _ActionButton(
-                label: context.l10n.set_as_cover,
-                icon: Symbols.image_rounded,
-                onPressed: () => onSetCover(context),
+              // Handle bar
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: 7,
+                  width: 35,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(6),
+                    color: context.secondaryColor.withValues(alpha: 0.4),
+                  ),
+                ),
               ),
-              _ActionButton(
-                label: context.l10n.share,
-                icon: Symbols.share_rounded,
-                onPressed: () => onShare(context),
+              Row(
+                children: [
+                  _ActionButton(
+                    label: context.l10n.set_as_cover,
+                    icon: Icons.image_outlined,
+                    onPressed: () => onSetCover(context),
+                  ),
+                  _ActionButton(
+                    label: context.l10n.share,
+                    icon: Icons.share_outlined,
+                    onPressed: () => onShare(context),
+                  ),
+                  _ActionButton(
+                    label: context.l10n.save,
+                    icon: Icons.save_outlined,
+                    onPressed: () => onSave(context),
+                  ),
+                ],
               ),
-              _ActionButton(
-                label: context.l10n.save,
-                icon: Symbols.save_rounded,
-                onPressed: () => onSave(context),
-              ),
+              ?footer,
             ],
           ),
-          ?footer,
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -72,31 +94,20 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.all(ShioriSpace.s16),
-        child: Material(
-          type: MaterialType.transparency,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ShioriShape.card),
+        padding: const EdgeInsets.all(15),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            shadowColor: Colors.transparent,
           ),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: onPressed,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s12),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: ShioriSpace.s4,
-                children: [
-                  Icon(icon, color: context.shiori.color.accentInk),
-                  Text(
-                    label,
-                    style: context.shiori.text.meta.copyWith(
-                      color: context.shiori.color.fg,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          onPressed: onPressed,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(padding: const EdgeInsets.all(4), child: Icon(icon)),
+              Text(label),
+            ],
           ),
         ),
       ),

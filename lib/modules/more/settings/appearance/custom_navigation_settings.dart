@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/l10n/generated/app_localizations.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/main_view/nav_groups.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/appearance_screen.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -27,55 +24,55 @@ class _CustomNavigationSettingsState
     return Scaffold(
       appBar: AppBar(title: Text(l10n.reorder_navigation)),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s16),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         child: ReorderableListView.builder(
-          header: ShioriSettingsGroup(
-            children: [
-              ShioriSwitchRow(
-                title: l10n.anime_only_tv_layout,
-                subtitle: l10n.anime_only_beta_subtitle,
-                value: ref.watch(animeOnlyTvModeProvider),
-                onChanged: (v) =>
-                    ref.read(animeOnlyTvModeProvider.notifier).set(v),
-              ),
-              ShioriSwitchRow(
-                title: l10n.group_nav_destinations,
-                subtitle: l10n.group_nav_destinations_subtitle,
-                value: ref.watch(navGroupingProvider),
-                onChanged: (v) => ref.read(navGroupingProvider.notifier).set(v),
-              ),
-              // The older, mobile-only way of folding the libraries; the
-              // grouping above supersedes it while it is on.
-              if (!ref.watch(navGroupingProvider))
-                ShioriSwitchRow(
-                  title: l10n.merge_library_nav_mobile,
-                  value: mergeLibraryNavMobile,
-                  onChanged: (v) => ref
-                      .read(mergeLibraryNavMobileStateProvider.notifier)
-                      .set(v),
+          header: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Column(
+              children: [
+                SwitchListTile(
+                  value: ref.watch(animeOnlyTvModeProvider),
+                  title: Text(context.l10n.anime_only_tv_layout),
+                  subtitle: const Text(
+                    'Hide the manga & novel libraries (on by default on TV)',
+                  ),
+                  onChanged: (value) {
+                    ref.read(animeOnlyTvModeProvider.notifier).set(value);
+                  },
                 ),
-            ],
+                SwitchListTile(
+                  value: mergeLibraryNavMobile,
+                  title: Text(context.l10n.merge_library_nav_mobile),
+                  onChanged: (value) {
+                    ref
+                        .read(mergeLibraryNavMobileStateProvider.notifier)
+                        .set(value);
+                  },
+                ),
+              ],
+            ),
           ),
           buildDefaultDragHandles: false,
           itemCount: navigationOrder.length,
           itemBuilder: (context, index) {
             final navigation = navigationOrder[index];
-            // More and Browse hold the settings and the sources: always
-            // shown, so there is always a way back to this screen.
-            final fixed = navigation == "/more" || navigation == "/browse";
             return Row(
               key: Key('navigation_$navigation'),
               children: [
                 ReorderableDragStartListener(
                   index: index,
-                  child: const Icon(Symbols.drag_handle_rounded),
+                  child: const Icon(Icons.drag_handle),
                 ),
                 Expanded(
-                  child: ShioriSwitchRow(
+                  child: SwitchListTile(
                     key: Key(navigation),
-                    title: _label(l10n, navigation),
+                    dense: true,
                     value: !hideItems.contains(navigation),
-                    onChanged: fixed
+                    onChanged:
+                        [
+                          "/more",
+                          "/browse",
+                        ].any((element) => element == navigation)
                         ? null
                         : (value) {
                             final temp = hideItems.toList();
@@ -86,6 +83,7 @@ class _CustomNavigationSettingsState
                             }
                             ref.read(hideItemsStateProvider.notifier).set(temp);
                           },
+                    title: Text(navigationItems[navigation]!),
                   ),
                 ),
               ],
@@ -114,16 +112,3 @@ class _CustomNavigationSettingsState
     );
   }
 }
-
-/// The destination's name in the reader's language.
-String _label(AppLocalizations l10n, String route) => switch (route) {
-  "/MangaLibrary" => l10n.manga,
-  "/AnimeLibrary" => l10n.anime,
-  "/NovelLibrary" => l10n.novel,
-  "/updates" => l10n.updates,
-  "/history" => l10n.history,
-  "/browse" => l10n.browse,
-  "/more" => l10n.more,
-  "/trackerLibrary" => l10n.tracking,
-  _ => navigationItems[route] ?? route,
-};

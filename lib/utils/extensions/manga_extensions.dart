@@ -77,21 +77,21 @@ extension MangaExtensions on Manga {
     final settings = settingsOverride ?? settingsRepository.current;
 
     final filterUnread =
-        ((settings.chapterFilterUnreadList ?? const [])
+        (settings.chapterFilterUnreadList!
                     .where((e) => e.mangaId == id)
                     .firstOrNull ??
                 ChapterFilterUnread(mangaId: id, type: 0))
             .type!;
 
     final filterBookmarked =
-        ((settings.chapterFilterBookmarkedList ?? const [])
+        (settings.chapterFilterBookmarkedList!
                     .where((e) => e.mangaId == id)
                     .firstOrNull ??
                 ChapterFilterBookmarked(mangaId: id, type: 0))
             .type!;
 
     final filterDownloaded =
-        ((settings.chapterFilterDownloadedList ?? const [])
+        (settings.chapterFilterDownloadedList!
                     .where((e) => e.mangaId == id)
                     .firstOrNull ??
                 ChapterFilterDownloaded(mangaId: id, type: 0))
@@ -149,7 +149,7 @@ extension MangaExtensions on Manga {
     final settings = settingsRepository.current;
 
     final sortChapterEntry =
-        (settings.sortChapterList ?? const []).where((e) => e.mangaId == id).firstOrNull ??
+        settings.sortChapterList!.where((e) => e.mangaId == id).firstOrNull ??
         SortChapter(mangaId: id, index: 1);
     final sortIndex = sortChapterEntry.index!;
     final reverse = sortChapterEntry.reverse!;

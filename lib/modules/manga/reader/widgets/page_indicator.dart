@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
-import 'package:shiori/shiori.dart';
 
 /// Page indicator widget showing current page / total pages.
 ///
@@ -43,11 +42,19 @@ class PageIndicator extends ConsumerWidget {
       child: ValueListenableBuilder<int>(
         valueListenable: currentPageListenable,
         builder: (context, currentIndex, child) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: ShioriSpace.s8),
-            child: ShioriOverlayLabel(
-              '${formatCurrentIndex(currentIndex)} / $totalPages',
+          return Text(
+            '${formatCurrentIndex(currentIndex)} / $totalPages',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+              shadows: [
+                Shadow(offset: Offset(-1, -1), blurRadius: 1),
+                Shadow(offset: Offset(1, -1), blurRadius: 1),
+                Shadow(offset: Offset(1, 1), blurRadius: 1),
+                Shadow(offset: Offset(-1, 1), blurRadius: 1),
+              ],
             ),
+            textAlign: TextAlign.center,
           );
         },
       ),

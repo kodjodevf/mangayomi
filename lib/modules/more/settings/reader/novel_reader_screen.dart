@@ -17,8 +17,9 @@ class NovelReaderScreen extends ConsumerWidget {
       length: ttsSupported ? 3 : 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(context.l10n.novel_reader),
+          title: Text('${context.l10n.novel} ${context.l10n.reader}'),
           bottom: TabBar(
+            indicatorSize: TabBarIndicatorSize.tab,
             tabs: [
               Tab(text: context.l10n.reader),
               Tab(text: context.l10n.general),

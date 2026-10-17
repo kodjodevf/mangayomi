@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/main_view/widgets/nav_group_switcher.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
@@ -23,10 +21,6 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
 
   /// Screen-specific title
   String get title;
-
-  /// This screen's navigation route, when it can be one member of a grouped
-  /// destination (Updates and History in Activity). Null otherwise.
-  String? get navRoute => null;
 
   /// Build the content of each tab
   Widget buildTab(ItemType type);
@@ -81,7 +75,7 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
   /// icon is clearly visible on a remote; `null` (default) off-TV. Subclasses
   /// use this for the icons they add in [buildExtraActions].
   Color? tvIconFocusColor(BuildContext context) => isTv
-      ? context.shiori.color.accent.withValues(alpha: Alphas.tvFocus)
+      ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.4)
       : null;
 
   /// The tab switcher below the title: TV-home style pills on Android TV, the
@@ -96,13 +90,13 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
         child: AnimatedBuilder(
           animation: tabController,
           builder: (context, _) => Padding(
-            padding: const EdgeInsets.only(bottom: ShioriSpace.s8),
+            padding: const EdgeInsets.only(bottom: 8),
             child: Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   for (var i = 0; i < visibleTabTypes.length; i++) ...[
-                    if (i > 0) const SizedBox(width: ShioriSpace.s8),
+                    if (i > 0) const SizedBox(width: 8),
                     TvPill(
                       label: visibleTabTypes[i].localized(l10n),
                       selected: tabController.index == i,
@@ -121,6 +115,7 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
     }
     return TabBar(
       controller: tabController,
+      indicatorSize: TabBarIndicatorSize.tab,
       onTap: (i) => onTabChanged(visibleTabTypes[i]),
       tabs: visibleTabTypes.map((type) {
         return buildTabLabel(type, type.localized(l10n));
@@ -128,41 +123,15 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
     );
   }
 
-  /// The group's switcher above this screen's own tabs.
-  PreferredSizeWidget _withGroupSwitcher(BuildContext context) {
-    final tabs = _buildTabSwitcher(context);
-    final switcherHeight =
-        context.shiori.density.minTarget + ShioriSpace.s4 + ShioriSpace.s8;
-    return PreferredSize(
-      preferredSize: Size.fromHeight(
-        switcherHeight + (tabs?.preferredSize.height ?? 0),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          NavGroupSwitcher(route: navRoute!),
-          ?tabs,
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final grouped = navRoute != null && isGroupedNavRoute(ref, navRoute!);
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
         title: isSearch
             ? null
-            // A main destination's title, as Library, Browse and More set it.
-            : Text(
-                grouped ? navGroupTitle(context, navRoute!) : title,
-                style: context.shiori.text.screenTitle.copyWith(
-                  color: context.shiori.color.fg,
-                ),
-              ),
+            : Text(title, style: TextStyle(color: Theme.of(context).hintColor)),
         actions: [
           isSearch
               ? SeachFormTextField(
@@ -178,21 +147,14 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
                   },
                 )
               : IconButton(
-                  tooltip: MaterialLocalizations.of(context).searchFieldLabel,
                   splashRadius: 20,
                   focusColor: tvIconFocusColor(context),
                   onPressed: () => setState(() => isSearch = true),
-                  icon: Icon(
-                    Symbols.search_rounded,
-                    fill: 1,
-                    color: context.shiori.color.fgMuted,
-                  ),
+                  icon: Icon(Icons.search, color: Theme.of(context).hintColor),
                 ),
           ...buildExtraActions(context),
         ],
-        bottom: grouped
-            ? _withGroupSwitcher(context)
-            : _buildTabSwitcher(context),
+        bottom: _buildTabSwitcher(context),
       ),
       body: TabBarView(
         controller: tabController,

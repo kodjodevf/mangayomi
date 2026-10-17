@@ -8,7 +8,6 @@ import 'package:mangayomi/modules/anime/providers/anime_player_controller_provid
 import 'package:mangayomi/modules/anime/utils/temporary_playback_speed.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
-import 'package:mangayomi/modules/anime/widgets/player_overlay_surface.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
@@ -16,9 +15,8 @@ import 'package:mangayomi/modules/more/settings/player/providers/player_state_pr
 import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:volume_controller/volume_controller.dart';
-import 'package:mangayomi/services/screen_brightness.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 import 'package:mangayomi/modules/anime/widgets/temporary_playback_speed_selector.dart';
@@ -65,16 +63,16 @@ class _MobileControllerWidgetState
   // The center play/pause — focused first on reveal so the d-pad lands on the
   // main control rather than the top-bar back button.
   final FocusNode _playPauseFocus = FocusNode(debugLabel: 'playerPlayPause');
-  Duration controlsTransitionDuration = ShioriMotion.enter;
-  Color backdropColor = ShioriScrim.shadow;
+  Duration controlsTransitionDuration = const Duration(milliseconds: 300);
+  Color backdropColor = const Color(0x66000000);
   Timer? _timer;
   late final skipDuration = ref.watch(
     defaultDoubleTapToSkipLengthStateProvider,
   );
   final ValueNotifier<double> _brightnessValue = ValueNotifier(0.0);
   final ValueNotifier<bool> _brightnessIndicator = ValueNotifier(false);
+  StreamSubscription<double>? _brightnessSubscription;
   Timer? _brightnessTimer;
-  bool _brightnessChanged = false;
 
   final ValueNotifier<double> _volumeValue = ValueNotifier(0.0);
   final ValueNotifier<bool> _volumeIndicator = ValueNotifier(false);
@@ -98,10 +96,7 @@ class _MobileControllerWidgetState
   bool _hideSeekBackwardButton = false;
   bool _hideSeekForwardButton = false;
   double buttonBarHeight = 100;
-  final bottomButtonBarMargin = const EdgeInsets.only(
-    left: ShioriSpace.s16,
-    right: ShioriSpace.s8,
-  );
+  final bottomButtonBarMargin = const EdgeInsets.only(left: 16.0, right: 8.0);
 
   Duration? _seekBarDeltaValueNotifier;
 
@@ -212,11 +207,15 @@ class _MobileControllerWidgetState
     _volumeIndicator.dispose();
     _brightnessValue.dispose();
     _brightnessIndicator.dispose();
+    _brightnessSubscription?.cancel();
     _volumeController.removeListener();
 
-    // Only if the brightness gesture set one; a reader's own brightness
-    // is never left on.
-    if (_brightnessChanged) unawaited(ScreenBrightness.reset());
+    // package:screen_brightness
+    Future.microtask(() async {
+      try {
+        await ScreenBrightness.instance.resetApplicationScreenBrightness();
+      } catch (_) {}
+    });
     super.dispose();
   }
 
@@ -356,8 +355,17 @@ class _MobileControllerWidgetState
     });
 
     Future.microtask(() async {
-      final current = await ScreenBrightness.current();
-      if (mounted && current != null) _brightnessValue.value = current;
+      try {
+        _brightnessValue.value = await ScreenBrightness.instance.application;
+        _brightnessSubscription = ScreenBrightness
+            .instance
+            .onApplicationScreenBrightnessChanged
+            .listen((value) {
+              if (mounted) {
+                _brightnessValue.value = value;
+              }
+            });
+      } catch (_) {}
     });
   }
 
@@ -378,9 +386,10 @@ class _MobileControllerWidgetState
   }
 
   Future<void> setBrightness(double value) async {
-    _brightnessChanged = true;
-    _brightnessValue.value = value;
-    unawaited(ScreenBrightness.set(value));
+    // package:screen_brightness
+    try {
+      await ScreenBrightness.instance.setApplicationScreenBrightness(value);
+    } catch (_) {}
     _brightnessIndicator.value = true;
     _brightnessTimer?.cancel();
     _brightnessTimer = Timer(const Duration(milliseconds: 200), () {
@@ -625,7 +634,7 @@ class _MobileControllerWidgetState
                           // after Flutter has accepted the long press.
                           behavior: HitTestBehavior.translucent,
                           onPointerCancel: (_) => _restorePlaybackSpeed(),
-                          child: Container(color: Colors.transparent),
+                          child: Container(color: const Color(0x00000000)),
                         ),
                       ),
                     ),
@@ -681,9 +690,7 @@ class _MobileControllerWidgetState
                             alignment: Alignment.bottomCenter,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: ShioriSpace.s12,
-                                ),
+                                padding: const EdgeInsets.only(bottom: 10),
                                 child: CustomSeekBar(
                                   onSeekStart: (value) {
                                     setState(() {
@@ -733,9 +740,7 @@ class _MobileControllerWidgetState
                           alignment: Alignment.bottomCenter,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: ShioriSpace.s12,
-                              ),
+                              padding: const EdgeInsets.only(bottom: 10),
                               child: CustomSeekBar(
                                 delta: _seekBarDeltaValueNotifier,
                                 player: widget.videoController.player,
@@ -786,7 +791,9 @@ class _MobileControllerWidgetState
                               }
                               return const SizedBox.shrink();
                             },
-                            child: const PlayerBuffering(),
+                            child: const CircularProgressIndicator(
+                              color: Color(0xFFFFFFFF),
+                            ),
                           ),
                         ),
                       ),
@@ -858,7 +865,7 @@ class _MobileControllerWidgetState
                                     begin: 0.0,
                                     end: _hideSeekBackwardButton ? 0.0 : 1.0,
                                   ),
-                                  duration: ShioriMotion.standard,
+                                  duration: const Duration(milliseconds: 200),
                                   builder: (context, value, child) =>
                                       Opacity(opacity: value, child: child),
                                   onEnd: () {
@@ -908,7 +915,7 @@ class _MobileControllerWidgetState
                                     begin: 0.0,
                                     end: _hideSeekForwardButton ? 0.0 : 1.0,
                                   ),
-                                  duration: ShioriMotion.standard,
+                                  duration: const Duration(milliseconds: 200),
                                   builder: (context, value, child) =>
                                       Opacity(opacity: value, child: child),
                                   onEnd: () {
@@ -987,8 +994,7 @@ List<Widget> mobilePrimaryButtonBar(
               );
             }
           : null,
-      tooltip: context.l10n.previous_episode,
-      icon: const Icon(Symbols.skip_previous_rounded, fill: 1, size: 28),
+      icon: const Icon(Icons.skip_previous, size: 28),
     ),
     const Spacer(),
     CustomPlayOrPauseButton(controller: controller, focusNode: playPauseFocus),
@@ -1006,8 +1012,7 @@ List<Widget> mobilePrimaryButtonBar(
               );
             }
           : null,
-      tooltip: context.l10n.next_episode,
-      icon: const Icon(Symbols.skip_next_rounded, fill: 1, size: 28),
+      icon: const Icon(Icons.skip_next, size: 28),
     ),
     const Spacer(flex: 3),
   ];

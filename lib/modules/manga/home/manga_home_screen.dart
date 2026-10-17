@@ -1,11 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/widgets/error_state.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/modules/widgets/source_code_error_banner.dart';
-import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
@@ -33,6 +28,7 @@ import 'package:mangayomi/modules/manga/home/widget/mangas_card_selector.dart';
 import 'package:mangayomi/modules/widgets/cover_grid_skeleton.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
+import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:marquee/marquee.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -82,9 +78,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   List<TypeMangaSelector> _types(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     return [
-      TypeMangaSelector(Symbols.local_fire_department_rounded, l10n.popular),
-      TypeMangaSelector(Symbols.new_releases_rounded, l10n.latest),
-      TypeMangaSelector(Symbols.filter_list_rounded, l10n.filter),
+      TypeMangaSelector(Icons.favorite, l10n.popular),
+      TypeMangaSelector(Icons.new_releases_outlined, l10n.latest),
+      TypeMangaSelector(Icons.filter_list_outlined, l10n.filter),
     ];
   }
 
@@ -165,14 +161,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     super.dispose();
   }
 
-  /// How far from the end the next page starts loading, so it is there by
-  /// the time the reader reaches it. Waiting for the exact end made a fling
-  /// stop short of it and left the reader on a "Load more" button.
-  static const _prefetchDistance = 600.0;
-
   void _onScroll() {
-    final position = _scrollController.position;
-    if (position.pixels >= position.maxScrollExtent - _prefetchDistance) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
       if (_mangaList.isNotEmpty &&
           _hasNextPage &&
           !_isLoading &&
@@ -190,85 +181,87 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     }
   }
 
-  Future<void> _promptSaveSearch() async {
+  void _promptSaveSearch() {
     final query = _query.trim();
     if (query.isEmpty) {
-      botToast(context.l10n.enter_search_to_save_first);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.enter_search_to_save_first)),
+      );
       return;
     }
-    final name = await showShioriPrompt(
-      context,
-      title: context.l10n.save_search,
-      label: context.l10n.name,
-      confirmLabel: context.l10n.save,
-      initialValue: query,
+    final controller = TextEditingController(text: query);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(context.l10n.save_search),
+        content: TextField(
+          controller: controller,
+          decoration: InputDecoration(labelText: context.l10n.name),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(context.l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              ref
+                  .read(savedSearchesProvider.notifier)
+                  .add(source.id!, controller.text, query);
+              Navigator.pop(ctx);
+            },
+            child: Text(context.l10n.save),
+          ),
+        ],
+      ),
     );
-    if (name == null) return;
-    ref.read(savedSearchesProvider.notifier).add(source.id!, name, query);
   }
 
   void _showSavedSearches() {
-    showShioriSheet<void>(
-      context,
-      title: context.l10n.saved_searches,
+    showModalBottomSheet(
+      context: context,
       builder: (ctx) => Consumer(
         builder: (ctx, ref, _) {
           final saved =
               ref.watch(savedSearchesProvider)[source.id] ??
               const <SavedSearch>[];
           if (saved.isEmpty) {
-            return ShioriEmptyState(
-              icon: Symbols.bookmark_rounded,
-              title: context.l10n.no_saved_searches,
-              compact: true,
+            return Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text(
+                context.l10n.no_saved_searches,
+                textAlign: TextAlign.center,
+              ),
             );
           }
           return ListView(
             shrinkWrap: true,
             children: [
               for (final s in saved)
-                ShioriListRow(
-                  leading: const Icon(Symbols.bookmark_rounded),
-                  title: s.name,
-                  subtitle: s.query,
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _runSavedSearch(s.query);
-                  },
+                ListTile(
+                  leading: const Icon(Icons.bookmark_outline),
+                  title: Text(s.name),
+                  subtitle: Text(
+                    s.query,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   trailing: IconButton(
-                    tooltip: MaterialLocalizations.of(context)
-                        .deleteButtonTooltip,
-                    icon: const Icon(Symbols.delete_rounded),
+                    icon: const Icon(Icons.delete_outline),
                     onPressed: () => ref
                         .read(savedSearchesProvider.notifier)
                         .remove(source.id!, s.name),
                   ),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _runSavedSearch(s.query);
+                  },
                 ),
             ],
           );
         },
       ),
     );
-  }
-
-  /// Fetches again whatever the screen shows: a search or filter, the
-  /// latest, or the popular list.
-  void _retry() {
-    if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
-        _isFiltering) {
-      ref.invalidate(
-        searchProvider(
-          source: source,
-          query: _query,
-          page: 1,
-          filterList: filters,
-        ),
-      );
-    } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
-      ref.invalidate(getLatestUpdatesProvider(source: source, page: 1));
-    } else if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
-      ref.invalidate(getPopularProvider(source: source, page: 1));
-    }
   }
 
   void _runSavedSearch(String query) {
@@ -333,8 +326,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     final displayType = ref.watch(mangaHomeDisplayTypeStateProvider);
     final displayTypeIcon = switch (displayType) {
       DisplayType.comfortableGrid ||
-      DisplayType.compactGrid => Symbols.view_module_rounded,
-      _ => Symbols.view_list_rounded,
+      DisplayType.compactGrid => Icons.view_module,
+      _ => Icons.view_list,
     };
     return Scaffold(
       appBar: AppBar(
@@ -354,7 +347,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                           height: 20,
                           child: Marquee(
                             text: l10n.extension_notes(source.notes!),
-                            style: context.shiori.text.meta,
+                            style: const TextStyle(fontSize: 12),
                             blankSpace: 40.0,
                             velocity: 30.0,
                             pauseAfterRound: const Duration(seconds: 1),
@@ -414,7 +407,6 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                   focusNode: _searchFieldFocus,
                 )
               : IconButton(
-                  tooltip: MaterialLocalizations.of(context).searchFieldLabel,
                   splashRadius: 20,
                   onPressed: () {
                     setState(() {
@@ -428,16 +420,15 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       });
                     }
                   },
-                  icon: Icon(
-                    Symbols.search_rounded,
-                    fill: 1,
-                    color: context.shiori.color.fgMuted,
-                  ),
+                  focusColor: isTv
+                      ? context.primaryColor.withValues(alpha: 0.4)
+                      : null,
+                  icon: Icon(Icons.search, color: Theme.of(context).hintColor),
                 ),
           if (isTv)
             IconButton(
-              tooltip: context.l10n.change_display_mode,
               focusNode: _postSearchFocus,
+              focusColor: context.primaryColor.withValues(alpha: 0.4),
               icon: Icon(displayTypeIcon),
               onPressed: () async {
                 const order = [
@@ -472,40 +463,87 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
               },
             )
           else
-            ShioriMenuButton(
-              icon: displayTypeIcon,
-              tooltip: l10n.display_mode,
-              items: [
-                for (final (type, label) in [
-                  (DisplayType.comfortableGrid, l10n.comfortable_grid),
-                  (DisplayType.compactGrid, l10n.compact_grid),
-                  (DisplayType.list, l10n.list),
-                ])
-                  ShioriMenuItem(
-                    label: label,
-                    checked: displayType == type,
-                    onSelected: () => ref
-                        .read(mangaHomeDisplayTypeStateProvider.notifier)
-                        .setMangaHomeDisplayType(type),
+            PopupMenuButton(
+              popUpAnimationStyle: popupAnimationStyle,
+              icon: Icon(displayTypeIcon),
+              itemBuilder: (context) {
+                final displayType = ref.watch(
+                  mangaHomeDisplayTypeStateProvider,
+                );
+                final displayTypeNotifier = ref.read(
+                  mangaHomeDisplayTypeStateProvider.notifier,
+                );
+                return [
+                  PopupMenuItem<int>(
+                    value: 0,
+                    child: RadioGroup(
+                      groupValue: displayType,
+                      onChanged: (a) {
+                        context.pop();
+                        displayTypeNotifier.setMangaHomeDisplayType(a!);
+                      },
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          RadioListTile(
+                            title: Text(context.l10n.comfortable_grid),
+                            value: DisplayType.comfortableGrid,
+                          ),
+                          RadioListTile(
+                            title: Text(context.l10n.compact_grid),
+                            value: DisplayType.compactGrid,
+                          ),
+                          RadioListTile(
+                            title: Text(context.l10n.list),
+                            value: DisplayType.list,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                null,
-                ShioriMenuItem(
-                  label: l10n.save_search,
-                  icon: Symbols.bookmark_add_rounded,
-                  onSelected: _promptSaveSearch,
-                ),
-                ShioriMenuItem(
-                  label: l10n.saved_searches,
-                  icon: Symbols.bookmarks_rounded,
-                  onSelected: _showSavedSearches,
-                ),
-              ],
+                  PopupMenuItem<int>(
+                    value: 2,
+                    child: Text(context.l10n.save_search),
+                  ),
+                  PopupMenuItem<int>(
+                    value: 3,
+                    child: Text(context.l10n.saved_searches),
+                  ),
+                ];
+              },
+              onSelected: (value) async {
+                if (value == 0) {
+                  final baseUrl = ref.watch(
+                    sourceBaseUrlProvider(source: source),
+                  );
+                  Map<String, dynamic> data = {
+                    'url': baseUrl,
+                    'sourceId': source.id.toString(),
+                    'title': '',
+                  };
+                  context.push("/mangawebview", extra: data);
+                } else if (value == 1) {
+                  final res = await context.push(
+                    '/extension_detail',
+                    extra: source,
+                  );
+                  if (res != null && mounted) {
+                    setState(() {
+                      source = res as Source;
+                    });
+                  }
+                } else if (value == 2) {
+                  _promptSaveSearch();
+                } else if (value == 3) {
+                  _showSavedSearches();
+                }
+              },
             ),
           if (!isLocal)
             if (isTv)
               IconButton(
-                tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
-                icon: const Icon(Symbols.more_vert_rounded, fill: 1),
+                focusColor: context.primaryColor.withValues(alpha: 0.4),
+                icon: const Icon(Icons.more_vert),
                 onPressed: () async {
                   final picked = await showTvMenu(
                     context,
@@ -519,20 +557,21 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 },
               )
             else
-              ShioriMenuButton(
-                tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
-                items: [
-                  ShioriMenuItem(
-                    label: l10n.open_in_browser,
-                    icon: Symbols.public_rounded,
-                    onSelected: () => _onSourceOverflow(0),
-                  ),
-                  ShioriMenuItem(
-                    label: l10n.settings,
-                    icon: Symbols.settings_rounded,
-                    onSelected: () => _onSourceOverflow(1),
-                  ),
-                ],
+              PopupMenuButton(
+                popUpAnimationStyle: popupAnimationStyle,
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem<int>(
+                      value: 0,
+                      child: Text(context.l10n.open_in_browser),
+                    ),
+                    PopupMenuItem<int>(
+                      value: 1,
+                      child: Text(context.l10n.settings),
+                    ),
+                  ];
+                },
+                onSelected: _onSourceOverflow,
               ),
         ],
         bottom: PreferredSize(
@@ -562,23 +601,58 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                           filters = filterList;
                         }
                         if (index == 2) {
-                          final result = await showShioriSheet<String>(
-                            context,
-                            title: l10n.filter,
+                          final result = await showModalBottomSheet(
+                            context: context,
                             builder: (context) => StatefulBuilder(
                               builder: (context, setState) {
-                                return FilterSheetBody(
-                                  filters: filters,
-                                  onChanged: (values) =>
-                                      setState(() => filters = values),
-                                  onReset: () => setState(
-                                    () =>
-                                        filters = getFilterList(source: source),
-                                  ),
-                                  onApply: () =>
-                                      Navigator.pop(context, 'filter'),
-                                  resetLabel: l10n.reset,
-                                  applyLabel: l10n.filter,
+                                return Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        children: [
+                                          TextButton(
+                                            onPressed: () {
+                                              setState(() {
+                                                filters = getFilterList(
+                                                  source: source,
+                                                );
+                                              });
+                                            },
+                                            child: Text(l10n.reset),
+                                          ),
+                                          const Spacer(),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  context.primaryColor,
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context, 'filter');
+                                            },
+                                            child: Text(
+                                              l10n.filter,
+                                              style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .scaffoldBackgroundColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Divider(),
+                                    Expanded(
+                                      child: FilterWidget(
+                                        filterList: filters,
+                                        onChanged: (values) {
+                                          setState(() {
+                                            filters = values;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 );
                               },
                             ),
@@ -621,7 +695,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 ),
               ),
               Container(
-                color: context.shiori.color.accentInk,
+                color: context.primaryColor,
                 height: 0.3,
                 width: context.width(1),
               ),
@@ -629,193 +703,259 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           ),
         ),
       ),
-      // In developer mode, what failed in the source's code, on the page.
-      body: Column(
-        children: [
-          SourceCodeErrorBanner(source: source),
-          Expanded(
-            child: _getManga!.isLoading
-                // Fetching a source page is the app's longest routine wait. Lay out
-                // the grid the covers will land in rather than a centred spinner;
-                // the list mode has no fixed cell shape to stand in for, so it keeps
-                // the spinner.
-                ? (displayType == DisplayType.list
-                      ? const ProgressCenter()
-                      : Consumer(
-                          builder: (context, ref, child) => CoverGridSkeleton(
-                            gridSize: ref.watch(
-                              libraryGridSizeStateProvider(
-                                itemType: source.itemType,
+      body: _getManga!.isLoading
+          // Fetching a source page is the app's longest routine wait. Lay out
+          // the grid the covers will land in rather than a centred spinner;
+          // the list mode has no fixed cell shape to stand in for, so it keeps
+          // the spinner.
+          ? (displayType == DisplayType.list
+                ? const ProgressCenter()
+                : Consumer(
+                    builder: (context, ref, child) => CoverGridSkeleton(
+                      gridSize: ref.watch(
+                        libraryGridSizeStateProvider(itemType: source.itemType),
+                      ),
+                      childAspectRatio:
+                          displayType == DisplayType.comfortableGrid
+                          ? 0.642
+                          : 0.69,
+                    ),
+                  ))
+          : _getManga!.when(
+              data: (data) {
+                if (_hasNextPage) {
+                  if (!data!.hasNextPage) {
+                    if (mounted) {
+                      setState(() {
+                        _hasNextPage = false;
+                      });
+                    }
+                  }
+                }
+                if (_mangaList.isEmpty && data!.list.isNotEmpty) {
+                  _mangaList.addAll(data.list);
+                }
+                Widget buildProgressIndicator() {
+                  return !(data!.list.isNotEmpty &&
+                          (data.hasNextPage || _hasNextPage))
+                      ? Container()
+                      : _isLoading
+                      ? const Center(
+                          child: SizedBox(
+                            height: 100,
+                            width: 200,
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5),
                               ),
                             ),
-                            childAspectRatio:
-                                displayType == DisplayType.comfortableGrid
-                                ? 0.642
-                                : 0.69,
-                          ),
-                        ))
-                : _getManga!.when(
-                    data: (data) {
-                      if (_hasNextPage) {
-                        if (!data!.hasNextPage) {
-                          if (mounted) {
-                            setState(() {
-                              _hasNextPage = false;
-                            });
-                          }
-                        }
-                      }
-                      if (_mangaList.isEmpty && data!.list.isNotEmpty) {
-                        _mangaList.addAll(data.list);
-                      }
-                      Widget buildProgressIndicator() {
-                        return !(data!.list.isNotEmpty &&
-                                (data.hasNextPage || _hasNextPage))
-                            ? Container()
-                            : _isLoading
-                            ? const Center(
-                                child: SizedBox(
-                                  height: 100,
-                                  width: 200,
-                                  child: Center(child: ShioriLoading.inline()),
-                                ),
-                              )
-                            : Padding(
-                                padding: const EdgeInsets.all(ShioriSpace.s16),
-                                child: Center(
-                                  child: ShioriButton.secondary(
-                                    label: l10n.load_more,
-                                    icon: Symbols.expand_more_rounded,
-                                    onPressed: () {
-                                      if (!_getManga!.isLoading) {
-                                        if (mounted) {
-                                          setState(() => _isLoading = true);
-                                        }
-                                        _loadMore().then((value) {
-                                          if (mounted && value != null) {
-                                            setState(() {
-                                              _mangaList.addAll(value.list);
-                                              _isLoading = false;
-                                            });
-                                          }
-                                        });
-                                      }
-                                    },
+                            onPressed: () {
+                              if (!_getManga!.isLoading) {
+                                if (mounted) {
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+                                }
+                                _loadMore().then((value) {
+                                  if (mounted && value != null) {
+                                    setState(() {
+                                      _mangaList.addAll(value.list);
+                                      _isLoading = false;
+                                    });
+                                  }
+                                });
+                              }
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  l10n.load_more,
+                                  style: const TextStyle(
+                                    overflow: TextOverflow.ellipsis,
                                   ),
+                                  maxLines: 2,
                                 ),
-                              );
-                      }
-
-                      if (data!.list.isEmpty) {
-                        return ShioriEmptyState(
-                          icon: Symbols.search_off_rounded,
-                          title: l10n.no_result,
-                          compact: true,
-                        );
-                      }
-                      _length = source.isFullData!
-                          ? _fullDataLength
-                          : _mangaList.length;
-                      _length = (_mangaList.length < _length
-                          ? _mangaList.length
-                          : _length);
-                      final isComfortableGrid =
-                          displayType == DisplayType.comfortableGrid;
-                      return Padding(
-                        padding: const EdgeInsets.only(top: ShioriSpace.s12),
-                        child: Column(
-                          children: [
-                            Flexible(
-                              child: displayType == DisplayType.list
-                                  ? SuperListViewWidget(
-                                      controller: _scrollController,
-                                      itemCount: _length + 1,
-                                      itemBuilder: (context, index) {
-                                        if (index == _length) {
-                                          return buildProgressIndicator();
-                                        }
-                                        return MangaHomeImageCardListTile(
-                                          itemType: source.itemType,
-                                          manga: _mangaList[index],
-                                          source: source,
-                                          libraryManga:
-                                              _libraryIndex[_mangaList[index]
-                                                  .name],
-                                        );
-                                      },
-                                    )
-                                  : Consumer(
-                                      builder: (context, ref, child) {
-                                        final gridSize = ref.watch(
-                                          libraryGridSizeStateProvider(
-                                            itemType: source.itemType,
-                                          ),
-                                        );
-
-                                        return GridViewWidget(
-                                          gridSize: gridSize,
-                                          controller: _scrollController,
-                                          itemCount: _length + 1,
-                                          childAspectRatio: isComfortableGrid
-                                              ? 0.642
-                                              : 0.69,
-                                          itemBuilder: (context, index) {
-                                            if (index == _length) {
-                                              return buildProgressIndicator();
-                                            }
-                                            return MangaHomeImageCard(
-                                              autofocus:
-                                                  isTv &&
-                                                  index == 0 &&
-                                                  !_isSearch,
-                                              itemType: source.itemType,
-                                              manga: _mangaList[index],
-                                              source: source,
-                                              isComfortableGrid:
-                                                  isComfortableGrid,
-                                              libraryManga:
-                                                  _libraryIndex[_mangaList[index]
-                                                      .name],
-                                            );
-                                          },
-                                        );
-                                      },
-                                    ),
+                                const Icon(Icons.arrow_forward_outlined),
+                              ],
                             ),
+                          ),
+                        );
+                }
+
+                if (data!.list.isEmpty) {
+                  return Center(child: Text(l10n.no_result));
+                }
+                _length = source.isFullData!
+                    ? _fullDataLength
+                    : _mangaList.length;
+                _length = (_mangaList.length < _length
+                    ? _mangaList.length
+                    : _length);
+                final isComfortableGrid =
+                    displayType == DisplayType.comfortableGrid;
+                return Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Column(
+                    children: [
+                      Flexible(
+                        child: displayType == DisplayType.list
+                            ? SuperListViewWidget(
+                                controller: _scrollController,
+                                itemCount: _length + 1,
+                                itemBuilder: (context, index) {
+                                  if (index == _length) {
+                                    return buildProgressIndicator();
+                                  }
+                                  return MangaHomeImageCardListTile(
+                                    itemType: source.itemType,
+                                    manga: _mangaList[index],
+                                    source: source,
+                                    libraryManga:
+                                        _libraryIndex[_mangaList[index].name],
+                                  );
+                                },
+                              )
+                            : Consumer(
+                                builder: (context, ref, child) {
+                                  final gridSize = ref.watch(
+                                    libraryGridSizeStateProvider(
+                                      itemType: source.itemType,
+                                    ),
+                                  );
+
+                                  return GridViewWidget(
+                                    gridSize: gridSize,
+                                    controller: _scrollController,
+                                    itemCount: _length + 1,
+                                    childAspectRatio: isComfortableGrid
+                                        ? 0.642
+                                        : 0.69,
+                                    itemBuilder: (context, index) {
+                                      if (index == _length) {
+                                        return buildProgressIndicator();
+                                      }
+                                      return MangaHomeImageCard(
+                                        autofocus:
+                                            isTv && index == 0 && !_isSearch,
+                                        itemType: source.itemType,
+                                        manga: _mangaList[index],
+                                        source: source,
+                                        isComfortableGrid: isComfortableGrid,
+                                        libraryManga:
+                                            _libraryIndex[_mangaList[index]
+                                                .name],
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              error: (error, stackTrace) => Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                if (_selectedIndex == 2 &&
+                                        (_isSearch && _query.isNotEmpty) ||
+                                    _isFiltering) {
+                                  ref.invalidate(
+                                    searchProvider(
+                                      source: source,
+                                      query: _query,
+                                      page: 1,
+                                      filterList: filters,
+                                    ),
+                                  );
+                                } else if (_selectedIndex == 1 &&
+                                    !_isSearch &&
+                                    _query.isEmpty) {
+                                  ref.invalidate(
+                                    getLatestUpdatesProvider(
+                                      source: source,
+                                      page: 1,
+                                    ),
+                                  );
+                                } else if (_selectedIndex == 0 &&
+                                    !_isSearch &&
+                                    _query.isEmpty) {
+                                  ref.invalidate(
+                                    getPopularProvider(source: source, page: 1),
+                                  );
+                                }
+                              },
+                              icon: const Icon(Icons.refresh),
+                            ),
+                            Text(l10n.refresh),
                           ],
                         ),
-                      );
-                    },
-                    // Retry with the provider this view reads, or open the
-                    // source in the browser, the way past a Cloudflare check.
-                    error: (error, stackTrace) => ErrorState(
-                      // The stack too in developer mode, to see where it broke.
-                      detail: ref.watch(developerModeStateProvider)
-                          ? '$error\n\n$stackTrace'
-                          : error.toString(),
-                      onRetry: _retry,
-                      secondaryLabel: l10n.webview,
-                      secondaryIcon: Symbols.public_rounded,
-                      onSecondary: () {
-                        final baseUrl = ref.read(
-                          sourceBaseUrlProvider(source: source),
-                        );
-                        context.push(
-                          "/mangawebview",
-                          extra: {
-                            'url': baseUrl,
-                            'sourceId': source.id.toString(),
-                            'title': '',
-                            "hasCloudFlare": source.hasCloudflare ?? false,
-                          },
-                        );
-                      },
+                        const SizedBox(width: 20),
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                final baseUrl = ref.watch(
+                                  sourceBaseUrlProvider(source: source),
+                                );
+                                Map<String, dynamic> data = {
+                                  'url': baseUrl,
+                                  'sourceId': source.id.toString(),
+                                  'title': '',
+                                  "hasCloudFlare":
+                                      source.hasCloudflare ?? false,
+                                };
+                                context.push("/mangawebview", extra: data);
+                              },
+                              icon: Icon(
+                                Icons.public,
+                                size: 22,
+                                color: context.secondaryColor,
+                              ),
+                            ),
+                            Text(context.l10n.webview),
+                          ],
+                        ),
+                      ],
                     ),
-                    loading: () => const ShioriLoading(),
                   ),
-          ),
-        ],
-      ),
+                  // This screen keeps its own recovery actions above (refresh
+                  // with the right provider, and a webview for Cloudflare), so
+                  // only the cause is demoted here to match ErrorState.
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      error.toString(),
+                      textAlign: TextAlign.center,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: context.textColor.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              loading: () => const Center(child: CircularProgressIndicator()),
+            ),
     );
   }
 }

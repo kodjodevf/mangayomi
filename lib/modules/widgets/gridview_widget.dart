@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 class GridViewWidget extends StatelessWidget {
@@ -22,7 +21,7 @@ class GridViewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: context.shiori.color.ink0,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: GridView.builder(
         // Grid spacing defaults to zero, so covers sat flush against each other
         // and the grid ran to the screen edges. On TV the focused cover scales
@@ -30,13 +29,8 @@ class GridViewWidget extends StatelessWidget {
         // the edge columns off the panel edge.
         padding:
             (isTv
-                    ? const EdgeInsets.fromLTRB(
-                        ShioriSpace.s12,
-                        ShioriSpace.s12,
-                        ShioriSpace.s12,
-                        ShioriSpace.s12,
-                      )
-                    : const EdgeInsets.only(top: ShioriSpace.s12))
+                    ? const EdgeInsets.fromLTRB(12, 13, 12, 12)
+                    : const EdgeInsets.only(top: 13))
                 .add(pageBottomInsets(context)),
         controller: controller,
         gridDelegate: (gridSize == null || gridSize == 0)

@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
@@ -63,31 +62,261 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final l10n = l10nLocalizations(context)!;
-    final targetVersion = widget.updateAvailable.$1;
-    final changelog = widget.updateAvailable.$2;
-    return ShioriDialog(
-      title: l10n.new_update_available,
-      // As wide as a comfortable line of notes, narrower on a phone.
-      content: SizedBox(
-        width: 440,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: ShioriSpace.s16,
-          children: [
-            _versions(context, targetVersion),
-            _notes(context, changelog),
-            if (_isDownloading)
-              _progress(context)
-            else if (_errorMessage != null)
-              _error(context),
-          ],
+    final updateAvailable = widget.updateAvailable;
+    final targetVersion = updateAvailable.$1;
+    final changelog = updateAvailable.$2;
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      elevation: 6,
+      clipBehavior: Clip.antiAlias,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 480),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 1. Header (Icon + Title + Version Badges)
+              _buildHeader(context, colorScheme, theme, l10n, targetVersion),
+              const SizedBox(height: 18),
+
+              // 2. Changelog / Release Notes Box
+              _buildChangelogBox(context, colorScheme, theme, changelog),
+              const SizedBox(height: 18),
+
+              // 3. Progress or Error Section
+              if (_isDownloading) ...[
+                _buildProgressCard(context, colorScheme, theme),
+                const SizedBox(height: 18),
+              ] else if (_errorMessage != null) ...[
+                _buildErrorBanner(context, colorScheme, theme),
+                const SizedBox(height: 18),
+              ],
+
+              // 4. Action Buttons
+              _buildActions(context, colorScheme, l10n),
+            ],
+          ),
         ),
       ),
-      actions: [
-        ShioriButton.quiet(
-          label: l10n.cancel,
+    );
+  }
+
+  Widget _buildHeader(
+    BuildContext context,
+    ColorScheme colorScheme,
+    ThemeData theme,
+    dynamic l10n,
+    String targetVersion,
+  ) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: colorScheme.primaryContainer.withValues(alpha: 0.7),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Icon(
+            Icons.system_update_rounded,
+            color: colorScheme.primary,
+            size: 28,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.new_update_available,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  if (_currentVersion.isNotEmpty) ...[
+                    Text(
+                      'v$_currentVersion',
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: theme.textTheme.bodySmall?.color,
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_rounded,
+                      size: 13,
+                      color: theme.textTheme.bodySmall?.color,
+                    ),
+                  ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      'v$targetVersion',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChangelogBox(
+    BuildContext context,
+    ColorScheme colorScheme,
+    ThemeData theme,
+    String changelog,
+  ) {
+    final cleanNotes = _cleanChangelog(changelog);
+    return Flexible(
+      child: Container(
+        constraints: const BoxConstraints(maxHeight: 220),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+          ),
+        ),
+        padding: const EdgeInsets.all(14),
+        child: Scrollbar(
+          controller: _changelogScrollController,
+          thumbVisibility: true,
+          child: SingleChildScrollView(
+            controller: _changelogScrollController,
+            child: SelectableText(
+              cleanNotes.isEmpty
+                  ? 'Aucune note de version fournie.'
+                  : cleanNotes,
+              style: theme.textTheme.bodySmall?.copyWith(
+                height: 1.45,
+                letterSpacing: 0.1,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProgressCard(
+    BuildContext context,
+    ColorScheme colorScheme,
+    ThemeData theme,
+  ) {
+    final progress = _total > 0 ? (_received / _total).clamp(0.0, 1.0) : 0.0;
+    final percentText = _total > 0
+        ? '${(progress * 100).toStringAsFixed(0)}%'
+        : '';
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: colorScheme.secondaryContainer.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                (_total > 0 ? percentText : ''),
+                style: theme.textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSecondaryContainer,
+                ),
+              ),
+              if (_total > 0 && !_isInstalling)
+                Text(
+                  '${(_received / 1048576.0).toStringAsFixed(1)} / ${(_total / 1048576.0).toStringAsFixed(1)} MB',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: colorScheme.onSecondaryContainer.withValues(
+                      alpha: 0.8,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: _isInstalling ? null : (_total > 0 ? progress : null),
+              minHeight: 8,
+              backgroundColor: colorScheme.surfaceContainerHighest,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorBanner(
+    BuildContext context,
+    ColorScheme colorScheme,
+    ThemeData theme,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: colorScheme.errorContainer.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.error_outline_rounded, color: colorScheme.error, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              _errorMessage ?? '',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.onErrorContainer,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActions(
+    BuildContext context,
+    ColorScheme colorScheme,
+    dynamic l10n,
+  ) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        TextButton(
           onPressed: () async {
             if (_isDownloading) {
               try {
@@ -98,127 +327,20 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
               Navigator.pop(context);
             }
           },
+          child: Text(l10n.cancel),
         ),
-        // Android downloads and installs the APK; elsewhere the release
-        // page opens in the browser, and the button says so.
+        const SizedBox(width: 10),
         if (!_isDownloading)
-          ShioriButton(
-            icon: Platform.isAndroid
-                ? Symbols.download_rounded
-                : Symbols.open_in_browser_rounded,
-            label: Platform.isAndroid ? l10n.download : l10n.open_in_browser,
+          FilledButton.icon(
+            icon: Icon(
+              Platform.isAndroid
+                  ? Icons.download_rounded
+                  : Icons.open_in_browser_rounded,
+              size: 18,
+            ),
+            label: Text(Platform.isAndroid ? l10n.download : (l10n.download)),
             onPressed: () => _handleDownloadOrOpen(widget.updateAvailable),
           ),
-      ],
-    );
-  }
-
-  /// The version installed and the one on offer: "v0.6.0 → v0.7.0".
-  Widget _versions(BuildContext context, String targetVersion) {
-    final tokens = context.shiori;
-    return Text.rich(
-      TextSpan(
-        children: [
-          if (_currentVersion.isNotEmpty)
-            TextSpan(text: 'v$_currentVersion  →  '),
-          TextSpan(
-            text: 'v$targetVersion',
-            style: TextStyle(
-              color: tokens.color.accentInk,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-      style: tokens.text.meta.copyWith(
-        color: tokens.color.fgMuted,
-        fontFeatures: const [FontFeature.tabularFigures()],
-      ),
-    );
-  }
-
-  /// The release notes, on a quiet ground, scrolling past a few lines.
-  Widget _notes(BuildContext context, String changelog) {
-    final tokens = context.shiori;
-    final notes = _cleanChangelog(changelog);
-    return Container(
-      constraints: const BoxConstraints(maxHeight: 220),
-      decoration: BoxDecoration(
-        color: tokens.color.ink2,
-        borderRadius: BorderRadius.circular(ShioriShape.card),
-      ),
-      child: Scrollbar(
-        controller: _changelogScrollController,
-        thumbVisibility: true,
-        child: SingleChildScrollView(
-          controller: _changelogScrollController,
-          padding: const EdgeInsets.all(ShioriSpace.s12),
-          child: SelectableText(
-            notes.isEmpty ? context.l10n.update_no_notes : notes,
-            style: tokens.text.meta.copyWith(
-              color: tokens.color.fg,
-              height: 1.45,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// How far the download has come: the share and the megabytes over a bar,
-  /// which runs on its own while the package installs.
-  Widget _progress(BuildContext context) {
-    final tokens = context.shiori;
-    final progress = _total > 0 ? (_received / _total).clamp(0.0, 1.0) : 0.0;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      spacing: ShioriSpace.s8,
-      children: [
-        if (_total > 0)
-          DefaultTextStyle.merge(
-            style: const TextStyle(
-              fontFeatures: [FontFeature.tabularFigures()],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${(progress * 100).toStringAsFixed(0)}%',
-                  style: tokens.text.meta.copyWith(
-                    color: tokens.color.fg,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                if (!_isInstalling)
-                  Text(
-                    '${(_received / 1048576.0).toStringAsFixed(1)} / ${(_total / 1048576.0).toStringAsFixed(1)} MB',
-                    style: tokens.caption,
-                  ),
-              ],
-            ),
-          ),
-        ShioriProgressBar(
-          value: _isInstalling ? null : (_total > 0 ? progress : null),
-        ),
-      ],
-    );
-  }
-
-  /// What went wrong, in the error tone, where the progress was.
-  Widget _error(BuildContext context) {
-    final tokens = context.shiori;
-    final tone = tokens.color.error.foreground;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: ShioriSpace.s8,
-      children: [
-        Icon(Symbols.error_rounded, fill: 1, color: tone, size: 20),
-        Expanded(
-          child: Text(
-            _errorMessage ?? '',
-            style: tokens.text.meta.copyWith(color: tone),
-          ),
-        ),
       ],
     );
   }
@@ -290,7 +412,7 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
         if (mounted) {
           setState(() {
             _isDownloading = false;
-            _errorMessage = context.l10n.update_download_failed('$e');
+            _errorMessage = 'Échec du téléchargement: $e';
           });
         }
       }
@@ -369,7 +491,7 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
         if (mounted) {
           setState(() {
             _isDownloading = false;
-            _errorMessage = context.l10n.update_network_error;
+            _errorMessage = 'Erreur réseau lors du téléchargement.';
           });
         }
       },
@@ -391,7 +513,7 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
           setState(() {
             _isDownloading = false;
             _isInstalling = false;
-            _errorMessage = context.l10n.update_write_failed;
+            _errorMessage = "Erreur lors de l'écriture du fichier APK.";
           });
         }
       }

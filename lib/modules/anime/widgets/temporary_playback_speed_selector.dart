@@ -1,8 +1,6 @@
 import 'package:mangayomi/modules/anime/utils/temporary_playback_speed.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/anime/widgets/player_overlay_surface.dart';
-import 'package:shiori/shiori.dart';
 
 class TemporaryPlaybackSpeedSelector extends StatelessWidget {
   const TemporaryPlaybackSpeedSelector({super.key, required this.speed});
@@ -19,6 +17,8 @@ class TemporaryPlaybackSpeedSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     final mediaQuery = MediaQuery.of(context);
     final isPortrait = mediaQuery.orientation == Orientation.portrait;
     final edgePadding = isPortrait
@@ -40,27 +40,41 @@ class TemporaryPlaybackSpeedSelector extends StatelessWidget {
           label:
               '${context.l10n.playback_speed}: ${temporaryPlaybackSpeedLabel(speed)}',
           liveRegion: true,
-          child: ConstrainedBox(
+          child: Material(
             key: const ValueKey('temporary-speed-indicator'),
-            constraints: const BoxConstraints(
-              minWidth: _width,
-              minHeight: _height,
+            color: colorScheme.scrim.withValues(alpha: 0.68),
+            elevation: 1,
+            shadowColor: Colors.black.withValues(alpha: 0.25),
+            shape: StadiumBorder(
+              side: BorderSide(color: Colors.white.withValues(alpha: 0.16)),
             ),
-            child: PlayerOverlaySurface(
-              padding: const EdgeInsets.symmetric(
-                horizontal: ShioriSpace.s12,
-                vertical: ShioriSpace.s4,
+            clipBehavior: Clip.antiAlias,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minWidth: _width,
+                minHeight: _height,
               ),
-              child: ExcludeSemantics(
-                child: AnimatedSwitcher(
-                  duration: ShioriMotion.fast,
-                  transitionBuilder: (child, animation) =>
-                      FadeTransition(opacity: animation, child: child),
-                  child: Text(
-                    temporaryPlaybackSpeedLabel(speed),
-                    key: ValueKey(speed),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontWeight: FontWeight.w800),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                child: ExcludeSemantics(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 100),
+                    transitionBuilder: (child, animation) =>
+                        FadeTransition(opacity: animation, child: child),
+                    child: Text(
+                      temporaryPlaybackSpeedLabel(speed),
+                      key: ValueKey(speed),
+                      textAlign: TextAlign.center,
+                      style: (textTheme.labelLarge ?? const TextStyle())
+                          .copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                    ),
                   ),
                 ),
               ),

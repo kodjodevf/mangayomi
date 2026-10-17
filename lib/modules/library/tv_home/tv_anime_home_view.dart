@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/category.dart';
@@ -326,7 +325,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
                   'Every title sits in a hidden category.\n'
                   'Hold OK on “All” to unhide one.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: context.shiori.color.fgMuted),
+                  style: TextStyle(color: Theme.of(context).hintColor),
                 ),
               ),
             );
@@ -371,7 +370,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
                   'No anime matches the current filters.\n'
                   'Change them from the button beside search.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: context.shiori.color.fgMuted),
+                  style: TextStyle(color: Theme.of(context).hintColor),
                 ),
               ),
             );
@@ -491,8 +490,8 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
                       padding: const EdgeInsets.fromLTRB(22, 16, 22, 8),
                       child: Text(
                         catName ?? '',
-                        style: TextStyle(
-                          fontSize: ShioriType.reference.section.fontSize,
+                        style: const TextStyle(
+                          fontSize: 16,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -511,7 +510,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
 
           // Whatever is painted behind the pills — the colour the scrolling
           // content has to dissolve into at the top of its viewport.
-          final pageBg = context.shiori.color.ink0;
+          final pageBg = Theme.of(context).scaffoldBackgroundColor;
           return Focus(
             onKeyEvent: _handleVertical,
             child: Column(

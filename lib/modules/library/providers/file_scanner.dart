@@ -11,14 +11,13 @@ import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/localized_message.dart';
 import 'package:path/path.dart' as p; // For manipulating file system paths
-import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:bot_toast/bot_toast.dart'; // For Exceptions
 import 'package:mangayomi/models/manga.dart'; // Has Manga model and ItemType enum
 import 'package:mangayomi/models/chapter.dart'; // Has Chapter model with archivePath
 import 'package:mangayomi/providers/storage_provider.dart'; // Provides storage directory selection
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
-import 'package:shiori/shiori.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart'; // Annotations for code generation
 part 'file_scanner.g.dart';
 
@@ -311,7 +310,9 @@ Future<void> _scanDirectory(
           coverBytes = await _readMangaFolderCover(ref, subDirs, files);
         }
       } catch (e) {
-        botToast(localizedMessage((l10n) => l10n.error_reading_cover_image(e)), tone: ShioriToastTone.error, second: 4);
+        BotToast.showText(
+          text: localizedMessage((l10n) => l10n.error_reading_cover_image(e)),
+        );
       }
     } else if (itemType == ItemType.manga && manga.customCoverImage == null) {
       coverBytes = await _readMangaFolderCover(ref, subDirs, files);
@@ -345,7 +346,9 @@ Future<void> _scanDirectory(
             : Status.unknown;
         manga.lastUpdate = dateNow;
       } catch (e) {
-        botToast(localizedMessage((l10n) => l10n.error_reading_metadata(e)), tone: ShioriToastTone.error, second: 4);
+        BotToast.showText(
+          text: localizedMessage((l10n) => l10n.error_reading_metadata(e)),
+        );
       }
     }
 
@@ -390,7 +393,9 @@ Future<void> _scanDirectory(
     // Save all new and changed items to the library
     await mangaRepository.putAll(changedMangas);
   } catch (e) {
-    botToast("Database write error. Manga/Anime couldn't be saved: $e", tone: ShioriToastTone.error, second: 4);
+    BotToast.showText(
+      text: "Database write error. Manga/Anime couldn't be saved: $e",
+    );
   }
 
   // If new Mangas have been added (no Id to save Chapters)
@@ -492,9 +497,11 @@ Future<void> _scanDirectory(
       await mangaRepository.putAll(processedMangas);
     }
   } catch (e) {
-    botToast(localizedMessage(
+    BotToast.showText(
+      text: localizedMessage(
         (l10n) => l10n.error_saving_chapter_episode_to_library(e),
-      ), tone: ShioriToastTone.error, second: 4);
+      ),
+    );
   }
   try {
     if (chaptersToSave.isNotEmpty) {
@@ -516,7 +523,9 @@ Future<void> _scanDirectory(
       });
     }
   } catch (e) {
-    botToast("Database write error. Manga/Anime couldn't be saved: $e", tone: ShioriToastTone.error, second: 4);
+    BotToast.showText(
+      text: "Database write error. Manga/Anime couldn't be saved: $e",
+    );
   }
 }
 
@@ -548,9 +557,11 @@ Future<Uint8List?> _readMangaFolderCover(
     try {
       return await imageFile.readAsBytes();
     } catch (e) {
-      botToast(localizedMessage(
+      BotToast.showText(
+        text: localizedMessage(
           (l10n) => l10n.error_reading_chapter_cover_image(e),
-        ), tone: ShioriToastTone.error, second: 4);
+        ),
+      );
     }
   }
 
@@ -563,9 +574,11 @@ Future<Uint8List?> _readMangaFolderCover(
       );
       return data.$3;
     } catch (e) {
-      botToast(localizedMessage(
+      BotToast.showText(
+        text: localizedMessage(
           (l10n) => l10n.error_reading_archive_cover_image(e),
-        ), tone: ShioriToastTone.error, second: 4);
+        ),
+      );
     }
   }
   return null;
@@ -644,7 +657,9 @@ Future<Directory?> getLocalLibrary() async {
     final dir = await StorageProvider().getDefaultDirectory();
     return dir == null ? null : Directory(p.join(dir.path, 'local'));
   } catch (e) {
-    botToast(localizedMessage((l10n) => l10n.error_getting_local_library(e)), tone: ShioriToastTone.error, second: 4);
+    BotToast.showText(
+      text: localizedMessage((l10n) => l10n.error_getting_local_library(e)),
+    );
     return null;
   }
 }

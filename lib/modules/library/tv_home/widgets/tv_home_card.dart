@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/modules/widgets/cover_view_widget.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 /// A cover card: reuses [CoverViewWidget] (focus ring + badges) and scrolls
 /// itself into view when focused (focus drives scroll). Select → detail.
@@ -40,7 +40,7 @@ class TvHomeCard extends ConsumerWidget {
           Scrollable.ensureVisible(
             context,
             alignment: 0.5,
-            duration: ShioriMotion.standard,
+            duration: const Duration(milliseconds: 220),
             curve: Curves.easeOut,
           );
         }
@@ -68,14 +68,14 @@ class TvHomeCard extends ConsumerWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                 decoration: BoxDecoration(
-                  color: context.shiori.color.accentInk,
-                  borderRadius: BorderRadius.circular(ShioriShape.badge),
+                  color: context.primaryColor,
+                  borderRadius: BorderRadius.circular(3),
                 ),
                 child: Text(
                   '$unread',
                   style: TextStyle(
-                    color: context.shiori.color.ink0,
-                    fontSize: ShioriType.reference.badge.fontSize,
+                    color: context.dynamicBlackWhiteColor,
+                    fontSize: 11,
                   ),
                 ),
               ),
@@ -91,16 +91,16 @@ class TvHomeCard extends ConsumerWidget {
                 constraints: const BoxConstraints(maxWidth: 92),
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
-                  color: context.shiori.color.ink1,
+                  color: Theme.of(context).cardColor,
                   borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(ShioriShape.badge),
+                    topRight: Radius.circular(3),
                   ),
                 ),
                 child: Text(
                   source,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: context.shiori.text.meta,
+                  style: const TextStyle(fontSize: 12),
                 ),
               ),
             ),

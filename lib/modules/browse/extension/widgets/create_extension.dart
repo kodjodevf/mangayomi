@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class CreateExtension extends StatefulWidget {
   final Source? editSource;
@@ -59,27 +59,64 @@ class _CreateExtensionState extends State<CreateExtension> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(ShioriSpace.s8),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              ShioriValueRow<int>(
-                title: l10n.choose_extension_language,
-                icon: _isEditMode ? Symbols.lock_rounded : null,
-                value: _languageIndex,
-                options: [
-                  for (final (i, label) in languageLabels.indexed)
-                    ShioriChoice(i, label),
-                ],
-                onChanged: _isEditMode
-                    ? null
-                    : (v) => setState(() {
-                        _sourceCodeLanguage = switch (v) {
-                          0 => SourceCodeLanguage.dart,
-                          1 => SourceCodeLanguage.javascript,
-                          _ => SourceCodeLanguage.lnreader,
-                        };
-                        _languageIndex = v;
-                      }),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 17),
+                child: Row(
+                  children: [
+                    Text(l10n.choose_extension_language),
+                    if (_isEditMode) ...[
+                      const SizedBox(width: 6),
+                      Icon(
+                        Icons.lock_outline,
+                        size: 14,
+                        color: Theme.of(context).hintColor,
+                      ),
+                    ],
+                    const SizedBox(width: 20),
+                    Flexible(
+                      child: DropdownButton(
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        isExpanded: true,
+                        value: _languageIndex,
+                        hint: Text(
+                          languageLabels[_languageIndex],
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                        items: languageLabels
+                            .map(
+                              (e) => DropdownMenuItem(
+                                value: languageLabels.indexOf(e),
+                                child: Text(
+                                  e,
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: _isEditMode
+                            ? null
+                            : (int? v) {
+                                setState(() {
+                                  if (v == 0) {
+                                    _sourceCodeLanguage =
+                                        SourceCodeLanguage.dart;
+                                  } else if (v == 1) {
+                                    _sourceCodeLanguage =
+                                        SourceCodeLanguage.javascript;
+                                  } else {
+                                    _sourceCodeLanguage =
+                                        SourceCodeLanguage.lnreader;
+                                  }
+                                  _languageIndex = v!;
+                                });
+                              },
+                      ),
+                    ),
+                  ],
+                ),
               ),
               _textEditing(
                 l10n.name,
@@ -137,41 +174,109 @@ class _CreateExtensionState extends State<CreateExtension> {
                 },
                 initialValue: _notes,
               ),
-              ShioriValueRow<int>(
-                title: l10n.type,
-                icon: _isEditMode ? Symbols.lock_rounded : null,
-                value: _sourceTypeIndex,
-                options: [
-                  for (final (i, label) in sourceTypeLabels.indexed)
-                    ShioriChoice(i, label),
-                ],
-                onChanged: _isEditMode
-                    ? null
-                    : (v) => setState(() => _sourceTypeIndex = v),
-              ),
-              ShioriValueRow<int>(
-                title: l10n.target,
-                icon: _isEditMode ? Symbols.lock_rounded : null,
-                value: _itemTypeIndex,
-                options: [
-                  for (final (i, label) in itemTypeLabels.indexed)
-                    ShioriChoice(i, label),
-                ],
-                onChanged: _isEditMode
-                    ? null
-                    : (v) => setState(() => _itemTypeIndex = v),
-              ),
-              ShioriSwitchRow(
-                title: "NSFW",
-                value: _isNsfw,
-                onChanged: (value) => setState(() => _isNsfw = value),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 17),
+                child: Row(
+                  children: [
+                    Text(l10n.type),
+                    if (_isEditMode) ...[
+                      const SizedBox(width: 6),
+                      Icon(
+                        Icons.lock_outline,
+                        size: 14,
+                        color: Theme.of(context).hintColor,
+                      ),
+                    ],
+                    const SizedBox(width: 20),
+                    Flexible(
+                      child: DropdownButton(
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        isExpanded: true,
+                        value: _sourceTypeIndex,
+                        hint: Text(
+                          sourceTypeLabels[_sourceTypeIndex],
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                        items: sourceTypeLabels
+                            .map(
+                              (e) => DropdownMenuItem(
+                                value: sourceTypeLabels.indexOf(e),
+                                child: Text(
+                                  e,
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: _isEditMode
+                            ? null
+                            : (int? v) {
+                                setState(() {
+                                  _sourceTypeIndex = v!;
+                                });
+                              },
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Padding(
-                padding: const EdgeInsets.all(ShioriSpace.s8),
+                padding: const EdgeInsets.symmetric(horizontal: 17),
+                child: Row(
+                  children: [
+                    Text(l10n.target),
+                    if (_isEditMode) ...[
+                      const SizedBox(width: 6),
+                      Icon(
+                        Icons.lock_outline,
+                        size: 14,
+                        color: Theme.of(context).hintColor,
+                      ),
+                    ],
+                    const SizedBox(width: 20),
+                    Flexible(
+                      child: DropdownButton(
+                        icon: const Icon(Icons.keyboard_arrow_down),
+                        isExpanded: true,
+                        value: _itemTypeIndex,
+                        hint: Text(
+                          itemTypeLabels[_itemTypeIndex],
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                        items: itemTypeLabels
+                            .map(
+                              (e) => DropdownMenuItem(
+                                value: itemTypeLabels.indexOf(e),
+                                child: Text(
+                                  e,
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: _isEditMode
+                            ? null
+                            : (int? v) {
+                                setState(() {
+                                  _itemTypeIndex = v!;
+                                });
+                              },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SwitchListTile(
+                title: const Text("NSFW", style: TextStyle(fontSize: 13)),
+                value: _isNsfw,
+                onChanged: (value) => setState(() => _isNsfw = value),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 17),
+                dense: true,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Consumer(
-                  builder: (context, ref, child) => ShioriButton(
-                    expand: true,
-                    label: context.l10n.save,
+                  builder: (context, ref, child) => ElevatedButton(
                     onPressed: () {
                       if (_name.isNotEmpty &&
                           _lang.isNotEmpty &&
@@ -236,6 +341,7 @@ class _CreateExtensionState extends State<CreateExtension> {
                         }
                       }
                     },
+                    child: Text(context.l10n.save),
                   ),
                 ),
               ),
@@ -256,7 +362,7 @@ Widget _textEditing(
   bool enabled = true,
 }) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s16, vertical: ShioriSpace.s4),
+    padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 5),
     child: TextFormField(
       initialValue: initialValue,
       enabled: enabled,
@@ -265,6 +371,18 @@ Widget _textEditing(
       decoration: InputDecoration(
         hintText: hintText,
         labelText: label,
+        isDense: true,
+        filled: true,
+        fillColor: Colors.transparent,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: context.secondaryColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: context.secondaryColor),
+        ),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(color: context.secondaryColor),
+        ),
       ),
     ),
   );

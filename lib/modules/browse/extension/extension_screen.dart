@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
@@ -8,6 +7,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extensions_provider.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
+import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/language.dart';
@@ -83,7 +83,7 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
       child: Padding(
         // Match the sources tab's inset so the two Browse tabs line up on TV.
         padding: EdgeInsets.only(
-          top: ShioriSpace.s12,
+          top: 10,
           left: tvHorizontalInset,
           right: tvHorizontalInset,
         ),
@@ -142,7 +142,7 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
               interactive: true,
               controller: controller,
               thickness: 12,
-              radius: const Radius.circular(ShioriShape.card),
+              radius: const Radius.circular(10),
               child: CustomScrollView(
                 controller: controller,
                 slivers: [
@@ -166,17 +166,13 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
               ),
             );
           },
-          error: (error, _) => ShioriEmptyState(
-            icon: Symbols.cloud_off_rounded,
-            title: '$error',
-            compact: true,
-            actionLabel: context.l10n.refresh,
-            onAction: _refreshSources,
+          error: (error, _) => Center(
+            child: ElevatedButton(
+              onPressed: _refreshSources,
+              child: Text(context.l10n.refresh),
+            ),
           ),
-          loading: () => ListView(
-            physics: const NeverScrollableScrollPhysics(),
-            children: [for (var i = 0; i < 8; i++) const ShioriSkeletonRow()],
-          ),
+          loading: () => const ProgressCenter(),
         ),
       ),
     );
@@ -189,33 +185,40 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
       groupSeparatorBuilder: (_) => StatefulBuilder(
         builder: (context, setState) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s16),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(child: ShioriGroupLabel(l10n.update_pending)),
-                if (isUpdating)
-                  const Padding(
-                    padding: EdgeInsets.all(ShioriSpace.s12),
-                    child: ShioriLoading.inline(),
-                  )
-                else
-                  ShioriButton.secondary(
-                    icon: Symbols.system_update_alt_rounded,
-                    label: l10n.update_all,
-                    onPressed: () async {
-                      setState(() => isUpdating = true);
-                      try {
-                        for (var source in updateEntries) {
-                          await _updateSource(source);
-                        }
-                      } finally {
-                        if (context.mounted) {
-                          setState(() => isUpdating = false);
-                        }
-                      }
-                    },
+                Text(
+                  l10n.update_pending,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
                   ),
+                ),
+                ElevatedButton(
+                  onPressed: isUpdating
+                      ? null
+                      : () async {
+                          setState(() => isUpdating = true);
+                          try {
+                            for (var source in updateEntries) {
+                              await _updateSource(source);
+                            }
+                          } finally {
+                            if (context.mounted) {
+                              setState(() => isUpdating = false);
+                            }
+                          }
+                        },
+                  child: isUpdating
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(l10n.update_all),
+                ),
               ],
             ),
           );
@@ -235,13 +238,11 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
       elements: installedEntries,
       groupBy: (_) => "",
       groupSeparatorBuilder: (_) => Padding(
-        padding: const EdgeInsets.fromLTRB(
-          ShioriSpace.s16,
-          ShioriSpace.s16,
-          ShioriSpace.s16,
-          ShioriSpace.s4,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Text(
+          l10n.installed,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
         ),
-        child: ShioriGroupLabel(l10n.installed),
       ),
       itemBuilder: (context, Source element) =>
           ExtensionListTileWidget(key: ValueKey(element.id), source: element),
@@ -256,15 +257,13 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
     return CustomSliverGroupedListView<Source, String>(
       elements: notInstalledEntries,
       groupBy: (element) =>
-          languageName(context, element.lang?.toLowerCase() ?? ''),
+          completeLanguageName(element.lang?.toLowerCase() ?? ''),
       groupSeparatorBuilder: (String groupByValue) => Padding(
-        padding: const EdgeInsets.fromLTRB(
-          ShioriSpace.s16,
-          ShioriSpace.s16,
-          ShioriSpace.s16,
-          ShioriSpace.s4,
+        padding: const EdgeInsets.only(left: 12),
+        child: Text(
+          groupByValue,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
         ),
-        child: ShioriGroupLabel(groupByValue),
       ),
       itemBuilder: (context, Source element) =>
           ExtensionListTileWidget(key: ValueKey(element.id), source: element),

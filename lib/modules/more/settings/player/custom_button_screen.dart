@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
-import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/repositories/custom_button_repository.dart';
 import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/custom_buttons_provider.dart';
+import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class CustomButtonScreen extends ConsumerStatefulWidget {
   const CustomButtonScreen({super.key});
@@ -24,255 +24,377 @@ class _CustomButtonScreenState extends ConsumerState<CustomButtonScreen> {
       body: customButtons.when(
         data: (data) {
           if (data.isEmpty) {
-            return ShioriEmptyState(
-              icon: Symbols.terminal_rounded,
-              title: l10n.custom_buttons,
-              message: l10n.custom_buttons_info,
-              actionLabel: l10n.custom_buttons_add,
-              onAction: () => _edit(null),
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  l10n.custom_buttons_edit,
+                  textAlign: TextAlign.center,
+                ),
+              ),
             );
           }
-          return ReorderableListView.builder(
-            buildDefaultDragHandles: false,
-            padding: const EdgeInsets.only(bottom: ShioriSpace.s48 * 2),
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              final button = data[index];
-              final favourite = button.isFavourite ?? false;
-              return ShioriListRow(
-                key: ValueKey('custom_btn_${button.id}'),
-                leading: ReorderableDragStartListener(
-                  index: index,
-                  child: const Icon(Symbols.drag_handle_rounded),
-                ),
-                title: button.title ?? '',
-                subtitle: button.codePress,
-                onTap: () => _edit(button),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: ReorderableListView.builder(
+              buildDefaultDragHandles: false,
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                final customButton = data[index];
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  key: Key("custom_btn_col_${customButton.id}"),
                   children: [
-                    IconButton(
-                      tooltip: l10n.set_as_default,
-                      isSelected: favourite,
-                      onPressed: () async {
-                        for (final other in data) {
-                          other.isFavourite = other.id == button.id;
-                        }
-                        await customButtonRepository.putAll(data);
-                      },
-                      icon: Icon(
-                        Symbols.star_rounded,
-                        fill: favourite ? 1 : 0,
-                        color: favourite
-                            ? context.shiori.color.accentInk
-                            : null,
-                      ),
-                    ),
-                    ShioriMenuButton(
-                      tooltip: MaterialLocalizations.of(context)
-                          .moreButtonTooltip,
-                      items: [
-                        ShioriMenuItem(
-                          label: l10n.edit,
-                          icon: Symbols.edit_rounded,
-                          onSelected: () => _edit(button),
+                    Row(
+                      key: Key("custom_btn_row_${customButton.id}"),
+                      children: [
+                        ReorderableDragStartListener(
+                          index: index,
+                          child: const Icon(Icons.drag_handle),
                         ),
-                        ShioriMenuItem(
-                          label: MaterialLocalizations.of(context)
-                              .deleteButtonTooltip,
-                          icon: Symbols.delete_rounded,
-                          destructive: true,
-                          onSelected: () => _delete(button),
+                        Expanded(
+                          child: Row(
+                            key: Key("custom_btn_row1_${customButton.id}"),
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Expanded(
+                                child: ListTile(
+                                  key: Key(
+                                    "custom_btn_tile_${customButton.id}",
+                                  ),
+                                  dense: true,
+                                  title: Text(
+                                    customButton.title!,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () async {
+                                  for (final button in data) {
+                                    button.isFavourite =
+                                        button.id == customButton.id;
+                                  }
+                                  await customButtonRepository.putAll(data);
+                                },
+                                icon: Icon(
+                                  (customButton.isFavourite ?? false)
+                                      ? Icons.star
+                                      : Icons.star_border,
+                                  color: context.primaryColor,
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () async {
+                                  await _showEditForm(customButton);
+                                },
+                                icon: Icon(Icons.mode_edit_outlined),
+                              ),
+                              IconButton(
+                                onPressed: () async {
+                                  await _showDeleteButton(customButton);
+                                },
+                                icon: Icon(Icons.delete_outline),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
+                    Text(
+                      customButton.codePress ?? "",
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
-                ),
-              );
-            },
-            onReorderItem: (oldIndex, newIndex) async {
-              if (oldIndex < newIndex) {
-                final draggedItemPos = data[oldIndex].pos;
-                for (var i = oldIndex; i < newIndex - 1; i++) {
-                  data[i].pos = data[i + 1].pos;
+                );
+              },
+              onReorderItem: (oldIndex, newIndex) async {
+                if (oldIndex < newIndex) {
+                  final draggedItemPos = data[oldIndex].pos;
+                  for (var i = oldIndex; i < newIndex - 1; i++) {
+                    data[i].pos = data[i + 1].pos;
+                  }
+                  data[newIndex - 1].pos = draggedItemPos;
+                } else {
+                  final draggedItemPos = data[oldIndex].pos;
+                  for (var i = oldIndex; i > newIndex; i--) {
+                    data[i].pos = data[i - 1].pos;
+                  }
+                  data[newIndex].pos = draggedItemPos;
                 }
-                data[newIndex - 1].pos = draggedItemPos;
-              } else {
-                final draggedItemPos = data[oldIndex].pos;
-                for (var i = oldIndex; i > newIndex; i--) {
-                  data[i].pos = data[i - 1].pos;
-                }
-                data[newIndex].pos = draggedItemPos;
-              }
-              await customButtonRepository.putAll(data);
-            },
+                await customButtonRepository.putAll(data);
+              },
+            ),
           );
         },
-        error: (error, stackTrace) => ErrorState(detail: '$error'),
-        loading: () => const ShioriLoading(),
+        error: (Object error, StackTrace stackTrace) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                l10n.custom_buttons_edit,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        },
+        loading: () {
+          return const ProgressCenter();
+        },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _edit(null),
-        icon: const Icon(Symbols.add_rounded),
-        label: Text(l10n.add),
+        onPressed: () async {
+          await _showEditForm(null);
+        },
+        label: Row(
+          children: [
+            const Icon(Icons.add),
+            const SizedBox(width: 10),
+            Text(l10n.add),
+          ],
+        ),
       ),
     );
   }
 
-  /// The button's text and its code, in a tall sheet: the code fields are
-  /// several lines each, and a dialog left them a few words wide.
-  Future<void> _edit(CustomButton? customButton) => showShioriSheet<void>(
-    context,
-    title: customButton == null
-        ? context.l10n.custom_buttons_add
-        : context.l10n.edit,
-    maxHeightFactor: 0.95,
-    builder: (_) => _CustomButtonForm(customButton: customButton),
-  );
-
-  Future<void> _delete(CustomButton customButton) async {
-    final confirmed = await showShioriConfirm(
-      context,
-      title: context.l10n.custom_buttons_delete,
-      message: customButton.title,
-      confirmLabel: MaterialLocalizations.of(context).deleteButtonTooltip,
-      destructive: true,
+  Future<void> _showEditForm(CustomButton? customButton) async {
+    bool isTitleMissing = customButton == null;
+    bool isCodePressMissing = customButton == null;
+    final titleController = TextEditingController(
+      text: customButton?.title ?? "",
     );
-    if (confirmed) await customButtonRepository.delete(customButton.id!);
-  }
-}
-
-class _CustomButtonForm extends StatefulWidget {
-  const _CustomButtonForm({required this.customButton});
-
-  final CustomButton? customButton;
-
-  @override
-  State<_CustomButtonForm> createState() => _CustomButtonFormState();
-}
-
-class _CustomButtonFormState extends State<_CustomButtonForm> {
-  late final _title = TextEditingController(
-    text: widget.customButton?.title ?? '',
-  );
-  late final _press = TextEditingController(
-    text: widget.customButton?.codePress ?? '',
-  );
-  late final _longPress = TextEditingController(
-    text: widget.customButton?.codeLongPress ?? '',
-  );
-  late final _startup = TextEditingController(
-    text: widget.customButton?.codeStartup ?? '',
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    // The save button follows the two required fields.
-    _title.addListener(_refresh);
-    _press.addListener(_refresh);
-  }
-
-  void _refresh() => setState(() {});
-
-  @override
-  void dispose() {
-    for (final c in [_title, _press, _longPress, _startup]) {
-      c.dispose();
-    }
-    super.dispose();
-  }
-
-  bool get _complete =>
-      _title.text.trim().isNotEmpty && _press.text.trim().isNotEmpty;
-
-  Future<void> _save() async {
-    final existing = await customButtonRepository.findById(
-      widget.customButton?.id,
+    final codePressController = TextEditingController(
+      text: customButton?.codePress ?? "",
     );
-    final button =
-        existing ??
-        CustomButton(
-          title: "",
-          codePress: "",
-          codeLongPress: "",
-          codeStartup: "",
-          pos: await customButtonRepository.count(),
+    final codeLongPressController = TextEditingController(
+      text: customButton?.codeLongPress ?? "",
+    );
+    final codeStartupController = TextEditingController(
+      text: customButton?.codeStartup ?? "",
+    );
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              return AlertDialog(
+                title: Text(
+                  "${context.l10n.custom_buttons_add}${customButton != null ? " (ID: ${customButton.id})" : ""}",
+                ),
+                scrollable: true,
+                content: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    CustomTextFormField(
+                      name: context.l10n.custom_buttons_text,
+                      helperText: context.l10n.custom_buttons_text_req,
+                      allowEnterNewLine: false,
+                      controller: titleController,
+                      context: context,
+                      missing: (value) {
+                        setState(() {
+                          isTitleMissing = value;
+                        });
+                      },
+                      isMissing: isTitleMissing,
+                      val: (val) {},
+                    ),
+                    const SizedBox(height: 20),
+                    CustomTextFormField(
+                      name: context.l10n.custom_buttons_js_code,
+                      helperText: context.l10n.custom_buttons_js_code_req,
+                      minLines: 4,
+                      controller: codePressController,
+                      context: context,
+                      missing: (value) {
+                        setState(() {
+                          isCodePressMissing = value;
+                        });
+                      },
+                      isMissing: isCodePressMissing,
+                      val: (val) {},
+                    ),
+                    const SizedBox(height: 20),
+                    CustomTextFormField(
+                      name: context.l10n.custom_buttons_js_code_long,
+                      minLines: 4,
+                      controller: codeLongPressController,
+                      context: context,
+                      missing: (value) {},
+                      isMissing: false,
+                      val: (val) {},
+                    ),
+                    const SizedBox(height: 20),
+                    CustomTextFormField(
+                      name: context.l10n.custom_buttons_startup,
+                      minLines: 4,
+                      controller: codeStartupController,
+                      context: context,
+                      missing: (value) {},
+                      isMissing: false,
+                      val: (val) {},
+                    ),
+                  ],
+                ),
+                actions: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(context.l10n.cancel),
+                      ),
+                      const SizedBox(width: 15),
+                      TextButton(
+                        onPressed: isTitleMissing || isCodePressMissing
+                            ? null
+                            : () async {
+                                final temp = await customButtonRepository
+                                    .findById(customButton?.id);
+                                final button =
+                                    temp ??
+                                    CustomButton(
+                                      title: "",
+                                      codePress: "",
+                                      codeLongPress: "",
+                                      codeStartup: "",
+                                      pos: await customButtonRepository.count(),
+                                    );
+                                await customButtonRepository.save(
+                                  button
+                                    ..title = titleController.text
+                                    ..codePress = codePressController.text
+                                    ..codeLongPress =
+                                        codeLongPressController.text
+                                    ..codeStartup = codeStartupController.text,
+                                );
+                                if (context.mounted) {
+                                  Navigator.pop(context);
+                                }
+                              },
+                        child: Text(
+                          customButton == null
+                              ? context.l10n.add
+                              : context.l10n.edit,
+                          style: TextStyle(
+                            color: isTitleMissing || isCodePressMissing
+                                ? Theme.of(context).primaryColor
+                                      .withValues(alpha: 0.2)
+                                : null,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
         );
-    await customButtonRepository.save(
-      button
-        ..title = _title.text
-        ..codePress = _press.text
-        ..codeLongPress = _longPress.text
-        ..codeStartup = _startup.text,
+      },
     );
-    if (mounted) Navigator.pop(context);
   }
+
+  Future<void> _showDeleteButton(CustomButton customButton) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Text(context.l10n.custom_buttons_delete),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(context.l10n.cancel),
+                ),
+                const SizedBox(width: 15),
+                ElevatedButton(
+                  onPressed: () async {
+                    await customButtonRepository.delete(customButton.id!);
+                    if (context.mounted) {
+                      Navigator.pop(context, "ok");
+                    }
+                  },
+                  child: Text(context.l10n.ok),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class CustomTextFormField extends StatelessWidget {
+  final TextEditingController controller;
+  final BuildContext context;
+  final Function(bool) missing;
+  final bool isMissing;
+  final String name;
+  final String helperText;
+  final int minLines;
+  final bool allowEnterNewLine;
+  final Function(String) val;
+  const CustomTextFormField({
+    super.key,
+    required this.controller,
+    required this.context,
+    required this.missing,
+    required this.isMissing,
+    this.name = "",
+    this.helperText = "",
+    this.minLines = 1,
+    this.allowEnterNewLine = true,
+    required this.val,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final mono = context.shiori.text.row.copyWith(fontFamily: 'monospace');
-    Widget field(
-      TextEditingController controller,
-      String label, {
-      String? helper,
-      bool code = true,
-    }) => TextField(
+    return TextFormField(
+      minLines: minLines,
+      maxLines: null,
       controller: controller,
-      minLines: code ? 3 : 1,
-      maxLines: code ? 8 : 1,
-      keyboardType: code ? TextInputType.multiline : TextInputType.text,
-      style: code ? mono : null,
-      decoration: InputDecoration(labelText: label, helperText: helper),
-    );
-    return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Flexible(
-            child: ListView(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(ShioriSpace.s16),
-              children: [
-                field(
-                  _title,
-                  l10n.custom_buttons_text,
-                  helper: l10n.custom_buttons_text_req,
-                  code: false,
-                ),
-                const SizedBox(height: ShioriSpace.s16),
-                field(
-                  _press,
-                  l10n.custom_buttons_js_code,
-                  helper: l10n.custom_buttons_js_code_req,
-                ),
-                const SizedBox(height: ShioriSpace.s16),
-                field(_longPress, l10n.custom_buttons_js_code_long),
-                const SizedBox(height: ShioriSpace.s16),
-                field(_startup, l10n.custom_buttons_startup),
-              ],
-            ),
+      keyboardType: allowEnterNewLine
+          ? TextInputType.multiline
+          : TextInputType.text,
+      onChanged: (value) {
+        missing(controller.text.isEmpty);
+        val(value);
+      },
+      onFieldSubmitted: (s) {},
+      decoration: InputDecoration(
+        helperText: helperText,
+        helperStyle: TextStyle(color: isMissing ? Colors.red : null),
+        isDense: true,
+        label: Text(
+          name,
+          style: TextStyle(color: isMissing ? Colors.red : null),
+        ),
+        filled: true,
+        fillColor: Colors.transparent,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: isMissing ? Colors.red : Theme.of(context).primaryColor,
           ),
-          SafeArea(
-            top: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                ShioriSpace.s16,
-                0,
-                ShioriSpace.s16,
-                ShioriSpace.s16,
-              ),
-              child: ShioriButton(
-                label: widget.customButton == null ? l10n.add : l10n.save,
-                expand: true,
-                onPressed: _complete ? _save : null,
-              ),
-            ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: isMissing ? Colors.red : Theme.of(context).primaryColor,
           ),
-        ],
+        ),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: isMissing ? Colors.red : Theme.of(context).primaryColor,
+          ),
+        ),
       ),
     );
   }

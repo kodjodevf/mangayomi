@@ -83,8 +83,11 @@ void main() {
       sourceId: 1,
     );
     await database.writeTxn(() => database.mangas.put(manga));
-    final episode = Chapter(mangaId: manga.id, name: 'Episode 1', isRead: false)
-      ..manga.value = manga;
+    final episode = Chapter(
+      mangaId: manga.id,
+      name: 'Episode 1',
+      isRead: false,
+    )..manga.value = manga;
     await database.writeTxn(() async {
       await database.chapters.put(episode);
       await episode.manga.save();

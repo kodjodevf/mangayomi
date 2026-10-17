@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/widgets/in_library_badge.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
@@ -10,6 +8,7 @@ import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
 
 /// A search-result cover card: focusable/TV-navigable, watches the library
@@ -62,7 +61,7 @@ class _GlobalSearchResultCardState extends ConsumerState<GlobalSearchResultCard>
           Scrollable.ensureVisible(
             context,
             alignment: 0.5,
-            duration: ShioriMotion.standard,
+            duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
           );
         }
@@ -80,7 +79,7 @@ class _GlobalSearchResultCardState extends ConsumerState<GlobalSearchResultCard>
       child: Padding(
         padding: widget.padding,
         child: AnimatedContainer(
-          duration: ShioriMotion.fast,
+          duration: const Duration(milliseconds: 130),
           curve: Curves.easeOut,
           // Matches the library cover: accent ring plus a slight lift.
           transform: Matrix4.identity()
@@ -92,9 +91,9 @@ class _GlobalSearchResultCardState extends ConsumerState<GlobalSearchResultCard>
             ),
           transformAlignment: Alignment.center,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(ShioriShape.cover),
+            borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: _focused ? context.shiori.color.accentInk : Colors.transparent,
+              color: _focused ? context.primaryColor : Colors.transparent,
               width: 2,
             ),
           ),
@@ -125,7 +124,7 @@ class _GlobalSearchResultCardState extends ConsumerState<GlobalSearchResultCard>
                                 );
                               }
                               return ClipRRect(
-                                borderRadius: BorderRadius.circular(ShioriShape.cover),
+                                borderRadius: BorderRadius.circular(5),
                                 child: cachedNetworkImage(
                                   headers: ref.watch(
                                     headersProvider(
@@ -152,10 +151,10 @@ class _GlobalSearchResultCardState extends ConsumerState<GlobalSearchResultCard>
                             },
                           ),
                           BottomTextWidget(
-                            fontSize: context.shiori.text.meta.fontSize,
+                            fontSize: 12.0,
                             text: getMangaDetail.name!,
                             isLoading: true,
-                            textColor: context.shiori.color.fg,
+                            textColor: Theme.of(context).textTheme.bodyLarge!.color,
                             isComfortableGrid: true,
                           ),
                         ],
@@ -165,14 +164,20 @@ class _GlobalSearchResultCardState extends ConsumerState<GlobalSearchResultCard>
                       width: 110,
                       height: 150,
                       color: hasData && snapshot.data!.first.favorite!
-                          ? inLibraryVeil
+                          ? Colors.black.withValues(alpha: 0.7)
                           : null,
                     ),
                     if (hasData && snapshot.data!.first.favorite!)
-                      const PositionedDirectional(
-                        top: ShioriSpace.s4,
-                        start: ShioriSpace.s4,
-                        child: InLibraryBadge(),
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(
+                            Icons.collections_bookmark,
+                            color: context.primaryColor,
+                          ),
+                        ),
                       ),
                   ],
                 );

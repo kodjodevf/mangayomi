@@ -1,7 +1,6 @@
 import 'dart:ui' show SemanticsAction;
 
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_pills.dart';
@@ -588,9 +587,9 @@ void main() {
       final control = find.byType(MobilePlayerCompactSeekControl);
       expect(tester.getSize(control), const Size.square(48));
       expect(find.text('85'), findsOneWidget);
-      expect(find.byIcon(Symbols.rotate_right_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.rotate_right_outlined), findsOneWidget);
       expect(
-        tester.getSize(find.byIcon(Symbols.rotate_right_rounded)),
+        tester.getSize(find.byIcon(Icons.rotate_right_outlined)),
         const Size.square(mobilePlayerPortraitControlIconSize),
       );
       expect(
@@ -715,11 +714,8 @@ void main() {
       ),
     );
 
-    // The pill keeps its size; only the tap target around it grows.
     final button = find.byType(PlayerPillButton);
-    final pill = find.descendant(of: button, matching: find.byType(Container));
-    expect(tester.getSize(pill.first).height, lessThan(44));
-    expect(tester.getSize(button).height, greaterThanOrEqualTo(44));
+    expect(tester.getSize(button).height, lessThan(44));
     expect(tester.widget<Icon>(find.byIcon(Icons.speed)).size, 14);
     expect(tester.widget<Text>(find.text('1.0x')).style?.fontSize, 11);
   });

@@ -619,7 +619,7 @@
     }
   },
   "mass_migration_select_destination_source": "Selecionar fonte de destino",
-  "mass_migration_finding_matches": "Buscando correspondências em {source} · {language}",
+  "mass_migration_finding_matches": "Buscando correspondências em {source} • {language}",
   "@mass_migration_finding_matches": {
     "placeholders": {
       "source": {},

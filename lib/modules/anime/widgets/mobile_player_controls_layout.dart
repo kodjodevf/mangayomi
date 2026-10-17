@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 
 const double mobilePlayerPortraitControlIconSize = 24;
 const double mobilePlayerBottomControlsBottomPadding = 30;
@@ -179,21 +178,18 @@ class MobilePlayerUnlockControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      minimum: const EdgeInsets.symmetric(
-        horizontal: ShioriSpace.s16,
-        vertical: ShioriSpace.s24,
-      ),
+      minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Align(
         alignment: Alignment.centerLeft,
         child: IconButton.filledTonal(
           key: const ValueKey('mobile-player-unlock-button'),
           style: IconButton.styleFrom(
-            backgroundColor: ShioriScrim.underText,
+            backgroundColor: Colors.black.withValues(alpha: 0.55),
             foregroundColor: Colors.white,
           ),
           tooltip: tooltip,
           onPressed: onPressed,
-          icon: const Icon(Symbols.lock_rounded, size: 24),
+          icon: const Icon(Icons.lock_outline, size: 24),
         ),
       ),
     );
@@ -219,8 +215,7 @@ class MobilePlayerCompactSeekControl extends StatelessWidget {
     final secondsLabel = seconds?.toString();
     final icon = secondsLabel == null
         ? const Icon(
-            Symbols.fast_forward_rounded,
-            fill: 1,
+            Icons.fast_forward_rounded,
             size: mobilePlayerPortraitControlIconSize,
             color: Colors.white,
           )
@@ -230,7 +225,7 @@ class MobilePlayerCompactSeekControl extends StatelessWidget {
               alignment: Alignment.center,
               children: [
                 const Icon(
-                  Symbols.rotate_right_rounded,
+                  Icons.rotate_right_outlined,
                   size: mobilePlayerPortraitControlIconSize,
                   color: Colors.white,
                 ),
@@ -301,7 +296,7 @@ class MobilePlayerBottomControlsLayout extends StatelessWidget {
         if (!compactPortrait) {
           return Padding(
             key: const ValueKey('mobile-player-bottom-controls-wide'),
-            padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s8),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
               key: const ValueKey('mobile-player-bottom-controls-wide-row'),
               children: [
@@ -322,7 +317,7 @@ class MobilePlayerBottomControlsLayout extends StatelessWidget {
 
         return Padding(
           key: const ValueKey('mobile-player-bottom-controls-compact'),
-          padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s12),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             key: const ValueKey('mobile-player-compact-controls-row'),
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -330,7 +325,7 @@ class MobilePlayerBottomControlsLayout extends StatelessWidget {
               lockButton,
               const Spacer(),
               seekButton,
-              const SizedBox(width: ShioriSpace.s8),
+              const SizedBox(width: 8),
               shortcutButtons,
             ],
           ),

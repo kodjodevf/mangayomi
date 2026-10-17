@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
@@ -50,42 +49,34 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
       canPop: false,
       child: Scaffold(
         body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(ShioriSpace.s24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: ShioriSpace.s8,
-              children: [
-                Icon(
-                  Symbols.lock_rounded,
-                  fill: 1,
-                  size: context.shiori.scaled(72),
-                  color: context.shiori.color.accentInk,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.lock_outline,
+                size: 80,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(height: 24),
+              Text(
+                l10n.app_locked,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.auth_unlock_msg,
+                style: Theme.of(context).textTheme.bodyMedium
+                    ?.copyWith(color: Theme.of(context).hintColor),
+              ),
+              const SizedBox(height: 32),
+              FilledButton.icon(
+                onPressed: _isAuthenticating ? null : _authenticate,
+                icon: const Icon(Icons.fingerprint),
+                label: Text(
+                  _isAuthenticating ? l10n.authenticating : l10n.unlock,
                 ),
-                const SizedBox(height: ShioriSpace.s16),
-                Text(
-                  l10n.app_locked,
-                  textAlign: TextAlign.center,
-                  style: context.shiori.text.screenTitle.copyWith(
-                    color: context.shiori.color.fg,
-                  ),
-                ),
-                Text(
-                  l10n.auth_unlock_msg,
-                  textAlign: TextAlign.center,
-                  style: context.shiori.text.body.copyWith(
-                    color: context.shiori.color.fgMuted,
-                  ),
-                ),
-                const SizedBox(height: ShioriSpace.s24),
-                ShioriButton(
-                  autofocus: true,
-                  icon: Symbols.fingerprint_rounded,
-                  label: _isAuthenticating ? l10n.authenticating : l10n.unlock,
-                  onPressed: _isAuthenticating ? null : _authenticate,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

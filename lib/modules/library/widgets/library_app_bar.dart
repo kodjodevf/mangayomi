@@ -1,7 +1,5 @@
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/main_view/nav_groups.dart';
-import 'package:mangayomi/modules/main_view/widgets/nav_group_switcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -16,11 +14,11 @@ import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/library_updater.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/modules/widgets/tv_menu.dart';
-import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
-import 'package:shiori/shiori.dart';
 
 /// AppBar for the library screen.
 ///
@@ -143,18 +141,26 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
       title: isSearch
           ? null
           : Row(
-              spacing: ShioriSpace.s8,
               children: [
                 Text(
-                  isGroupedNavRoute(ref, libraryRouteFor(itemType))
-                      ? navGroupTitle(context, libraryRouteFor(itemType))
-                      : itemType.localized(l10n),
-                  style: context.shiori.text.screenTitle.copyWith(
-                    color: context.shiori.color.fg,
-                  ),
+                  itemType.localized(l10n),
+                  style: TextStyle(color: Theme.of(context).hintColor),
                 ),
+                const SizedBox(width: 10),
                 if (showNumbersOfItems)
-                  EntryBadgeChip(label: numberOfItems.toString()),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 3),
+                    child: Badge(
+                      backgroundColor: Theme.of(context).focusColor,
+                      label: Text(
+                        numberOfItems.toString(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.bodySmall!.color,
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
       actions: [
@@ -163,9 +169,11 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
           IconButton(
             splashRadius: 20,
             tooltip: l10n.cancel,
+            focusColor: Theme.of(context).colorScheme.primary
+                .withValues(alpha: 0.4),
             onPressed: () =>
                 ref.read(libraryUpdateProvider.notifier).requestCancel(),
-            icon: const Icon(Symbols.stop_circle_rounded),
+            icon: const Icon(Icons.stop_circle_outlined),
           ),
         isSearch
             ? SeachFormTextField(
@@ -183,8 +191,7 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   textEditingController.clear();
                   onSearchToggle();
                 },
-                tooltip: MaterialLocalizations.of(context).searchFieldLabel,
-                icon: const Icon(Symbols.search_rounded),
+                icon: const Icon(Icons.search),
               ),
         // Checkbox when searching library to ignore filters
         if (isSearch)
@@ -216,13 +223,9 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
               entries: entries,
             );
           },
-          tooltip: l10n.filter,
-          // An active filter is the accent, filled, so a library that looks
-          // short is never a mystery.
           icon: Icon(
-            Symbols.filter_list_rounded,
-            fill: isNotFiltering ? 0 : 1,
-            color: isNotFiltering ? null : context.shiori.color.accentInk,
+            Icons.filter_list_sharp,
+            color: isNotFiltering ? null : Colors.yellow,
           ),
         ),
         // Torrent stream is anime-only, so the menu's values are not its
@@ -237,8 +240,7 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 if (itemType == ItemType.anime) (l10n.torrent_stream, 3),
               ];
               return IconButton(
-                tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
-                icon: const Icon(Symbols.more_vert_rounded),
+                icon: const Icon(Icons.more_vert),
                 onPressed: () async {
                   final picked = await showTvMenu(
                     context,
@@ -253,31 +255,27 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
             },
           )
         else
-          ShioriMenuButton(
-            tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
-            items: [
-              ShioriMenuItem(
-                label: l10n.update_library,
-                icon: Symbols.refresh_rounded,
-                onSelected: () => _onLibraryMenu(context, ref, 0, manga),
-              ),
-              ShioriMenuItem(
-                label: l10n.open_random_entry,
-                icon: Symbols.shuffle_rounded,
-                onSelected: () => _onLibraryMenu(context, ref, 1, manga),
-              ),
-              ShioriMenuItem(
-                label: l10n.import,
-                icon: Symbols.file_open_rounded,
-                onSelected: () => _onLibraryMenu(context, ref, 2, manga),
-              ),
-              if (itemType == ItemType.anime)
-                ShioriMenuItem(
-                  label: l10n.torrent_stream,
-                  icon: Symbols.podcasts_rounded,
-                  onSelected: () => _onLibraryMenu(context, ref, 3, manga),
+          PopupMenuButton(
+            popUpAnimationStyle: popupAnimationStyle,
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem<int>(
+                  value: 0,
+                  child: Text(context.l10n.update_library),
                 ),
-            ],
+                PopupMenuItem<int>(
+                  value: 1,
+                  child: Text(l10n.open_random_entry),
+                ),
+                PopupMenuItem<int>(value: 2, child: Text(l10n.import)),
+                if (itemType == ItemType.anime)
+                  PopupMenuItem<int>(
+                    value: 3,
+                    child: Text(l10n.torrent_stream),
+                  ),
+              ];
+            },
+            onSelected: (value) => _onLibraryMenu(context, ref, value, manga),
           ),
       ],
     );
@@ -300,34 +298,29 @@ class _SelectionAppBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLongPressed = ref.watch(isLongPressedStateProvider);
     return Container(
-      color: context.shiori.color.ink0,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: AppBar(
-        title: Text(context.l10n.n_selected(mangaIdsList.length)),
-        backgroundColor: context.shiori.color.accent.withValues(
-          alpha: Alphas.accentTint,
-        ),
+        title: Text(mangaIdsList.length.toString()),
+        backgroundColor: context.primaryColor.withValues(alpha: 0.2),
         leading: IconButton(
-          tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
           onPressed: () {
             ref.read(mangasListStateProvider.notifier).clear();
             ref
                 .read(isLongPressedStateProvider.notifier)
                 .update(!isLongPressed);
           },
-          icon: const Icon(Symbols.close_rounded),
+          icon: const Icon(Icons.clear),
         ),
         actions: [
           IconButton(
-            tooltip: MaterialLocalizations.of(context).selectAllButtonLabel,
             onPressed: () {
               for (var manga in data) {
                 ref.read(mangasListStateProvider.notifier).selectAll(manga);
               }
             },
-            icon: const Icon(Symbols.select_all_rounded),
+            icon: const Icon(Icons.select_all),
           ),
           IconButton(
-            tooltip: context.l10n.invert_selection,
             onPressed: () {
               if (data.length == mangaIdsList.length) {
                 for (var manga in data) {
@@ -340,7 +333,7 @@ class _SelectionAppBar extends ConsumerWidget {
                 }
               }
             },
-            icon: const Icon(Symbols.flip_to_back_rounded),
+            icon: const Icon(Icons.flip_to_back_rounded),
           ),
         ],
       ),

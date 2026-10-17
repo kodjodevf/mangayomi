@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/mass_migration/mass_migration_preview_screen.dart';
 import 'package:mangayomi/modules/mass_migration/models/mass_migration_models.dart';
@@ -40,10 +39,11 @@ class MassMigrationSourceSelectionScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.mass_migration_title)),
       body: sourceGroups.isEmpty
-          ? ShioriEmptyState(
-              icon: Symbols.collections_bookmark_rounded,
-              title: l10n.mass_migration_no_library_items,
-              compact: true,
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(l10n.mass_migration_no_library_items),
+              ),
             )
           : ListView.separated(
               padding: tvPageInsets,
@@ -63,11 +63,11 @@ class MassMigrationSourceSelectionScreen extends StatelessWidget {
                   subtitle: Text(
                     [
                       if ((sourceGroup.lang ?? '').isNotEmpty)
-                        languageName(context, sourceGroup.lang!),
+                        completeLanguageName(sourceGroup.lang!),
                       l10n.mass_migration_item_count(sourceGroup.count),
-                    ].join(' · '),
+                    ].join(' • '),
                   ),
-                  trailing: const Icon(Symbols.chevron_right_rounded, fill: 1),
+                  trailing: const Icon(Icons.chevron_right),
                 );
                 if (isTv) {
                   return TvListRow(

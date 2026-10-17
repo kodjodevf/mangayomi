@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/widgets/tv_row_button.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 class ListTileWidget extends StatelessWidget {
@@ -40,11 +40,17 @@ class ListTileWidget extends StatelessWidget {
               child: ListTile(
                 leading: SizedBox(
                   height: 40,
-                  child: Icon(icon, color: context.shiori.color.accentInk),
+                  child: Icon(icon, color: context.primaryColor),
                 ),
                 title: Text(title),
                 subtitle: subtitle != null
-                    ? Text(subtitle!, style: context.shiori.caption)
+                    ? Text(
+                        subtitle!,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: context.secondaryColor,
+                        ),
+                      )
                     : null,
               ),
             ),
@@ -55,13 +61,22 @@ class ListTileWidget extends StatelessWidget {
     return ListTile(
       autofocus: autofocus,
       onTap: onTap,
+      // subtitle: subtitle != null
+      //     ? Text(
+      //         subtitle!,
+      //         style: TextStyle(fontSize: 11, color: context.secondaryColor),
+      //       )
+      //     : null,
       leading: SizedBox(
         height: 40,
-        child: Icon(icon, color: context.shiori.color.accentInk),
+        child: Icon(icon, color: context.primaryColor),
       ),
       title: Text(title),
       subtitle: subtitle != null
-          ? Text(subtitle!, style: context.shiori.caption)
+          ? Text(
+              subtitle!,
+              style: TextStyle(fontSize: 11, color: context.secondaryColor),
+            )
           : null,
       trailing: trailing,
     );

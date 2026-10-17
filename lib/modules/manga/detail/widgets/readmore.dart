@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/expandable_text.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
@@ -30,7 +29,7 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
             children: [Text(l10n.no_description)],
           )
         : Padding(
-            padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s8),
+            padding: const EdgeInsets.symmetric(horizontal: 6),
             child: ExpandableText(
               widget.text.trim(),
               expandText: '',
@@ -38,14 +37,14 @@ class ReadMoreWidgetState extends State<ReadMoreWidget>
               expanded: expanded,
               linkColor: Colors.transparent,
               animation: true,
-              animationDuration: ShioriMotion.exitSlow,
+              animationDuration: const Duration(milliseconds: 500),
               expandOnTextTap: true,
               collapseOnTextTap: true,
               prefixText: '',
               showGradientOverlay: false,
               showExpandCollapseIcon: true,
-              expandIcon: Symbols.keyboard_arrow_down_rounded,
-              collapseIcon: Symbols.keyboard_arrow_up_rounded,
+              expandIcon: Icons.keyboard_arrow_down_sharp,
+              collapseIcon: Icons.keyboard_arrow_up_sharp,
               onExpandedChanged: (value) {
                 setState(() => expanded = value);
                 widget.onChanged(value);

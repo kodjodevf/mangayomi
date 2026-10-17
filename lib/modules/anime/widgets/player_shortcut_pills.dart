@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
@@ -62,7 +61,7 @@ class PlayerShortcutPills extends StatelessWidget {
         // Quality shortcut pill
         if (hasMultipleVideos)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
+            padding: const EdgeInsets.symmetric(horizontal: 2.5),
             child: Builder(
               builder: (context) => ValueListenableBuilder<VideoPrefs?>(
                 valueListenable: video,
@@ -72,7 +71,7 @@ class PlayerShortcutPills extends StatelessWidget {
                       (videos.isNotEmpty ? videos.first.quality : '');
                   final qualityLabel = shortQualityLabel(rawQuality);
                   return PlayerPillButton(
-                    icon: Symbols.high_quality_rounded,
+                    icon: Icons.high_quality,
                     label: qualityLabel.isNotEmpty ? qualityLabel : null,
                     showLabel: !iconOnly,
                     tooltip: context.l10n.video_quality,
@@ -94,7 +93,7 @@ class PlayerShortcutPills extends StatelessWidget {
                 : _shortTrackName(subtitleTrackLabel(subTrack));
 
             return PlayerPillButton(
-              icon: Symbols.subtitles_rounded,
+              icon: Icons.subtitles_outlined,
               label: !isSubOff && shortLabel.isNotEmpty ? shortLabel : 'Off',
               showLabel: !iconOnly,
               tooltip: context.l10n.video_subtitle,
@@ -121,7 +120,7 @@ class PlayerShortcutPills extends StatelessWidget {
             }
 
             return PlayerPillButton(
-              icon: Symbols.audiotrack_rounded,
+              icon: Icons.audiotrack_outlined,
               label: shortLabel.isNotEmpty ? shortLabel : null,
               showLabel: !iconOnly,
               tooltip: context.l10n.video_audio,
@@ -133,12 +132,12 @@ class PlayerShortcutPills extends StatelessWidget {
 
         // Playback speed pill
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
+          padding: const EdgeInsets.symmetric(horizontal: 2.5),
           child: Builder(
             builder: (context) => ValueListenableBuilder<double>(
               valueListenable: playbackSpeed,
               builder: (context, speed, _) => PlayerPillButton(
-                icon: Symbols.speed_rounded,
+                icon: Icons.speed,
                 label: '${speed}x',
                 showLabel: !iconOnly,
                 tooltip: context.l10n.playback_speed,
@@ -151,11 +150,11 @@ class PlayerShortcutPills extends StatelessWidget {
 
         // Fit screen pill
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
+          padding: const EdgeInsets.symmetric(horizontal: 2.5),
           child: ValueListenableBuilder<BoxFit>(
             valueListenable: fit,
             builder: (context, fit, _) => PlayerPillButton(
-              icon: Symbols.fit_screen_rounded,
+              icon: Icons.fit_screen_outlined,
               label: fitShortLabel(fit),
               showLabel: !iconOnly,
               tooltip: context.l10n.scale_type_fit_screen,
@@ -166,10 +165,10 @@ class PlayerShortcutPills extends StatelessWidget {
         ),
 
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
+          padding: const EdgeInsets.symmetric(horizontal: 2.5),
           child: Builder(
             builder: (btnContext) => PlayerPillButton(
-              icon: Symbols.video_settings_rounded,
+              icon: Icons.video_settings,
               tooltip: context.l10n.settings,
               isCompact: isMobile,
               onTap: () => onSettings(btnContext),
@@ -182,14 +181,9 @@ class PlayerShortcutPills extends StatelessWidget {
             builder: (context, ref, _) {
               final isFullscreen = ref.watch(fullscreenProvider);
               return Padding(
-                padding: const EdgeInsets.only(
-                  left: ShioriSpace.s4,
-                  right: ShioriSpace.s4,
-                ),
+                padding: const EdgeInsets.only(left: 2.5, right: 5),
                 child: PlayerPillButton(
-                  icon: isFullscreen
-                      ? Symbols.fullscreen_exit_rounded
-                      : Symbols.fullscreen_rounded,
+                  icon: isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
                   tooltip: context.l10n.fullscreen,
                   isCompact: isMobile,
                   onTap: () => onToggleFullscreen(isFullscreen),
@@ -203,7 +197,7 @@ class PlayerShortcutPills extends StatelessWidget {
 
   /// A pill that rebuilds whenever mpv reports a track change.
   Widget _trackPill({required WidgetBuilder builder}) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
+    padding: const EdgeInsets.symmetric(horizontal: 2.5),
     child: Builder(
       builder: (context) => StreamBuilder<Track>(
         stream: player.stream.track,

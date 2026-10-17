@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 
 /// The optional floating capsule used in place of the material NavigationBar
 /// on supported devices. Icons only, with a single highlight pill that slides
@@ -54,7 +53,7 @@ class FloatingNavBar extends StatefulWidget {
   /// height to save, and where a rail would otherwise take over.
   final bool showLabels;
 
-  static const _duration = ShioriMotion.standard;
+  static const _duration = Duration(milliseconds: 260);
   static const _curve = Curves.easeOutCubic;
 
   /// The shrink has its own timing, and it is not symmetric.
@@ -66,8 +65,8 @@ class FloatingNavBar extends StatefulWidget {
   /// close to the old timing: the same asymmetry NavShrink already applies to
   /// its thresholds, where hiding needs a long run and coming back needs a
   /// short one.
-  static const _shrinkDuration = ShioriMotion.exitSlow;
-  static const _shrinkReleaseDuration = ShioriMotion.standard;
+  static const _shrinkDuration = Duration(milliseconds: 460);
+  static const _shrinkReleaseDuration = Duration(milliseconds: 240);
   static const _shrinkCurve = Curves.easeOutQuart;
 
   /// How the glass edge varies along the bar. Irregular on purpose, and never
@@ -583,10 +582,7 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
     final light = theme.brightness == Brightness.light;
     final labelStyle =
         theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600) ??
-        TextStyle(
-          fontSize: context.shiori.text.meta.fontSize,
-          fontWeight: FontWeight.w600,
-        );
+        const TextStyle(fontSize: 12, fontWeight: FontWeight.w600);
     final dragging = _dragX != null;
     final lifted = dragging || _tapped;
     final barColor = light

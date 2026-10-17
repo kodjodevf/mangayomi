@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -104,11 +104,13 @@ Future<void> updateLibrary({
   // Don't start a second concurrent run.
   if (ref.read(libraryUpdateProvider).running) return;
   ref.read(libraryUpdateProvider.notifier).begin();
+  bool isDark = ref.read(themeModeStateProvider);
   botToast(
     context.l10n.updating_library("0", "0", "0"),
     fontSize: 13,
     second: 30,
     alignY: !context.isTablet ? 0.85 : 1,
+    themeDark: isDark,
   );
   final failures = await _runUpdate(
     ref: ref,
@@ -124,6 +126,7 @@ Future<void> updateLibrary({
         animationDuration: 0,
         dismissDirections: [DismissDirection.none],
         onlyOne: false,
+        themeDark: isDark,
       );
     },
   );
@@ -136,13 +139,14 @@ Future<void> updateLibrary({
   // screen, in addition to the dialog below.
   ref.read(updateErrorsProvider.notifier).set(failures);
   if (context.mounted && failures.isNotEmpty) {
+    final plural = failed == 1 ? itemtype : "${itemtype}s";
     // Show the failures in a dismissible dialog rather than a transient toast,
     // so the list can be reviewed at the user's pace and isn't missed when many
     // entries fail. See #623.
     await showDialog(
       context: context,
-      builder: (context) => ShioriDialog(
-        title: context.l10n.update_failed_count(failed),
+      builder: (context) => AlertDialog(
+        title: Text("Failed to update $failed $plural"),
         content: SizedBox(
           width: context.width(0.8),
           child: ConstrainedBox(
@@ -160,9 +164,9 @@ Future<void> updateLibrary({
           ),
         ),
         actions: [
-          ShioriButton(
-            label: context.l10n.ok,
+          TextButton(
             onPressed: () => Navigator.pop(context),
+            child: Text(context.l10n.ok),
           ),
         ],
       ),

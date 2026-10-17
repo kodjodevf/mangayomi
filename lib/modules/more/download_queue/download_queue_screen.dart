@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/models/download.dart';
-import 'package:mangayomi/modules/widgets/entry_badge_chip.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/custom_floating_action_btn.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/download_manager/download_queue_order.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
+import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/modules/widgets/tv_menu.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -37,19 +37,13 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
               title: Text(l10n.download_queue),
               leading: isTv
                   ? IconButton(
-                      tooltip: MaterialLocalizations.of(context)
-                          .backButtonTooltip,
                       autofocus: true,
                       icon: const BackButtonIcon(),
                       onPressed: () => Navigator.of(context).pop(),
                     )
                   : null,
             ),
-            body: ShioriEmptyState(
-              icon: Symbols.download_done_rounded,
-              title: l10n.no_downloads,
-              compact: true,
-            ),
+            body: Center(child: Text(l10n.no_downloads)),
           );
         }
         // Filter out orphaned downloads (chapter or manga deleted) and auto-
@@ -72,41 +66,37 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
               title: Text(l10n.download_queue),
               leading: isTv
                   ? IconButton(
-                      tooltip: MaterialLocalizations.of(context)
-                          .backButtonTooltip,
                       autofocus: true,
                       icon: const BackButtonIcon(),
                       onPressed: () => Navigator.of(context).pop(),
                     )
                   : null,
             ),
-            body: ShioriEmptyState(
-              icon: Symbols.download_done_rounded,
-              title: l10n.no_downloads,
-              compact: true,
-            ),
+            body: Center(child: Text(l10n.no_downloads)),
           );
         }
         final entries = DownloadQueueOrder.sorted(valid);
         return Scaffold(
           appBar: AppBar(
             title: Row(
-              spacing: ShioriSpace.s8,
               children: [
-                Flexible(child: Text(l10n.download_queue)),
-                EntryBadgeChip(label: entries.length.toString()),
+                Text(l10n.download_queue),
+                const SizedBox(width: 10),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 3),
+                  child: Badge(
+                    backgroundColor: Theme.of(context).focusColor,
+                    label: Text(
+                      entries.length.toString(),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).textTheme.bodySmall!.color,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
-            actions: [
-              // Starts every download in the queue again, failed ones
-              // included. It was a floating button labelled with the
-              // screen's own name, which said nothing of what it did.
-              IconButton(
-                tooltip: l10n.resume_all_downloads,
-                onPressed: () => _resumeAll(entries),
-                icon: const Icon(Symbols.play_arrow_rounded, fill: 1),
-              ),
-            ],
           ),
           body: ReorderableListView.builder(
             buildDefaultDragHandles: false,
@@ -126,21 +116,24 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
               return _buildRow(context, l10n, entries, element, index);
             },
           ),
+          floatingActionButton: CustomFloatingActionBtn(
+            isExtended: false,
+            label: l10n.download_queue,
+            onPressed: () async {
+              for (final entry in entries) {
+                final chapter = entry.chapter.value;
+                if (chapter != null) {
+                  await downloadRepository.enqueue(chapter);
+                }
+              }
+              if (!mounted) return;
+              ref.invalidate(processDownloadsProvider());
+              ref.read(processDownloadsProvider());
+            },
+          ),
         );
       },
     );
-  }
-
-  Future<void> _resumeAll(List<Download> entries) async {
-    for (final entry in entries) {
-      final chapter = entry.chapter.value;
-      if (chapter != null) {
-        await downloadRepository.enqueue(chapter);
-      }
-    }
-    if (!mounted) return;
-    ref.invalidate(processDownloadsProvider());
-    ref.read(processDownloadsProvider());
   }
 
   Widget _buildRow(
@@ -152,90 +145,61 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
   ) {
     return SizedBox(
       key: ValueKey(element.id),
-      height: context.shiori.density.rowHeight + ShioriSpace.s16,
+      height: 60,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ReorderableDragStartListener(
             index: index,
             child: const Padding(
-              padding: EdgeInsets.all(ShioriSpace.s8),
-              child: Icon(Symbols.drag_handle_rounded, fill: 1),
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.drag_handle),
             ),
           ),
-          Expanded(
-            child: Builder(
-              builder: (context) {
-                final tokens = context.shiori;
-                final failed = (element.failed ?? 0) > 0;
-                final total = element.total ?? 0;
-                final progress = total > 0
-                    ? (element.succeeded ?? 0) / total
-                    : 0.0;
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 2,
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      spacing: ShioriSpace.s8,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            element.chapter.value?.manga.value?.name ?? "",
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: tokens.text.row.copyWith(
-                              color: tokens.color.fg,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          failed
-                              ? l10n.download_failed
-                              : '${(progress * 100).round()} %',
-                          style: tokens.text.meta.copyWith(
-                            color: failed
-                                ? tokens.color.error.foreground
-                                : tokens.color.fgMuted,
-                            fontFeatures: const [FontFeature.tabularFigures()],
-                          ),
-                        ),
-                      ],
+                    Text(
+                      element.chapter.value?.manga.value?.name ?? "",
+                      style: const TextStyle(fontSize: 16),
                     ),
                     Text(
-                      element.chapter.value?.name ?? "",
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: tokens.caption,
-                    ),
-                    const SizedBox(height: ShioriSpace.s4),
-                    TweenAnimationBuilder<double>(
-                      duration: ShioriMotion.of(context, ShioriMotion.standard),
-                      curve: ShioriMotion.standardCurve,
-                      tween: Tween<double>(begin: 0, end: progress),
-                      builder: (context, value, _) => ShioriProgressBar(
-                        value: value,
-                        height: 4,
-                        color: failed
-                            ? tokens.color.error.foreground
-                            : tokens.color.accent,
-                      ),
+                      (element.failed ?? 0) > 0
+                          ? 'Failed — retry'
+                          : '${element.succeeded ?? 0}%',
+                      style: const TextStyle(fontSize: 10),
                     ),
                   ],
-                );
-              },
+                ),
+                Text(
+                  element.chapter.value?.name ?? "",
+                  style: const TextStyle(fontSize: 13),
+                ),
+                const SizedBox(height: 8),
+                TweenAnimationBuilder<double>(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  tween: Tween<double>(
+                    begin: 0,
+                    end: element.succeeded! / element.total!,
+                  ),
+                  builder: (context, value, _) =>
+                      LinearProgressIndicator(value: value),
+                ),
+              ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(ShioriSpace.s8),
+            padding: const EdgeInsets.all(8.0),
             child: isTv
                 // An anchored dropdown is a poor remote target, so pop the same
                 // actions in the centre on TV.
                 ? IconButton(
-                    tooltip: MaterialLocalizations.of(context)
-                        .moreButtonTooltip,
-                    icon: const Icon(Symbols.more_vert_rounded, fill: 1),
+                    icon: const Icon(Icons.more_vert),
                     onPressed: () async {
                       final picked = await showTvMenu(
                         context,
@@ -255,30 +219,20 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
                       }
                     },
                   )
-                : ShioriMenuButton(
-                    tooltip: MaterialLocalizations.of(context)
-                        .moreButtonTooltip,
-                    items: [
-                      ShioriMenuItem(
-                        label: l10n.cancel,
-                        icon: Symbols.close_rounded,
-                        onSelected: () => _onDownloadAction(
-                          context,
-                          'Cancel',
-                          element,
-                          entries,
-                        ),
-                      ),
-                      ShioriMenuItem(
-                        label: l10n.cancel_all_for_this_series,
-                        icon: Symbols.cancel_rounded,
-                        destructive: true,
-                        onSelected: () => _onDownloadAction(
-                          context,
-                          'CancelAll',
-                          element,
-                          entries,
-                        ),
+                : PopupMenuButton(
+                    popUpAnimationStyle: popupAnimationStyle,
+                    child: const Icon(Icons.more_vert),
+                    onSelected: (value) => _onDownloadAction(
+                      context,
+                      value.toString(),
+                      element,
+                      entries,
+                    ),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(value: 'Cancel', child: Text(l10n.cancel)),
+                      PopupMenuItem(
+                        value: 'CancelAll',
+                        child: Text(l10n.cancel_all_for_this_series),
                       ),
                     ],
                   ),

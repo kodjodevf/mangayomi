@@ -2,7 +2,6 @@ import 'package:mangayomi/core/navigation/app_navigator.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/utils/localized_message.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 
 /// Keeps a caught error where it can be found later: in [CrashReports], which
@@ -38,7 +37,6 @@ void toastError(
   recordError(error, stack: stack, source: source);
   botToast(
     errorToastMessage(error),
-    tone: ShioriToastTone.error,
     second: seconds,
     maxLines: 3,
     detailsLabel: localizedMessage((l10n) => l10n.error_reports_banner_action),

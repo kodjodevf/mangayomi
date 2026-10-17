@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/browse/sources/widgets/source_list_tile.dart';
-import 'package:mangayomi/modules/widgets/entry_badge_chip.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
@@ -10,6 +7,8 @@ import 'package:mangayomi/modules/widgets/tv_row_button.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
+import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -30,10 +29,10 @@ class _ExtensionListTileWidgetState
       (widget.source.isAdded ?? false) &&
       !(widget.source.isObsolete ?? false) &&
       compareVersions(
-            widget.source.version ?? '',
-            widget.source.versionLast ?? '',
-          ) <
-          0;
+        widget.source.version ?? '',
+        widget.source.versionLast ?? '',
+      ) <
+      0;
 
   bool get _sourceNotEmpty =>
       widget.source.sourceCode != null && widget.source.sourceCode!.isNotEmpty;
@@ -78,48 +77,123 @@ class _ExtensionListTileWidgetState
   }
 
   IconData _actionIcon(BuildContext context, String label) {
-    if (label == context.l10n.install) return Symbols.download_rounded;
-    if (label == context.l10n.update) return Symbols.system_update_alt_rounded;
-    return Symbols.settings_rounded;
+    if (label == context.l10n.install) return Icons.download_outlined;
+    if (label == context.l10n.update) return Icons.system_update_alt_outlined;
+    return Icons.settings_outlined;
   }
 
-  Future<void> _openUninstallDialog(BuildContext context) async {
-    final l10n = context.l10n;
-    final confirmed = await showShioriConfirm(
-      context,
-      title: widget.source.name!,
-      message: l10n.uninstall_extension(widget.source.name!),
-      confirmLabel: l10n.uninstall,
-      destructive: true,
+  void _openUninstallDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text(widget.source.name!),
+          content: Text(ctx.l10n.uninstall_extension(widget.source.name!)),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                  },
+                  child: Text(ctx.l10n.cancel),
+                ),
+                const SizedBox(width: 15),
+                TextButton(
+                  onPressed: () {
+                    sourceRepository.uninstall(ref, widget.source);
+                    Navigator.pop(ctx);
+                  },
+                  child: Text(ctx.l10n.ok),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
-    if (confirmed) sourceRepository.uninstall(ref, widget.source);
   }
 
-  Widget _icon() => SourceIcon(iconUrl: widget.source.iconUrl);
+  Widget _icon() {
+    return Container(
+      height: 37,
+      width: 37,
+      decoration: BoxDecoration(
+        color: Theme.of(context).secondaryHeaderColor.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: widget.source.iconUrl!.isEmpty
+          ? const Icon(Icons.extension_rounded)
+          : cachedNetworkImage(
+              imageUrl: widget.source.iconUrl!,
+              fit: BoxFit.contain,
+              width: 37,
+              height: 37,
+              errorWidget: const SizedBox(
+                width: 37,
+                height: 37,
+                child: Center(child: Icon(Icons.extension_rounded)),
+              ),
+              useCustomNetworkImage: false,
+            ),
+    );
+  }
 
   /// Language, version and the NSFW / repo / obsolete badges.
   Widget _meta(BuildContext context) {
-    final tokens = context.shiori;
-    final repo = widget.source.repo?.name;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        spacing: ShioriSpace.s4,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(
-            [
-              languageName(context, widget.source.lang!.toLowerCase()),
-              widget.source.version!,
-              ?repo,
-            ].join(' · '),
-            style: tokens.caption,
+            completeLanguageName(widget.source.lang!.toLowerCase()),
+            style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            widget.source.version!,
+            style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
           ),
           if (widget.source.isNsfw ?? false)
-            EntryBadgeChip(label: 'NSFW', tone: tokens.color.error),
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                decoration: BoxDecoration(
+                  color: Colors.red.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Text(
+                  "NSFW",
+                  style: TextStyle(
+                    fontSize: 8,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          if (widget.source.repo?.name != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                "- ${widget.source.repo!.name!}",
+                style: TextStyle(fontSize: 12),
+              ),
+            ),
           if (widget.source.isObsolete ?? false)
-            EntryBadgeChip(
-              label: context.l10n.obsolete.toUpperCase(),
-              tone: tokens.color.offline,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                "OBSOLETE",
+                style: TextStyle(
+                  color: context.primaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
             ),
         ],
       ),
@@ -128,23 +202,22 @@ class _ExtensionListTileWidgetState
 
   Widget _buildTrailingButton(BuildContext context, String label) {
     return _isLoading
-        ? const Padding(
-            padding: EdgeInsets.all(ShioriSpace.s12),
-            child: ShioriLoading.inline(),
+        ? const SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(strokeWidth: 2.0),
           )
         : Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
-                tooltip: label,
-                onPressed: () => _onActionTap(context),
-                icon: Icon(_actionIcon(context, label)),
+              TextButton(
+                onPressed: _isLoading ? null : () => _onActionTap(context),
+                child: Icon(_actionIcon(context, label), size: 24),
               ),
               if (_sourceNotEmpty)
-                IconButton(
-                  tooltip: context.l10n.uninstall,
+                TextButton(
                   onPressed: () => _openUninstallDialog(context),
-                  icon: const Icon(Symbols.delete_rounded),
+                  child: Icon(Icons.delete_outline, size: 24),
                 ),
             ],
           );
@@ -160,14 +233,11 @@ class _ExtensionListTileWidgetState
           child: TvRowButton(
             onTap: () => _onMainTap(context),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: ShioriSpace.s12,
-                vertical: ShioriSpace.s8,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               child: Row(
                 children: [
                   _icon(),
-                  const SizedBox(width: ShioriSpace.s12),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,7 +245,7 @@ class _ExtensionListTileWidgetState
                       children: [
                         Text(
                           widget.source.name!,
-                          style: context.shiori.text.body,
+                          style: const TextStyle(fontSize: 16),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -188,27 +258,31 @@ class _ExtensionListTileWidgetState
             ),
           ),
         ),
-        const SizedBox(width: ShioriSpace.s8),
+        const SizedBox(width: 6),
         if (_isLoading)
           const Padding(
-            padding: EdgeInsets.all(ShioriSpace.s12),
-            child: ShioriLoading.inline(),
+            padding: EdgeInsets.all(12),
+            child: SizedBox(
+              height: 24,
+              width: 24,
+              child: CircularProgressIndicator(strokeWidth: 2.0),
+            ),
           )
         else ...[
           TvRowButton(
             onTap: () => _onActionTap(context),
             child: Padding(
-              padding: const EdgeInsets.all(ShioriSpace.s12),
+              padding: const EdgeInsets.all(12),
               child: Icon(_actionIcon(context, label), size: 24),
             ),
           ),
           if (_sourceNotEmpty) ...[
-            const SizedBox(width: ShioriSpace.s8),
+            const SizedBox(width: 6),
             TvRowButton(
               onTap: () => _openUninstallDialog(context),
               child: const Padding(
-                padding: EdgeInsets.all(ShioriSpace.s12),
-                child: Icon(Symbols.delete_rounded, size: 24),
+                padding: EdgeInsets.all(12),
+                child: Icon(Icons.delete_outline, size: 24),
               ),
             ),
           ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
-import 'package:shiori/shiori.dart';
 
 /// Placeholder grid shown while a page of covers is loading.
 ///
@@ -9,9 +8,10 @@ import 'package:shiori/shiori.dart';
 /// real [GridViewWidget] so the delegate, spacing, padding and TV insets match
 /// exactly. Nothing shifts when the covers arrive.
 ///
-/// Each cell is a [ShioriSkeleton], so it breathes with the rest of the
-/// app's loading states and holds still under reduced motion.
-class CoverGridSkeleton extends StatelessWidget {
+/// The tint is the theme foreground at low alpha rather than a fixed grey,
+/// because the palette is chosen at runtime and a grey that reads correctly on
+/// one scheme is wrong on another.
+class CoverGridSkeleton extends StatefulWidget {
   const CoverGridSkeleton({
     super.key,
     this.gridSize,
@@ -29,33 +29,93 @@ class CoverGridSkeleton extends StatelessWidget {
   final int itemCount;
 
   @override
+  State<CoverGridSkeleton> createState() => _CoverGridSkeletonState();
+}
+
+class _CoverGridSkeletonState extends State<CoverGridSkeleton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  );
+
+  bool _animate = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Respect the platform's reduce-motion setting: hold a flat tint instead
+    // of breathing. Decided here rather than in build so the controller is not
+    // started as a build side effect.
+    _animate = !MediaQuery.disableAnimationsOf(context);
+    if (_animate) {
+      if (!_pulse.isAnimating) _pulse.repeat(reverse: true);
+    } else {
+      _pulse.stop();
+    }
+  }
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return GridViewWidget(
-      itemCount: itemCount,
-      gridSize: gridSize,
-      childAspectRatio: childAspectRatio,
-      itemBuilder: (context, index) => const _CoverPlaceholder(),
+    final fg = Theme.of(context).colorScheme.onSurface;
+
+    return AnimatedBuilder(
+      animation: _pulse,
+      builder: (context, _) {
+        // Rebuilding a dozen plain boxes is cheaper than wrapping the grid in
+        // an Opacity, which would force a save layer on every frame.
+        final tint = fg.withValues(
+          alpha: _animate ? 0.06 + (_pulse.value * 0.06) : 0.08,
+        );
+        return GridViewWidget(
+          itemCount: widget.itemCount,
+          gridSize: widget.gridSize,
+          childAspectRatio: widget.childAspectRatio,
+          itemBuilder: (context, index) => _CoverPlaceholder(tint: tint),
+        );
+      },
     );
   }
 }
 
 class _CoverPlaceholder extends StatelessWidget {
-  const _CoverPlaceholder();
+  const _CoverPlaceholder({required this.tint});
+
+  final Color tint;
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(ShioriSpace.s4),
+    return Padding(
+      padding: const EdgeInsets.all(4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(child: ShioriSkeleton.box(radius: ShioriShape.cover)),
-          SizedBox(height: ShioriSpace.s8),
+          Expanded(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: tint,
+                borderRadius: BorderRadius.circular(6),
+              ),
+            ),
+          ),
+          const SizedBox(height: 6),
           // Stands in for the title line under the cover.
           FractionallySizedBox(
-            alignment: AlignmentDirectional.centerStart,
+            alignment: Alignment.centerLeft,
             widthFactor: 0.72,
-            child: ShioriSkeleton.line(),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: tint,
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: const SizedBox(height: 10),
+            ),
           ),
         ],
       ),

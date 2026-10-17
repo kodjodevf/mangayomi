@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/models/source.dart';
@@ -65,35 +64,32 @@ class _MassMigrationRunnerScreenState
     final total = widget.sourceGroup.items.length;
     final currentItem = widget.sourceGroup.items[_currentIndex];
     return Padding(
-      padding: const EdgeInsets.all(ShioriSpace.s16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               MassMigrationSourceIcon(source: widget.destinationSource),
-              const SizedBox(width: ShioriSpace.s12),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   l10n.mass_migration_finding_matches(
                     widget.destinationSource.name ?? '',
-                    languageName(context, widget.destinationSource.lang ?? ''),
+                    completeLanguageName(widget.destinationSource.lang ?? ''),
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: ShioriSpace.s16),
-          ShioriProgressBar(value: (_currentIndex + 1) / total),
-          const SizedBox(height: ShioriSpace.s8),
-          Text(
-            l10n.mass_migration_processing_item(_currentIndex + 1, total),
-            style: context.shiori.caption,
-          ),
-          const SizedBox(height: ShioriSpace.s16),
+          const SizedBox(height: 16),
+          LinearProgressIndicator(value: (_currentIndex + 1) / total),
+          const SizedBox(height: 8),
+          Text(l10n.mass_migration_processing_item(_currentIndex + 1, total)),
+          const SizedBox(height: 16),
           Card(
             child: Padding(
-              padding: const EdgeInsets.all(ShioriSpace.s16),
+              padding: const EdgeInsets.all(16),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -101,26 +97,23 @@ class _MassMigrationRunnerScreenState
                     libraryItem: currentItem,
                     source: widget.sourceGroup.source,
                   ),
-                  const SizedBox(width: ShioriSpace.s12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           currentItem.name ?? l10n.mass_migration_unknown_title,
-                          style: context.shiori.text.section.copyWith(
-                            color: context.shiori.color.fg,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
-                        const SizedBox(height: ShioriSpace.s8),
+                        const SizedBox(height: 6),
                         Text(
                           [
                             widget.sourceGroup.sourceName,
                             l10n.mass_migration_chapter_count(
                               currentItem.chapters.length,
                             ),
-                          ].join(' · '),
-                          style: context.shiori.caption,
+                          ].join(' • '),
                         ),
                       ],
                     ),
@@ -130,25 +123,20 @@ class _MassMigrationRunnerScreenState
             ),
           ),
           if (_isWaitingForNextItem) ...[
-            const SizedBox(height: ShioriSpace.s12),
-            Text(
-              l10n.mass_migration_waiting_next_item,
-              style: context.shiori.caption,
-            ),
+            const SizedBox(height: 12),
+            Text(l10n.mass_migration_waiting_next_item),
           ],
           if (_resolvedItems.isNotEmpty) ...[
-            const SizedBox(height: ShioriSpace.s16),
+            const SizedBox(height: 16),
             Text(
               l10n.mass_migration_matched_so_far(
                 _resolvedItems.where((item) => item.hasMatch).length,
               ),
-              style: context.shiori.caption,
             ),
             Text(
               l10n.mass_migration_no_match_count(
                 _resolvedItems.where((item) => !item.hasMatch).length,
               ),
-              style: context.shiori.caption,
             ),
           ],
         ],
@@ -167,42 +155,31 @@ class _MassMigrationRunnerScreenState
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(ShioriSpace.s16),
+          padding: const EdgeInsets.all(16),
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(ShioriSpace.s16),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       MassMigrationSourceIcon(source: widget.destinationSource),
-                      const SizedBox(width: ShioriSpace.s12),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           l10n.mass_migration_review_matches(
                             widget.destinationSource.name ?? '',
                           ),
-                          style: context.shiori.text.section.copyWith(
-                            color: context.shiori.color.fg,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: ShioriSpace.s12),
-                  Text(
-                    l10n.mass_migration_found_matches(matchedCount),
-                    style: context.shiori.caption,
-                  ),
-                  Text(
-                    l10n.mass_migration_no_matches(noMatchCount),
-                    style: context.shiori.caption,
-                  ),
-                  Text(
-                    l10n.mass_migration_selected_to_migrate(selectedCount),
-                    style: context.shiori.caption,
-                  ),
+                  const SizedBox(height: 12),
+                  Text(l10n.mass_migration_found_matches(matchedCount)),
+                  Text(l10n.mass_migration_no_matches(noMatchCount)),
+                  Text(l10n.mass_migration_selected_to_migrate(selectedCount)),
                 ],
               ),
             ),
@@ -210,14 +187,14 @@ class _MassMigrationRunnerScreenState
         ),
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.only(bottom: ShioriSpace.s16),
+            padding: const EdgeInsets.only(bottom: 16),
             itemCount: _resolvedItems.length,
             itemBuilder: (context, index) {
               final item = _resolvedItems[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: ShioriSpace.s16,
-                  vertical: ShioriSpace.s8,
+                  horizontal: 16,
+                  vertical: 6,
                 ),
                 child: _buildResolvedItemCard(context, item, index),
               );
@@ -225,20 +202,16 @@ class _MassMigrationRunnerScreenState
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(
-            ShioriSpace.s16,
-            0,
-            ShioriSpace.s16,
-            ShioriSpace.s16,
-          ),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child: SizedBox(
             width: double.infinity,
-            child: ShioriButton(
-              expand: true,
+            child: FilledButton(
               onPressed: _startMigration,
-              label: selectedCount == 0
-                  ? l10n.mass_migration_finish_review
-                  : l10n.mass_migration_migrate_selected(selectedCount),
+              child: Text(
+                selectedCount == 0
+                    ? l10n.mass_migration_finish_review
+                    : l10n.mass_migration_migrate_selected(selectedCount),
+              ),
             ),
           ),
         ),
@@ -257,7 +230,7 @@ class _MassMigrationRunnerScreenState
         : selectedItems[_currentIndex.clamp(0, selectedItems.length - 1)];
 
     return Padding(
-      padding: const EdgeInsets.all(ShioriSpace.s16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -265,26 +238,23 @@ class _MassMigrationRunnerScreenState
             l10n.mass_migration_migrating_selected(
               widget.destinationSource.name ?? '',
             ),
-            style: context.shiori.text.section.copyWith(
-              color: context.shiori.color.fg,
-            ),
+            style: Theme.of(context).textTheme.titleMedium,
           ),
-          const SizedBox(height: ShioriSpace.s16),
-          ShioriProgressBar(
+          const SizedBox(height: 16),
+          LinearProgressIndicator(
             value: selectedItems.isEmpty ? 1 : (_currentIndex + 1) / total,
           ),
-          const SizedBox(height: ShioriSpace.s8),
+          const SizedBox(height: 8),
           Text(
             selectedItems.isEmpty
                 ? l10n.mass_migration_no_items_selected
                 : l10n.mass_migration_migrating_item(_currentIndex + 1, total),
-            style: context.shiori.caption,
           ),
-          const SizedBox(height: ShioriSpace.s16),
+          const SizedBox(height: 16),
           if (currentItem != null)
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(ShioriSpace.s16),
+                padding: const EdgeInsets.all(16),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -292,14 +262,14 @@ class _MassMigrationRunnerScreenState
                       libraryItem: currentItem.sourceItem,
                       source: widget.sourceGroup.source,
                     ),
-                    const SizedBox(width: ShioriSpace.s12),
-                    const Icon(Symbols.arrow_forward_rounded, fill: 1),
-                    const SizedBox(width: ShioriSpace.s12),
+                    const SizedBox(width: 12),
+                    const Icon(Icons.arrow_forward_rounded),
+                    const SizedBox(width: 12),
                     MassMigrationCover(
                       remoteItem: currentItem.selectedCandidate,
                       source: widget.destinationSource,
                     ),
-                    const SizedBox(width: ShioriSpace.s12),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,15 +277,12 @@ class _MassMigrationRunnerScreenState
                           Text(
                             currentItem.sourceItem.name ??
                                 l10n.mass_migration_unknown_title,
-                            style: context.shiori.text.section.copyWith(
-                              color: context.shiori.color.fg,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium,
                           ),
-                          const SizedBox(height: ShioriSpace.s8),
+                          const SizedBox(height: 6),
                           Text(
                             currentItem.selectedCandidate?.name ??
                                 l10n.mass_migration_unknown_match,
-                            style: context.shiori.caption,
                           ),
                         ],
                       ),
@@ -325,11 +292,8 @@ class _MassMigrationRunnerScreenState
               ),
             ),
           if (_isWaitingForNextItem) ...[
-            const SizedBox(height: ShioriSpace.s12),
-            Text(
-              l10n.mass_migration_waiting_next_migration,
-              style: context.shiori.caption,
-            ),
+            const SizedBox(height: 12),
+            Text(l10n.mass_migration_waiting_next_migration),
           ],
         ],
       ),
@@ -340,21 +304,27 @@ class _MassMigrationRunnerScreenState
     final l10n = context.l10n;
     final total = widget.sourceGroup.items.length;
     final matchedCount = _resolvedItems.where((item) => item.hasMatch).length;
-    final tone = _failedItems.isEmpty
-        ? context.shiori.color.completed
-        : context.shiori.color.offline;
-    final successTone = tone.foreground;
+    final successTone = _failedItems.isEmpty ? Colors.green : Colors.orange;
 
     return Container(
-      decoration: BoxDecoration(color: context.shiori.color.ink0),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+      ),
       child: ListView(
-        padding: const EdgeInsets.all(ShioriSpace.s16),
+        padding: const EdgeInsets.all(16),
         children: [
           Container(
-            padding: const EdgeInsets.all(ShioriSpace.s24),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(ShioriShape.card),
-              color: context.shiori.color.ink1,
+              borderRadius: BorderRadius.circular(20),
+              color: Theme.of(context).cardColor,
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).shadowColor.withValues(alpha: 0.08),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -363,44 +333,40 @@ class _MassMigrationRunnerScreenState
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: tone.background,
-                    borderRadius: BorderRadius.circular(ShioriShape.card),
+                    color: successTone.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
                     _failedItems.isEmpty
-                        ? Symbols.task_alt_rounded
-                        : Symbols.done_all_rounded,
+                        ? Icons.task_alt_rounded
+                        : Icons.done_all_rounded,
                     color: successTone,
                     size: 30,
                   ),
                 ),
-                const SizedBox(width: ShioriSpace.s16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         l10n.mass_migration_complete,
-                        style: context.shiori.text.seriesTitle.copyWith(
-                          color: context.shiori.color.fg,
-                        ),
+                        style: Theme.of(context).textTheme.headlineSmall,
                       ),
-                      const SizedBox(height: ShioriSpace.s8),
+                      const SizedBox(height: 8),
                       Text(
                         _failedItems.isEmpty
                             ? l10n.mass_migration_complete_success_message
                             : l10n.mass_migration_complete_partial_message,
-                        style: context.shiori.text.body.copyWith(
-                          color: context.shiori.color.fg,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
-                      const SizedBox(height: ShioriSpace.s12),
+                      const SizedBox(height: 12),
                       Text(
                         l10n.mass_migration_route_summary(
                           widget.sourceGroup.sourceName,
                           widget.destinationSource.name ?? '',
                         ),
-                        style: context.shiori.caption,
+                        style: Theme.of(context).textTheme.labelLarge,
                       ),
                     ],
                   ),
@@ -408,10 +374,10 @@ class _MassMigrationRunnerScreenState
               ],
             ),
           ),
-          const SizedBox(height: ShioriSpace.s16),
+          const SizedBox(height: 16),
           Wrap(
-            spacing: ShioriSpace.s12,
-            runSpacing: ShioriSpace.s12,
+            spacing: 12,
+            runSpacing: 12,
             children: [
               _SummaryStatCard(
                 label: l10n.mass_migration_processed,
@@ -436,35 +402,32 @@ class _MassMigrationRunnerScreenState
             ],
           ),
           if (_failedItems.isNotEmpty) ...[
-            const SizedBox(height: ShioriSpace.s24),
+            const SizedBox(height: 20),
             Container(
-              padding: const EdgeInsets.all(ShioriSpace.s16),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: context.shiori.color.ink1,
-                borderRadius: BorderRadius.circular(ShioriShape.card),
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(18),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     l10n.mass_migration_failed_items,
-                    style: context.shiori.text.section.copyWith(
-                      color: context.shiori.color.fg,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  const SizedBox(height: ShioriSpace.s12),
+                  const SizedBox(height: 12),
                   for (final item in _failedItems)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: ShioriSpace.s8),
+                      padding: const EdgeInsets.only(bottom: 8),
                       child: Row(
                         children: [
-                          Icon(
-                            Symbols.error_outline_rounded,
-                            fill: 1,
+                          const Icon(
+                            Icons.error_outline_rounded,
                             size: 18,
-                            color: context.shiori.color.offline.foreground,
+                            color: Colors.orange,
                           ),
-                          const SizedBox(width: ShioriSpace.s8),
+                          const SizedBox(width: 8),
                           Expanded(child: Text(item)),
                         ],
                       ),
@@ -473,11 +436,11 @@ class _MassMigrationRunnerScreenState
               ),
             ),
           ],
-          const SizedBox(height: ShioriSpace.s24),
-          ShioriButton(
+          const SizedBox(height: 24),
+          FilledButton.icon(
             onPressed: _exitMassMigrationFlow,
-            icon: Symbols.exit_to_app_rounded,
-            label: l10n.mass_migration_exit,
+            icon: const Icon(Icons.exit_to_app_rounded),
+            label: Text(l10n.mass_migration_exit),
           ),
         ],
       ),
@@ -503,7 +466,7 @@ class _MassMigrationRunnerScreenState
 
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(ShioriSpace.s16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -514,14 +477,14 @@ class _MassMigrationRunnerScreenState
                   libraryItem: item.sourceItem,
                   source: widget.sourceGroup.source,
                 ),
-                const SizedBox(width: ShioriSpace.s12),
-                const Icon(Symbols.arrow_forward_rounded, fill: 1),
-                const SizedBox(width: ShioriSpace.s12),
+                const SizedBox(width: 12),
+                const Icon(Icons.arrow_forward_rounded),
+                const SizedBox(width: 12),
                 MassMigrationCover(
                   remoteItem: item.selectedCandidate,
                   source: widget.destinationSource,
                 ),
-                const SizedBox(width: ShioriSpace.s12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -529,23 +492,16 @@ class _MassMigrationRunnerScreenState
                       Text(
                         item.sourceItem.name ??
                             l10n.mass_migration_unknown_title,
-                        style: context.shiori.text.section.copyWith(
-                          color: context.shiori.color.fg,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      const SizedBox(height: ShioriSpace.s8),
+                      const SizedBox(height: 6),
                       Text(
                         item.hasMatch
                             ? (item.selectedCandidate?.name ??
                                   l10n.mass_migration_unknown_match)
                             : l10n.mass_migration_no_destination_match,
-                        style: context.shiori.text.row.copyWith(
-                          color: item.hasMatch
-                              ? context.shiori.color.fg
-                              : context.shiori.color.fgMuted,
-                        ),
                       ),
-                      const SizedBox(height: ShioriSpace.s8),
+                      const SizedBox(height: 6),
                       Text(
                         [
                           l10n.mass_migration_source_chapter_count(
@@ -558,8 +514,7 @@ class _MassMigrationRunnerScreenState
                             l10n.mass_migration_query(
                               item.searchResult.usedQuery!,
                             ),
-                        ].join(' · '),
-                        style: context.shiori.caption,
+                        ].join(' • '),
                       ),
                     ],
                   ),
@@ -567,47 +522,40 @@ class _MassMigrationRunnerScreenState
               ],
             ),
             if ((item.errorMessage ?? '').isNotEmpty) ...[
-              const SizedBox(height: ShioriSpace.s8),
-              Text(
-                item.errorMessage!,
-                style: context.shiori.text.meta.copyWith(
-                  color: context.shiori.color.error.foreground,
-                ),
-              ),
+              const SizedBox(height: 8),
+              Text(item.errorMessage!),
             ],
-            const SizedBox(height: ShioriSpace.s12),
+            const SizedBox(height: 12),
             Row(
               children: [
-                if (item.canMigrate)
-                  Flexible(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 260),
-                      child: ShioriSegmentedControl<bool>(
-                        segments: [
-                          ShioriSegment(
-                            value: false,
-                            label: l10n.mass_migration_skip,
-                          ),
-                          ShioriSegment(value: true, label: l10n.migrate),
-                        ],
-                        selected: item.shouldMigrate,
-                        onSelected: (v) => _updateShouldMigrate(index, v),
-                      ),
-                    ),
-                  ),
+                ChoiceChip(
+                  label: Text(l10n.mass_migration_skip),
+                  selected: !item.shouldMigrate,
+                  onSelected: (_) => _updateShouldMigrate(index, false),
+                ),
+                const SizedBox(width: 8),
+                ChoiceChip(
+                  label: Text(l10n.migrate),
+                  selected: item.shouldMigrate,
+                  onSelected: item.canMigrate
+                      ? (_) => _updateShouldMigrate(index, true)
+                      : null,
+                ),
                 const Spacer(),
                 if (item.searchResult.candidates.length > 1)
-                  ShioriButton.quiet(
+                  TextButton(
                     onPressed: _loadingCandidateIndexes.contains(index)
                         ? null
                         : () => _pickAnotherCandidate(index),
-                    label: _loadingCandidateIndexes.contains(index)
-                        ? l10n.mass_migration_loading
-                        : l10n.mass_migration_choose_another_result,
+                    child: Text(
+                      _loadingCandidateIndexes.contains(index)
+                          ? l10n.mass_migration_loading
+                          : l10n.mass_migration_choose_another_result,
+                    ),
                   ),
               ],
             ),
-            const SizedBox(height: ShioriSpace.s8),
+            const SizedBox(height: 8),
             MassMigrationChapterSection(
               title: l10n.mass_migration_source_chapters,
               chapters: sourceChapterNames,
@@ -666,22 +614,34 @@ class _MassMigrationRunnerScreenState
 
   Future<void> _pickAnotherCandidate(int index) async {
     final item = _resolvedItems[index];
-    final l10n = context.l10n;
-    final selected = await showShioriChoice<MManga>(
-      context,
-      title: l10n.mass_migration_choose_another_result,
-      selected: item.selectedCandidate,
-      options: [
-        for (final candidate in item.searchResult.candidates)
-          ShioriChoice(
-            candidate,
-            candidate.name ?? l10n.mass_migration_unknown_title,
-            subtitle: [
-              if ((candidate.author ?? '').trim().isNotEmpty) candidate.author!,
-              if ((candidate.artist ?? '').trim().isNotEmpty) candidate.artist!,
-            ].join(' · '),
+    final selected = await showModalBottomSheet<MManga>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: ListView.separated(
+            itemCount: item.searchResult.candidates.length,
+            separatorBuilder: (_, _) => const Divider(height: 1),
+            itemBuilder: (context, candidateIndex) {
+              final l10n = context.l10n;
+              final candidate = item.searchResult.candidates[candidateIndex];
+              return ListTile(
+                title: Text(
+                  candidate.name ?? l10n.mass_migration_unknown_title,
+                ),
+                subtitle: Text(
+                  [
+                    if ((candidate.author ?? '').trim().isNotEmpty)
+                      candidate.author!,
+                    if ((candidate.artist ?? '').trim().isNotEmpty)
+                      candidate.artist!,
+                  ].join(' • '),
+                ),
+                onTap: () => Navigator.pop(context, candidate),
+              );
+            },
           ),
-      ],
+        );
+      },
     );
 
     if (selected == null || !mounted) return;
@@ -793,8 +753,6 @@ class _MassMigrationRunnerScreenState
   }
 }
 
-/// One figure of the summary: the number large and tabular, its label
-/// under it, as on the statistics screen.
 class _SummaryStatCard extends StatelessWidget {
   const _SummaryStatCard({required this.label, required this.value});
 
@@ -803,27 +761,22 @@ class _SummaryStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.shiori;
-    return Container(
+    return SizedBox(
       width: 156,
-      padding: const EdgeInsets.all(ShioriSpace.s16),
-      decoration: BoxDecoration(
-        color: tokens.color.ink1,
-        borderRadius: BorderRadius.circular(ShioriShape.card),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: ShioriSpace.s4,
-        children: [
-          Text(
-            value,
-            style: tokens.text.seriesTitle.copyWith(
-              color: tokens.color.fg,
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
-          ),
-          Text(label, style: tokens.caption),
-        ],
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(value, style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: 6),
+            Text(label, style: Theme.of(context).textTheme.bodyMedium),
+          ],
+        ),
       ),
     );
   }

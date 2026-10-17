@@ -5,12 +5,12 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/modules/more/settings/browse/extension_server/android_proxy_server_dialog.dart';
 import 'package:mangayomi/modules/more/settings/browse/extension_server/extension_server_release.dart';
+import 'package:mangayomi/modules/more/settings/browse/extension_server/extension_server_tiles.dart';
 import 'package:mangayomi/modules/more/settings/browse/extension_server/extension_server_utils.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -18,6 +18,7 @@ import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/m_extension_server.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:path/path.dart' as path;
 import 'package:url_launcher/url_launcher.dart';
@@ -83,7 +84,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
+    final l10n = l10nLocalizations(context)!;
     final androidProxyServer = ref.watch(androidProxyServerStateProvider);
     final autoStartServer = ref.watch(
       autoStartExtensionServerOnLaunchStateProvider,
@@ -91,20 +92,6 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     final actionLabel = !_isInstalled
         ? l10n.download
         : (_hasUpdateAvailable ? l10n.update_files : l10n.up_to_date);
-    final tokens = context.shiori;
-    final actionIcon = _isInstalled && _hasUpdateAvailable
-        ? Symbols.system_update_alt_rounded
-        : (_isInstalled
-              ? Symbols.check_circle_rounded
-              : Symbols.download_rounded);
-    final statusLabel = _isChecking
-        ? l10n.checking_files
-        : (_isInstalled ? l10n.files_installed : l10n.files_missing);
-    final versions = [
-      if (_installedVersion.isNotEmpty) _installedVersion,
-      if (_latestVersion.isNotEmpty && _latestVersion != _installedVersion)
-        '→ $_latestVersion',
-    ].join(' ');
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -113,125 +100,207 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
               : l10n.android_proxy_server,
         ),
       ),
-      body: ListView(
-        padding: EdgeInsets.only(bottom: ShioriSpace.s24).add(tvPageInsets),
-        children: [
-          if (_showExtensionServerSection) ...[
-            _intro(
-              _requiresJre
-                  ? l10n.extension_server_intro_with_jre
-                  : l10n.extension_server_intro_ios,
-            ),
-            // Where it stands, and the one thing to do about it.
-            ShioriSettingsGroup(
-              title: l10n.mihon_proxy_server,
-              children: [
-                ShioriSettingRow(
-                  icon: _isChecking
-                      ? Symbols.sync_rounded
-                      : (_isInstalled
-                            ? Symbols.check_circle_rounded
-                            : Symbols.error_rounded),
-                  title: statusLabel,
-                  subtitle: versions.isEmpty ? null : versions,
-                  onTap: _isDownloading ? null : _refreshStatus,
-                  trailing: ShioriButton(
-                    onPressed: _canDownloadOrUpdate ? _downloadOrUpdate : null,
-                    icon: actionIcon,
-                    label: actionLabel,
-                  ),
-                ),
-                if (_isDownloading)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      ShioriSpace.s16,
-                      ShioriSpace.s4,
-                      ShioriSpace.s16,
-                      ShioriSpace.s12,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      spacing: ShioriSpace.s8,
-                      children: [
-                        ShioriProgressBar(
-                          value: _totalBytes > 0
-                              ? _receivedBytes / _totalBytes
-                              : null,
-                        ),
-                        Text(
-                          _totalBytes > 0
-                              ? '${(_receivedBytes / 1048576).toStringAsFixed(2)}/${(_totalBytes / 1048576).toStringAsFixed(2)} MB'
-                              : l10n.preparing_download,
-                          style: tokens.caption,
-                        ),
-                      ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (_showExtensionServerSection) ...[
+              Text(
+                _requiresJre
+                    ? l10n.extension_server_intro_with_jre
+                    : l10n.extension_server_intro_ios,
+                style: TextStyle(color: context.secondaryColor),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                l10n.mihon_proxy_server,
+                style: TextStyle(fontSize: 13, color: context.primaryColor),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _isDownloading ? null : _refreshStatus,
+                      icon: Icon(
+                        _isChecking
+                            ? Icons.sync_outlined
+                            : (_isInstalled
+                                  ? Icons.check_circle_outline
+                                  : Icons.error_outline),
+                      ),
+                      label: Text(
+                        _isChecking
+                            ? l10n.checking_files
+                            : (_isInstalled
+                                  ? l10n.files_installed
+                                  : l10n.files_missing),
+                      ),
                     ),
                   ),
-                ShioriSettingRow(
-                  icon: Symbols.folder_open_rounded,
-                  title: Platform.isIOS
-                      ? l10n.app_install_location
-                      : l10n.install_location,
-                  subtitle: _selectedInstallDirectory.isEmpty
-                      ? l10n.not_configured
-                      : _selectedInstallDirectory,
-                  onTap: _requiresJre && !_isDownloading
-                      ? _chooseInstallDirectory
-                      : null,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _canDownloadOrUpdate
+                          ? _downloadOrUpdate
+                          : null,
+                      icon: Icon(
+                        _isInstalled && _hasUpdateAvailable
+                            ? Icons.system_update_alt_outlined
+                            : (_isInstalled
+                                  ? Icons.check_circle_outline
+                                  : Icons.download_outlined),
+                      ),
+                      label: Text(actionLabel),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  if (_requiresJre)
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: _isDownloading
+                            ? null
+                            : _chooseInstallDirectory,
+                        icon: const Icon(Icons.folder_open_outlined),
+                        label: Text(l10n.choose_location),
+                      ),
+                    ),
+                  if (_requiresJre) const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed:
+                          _isDownloading || !_canDetectFilesInSelectedFolder
+                          ? null
+                          : _useExistingLocation,
+                      icon: const Icon(Icons.link_outlined),
+                      label: Text(
+                        Platform.isIOS
+                            ? l10n.import_existing_jar
+                            : l10n.detect_files_in_selected_folder,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if (_isDownloading) ...[
+                const SizedBox(height: 16),
+                LinearProgressIndicator(
+                  value: _totalBytes > 0 ? _receivedBytes / _totalBytes : null,
                 ),
-                ShioriSettingRow(
-                  icon: Symbols.link_rounded,
-                  title: Platform.isIOS
-                      ? l10n.import_existing_jar
-                      : l10n.detect_files_in_selected_folder,
-                  enabled: !_isDownloading && _canDetectFilesInSelectedFolder,
-                  onTap: _useExistingLocation,
+                const SizedBox(height: 8),
+                Text(
+                  _totalBytes > 0
+                      ? '${(_receivedBytes / 1048576).toStringAsFixed(2)}/${(_totalBytes / 1048576).toStringAsFixed(2)} MB'
+                      : l10n.preparing_download,
+                  style: TextStyle(color: context.secondaryColor),
                 ),
               ],
-            ),
-            // What is on disk, file by file.
-            ShioriSettingsGroup(
-              title: l10n.status,
-              footer: _releaseCheckMessage.isEmpty
-                  ? null
-                  : _releaseCheckMessage,
-              children: [
-                if (_requiresJre)
-                  _fileRow(l10n.jre_executable, _jrePath, _jreExists),
-                _fileRow(
-                  l10n.extension_server_jar,
-                  _extensionServerPath,
-                  _serverExists,
+              const SizedBox(height: 24),
+              ExtensionServerStatusTile(
+                label: Platform.isIOS
+                    ? l10n.app_install_location
+                    : l10n.install_location,
+                value: _selectedInstallDirectory,
+                exists:
+                    _selectedInstallDirectory.isNotEmpty &&
+                    Directory(_selectedInstallDirectory).existsSync(),
+              ),
+              const SizedBox(height: 12),
+              if (_requiresJre) ...[
+                ExtensionServerStatusTile(
+                  label: l10n.jre_executable,
+                  value: _jrePath,
+                  exists: _jreExists,
                 ),
-                ShioriSettingRow(
-                  title: l10n.installed_version,
-                  subtitle: _installedVersion.isEmpty
-                      ? l10n.unknown
-                      : _installedVersion,
-                ),
-                ShioriSettingRow(
-                  title: l10n.latest_version,
-                  subtitle: _latestVersion.isEmpty
-                      ? l10n.unknown
-                      : _latestVersion,
+                const SizedBox(height: 12),
+              ],
+              ExtensionServerStatusTile(
+                label: l10n.extension_server_jar,
+                value: _extensionServerPath,
+                exists: _serverExists,
+              ),
+              const SizedBox(height: 12),
+              ExtensionServerInfoTile(
+                label: l10n.installed_version,
+                value: _installedVersion,
+              ),
+              const SizedBox(height: 12),
+              ExtensionServerInfoTile(
+                label: l10n.latest_version,
+                value: _latestVersion,
+              ),
+              if (_releaseCheckMessage.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(
+                  _releaseCheckMessage,
+                  style: TextStyle(color: context.secondaryColor),
                 ),
               ],
-            ),
-          ],
-          if (_showAndroidProxySectionOrAdvanced)
-            _androidProxyGroup(
-              androidProxyServer,
-              title: _showAndroidProxyServerSection
-                  ? l10n.android_proxy_server
-                  : l10n.advanced,
-            ),
-          if (_showAndroidProxyServerSection && Platform.isIOS)
-            ShioriSettingsGroup(
-              title: l10n.zero_interpreter,
-              footer: l10n.zero_interpreter_description,
-              children: [
-                ShioriSwitchRow(
-                  title: l10n.start_server_on_launch,
+            ],
+            if (_showAndroidProxyServerSection) ...[
+              if (_showExtensionServerSection) const SizedBox(height: 24),
+              Text(
+                l10n.android_proxy_server,
+                style: TextStyle(fontSize: 13, color: context.primaryColor),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.m_extension_server_description,
+                style: TextStyle(color: context.secondaryColor),
+              ),
+              const SizedBox(height: 12),
+              ExtensionServerStatusTile(
+                label: l10n.android_proxy_server,
+                value: androidProxyServer,
+                exists: androidProxyServer.isNotEmpty,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => showAndroidProxyServerDialog(
+                        context,
+                        proxyServer: androidProxyServer,
+                        onConfirm: (server) {
+                          ref
+                              .read(androidProxyServerStateProvider.notifier)
+                              .set(server);
+                        },
+                      ),
+                      icon: const Icon(Icons.edit_outlined),
+                      label: Text(l10n.set_proxy_address),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _openMExtensionServerRelease,
+                      icon: const Icon(Icons.download_outlined),
+                      label: Text(l10n.get_m_extension_server),
+                    ),
+                  ),
+                ],
+              ),
+              if (Platform.isIOS) ...[
+                const SizedBox(height: 24),
+                Text(
+                  l10n.zero_interpreter,
+                  style: TextStyle(fontSize: 13, color: context.primaryColor),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  l10n.zero_interpreter_description,
+                  style: TextStyle(color: context.secondaryColor),
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(l10n.start_server_on_launch),
                   value: autoStartServer,
                   onChanged: ref
                       .read(
@@ -239,92 +308,95 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
                       )
                       .set,
                 ),
-                ShioriSettingRow(
-                  icon: _runtimeRunning
-                      ? Symbols.stop_circle_rounded
-                      : Symbols.play_circle_rounded,
-                  title: _runtimeRunning ? l10n.stop : l10n.start,
-                  subtitle:
-                      '${l10n.runtime_status} · ${_runtimeRunning ? l10n.running : l10n.stopped}',
-                  enabled: !_runtimeBusy,
-                  onTap: _toggleRuntime,
+                const SizedBox(height: 12),
+                ExtensionServerStatusTile(
+                  label: l10n.runtime_status,
+                  value: _runtimeRunning ? l10n.running : l10n.stopped,
+                  exists: _runtimeRunning,
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _runtimeBusy ? null : _toggleRuntime,
+                    icon: Icon(
+                      _runtimeRunning
+                          ? Icons.stop_circle_outlined
+                          : Icons.play_circle_outline,
+                    ),
+                    label: Text(_runtimeRunning ? l10n.stop : l10n.start),
+                  ),
                 ),
               ],
-            ),
-        ],
-      ),
-    );
-  }
-
-  bool get _showAndroidProxySectionOrAdvanced =>
-      _showAndroidProxyServerSection ||
-      _showDesktopAdvancedMExtensionServerSection;
-
-  /// A line of explanation over the groups.
-  Widget _intro(String text) => Padding(
-    padding: const EdgeInsets.fromLTRB(
-      ShioriSpace.s16,
-      ShioriSpace.s16,
-      ShioriSpace.s16,
-      0,
-    ),
-    child: Text(text, style: context.shiori.caption),
-  );
-
-  /// A file the server needs: where it is, and whether it is there.
-  Widget _fileRow(String label, String value, bool exists) {
-    final c = context.shiori.color;
-    return ShioriSettingRow(
-      title: label,
-      subtitle: value.isEmpty ? context.l10n.not_configured : value,
-      trailing: Icon(
-        exists ? Symbols.check_circle_rounded : Symbols.error_rounded,
-        fill: 1,
-        color: exists ? c.completed.foreground : c.offline.foreground,
-      ),
-    );
-  }
-
-  /// The Android proxy's address and where to get it: a group of its own on
-  /// mobile, the Advanced group on desktop.
-  Widget _androidProxyGroup(
-    String androidProxyServer, {
-    required String title,
-  }) {
-    final l10n = context.l10n;
-    final c = context.shiori.color;
-    return ShioriSettingsGroup(
-      title: title,
-      footer: l10n.m_extension_server_description,
-      children: [
-        ShioriSettingRow(
-          icon: Symbols.edit_rounded,
-          title: l10n.set_proxy_address,
-          subtitle: androidProxyServer.isEmpty
-              ? l10n.not_configured
-              : androidProxyServer,
-          trailing: Icon(
-            androidProxyServer.isNotEmpty
-                ? Symbols.check_circle_rounded
-                : Symbols.error_rounded,
-            fill: 1,
-            color: androidProxyServer.isNotEmpty
-                ? c.completed.foreground
-                : c.offline.foreground,
-          ),
-          onTap: () => showAndroidProxyServerDialog(
-            context,
-            proxyServer: androidProxyServer,
-            onConfirm: (server) =>
-                ref.read(androidProxyServerStateProvider.notifier).set(server),
-          ),
+            ],
+            if (_showDesktopAdvancedMExtensionServerSection) ...[
+              const SizedBox(height: 24),
+              Theme(
+                data: Theme.of(context)
+                    .copyWith(dividerColor: Colors.transparent),
+                child: ExpansionTile(
+                  tilePadding: EdgeInsets.zero,
+                  childrenPadding: const EdgeInsets.only(bottom: 8),
+                  title: Text(
+                    l10n.advanced,
+                    style: TextStyle(fontSize: 13, color: context.primaryColor),
+                  ),
+                  children: [
+                    Text(
+                      l10n.android_proxy_server,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: context.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.m_extension_server_description,
+                      style: TextStyle(color: context.secondaryColor),
+                    ),
+                    const SizedBox(height: 12),
+                    ExtensionServerStatusTile(
+                      label: l10n.android_proxy_server,
+                      value: androidProxyServer,
+                      exists: androidProxyServer.isNotEmpty,
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () => showAndroidProxyServerDialog(
+                              context,
+                              proxyServer: androidProxyServer,
+                              onConfirm: (server) {
+                                ref
+                                    .read(
+                                      androidProxyServerStateProvider.notifier,
+                                    )
+                                    .set(server);
+                              },
+                            ),
+                            icon: const Icon(Icons.edit_outlined),
+                            label: Text(l10n.set_proxy_address),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: _openMExtensionServerRelease,
+                            icon: const Icon(Icons.download_outlined),
+                            label: Text(l10n.get_m_extension_server),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
         ),
-        ShioriSettingRow(
-          icon: Symbols.open_in_new_rounded,
-          title: l10n.get_m_extension_server,
-          onTap: _openMExtensionServerRelease,
-        ),
-      ],
+      ),
     );
   }
 

@@ -102,7 +102,7 @@ void main() {
     expect(tester.getRect(action).right, lessThanOrEqualTo(320));
     expect(
       tester
-          .getSize(find.widgetWithText(TextButton, 'Resolve challenge'))
+          .getSize(find.widgetWithText(OutlinedButton, 'Resolve challenge'))
           .height,
       greaterThanOrEqualTo(44),
     );

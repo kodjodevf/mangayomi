@@ -1,12 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/browse/sources/widgets/source_list_tile.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -18,7 +16,31 @@ class MassMigrationSourceIcon extends StatelessWidget {
   final Source? source;
 
   @override
-  Widget build(BuildContext context) => SourceIcon(iconUrl: source?.iconUrl);
+  Widget build(BuildContext context) {
+    final iconUrl = source?.iconUrl ?? '';
+    return Container(
+      height: 37,
+      width: 37,
+      decoration: BoxDecoration(
+        color: Theme.of(context).secondaryHeaderColor.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: iconUrl.isEmpty
+          ? const Icon(Icons.extension_rounded)
+          : cachedNetworkImage(
+              imageUrl: iconUrl,
+              fit: BoxFit.contain,
+              width: 37,
+              height: 37,
+              errorWidget: const SizedBox(
+                width: 37,
+                height: 37,
+                child: Center(child: Icon(Icons.extension_rounded)),
+              ),
+              useCustomNetworkImage: false,
+            ),
+    );
+  }
 }
 
 class MassMigrationCover extends ConsumerWidget {
@@ -42,7 +64,7 @@ class MassMigrationCover extends ConsumerWidget {
     final customCover = libraryItem?.customCoverImage;
     if (customCover != null && customCover.isNotEmpty) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(ShioriShape.cover),
+        borderRadius: BorderRadius.circular(8),
         child: Image.memory(
           Uint8List.fromList(customCover),
           width: width,
@@ -72,7 +94,7 @@ class MassMigrationCover extends ConsumerWidget {
           );
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(ShioriShape.cover),
+      borderRadius: BorderRadius.circular(8),
       child: cachedNetworkImage(
         headers: headers,
         imageUrl: imageUrl,
@@ -82,8 +104,8 @@ class MassMigrationCover extends ConsumerWidget {
         errorWidget: Container(
           width: width,
           height: height,
-          color: context.shiori.color.ink2,
-          child: const Icon(Symbols.image_not_supported_rounded),
+          color: Theme.of(context).secondaryHeaderColor.withValues(alpha: 0.4),
+          child: const Icon(Icons.image_not_supported_outlined),
         ),
       ),
     );
@@ -107,30 +129,14 @@ class MassMigrationChapterSection extends StatelessWidget {
       tilePadding: EdgeInsets.zero,
       childrenPadding: EdgeInsets.zero,
       dense: true,
-      title: Text.rich(
-        TextSpan(
-          text: title,
-          children: [
-            TextSpan(
-              text: ' · ${chapters.length}',
-              style: TextStyle(
-                color: context.shiori.color.fgMuted,
-                fontFeatures: const [FontFeature.tabularFigures()],
-              ),
-            ),
-          ],
-        ),
-      ),
+      title: Text('$title (${chapters.length})'),
       children: [
         if (chapters.isEmpty)
           Padding(
-            padding: const EdgeInsets.only(bottom: ShioriSpace.s12),
+            padding: const EdgeInsets.only(bottom: 12),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                l10n.mass_migration_no_chapters_found,
-                style: context.shiori.caption,
-              ),
+              child: Text(l10n.mass_migration_no_chapters_found),
             ),
           )
         else
@@ -142,9 +148,7 @@ class MassMigrationChapterSection extends StatelessWidget {
                   contentPadding: EdgeInsets.zero,
                   title: Text(
                     chapter,
-                    style: context.shiori.text.row.copyWith(
-                      color: context.shiori.color.fg,
-                    ),
+                    style: const TextStyle(fontSize: 13),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -152,12 +156,11 @@ class MassMigrationChapterSection extends StatelessWidget {
               ),
         if (chapters.length > 12)
           Padding(
-            padding: const EdgeInsets.only(bottom: ShioriSpace.s12),
+            padding: const EdgeInsets.only(bottom: 12),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 l10n.mass_migration_and_more_chapters(chapters.length - 12),
-                style: context.shiori.caption,
               ),
             ),
           ),

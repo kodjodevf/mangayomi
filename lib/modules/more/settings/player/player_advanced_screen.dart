@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:path/path.dart' as path;
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -24,34 +24,38 @@ class _PlayerAdvancedScreenState extends ConsumerState<PlayerAdvancedScreen> {
   Widget build(BuildContext context) {
     final useMpvConfig = ref.watch(useMpvConfigStateProvider);
 
-    final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.advanced)),
-      body: ListView(
+      appBar: AppBar(title: Text(context.l10n.advanced)),
+      body: SingleChildScrollView(
         padding: tvPageInsets,
-        children: [
-          ShioriSettingsGroup(
-            children: [
-              ShioriSwitchRow(
-                autofocus: isTv,
-                title: l10n.enable_mpv,
-                subtitle: l10n.mpv_info,
-                value: useMpvConfig,
-                onChanged: (value) async {
-                  if (value && !(await _checkMpvConfig(context))) {
-                    return;
-                  }
-                  ref.read(useMpvConfigStateProvider.notifier).set(value);
-                },
+        child: Column(
+          children: [
+            SwitchListTile(
+              value: useMpvConfig,
+              title: Text(context.l10n.enable_mpv),
+              subtitle: Text(
+                context.l10n.mpv_info,
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
-              ShioriSettingRow(
-                title: l10n.mpv_redownload,
-                subtitle: l10n.mpv_redownload_info,
-                onTap: () => _checkMpvConfig(context, redownload: true),
+              onChanged: (value) async {
+                if (value && !(await _checkMpvConfig(context))) {
+                  return;
+                }
+                ref.read(useMpvConfigStateProvider.notifier).set(value);
+              },
+            ),
+            ListTile(
+              onTap: () {
+                _checkMpvConfig(context, redownload: true);
+              },
+              title: Text(context.l10n.mpv_redownload),
+              subtitle: Text(
+                context.l10n.mpv_redownload_info,
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -70,37 +74,65 @@ class _PlayerAdvancedScreenState extends ConsumerState<PlayerAdvancedScreen> {
     final filesMissing =
         !(await mpvFile.exists()) && !(await inputFile.exists());
     if ((redownload || filesMissing) && context.mounted) {
-      final confirmed = await showShioriConfirm(
-        context,
-        title: context.l10n.enable_mpv,
-        message: context.l10n.mpv_download,
-        confirmLabel: context.l10n.download,
+      final res = await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text(context.l10n.mpv_download),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(context.l10n.cancel),
+                  ),
+                  const SizedBox(width: 15),
+                  ElevatedButton(
+                    onPressed: () async {
+                      final bytes = await rootBundle.load(
+                        "assets/mangayomi_mpv.zip",
+                      );
+                      final archive = ZipDecoder().decodeBytes(
+                        bytes.buffer.asUint8List(),
+                      );
+                      String shadersDir = path.join(dir.path, 'shaders');
+                      await Directory(shadersDir).create(recursive: true);
+                      String scriptsDir = path.join(dir.path, 'scripts');
+                      await Directory(scriptsDir).create(recursive: true);
+                      for (final file in archive.files) {
+                        if (file.name == "mpv.conf") {
+                          await mpvFile.writeAsBytes(file.content);
+                        } else if (file.name == "input.conf") {
+                          await inputFile.writeAsBytes(file.content);
+                        } else if (file.name.startsWith("shaders/") &&
+                            file.name.endsWith(".glsl")) {
+                          final shaderFile = File(
+                            '$shadersDir/${file.name.split("/").last}',
+                          );
+                          await shaderFile.writeAsBytes(file.content);
+                        } else if (file.name.startsWith("scripts/") &&
+                            (file.name.endsWith(".js") ||
+                                file.name.endsWith(".lua"))) {
+                          final scriptFile = File(
+                            '$scriptsDir/${file.name.split("/").last}',
+                          );
+                          await scriptFile.writeAsBytes(file.content);
+                        }
+                      }
+                      if (context.mounted) {
+                        Navigator.pop(context, "ok");
+                      }
+                    },
+                    child: Text(context.l10n.download),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
       );
-      if (!confirmed) return false;
-      // The configuration ships with the app: this unpacks it, nothing is
-      // fetched.
-      final bytes = await rootBundle.load("assets/mangayomi_mpv.zip");
-      final archive = ZipDecoder().decodeBytes(bytes.buffer.asUint8List());
-      String shadersDir = path.join(dir.path, 'shaders');
-      await Directory(shadersDir).create(recursive: true);
-      String scriptsDir = path.join(dir.path, 'scripts');
-      await Directory(scriptsDir).create(recursive: true);
-      for (final file in archive.files) {
-        if (file.name == "mpv.conf") {
-          await mpvFile.writeAsBytes(file.content);
-        } else if (file.name == "input.conf") {
-          await inputFile.writeAsBytes(file.content);
-        } else if (file.name.startsWith("shaders/") &&
-            file.name.endsWith(".glsl")) {
-          final shaderFile = File('$shadersDir/${file.name.split("/").last}');
-          await shaderFile.writeAsBytes(file.content);
-        } else if (file.name.startsWith("scripts/") &&
-            (file.name.endsWith(".js") || file.name.endsWith(".lua"))) {
-          final scriptFile = File('$scriptsDir/${file.name.split("/").last}');
-          await scriptFile.writeAsBytes(file.content);
-        }
-      }
-      return true;
+      return res != null && res == "ok";
     }
     return context.mounted;
   }

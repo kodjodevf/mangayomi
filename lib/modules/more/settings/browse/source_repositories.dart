@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,24 +8,13 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/utils/error_toast.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-/// How many sources each repository offers, by its index URL; follows the
-/// sources as a refresh adds or drops some.
-final repoSourceCountsProvider =
-    StreamProvider.family<Map<String?, int>, ItemType>((ref, itemType) {
-      return sourceRepository.watchByItemType(itemType).map((sources) {
-        final counts = <String?, int>{};
-        for (final source in sources) {
-          final url = source.repo?.jsonUrl;
-          counts[url] = (counts[url] ?? 0) + 1;
-        }
-        return counts;
-      });
-    });
+import 'package:mangayomi/modules/more/widgets/outlined_field_decoration.dart';
 
 class SourceRepositories extends ConsumerStatefulWidget {
   final ItemType itemType;
@@ -47,148 +35,227 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
     }
   }
 
-  /// The repository's name, or the last part of its URL when it has none.
-  String _name(Repo repo) {
-    if (repo.name != null &&
-        repo.name!.isNotEmpty &&
-        !repo.name!.endsWith('.json')) {
-      return repo.name!;
-    }
-    if (repo.jsonUrl == null) return "Invalid source - remove it";
-    return repo.jsonUrl!
-            .replaceAll(RegExp(r'/[^/]+\.json$'), '')
-            .split('/')
-            .where((s) => s.isNotEmpty)
-            .lastOrNull ??
-        repo.jsonUrl!;
-  }
-
-  Future<void> _refresh() async {
-    setState(() => isRefreshing = true);
-    final sources = fetchItemSourcesListProvider(
-      id: null,
-      reFresh: true,
-      itemType: widget.itemType,
-    );
-    ref.invalidate(sources);
-    await ref.read(sources.future);
-    if (mounted) setState(() => isRefreshing = false);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
+    final l10n = l10nLocalizations(context)!;
     final repositories = ref.watch(
       extensionsRepoStateProvider(widget.itemType),
     );
-    _entries = repositories;
-    final sourceCounts =
-        ref.watch(repoSourceCountsProvider(widget.itemType)).asData?.value ??
-        const {};
+    final data = AsyncValue.data(repositories);
     return Scaffold(
       appBar: AppBar(
-        title: Text(switch (widget.itemType) {
-          ItemType.manga => l10n.manage_manga_repo_urls,
-          ItemType.anime => l10n.manage_anime_repo_urls,
-          _ => l10n.manage_novel_repo_urls,
-        }),
+        title: switch (widget.itemType) {
+          ItemType.manga => Text(l10n.manage_manga_repo_urls),
+          ItemType.anime => Text(l10n.manage_anime_repo_urls),
+          _ => Text(l10n.manage_novel_repo_urls),
+        },
         actions: [
-          if (isRefreshing)
-            const Padding(
-              padding: EdgeInsets.all(ShioriSpace.s16),
-              child: ShioriLoading.inline(),
-            )
-          else
-            IconButton(
-              tooltip: l10n.refresh,
-              onPressed: _refresh,
-              icon: const Icon(Symbols.refresh_rounded),
-            ),
+          isRefreshing
+              ? const Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 3),
+                  ),
+                )
+              : Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: IconButton(
+                    splashRadius: 20,
+                    onPressed: () async {
+                      setState(() {
+                        isRefreshing = true;
+                      });
+                      final result = await ref.refresh(
+                        fetchItemSourcesListProvider(
+                          id: null,
+                          reFresh: true,
+                          itemType: widget.itemType,
+                        ).future,
+                      );
+                      setState(() {
+                        isRefreshing = false;
+                      });
+                      return result;
+                    },
+                    icon: Icon(
+                      Icons.refresh,
+                      color: Theme.of(context).hintColor,
+                    ),
+                  ),
+                ),
         ],
       ),
-      body: repositories.isEmpty
-          ? ShioriEmptyState(
-              icon: Symbols.source_rounded,
-              title: l10n.empty_extensions_repo,
-              actionLabel: l10n.add_extensions_repo,
-              onAction: () => _showAddRepoDialog(context),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.only(bottom: ShioriSpace.s48 * 2),
-              itemCount: repositories.length,
-              itemBuilder: (context, index) {
-                final repo = repositories[index];
-                final isHidden = repo.hidden ?? false;
-                final count = sourceCounts[repo.jsonUrl] ?? 0;
-                return ShioriListRow(
-                  leading: const Icon(
-                    Symbols.source_rounded,
-                    key: Key('repository-icon'),
-                  ),
-                  title: _name(repo),
-                  // What it brings, then where it is.
-                  subtitle: [l10n.n_sources(count), ?repo.jsonUrl].join(' · '),
-                  // A hidden repository's sources are left out of Browse.
-                  dimmed: isHidden,
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        tooltip: isHidden
-                            ? l10n.show_repository
-                            : l10n.hide_repository,
-                        isSelected: !isHidden,
-                        onPressed: () => ref
-                            .read(
-                              extensionsRepoStateProvider(widget.itemType)
-                                  .notifier,
-                            )
-                            .setVisibility(repo, !isHidden),
-                        icon: Icon(
-                          isHidden
-                              ? Symbols.visibility_off_rounded
-                              : Symbols.visibility_rounded,
+      body: data.when(
+        data: (data) {
+          if (data.isEmpty) {
+            _entries = [];
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  l10n.empty_extensions_repo,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+          _entries = data;
+
+          return SuperListView.builder(
+            itemCount: _entries.length,
+            itemBuilder: (context, index) {
+              final repo = _entries[index];
+              final isHidden = repo.hidden ?? false;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Column(
+                      children: [
+                        Opacity(
+                          opacity: isHidden ? 0.3 : 1,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: SizedBox.square(
+                                  dimension: 64,
+                                  child: Icon(
+                                    Icons.source_outlined,
+                                    key: Key('repository-icon'),
+                                    size: 32,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  (repo.name != null &&
+                                          repo.name!.isNotEmpty &&
+                                          !repo.name!.endsWith('.json'))
+                                      ? repo.name!
+                                      : (repo.jsonUrl != null
+                                            ? (repo.jsonUrl!
+                                                      .replaceAll(
+                                                        RegExp(
+                                                          r'/[^/]+\.json$',
+                                                        ),
+                                                        '',
+                                                      )
+                                                      .split('/')
+                                                      .where(
+                                                        (s) => s.isNotEmpty,
+                                                      )
+                                                      .lastOrNull ??
+                                                  repo.jsonUrl!)
+                                            : "Invalid source - remove it"),
+                                  style: TextStyle(
+                                    decoration: isHidden
+                                        ? TextDecoration.lineThrough
+                                        : TextDecoration.none,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      ShioriMenuButton(
-                        tooltip: MaterialLocalizations.of(context)
-                            .moreButtonTooltip,
-                        items: [
-                          if (repo.website != null)
-                            ShioriMenuItem(
-                              label: l10n.open_in_browser,
-                              icon: Symbols.open_in_new_rounded,
-                              onSelected: () =>
-                                  _launchInBrowser(Uri.parse(repo.website!)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            if (repo.website != null)
+                              IconButton(
+                                onPressed: () {
+                                  _launchInBrowser(Uri.parse(repo.website!));
+                                },
+                                icon: Icon(Icons.open_in_new_outlined),
+                              ),
+                            SizedBox(width: 10),
+                            IconButton(
+                              onPressed: () async {
+                                if (repo.jsonUrl != null) {
+                                  await Clipboard.setData(
+                                    ClipboardData(text: repo.jsonUrl!),
+                                  );
+                                }
+                              },
+                              icon: const Icon(Icons.content_copy),
                             ),
-                          if (repo.jsonUrl != null)
-                            ShioriMenuItem(
-                              label: MaterialLocalizations.of(context)
-                                  .copyButtonLabel,
-                              icon: Symbols.content_copy_rounded,
-                              onSelected: () => Clipboard.setData(
-                                ClipboardData(text: repo.jsonUrl!),
+                            SizedBox(width: 10),
+                            IconButton(
+                              onPressed: () => ref
+                                  .read(
+                                    extensionsRepoStateProvider(widget.itemType)
+                                        .notifier,
+                                  )
+                                  .setVisibility(repo, !isHidden),
+                              icon: Stack(
+                                children: [
+                                  const Icon(Icons.remove_red_eye_outlined),
+                                  if (isHidden)
+                                    Positioned(
+                                      right: 8,
+                                      child: Transform.scale(
+                                        scaleX: 2.5,
+                                        child: const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '\\',
+                                              style: TextStyle(fontSize: 17),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
-                          null,
-                          ShioriMenuItem(
-                            label: MaterialLocalizations.of(context)
-                                .deleteButtonTooltip,
-                            icon: Symbols.delete_rounded,
-                            destructive: true,
-                            onSelected: () => _removeRepo(repo),
-                          ),
-                        ],
-                      ),
-                    ],
+                            SizedBox(width: 10),
+                            IconButton(
+                              onPressed: () =>
+                                  _showRemoveRepoDialog(context, index),
+                              icon: const Icon(Icons.delete_outlined),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                );
-              },
+                ),
+              );
+            },
+          );
+        },
+        error: (Object error, StackTrace stackTrace) {
+          _entries = [];
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                l10n.empty_extensions_repo,
+                textAlign: TextAlign.center,
+              ),
             ),
+          );
+        },
+        loading: () {
+          return const ProgressCenter();
+        },
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddRepoDialog(context),
-        icon: const Icon(Symbols.add_rounded),
-        label: Text(l10n.add),
+        label: Row(
+          children: [
+            const Icon(Icons.add),
+            const SizedBox(width: 10),
+            Text(l10n.add),
+          ],
+        ),
       ),
     );
   }
@@ -211,24 +278,55 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
     }
   }
 
-  Future<void> _removeRepo(Repo removedRepo) async {
-    final l10n = context.l10n;
-    final confirmed = await showShioriConfirm(
-      context,
-      title: l10n.remove_extensions_repo,
-      message: _name(removedRepo),
-      confirmLabel: l10n.remove,
-      destructive: true,
+  void _showRemoveRepoDialog(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final l10n = context.l10n;
+            return AlertDialog(
+              title: Text(l10n.remove_extensions_repo),
+              content: Text(l10n.remove_extensions_repo),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(l10n.cancel),
+                    ),
+                    const SizedBox(width: 15),
+                    TextButton(
+                      onPressed: () async {
+                        final removedRepo = _entries[index];
+                        final mangaRepos = ref
+                            .read(extensionsRepoStateProvider(widget.itemType))
+                            .toList();
+                        mangaRepos.removeWhere((url) => url == removedRepo);
+                        await ref
+                            .read(
+                              extensionsRepoStateProvider(widget.itemType)
+                                  .notifier,
+                            )
+                            .set(mangaRepos);
+                        await _removeOrphanSources(removedRepo);
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: Text(l10n.ok),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
-    if (!confirmed) return;
-    final repos = ref
-        .read(extensionsRepoStateProvider(widget.itemType))
-        .where((r) => r != removedRepo)
-        .toList();
-    await ref
-        .read(extensionsRepoStateProvider(widget.itemType).notifier)
-        .set(repos);
-    await _removeOrphanSources(removedRepo);
   }
 
   void _showAddRepoDialog(BuildContext context) {
@@ -241,8 +339,8 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
           child: StatefulBuilder(
             builder: (context, setState) {
               final l10n = context.l10n;
-              return ShioriDialog(
-                title: l10n.add_extensions_repo,
+              return AlertDialog(
+                title: Text(l10n.add_extensions_repo),
                 content: TextFormField(
                   controller: controller,
                   // On Android TV, don't autofocus: it instantly pops the
@@ -280,109 +378,126 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                     }
                   },
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  decoration: InputDecoration(
-                    labelText: l10n.url,
+                  decoration: outlinedFieldDecoration(
                     hintText: l10n.url_must_end_with_dot_json_or_dot_pb,
                   ),
                 ),
                 actions: [
-                  ShioriButton.quiet(
-                    label: l10n.cancel,
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  StatefulBuilder(
-                    builder: (context, setState) {
-                      final text = controller.text.trim();
-                      final clean = text.toLowerCase();
-                      final alreadyExists = _entries.any((r) {
-                        final rUrl = r.jsonUrl?.trim().toLowerCase();
-                        if (rUrl == null) return false;
-                        return rUrl == clean ||
-                            rUrl == '$clean/' ||
-                            '$rUrl/' == clean;
-                      });
-                      final isValid =
-                          text.isNotEmpty &&
-                          !alreadyExists &&
-                          Uri.tryParse(text)?.isAbsolute == true;
-                      if (isLoading) {
-                        return const Padding(
-                          padding: EdgeInsets.all(ShioriSpace.s8),
-                          child: ShioriLoading.inline(),
-                        );
-                      }
-                      return ShioriButton(
-                        label: l10n.add,
-                        onPressed: !isValid
-                            ? null
-                            : () async {
-                                setState(() => isLoading = true);
-                                try {
-                                  final repoNotifier = ref.read(
-                                    extensionsRepoStateProvider(widget.itemType)
-                                        .notifier,
-                                  );
-                                  final currentRepos = ref.read(
-                                    extensionsRepoStateProvider(
-                                      widget.itemType,
-                                    ),
-                                  );
-                                  final repo = await ref.read(
-                                    getRepoInfosProvider(jsonUrl: text).future,
-                                  );
-                                  if (repo == null) {
-                                    if (context.mounted) {
-                                      setState(() => isLoading = false);
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(l10n.cancel),
+                      ),
+                      const SizedBox(width: 15),
+                      StatefulBuilder(
+                        builder: (context, setState) {
+                          final text = controller.text.trim();
+                          final clean = text.toLowerCase();
+                          final alreadyExists = _entries.any((r) {
+                            final rUrl = r.jsonUrl?.trim().toLowerCase();
+                            if (rUrl == null) return false;
+                            return rUrl == clean ||
+                                rUrl == '$clean/' ||
+                                '$rUrl/' == clean;
+                          });
+                          final isValid =
+                              text.isNotEmpty &&
+                              !alreadyExists &&
+                              Uri.tryParse(text)?.isAbsolute == true;
+                          return TextButton(
+                            onPressed: !isValid
+                                ? null
+                                : () async {
+                                    setState(() => isLoading = true);
+                                    try {
+                                      final repoNotifier = ref.read(
+                                        extensionsRepoStateProvider(
+                                          widget.itemType,
+                                        ).notifier,
+                                      );
+                                      final currentRepos = ref.read(
+                                        extensionsRepoStateProvider(
+                                          widget.itemType,
+                                        ),
+                                      );
+                                      final repo = await ref.read(
+                                        getRepoInfosProvider(jsonUrl: text)
+                                            .future,
+                                      );
+                                      if (repo == null) {
+                                        if (context.mounted) {
+                                          setState(() => isLoading = false);
+                                        }
+                                        botToast(l10n.unsupported_repo);
+                                        return;
+                                      }
+                                      final repoUrl = repo.jsonUrl
+                                          ?.trim()
+                                          .toLowerCase();
+                                      final isDuplicate = currentRepos.any((r) {
+                                        final rUrl = r.jsonUrl
+                                            ?.trim()
+                                            .toLowerCase();
+                                        return (rUrl != null &&
+                                                (rUrl == repoUrl ||
+                                                    rUrl == clean ||
+                                                    rUrl == '$clean/' ||
+                                                    '$rUrl/' == clean ||
+                                                    (repoUrl != null &&
+                                                        (rUrl == '$repoUrl/' ||
+                                                            '$rUrl/' ==
+                                                                repoUrl)))) ||
+                                            r == repo;
+                                      });
+                                      if (isDuplicate) {
+                                        setState(() => isLoading = false);
+                                        botToast(l10n.repo_already_exists);
+                                        return;
+                                      }
+                                      await repoNotifier.set([
+                                        ...currentRepos,
+                                        repo,
+                                      ]);
+                                      botToast(l10n.repo_added);
+                                    } catch (e, s) {
+                                      if (context.mounted) {
+                                        setState(() => isLoading = false);
+                                      }
+                                      toastError(
+                                        e,
+                                        stack: s,
+                                        source: 'sourceRepositories',
+                                      );
+                                      return;
                                     }
-                                    botToast(l10n.unsupported_repo);
-                                    return;
-                                  }
-                                  final repoUrl = repo.jsonUrl
-                                      ?.trim()
-                                      .toLowerCase();
-                                  final isDuplicate = currentRepos.any((r) {
-                                    final rUrl = r.jsonUrl
-                                        ?.trim()
-                                        .toLowerCase();
-                                    return (rUrl != null &&
-                                            (rUrl == repoUrl ||
-                                                rUrl == clean ||
-                                                rUrl == '$clean/' ||
-                                                '$rUrl/' == clean ||
-                                                (repoUrl != null &&
-                                                    (rUrl == '$repoUrl/' ||
-                                                        '$rUrl/' ==
-                                                            repoUrl)))) ||
-                                        r == repo;
-                                  });
-                                  if (isDuplicate) {
-                                    setState(() => isLoading = false);
-                                    botToast(l10n.repo_already_exists);
-                                    return;
-                                  }
-                                  await repoNotifier.set([
-                                    ...currentRepos,
-                                    repo,
-                                  ]);
-                                  botToast(l10n.repo_added);
-                                } catch (e, s) {
-                                  if (context.mounted) {
-                                    setState(() => isLoading = false);
-                                  }
-                                  toastError(
-                                    e,
-                                    stack: s,
-                                    source: 'sourceRepositories',
-                                  );
-                                  return;
-                                }
 
-                                if (context.mounted) {
-                                  Navigator.pop(context);
-                                }
-                              },
-                      );
-                    },
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                    }
+                                  },
+                            child: isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(),
+                                  )
+                                : Text(
+                                    l10n.add,
+                                    style: TextStyle(
+                                      color: !isValid
+                                          ? Theme.of(context).primaryColor
+                                                .withValues(alpha: 0.2)
+                                          : null,
+                                    ),
+                                  ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               );

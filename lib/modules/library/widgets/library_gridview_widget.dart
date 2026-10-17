@@ -5,13 +5,12 @@ import 'package:mangayomi/modules/library/providers/library_state_provider.dart'
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/widgets/continue_reader_button.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
-import 'package:mangayomi/modules/widgets/cover_hero.dart';
 import 'package:mangayomi/modules/widgets/cover_view_widget.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
-import 'package:shiori/shiori.dart';
 
 class LibraryGridViewWidget extends StatefulWidget {
   final bool isCoverOnlyGrid;
@@ -66,7 +65,6 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                     // On TV, make the first cover the content's focus target so the
                     // d-pad reliably lands on the grid (not the app bar).
                     autofocus: isTv && index == 0,
-                    heroTag: entry.id == null ? null : coverHeroTag(entry.id!),
                     isLongPressed: widget.mangaIdsList.contains(entry.id),
                     isComfortableGrid: widget.isComfortableGrid,
                     bottomTextWidget: BottomTextWidget(
@@ -95,25 +93,38 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                       Stack(
                         children: [
                           // ── Top-left: Local + download count + unread count ──
-                          PositionedDirectional(
-                            top: ShioriSpace.s4,
-                            start: ShioriSpace.s4,
-                            child: LibraryBadgeWidget(
-                              entry: entry,
-                              showLocal: widget.localSource,
-                              showDownloaded: widget.downloadedChapter,
-                              settings: widget.settings,
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: LibraryBadgeWidget(
+                                entry: entry,
+                                showLocal: widget.localSource,
+                                showDownloaded: widget.downloadedChapter,
+                                settings: widget.settings,
+                              ),
                             ),
                           ),
 
                           // ── Top-right: Language ──
                           if (widget.language &&
                               (entry.lang?.isNotEmpty ?? false))
-                            PositionedDirectional(
-                              top: ShioriSpace.s4,
-                              end: ShioriSpace.s4,
-                              child: EntryBadgeChip(
-                                label: entry.lang!.toUpperCase(),
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: Container(
+                                  color: context.themeData.cardColor,
+                                  child: EntryBadgeChip(
+                                    label: entry.lang!.toUpperCase(),
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(3),
+                                      bottomLeft: Radius.circular(3),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                         ],
@@ -123,20 +134,41 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                         BottomTextWidget(text: entry.name!),
 
                       if (widget.continueReaderBtn)
-                        PositionedDirectional(
-                          bottom: ShioriSpace.s8,
-                          end: ShioriSpace.s8,
-                          child: ContinueReaderButton(entry: entry),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(9),
+                            child: ContinueReaderButton(entry: entry),
+                          ),
                         ),
 
                       // ── Bottom-left: Source ──
                       if (widget.sourceBadge && (entry.source ?? '').isNotEmpty)
-                        PositionedDirectional(
-                          bottom: ShioriSpace.s4,
-                          start: ShioriSpace.s4,
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 96),
-                            child: EntryBadgeChip(label: entry.source!),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Container(
+                              constraints: const BoxConstraints(maxWidth: 96),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: context.themeData.cardColor,
+                                borderRadius: const BorderRadius.only(
+                                  topRight: Radius.circular(3),
+                                ),
+                              ),
+                              child: Text(
+                                entry.source!,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 10),
+                              ),
+                            ),
                           ),
                         ),
                     ],

@@ -1,6 +1,5 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -9,6 +8,7 @@ import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_st
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/local_directory_access.dart';
+import 'package:numberpicker/numberpicker.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:path/path.dart' as p;
 
@@ -34,207 +34,307 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     final downloadDelaySeconds = ref.watch(downloadDelaySecondsStateProvider);
     final localFolders = ref.watch(localFoldersStateProvider);
     final downloadLocation = ref.watch(downloadLocationStateProvider);
-    final l10n = context.l10n;
+    final l10n = l10nLocalizations(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.downloads)),
-      body: ListView(
+      appBar: AppBar(title: Text(l10n!.downloads)),
+      body: SingleChildScrollView(
         padding: tvPageInsets,
-        children: [
-          // Where downloads go and how they are kept; the screen's title
-          // already names them.
-          ShioriSettingsGroup(
-            children: [
-              ShioriSettingRow(
-                autofocus: isTv,
-                icon: Symbols.folder_open_rounded,
-                title: l10n.download_location,
-                subtitle: downloadLocation.$2.isEmpty
+        child: Column(
+          children: [
+            SwitchListTile(
+              value: onlyOnWifiState,
+              title: Text(l10n.only_on_wifi),
+              onChanged: (value) {
+                ref.read(onlyOnWifiStateProvider.notifier).set(value);
+              },
+            ),
+            SwitchListTile(
+              value: saveAsCBZArchiveState,
+              title: Text(l10n.save_as_cbz_archive),
+              onChanged: (value) {
+                ref.read(saveAsCBZArchiveStateProvider.notifier).set(value);
+              },
+            ),
+            SwitchListTile(
+              value: deleteDownloadAfterReading,
+              title: Text(l10n.delete_download_after_reading),
+              onChanged: (value) {
+                ref
+                    .read(deleteDownloadAfterReadingStateProvider.notifier)
+                    .set(value);
+              },
+            ),
+            SwitchListTile(
+              value: allowConcurrentDownloads,
+              title: Text(l10n.allow_concurrent_downloads),
+              subtitle: Text(l10n.allow_concurrent_downloads_subtitle),
+              onChanged: (value) {
+                ref
+                    .read(allowConcurrentDownloadsStateProvider.notifier)
+                    .set(value);
+              },
+            ),
+            if (allowConcurrentDownloads)
+              ListTile(
+                onTap: () {
+                  int currentIntValue = concurrentDownloads;
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(context.l10n.concurrent_downloads),
+                        content: StatefulBuilder(
+                          builder: (context, setState) => SizedBox(
+                            height: 200,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                NumberPicker(
+                                  value: currentIntValue,
+                                  minValue: 1,
+                                  maxValue: 255,
+                                  step: 1,
+                                  haptics: true,
+                                  textMapper: (numberText) => numberText,
+                                  onChanged: (value) =>
+                                      setState(() => currentIntValue = value),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        actions: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  context.l10n.cancel,
+                                  style: TextStyle(color: context.primaryColor),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  ref
+                                      .read(
+                                        concurrentDownloadsStateProvider
+                                            .notifier,
+                                      )
+                                      .set(currentIntValue);
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  context.l10n.ok,
+                                  style: TextStyle(color: context.primaryColor),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                title: Text(context.l10n.concurrent_downloads),
+                subtitle: Text(
+                  "$concurrentDownloads",
+                  style: TextStyle(fontSize: 11, color: context.secondaryColor),
+                ),
+              ),
+            ListTile(
+              onTap: () {
+                int currentDelay = downloadDelaySeconds;
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(context.l10n.download_delay),
+                      content: StatefulBuilder(
+                        builder: (context, setState) => SizedBox(
+                          height: 200,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              NumberPicker(
+                                value: currentDelay,
+                                minValue: 0,
+                                maxValue: 120,
+                                step: 1,
+                                haptics: true,
+                                textMapper: (numberText) => numberText,
+                                onChanged: (value) =>
+                                    setState(() => currentDelay = value),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(
+                                context.l10n.cancel,
+                                style: TextStyle(color: context.primaryColor),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                ref
+                                    .read(
+                                      downloadDelaySecondsStateProvider
+                                          .notifier,
+                                    )
+                                    .set(currentDelay);
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                context.l10n.ok,
+                                style: TextStyle(color: context.primaryColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              title: Text(context.l10n.download_delay),
+              subtitle: Text(
+                downloadDelaySeconds == 0
+                    ? l10n.download_delay_subtitle
+                    : "$downloadDelaySeconds s (+ jitter)",
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ),
+            ),
+            ListTile(
+              onTap: () async {
+                final result =
+                    await LocalDirectoryAccess.pickDirectory() ??
+                    await FilePicker.getDirectoryPath(
+                      linuxOptions: const LinuxOptions(lockParentWindow: true),
+                    );
+                if (result != null) {
+                  ref.read(downloadLocationStateProvider.notifier).set(result);
+                }
+              },
+              title: Text(l10n.download_location),
+              subtitle: Text(
+                downloadLocation.$2.isEmpty
                     ? downloadLocation.$1
                     : downloadLocation.$2,
-                onTap: () async {
-                  final result = await _pickDirectory();
-                  if (result != null) {
-                    ref
-                        .read(downloadLocationStateProvider.notifier)
-                        .set(result);
-                  }
-                },
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
-              ShioriSwitchRow(
-                title: l10n.only_on_wifi,
-                value: onlyOnWifiState,
-                onChanged: (v) =>
-                    ref.read(onlyOnWifiStateProvider.notifier).set(v),
+            ),
+            ListTile(
+              onTap: () async {
+                final result =
+                    await LocalDirectoryAccess.pickDirectory() ??
+                    await FilePicker.getDirectoryPath(
+                      linuxOptions: const LinuxOptions(lockParentWindow: true),
+                    );
+                if (result != null) {
+                  if (!context.mounted) return;
+                  final name = await _showLocalFolderNameDialog(
+                    context,
+                    LocalFolder.fromPath(path: result).name ??
+                        p.basename(result),
+                  );
+                  if (name == null || name.trim().isEmpty) return;
+                  final temp = localFolders.toList();
+                  temp.add(LocalFolder(name: name.trim(), path: result));
+                  ref.read(localFoldersStateProvider.notifier).set(temp);
+                }
+              },
+              title: Text(context.l10n.add_local_folder),
+            ),
+            ListTile(
+              onTap: () async => ref.read(scanLocalLibraryProvider.future),
+              title: Text(context.l10n.rescan_local_folder),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      children: [
+                        Text(
+                          context.l10n.local_folder,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton.outlined(
+                          tooltip: context.l10n.local_folder_structure,
+                          onPressed: () => _showHelpDialog(context),
+                          icon: const Icon(Icons.question_mark),
+                        ),
+                      ],
+                    ),
+                  ),
+                  FutureBuilder<LocalFolder?>(
+                    future: getDefaultLocalFolder(),
+                    builder: (context, snapshot) => Column(
+                      children: [
+                        if (snapshot.data?.path != null)
+                          _buildLocalFolder(
+                            l10n,
+                            localFolders,
+                            snapshot.data!,
+                            isDefault: true,
+                          ),
+                        ...localFolders.map(
+                          (e) => _buildLocalFolder(l10n, localFolders, e),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              ShioriSwitchRow(
-                title: l10n.save_as_cbz_archive,
-                value: saveAsCBZArchiveState,
-                onChanged: (v) =>
-                    ref.read(saveAsCBZArchiveStateProvider.notifier).set(v),
-              ),
-              ShioriSwitchRow(
-                title: l10n.delete_download_after_reading,
-                value: deleteDownloadAfterReading,
-                onChanged: (v) => ref
-                    .read(deleteDownloadAfterReadingStateProvider.notifier)
-                    .set(v),
-              ),
-            ],
-          ),
-          ShioriSettingsGroup(
-            title: l10n.download_queue,
-            children: [
-              ShioriSwitchRow(
-                title: l10n.allow_concurrent_downloads,
-                subtitle: l10n.allow_concurrent_downloads_subtitle,
-                value: allowConcurrentDownloads,
-                onChanged: (v) => ref
-                    .read(allowConcurrentDownloadsStateProvider.notifier)
-                    .set(v),
-              ),
-              if (allowConcurrentDownloads)
-                ShioriSliderRow(
-                  title: l10n.concurrent_downloads,
-                  value: concurrentDownloads.toDouble(),
-                  min: 1,
-                  // Room for a value set higher before this was a slider.
-                  max: concurrentDownloads > 20
-                      ? concurrentDownloads.toDouble()
-                      : 20,
-                  divisions: concurrentDownloads > 20
-                      ? concurrentDownloads - 1
-                      : 19,
-                  onChanged: (v) => ref
-                      .read(concurrentDownloadsStateProvider.notifier)
-                      .set(v.round()),
-                ),
-              ShioriSliderRow(
-                title: l10n.download_delay,
-                subtitle: downloadDelaySeconds == 0
-                    ? l10n.download_delay_subtitle
-                    : null,
-                value: downloadDelaySeconds.toDouble(),
-                min: 0,
-                max: 120,
-                divisions: 120,
-                valueLabel: (v) => l10n.seconds_short(v.round()),
-                defaultValue: 0,
-                onReset: () =>
-                    ref.read(downloadDelaySecondsStateProvider.notifier).set(0),
-                resetTooltip: l10n.reset,
-                onChanged: (v) => ref
-                    .read(downloadDelaySecondsStateProvider.notifier)
-                    .set(v.round()),
-              ),
-            ],
-          ),
-          ShioriSettingsGroup(
-            title: l10n.local_folder,
-            children: [
-              FutureBuilder<LocalFolder?>(
-                future: getDefaultLocalFolder(),
-                builder: (context, snapshot) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (snapshot.data?.path != null)
-                      _localFolderRow(
-                        l10n,
-                        localFolders,
-                        snapshot.data!,
-                        isDefault: true,
-                      ),
-                    for (final folder in localFolders)
-                      _localFolderRow(l10n, localFolders, folder),
-                  ],
-                ),
-              ),
-              ShioriSettingRow(
-                icon: Symbols.create_new_folder_rounded,
-                title: l10n.add_local_folder,
-                onTap: () => _addLocalFolder(localFolders),
-              ),
-              ShioriSettingRow(
-                icon: Symbols.refresh_rounded,
-                title: l10n.rescan_local_folder,
-                onTap: () async => ref.read(scanLocalLibraryProvider.future),
-              ),
-              ShioriSettingRow(
-                icon: Symbols.help_rounded,
-                title: l10n.local_folder_structure,
-                onTap: () => _showHelpDialog(context),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Future<String?> _pickDirectory() async =>
-      await LocalDirectoryAccess.pickDirectory() ??
-      await FilePicker.getDirectoryPath(
-        linuxOptions: const LinuxOptions(lockParentWindow: true),
-      );
-
-  Future<void> _addLocalFolder(List<LocalFolder> localFolders) async {
-    final result = await _pickDirectory();
-    if (result == null || !mounted) return;
-    final name = await showShioriPrompt(
-      context,
-      title: context.l10n.name,
-      label: context.l10n.name,
-      confirmLabel: context.l10n.add,
-      initialValue:
-          LocalFolder.fromPath(path: result).name ?? p.basename(result),
-    );
-    if (name == null || name.trim().isEmpty) return;
-    ref.read(localFoldersStateProvider.notifier).set([
-      ...localFolders,
-      LocalFolder(name: name.trim(), path: result),
-    ]);
-  }
-
-  /// One folder the library is read from: the app's own, then the ones
-  /// added here, which can be removed.
-  Widget _localFolderRow(
-    AppLocalizations l10n,
-    List<LocalFolder> localFolders,
-    LocalFolder folder, {
-    bool isDefault = false,
-  }) {
-    final folderName = folder.name ?? "";
-    final folderPath = folder.path ?? "";
-    return ShioriSettingRow(
-      key: Key('folder_${folderName}_${folderPath.hashCode}'),
-      icon: isDefault ? Symbols.home_rounded : Symbols.folder_rounded,
-      title: isDefault ? '$folderName · ${l10n.default0}' : folderName,
-      subtitle: folderPath,
-      trailing: isDefault
-          ? null
-          : IconButton(
-              tooltip: l10n.delete,
-              icon: const Icon(Symbols.delete_rounded),
-              onPressed: () async {
-                final confirmed = await showShioriConfirm(
-                  context,
-                  title: l10n.delete,
-                  message: '$folderName\n$folderPath',
-                  confirmLabel: l10n.delete,
-                  destructive: true,
-                );
-                if (!confirmed) return;
-                ref
-                    .read(localFoldersStateProvider.notifier)
-                    .set(
-                      localFolders
-                          .where(
-                            (e) =>
-                                e.name != folder.name || e.path != folder.path,
-                          )
-                          .toList(),
-                    );
-              },
-            ),
+  Future<String?> _showLocalFolderNameDialog(
+    BuildContext context,
+    String initialName,
+  ) async {
+    final controller = TextEditingController(text: initialName);
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.name),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(labelText: context.l10n.name),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: Text(context.l10n.ok),
+          ),
+        ],
+      ),
     );
   }
 
@@ -245,47 +345,47 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
         (
           "MangaName",
           [
-            ("cover.jpg", Symbols.image_rounded),
+            ("cover.jpg", Icons.image_outlined),
             (
               "Chapter1",
               [
-                ("Page1.jpg", Symbols.image_rounded),
-                ("Page2.jpeg", Symbols.image_rounded),
-                ("Page3.png", Symbols.image_rounded),
-                ("Page4.webp", Symbols.image_rounded),
+                ("Page1.jpg", Icons.image_outlined),
+                ("Page2.jpeg", Icons.image_outlined),
+                ("Page3.png", Icons.image_outlined),
+                ("Page4.webp", Icons.image_outlined),
               ],
             ),
-            ("Chapter2.cbz", Symbols.folder_zip_rounded),
-            ("Chapter3.zip", Symbols.folder_zip_rounded),
-            ("Chapter4.cbt", Symbols.folder_zip_rounded),
-            ("Chapter5.tar", Symbols.folder_zip_rounded),
+            ("Chapter2.cbz", Icons.folder_zip_outlined),
+            ("Chapter3.zip", Icons.folder_zip_outlined),
+            ("Chapter4.cbt", Icons.folder_zip_outlined),
+            ("Chapter5.tar", Icons.folder_zip_outlined),
           ],
         ),
         (
           "AnimeName",
           [
-            ("cover.jpg", Symbols.image_rounded),
-            ("Episode1.mp4", Symbols.video_file_rounded),
+            ("cover.jpg", Icons.image_outlined),
+            ("Episode1.mp4", Icons.video_file_outlined),
             (
               "Episode1_subtitles",
               [
-                ("en.srt", Symbols.subtitles_rounded),
-                ("de.srt", Symbols.subtitles_rounded),
+                ("en.srt", Icons.subtitles_outlined),
+                ("de.srt", Icons.subtitles_outlined),
               ],
             ),
-            ("Episode2.mov", Symbols.video_file_rounded),
-            ("Episode3.avi", Symbols.video_file_rounded),
-            ("Episode4.flv", Symbols.video_file_rounded),
-            ("Episode5.wmv", Symbols.video_file_rounded),
-            ("Episode6.mpeg", Symbols.video_file_rounded),
-            ("Episode7.mkv", Symbols.video_file_rounded),
+            ("Episode2.mov", Icons.video_file_outlined),
+            ("Episode3.avi", Icons.video_file_outlined),
+            ("Episode4.flv", Icons.video_file_outlined),
+            ("Episode5.wmv", Icons.video_file_outlined),
+            ("Episode6.mpeg", Icons.video_file_outlined),
+            ("Episode7.mkv", Icons.video_file_outlined),
           ],
         ),
         (
           "NovelName",
           [
-            ("cover.jpg", Symbols.image_rounded),
-            ("NovelName.epub", Symbols.book_rounded),
+            ("cover.jpg", Icons.image_outlined),
+            ("NovelName.epub", Icons.book_outlined),
           ],
         ),
       ],
@@ -300,16 +400,11 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
               TextSpan(
                 children: [
                   for (int i = 1; i < level; i++)
-                    const WidgetSpan(child: SizedBox(width: ShioriSpace.s24)),
+                    const WidgetSpan(child: SizedBox(width: 20)),
                   if (level > 0)
-                    WidgetSpan(
-                      child: Icon(
-                        Symbols.subdirectory_arrow_right_rounded,
-                        fill: 1,
-                      ),
-                    ),
-                  WidgetSpan(child: Icon(Symbols.folder_rounded, fill: 1)),
-                  const WidgetSpan(child: SizedBox(width: ShioriSpace.s4)),
+                    WidgetSpan(child: Icon(Icons.subdirectory_arrow_right)),
+                  WidgetSpan(child: Icon(Icons.folder)),
+                  const WidgetSpan(child: SizedBox(width: 5)),
                   TextSpan(text: data.$1),
                 ],
               ),
@@ -324,13 +419,11 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
         TextSpan(
           children: [
             for (int i = 1; i < level; i++)
-              const WidgetSpan(child: SizedBox(width: ShioriSpace.s24)),
+              const WidgetSpan(child: SizedBox(width: 20)),
             if (level > 0)
-              WidgetSpan(
-                child: Icon(Symbols.subdirectory_arrow_right_rounded, fill: 1),
-              ),
+              WidgetSpan(child: Icon(Icons.subdirectory_arrow_right)),
             WidgetSpan(child: Icon(data.$2 as IconData)),
-            const WidgetSpan(child: SizedBox(width: ShioriSpace.s4)),
+            const WidgetSpan(child: SizedBox(width: 5)),
             TextSpan(text: data.$1),
           ],
         ),
@@ -339,22 +432,162 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
 
     showDialog(
       context: context,
-      builder: (context) => ShioriDialog(
-        title: context.l10n.local_folder_structure,
-        // As tall as the tree, up to six tenths of the screen.
-        content: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: context.width(0.6),
-            maxHeight: context.height(0.6),
-          ),
-          child: SingleChildScrollView(child: buildSubFolder(data, 0)),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(context.l10n.local_folder_structure),
+              content: SizedBox(
+                width: context.width(0.6),
+                height: context.height(0.8),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SingleChildScrollView(child: buildSubFolder(data, 0)),
+                ),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(context.l10n.cancel),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildLocalFolder(
+    AppLocalizations l10n,
+    List<LocalFolder> localFolders,
+    LocalFolder folder, {
+    bool isDefault = false,
+  }) {
+    final folderName = folder.name ?? "";
+    final folderPath = folder.path ?? "";
+    return Card(
+      key: Key('folder_${folderName}_${folderPath.hashCode}'),
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: Theme.of(context).colorScheme.primary
+                  .withValues(alpha: 0.12),
+              child: Icon(
+                isDefault ? Icons.home_outlined : Icons.folder_outlined,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: Text(
+                          folderName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      if (isDefault)
+                        _buildFolderLabel(l10n.default0)
+                      else
+                        _buildFolderLabel(l10n.custom),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    folderPath,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: context.secondaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            if (!isDefault)
+              IconButton(
+                tooltip: l10n.delete,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(l10n.delete),
+                        content: Text("$folderName\n$folderPath"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(l10n.cancel),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              final temp = localFolders.toList();
+                              temp.removeWhere(
+                                (element) =>
+                                    element.name == folder.name &&
+                                    element.path == folder.path,
+                              );
+                              ref
+                                  .read(localFoldersStateProvider.notifier)
+                                  .set(temp);
+                              Navigator.pop(context);
+                            },
+                            child: Text(l10n.ok),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(Icons.delete_outline),
+              ),
+          ],
         ),
-        actions: [
-          ShioriButton.quiet(
-            label: MaterialLocalizations.of(context).closeButtonLabel,
-            onPressed: () => Navigator.pop(context),
-          ),
-        ],
+      ),
+    );
+  }
+
+  Widget _buildFolderLabel(String label) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 58, maxWidth: 82),
+      child: Container(
+        height: 22,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
       ),
     );
   }

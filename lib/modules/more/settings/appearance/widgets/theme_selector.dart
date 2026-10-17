@@ -1,7 +1,7 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
@@ -33,10 +33,7 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
         children: [
           Expanded(
             child: SuperListView.builder(
-              padding: const EdgeInsetsDirectional.only(
-                start: ShioriSpace.s8,
-                end: ShioriSpace.s16,
-              ),
+              padding: const EdgeInsetsDirectional.only(start: 8, end: 16),
               physics: const ClampingScrollPhysics(),
               scrollDirection: Axis.horizontal,
               itemCount: ThemeAA.schemes.length,
@@ -51,7 +48,7 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                         .setTheme(color, index);
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(ShioriSpace.s8),
+                    padding: const EdgeInsets.all(8.0),
                     child: Stack(
                       children: [
                         Column(
@@ -60,7 +57,7 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                               flexSchemeColor: color,
                               selected: selected == index,
                               selectedBorder: BorderSide(
-                                color: context.shiori.color.accent,
+                                color: theme.primaryColorLight,
                                 width: 4,
                               ),
                               unselectedBorder: BorderSide.none,
@@ -77,11 +74,11 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                               optionButtonPadding: EdgeInsets.zero,
                               optionButtonMargin: EdgeInsets.zero,
                             ),
-                            const SizedBox(height: ShioriSpace.s4),
+                            const SizedBox(height: 3),
                             Text(
                               ThemeAA.schemes[index].name,
-                              style: TextStyle(
-                                fontSize: context.shiori.text.meta.fontSize,
+                              style: const TextStyle(
+                                fontSize: 12,
                                 fontWeight: FontWeight.w300,
                               ),
                             ),
@@ -89,16 +86,14 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                         ),
                         if (selected == index)
                           Padding(
-                            padding: const EdgeInsets.all(ShioriSpace.s4),
-                            // The picked palette's check, in the accent,
-                            // as the app marks a choice.
+                            padding: const EdgeInsets.all(5),
                             child: CircleAvatar(
                               radius: 14,
-                              backgroundColor: context.shiori.color.accent,
-                              child: Icon(
-                                Symbols.check_rounded,
-                                color: context.shiori.color.onAccent,
-                                size: 18,
+                              backgroundColor: theme.primaryColorLight,
+                              child: FaIcon(
+                                FontAwesomeIcons.check,
+                                color: context.secondaryColor,
+                                size: 16,
                               ),
                             ),
                           ),
@@ -139,7 +134,7 @@ class _TvSwatchFocusState extends State<_TvSwatchFocus> {
           Scrollable.ensureVisible(
             context,
             alignment: 0.5,
-            duration: ShioriMotion.standard,
+            duration: const Duration(milliseconds: 200),
           );
         }
       },
@@ -156,9 +151,9 @@ class _TvSwatchFocusState extends State<_TvSwatchFocus> {
         return KeyEventResult.ignored;
       },
       child: AnimatedContainer(
-        duration: ShioriMotion.fast,
+        duration: const Duration(milliseconds: 120),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(ShioriShape.cover),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: _focused ? context.primaryColor : Colors.transparent,
             width: 3,

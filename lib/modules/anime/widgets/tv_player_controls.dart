@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
@@ -154,7 +153,7 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.shiori.color.accentInk;
+    final accent = Theme.of(context).colorScheme.primary;
     // TV overscan-safe margins (~5% per side, Netflix-generous). Only the
     // interactive controls/title are inset — the scrim stays full-bleed, per
     // Android TV layout guidance.
@@ -235,15 +234,18 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
                             accent: accent,
                             onPressed: widget.onBack,
                             child: const Icon(
-                              Symbols.arrow_back_rounded,
-                              fill: 1,
+                              Icons.arrow_back,
+                              color: Colors.white,
                             ),
                           ),
                           const SizedBox(width: 8),
                           TvFocusable(
                             accent: accent,
                             onPressed: widget.onRestart,
-                            child: const Icon(Symbols.replay_rounded),
+                            child: const Icon(
+                              Icons.replay_outlined,
+                              color: Colors.white,
+                            ),
                           ),
                           const SizedBox(width: 8),
                           // Autoplay-next — YouTube-style labelled switch.
@@ -272,21 +274,18 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
                           if (widget.title.isNotEmpty)
                             Text(
                               widget.title,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
-                                fontSize:
-                                    ShioriType.reference.seriesTitle.fontSize,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           if (widget.episodeLabel.isNotEmpty)
                             Text(
                               widget.episodeLabel,
-                              style: TextStyle(
-                                color: Colors.white.withValues(
-                                  alpha: Alphas.secondary,
-                                ),
-                                fontSize: ShioriType.reference.row.fontSize,
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 14,
                               ),
                             ),
                         ],
@@ -331,8 +330,8 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
                                   // Match the play/pause size (34) so the two
                                   // transport controls frame the seek bar evenly.
                                   child: const Icon(
-                                    Symbols.skip_next_rounded,
-                                    fill: 1,
+                                    Icons.skip_next,
+                                    color: Colors.white,
                                     size: 34,
                                   ),
                                 ),

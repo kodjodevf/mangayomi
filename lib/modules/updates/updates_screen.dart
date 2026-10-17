@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/utils/platform_utils.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/repositories/download_repository.dart';
-import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/widgets/base_library_tab_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/updates/widgets/series_updates.dart';
 import 'package:mangayomi/modules/updates/widgets/update_chapter_list_tile_widget.dart';
 import 'package:mangayomi/modules/updates/update_errors_screen.dart';
 import 'package:mangayomi/services/update_errors_provider.dart';
@@ -18,9 +14,9 @@ import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/utils/date.dart';
-import 'package:mangayomi/modules/widgets/entry_badge_chip.dart';
-import 'package:mangayomi/modules/widgets/error_state.dart';
-import 'package:shiori/shiori.dart';
+import 'package:mangayomi/modules/widgets/error_text.dart';
+import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class UpdatesScreen extends ConsumerStatefulWidget {
   const UpdatesScreen({super.key});
@@ -36,12 +32,9 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
   String get title => l10nLocalizations(context)!.updates;
 
   @override
-  String? get navRoute => '/updates';
-
-  @override
   Widget buildTab(ItemType type) {
     return Padding(
-      padding: const EdgeInsets.only(top: ShioriSpace.s12),
+      padding: const EdgeInsets.only(top: 10),
       child: UpdateTab(
         itemType: type,
         query: textEditingController.text,
@@ -56,7 +49,7 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Tab(text: label),
-        const SizedBox(width: ShioriSpace.s8),
+        const SizedBox(width: 8),
         _updateNumbers(ref, type),
       ],
     );
@@ -72,8 +65,8 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
           splashRadius: 20,
           tooltip: context.l10n.update_errors,
           icon: Icon(
-            Symbols.error_rounded,
-            color: context.shiori.color.error.foreground,
+            Icons.error_outline,
+            color: Theme.of(context).colorScheme.error,
           ),
           onPressed: () => Navigator.push(
             context,
@@ -87,7 +80,10 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
         IconButton(
           splashRadius: 20,
           tooltip: l10n.cancel,
-          icon: const Icon(Symbols.stop_circle_rounded),
+          icon: Icon(
+            Icons.stop_circle_outlined,
+            color: Theme.of(context).hintColor,
+          ),
           onPressed: () =>
               ref.read(libraryUpdateProvider.notifier).requestCancel(),
         )
@@ -95,23 +91,39 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
         IconButton(
           splashRadius: 20,
           tooltip: l10n.refresh,
-          icon: const Icon(Symbols.refresh_rounded),
+          icon: Icon(
+            Icons.refresh_outlined,
+            color: Theme.of(context).hintColor,
+          ),
           onPressed: _updateLibrary,
         ),
       IconButton(
         splashRadius: 20,
-        tooltip: l10n.remove_everything,
-        icon: const Icon(Symbols.delete_sweep_rounded),
-        onPressed: () async {
-          final confirmed = await showShioriConfirm(
-            context,
-            title: l10n.remove_everything,
-            message: l10n.remove_all_update_msg,
-            confirmLabel: l10n.ok,
-            cancelLabel: l10n.cancel,
-            destructive: true,
+        icon: Icon(
+          Icons.delete_sweep_outlined,
+          color: Theme.of(context).hintColor,
+        ),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (dialogContext) => AlertDialog(
+              title: Text(l10n.remove_everything),
+              content: Text(l10n.remove_all_update_msg),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(l10n.cancel),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(dialogContext).pop();
+                    await _clearUpdates();
+                  },
+                  child: Text(l10n.ok),
+                ),
+              ],
+            ),
           );
-          if (confirmed) await _clearUpdates();
         },
       ),
     ];
@@ -164,28 +176,6 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
   @override
   bool get wantKeepAlive => true;
 
-  /// Queues every chapter of a day that is not downloaded yet, as the
-  /// detail page does for a selection, and says how many.
-  Future<void> _downloadDay(List<Chapter> chapters) async {
-    final l10n = l10nLocalizations(context)!;
-    final pending = chapters.where((chapter) {
-      final entry = downloadRepository.getByChapterId(chapter.id);
-      return entry == null || !(entry.isDownload ?? false);
-    }).toList();
-    if (pending.isEmpty) return;
-    for (final chapter in pending) {
-      await downloadRepository.enqueue(chapter);
-    }
-    if (!mounted) return;
-    ref.invalidate(processDownloadsProvider());
-    ref.read(processDownloadsProvider());
-    botToast(
-      l10n.n_chapters_queued(pending.length),
-      second: 3,
-      tone: ShioriToastTone.success,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -236,116 +226,83 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
                 lastUpdated = value;
               }
             }
-            final groups = groupUpdatesBySeries(
-              resolved,
-              mangaIdOf: (u) => chapterByUpdateId[u.id]?.mangaId,
-              dayOf: (u) => dateFormat(
-                u.date!,
-                context: context,
-                ref: ref,
-                forHistoryValue: true,
-                useRelativeTimesTamps: false,
-              ),
-            );
             if (resolved.isNotEmpty) {
               return CustomScrollView(
                 slivers: [
                   if (lastUpdated != null)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          ShioriSpace.s16,
-                          ShioriSpace.s8,
-                          ShioriSpace.s16,
-                          ShioriSpace.s8,
-                        ),
-                        child: Text(
-                          l10n.library_last_updated(
-                            dateFormat(
-                              lastUpdated.toString(),
-                              ref: ref,
-                              context: context,
-                              showHOURorMINUTE: true,
+                    SliverPadding(
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                        top: 10,
+                        bottom: 20,
+                      ),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate.fixed([
+                          Text(
+                            l10n.library_last_updated(
+                              dateFormat(
+                                lastUpdated.toString(),
+                                ref: ref,
+                                context: context,
+                                showHOURorMINUTE: true,
+                              ),
+                            ),
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              color: context.secondaryColor,
                             ),
                           ),
-                          style: context.shiori.text.meta.copyWith(
-                            color: context.shiori.color.fgMuted,
-                          ),
-                        ),
+                        ]),
                       ),
                     ),
-                  CustomSliverGroupedListView<SeriesDayUpdates, String>(
-                    // One row per series and day: a batch of chapters from
-                    // one series no longer floods the day.
-                    elements: groups,
-                    groupBy: (element) => element.day,
-                    groupSeparatorBuilder: (String groupByValue) {
-                      final day = [
-                        for (final g in groups)
-                          if (g.day == groupByValue)
-                            for (final u in g.updates) chapterByUpdateId[u.id]!,
-                      ];
-                      // Downloads are hidden on a TV, so is this.
-                      final canDownload =
-                          !isTv &&
-                          day.any((c) {
-                            final entry = downloadRepository.getByChapterId(
-                              c.id,
-                            );
-                            return entry == null ||
-                                !(entry.isDownload ?? false);
-                          });
-                      return ShioriSectionHeader(
-                        overline: true,
-                        title: dateFormat(
-                          null,
-                          context: context,
-                          stringDate: groupByValue,
-                          ref: ref,
-                        ),
-                        actionLabel: canDownload ? l10n.download_all : null,
-                        onAction: canDownload ? () => _downloadDay(day) : null,
-                      );
-                    },
+                  CustomSliverGroupedListView<Update, String>(
+                    elements: resolved,
+                    groupBy: (element) => dateFormat(
+                      element.date!,
+                      context: context,
+                      ref: ref,
+                      forHistoryValue: true,
+                      useRelativeTimesTamps: false,
+                    ),
+                    groupSeparatorBuilder: (String groupByValue) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8, left: 12),
+                      child: Row(
+                        children: [
+                          Text(
+                            dateFormat(
+                              null,
+                              context: context,
+                              stringDate: groupByValue,
+                              ref: ref,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     itemBuilder: (context, element) {
-                      final manga = mangaById[element.mangaId]!;
-                      final chapters = [
-                        for (final u in element.updates)
-                          chapterByUpdateId[u.id]!,
-                      ];
-                      if (chapters.length == 1) {
-                        return UpdateChapterListTileWidget(
-                          chapter: chapters.single,
-                          manga: manga,
-                          sourceExist: true,
-                        );
-                      }
-                      return SeriesUpdatesTile(
-                        key: ValueKey('${element.mangaId}-${element.day}'),
+                      final chapter = chapterByUpdateId[element.id]!;
+                      final manga = mangaById[chapter.mangaId]!;
+                      return UpdateChapterListTileWidget(
+                        chapter: chapter,
                         manga: manga,
-                        chapters: chapters,
+                        sourceExist: true,
                       );
                     },
                     itemComparator: (item1, item2) =>
-                        item1.latest.compareTo(item2.latest),
+                        item1.date!.compareTo(item2.date!),
                     order: GroupedListOrder.DESC,
                   ),
                 ],
               );
             }
-            return ShioriEmptyState(
-              icon: Symbols.new_releases_rounded,
-              title: l10n.no_recent_updates,
-            );
+            return Center(child: Text(l10n.no_recent_updates));
           },
           error: (Object error, StackTrace stackTrace) {
-            return ErrorState(detail: error.toString());
+            return ErrorText(error);
           },
           loading: () {
-            return ListView(
-              physics: const NeverScrollableScrollPhysics(),
-              children: [for (var i = 0; i < 8; i++) const ShioriSkeletonRow()],
-            );
+            return const ProgressCenter();
           },
         ),
         if (widget.isLoading)
@@ -354,7 +311,7 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
             left: 0,
             right: 0,
             child: Padding(
-              padding: EdgeInsets.only(top: ShioriSpace.s32),
+              padding: EdgeInsets.only(top: 40),
               child: Center(child: RefreshProgressIndicator()),
             ),
           ),
@@ -369,7 +326,13 @@ Widget _updateNumbers(WidgetRef ref, ItemType itemType) {
     builder: (context, snapshot) {
       final count = snapshot.data?.length ?? 0;
       if (count == 0) return const SizedBox.shrink();
-      return EntryBadgeChip(label: count.toString());
+      return Badge(
+        backgroundColor: Theme.of(context).focusColor,
+        label: Text(
+          count.toString(),
+          style: TextStyle(color: Theme.of(context).textTheme.bodySmall!.color),
+        ),
+      );
     },
   );
 }

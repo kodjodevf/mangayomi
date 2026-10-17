@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/widgets/library_settings_sheet.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/library/tv_home/tv_home_layout.dart';
 
@@ -25,7 +25,7 @@ class TvHomeTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.shiori.color.accentInk;
+    final accent = context.primaryColor;
     return Padding(
       padding: const EdgeInsets.fromLTRB(22, 16, 22, 6),
       child: Row(
@@ -61,25 +61,21 @@ class TvHomeTopBar extends StatelessWidget {
                   isDense: true,
                   filled: true,
                   hintText: context.l10n.search_your_anime,
-                  prefixIcon: const Icon(
-                    Symbols.search_rounded,
-                    fill: 1,
-                    size: 20,
-                  ),
+                  prefixIcon: const Icon(Icons.search, size: 20),
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 12,
                     horizontal: 12,
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(ShioriShape.sheet),
+                    borderRadius: BorderRadius.circular(26),
                     borderSide: BorderSide.none,
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(ShioriShape.sheet),
+                    borderRadius: BorderRadius.circular(26),
                     borderSide: BorderSide(color: accent, width: 2),
                   ),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(ShioriShape.sheet),
+                    borderRadius: BorderRadius.circular(26),
                     borderSide: BorderSide.none,
                   ),
                 ),
@@ -122,7 +118,7 @@ class _LibrarySettingsButtonState extends ConsumerState<_LibrarySettingsButton>
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.shiori.color.accentInk;
+    final accent = context.primaryColor;
     return Focus(
       onFocusChange: (f) => setState(() => _focused = f),
       onKeyEvent: (node, event) {
@@ -138,17 +134,16 @@ class _LibrarySettingsButtonState extends ConsumerState<_LibrarySettingsButton>
       child: GestureDetector(
         onTap: _open,
         child: AnimatedContainer(
-          duration: ShioriMotion.fast,
+          duration: const Duration(milliseconds: 120),
           padding: const EdgeInsets.all(11),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: _focused ? accent : accent.withValues(alpha: Alphas.focus),
+            color: _focused ? accent : accent.withValues(alpha: 0.12),
           ),
           child: Icon(
-            Symbols.filter_list_rounded,
-            fill: 1,
+            Icons.filter_list_sharp,
             size: 22,
-            color: _focused ? ShioriColors.onFill(accent) : accent,
+            color: _focused ? Colors.white : accent,
           ),
         ),
       ),

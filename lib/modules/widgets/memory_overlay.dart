@@ -1,6 +1,4 @@
-// shiori-file: a developer overlay drawn over any screen in fixed colours
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/utils/memory_probe.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -33,7 +31,7 @@ class MemoryOverlay extends StatelessWidget {
         ignoring: !interactive,
         child: Material(
           color: Colors.black.withValues(alpha: 0.78),
-          borderRadius: BorderRadius.circular(ShioriShape.cover),
+          borderRadius: BorderRadius.circular(8),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: ListenableBuilder(
@@ -104,11 +102,11 @@ class MemoryOverlay extends StatelessWidget {
             children: [
               TextButton(
                 onPressed: probe.reset,
-                child: Text('Reset', style: context.shiori.text.meta),
+                child: const Text('Reset', style: TextStyle(fontSize: 12)),
               ),
               TextButton(
                 onPressed: onClose,
-                child: Text('Hide', style: context.shiori.text.meta),
+                child: const Text('Hide', style: TextStyle(fontSize: 12)),
               ),
             ],
           ),

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/widgets/in_library_badge.dart';
-import 'package:mangayomi/modules/widgets/entry_badge_chip.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_search.dart';
@@ -9,6 +6,7 @@ import 'package:mangayomi/modules/tracker_library/tracker_item_card.dart';
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class TrackerLibraryImageCard extends StatelessWidget {
   final TrackSearch track;
@@ -28,7 +26,7 @@ class TrackerLibraryImageCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showCard(context, libraryTrack?.mangaId),
       child: Padding(
-        padding: const EdgeInsets.only(left: ShioriSpace.s12),
+        padding: const EdgeInsets.only(left: 10),
         child: Stack(
           children: [
             SizedBox(
@@ -36,7 +34,7 @@ class TrackerLibraryImageCard extends StatelessWidget {
               child: Column(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(ShioriShape.cover),
+                    borderRadius: BorderRadius.circular(5),
                     child: Stack(
                       children: [
                         cachedNetworkImage(
@@ -45,21 +43,45 @@ class TrackerLibraryImageCard extends StatelessWidget {
                           height: 150,
                           fit: BoxFit.cover,
                         ),
-                        PositionedDirectional(
-                          top: ShioriSpace.s4,
-                          end: ShioriSpace.s4,
-                          child: EntryBadgeChip(
-                            label: '★ ${track.score ?? "?"}',
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: Text.rich(
+                            TextSpan(
+                              style: TextStyle(
+                                background: Paint()
+                                  ..color = Theme.of(context)
+                                      .scaffoldBackgroundColor
+                                      .withValues(alpha: 0.75)
+                                  ..strokeWidth = 20.0
+                                  ..strokeJoin = StrokeJoin.round
+                                  ..style = PaintingStyle.stroke,
+                              ),
+                              children: [
+                                WidgetSpan(
+                                  child: Icon(
+                                    Icons.star,
+                                    color: context.primaryColor,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: " ${track.score ?? "?"}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
                   BottomTextWidget(
-                    fontSize: context.shiori.text.meta.fontSize,
+                    fontSize: 12.0,
                     text: track.title!,
                     isLoading: true,
-                    textColor: context.shiori.color.fg,
+                    textColor: Theme.of(context).textTheme.bodyLarge!.color,
                     isComfortableGrid: true,
                   ),
                 ],
@@ -68,15 +90,19 @@ class TrackerLibraryImageCard extends StatelessWidget {
             Container(
               width: 110,
               height: 150,
-              // Already in the library: a light veil and a label, so the
-              // cover stays recognisable.
-              color: hasData ? inLibraryVeil : null,
+              color: hasData ? Colors.black.withValues(alpha: 0.7) : null,
             ),
             if (hasData)
-              PositionedDirectional(
-                top: ShioriSpace.s4,
-                start: ShioriSpace.s4,
-                child: const InLibraryBadge(),
+              Positioned(
+                top: 0,
+                left: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Icon(
+                    Icons.collections_bookmark,
+                    color: context.primaryColor,
+                  ),
+                ),
               ),
           ],
         ),
@@ -85,11 +111,10 @@ class TrackerLibraryImageCard extends StatelessWidget {
   }
 
   void _showCard(BuildContext context, int? mangaId) {
-    showTrackerItemSheet(
-      context,
-      track: track,
-      itemType: itemType,
-      mangaId: mangaId,
+    showDialog(
+      context: context,
+      builder: (context) =>
+          TrackerItemCard(track: track, itemType: itemType, mangaId: mangaId),
     );
   }
 }

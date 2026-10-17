@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +12,7 @@ import 'package:mangayomi/modules/more/settings/general/providers/general_state_
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/global_style.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -189,14 +189,19 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     return (!isNotWebviewWindow && Platform.isLinux)
         ? Scaffold(
             appBar: AppBar(
-              title: Text(_title, overflow: TextOverflow.ellipsis),
+              title: Text(
+                _title,
+                style: const TextStyle(
+                  overflow: TextOverflow.ellipsis,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               leading: IconButton(
-                tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                 onPressed: () {
                   _closeDesktopWebview();
                   _popWebviewRoute();
                 },
-                icon: const Icon(Symbols.close_rounded, fill: 1),
+                icon: const Icon(Icons.close),
               ),
             ),
           )
@@ -224,46 +229,33 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                               dense: true,
                               subtitle: Text(
                                 _url,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: context.shiori.caption,
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                               title: Text(
                                 _title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: context.shiori.text.row.copyWith(
-                                  color: context.shiori.color.fg,
-                                  fontWeight: FontWeight.w600,
+                                style: const TextStyle(
+                                  overflow: TextOverflow.ellipsis,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                               leading: IconButton(
-                                tooltip: MaterialLocalizations.of(context)
-                                    .closeButtonTooltip,
                                 onPressed: () {
                                   if (Platform.isWindows) {
                                     _closeBrowser();
                                   }
                                   Navigator.pop(context);
                                 },
-                                icon: const Icon(
-                                  Symbols.close_rounded,
-                                  fill: 1,
-                                ),
+                                icon: const Icon(Icons.close),
                               ),
                             ),
                           ),
                           IconButton(
-                            tooltip: MaterialLocalizations.of(context)
-                                .backButtonTooltip,
                             icon: Icon(
-                              Symbols.arrow_back_rounded,
-                              fill: 1,
-                              color: _canGoback
-                                  ? null
-                                  : context.shiori.color.fg.withValues(
-                                      alpha: Alphas.disabled,
-                                    ),
+                              Icons.arrow_back,
+                              color: _canGoback ? null : Theme.of(context).disabledColor,
                             ),
                             onPressed: _canGoback
                                 ? () {
@@ -272,15 +264,9 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                                 : null,
                           ),
                           IconButton(
-                            tooltip: context.l10n.go_forward,
                             icon: Icon(
-                              Symbols.arrow_forward_rounded,
-                              fill: 1,
-                              color: _canGoForward
-                                  ? null
-                                  : context.shiori.color.fg.withValues(
-                                      alpha: Alphas.disabled,
-                                    ),
+                              Icons.arrow_forward,
+                              color: _canGoForward ? null : Theme.of(context).disabledColor,
                             ),
                             onPressed: _canGoForward
                                 ? () {
@@ -288,56 +274,57 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                                   }
                                 : null,
                           ),
-                          ShioriMenuButton(
-                            tooltip: MaterialLocalizations.of(context)
-                                .moreButtonTooltip,
-                            items: [
-                              ShioriMenuItem(
-                                label: l10n!.refresh,
-                                icon: Symbols.refresh_rounded,
-                                onSelected: () => _webViewController?.reload(),
-                              ),
-                              ShioriMenuItem(
-                                label: l10n.share,
-                                icon: Symbols.share_rounded,
-                                onSelected: () {
-                                  final box =
-                                      context.findRenderObject() as RenderBox?;
-                                  shareOrCopy(
-                                    ShareParams(
-                                      text: _url,
-                                      sharePositionOrigin:
-                                          box!.localToGlobal(Offset.zero) &
-                                          box.size,
-                                    ),
-                                  );
-                                },
-                              ),
-                              ShioriMenuItem(
-                                label: l10n.open_in_browser,
-                                icon: Symbols.open_in_browser_rounded,
-                                onSelected: () =>
-                                    InAppBrowser.openWithSystemBrowser(
-                                      url: WebUri(_url),
-                                    ),
-                              ),
-                              null,
-                              ShioriMenuItem(
-                                label: l10n.clear_cookie,
-                                icon: Symbols.cookie_rounded,
-                                destructive: true,
-                                onSelected: () {
-                                  CookieManager.instance().deleteAllCookies();
-                                  MClient.deleteAllCookies(_url);
-                                },
-                              ),
-                            ],
+                          PopupMenuButton(
+                            popUpAnimationStyle: popupAnimationStyle,
+                            itemBuilder: (context) {
+                              return [
+                                PopupMenuItem<int>(
+                                  value: 0,
+                                  child: Text(l10n!.refresh),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 1,
+                                  child: Text(l10n.share),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 2,
+                                  child: Text(l10n.open_in_browser),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 3,
+                                  child: Text(l10n.clear_cookie),
+                                ),
+                              ];
+                            },
+                            onSelected: (value) async {
+                              if (value == 0) {
+                                _webViewController?.reload();
+                              } else if (value == 1) {
+                                final box =
+                                    context.findRenderObject() as RenderBox?;
+                                shareOrCopy(
+                                  ShareParams(
+                                    text: _url,
+                                    sharePositionOrigin:
+                                        box!.localToGlobal(Offset.zero) &
+                                        box.size,
+                                  ),
+                                );
+                              } else if (value == 2) {
+                                await InAppBrowser.openWithSystemBrowser(
+                                  url: WebUri(_url),
+                                );
+                              } else if (value == 3) {
+                                CookieManager.instance().deleteAllCookies();
+                                MClient.deleteAllCookies(_url);
+                              }
+                            },
                           ),
                         ],
                       ),
                     ),
                     _progress < 1.0
-                        ? ShioriProgressBar(value: _progress, height: 2)
+                        ? LinearProgressIndicator(value: _progress)
                         : Container(),
                     if (!Platform.isWindows)
                       Expanded(

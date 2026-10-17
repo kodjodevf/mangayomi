@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/providers/state_provider.dart';
@@ -146,6 +145,9 @@ class _SubtitleAppearanceWidgetState
   @override
   Widget build(BuildContext context) {
     final subSets = ref.watch(subtitleSettingsStateProvider);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
 
     // Synchronize controller text when not focused
     if (!_fontSizeFocusNode.hasFocus) {
@@ -181,62 +183,53 @@ class _SubtitleAppearanceWidgetState
     };
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Subtitle track warning banner
           if (!widget.hasSubtitleTrack)
             Container(
-              margin: const EdgeInsets.fromLTRB(
-                ShioriSpace.s16,
-                ShioriSpace.s4,
-                ShioriSpace.s16,
-                ShioriSpace.s12,
-              ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: ShioriSpace.s12,
-                vertical: ShioriSpace.s8,
-              ),
+              margin: const EdgeInsets.fromLTRB(12, 4, 12, 10),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: context.shiori.color.ink2,
-                borderRadius: BorderRadius.circular(ShioriShape.card),
+                color: colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.5,
+                ),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.25),
+                ),
               ),
               child: Row(
                 children: [
                   Icon(
-                    Symbols.info_rounded,
+                    Icons.info_outline_rounded,
                     size: 16,
-                    color: context.shiori.color.fgMuted,
+                    color: colorScheme.onSurfaceVariant,
                   ),
-                  const SizedBox(width: ShioriSpace.s8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       context.l10n.no_subtite_warning_message,
-                      style: context.shiori.caption,
+                      style: (textTheme.bodySmall ?? const TextStyle())
+                          .copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                            fontSize: 12,
+                          ),
                     ),
                   ),
                 ],
               ),
             ),
 
-          // The subtitle as it will look, on the black of a video.
+          // Live Subtitle Preview Box
           Container(
-            margin: const EdgeInsets.symmetric(
-              horizontal: ShioriSpace.s16,
-              vertical: ShioriSpace.s8,
-            ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: ShioriSpace.s16,
-              vertical: ShioriSpace.s24,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.black,
-              borderRadius: BorderRadius.circular(ShioriShape.card),
-            ),
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Center(
               child: Text(
-                context.l10n.subtitle_preview_sample,
+                "Lorem ipsum dolor sit amet",
                 style: subtileTextStyle(ref).copyWith(
                   fontSize: ((subSets.fontSize ?? 45) * 0.45).clamp(14.0, 24.0),
                 ),
@@ -270,17 +263,15 @@ class _SubtitleAppearanceWidgetState
             },
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: ShioriSpace.s16,
-              vertical: ShioriSpace.s8,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: Row(
               children: [
                 Expanded(
                   child: Text(
-                    context.l10n.text_style,
-                    style: context.shiori.text.row.copyWith(
-                      color: context.shiori.color.fg,
+                    "Style",
+                    style: (textTheme.bodyMedium ?? const TextStyle()).copyWith(
+                      fontSize: 13,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -288,20 +279,12 @@ class _SubtitleAppearanceWidgetState
                   segments: [
                     ButtonSegment(
                       value: 'bold',
-                      icon: const Icon(
-                        Symbols.format_bold_rounded,
-                        fill: 1,
-                        size: 18,
-                      ),
+                      icon: const Icon(Icons.format_bold, size: 18),
                       tooltip: context.l10n.bold,
                     ),
                     ButtonSegment(
                       value: 'italic',
-                      icon: const Icon(
-                        Symbols.format_italic_rounded,
-                        fill: 1,
-                        size: 18,
-                      ),
+                      icon: const Icon(Icons.format_italic, size: 18),
                       tooltip: context.l10n.italic,
                     ),
                   ],
@@ -317,7 +300,7 @@ class _SubtitleAppearanceWidgetState
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     shape: WidgetStatePropertyAll(
                       RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(ShioriShape.cover),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                     ),
                   ),
@@ -338,25 +321,27 @@ class _SubtitleAppearanceWidgetState
             ),
           ),
 
-          const SizedBox(height: ShioriSpace.s8),
+          const SizedBox(height: 8),
           Divider(
             height: 1,
-            color: context.shiori.color.hairline.withValues(alpha: 0.20),
+            color: colorScheme.outlineVariant.withValues(alpha: 0.20),
           ),
 
           // Color section
           SettingsSectionLabel(context.l10n.color),
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: ShioriSpace.s16,
-              vertical: ShioriSpace.s4,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             child: Container(
               decoration: BoxDecoration(
-                color: context.shiori.color.ink2,
-                borderRadius: BorderRadius.circular(ShioriShape.card),
+                color: colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.50,
+                ),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.25),
+                ),
               ),
-              padding: const EdgeInsets.all(ShioriSpace.s4),
+              padding: const EdgeInsets.all(3),
               child: Row(
                 children: [
                   Expanded(
@@ -390,45 +375,36 @@ class _SubtitleAppearanceWidgetState
 
           // Quick Preset Color Chips
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: ShioriSpace.s16,
-              vertical: ShioriSpace.s8,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _PresetChip(
-                  // shiori: a subtitle colour the viewer picks; it styles the video, not the interface
                   color: const Color(0xFFFFFFFF),
                   tooltip: context.l10n.white,
                   onTap: () => _applyPresetColor(255, 255, 255),
                 ),
                 _PresetChip(
-                  // shiori: a subtitle colour the viewer picks; it styles the video, not the interface
                   color: const Color(0xFFFFEB3B),
                   tooltip: context.l10n.color_yellow,
                   onTap: () => _applyPresetColor(255, 235, 59),
                 ),
                 _PresetChip(
-                  // shiori: a subtitle colour the viewer picks; it styles the video, not the interface
                   color: const Color(0xFF00E5FF),
                   tooltip: context.l10n.color_cyan,
                   onTap: () => _applyPresetColor(0, 229, 255),
                 ),
                 _PresetChip(
-                  // shiori: a subtitle colour the viewer picks; it styles the video, not the interface
                   color: const Color(0xFF69F0AE),
                   tooltip: context.l10n.color_green,
                   onTap: () => _applyPresetColor(105, 240, 174),
                 ),
                 _PresetChip(
-                  // shiori: a subtitle colour the viewer picks; it styles the video, not the interface
                   color: const Color(0xFFFFAB40),
                   tooltip: context.l10n.color_orange,
                   onTap: () => _applyPresetColor(255, 171, 64),
                 ),
                 _PresetChip(
-                  // shiori: a subtitle colour the viewer picks; it styles the video, not the interface
                   color: const Color(0xFF000000),
                   tooltip: context.l10n.black,
                   onTap: () => _applyPresetColor(0, 0, 0),
@@ -441,42 +417,46 @@ class _SubtitleAppearanceWidgetState
           _ColorChannelSlider(
             label: 'R',
             value: activeR,
-            // shiori: a subtitle colour the viewer picks; it styles the video, not the interface
             channelColor: Colors.redAccent,
             onChanged: (v) => _updateColorChannel('r', v, true),
           ),
           _ColorChannelSlider(
             label: 'G',
             value: activeG,
-            // shiori: a subtitle colour the viewer picks; it styles the video, not the interface
             channelColor: Colors.greenAccent,
             onChanged: (v) => _updateColorChannel('g', v, true),
           ),
           _ColorChannelSlider(
             label: 'B',
             value: activeB,
-            // shiori: a subtitle colour the viewer picks; it styles the video, not the interface
             channelColor: Colors.lightBlueAccent,
             onChanged: (v) => _updateColorChannel('b', v, true),
           ),
           _ColorChannelSlider(
             label: 'A',
             value: activeA,
-            // shiori: a subtitle colour the viewer picks; it styles the video, not the interface
             channelColor: Colors.grey.shade400,
             onChanged: (v) => _updateColorChannel('a', v, true),
           ),
 
           // Reset button
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: ShioriSpace.s16,
-              vertical: ShioriSpace.s12,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             child: Center(
-              child: ShioriButton.quiet(
-                icon: Symbols.restart_alt_rounded,
-                label: context.l10n.reset,
+              child: OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: colorScheme.onSurfaceVariant,
+                  side: BorderSide(
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                ),
                 onPressed: () {
                   ref.read(subtitleSettingsStateProvider.notifier).reset();
                   _fontSizeController.text = '45';
@@ -484,6 +464,8 @@ class _SubtitleAppearanceWidgetState
                     _colorTarget = 'text';
                   });
                 },
+                icon: const Icon(Icons.refresh, size: 16),
+                label: Text(context.l10n.reset),
               ),
             ),
           ),
@@ -508,17 +490,18 @@ class _ColorTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Material(
-      color: selected ? context.shiori.color.ink3 : Colors.transparent,
-      borderRadius: BorderRadius.circular(ShioriShape.cover),
+      color: selected
+          ? colorScheme.surfaceContainerHighest
+          : Colors.transparent,
+      borderRadius: BorderRadius.circular(8),
       child: InkWell(
-        borderRadius: BorderRadius.circular(ShioriShape.cover),
+        borderRadius: BorderRadius.circular(8),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            vertical: ShioriSpace.s8,
-            horizontal: ShioriSpace.s4,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -529,20 +512,21 @@ class _ColorTab extends StatelessWidget {
                   color: color,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: context.shiori.color.fgMuted.withValues(alpha: 0.5),
+                    color: colorScheme.outline.withValues(alpha: 0.5),
                     width: 1.5,
                   ),
                 ),
               ),
-              const SizedBox(width: ShioriSpace.s8),
+              const SizedBox(width: 6),
               Flexible(
                 child: Text(
                   label,
-                  style: context.shiori.text.meta.copyWith(
-                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    fontWeight: selected ? FontWeight.bold : FontWeight.w500,
                     color: selected
-                        ? context.shiori.color.fg
-                        : context.shiori.color.fgMuted,
+                        ? colorScheme.primary
+                        : colorScheme.onSurfaceVariant,
+                    fontSize: 12,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -572,7 +556,7 @@ class _PresetChip extends StatelessWidget {
     return Tooltip(
       message: tooltip,
       child: InkWell(
-        borderRadius: BorderRadius.circular(ShioriShape.card),
+        borderRadius: BorderRadius.circular(16),
         onTap: onTap,
         child: Container(
           width: 28,
@@ -613,17 +597,20 @@ class _ColorChannelSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.shiori;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
       child: Row(
         children: [
           SizedBox(
             width: 20,
             child: Text(
               label,
-              style: tokens.text.row.copyWith(
-                fontWeight: FontWeight.w700,
+              style: (textTheme.labelLarge ?? const TextStyle()).copyWith(
+                fontWeight: FontWeight.bold,
                 color: channelColor,
               ),
             ),
@@ -634,6 +621,7 @@ class _ColorChannelSlider extends StatelessWidget {
                 trackHeight: 3,
                 activeTrackColor: channelColor,
                 thumbColor: channelColor,
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 8),
                 thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
               ),
               child: Slider(
@@ -650,8 +638,11 @@ class _ColorChannelSlider extends StatelessWidget {
             child: Text(
               '$value',
               textAlign: TextAlign.end,
-              style: tokens.caption.copyWith(
+              style: (textTheme.labelMedium ?? const TextStyle()).copyWith(
                 fontFeatures: const [FontFeature.tabularFigures()],
+                color: colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
               ),
             ),
           ),

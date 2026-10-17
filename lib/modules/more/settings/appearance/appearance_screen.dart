@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/floating_navigation_bar_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/tint_surfaces_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/widgets/follow_system_theme_button.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/date_format_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
@@ -19,7 +18,9 @@ import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/utils/language.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_ui_scale_state_provider.dart';
+import 'package:mangayomi/modules/widgets/tv_escapable_slider.dart';
 
 final navigationItems = {
   "/MangaLibrary": "Manga",
@@ -32,192 +33,522 @@ final navigationItems = {
   "/trackerLibrary": "Tracking",
 };
 
+class SettingsSection extends StatelessWidget {
+  final String title;
+  final List<Widget> children;
+
+  const SettingsSection({
+    super.key,
+    required this.title,
+    required this.children,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Text(
+              title,
+              style: TextStyle(fontSize: 13, color: context.primaryColor),
+            ),
+          ),
+          ...children,
+        ],
+      ),
+    );
+  }
+}
+
 class AppearanceScreen extends ConsumerWidget {
   const AppearanceScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
+    final l10n = l10nLocalizations(context);
     final pureBlackDarkMode = ref.watch(pureBlackDarkModeStateProvider);
     final isDarkTheme = ref.watch(themeModeStateProvider);
-    final followSystemTheme = ref.watch(followSystemThemeStateProvider);
-    final tintSurfaces = ref.watch(tintSurfacesStateProvider);
-    final scale = ref.watch(appUiScaleStateProvider).clamp(0.85, 1.25);
-    final locale = ref.watch(l10nLocaleStateProvider);
-    final rawFontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$1));
-    final relativeTimestamps = ref.watch(relativeTimesTampsStateProvider);
-    final dateFormatState = ref.watch(dateFormatStateProvider);
-    String sampleDate(String format) => dateFormat(
-      context: context,
-      DateTime.now().millisecondsSinceEpoch.toString(),
-      useRelativeTimesTamps: false,
-      dateFormat: format,
-      ref: ref,
-    );
+    bool followSystemTheme = ref.watch(followSystemThemeStateProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.appearance)),
-      body: ListView(
+      appBar: AppBar(title: Text(l10n!.appearance)),
+      body: SingleChildScrollView(
         padding: tvPageInsets,
-        children: [
-          ShioriSettingsGroup(
-            title: l10n.theme,
-            children: [
-              const FollowSystemThemeButton(),
-              if (!followSystemTheme) const DarkModeButton(),
-              const ThemeSelector(),
-              if (isDarkTheme)
-                ShioriSwitchRow(
-                  title: l10n.pure_black_dark_mode,
-                  value: pureBlackDarkMode,
-                  onChanged: (v) =>
-                      ref.read(pureBlackDarkModeStateProvider.notifier).set(v),
-                ),
-              ShioriSwitchRow(
-                title: l10n.tint_surfaces_with_palette,
-                subtitle: l10n.tint_surfaces_with_palette_subtitle,
-                value: tintSurfaces,
-                onChanged: (v) =>
-                    ref.read(tintSurfacesStateProvider.notifier).set(v),
-              ),
-              // The blend only mixes the palette into the surfaces, so it
-              // has nothing to do while they are neutral, or pure black.
-              if (tintSurfaces && (!pureBlackDarkMode || !isDarkTheme))
-                const BlendLevelSlider(),
-            ],
-          ),
-          ShioriSettingsGroup(
-            title: l10n.group_interface,
-            children: [
-              ShioriSliderRow(
-                icon: Symbols.aspect_ratio_rounded,
-                title: l10n.app_ui_scale,
-                subtitle: l10n.app_ui_scale_subtitle,
-                value: scale.toDouble(),
-                min: 0.85,
-                max: 1.25,
-                divisions: 8,
-                valueLabel: (v) => '${(v * 100).round()} %',
-                defaultValue: 1,
-                onReset: () => ref
-                    .read(appUiScaleStateProvider.notifier)
-                    .set(1, end: true),
-                resetTooltip: l10n.reset,
-                onChanged: (v) =>
-                    ref.read(appUiScaleStateProvider.notifier).set(v),
-                onChangeEnd: (v) => ref
-                    .read(appUiScaleStateProvider.notifier)
-                    .set(v, end: true),
-              ),
-              ShioriValueRow<Locale>(
-                icon: Symbols.translate_rounded,
-                title: l10n.app_language,
-                searchHint: l10n.search,
-                value: locale,
-                options: [
-                  for (final locale in AppLocalizations.supportedLocales)
-                    ShioriChoice(
-                      locale,
-                      languageName(context, locale.toLanguageTag()),
+        child: Column(
+          children: [
+            SettingsSection(
+              title: l10n.theme,
+              children: [
+                const FollowSystemThemeButton(),
+                if (!followSystemTheme) const DarkModeButton(),
+                const ThemeSelector(),
+                if (isDarkTheme)
+                  SwitchListTile(
+                    title: Text(l10n.pure_black_dark_mode),
+                    value: pureBlackDarkMode,
+                    onChanged: (value) {
+                      ref
+                          .read(pureBlackDarkModeStateProvider.notifier)
+                          .set(value);
+                    },
+                  ),
+                if (!pureBlackDarkMode || !isDarkTheme)
+                  const BlendLevelSlider(),
+              ],
+            ),
+            SettingsSection(
+              title: l10n.appearance,
+              children: [
+                if (isTv)
+                  SwitchListTile(
+                    secondary: const Icon(Icons.grid_view_outlined),
+                    title: Text(context.l10n.tv_home_beta),
+                    subtitle: const Text(
+                      'Rows-based anime home (Continue · New Episodes · '
+                      'categories) instead of the flat grid',
                     ),
-                ],
-                onChanged: (v) =>
-                    ref.read(l10nLocaleStateProvider.notifier).setLocale(v),
-              ),
-              ShioriSettingRow(
-                icon: Symbols.font_download_rounded,
-                title: l10n.novel_reader_font,
-                subtitle:
-                    '${rawFontFamily ?? l10n.default0} · '
-                    '${l10n.novel_reader_font_subtitle}',
-                onTap: () => _pickFont(context, ref, rawFontFamily),
-              ),
-            ],
-          ),
-          ShioriSettingsGroup(
-            title: l10n.group_navigation,
-            children: [
-              if (supportsFloatingNav)
-                ShioriSwitchRow(
-                  icon: Symbols.call_to_action_rounded,
-                  title: l10n.floating_navigation_bar,
-                  subtitle: l10n.floating_navigation_bar_description,
-                  value: ref.watch(floatingNavigationBarStateProvider),
-                  onChanged: (v) => ref
-                      .read(floatingNavigationBarStateProvider.notifier)
-                      .set(v),
+                    value: ref.watch(tvHomeStyleProvider),
+                    onChanged: (v) =>
+                        ref.read(tvHomeStyleProvider.notifier).set(v),
+                  ),
+                Builder(
+                  builder: (context) {
+                    final scale = ref
+                        .watch(appUiScaleStateProvider)
+                        .clamp(0.85, 1.25);
+                    return ListTile(
+                      leading: const Icon(Icons.aspect_ratio_outlined),
+                      title: Text(l10n.app_ui_scale),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${l10n.app_ui_scale_subtitle}  '
+                            '(${(scale * 100).round()}%)',
+                          ),
+                          TvEscapableSlider(
+                            enabled: isTv,
+                            onDecrease: () => ref
+                                .read(appUiScaleStateProvider.notifier)
+                                .set(
+                                  (scale - 0.05).clamp(0.85, 1.25),
+                                  end: true,
+                                ),
+                            onIncrease: () => ref
+                                .read(appUiScaleStateProvider.notifier)
+                                .set(
+                                  (scale + 0.05).clamp(0.85, 1.25),
+                                  end: true,
+                                ),
+                            child: Slider(
+                              min: 0.85,
+                              max: 1.25,
+                              divisions: 8,
+                              value: scale.toDouble(),
+                              label: '${(scale * 100).round()}%',
+                              onChanged: (v) => ref
+                                  .read(appUiScaleStateProvider.notifier)
+                                  .set(v),
+                              onChangeEnd: (v) => ref
+                                  .read(appUiScaleStateProvider.notifier)
+                                  .set(v, end: true),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              ShioriSettingRow(
-                icon: Symbols.reorder_rounded,
-                title: l10n.reorder_navigation,
-                subtitle: l10n.reorder_navigation_description,
-                trailing: const Icon(Symbols.chevron_forward_rounded),
-                onTap: () => context.push("/customNavigationSettings"),
-              ),
-              if (isTv)
-                ShioriSwitchRow(
-                  icon: Symbols.grid_view_rounded,
-                  title: l10n.tv_home_beta,
-                  subtitle: l10n.tv_home_beta_subtitle,
-                  value: ref.watch(tvHomeStyleProvider),
-                  onChanged: (v) =>
-                      ref.read(tvHomeStyleProvider.notifier).set(v),
+                _buildLanguageTile(context, ref, l10n),
+                _buildFontTile(context, ref, l10n),
+                if (supportsFloatingNav)
+                  SwitchListTile(
+                    secondary: const Icon(Icons.call_to_action_outlined),
+                    title: Text(l10n.floating_navigation_bar),
+                    subtitle: Text(
+                      l10n.floating_navigation_bar_description,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.secondaryColor,
+                      ),
+                    ),
+                    value: ref.watch(floatingNavigationBarStateProvider),
+                    onChanged: (value) => ref
+                        .read(floatingNavigationBarStateProvider.notifier)
+                        .set(value),
+                  ),
+                ListTile(
+                  title: Text(l10n.reorder_navigation),
+                  subtitle: Text(
+                    l10n.reorder_navigation_description,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.secondaryColor,
+                    ),
+                  ),
+                  onTap: () {
+                    context.push("/customNavigationSettings");
+                  },
                 ),
-            ],
-          ),
-          ShioriSettingsGroup(
-            title: l10n.timestamp,
-            children: [
-              ShioriValueRow<int>(
-                title: l10n.relative_timestamp,
-                value: relativeTimestamps,
-                options: [
-                  for (final (i, name) in relativeTimestampsList(
-                    context,
-                  ).indexed)
-                    ShioriChoice(i, name),
-                ],
-                onChanged: (v) =>
-                    ref.read(relativeTimesTampsStateProvider.notifier).set(v),
-              ),
-              ShioriValueRow<String>(
-                title: l10n.date_format,
-                value: dateFormatState,
-                options: [
-                  for (final format in dateFormatsList)
-                    ShioriChoice(format, format, subtitle: sampleDate(format)),
-                ],
-                onChanged: (v) =>
-                    ref.read(dateFormatStateProvider.notifier).set(v),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+            SettingsSection(
+              title: l10n.timestamp,
+              children: [
+                _buildRelativeTimestampTile(context, ref, l10n),
+                _buildDateFormatTile(context, ref, l10n),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  /// Every Google font, searchable, with the app's own first.
-  Future<void> _pickFont(
+  Widget _buildLanguageTile(
     BuildContext context,
     WidgetRef ref,
-    String? current,
-  ) async {
-    // The choice sheet answers null when dismissed, so the default font
-    // needs a value of its own.
-    const defaultFont = '';
-    final picked = await showShioriChoice<String>(
-      context,
-      title: context.l10n.font,
-      searchHint: context.l10n.search,
-      selected: current ?? defaultFont,
-      options: [
-        ShioriChoice(defaultFont, context.l10n.default0),
-        for (final name in GoogleFonts.asMap().keys) ShioriChoice(name, name),
-      ],
+    AppLocalizations l10n,
+  ) {
+    final l10nLocale = ref.watch(l10nLocaleStateProvider);
+    return ListTile(
+      title: Text(l10n.app_language),
+      subtitle: Text(
+        completeLanguageName(l10nLocale.toLanguageTag()),
+        style: TextStyle(fontSize: 11, color: context.secondaryColor),
+      ),
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(l10n.app_language),
+              content: SizedBox(
+                width: context.width(0.8),
+                child: RadioGroup(
+                  groupValue: l10nLocale,
+                  onChanged: (value) {
+                    ref
+                        .read(l10nLocaleStateProvider.notifier)
+                        .setLocale(value!);
+                    Navigator.pop(context);
+                  },
+                  child: SuperListView.builder(
+                    shrinkWrap: true,
+                    itemCount: AppLocalizations.supportedLocales.length,
+                    itemBuilder: (context, index) {
+                      final locale = AppLocalizations.supportedLocales[index];
+                      return RadioListTile(
+                        dense: true,
+                        contentPadding: const EdgeInsets.all(0),
+                        value: locale,
+                        title: Text(
+                          completeLanguageName(locale.toLanguageTag()),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        l10n.cancel,
+                        style: TextStyle(color: context.primaryColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
-    if (picked == null) return;
-    ref
-        .read(appFontFamilyProvider.notifier)
-        .set(picked == defaultFont ? null : picked);
+  }
+
+  Widget _buildFontTile(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    final rawFontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$1));
+    final appFontFamilySub = rawFontFamily ?? context.l10n.default0;
+    return ListTile(
+      title: Text(context.l10n.font),
+      subtitle: Text(
+        appFontFamilySub,
+        style: TextStyle(fontSize: 11, color: context.secondaryColor),
+      ),
+      onTap: () {
+        String textValue = "";
+        final controller = ScrollController();
+        final List<String> allFontNames = GoogleFonts.asMap().keys.toList();
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(context.l10n.font),
+              content: StatefulBuilder(
+                builder: (context, setState) {
+                  return SizedBox(
+                    width: context.width(0.8),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 8,
+                          ),
+                          child: TextField(
+                            onChanged: (v) {
+                              setState(() {
+                                textValue = v;
+                              });
+                            },
+                            decoration: InputDecoration(
+                              isDense: true,
+                              filled: false,
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: context.secondaryColor,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: context.primaryColor,
+                                ),
+                              ),
+                              border: const OutlineInputBorder(
+                                borderSide: BorderSide(),
+                              ),
+                              hintText: l10n.search,
+                            ),
+                          ),
+                        ),
+                        Builder(
+                          builder: (context) {
+                            final filteredFontNames = allFontNames
+                                .where(
+                                  (name) => name.toLowerCase().contains(
+                                    textValue.toLowerCase(),
+                                  ),
+                                )
+                                .toList();
+                            return Expanded(
+                              child: Scrollbar(
+                                interactive: true,
+                                thickness: 12,
+                                radius: const Radius.circular(10),
+                                controller: controller,
+                                child: RadioGroup<String?>(
+                                  groupValue: rawFontFamily,
+                                  onChanged: (value) {
+                                    ref
+                                        .read(appFontFamilyProvider.notifier)
+                                        .set(value);
+                                    Navigator.pop(context);
+                                  },
+                                  child: SuperListView.builder(
+                                    controller: controller,
+                                    itemCount: filteredFontNames.length,
+                                    itemBuilder: (context, index) {
+                                      final fontName = filteredFontNames[index];
+                                      return RadioListTile<String?>(
+                                        dense: true,
+                                        contentPadding: const EdgeInsets.all(0),
+                                        value: fontName,
+                                        title: Text(fontName),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        ref.read(appFontFamilyProvider.notifier).set(null);
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        l10n.default0,
+                        style: TextStyle(color: context.primaryColor),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        l10n.cancel,
+                        style: TextStyle(color: context.primaryColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildRelativeTimestampTile(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    final relativeTimestamps = ref.watch(relativeTimesTampsStateProvider);
+    return ListTile(
+      title: Text(l10n.relative_timestamp),
+      subtitle: Text(
+        relativeTimestampsList(context)[relativeTimestamps],
+        style: TextStyle(fontSize: 11, color: context.secondaryColor),
+      ),
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(l10n.relative_timestamp),
+              content: SizedBox(
+                width: context.width(0.8),
+                child: RadioGroup(
+                  groupValue: relativeTimestamps,
+                  onChanged: (value) {
+                    ref
+                        .read(relativeTimesTampsStateProvider.notifier)
+                        .set(value!);
+                    Navigator.pop(context);
+                  },
+                  child: SuperListView.builder(
+                    shrinkWrap: true,
+                    itemCount: relativeTimestampsList(context).length,
+                    itemBuilder: (context, index) {
+                      return RadioListTile(
+                        dense: true,
+                        contentPadding: const EdgeInsets.all(0),
+                        value: index,
+                        title: Row(
+                          children: [
+                            Text(relativeTimestampsList(context)[index]),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        l10n.cancel,
+                        style: TextStyle(color: context.primaryColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildDateFormatTile(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) {
+    final dateFormatState = ref.watch(dateFormatStateProvider);
+    return ListTile(
+      title: Text(l10n.date_format),
+      subtitle: Text(
+        "$dateFormatState (${dateFormat(context: context, DateTime.now().millisecondsSinceEpoch.toString(), useRelativeTimesTamps: false, dateFormat: dateFormatState, ref: ref)})",
+        style: TextStyle(fontSize: 11, color: context.secondaryColor),
+      ),
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(l10n.date_format),
+              content: SizedBox(
+                width: context.width(0.8),
+                child: RadioGroup(
+                  groupValue: dateFormatState,
+                  onChanged: (value) {
+                    ref.read(dateFormatStateProvider.notifier).set(value!);
+                    Navigator.pop(context);
+                  },
+                  child: SuperListView.builder(
+                    shrinkWrap: true,
+                    itemCount: dateFormatsList.length,
+                    itemBuilder: (context, index) {
+                      return RadioListTile(
+                        dense: true,
+                        contentPadding: const EdgeInsets.all(0),
+                        value: dateFormatsList[index],
+                        title: Row(
+                          children: [
+                            Text(
+                              "${dateFormatsList[index]} (${dateFormat(context: context, DateTime.now().millisecondsSinceEpoch.toString(), useRelativeTimesTamps: false, dateFormat: dateFormatsList[index], ref: ref)})",
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        l10n.cancel,
+                        style: TextStyle(color: context.primaryColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }

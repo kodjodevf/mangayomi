@@ -1,7 +1,6 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +17,7 @@ import 'package:mangayomi/repositories/history_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/services/discovery/media_lookup_context.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
@@ -138,7 +138,7 @@ class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
     final resume = _resumeEpisode(reading);
     final watched = episodes.where((c) => c.isRead ?? false).length;
     final cover = resolveCoverImage(manga, ref);
-    final bg = context.shiori.color.ink0;
+    final bg = Theme.of(context).scaffoldBackgroundColor;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Claim focus only if it landed nowhere in the detail at all (initial
@@ -360,14 +360,12 @@ class _TopBar extends StatelessWidget {
           children: [
             _TopBarButton(
               focusNode: topBarFocus,
-              icon: Symbols.arrow_back_rounded,
+              icon: Icons.arrow_back,
               onPressed: onBack,
             ),
             const Spacer(),
             _TopBarButton(
-              icon: refreshing
-                  ? Symbols.hourglass_empty_rounded
-                  : Symbols.refresh_rounded,
+              icon: refreshing ? Icons.hourglass_empty : Icons.refresh,
               onPressed: onRefresh,
             ),
           ],
@@ -397,7 +395,7 @@ class _TopBarButtonState extends State<_TopBarButton> {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.shiori.color.accentInk;
+    final accent = context.primaryColor;
     return Focus(
       focusNode: widget.focusNode,
       onFocusChange: (f) => setState(() => _focused = f),
@@ -411,17 +409,17 @@ class _TopBarButtonState extends State<_TopBarButton> {
       child: GestureDetector(
         onTap: widget.onPressed,
         child: AnimatedContainer(
-          duration: ShioriMotion.fast,
+          duration: const Duration(milliseconds: 120),
           margin: const EdgeInsets.symmetric(horizontal: 4),
           padding: const EdgeInsets.all(9),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: _focused ? accent : accent.withValues(alpha: Alphas.focus),
+            color: _focused ? accent : accent.withValues(alpha: 0.12),
           ),
           child: Icon(
             widget.icon,
             size: 22,
-            color: _focused ? ShioriColors.onFill(accent) : accent,
+            color: _focused ? Colors.white : accent,
           ),
         ),
       ),
@@ -472,7 +470,7 @@ class _LeftInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.shiori.color.accentInk;
+    final accent = context.primaryColor;
     final genres = (manga.genre ?? const <String>[])
         .where((g) => g.trim().isNotEmpty)
         .toList();
@@ -504,7 +502,7 @@ class _LeftInfo extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(ShioriShape.card),
+                borderRadius: BorderRadius.circular(12),
                 child: SizedBox(
                   width: 150,
                   child: AspectRatio(
@@ -523,8 +521,8 @@ class _LeftInfo extends StatelessWidget {
                       manga.name ?? '',
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: ShioriType.reference.screenTitle.fontSize,
+                      style: const TextStyle(
+                        fontSize: 28,
                         fontWeight: FontWeight.w800,
                         height: 1.12,
                       ),
@@ -534,8 +532,8 @@ class _LeftInfo extends StatelessWidget {
                       Text(
                         metaBits,
                         style: TextStyle(
-                          fontSize: ShioriType.reference.row.fontSize,
-                          color: context.shiori.color.fgMuted,
+                          fontSize: 13,
+                          color: Theme.of(context).hintColor,
                         ),
                       ),
                     ],
@@ -552,15 +550,13 @@ class _LeftInfo extends StatelessWidget {
                                 vertical: 5,
                               ),
                               decoration: BoxDecoration(
-                                color: accent.withValues(alpha: Alphas.focus),
-                                borderRadius: BorderRadius.circular(
-                                  ShioriShape.sheet,
-                                ),
+                                color: accent.withValues(alpha: 0.14),
+                                borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
                                 g,
                                 style: TextStyle(
-                                  fontSize: ShioriType.reference.meta.fontSize,
+                                  fontSize: 12,
                                   color: accent,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -581,9 +577,10 @@ class _LeftInfo extends StatelessWidget {
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: ShioriType.reference.row.fontSize,
+                fontSize: 14,
                 height: 1.45,
-                color: context.shiori.color.fg.withValues(alpha: 0.82),
+                color: Theme.of(context).textTheme.bodyLarge!.color!
+                    .withValues(alpha: 0.82),
               ),
             ),
           ],
@@ -595,7 +592,7 @@ class _LeftInfo extends StatelessWidget {
             autofocus: true,
             accent: accent,
             primary: true,
-            icon: Symbols.play_arrow_rounded,
+            icon: Icons.play_arrow_rounded,
             label: resumeLabel,
             onPressed: onPlay,
             onExitUp: onExitUp,
@@ -612,58 +609,56 @@ class _LeftInfo extends StatelessWidget {
                     _VActionButton(
                       focusNode: actionFocus[1],
                       accent: accent,
-                      icon: favorite
-                          ? Symbols.favorite_rounded
-                          : Symbols.favorite_border_rounded,
+                      icon: favorite ? Icons.favorite : Icons.favorite_border,
                       label: favorite ? 'In Library' : 'Add to Library',
                       onPressed: onToggleLibrary,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[2],
                       accent: accent,
-                      icon: Symbols.label_rounded,
+                      icon: Icons.label_outline,
                       label: context.l10n.categories,
                       onPressed: onCategories,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[8],
                       accent: accent,
-                      icon: Symbols.sync_alt_rounded,
+                      icon: Icons.sync_alt,
                       label: context.l10n.tracking,
                       onPressed: onTracking,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[3],
                       accent: accent,
-                      icon: Symbols.public_rounded,
+                      icon: Icons.public,
                       label: context.l10n.open_in_browser,
                       onPressed: onBrowser,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[4],
                       accent: accent,
-                      icon: Symbols.recommend_rounded,
+                      icon: Icons.recommend_outlined,
                       label: context.l10n.recommendations,
                       onPressed: onRecommendations,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[5],
                       accent: accent,
-                      icon: Symbols.format_list_numbered_rounded,
+                      icon: Icons.format_list_numbered,
                       label: context.l10n.watch_order,
                       onPressed: onWatchOrder,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[6],
                       accent: accent,
-                      icon: Symbols.swap_horiz_rounded,
+                      icon: Icons.swap_horiz,
                       label: context.l10n.migrate,
                       onPressed: onMigrate,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[7],
                       accent: accent,
-                      icon: Symbols.dynamic_feed_rounded,
+                      icon: Icons.dynamic_feed,
                       label: context.l10n.migrate_source,
                       onPressed: onMassMigrate,
                     ),
@@ -717,14 +712,13 @@ class _VActionButtonState extends State<_VActionButton> {
     final bg = _focused
         ? accent
         : widget.primary
-        ? accent.withValues(alpha: Alphas.accentTint)
+        ? accent.withValues(alpha: 0.18)
         : Colors.white.withValues(alpha: 0.05);
-    // Read on the accent once focused; white was lost on a light accent.
     final fg = _focused
-        ? ShioriColors.onFill(accent)
+        ? Colors.white
         : widget.primary
         ? accent
-        : context.shiori.color.fg;
+        : Theme.of(context).textTheme.bodyLarge!.color;
     return Focus(
       focusNode: widget.focusNode,
       autofocus: widget.autofocus,
@@ -753,18 +747,18 @@ class _VActionButtonState extends State<_VActionButton> {
       child: GestureDetector(
         onTap: widget.onPressed,
         child: AnimatedContainer(
-          duration: ShioriMotion.fast,
+          duration: const Duration(milliseconds: 120),
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
           decoration: BoxDecoration(
             color: bg,
-            borderRadius: BorderRadius.circular(ShioriShape.card),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
               Icon(
                 widget.icon,
-                color: _focused ? ShioriColors.onFill(accent) : accent,
+                color: _focused ? Colors.white : accent,
                 size: 22,
               ),
               const SizedBox(width: 14),
@@ -776,7 +770,7 @@ class _VActionButtonState extends State<_VActionButton> {
                   style: TextStyle(
                     color: fg,
                     fontWeight: FontWeight.w600,
-                    fontSize: ShioriType.reference.body.fontSize,
+                    fontSize: 15,
                   ),
                 ),
               ),
@@ -805,7 +799,7 @@ class _EpisodesPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.shiori.color.accentInk;
+    final accent = context.primaryColor;
     // No panel surface and no divider line: the list sits over the same
     // backdrop as the left side so the two columns read as one screen. It fills
     // its half so the episodes balance the hero on the left instead of leaving
@@ -817,10 +811,7 @@ class _EpisodesPanel extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
           child: Text(
             'Episodes  ·  ${episodes.length}',
-            style: TextStyle(
-              fontSize: ShioriType.reference.section.fontSize,
-              fontWeight: FontWeight.w700,
-            ),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
           ),
         ),
         Expanded(
@@ -829,8 +820,8 @@ class _EpisodesPanel extends StatelessWidget {
               : episodes.isEmpty
               ? Center(
                   child: Text(
-                    context.l10n.no_episodes_yet,
-                    style: TextStyle(color: context.shiori.color.fgMuted),
+                    'No episodes yet',
+                    style: TextStyle(color: Theme.of(context).hintColor),
                   ),
                 )
               : FocusTraversalGroup(
@@ -910,9 +901,9 @@ class _EpisodeRowState extends State<_EpisodeRow> {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           decoration: BoxDecoration(
             color: _focused
-                ? widget.accent.withValues(alpha: Alphas.accentTint)
+                ? widget.accent.withValues(alpha: 0.20)
                 : Colors.transparent,
-            borderRadius: BorderRadius.circular(ShioriShape.card),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             children: [
@@ -924,20 +915,15 @@ class _EpisodeRowState extends State<_EpisodeRow> {
                 margin: const EdgeInsets.only(right: 12),
                 decoration: BoxDecoration(
                   color: watched
-                      ? context.shiori.color.fgMuted.withValues(alpha: 0.3)
+                      ? Theme.of(context).hintColor.withValues(alpha: 0.3)
                       : widget.accent,
-                  borderRadius: BorderRadius.circular(ShioriShape.card),
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
               // The title already reads "Episode N", so no leading number —
               // just a play marker on the resume episode.
               if (widget.isResume) ...[
-                Icon(
-                  Symbols.play_arrow_rounded,
-                  fill: 1,
-                  color: widget.accent,
-                  size: 20,
-                ),
+                Icon(Icons.play_arrow_rounded, color: widget.accent, size: 20),
                 const SizedBox(width: 10),
               ],
               Expanded(
@@ -946,7 +932,7 @@ class _EpisodeRowState extends State<_EpisodeRow> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: watched ? context.shiori.color.fgMuted : null,
+                    color: watched ? Theme.of(context).hintColor : null,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -959,14 +945,14 @@ class _EpisodeRowState extends State<_EpisodeRow> {
                     vertical: 1,
                   ),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(ShioriShape.badge),
-                    border: Border.all(color: context.shiori.color.fgMuted),
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(color: Theme.of(context).hintColor),
                   ),
                   child: Text(
-                    context.l10n.filler.toUpperCase(),
+                    'FILLER',
                     style: TextStyle(
-                      fontSize: ShioriType.reference.meta.fontSize,
-                      color: context.shiori.color.fgMuted,
+                      fontSize: 12,
+                      color: Theme.of(context).hintColor,
                     ),
                   ),
                 ),
@@ -975,8 +961,8 @@ class _EpisodeRowState extends State<_EpisodeRow> {
                 Text(
                   ep.duration!,
                   style: TextStyle(
-                    fontSize: ShioriType.reference.meta.fontSize,
-                    color: context.shiori.color.fgMuted,
+                    fontSize: 12,
+                    color: Theme.of(context).hintColor,
                   ),
                 ),
               ],
@@ -984,10 +970,9 @@ class _EpisodeRowState extends State<_EpisodeRow> {
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: Icon(
-                    Symbols.check_circle_rounded,
-                    fill: 1,
+                    Icons.check_circle,
                     size: 16,
-                    color: context.shiori.color.fgMuted,
+                    color: Theme.of(context).hintColor,
                   ),
                 ),
             ],

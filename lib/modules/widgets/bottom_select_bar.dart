@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 /// Bar, that appears at the bottom of the screen when long-pressing (selecting)
 /// a Manga/Anime/Novel or Chapter/Episode
@@ -15,30 +15,21 @@ class BottomSelectBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tokens = context.shiori;
-    final c = tokens.color;
-    final height = tokens.density.rowHeight + ShioriSpace.s16;
     return AnimatedContainer(
-      curve: ShioriMotion.standardCurve,
-      duration: ShioriMotion.of(context, ShioriMotion.standard),
-      height: isVisible ? height : 0,
-      width: double.infinity,
-      clipBehavior: Clip.antiAlias,
+      curve: Curves.easeIn,
       decoration: BoxDecoration(
-        color: c.ink3,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(ShioriShape.sheet),
+        color: context.primaryColor.withValues(alpha: 0.2),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
-        border: Border(top: BorderSide(color: c.hairline)),
       ),
-      child: OverflowBox(
-        alignment: Alignment.topCenter,
-        minHeight: height,
-        maxHeight: height,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: actions,
-        ),
+      duration: const Duration(milliseconds: 100),
+      height: isVisible ? 70 : 0,
+      width: context.width(1),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: actions,
       ),
     );
   }
@@ -49,30 +40,25 @@ class BottomSelectButton extends StatelessWidget {
   final Widget icon;
   final VoidCallback onPressed;
 
-  /// Names the action for screen readers and on hover.
-  final String? tooltip;
-
   const BottomSelectButton({
     super.key,
     required this.icon,
     required this.onPressed,
-    this.tooltip,
   });
 
   @override
   Widget build(BuildContext context) {
-    final c = context.shiori.color;
     return Expanded(
-      child: IconButton(
-        tooltip: tooltip,
-        onPressed: onPressed,
-        color: c.fg,
-        icon: icon,
-        style: IconButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ShioriShape.card),
+      child: SizedBox(
+        height: 70,
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
           ),
-          minimumSize: Size.fromHeight(context.shiori.density.rowHeight),
+          onPressed: onPressed,
+          child: icon,
         ),
       ),
     );

@@ -1,9 +1,7 @@
-// shiori-file: a code editor: its syntax colours and type are the editor's, not the app's
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:json_view/json_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/interface.dart';
@@ -66,23 +64,23 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
   IconData _getServiceIcon(int index) {
     switch (index) {
       case 0:
-        return Symbols.star_rounded;
+        return Icons.star_rounded;
       case 1:
-        return Symbols.update_rounded;
+        return Icons.update_rounded;
       case 2:
-        return Symbols.search_rounded;
+        return Icons.search_rounded;
       case 3:
-        return Symbols.info_rounded;
+        return Icons.info_outline_rounded;
       case 4:
-        return Symbols.image_rounded;
+        return Icons.image_rounded;
       case 5:
-        return Symbols.video_library_rounded;
+        return Icons.video_library_rounded;
       case 6:
-        return Symbols.article_rounded;
+        return Icons.article_rounded;
       case 7:
-        return Symbols.cleaning_services_rounded;
+        return Icons.cleaning_services_rounded;
       default:
-        return Symbols.code_rounded;
+        return Icons.code_rounded;
     }
   }
 
@@ -135,23 +133,57 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
 
   List<dynamic> filters = [];
 
-  /// The phone shows one of these at a time; a wide screen shows them all.
-  _CodeView _view = _CodeView.code;
-
-  Future<String?> filterDialog(BuildContext context) {
-    return showShioriSheet<String>(
-      context,
-      title: context.l10n.filter,
-      builder: (sheetContext) => StatefulBuilder(
-        builder: (context, setState) => FilterSheetBody(
-          filters: filters,
-          onChanged: (values) => setState(() => filters = values),
-          onReset: () =>
-              setState(() => filters = getFilterList(source: source!)),
-          onApply: () => Navigator.pop(sheetContext, 'filter'),
-          resetLabel: context.l10n.reset,
-          applyLabel: context.l10n.filter,
-        ),
+  Future<String?> filterDialog(BuildContext context) async {
+    return await showModalBottomSheet(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          filters = getFilterList(source: source!);
+                        });
+                      },
+                      child: Text(context.l10n.reset),
+                    ),
+                    const Spacer(),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: context.primaryColor,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context, 'filter');
+                      },
+                      child: Text(
+                        context.l10n.filter,
+                        style: TextStyle(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(),
+              Expanded(
+                child: FilterWidget(
+                  filterList: filters,
+                  onChanged: (values) {
+                    setState(() {
+                      filters = values;
+                    });
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -170,586 +202,834 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
     super.dispose();
   }
 
-  void _resetRun() {
-    setState(() {
-      result = null;
-      _isLoading = false;
-      _error = false;
-      _errorText = "";
-      filters = [];
-    });
-  }
-
-  void _startRun() {
-    setState(() {
-      result = null;
-      _isLoading = true;
-      _error = false;
-      _errorText = "";
-    });
-  }
-
-  void _failRun(Object e) {
-    if (!mounted) return;
-    setState(() {
-      _error = true;
-      _errorText = e.toString();
-      _isLoading = false;
-    });
-  }
-
-  /// Saves the code, then runs the chosen function of the source with the
-  /// inputs given, and shows what it returns.
-  Future<void> _execute(List<dynamic> filterList) async {
-    source?.sourceCode = _controller.text;
-    if (source != null) await sourceRepository.save(source!);
-    _startRun();
-    if (source == null) return;
-    final proxyServer = ref.read(androidProxyServerStateProvider);
-    try {
-      Future<dynamic> Function(ExtensionService service)? serviceFunc;
-      switch (_serviceIndex) {
-        case 0 || 1 || 2:
-          final pages = await getIsolateService.get<MPages?>(
-            page: _page,
-            query: _serviceIndex == 2 ? _query : null,
-            filterList: _serviceIndex == 2 ? filterList : null,
-            source: source,
-            serviceType: switch (_serviceIndex) {
-              0 => 'getPopular',
-              1 => 'getLatestUpdates',
-              _ => 'search',
-            },
-            proxyServer: proxyServer,
-            useLogger: true,
-          );
-          result = pages!.toJson();
-        case 3:
-          final manga = await getIsolateService.get<MManga>(
-            url: _url,
-            source: source,
-            serviceType: 'getDetail',
-            proxyServer: proxyServer,
-            useLogger: true,
-          );
-          result = manga.toJson();
-        case 4:
-          serviceFunc = (service) async => {
-            "pages": (await service.getPageList(_url))
-                .map((e) => e.toJson())
-                .toList(),
-          };
-        case 5:
-          serviceFunc = (service) async =>
-              (await service.getVideoList(_url))
-                  .map((e) => e.toJson())
-                  .toList();
-        case 6:
-          serviceFunc = (service) => service.getHtmlContent("test", _url);
-        default:
-          serviceFunc = (service) => service.cleanHtmlContent(_html);
-      }
-      if (serviceFunc != null) {
-        result = await withExtensionService(source!, proxyServer, serviceFunc);
-      }
-      if (mounted) setState(() => _isLoading = false);
-    } catch (e) {
-      _failRun(e);
-    }
-  }
-
-  /// Picks the search's filters in a sheet, then searches with them.
-  Future<void> _searchWithFilters(List<dynamic> filterList) async {
-    if (source == null) return;
-    try {
-      if (filters.isEmpty) filters = filterList;
-      final res = await filterDialog(context);
-      if (res != 'filter' || !mounted) return;
-      _startRun();
-      final pages = await ref.read(
-        searchProvider(
-          source: source!,
-          query: _query,
-          page: _page,
-          filterList: filters,
-        ).future,
-      );
-      result = pages!.toJson();
-      if (mounted) setState(() => _isLoading = false);
-    } catch (e) {
-      _failRun(e);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final filterList = source != null
+    List<dynamic> filterList = source != null
         ? getFilterList(source: source!)
-        : <dynamic>[];
+        : [];
     final appFontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$2));
-    final tokens = context.shiori;
-    final editor = _editor(context, appFontFamily);
-    final runPanel = _runPanel(context, filterList);
-    final console = _console(context);
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        elevation: 0,
+        title: Row(
           children: [
-            Text(
-              source?.name ?? context.l10n.code_editor,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: tokens.text.row.copyWith(
-                color: tokens.color.fg,
-                fontWeight: FontWeight.w700,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    source?.name ?? 'Code Editor',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (source != null)
+                    Text(
+                      completeLanguageName(source!.lang ?? ''),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                ],
               ),
             ),
-            if (source != null)
-              Text(
-                languageName(context, source!.lang ?? ''),
-                style: tokens.caption,
-              ),
           ],
         ),
         leading: IconButton(
-          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-          icon: const Icon(Symbols.arrow_back_rounded, fill: 1),
+          icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () {
-            if (source != null) sourceRepository.save(source!);
+            sourceRepository.save(source!);
             Navigator.pop(context, source);
           },
         ),
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          // Wide, the code, the test and the console side by side; on a
-          // phone, one at a time, so a source can be tried there too (the
-          // test and the console used to exist only on a tablet).
-          if (context.isTablet) {
-            return Padding(
-              padding: const EdgeInsets.all(ShioriSpace.s12),
-              child: Column(
-                spacing: ShioriSpace.s12,
-                children: [
-                  Expanded(
-                    child: Row(
-                      spacing: ShioriSpace.s12,
-                      children: [
-                        Expanded(flex: 7, child: _panel(context, editor)),
-                        Expanded(flex: 3, child: _panel(context, runPanel)),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 200, child: console),
-                ],
-              ),
-            );
-          }
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  ShioriSpace.s16,
-                  ShioriSpace.s4,
-                  ShioriSpace.s16,
-                  ShioriSpace.s8,
-                ),
-                child: ShioriSegmentedControl<_CodeView>(
-                  segments: [
-                    ShioriSegment(
-                      value: _CodeView.code,
-                      label: context.l10n.code_view_code,
-                      icon: Symbols.code_rounded,
-                    ),
-                    ShioriSegment(
-                      value: _CodeView.test,
-                      label: context.l10n.code_view_test,
-                      icon: Symbols.play_arrow_rounded,
-                    ),
-                    ShioriSegment(
-                      value: _CodeView.console,
-                      label: context.l10n.code_view_console,
-                      icon: Symbols.terminal_rounded,
-                    ),
-                  ],
-                  selected: _view,
-                  onSelected: (view) => setState(() => _view = view),
-                ),
-              ),
-              Expanded(
-                child: switch (_view) {
-                  _CodeView.code => editor,
-                  _CodeView.test => runPanel,
-                  _CodeView.console => Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      ShioriSpace.s12,
-                      0,
-                      ShioriSpace.s12,
-                      ShioriSpace.s12,
-                    ),
-                    child: console,
-                  ),
-                },
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  /// A pane of the wide layout: the app's hairline round the content.
-  Widget _panel(BuildContext context, Widget child) {
-    final tokens = context.shiori;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: tokens.color.ink1,
-        borderRadius: BorderRadius.circular(ShioriShape.card),
-        border: Border.all(color: tokens.color.hairline),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(ShioriShape.card),
-        child: child,
-      ),
-    );
-  }
-
-  Widget _editor(BuildContext context, String? appFontFamily) {
-    return CodeEditor(
-      toolbarController:
-          defaultTargetPlatform == TargetPlatform.iOS ||
-              defaultTargetPlatform == TargetPlatform.android
-          ? _selectionToolbarController
-          : null,
-      style: CodeEditorStyle(
-        fontSize: 15,
-        fontFamily: appFontFamily,
-        codeTheme: CodeHighlightTheme(
-          languages: {
-            'dart': CodeHighlightThemeMode(mode: langDart),
-            'javascript': CodeHighlightThemeMode(mode: langJavascript),
-          },
-          theme: vs2015Theme,
-        ),
-      ),
-      controller: _controller,
-      onChanged: (_) {
-        source?.sourceCode = _controller.text;
-        if (source != null && context.mounted) {
-          _saveDebounceTimer?.cancel();
-          _saveDebounceTimer = Timer(
-            const Duration(milliseconds: 1500),
-            _persistSourceCodeNow,
-          );
-        }
-      },
-      wordWrap: false,
-      indicatorBuilder:
-          (context, editingController, chunkController, notifier) {
-            return Row(
-              children: [
-                DefaultCodeLineNumber(
-                  controller: editingController,
-                  notifier: notifier,
-                ),
-                DefaultCodeChunkIndicator(
-                  width: 20,
-                  controller: chunkController,
-                  notifier: notifier,
-                ),
-              ],
-            );
-          },
-      leadingDivider: Container(width: 1, color: context.shiori.color.hairline),
-    );
-  }
-
-  /// What to run and with what, the buttons, then what came back.
-  Widget _runPanel(BuildContext context, List<dynamic> filterList) {
-    final l10n = context.l10n;
-    final services = _getServices(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        ShioriValueRow<int>(
-          title: l10n.code_function,
-          icon: _getServiceIcon(_serviceIndex),
-          value: _serviceIndex,
-          options: [
-            for (final (name, index) in services)
-              ShioriChoice(index, name, icon: _getServiceIcon(index)),
-          ],
-          onChanged: (v) => setState(() => _serviceIndex = v),
-        ),
-        if (_serviceIndex <= 2)
-          _textEditing(
-            context,
-            label: l10n.code_page,
-            hint: "1",
-            icon: Symbols.numbers_rounded,
-            initialValue: '$_page',
-            number: true,
-            onChanged: (v) => _page = int.tryParse(v) ?? 1,
-          ),
-        if (_serviceIndex == 2)
-          _textEditing(
-            context,
-            label: l10n.code_query,
-            hint: "one piece",
-            icon: Symbols.search_rounded,
-            initialValue: _query,
-            onChanged: (v) => _query = v,
-          ),
-        if (_serviceIndex >= 3 && _serviceIndex <= 6)
-          _textEditing(
-            context,
-            label: l10n.code_url,
-            hint: "https://…",
-            icon: Symbols.link_rounded,
-            initialValue: _url,
-            onChanged: (v) => _url = v,
-          ),
-        if (_serviceIndex == 7)
-          _textEditing(
-            context,
-            label: l10n.code_html,
-            hint: "<p>Text</p>",
-            icon: Symbols.code_rounded,
-            initialValue: _html,
-            onChanged: (v) => _html = v,
-          ),
-        Padding(
-          padding: const EdgeInsets.all(ShioriSpace.s12),
-          child: Wrap(
-            spacing: ShioriSpace.s8,
-            runSpacing: ShioriSpace.s8,
-            alignment: WrapAlignment.center,
-            children: [
-              ShioriButton(
-                icon: Symbols.play_arrow_rounded,
-                label: l10n.code_execute,
-                onPressed: _isLoading ? null : () => _execute(filterList),
-              ),
-              if (_serviceIndex == 2 && filterList.isNotEmpty)
-                ShioriButton.secondary(
-                  icon: Symbols.filter_alt_rounded,
-                  label: l10n.filter,
-                  onPressed: _isLoading
-                      ? null
-                      : () => _searchWithFilters(filterList),
-                ),
-              ShioriButton.quiet(
-                icon: Symbols.refresh_rounded,
-                label: l10n.reset,
-                onPressed: _resetRun,
-              ),
-            ],
-          ),
-        ),
-        Divider(height: 1, color: context.shiori.color.hairline),
-        Expanded(child: _result(context)),
-      ],
-    );
-  }
-
-  Widget _result(BuildContext context) {
-    final tokens = context.shiori;
-    final l10n = context.l10n;
-    if (_error) {
-      return SingleChildScrollView(
-        padding: const EdgeInsets.all(ShioriSpace.s16),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.errorContainer,
-            borderRadius: BorderRadius.circular(ShioriShape.card),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(ShioriSpace.s16),
-            child: SelectableText(
-              _errorText,
-              style: tokens.text.meta.copyWith(
-                fontFamily: 'monospace',
-                color: Theme.of(context).colorScheme.onErrorContainer,
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-    if (_isLoading) {
-      return Center(child: ShioriLoading(label: l10n.code_executing));
-    }
-    if (result != null) {
-      return Padding(
-        padding: const EdgeInsets.all(ShioriSpace.s12),
-        child: JsonConfig(
-          data: JsonConfigData(
-            gap: 100,
-            style: const JsonStyleScheme(
-              quotation: JsonQuotation.same('"'),
-              openAtStart: false,
-              arrow: Icon(Symbols.arrow_forward_rounded, fill: 1),
-              depth: 4,
-            ),
-            color: const JsonColorScheme(),
-          ),
-          child: JsonView(json: result),
-        ),
-      );
-    }
-    return Center(
-      child: SingleChildScrollView(
-        child: ShioriEmptyState(
-          icon: Symbols.data_object_rounded,
-          title: l10n.code_no_result,
-          message: l10n.code_no_result_message,
-          compact: true,
-        ),
-      ),
-    );
-  }
-
-  /// The source's logs as they come, on a terminal's black.
-  Widget _console(BuildContext context) {
-    final tokens = context.shiori;
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(ShioriShape.card),
-        border: Border.all(color: tokens.color.hairline),
-      ),
-      child: Column(
+      body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(
-              ShioriSpace.s12,
-              ShioriSpace.s4,
-              ShioriSpace.s4,
-              ShioriSpace.s4,
-            ),
-            child: Row(
-              spacing: ShioriSpace.s8,
-              children: [
-                const Icon(
-                  Symbols.terminal_rounded,
-                  size: 18,
-                  color: Colors.white,
-                ),
-                Expanded(
-                  child: Text(
-                    context.l10n.code_console,
-                    style: tokens.text.meta.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Symbols.clear_all_rounded, size: 18),
-                  color: Colors.white,
-                  tooltip: context.l10n.clear_logs,
-                  onPressed: () => setState(() => _logsNotifier.value.clear()),
-                ),
-              ],
-            ),
-          ),
-          Divider(
-            height: 1,
-            color: Colors.white.withValues(alpha: Alphas.hairline),
-          ),
           Expanded(
-            child: ValueListenableBuilder(
-              valueListenable: _logsNotifier,
-              builder: (context, logs, child) => logs.isEmpty
-                  ? Center(
-                      child: Text(
-                        context.l10n.code_no_logs,
-                        style: tokens.text.meta.copyWith(
-                          color: Colors.white.withValues(
-                            alpha: Alphas.secondary,
+            flex: 7,
+            child: Row(
+              children: [
+                Flexible(
+                  flex: 7,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: context.primaryColor.withValues(alpha: 0.2),
+                        width: 1,
+                      ),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
+                      ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
+                      ),
+                      child: CodeEditor(
+                        toolbarController:
+                            defaultTargetPlatform == TargetPlatform.iOS ||
+                                defaultTargetPlatform == TargetPlatform.android
+                            ? _selectionToolbarController
+                            : null,
+                        style: CodeEditorStyle(
+                          fontSize: 15,
+                          fontFamily: appFontFamily,
+                          codeTheme: CodeHighlightTheme(
+                            languages: {
+                              'dart': CodeHighlightThemeMode(mode: langDart),
+                              'javascript': CodeHighlightThemeMode(
+                                mode: langJavascript,
+                              ),
+                            },
+                            theme: vs2015Theme,
+                          ),
+                        ),
+                        controller: _controller,
+                        onChanged: (_) {
+                          source?.sourceCode = _controller.text;
+                          if (source != null && context.mounted) {
+                            _saveDebounceTimer?.cancel();
+                            _saveDebounceTimer = Timer(
+                              const Duration(milliseconds: 1500),
+                              _persistSourceCodeNow,
+                            );
+                          }
+                        },
+                        wordWrap: false,
+                        indicatorBuilder:
+                            (
+                              context,
+                              editingController,
+                              chunkController,
+                              notifier,
+                            ) {
+                              return Row(
+                                children: [
+                                  DefaultCodeLineNumber(
+                                    controller: editingController,
+                                    notifier: notifier,
+                                  ),
+                                  DefaultCodeChunkIndicator(
+                                    width: 20,
+                                    controller: chunkController,
+                                    notifier: notifier,
+                                  ),
+                                ],
+                              );
+                            },
+                        leadingDivider: Container(
+                          width: 1,
+                          color: context.dynamicThemeColor.withValues(
+                            alpha: 0.3,
                           ),
                         ),
                       ),
-                    )
-                  : SuperListView.separated(
-                      separatorBuilder: (context, index) => Divider(
-                        height: 1,
-                        color: Colors.white.withValues(alpha: Alphas.tint),
+                    ),
+                  ),
+                ),
+                if (context.isTablet)
+                  Flexible(
+                    flex: 3,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: context.primaryColor.withValues(alpha: 0.2),
+                          width: 1,
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          topRight: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        ),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            context.primaryColor.withValues(alpha: 0.03),
+                            Colors.transparent,
+                          ],
+                        ),
                       ),
-                      controller: _scrollController,
-                      padding: const EdgeInsets.all(ShioriSpace.s12),
-                      itemCount: logs.length,
-                      itemBuilder: (context, index) {
-                        final (level, message, _) = logs[index];
-                        final info = level == LoggerLevel.info;
-                        // A terminal's own colours, kept from before.
-                        final color = info ? Colors.yellow : Colors.blueAccent;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: ShioriSpace.s4,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            spacing: ShioriSpace.s8,
-                            children: [
-                              Icon(
-                                info
-                                    ? Symbols.info_rounded
-                                    : Symbols.bug_report_rounded,
-                                size: 14,
-                                color: color,
-                              ),
-                              Expanded(
-                                child: SelectableText(
-                                  message,
-                                  style: tokens.text.badge.copyWith(
-                                    fontFamily: 'monospace',
-                                    color: color,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: context.primaryColor.withValues(
+                                    alpha: 0.3,
                                   ),
+                                  width: 1.5,
+                                ),
+                                color: context.primaryColor.withValues(
+                                  alpha: 0.05,
                                 ),
                               ),
-                            ],
+                              child: DropdownButton<(String, int)>(
+                                icon: Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  color: context.primaryColor,
+                                ),
+                                isExpanded: true,
+                                underline: const SizedBox.shrink(),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                value: _getServices(context).firstWhere(
+                                  (element) => element.$2 == _serviceIndex,
+                                ),
+                                hint: Text(
+                                  _getServices(context)
+                                      .firstWhere(
+                                        (element) =>
+                                            element.$2 == _serviceIndex,
+                                      )
+                                      .$1,
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                                items: _getServices(context)
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              _getServiceIcon(e.$2),
+                                              size: 18,
+                                              color: context.primaryColor,
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Text(
+                                              e.$1,
+                                              style: const TextStyle(
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (v) {
+                                  setState(() {
+                                    _serviceIndex = v!.$2;
+                                  });
+                                },
+                              ),
+                            ),
                           ),
-                        );
-                      },
+                          if (_serviceIndex == 0 ||
+                              _serviceIndex == 1 ||
+                              _serviceIndex == 2)
+                            _textEditing("Page", context, "ex: 1", (v) {
+                              _page = int.tryParse(v) ?? 1;
+                            }),
+                          if (_serviceIndex == 2)
+                            _textEditing("Query", context, "ex: one piece", (
+                              v,
+                            ) {
+                              _query = v;
+                            }),
+                          if (_serviceIndex == 3 ||
+                              _serviceIndex == 4 ||
+                              _serviceIndex == 5 ||
+                              _serviceIndex == 6)
+                            _textEditing(
+                              "Url",
+                              context,
+                              "ex: url of the entry",
+                              (v) {
+                                _url = v;
+                              },
+                            ),
+                          if (_serviceIndex == 7)
+                            _textEditing("Html", context, "ex. <p>Text</p>", (
+                              v,
+                            ) {
+                              _html = v;
+                            }),
+                          Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              alignment: WrapAlignment.center,
+                              children: [
+                                FilledButton.icon(
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: context.primaryColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 12,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    elevation: 2,
+                                  ),
+                                  icon: const Icon(
+                                    Icons.play_arrow_rounded,
+                                    size: 20,
+                                  ),
+                                  label: const Text(
+                                    "Execute",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    source?.sourceCode = _controller.text;
+                                    if (source != null && context.mounted) {
+                                      await sourceRepository.save(source!);
+                                    }
+                                    setState(() {
+                                      result = null;
+                                      _isLoading = true;
+                                      _error = false;
+                                      _errorText = "";
+                                    });
+                                    if (source != null) {
+                                      final proxyServer = ref.read(
+                                        androidProxyServerStateProvider,
+                                      );
+                                      try {
+                                        Future<dynamic> Function(
+                                          ExtensionService service,
+                                        )?
+                                        serviceFunc;
+                                        if (_serviceIndex == 0) {
+                                          final getManga =
+                                              await getIsolateService
+                                                  .get<MPages?>(
+                                                    page: _page,
+                                                    source: source,
+                                                    serviceType: 'getPopular',
+                                                    proxyServer: proxyServer,
+                                                    useLogger: true,
+                                                  );
+                                          result = getManga!.toJson();
+                                        } else if (_serviceIndex == 1) {
+                                          final getManga =
+                                              await getIsolateService
+                                                  .get<MPages?>(
+                                                    page: _page,
+                                                    source: source,
+                                                    serviceType:
+                                                        'getLatestUpdates',
+                                                    proxyServer: proxyServer,
+                                                    useLogger: true,
+                                                  );
+                                          result = getManga!.toJson();
+                                        } else if (_serviceIndex == 2) {
+                                          final getManga =
+                                              await getIsolateService
+                                                  .get<MPages?>(
+                                                    query: _query,
+                                                    filterList: filterList,
+                                                    source: source,
+                                                    page: _page,
+                                                    serviceType: 'search',
+                                                    proxyServer: proxyServer,
+                                                    useLogger: true,
+                                                  );
+                                          result = getManga!.toJson();
+                                        } else if (_serviceIndex == 3) {
+                                          final getManga =
+                                              await getIsolateService
+                                                  .get<MManga>(
+                                                    url: _url,
+                                                    source: source,
+                                                    serviceType: 'getDetail',
+                                                    proxyServer: proxyServer,
+                                                    useLogger: true,
+                                                  );
+                                          result = getManga.toJson();
+                                        } else if (_serviceIndex == 4) {
+                                          serviceFunc = (service) async {
+                                            return {
+                                              "pages":
+                                                  (await service.getPageList(
+                                                        _url,
+                                                      ))
+                                                      .map((e) => e.toJson())
+                                                      .toList(),
+                                            };
+                                          };
+                                        } else if (_serviceIndex == 5) {
+                                          serviceFunc = (service) async {
+                                            return (await service.getVideoList(
+                                              _url,
+                                            )).map((e) => e.toJson()).toList();
+                                          };
+                                        } else if (_serviceIndex == 6) {
+                                          serviceFunc = (service) async {
+                                            return await service.getHtmlContent(
+                                              "test",
+                                              _url,
+                                            );
+                                          };
+                                        } else {
+                                          serviceFunc = (service) async {
+                                            return await service
+                                                .cleanHtmlContent(_html);
+                                          };
+                                        }
+                                        if (serviceFunc != null) {
+                                          result = await withExtensionService(
+                                            source!,
+                                            proxyServer,
+                                            serviceFunc,
+                                          );
+                                        }
+                                        if (context.mounted) {
+                                          setState(() {
+                                            _isLoading = false;
+                                          });
+                                        }
+                                      } catch (e) {
+                                        if (context.mounted) {
+                                          setState(() {
+                                            _error = true;
+                                            _errorText = e.toString();
+                                            _isLoading = false;
+                                          });
+                                        }
+                                      }
+                                    }
+                                  },
+                                ),
+                                OutlinedButton.icon(
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: context.primaryColor,
+                                    side: BorderSide(
+                                      color: context.primaryColor.withValues(
+                                        alpha: 0.5,
+                                      ),
+                                      width: 1.5,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20,
+                                      vertical: 12,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  icon: const Icon(
+                                    Icons.refresh_rounded,
+                                    size: 20,
+                                  ),
+                                  label: Text(
+                                    context.l10n.reset,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      result = null;
+                                      _isLoading = false;
+                                      _error = false;
+                                      _errorText = "";
+                                      filters = [];
+                                    });
+                                  },
+                                ),
+                                if (_serviceIndex == 2 && filterList.isNotEmpty)
+                                  FilledButton.tonalIcon(
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: context.primaryColor
+                                          .withValues(alpha: 0.15),
+                                      foregroundColor: context.primaryColor,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 12,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    icon: const Icon(
+                                      Icons.filter_alt_rounded,
+                                      size: 20,
+                                    ),
+                                    label: Text(
+                                      context.l10n.filter,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      if (source != null) {
+                                        setState(() {
+                                          filterList = getFilterList(
+                                            source: source!,
+                                          );
+                                        });
+                                        try {
+                                          if (filters.isEmpty) {
+                                            filters = filterList;
+                                          }
+                                          final res = await filterDialog(
+                                            context,
+                                          );
+                                          if (res == 'filter' &&
+                                              context.mounted) {
+                                            setState(() {
+                                              result = null;
+                                              _isLoading = true;
+                                              _error = false;
+                                              _errorText = "";
+                                            });
+                                            final getManga = await ref.watch(
+                                              searchProvider(
+                                                source: source!,
+                                                query: _query,
+                                                page: _page,
+                                                filterList: filters,
+                                              ).future,
+                                            );
+                                            result = getManga!.toJson();
+                                            setState(() {
+                                              _isLoading = false;
+                                            });
+                                          }
+                                        } catch (e) {
+                                          setState(() {
+                                            _error = true;
+                                            _errorText = e.toString();
+                                            _isLoading = false;
+                                          });
+                                        }
+                                      }
+                                    },
+                                  ),
+                              ],
+                            ),
+                          ),
+                          const Divider(height: 1),
+                          Expanded(
+                            child: _error
+                                ? Container(
+                                    padding: const EdgeInsets.all(20),
+                                    child: Center(
+                                      child: Container(
+                                        padding: const EdgeInsets.all(16),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red.withValues(
+                                            alpha: 0.1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.red.withValues(
+                                              alpha: 0.3,
+                                            ),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: SelectableText(
+                                          _errorText,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontFamily: 'monospace',
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : _isLoading
+                                ? Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CircularProgressIndicator(
+                                          color: context.primaryColor,
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          'Executing...',
+                                          style: TextStyle(
+                                            color: context.primaryColor,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : result != null
+                                ? Container(
+                                    padding: const EdgeInsets.all(12),
+                                    child: JsonConfig(
+                                      data: JsonConfigData(
+                                        gap: 100,
+                                        style: const JsonStyleScheme(
+                                          quotation: JsonQuotation.same('"'),
+                                          openAtStart: false,
+                                          arrow: Icon(
+                                            Icons.arrow_forward_rounded,
+                                          ),
+                                          depth: 4,
+                                        ),
+                                        color: const JsonColorScheme(),
+                                      ),
+                                      child: JsonView(json: result),
+                                    ),
+                                  )
+                                : Center(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.data_object_rounded,
+                                          size: 64,
+                                          color: Colors.grey.withValues(
+                                            alpha: 0.5,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 16),
+                                        Text(
+                                          'No results yet',
+                                          style: TextStyle(
+                                            color: Colors.grey.withValues(
+                                              alpha: 0.7,
+                                            ),
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          'Execute a service to see results',
+                                          style: TextStyle(
+                                            color: Colors.grey.withValues(
+                                              alpha: 0.5,
+                                            ),
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                          ),
+                        ],
+                      ),
                     ),
+                  ),
+              ],
             ),
           ),
+          if (context.isTablet)
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: context.primaryColor.withValues(alpha: 0.3),
+                    width: 1.5,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.black,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                height: 200,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[900],
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
+                        border: Border(
+                          bottom: BorderSide(
+                            color: context.primaryColor.withValues(alpha: 0.3),
+                            width: 1,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.terminal_rounded,
+                            size: 18,
+                            color: context.primaryColor,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Console Logs',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: context.primaryColor,
+                            ),
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.clear_all_rounded,
+                              size: 18,
+                              color: Colors.grey,
+                            ),
+                            tooltip: context.l10n.clear_logs,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {
+                              setState(() {
+                                _logsNotifier.value.clear();
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: ValueListenableBuilder(
+                        valueListenable: _logsNotifier,
+                        builder: (context, logs, child) => logs.isEmpty
+                            ? Center(
+                                child: Text(
+                                  'No logs yet',
+                                  style: TextStyle(
+                                    color: Colors.grey.withValues(alpha: 0.5),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              )
+                            : SuperListView.separated(
+                                separatorBuilder: (context, index) => Divider(
+                                  height: 1,
+                                  color: Colors.grey.withValues(alpha: 0.2),
+                                ),
+                                controller: _scrollController,
+                                padding: const EdgeInsets.all(12),
+                                itemCount: logs.length,
+                                itemBuilder: (context, index) {
+                                  final value = logs[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 4,
+                                    ),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          value.$1 == LoggerLevel.info
+                                              ? Icons.info_outline_rounded
+                                              : Icons.bug_report_rounded,
+                                          size: 14,
+                                          color: value.$1 == LoggerLevel.info
+                                              ? Colors.yellow
+                                              : Colors.blueAccent,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: SelectableText(
+                                            value.$2,
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              fontFamily: 'monospace',
+                                              color:
+                                                  value.$1 == LoggerLevel.info
+                                                  ? Colors.yellow
+                                                  : Colors.blueAccent,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
   }
 }
 
-enum _CodeView { code, test, console }
-
-/// An input of the test: the app's text field, with what it is for.
 Widget _textEditing(
-  BuildContext context, {
-  required String label,
-  required String hint,
-  required IconData icon,
-  required String initialValue,
-  required ValueChanged<String> onChanged,
-  bool number = false,
-}) {
+  String label,
+  BuildContext context,
+  String hintText,
+  void Function(String)? onChanged,
+) {
   return Padding(
-    padding: const EdgeInsets.symmetric(
-      horizontal: ShioriSpace.s16,
-      vertical: ShioriSpace.s4,
-    ),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     child: TextFormField(
-      initialValue: initialValue,
-      keyboardType: number ? TextInputType.number : TextInputType.text,
+      keyboardType: label == "Page" ? TextInputType.number : TextInputType.text,
       onChanged: onChanged,
-      style: context.shiori.text.row,
+      style: const TextStyle(fontSize: 13),
       decoration: InputDecoration(
+        hintText: hintText,
         labelText: label,
-        hintText: hint,
         isDense: true,
-        prefixIcon: Icon(icon, size: 20),
+        filled: true,
+        fillColor: context.primaryColor.withValues(alpha: 0.05),
+        prefixIcon: Icon(
+          label == "Page"
+              ? Icons.numbers_rounded
+              : label == "Query"
+              ? Icons.search_rounded
+              : label == "Url"
+              ? Icons.link_rounded
+              : Icons.code_rounded,
+          size: 20,
+          color: context.primaryColor,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: context.dynamicThemeColor.withValues(alpha: 0.3),
+            width: 1.5,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: context.primaryColor, width: 2),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: context.dynamicThemeColor.withValues(alpha: 0.3),
+            width: 1.5,
+          ),
+        ),
+        labelStyle: TextStyle(
+          fontSize: 12,
+          color: context.primaryColor.withValues(alpha: 0.7),
+        ),
+        hintStyle: TextStyle(
+          fontSize: 12,
+          color: Colors.grey.withValues(alpha: 0.5),
+        ),
       ),
     ),
   );

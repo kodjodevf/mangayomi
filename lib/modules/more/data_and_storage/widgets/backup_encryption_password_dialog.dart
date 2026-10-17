@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/backup_password_storage.dart';
 
@@ -24,18 +23,17 @@ Future<bool?> showSecureStorageFallbackPrompt(BuildContext context) {
   final l10n = l10nLocalizations(context)!;
   return showDialog<bool>(
     context: context,
-    builder: (context) => ShioriDialog(
-      title: l10n.no_secure_storage,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.no_secure_storage),
       content: Text(l10n.no_keyring_warning),
       actions: [
-        ShioriButton.quiet(
-          label: l10n.cancel,
+        TextButton(
           onPressed: () => Navigator.pop(context, false),
+          child: Text(l10n.cancel),
         ),
-        ShioriButton(
-          label: l10n.ok,
-          destructive: true,
+        TextButton(
           onPressed: () => Navigator.pop(context, true),
+          child: Text(l10n.ok),
         ),
       ],
     ),
@@ -103,18 +101,18 @@ class _BackupDecryptPasswordDialogState
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-    return ShioriDialog(
-      title: l10n.enter_backup_password,
+    return AlertDialog(
+      title: Text(l10n.enter_backup_password),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.wasIncorrect)
             Padding(
-              padding: const EdgeInsets.only(bottom: ShioriSpace.s8),
+              padding: const EdgeInsets.only(bottom: 8),
               child: Text(
                 l10n.incorrect_password_try_again,
-                style: TextStyle(color: context.shiori.color.error.foreground),
+                style: const TextStyle(color: Colors.red),
               ),
             ),
           TextField(
@@ -124,12 +122,7 @@ class _BackupDecryptPasswordDialogState
             decoration: InputDecoration(
               labelText: l10n.password,
               suffixIcon: IconButton(
-                tooltip: _obscure ? l10n.show_password : l10n.hide_password,
-                icon: Icon(
-                  _obscure
-                      ? Symbols.visibility_rounded
-                      : Symbols.visibility_off_rounded,
-                ),
+                icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
                 onPressed: () => setState(() => _obscure = !_obscure),
               ),
             ),
@@ -143,15 +136,15 @@ class _BackupDecryptPasswordDialogState
         ],
       ),
       actions: [
-        ShioriButton.quiet(
-          label: l10n.cancel,
+        TextButton(
           onPressed: () => Navigator.pop(context, null),
+          child: Text(l10n.cancel),
         ),
-        ShioriButton(
-          label: l10n.ok,
+        TextButton(
           onPressed: _controller.text.isEmpty
               ? null
               : () => Navigator.pop(context, _controller.text),
+          child: Text(l10n.ok),
         ),
       ],
     );
@@ -204,8 +197,8 @@ class _BackupEncryptionPasswordDialogState
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-    return ShioriDialog(
-      title: l10n.set_backup_password,
+    return AlertDialog(
+      title: Text(l10n.set_backup_password),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,19 +210,14 @@ class _BackupEncryptionPasswordDialogState
             decoration: InputDecoration(
               labelText: l10n.password,
               suffixIcon: IconButton(
-                tooltip: _obscure ? l10n.show_password : l10n.hide_password,
-                icon: Icon(
-                  _obscure
-                      ? Symbols.visibility_rounded
-                      : Symbols.visibility_off_rounded,
-                ),
+                icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
                 onPressed: () => setState(() => _obscure = !_obscure),
               ),
             ),
             onChanged: (_) => setState(() {}),
           ),
           if (_obscure) ...[
-            const SizedBox(height: ShioriSpace.s8),
+            const SizedBox(height: 8),
             TextField(
               controller: _confirmController,
               obscureText: true,
@@ -247,17 +235,20 @@ class _BackupEncryptionPasswordDialogState
         ],
       ),
       actions: [
-        ShioriButton.quiet(
-          label: l10n.cancel,
+        TextButton(
           onPressed: _saving ? null : () => Navigator.pop(context, false),
+          child: Text(l10n.cancel),
         ),
-        if (_saving)
-          const Padding(
-            padding: EdgeInsets.all(ShioriSpace.s8),
-            child: ShioriLoading.inline(),
-          )
-        else
-          ShioriButton(label: l10n.ok, onPressed: _canSubmit ? _submit : null),
+        TextButton(
+          onPressed: (_canSubmit && !_saving) ? _submit : null,
+          child: _saving
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Text(l10n.ok),
+        ),
       ],
     );
   }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
@@ -19,13 +18,14 @@ class OnboardingNavPreview extends StatelessWidget {
   final bool merged;
 
   static const _icons = {
-    ItemType.manga: Symbols.collections_bookmark_rounded,
-    ItemType.anime: Symbols.video_library_rounded,
-    ItemType.novel: Symbols.local_library_rounded,
+    ItemType.manga: Icons.collections_bookmark_outlined,
+    ItemType.anime: Icons.video_collection_outlined,
+    ItemType.novel: Icons.local_library_outlined,
   };
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final l10n = l10nLocalizations(context)!;
     final labels = {
       ItemType.manga: l10n.manga,
@@ -35,18 +35,18 @@ class OnboardingNavPreview extends StatelessWidget {
 
     final bar = <(IconData, String)>[
       if (merged)
-        (Symbols.collections_bookmark_rounded, l10n.library)
+        (Icons.collections_bookmark_outlined, l10n.library)
       else
         for (final type in libraries) (_icons[type]!, labels[type]!),
-      (Symbols.explore_rounded, l10n.browse),
-      (Symbols.more_horiz_rounded, l10n.more),
+      (Icons.explore_outlined, l10n.browse),
+      (Icons.more_horiz_outlined, l10n.more),
     ];
 
     // Merged hides a second bar behind the first: tapping Library swaps the
     // whole row for the libraries plus a way back. That is the part of the
     // choice the words cannot describe, so it is drawn too.
     final insideLibrary = <(IconData, String)>[
-      (Symbols.arrow_back_rounded, l10n.go_back),
+      (Icons.arrow_back, l10n.go_back),
       for (final type in libraries) (_icons[type]!, labels[type]!),
     ];
 
@@ -54,20 +54,21 @@ class OnboardingNavPreview extends StatelessWidget {
       children: [
         _NavPreviewBar(items: bar),
         if (merged) ...[
-          const SizedBox(height: ShioriSpace.s8),
+          const SizedBox(height: 6),
           Icon(
-            Symbols.keyboard_arrow_down_rounded,
-            fill: 1,
+            Icons.keyboard_arrow_down,
             size: 18,
-            color: context.shiori.color.fgMuted,
+            color: theme.colorScheme.onSurfaceVariant,
           ),
-          const SizedBox(height: ShioriSpace.s8),
+          const SizedBox(height: 6),
           Text(
             l10n.onboarding_nav_inside,
             textAlign: TextAlign.center,
-            style: context.shiori.caption,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
-          const SizedBox(height: ShioriSpace.s8),
+          const SizedBox(height: 8),
           _NavPreviewBar(items: insideLibrary),
         ],
       ],
@@ -82,18 +83,16 @@ class _NavPreviewBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(
         // Solid, not a half transparent wash. On a light scheme the wash left
         // the bar barely separated from the page behind it.
-        color: context.shiori.color.ink3,
-        borderRadius: BorderRadius.circular(ShioriShape.card),
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(14),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: ShioriSpace.s12,
-          horizontal: ShioriSpace.s8,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -102,7 +101,7 @@ class _NavPreviewBar extends StatelessWidget {
                 icon: item.$1,
                 label: item.$2,
                 // The entry the bar opens on. A back arrow never is one.
-                selected: index == 0 && item.$1 != Symbols.arrow_back_rounded,
+                selected: index == 0 && item.$1 != Icons.arrow_back,
               ),
           ],
         ),
@@ -135,10 +134,8 @@ class _NavPreviewItem extends StatelessWidget {
     // the current entry the one word in the row you could not read.
     final iconColor = selected
         ? scheme.onSecondaryContainer
-        : context.shiori.color.fgMuted;
-    final labelColor = selected
-        ? context.shiori.color.fg
-        : context.shiori.color.fgMuted;
+        : scheme.onSurfaceVariant;
+    final labelColor = selected ? scheme.onSurface : scheme.onSurfaceVariant;
     return Flexible(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -146,24 +143,21 @@ class _NavPreviewItem extends StatelessWidget {
           DecoratedBox(
             decoration: BoxDecoration(
               color: selected ? scheme.secondaryContainer : null,
-              borderRadius: BorderRadius.circular(ShioriShape.card),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: ShioriSpace.s12,
-                vertical: 2,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
               child: Icon(icon, size: 20, color: iconColor),
             ),
           ),
-          const SizedBox(height: ShioriSpace.s4),
+          const SizedBox(height: 4),
           Text(
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: context.shiori.text.badge.copyWith(
+            style: theme.textTheme.labelSmall?.copyWith(
               color: labelColor,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+              fontWeight: selected ? FontWeight.w600 : null,
             ),
           ),
         ],

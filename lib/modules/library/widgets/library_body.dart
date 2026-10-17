@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/browse/providers/browse_initial_tab_provider.dart';
-import 'package:mangayomi/modules/browse/browse_screen.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -11,13 +8,11 @@ import 'package:mangayomi/modules/library/providers/library_source_badge_provide
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/library/widgets/library_gridview_widget.dart';
 import 'package:mangayomi/modules/library/widgets/library_listview_widget.dart';
-import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
-import 'package:mangayomi/modules/widgets/cover_grid_skeleton.dart';
-import 'package:mangayomi/modules/widgets/error_state.dart';
+import 'package:mangayomi/modules/widgets/error_text.dart';
+import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
-import 'package:shiori/shiori.dart';
 
 /// Displays the library body content for a given category (or uncategorized).
 ///
@@ -122,26 +117,7 @@ class LibraryBody extends ConsumerWidget {
         );
 
         if (entries.isEmpty) {
-          // A search or a filter that matches nothing is not an empty
-          // library; say which it is.
-          final narrowed = searchQuery.isNotEmpty || data.isNotEmpty;
-          return ShioriEmptyState(
-            icon: narrowed
-                ? Symbols.search_off_rounded
-                : Symbols.collections_bookmark_rounded,
-            title: narrowed ? l10n.no_result : l10n.empty_library,
-            message: narrowed ? null : l10n.empty_library_hint,
-            // An empty library leads somewhere: the sources for this media.
-            actionLabel: narrowed ? null : l10n.browse,
-            onAction: narrowed
-                ? null
-                : () {
-                    ref
-                        .read(browseInitialTabProvider.notifier)
-                        .request(BrowseTab(itemType, BrowseTabKind.sources));
-                    context.go('/browse');
-                  },
-          );
+          return Center(child: Text(l10n.empty_library));
         }
 
         final entriesManga = reverse
@@ -188,22 +164,8 @@ class LibraryBody extends ConsumerWidget {
                 ),
         );
       },
-      error: (error, _) => ErrorState(detail: error.toString()),
-      loading: () => displayType == DisplayType.list
-          ? ListView(
-              physics: const NeverScrollableScrollPhysics(),
-              children: [
-                for (var i = 0; i < 8; i++) const ShioriSkeletonRow(),
-              ],
-            )
-          : CoverGridSkeleton(
-              gridSize: ref.watch(
-                libraryGridSizeStateProvider(itemType: itemType),
-              ),
-              childAspectRatio: displayType == DisplayType.comfortableGrid
-                  ? 0.642
-                  : 0.69,
-            ),
+      error: (error, _) => ErrorText(error),
+      loading: () => const ProgressCenter(),
     );
   }
 }
@@ -277,10 +239,20 @@ class CategoryBadge extends ConsumerWidget {
             settings: settings,
           ),
         );
-        return EntryBadgeChip(label: filtered.length.toString());
+        return CircleAvatar(
+          backgroundColor: Theme.of(context).focusColor,
+          radius: 8,
+          child: Text(
+            filtered.length.toString(),
+            style: TextStyle(
+              fontSize: 10,
+              color: Theme.of(context).textTheme.bodySmall!.color,
+            ),
+          ),
+        );
       },
-      error: (error, _) => const SizedBox.shrink(),
-      loading: () => const SizedBox.shrink(),
+      error: (error, _) => ErrorText(error),
+      loading: () => const ProgressCenter(),
     );
   }
 }

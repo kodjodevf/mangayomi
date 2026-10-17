@@ -1,6 +1,6 @@
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/main_view/main_screen.dart';
 
 class DownloadedOnlyBar extends StatelessWidget {
@@ -23,14 +23,14 @@ class DownloadedOnlyBar extends StatelessWidget {
                   : 50
             : 0,
         curve: Curves.easeIn,
-        duration: ShioriMotion.fast,
-        color: context.shiori.color.fgMuted,
+        duration: const Duration(milliseconds: 150),
+        color: context.secondaryColor,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.all(ShioriSpace.s8),
+              padding: const EdgeInsets.all(8.0),
               child: Text(
                 l10n.downloaded_only,
                 style: TextStyle(
@@ -66,14 +66,14 @@ class IncognitoModeBar extends StatelessWidget {
                   : 50
             : 0,
         curve: Curves.easeIn,
-        duration: ShioriMotion.fast,
-        color: context.shiori.color.accentInk,
+        duration: const Duration(milliseconds: 150),
+        color: context.primaryColor,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.all(ShioriSpace.s8),
+              padding: const EdgeInsets.all(8.0),
               child: Text(
                 l10n.incognito_mode,
                 style: TextStyle(

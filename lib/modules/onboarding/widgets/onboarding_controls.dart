@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -96,7 +95,7 @@ class OnboardingStepDots extends StatelessWidget {
           AnimatedContainer(
             duration: duration,
             curve: Curves.easeOutCubic,
-            margin: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
+            margin: const EdgeInsets.symmetric(horizontal: 3),
             height: 6,
             // The one you are on is a bar, the rest are dots, so it reads at a
             // glance without colour having to carry it alone.
@@ -105,7 +104,7 @@ class OnboardingStepDots extends StatelessWidget {
               color: i == current
                   ? scheme.primary
                   : scheme.onSurfaceVariant.withValues(alpha: 0.35),
-              borderRadius: BorderRadius.circular(ShioriShape.badge),
+              borderRadius: BorderRadius.circular(3),
             ),
           ),
       ],
@@ -120,20 +119,17 @@ class OnboardingAddedRepo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          Symbols.check_circle_rounded,
-          size: 18,
-          color: context.shiori.color.fgMuted,
-        ),
-        const SizedBox(width: ShioriSpace.s8),
+        Icon(Icons.check_circle_outline, size: 18, color: theme.hintColor),
+        const SizedBox(width: 8),
         Flexible(
           child: Text(
             name,
             overflow: TextOverflow.ellipsis,
-            style: context.shiori.caption,
+            style: theme.textTheme.bodySmall?.copyWith(color: theme.hintColor),
           ),
         ),
       ],

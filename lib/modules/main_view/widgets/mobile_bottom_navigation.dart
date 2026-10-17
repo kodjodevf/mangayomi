@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/widgets/floating_nav_bar.dart';
@@ -56,7 +55,7 @@ class MainMobileBottomNavigation extends StatelessWidget {
     }
 
     return AnimatedContainer(
-      duration: ShioriMotion.fast,
+      duration: const Duration(milliseconds: 0),
       width: context.width(1),
       height: _getBottomNavigationHeight(isLongPressed, location),
       child: NavigationBarTheme(
@@ -65,11 +64,11 @@ class MainMobileBottomNavigation extends StatelessWidget {
             TextStyle(overflow: TextOverflow.ellipsis),
           ),
           indicatorShape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ShioriShape.sheet),
+            borderRadius: BorderRadius.circular(30),
           ),
         ),
         child: NavigationBar(
-          animationDuration: ShioriMotion.exitSlow,
+          animationDuration: const Duration(milliseconds: 500),
           selectedIndex: currentIndex,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: buildNavigationWidgetsMobile(ref, dest, context),

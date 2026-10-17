@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_card.dart';
@@ -78,7 +77,7 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
             _isLoading
                 ? const SizedBox(
                     height: 60,
-                    child: Center(child: ShioriSkeleton.line(width: 160)),
+                    child: Center(child: CircularProgressIndicator()),
                   )
                 : Builder(
                     builder: (context) {
@@ -112,11 +111,7 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
                       }
                       return SizedBox(
                         height: 60,
-                        child: ShioriEmptyState(
-                          icon: Symbols.search_off_rounded,
-                          title: l10n.no_result,
-                          compact: true,
-                        ),
+                        child: Center(child: Text(l10n.no_result)),
                       );
                     },
                   ),

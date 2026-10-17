@@ -101,7 +101,6 @@ class SubtitleSettingsState extends _$SubtitleSettingsState {
 
   void reset() {
     state = PlayerSubtitleSettings(
-      // shiori: the default subtitle size, a stored setting rather than interface type
       fontSize: 45,
       useBold: true,
       useItalic: false,

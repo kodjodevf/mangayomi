@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
-import 'package:mangayomi/modules/widgets/entry_badge_chip.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
@@ -10,6 +8,8 @@ import 'package:mangayomi/services/discovery/media_lookup_context.dart';
 import 'package:mangayomi/services/recommendation.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/design_tokens.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 /// Covers are 2:3, so a grid of mixed sources does not visibly jitter.
@@ -87,11 +87,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
               },
             )
           : (data == null || data!.isEmpty)
-          ? ShioriEmptyState(
-              icon: Symbols.auto_awesome_rounded,
-              title: l10n.no_result,
-              compact: true,
-            )
+          ? Center(child: Text(l10n.no_result))
           // Poster list: a cover, the catalog rating as a filled pill, the
           // title, a two-line capped synopsis and genre chips. Rows used to
           // stretch the full width of a TV or desktop panel; the grid reflows
@@ -123,24 +119,24 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
     final coverUrl = rec.imgURLs.isNotEmpty ? rec.imgURLs.first : "";
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(ShioriShape.cover),
+      borderRadius: BorderRadius.circular(8),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         // Nothing was focusable on entry, so a remote did nothing until the
         // user guessed a direction. The first card claims focus on a TV.
         autofocus: isTv && index == 0,
-        focusColor: context.shiori.color.accent.withValues(alpha: Alphas.focus),
+        focusColor: context.primaryColor.withValues(alpha: Alphas.focus),
         onTap: () => context.push(
           '/globalSearch',
           extra: (rec.searchTarget.query, rec.searchTarget.itemType),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(ShioriSpace.s8),
+          padding: const EdgeInsets.all(6),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(ShioriShape.cover),
+                borderRadius: BorderRadius.circular(6),
                 child: Image(
                   image: coverProvider(toImgUrl(coverUrl)),
                   width: _coverWidth,
@@ -148,7 +144,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(width: ShioriSpace.s12),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,15 +154,15 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                       children: [
                         if (rec.rating case CatalogRating rating) ...[
                           _ratingPill(context, rating),
-                          const SizedBox(width: ShioriSpace.s8),
+                          const SizedBox(width: 8),
                         ],
                         Expanded(
                           child: Text(
                             title,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: context.shiori.text.row.fontSize,
+                            style: const TextStyle(
+                              fontSize: 14,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -175,16 +171,22 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                     ),
                     if (rec.description != null &&
                         rec.description!.isNotEmpty) ...[
-                      const SizedBox(height: ShioriSpace.s4),
+                      const SizedBox(height: 5),
                       Text(
                         rec.description!,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: context.shiori.caption.copyWith(height: 1.35),
+                        style: TextStyle(
+                          fontSize: 12,
+                          height: 1.35,
+                          color: context.textColor.withValues(
+                            alpha: Alphas.secondary,
+                          ),
+                        ),
                       ),
                     ],
                     if (rec.genres.isNotEmpty) ...[
-                      const SizedBox(height: ShioriSpace.s8),
+                      const SizedBox(height: 7),
                       Wrap(
                         spacing: 5,
                         runSpacing: 4,
@@ -203,21 +205,51 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
     );
   }
 
-  /// The rating, filled with the accent.
+  /// Filled with the accent. The label colour is computed against the accent
+  /// rather than the theme, so it stays readable whichever hue the user picked
+  /// and in either brightness.
   Widget _ratingPill(BuildContext context, CatalogRating rating) {
+    final accent = context.primaryColor;
+    final onAccent = accent.computeLuminance() > 0.5
+        ? Colors.black
+        : Colors.white;
     final label = rating.valueLabel;
     return Semantics(
       label: context.l10n.recommendation_rating_accessibility(label),
       child: ExcludeSemantics(
-        child: EntryBadgeChip(
-          label: label,
-          tone: EntryBadgeChip.accent(context),
-          strong: true,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: accent,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              color: onAccent,
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _chip(BuildContext context, String text) =>
-      EntryBadgeChip(label: text);
+  Widget _chip(BuildContext context, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: context.textColor.withValues(alpha: Alphas.tint),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 11,
+          color: context.textColor.withValues(alpha: Alphas.secondary),
+        ),
+      ),
+    );
+  }
 }

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/manga/detail/providers/chapter_display.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/date.dart';
+import 'package:mangayomi/utils/design_tokens.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
@@ -21,99 +21,82 @@ Widget btnToShowChapterListDialog(
   Color? iconColor,
 }) {
   return IconButton(
-    tooltip: title,
     onPressed: () async {
       onChanged?.call(false);
-      await showChapterListPanel(context, title: title, chapter: chapter);
-      onChanged?.call(true);
-    },
-    icon: Icon(Symbols.format_list_numbered_rounded, color: iconColor),
-  );
-}
-
-/// The chapters or episodes of [chapter]'s series, opened over the reader or
-/// the player without hiding it: a panel from the side when the screen is
-/// wider than tall (a video in landscape keeps playing beside it), a sheet
-/// from the bottom otherwise.
-Future<void> showChapterListPanel(
-  BuildContext context, {
-  required String title,
-  required Chapter chapter,
-}) {
-  final size = MediaQuery.sizeOf(context);
-  if (size.width <= size.height) {
-    return showShioriSheet<void>(
-      context,
-      title: title,
-      maxHeightFactor: 0.8,
-      builder: (_) => ChapterListWidget(chapter: chapter),
-    );
-  }
-  final width = (size.width * 0.45).clamp(320.0, 460.0);
-  return showGeneralDialog<void>(
-    context: context,
-    barrierDismissible: true,
-    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-    barrierColor: ShioriScrim.onImage,
-    transitionDuration: ShioriMotion.of(context, ShioriMotion.enter),
-    pageBuilder: (context, _, _) => Align(
-      alignment: AlignmentDirectional.centerEnd,
-      child: SizedBox(
-        width: width,
-        height: double.infinity,
-        child: Material(
-          color: context.shiori.color.ink1,
-          borderRadius: const BorderRadiusDirectional.horizontal(
-            start: Radius.circular(ShioriShape.sheet),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: SafeArea(
-            left: false,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                    ShioriSpace.s16,
-                    ShioriSpace.s8,
-                    ShioriSpace.s4,
-                    ShioriSpace.s4,
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Semantics(
-                          header: true,
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            elevation: 8,
+            child: Container(
+              width: context.width(0.85),
+              constraints: BoxConstraints(maxHeight: context.height(0.8)),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    context.primaryColor.withValues(alpha: 0.05),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: context.primaryColor.withValues(alpha: 0.2),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.menu_book_rounded,
+                          color: context.primaryColor,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
                           child: Text(
                             title,
-                            style: context.shiori.text.section.copyWith(
-                              color: context.shiori.color.fg,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: context.primaryColor,
                             ),
                           ),
                         ),
-                      ),
-                      IconButton(
-                        tooltip: MaterialLocalizations.of(context)
-                            .closeButtonTooltip,
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Symbols.close_rounded),
-                      ),
-                    ],
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: context.primaryColor.withValues(alpha: 0.7),
+                          ),
+                          tooltip: context.l10n.close,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Expanded(child: ChapterListWidget(chapter: chapter)),
-              ],
+                  Flexible(child: ChapterListWidget(chapter: chapter)),
+                ],
+              ),
             ),
-          ),
-        ),
-      ),
-    ),
-    transitionBuilder: (context, animation, _, child) => SlideTransition(
-      position: Tween(begin: const Offset(1, 0), end: Offset.zero).animate(
-        CurvedAnimation(parent: animation, curve: ShioriMotion.enterCurve),
-      ),
-      child: child,
-    ),
+          );
+        },
+      );
+      onChanged?.call(true);
+    },
+    icon: Icon(Icons.format_list_numbered_outlined, color: iconColor),
   );
 }
 
@@ -127,7 +110,6 @@ class ChapterListWidget extends StatefulWidget {
 
 class _ChapterListWidgetState extends State<ChapterListWidget> {
   final controller = ScrollController();
-  final _listController = ListController();
   late final chapterList = widget.chapter.manga.value!
       .getSortedFilteredChapters();
   late final currentChapIndex = chapterList.indexWhere(
@@ -145,21 +127,17 @@ class _ChapterListWidgetState extends State<ChapterListWidget> {
 
   @override
   void dispose() {
-    _listController.dispose();
     controller.dispose();
     super.dispose();
   }
 
-  /// Opens on the current chapter, a third of the way down: the list
-  /// controller lands on the item itself, where dividing the scroll extent
-  /// by the count landed wherever the rows' heights disagreed.
   Future<void> _jumpTo() async {
+    // Wait for the scroll view to layout before jumping
     await WidgetsBinding.instance.endOfFrame;
-    if (!mounted || currentChapIndex < 0) return;
-    _listController.jumpToItem(
-      index: currentChapIndex,
-      scrollController: controller,
-      alignment: 0.3,
+    controller.jumpTo(
+      controller.position.maxScrollExtent /
+          chapterList.length *
+          currentChapIndex,
     );
   }
 
@@ -168,26 +146,20 @@ class _ChapterListWidgetState extends State<ChapterListWidget> {
     return Scrollbar(
       interactive: true,
       thickness: 8,
-      radius: const Radius.circular(ShioriShape.card),
+      radius: const Radius.circular(10),
       controller: controller,
       child: CustomScrollView(
         controller: controller,
-        // A short list takes its own height rather than the sheet's whole;
-        // a long one stays lazy, and fills it.
-        shrinkWrap: chapterList.length <= 20,
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.all(ShioriSpace.s12),
+            padding: const EdgeInsets.all(12),
             sliver: SuperSliverList.builder(
-              listController: _listController,
               itemCount: chapterList.length,
               itemBuilder: (context, index) {
                 final chapter = chapterList[index];
-                final currentChap =
-                    currentChapIndex >= 0 &&
-                    chapter == chapterList[currentChapIndex];
+                final currentChap = chapter == chapterList[currentChapIndex];
                 return Padding(
-                  padding: const EdgeInsets.only(bottom: ShioriSpace.s8),
+                  padding: const EdgeInsets.only(bottom: 6),
                   child: ChapterListTile(
                     chapter: chapter,
                     currentChap: currentChap,
@@ -220,25 +192,24 @@ class _ChapterListTileState extends State<ChapterListTile> {
   late bool isBookmarked = chapter.isBookmarked!;
   @override
   Widget build(BuildContext context) {
-    final tokens = context.shiori;
-    final c = tokens.color;
-    final isRead = chapter.isRead!;
-    final meta = tokens.caption;
     return AnimatedContainer(
-      duration: ShioriMotion.of(context, ShioriMotion.standard),
+      duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
         color: widget.currentChap
-            ? c.accent.withValues(alpha: Alphas.accentTint)
+            ? context.primaryColor.withValues(alpha: 0.15)
             : Colors.transparent,
-        borderRadius: BorderRadius.circular(ShioriShape.card),
+        borderRadius: BorderRadius.circular(12),
         border: widget.currentChap
-            ? Border.all(color: c.accent, width: 1.5)
+            ? Border.all(
+                color: context.primaryColor.withValues(alpha: 0.4),
+                width: 1.5,
+              )
             : null,
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(ShioriShape.card),
+          borderRadius: BorderRadius.circular(12),
           onTap: () async {
             if (!widget.currentChap) {
               Navigator.pop(context);
@@ -250,10 +221,7 @@ class _ChapterListTileState extends State<ChapterListTile> {
             }
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: ShioriSpace.s16,
-              vertical: ShioriSpace.s12,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
                 // Chapter indicator
@@ -261,44 +229,35 @@ class _ChapterListTileState extends State<ChapterListTile> {
                   width: 4,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: isRead ? c.hairline : c.accent,
-                    borderRadius: BorderRadius.circular(ShioriShape.badge),
+                    color: chapter.isRead!
+                        ? context.textColor.withValues(alpha: Alphas.disabled)
+                        : context.primaryColor,
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                const SizedBox(width: ShioriSpace.s12),
+                const SizedBox(width: 12),
                 // Chapter content
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Named as in the series' own list: by its title, or
-                      // by its number when the series is set to.
-                      Consumer(
-                        builder: (context, ref, _) {
-                          final manga = chapter.manga.value!;
-                          return Text(
-                            chapterDisplayName(
-                              chapter,
-                              manga,
-                              context.l10n,
-                              byNumber: ref.watch(
-                                chapterNumberDisplayProvider.select(
-                                  (ids) => ids.contains(manga.id),
-                                ),
-                              ),
-                            ),
-                            style: tokens.text.row.copyWith(
-                              fontWeight: widget.currentChap
-                                  ? FontWeight.w700
-                                  : FontWeight.w500,
-                              color: isRead ? c.fgMuted : c.fg,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                          );
-                        },
+                      Text(
+                        chapter.name!,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: widget.currentChap
+                              ? FontWeight.bold
+                              : FontWeight.w500,
+                          color: chapter.isRead!
+                              ? context.isLight
+                                    ? Colors.black.withValues(alpha: 0.4)
+                                    : Colors.white.withValues(alpha: 0.4)
+                              : null,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                       ),
-                      const SizedBox(height: ShioriSpace.s4),
+                      const SizedBox(height: 4),
                       Row(
                         children: [
                           if (!(chapter.manga.value!.isLocalArchive ?? false))
@@ -317,13 +276,23 @@ class _ChapterListTileState extends State<ChapterListTile> {
                                     ? Row(
                                         children: [
                                           Icon(
-                                            Symbols.access_time_rounded,
-                                            fill: 1,
+                                            Icons.access_time_rounded,
                                             size: 12,
-                                            color: c.fgMuted,
+                                            color: context.textColor.withValues(
+                                              alpha: Alphas.secondary,
+                                            ),
                                           ),
-                                          const SizedBox(width: ShioriSpace.s4),
-                                          Text(dateText, style: meta),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            dateText,
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: context.textColor
+                                                  .withValues(
+                                                    alpha: Alphas.secondary,
+                                                  ),
+                                            ),
+                                          ),
                                         ],
                                       )
                                     : const SizedBox.shrink();
@@ -339,21 +308,35 @@ class _ChapterListTileState extends State<ChapterListTile> {
                                         chapter.dateUpload!.isNotEmpty))
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: ShioriSpace.s8,
+                                      horizontal: 6,
                                     ),
-                                    child: Text('·', style: meta),
+                                    child: Text(
+                                      '•',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: context.textColor.withValues(
+                                          alpha: Alphas.secondary,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 Icon(
-                                  Symbols.group_rounded,
-                                  fill: 1,
+                                  Icons.group_rounded,
                                   size: 12,
-                                  color: c.fgMuted,
+                                  color: context.textColor.withValues(
+                                    alpha: Alphas.secondary,
+                                  ),
                                 ),
-                                const SizedBox(width: ShioriSpace.s4),
+                                const SizedBox(width: 4),
                                 Flexible(
                                   child: Text(
                                     chapter.scanlator!,
-                                    style: meta,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: context.textColor.withValues(
+                                        alpha: Alphas.secondary,
+                                      ),
+                                    ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -365,16 +348,15 @@ class _ChapterListTileState extends State<ChapterListTile> {
                           chapter.lastPageRead!.isNotEmpty &&
                           chapter.lastPageRead != "1")
                         Padding(
-                          padding: const EdgeInsets.only(top: ShioriSpace.s4),
+                          padding: const EdgeInsets.only(top: 4),
                           child: Row(
                             children: [
                               Icon(
-                                Symbols.bookmark_rounded,
-                                fill: 1,
+                                Icons.bookmark_rounded,
                                 size: 12,
-                                color: c.accentInk,
+                                color: context.primaryColor,
                               ),
-                              const SizedBox(width: ShioriSpace.s4),
+                              const SizedBox(width: 4),
                               Text(
                                 chapter.manga.value!.itemType == ItemType.anime
                                     ? context.l10n.episode_progress(
@@ -390,7 +372,11 @@ class _ChapterListTileState extends State<ChapterListTile> {
                                             ? chapter.lastPageRead!
                                             : "${((double.tryParse(chapter.lastPageRead!) ?? 0) * 100).toStringAsFixed(0)} %",
                                       ),
-                                style: meta.copyWith(color: c.accentInk),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: context.primaryColor,
+                                ),
                               ),
                             ],
                           ),
@@ -398,22 +384,36 @@ class _ChapterListTileState extends State<ChapterListTile> {
                     ],
                   ),
                 ),
-                const SizedBox(width: ShioriSpace.s12),
+                const SizedBox(width: 12),
                 // Bookmark button
-                IconButton(
-                  tooltip: isBookmarked
-                      ? context.l10n.remove_bookmark
-                      : context.l10n.bookmark,
-                  onPressed: () {
-                    setState(() => isBookmarked = !isBookmarked);
-                    chapterRepository.save(
-                      chapter..isBookmarked = isBookmarked,
-                    );
-                  },
-                  icon: Icon(
-                    Symbols.bookmark_rounded,
-                    fill: isBookmarked ? 1 : 0,
-                    color: isBookmarked ? c.accentInk : c.fgMuted,
+                Consumer(
+                  builder: (context, ref, child) => Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () {
+                        setState(() {
+                          isBookmarked = !isBookmarked;
+                        });
+                        chapterRepository.save(
+                          chapter..isBookmarked = isBookmarked,
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Icon(
+                          isBookmarked
+                              ? Icons.bookmark_rounded
+                              : Icons.bookmark_outline_rounded,
+                          color: isBookmarked
+                              ? context.primaryColor
+                              : context.textColor.withValues(
+                                  alpha: Alphas.disabled,
+                                ),
+                          size: 22,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],

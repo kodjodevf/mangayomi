@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/cached_network.dart';
@@ -67,15 +66,19 @@ class DetailBanner extends ConsumerWidget {
                           width: context.width(1),
                           height: AppBar().preferredSize.height,
                           color: context.isTablet
-                              ? context.shiori.color.ink0
-                              : context.shiori.color.ink0.withValues(alpha: 0.9),
+                              ? Theme.of(context).scaffoldBackgroundColor
+                              : Theme.of(
+                                  context,
+                                ).scaffoldBackgroundColor.withValues(alpha: 0.9),
                         ),
                         Container(
                           width: context.width(1),
                           height: 465,
                           color: context.isTablet
-                              ? context.shiori.color.ink0
-                              : context.shiori.color.ink0.withValues(alpha: 0.9),
+                              ? Theme.of(context).scaffoldBackgroundColor
+                              : Theme.of(
+                                  context,
+                                ).scaffoldBackgroundColor.withValues(alpha: 0.9),
                         ),
                       ],
                     ),
@@ -84,7 +87,7 @@ class DetailBanner extends ConsumerWidget {
                       child: Container(
                         width: context.width(1),
                         height: 100,
-                        color: context.shiori.color.ink0,
+                        color: Theme.of(context).scaffoldBackgroundColor,
                       ),
                     ),
                   ],

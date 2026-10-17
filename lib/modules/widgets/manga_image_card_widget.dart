@@ -1,8 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/widgets/in_library_badge.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
@@ -74,13 +72,31 @@ class MangaImageCardWidget extends ConsumerWidget {
       onSecondaryTap: () => _toMangaRdD(ref, context, true),
       children: [
         Container(
-          color: hasData && libraryManga!.favorite! ? inLibraryVeil : null,
+          color: hasData && libraryManga!.favorite!
+              ? Colors.black.withValues(alpha: 0.5)
+              : null,
         ),
         if (hasData && libraryManga!.favorite!)
-          const PositionedDirectional(
-            top: ShioriSpace.s4,
-            start: ShioriSpace.s4,
-            child: InLibraryBadge(),
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: context.primaryColor,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Icon(
+                    Icons.collections_bookmark_outlined,
+                    size: 16,
+                    color: context.dynamicWhiteBlackColor,
+                  ),
+                ),
+              ),
+            ),
           ),
         if (!isComfortableGrid)
           BottomTextWidget(
@@ -142,9 +158,9 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
             ),
           );
     return Padding(
-      padding: const EdgeInsets.all(ShioriSpace.s8),
+      padding: const EdgeInsets.all(8.0),
       child: Material(
-        borderRadius: BorderRadius.circular(ShioriShape.cover),
+        borderRadius: BorderRadius.circular(5),
         color: Colors.transparent,
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -180,13 +196,11 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
           child: Row(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: ShioriSpace.s12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Stack(
                   children: [
                     Material(
-                      borderRadius: BorderRadius.circular(ShioriShape.cover),
+                      borderRadius: BorderRadius.circular(5),
                       color: Colors.transparent,
                       clipBehavior: Clip.antiAlias,
                       child: Image(
@@ -200,7 +214,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                       height: 55,
                       width: 40,
                       color: hasData && libraryManga!.favorite!
-                          ? inLibraryVeil
+                          ? Colors.black.withValues(alpha: 0.5)
                           : null,
                     ),
                   ],
@@ -217,9 +231,22 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                 ),
               ),
               if (hasData && libraryManga!.favorite!)
-                const Padding(
-                  padding: EdgeInsets.all(ShioriSpace.s8),
-                  child: InLibraryBadge(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: context.primaryColor,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.collections_bookmark_outlined,
+                        size: 16,
+                        color: context.dynamicWhiteBlackColor,
+                      ),
+                    ),
+                  ),
                 ),
             ],
           ),

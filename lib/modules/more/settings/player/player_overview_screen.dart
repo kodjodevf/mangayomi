@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
@@ -25,11 +24,12 @@ class PlayerOverviewScreen extends StatelessWidget {
               Consumer(
                 builder: (context, ref, _) {
                   final useTvPlayer = ref.watch(tvPlayerStyleProvider);
-                  return ShioriSwitchRow(
-                    autofocus: true,
-                    icon: Symbols.smart_display_rounded,
-                    title: context.l10n.tv_player_beta,
-                    subtitle: context.l10n.tv_player_beta_subtitle,
+                  return SwitchListTile(
+                    secondary: const Icon(Icons.smart_display_outlined),
+                    title: Text(context.l10n.tv_player_beta),
+                    subtitle: const Text(
+                      'On: dedicated TV player.  Off: original (desktop) player.',
+                    ),
                     value: useTvPlayer,
                     onChanged: (v) =>
                         ref.read(tvPlayerStyleProvider.notifier).set(v),
@@ -39,31 +39,31 @@ class PlayerOverviewScreen extends StatelessWidget {
             ListTileWidget(
               title: l10n.internal_player,
               subtitle: l10n.internal_player_info,
-              icon: Symbols.play_circle_rounded,
+              icon: Icons.play_circle_outline_outlined,
               onTap: () => context.push('/playerMode'),
             ),
             ListTileWidget(
               title: l10n.decoder,
               subtitle: l10n.decoder_info,
-              icon: Symbols.memory_rounded,
+              icon: Icons.memory_outlined,
               onTap: () => context.push('/playerDecoderScreen'),
             ),
             ListTileWidget(
               title: l10n.video_audio,
               subtitle: l10n.video_audio_info,
-              icon: Symbols.audiotrack_rounded,
+              icon: Icons.audiotrack_outlined,
               onTap: () => context.push('/playerAudioScreen'),
             ),
             ListTileWidget(
               title: l10n.custom_buttons,
               subtitle: l10n.custom_buttons_info,
-              icon: Symbols.terminal_rounded,
+              icon: Icons.terminal_outlined,
               onTap: () => context.push('/customButtonScreen'),
             ),
             ListTileWidget(
               title: l10n.advanced,
               subtitle: l10n.advanced_info,
-              icon: Symbols.code_rounded,
+              icon: Icons.code_outlined,
               onTap: () => context.push('/playerAdvancedScreen'),
             ),
           ],
