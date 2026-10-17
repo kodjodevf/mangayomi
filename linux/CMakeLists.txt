@@ -186,9 +186,12 @@ endforeach(bundled_library)
 
 # Copy the native assets provided by the build.dart from all packages.
 set(NATIVE_ASSETS_DIR "${PROJECT_BUILD_DIR}native_assets/linux/")
+# hook/build.dart also builds the image decoder, but without the image library
+# headers, so its copy decodes nothing. Keep the one built above instead.
 install(DIRECTORY "${NATIVE_ASSETS_DIR}"
    DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
-   COMPONENT Runtime)
+   COMPONENT Runtime
+   PATTERN "libsubsampling_scale_image_view.so" EXCLUDE)
 
 # Fully re-copy the assets directory on each build to avoid having stale files
 # from a previous install.
