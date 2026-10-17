@@ -16,12 +16,12 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/crash_report.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/m_extension_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:path/path.dart' as path;
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../providers/storage_provider.dart';
 
@@ -636,10 +636,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
 
   Future<void> _openMExtensionServerRelease() async {
     final l10n = l10nLocalizations(context)!;
-    if (!await launchUrl(
-      Uri.parse(mExtensionServerReleaseUrl),
-      mode: LaunchMode.externalApplication,
-    )) {
+    if (!await ExternalBrowser.open(mExtensionServerReleaseUrl)) {
       botToast(l10n.could_not_launch_apk_bridge_page);
     }
   }

@@ -9,11 +9,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class DownloadFileScreen extends ConsumerStatefulWidget {
   final (String, String, String, List<dynamic>) updateAvailable;
@@ -529,7 +529,7 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
   }
 
   Future<void> _launchInBrowser(Uri url) async {
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+    if (!await ExternalBrowser.open(url.toString())) {
       throw 'Could not launch $url';
     }
   }
