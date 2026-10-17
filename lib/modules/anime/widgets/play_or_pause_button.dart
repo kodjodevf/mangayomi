@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
@@ -26,7 +28,7 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
   late final animation = AnimationController(
     vsync: this,
     value: widget.controller.player.state.playing ? 1 : 0,
-    duration: const Duration(milliseconds: 200),
+    duration: ShioriMotion.standard,
   );
 
   StreamSubscription<bool>? subscription;
@@ -62,6 +64,8 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
   @override
   Widget build(BuildContext context) {
     return IconButton(
+      // One button for both: the icon shows which, the label names the pair.
+      tooltip: '${context.l10n.play} / ${context.l10n.pause}',
       focusNode: widget.focusNode,
       onPressed: widget.controller.player.playOrPause,
       iconSize: iconSize,

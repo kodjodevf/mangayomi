@@ -268,7 +268,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String mass_migration_finding_matches(Object source, Object language) {
-    return 'Finding matches in $source • $language';
+    return 'Finding matches in $source · $language';
   }
 
   @override
@@ -576,6 +576,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pure_black_dark_mode => 'Pure black dark mode';
+
+  @override
+  String get tint_surfaces_with_palette => 'Tint surfaces with the palette';
+
+  @override
+  String get tint_surfaces_with_palette_subtitle =>
+      'Colours backgrounds, cards and bars with the chosen palette, as before. Off, they stay neutral and the palette only colours the accent.';
+
+  @override
+  String get novel_reader_font => 'Novel reader font';
+
+  @override
+  String get novel_reader_font_subtitle =>
+      'Used by the novel reader\'s Default font. The rest of the app uses Figtree.';
 
   @override
   String get timestamp => 'Timestamp';
@@ -2508,7 +2522,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get app_lock_description =>
-      'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.';
+      'When app lock is enabled, you will be asked to authenticate every time you open the app or switch back to it from the background.';
 
   @override
   String get keep_screen_on => 'Keep screen on';
@@ -3583,4 +3597,753 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tv_player_beta => 'TV player (beta)';
+
+  @override
+  String get mark_as_read => 'Mark as read';
+
+  @override
+  String get mark_as_unread => 'Mark as unread';
+
+  @override
+  String get bookmark => 'Bookmark';
+
+  @override
+  String get remove_bookmark => 'Remove bookmark';
+
+  @override
+  String get mark_below_as_read => 'Mark below as read';
+
+  @override
+  String get previous_chapter => 'Previous chapter';
+
+  @override
+  String get pin => 'Pin';
+
+  @override
+  String get go_forward => 'Go forward';
+
+  @override
+  String get invert_selection => 'Invert selection';
+
+  @override
+  String get show_password => 'Show password';
+
+  @override
+  String get hide_password => 'Hide password';
+
+  @override
+  String get always_on_top => 'Always on top';
+
+  @override
+  String get mute => 'Mute';
+
+  @override
+  String get unmute => 'Unmute';
+
+  @override
+  String get exit_fullscreen => 'Exit fullscreen';
+
+  @override
+  String get play => 'Play';
+
+  @override
+  String get pause => 'Pause';
+
+  @override
+  String get switch_tracker => 'Switch tracker';
+
+  @override
+  String get rename => 'Rename';
+
+  @override
+  String get show_category => 'Show category';
+
+  @override
+  String get hide_category => 'Hide category';
+
+  @override
+  String get update_with_library => 'Update with the library';
+
+  @override
+  String get skip_updates => 'Skip when updating the library';
+
+  @override
+  String get show_repository => 'Show repository';
+
+  @override
+  String get hide_repository => 'Hide repository';
+
+  @override
+  String get set_as_default => 'Set as default';
+
+  @override
+  String get change_display_mode => 'Change display mode';
+
+  @override
+  String get back_to_results => 'Back to results';
+
+  @override
+  String get activity => 'Activity';
+
+  @override
+  String get group_nav_destinations => 'Group the navigation';
+
+  @override
+  String get group_nav_destinations_subtitle =>
+      'One Library tab with a switcher for manga, anime and novels, and one Activity tab for updates and history';
+
+  @override
+  String get search_all_sources => 'Search every source';
+
+  @override
+  String get continue_reading => 'Continue';
+
+  @override
+  String get show_continue_shelf => 'Show what you are reading';
+
+  @override
+  String get show_continue_shelf_subtitle =>
+      'A row of the series in progress at the top of the library';
+
+  @override
+  String get excluded => 'Excluded';
+
+  @override
+  String get remove_filter => 'Remove filter';
+
+  @override
+  String get current_chapter => 'Current chapter';
+
+  @override
+  String get series => 'Series';
+
+  @override
+  String get chapters_read => 'Chapters read';
+
+  @override
+  String get search_settings => 'Search settings';
+
+  @override
+  String get search_settings_hint =>
+      'Type a setting\'s name, or a word from its description';
+
+  @override
+  String reading_mode_for(String name) {
+    return 'Reading mode for $name';
+  }
+
+  @override
+  String default_is(String name) {
+    return 'Default: $name';
+  }
+
+  @override
+  String get use_default => 'Use the default';
+
+  @override
+  String get is_the_default => 'This is your default reading mode';
+
+  @override
+  String get page_layout => 'Page layout and zoom';
+
+  @override
+  String get reader_section_mode_summary =>
+      'Default mode, scale, background, preloading, fullscreen';
+
+  @override
+  String get reader_section_layout_summary =>
+      'Wide pages, double pages, landscape zoom';
+
+  @override
+  String get reader_section_navigation_summary =>
+      'Tap zones, layout, hiding the menu, page flash';
+
+  @override
+  String get reader_section_swipe_summary =>
+      'What swiping a chapter does in a list';
+
+  @override
+  String get all_reader_settings => 'All reader settings';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String get removed_from_history => 'Removed from history';
+
+  @override
+  String n_new_chapters(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new chapters',
+      one: '1 new chapter',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get page_color_white => 'White';
+
+  @override
+  String get page_color_black => 'Black';
+
+  @override
+  String get page_color_night => 'Night';
+
+  @override
+  String get page_color_sepia => 'Sepia';
+
+  @override
+  String get page_color_coffee => 'Coffee';
+
+  @override
+  String get page_color_silver => 'Silver';
+
+  @override
+  String get page_color_graphite => 'Graphite';
+
+  @override
+  String get page_color_mist => 'Mist';
+
+  @override
+  String get page_color_paper => 'Paper';
+
+  @override
+  String get page_color_sky => 'Sky';
+
+  @override
+  String get page_color_mint => 'Mint';
+
+  @override
+  String get page_color_honey => 'Honey';
+
+  @override
+  String next_episode_in(int seconds) {
+    return 'Next episode in $seconds s';
+  }
+
+  @override
+  String get stay_on_this_episode => 'Stay on this episode';
+
+  @override
+  String get got_it => 'Got it';
+
+  @override
+  String get gesture_brightness =>
+      'Slide up or down on the left for brightness';
+
+  @override
+  String get gesture_volume => 'Slide up or down on the right for volume';
+
+  @override
+  String get gesture_double_tap_skip =>
+      'Double-tap a side to skip back or ahead';
+
+  @override
+  String get gesture_drag_seek => 'Drag sideways to move through the video';
+
+  @override
+  String get gesture_long_press_speed => 'Press and hold to speed up';
+
+  @override
+  String get tap_to_continue => 'Tap anywhere to continue';
+
+  @override
+  String get empty_library_hint =>
+      'Find a series in Browse and add it to your library.';
+
+  @override
+  String get more_filters => 'More filters';
+
+  @override
+  String get resume_all_downloads => 'Resume all downloads';
+
+  @override
+  String get download_failed => 'Failed';
+
+  @override
+  String get download_all => 'Download all';
+
+  @override
+  String n_chapters_queued(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count chapters queued',
+      one: '1 chapter queued',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String n_selected(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get settings_general_summary => 'Language, library updates, network';
+
+  @override
+  String get settings_appearance_summary => 'Theme, palette, navigation, type';
+
+  @override
+  String get settings_novel_reader_summary =>
+      'Font, page colour, text to speech';
+
+  @override
+  String get settings_player_summary => 'Playback, subtitles, audio, decoder';
+
+  @override
+  String get settings_downloads_summary =>
+      'Location, Wi-Fi only, simultaneous downloads';
+
+  @override
+  String get settings_tracking_summary =>
+      'MyAnimeList, AniList, Kitsu and more';
+
+  @override
+  String get settings_syncing_summary =>
+      'Keep your progress in step on your own server';
+
+  @override
+  String get settings_browse_summary => 'Extensions, repositories, sources';
+
+  @override
+  String get settings_security_summary => 'App lock';
+
+  @override
+  String get settings_about_summary => 'Version, updates, error reports';
+
+  @override
+  String minutes_left(int minutes) {
+    return '≈ $minutes min left';
+  }
+
+  @override
+  String get group_playback => 'Playback';
+
+  @override
+  String get group_subtitles => 'Subtitles';
+
+  @override
+  String get group_screen => 'Screen';
+
+  @override
+  String get aniskip => 'AniSkip';
+
+  @override
+  String seconds_short(int n) {
+    return '$n s';
+  }
+
+  @override
+  String unknown_language_codes(String codes) {
+    return 'Unknown language code: $codes';
+  }
+
+  @override
+  String get group_network => 'Network';
+
+  @override
+  String get group_discord => 'Discord';
+
+  @override
+  String invalid_url(String scheme) {
+    return 'Enter a URL starting with $scheme';
+  }
+
+  @override
+  String get group_cleanup => 'Clean up';
+
+  @override
+  String remove_entries_confirm(int n) {
+    return 'Remove $n entries and their history? This can\'t be undone.';
+  }
+
+  @override
+  String get group_library_maintenance => 'Library maintenance';
+
+  @override
+  String get group_diagnostics => 'Diagnostics';
+
+  @override
+  String get update_no_notes => 'No release notes.';
+
+  @override
+  String update_download_failed(String error) {
+    return 'Download failed: $error';
+  }
+
+  @override
+  String get update_network_error => 'Network error while downloading.';
+
+  @override
+  String get update_write_failed => 'Couldn\'t write the APK file.';
+
+  @override
+  String get deselect_all => 'Deselect all';
+
+  @override
+  String update_failed_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entries couldn\'t be updated',
+      one: '1 entry couldn\'t be updated',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sort_ascending => 'Ascending';
+
+  @override
+  String get sort_descending => 'Descending';
+
+  @override
+  String get not_downloaded => 'Not downloaded';
+
+  @override
+  String n_tracked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entries tracked',
+      one: '1 entry tracked',
+      zero: 'Nothing tracked yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get no_tracker_connected => 'No tracker connected';
+
+  @override
+  String get no_tracker_connected_message =>
+      'Log in to a service in Settings › Tracking to see its lists here.';
+
+  @override
+  String get edit_metadata => 'Edit metadata';
+
+  @override
+  String get group_modes => 'Modes';
+
+  @override
+  String get group_app => 'App';
+
+  @override
+  String get group_sources_services => 'Sources and services';
+
+  @override
+  String n_sources(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sources',
+      one: '1 source',
+      zero: 'No sources',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tv_player_beta_subtitle =>
+      'On: the player made for the TV remote. Off: the original player.';
+
+  @override
+  String get anime_only_beta_subtitle =>
+      'Hide manga and novels across the app. Turn off to show everything.';
+
+  @override
+  String download_queue_start_failed(String error) {
+    return 'Could not start the download queue: $error';
+  }
+
+  @override
+  String get group_interface => 'Interface';
+
+  @override
+  String get group_navigation => 'Navigation';
+
+  @override
+  String get tv_home_beta_subtitle =>
+      'An anime home in rows (continue, new episodes, categories) instead of the flat grid';
+
+  @override
+  String get cloudflare_bypass_proxy_hint =>
+      'Optional FlareSolverr or Byparr address';
+
+  @override
+  String get cloudflare_bypass_proxy_message =>
+      'A FlareSolverr or Byparr endpoint. Leave empty to turn it off.';
+
+  @override
+  String get group_explore => 'Explore';
+
+  @override
+  String get explore_recommendations_subtitle => 'Titles like this one';
+
+  @override
+  String get explore_related_subtitle =>
+      'Its adaptations, spin-offs and other versions';
+
+  @override
+  String get explore_watch_order_subtitle =>
+      'The order to watch the whole story in';
+
+  @override
+  String get explore_sequels_subtitle => 'What comes after, from your tracker';
+
+  @override
+  String get tap_zone_menu => 'Menu';
+
+  @override
+  String get tap_zone_previous => 'Previous';
+
+  @override
+  String get tap_zone_next => 'Next';
+
+  @override
+  String get back_to_series => 'Back to the series';
+
+  @override
+  String get keyboard_shortcuts => 'Keyboard shortcuts';
+
+  @override
+  String get shortcut_previous_page => 'Previous page';
+
+  @override
+  String get shortcut_next_page => 'Next page';
+
+  @override
+  String get shortcut_toggle_bars => 'Show or hide the bars';
+
+  @override
+  String get shortcut_zoom_in => 'Zoom in';
+
+  @override
+  String get shortcut_zoom_out => 'Zoom out';
+
+  @override
+  String get shortcut_zoom_reset => 'Fit the page';
+
+  @override
+  String get shortcut_leave => 'Leave the reader';
+
+  @override
+  String get shortcut_show => 'Show these shortcuts';
+
+  @override
+  String get color_red => 'Red';
+
+  @override
+  String get color_blue => 'Blue';
+
+  @override
+  String get color_opacity => 'Opacity';
+
+  @override
+  String get volume_keys_paging => 'Turn pages with the volume buttons';
+
+  @override
+  String get volume_keys_paging_ios =>
+      'The volume is held at half while reading, so both buttons work, and comes back as it was when you leave.';
+
+  @override
+  String get volume_keys_inverted => 'Invert the volume buttons';
+
+  @override
+  String get reader_orientation => 'Screen orientation';
+
+  @override
+  String get orientation_free => 'Follow the device';
+
+  @override
+  String get orientation_portrait => 'Portrait';
+
+  @override
+  String get orientation_landscape => 'Landscape';
+
+  @override
+  String get screen_brightness => 'Screen brightness';
+
+  @override
+  String get screen_brightness_system => 'Follows the system';
+
+  @override
+  String get shortcut_play_pause => 'Play or pause';
+
+  @override
+  String shortcut_seek_back(int n) {
+    return 'Back $n s';
+  }
+
+  @override
+  String shortcut_seek_forward(int n) {
+    return 'Forward $n s';
+  }
+
+  @override
+  String get shortcut_volume_up => 'Volume up';
+
+  @override
+  String get shortcut_volume_down => 'Volume down';
+
+  @override
+  String get shortcut_mute => 'Mute or unmute';
+
+  @override
+  String shortcut_skip_intro(int n) {
+    return 'Skip the intro ($n s)';
+  }
+
+  @override
+  String get shortcut_previous_frame => 'Previous frame';
+
+  @override
+  String get shortcut_next_frame => 'Next frame';
+
+  @override
+  String get shortcut_shaders => 'Anime4K shaders';
+
+  @override
+  String get shortcut_shaders_off => 'Shaders off';
+
+  @override
+  String get autoplay_next_on => 'Autoplay next episode: on';
+
+  @override
+  String get autoplay_next_off => 'Autoplay next episode: off';
+
+  @override
+  String get subtitle_preview_sample => 'The journey goes on.';
+
+  @override
+  String get text_style => 'Style';
+
+  @override
+  String get code_editor => 'Code editor';
+
+  @override
+  String get code_view_code => 'Code';
+
+  @override
+  String get code_view_test => 'Test';
+
+  @override
+  String get code_view_console => 'Console';
+
+  @override
+  String get code_function => 'Function';
+
+  @override
+  String get code_page => 'Page';
+
+  @override
+  String get code_query => 'Query';
+
+  @override
+  String get code_url => 'URL';
+
+  @override
+  String get code_html => 'HTML';
+
+  @override
+  String get code_execute => 'Run';
+
+  @override
+  String get code_executing => 'Running…';
+
+  @override
+  String get code_no_result => 'No result yet';
+
+  @override
+  String get code_no_result_message => 'Run a function to see what it returns.';
+
+  @override
+  String get code_console => 'Console';
+
+  @override
+  String get code_no_logs => 'No logs yet';
+
+  @override
+  String get tv_empty_anime_library => 'Your anime library is empty';
+
+  @override
+  String get tv_empty_anime_library_hint =>
+      'Add anime from Browse to fill your home';
+
+  @override
+  String get browse_anime => 'Browse anime';
+
+  @override
+  String get no_episodes_yet => 'No episodes yet';
+
+  @override
+  String get filler => 'Filler';
+
+  @override
+  String get obsolete => 'Obsolete';
+
+  @override
+  String every_n_days(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Every $n days',
+      one: 'Every day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get update_interval_unknown => 'No estimate';
+
+  @override
+  String get group_reading => 'Reading';
+
+  @override
+  String get group_reading_watching => 'Reading and watching';
+
+  @override
+  String get novel_reader => 'Novel reader';
+
+  @override
+  String get all_languages => 'All languages';
+
+  @override
+  String get custom_dns_title => 'Custom DNS';
+
+  @override
+  String get custom_dns_system => 'System DNS';
+
+  @override
+  String get calendar_format_month => 'Month';
+
+  @override
+  String get calendar_format_two_weeks => '2 weeks';
+
+  @override
+  String get calendar_format_week => 'Week';
+
+  @override
+  String get read_count => 'Read';
+
+  @override
+  String get watched_count => 'Watched';
+
+  @override
+  String get source_code_error_title => 'This source\'s code did not run';
+
+  @override
+  String source_code_error_failed(String what) {
+    return '$what failed: the screen fell back so readers can go on';
+  }
+
+  @override
+  String get copy_error => 'Copy';
+
+  @override
+  String get error_copied => 'Error copied';
 }

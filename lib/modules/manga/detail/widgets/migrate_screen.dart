@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
+import 'package:mangayomi/modules/browse/sources/widgets/source_list_tile.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
@@ -221,16 +223,17 @@ class _MigrationSourceSearchScreenState
         children: [
           ListTile(
             dense: true,
+            leading: SourceIcon(iconUrl: widget.source.iconUrl),
             title: Text(widget.source.name!),
             subtitle: Text(
-              completeLanguageName(widget.source.lang!),
-              style: const TextStyle(fontSize: 10),
+              languageName(context, widget.source.lang!),
+              style: context.shiori.caption,
             ),
           ),
           _isLoading
               ? const SizedBox(
                   height: 60,
-                  child: Center(child: CircularProgressIndicator()),
+                  child: Center(child: ShioriLoading.inline()),
                 )
               : Builder(
                   builder: (context) {
@@ -270,7 +273,11 @@ class _MigrationSourceSearchScreenState
                     }
                     return SizedBox(
                       height: 60,
-                      child: Center(child: Text(l10n.no_result)),
+                      child: ShioriEmptyState(
+                        icon: Symbols.search_off_rounded,
+                        title: l10n.no_result,
+                        compact: true,
+                      ),
                     );
                   },
                 ),
@@ -311,7 +318,10 @@ class _MigrationMangaGlobalImageCardState
       source: widget.source,
       autofocus: widget.autofocus,
       // Padding outside the scale so the focused cover grows into it.
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: ShioriSpace.s8,
+        vertical: ShioriSpace.s8,
+      ),
       onActivate: () => _showMigrateDialog(context, l10n),
     );
   }
@@ -329,12 +339,10 @@ class _MigrationMangaGlobalImageCardState
             showDialog(
               context: context,
               builder: (ctx) {
-                return AlertDialog(
-                  title: Text(
-                    widget.trackSearch == null
-                        ? l10n.migrate_confirm
-                        : l10n.track_library_add_confirm,
-                  ),
+                return ShioriDialog(
+                  title: widget.trackSearch == null
+                      ? l10n.migrate_confirm
+                      : l10n.track_library_add_confirm,
                   content: preview.chapters != null
                       ? SizedBox(
                           height: ctx.height(0.5),
@@ -347,50 +355,22 @@ class _MigrationMangaGlobalImageCardState
                                   itemCount: preview.chapters!.length,
                                   itemBuilder: (context, index) {
                                     final chapter = preview.chapters![index];
-                                    return ListTile(
-                                      title: Row(
-                                        children: [
-                                          Flexible(
-                                            child: Text(
-                                              preview.chapters![index].name!,
-                                              style: const TextStyle(
-                                                fontSize: 13,
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      subtitle: Row(
-                                        children: [
-                                          Text(
-                                            chapter.dateUpload == null ||
-                                                    chapter.dateUpload!.isEmpty
-                                                ? ""
-                                                : dateFormat(
-                                                    chapter.dateUpload!,
-                                                    ref: ref,
-                                                    context: context,
-                                                  ),
-                                            style: const TextStyle(
-                                              fontSize: 11,
-                                            ),
-                                          ),
-                                          if (chapter.scanlator?.isNotEmpty ??
-                                              false)
-                                            Row(
-                                              children: [
-                                                const Text(' • '),
-                                                Text(
-                                                  chapter.scanlator!,
-                                                  style: TextStyle(
-                                                    fontSize: 11,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                        ],
-                                      ),
+                                    final date =
+                                        chapter.dateUpload?.isNotEmpty ?? false
+                                        ? dateFormat(
+                                            chapter.dateUpload!,
+                                            ref: ref,
+                                            context: context,
+                                          )
+                                        : '';
+                                    return ShioriListRow(
+                                      title: chapter.name!,
+                                      subtitle: [
+                                        if (date.isNotEmpty) date,
+                                        if (chapter.scanlator?.isNotEmpty ??
+                                            false)
+                                          chapter.scanlator!,
+                                      ].join(' · '),
                                     );
                                   },
                                 ),
@@ -400,33 +380,27 @@ class _MigrationMangaGlobalImageCardState
                         )
                       : Text(l10n.n_chapters(0)),
                   actions: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(ctx);
-                          },
-                          child: Text(l10n.cancel),
-                        ),
-                        const SizedBox(width: 15),
-                        Consumer(
-                          builder: (context, ref, child) => TextButton(
-                            onPressed: () async {
-                              if (widget.trackSearch == null) {
-                                await _migrateManga(preview);
-                                if (ctx.mounted) {
-                                  Navigator.pop(ctx);
-                                  Navigator.pop(ctx);
-                                }
-                              } else {
-                                await _addTrackManga(context);
-                              }
-                            },
-                            child: Text(l10n.ok),
-                          ),
-                        ),
-                      ],
+                    ShioriButton.quiet(
+                      label: l10n.cancel,
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
+                    Consumer(
+                      builder: (context, ref, child) => ShioriButton(
+                        label: widget.trackSearch == null
+                            ? l10n.migrate
+                            : l10n.add,
+                        onPressed: () async {
+                          if (widget.trackSearch == null) {
+                            await _migrateManga(preview);
+                            if (ctx.mounted) {
+                              Navigator.pop(ctx);
+                              Navigator.pop(ctx);
+                            }
+                          } else {
+                            await _addTrackManga(context);
+                          }
+                        },
+                      ),
                     ),
                   ],
                 );
@@ -444,8 +418,8 @@ class _MigrationMangaGlobalImageCardState
         return StatefulBuilder(
           builder: (context, setState) {
             final l10n = l10nLocalizations(context)!;
-            return AlertDialog(
-              title: Text(l10n.set_categories),
+            return ShioriDialog(
+              title: l10n.set_categories,
               content: SizedBox(
                 width: context.width(0.8),
                 child: StreamBuilder(
@@ -482,82 +456,70 @@ class _MigrationMangaGlobalImageCardState
                 ),
               ),
               actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        context.push(
-                          "/categories",
-                          extra: (
-                            true,
-                            widget.oldManga.itemType == ItemType.manga
-                                ? 0
-                                : widget.oldManga.itemType == ItemType.anime
-                                ? 1
-                                : 2,
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      child: Text(l10n.edit),
-                    ),
-                    Row(
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(l10n.cancel),
-                        ),
-                        const SizedBox(width: 15),
-                        TextButton(
-                          onPressed: () async {
-                            final model = widget.manga;
-                            final manga = Manga(
-                              name: model.name,
-                              artist: model.artist,
-                              author: model.author,
-                              description: model.description,
-                              imageUrl: model.imageUrl,
-                              link: model.link,
-                              genre: model.genre,
-                              status: model.status ?? Status.unknown,
-                              source: widget.source.name,
-                              lang: widget.source.lang,
+                ShioriButton.quiet(
+                  label: l10n.edit,
+                  onPressed: () {
+                    context.push(
+                      "/categories",
+                      extra: (
+                        true,
+                        widget.oldManga.itemType == ItemType.manga
+                            ? 0
+                            : widget.oldManga.itemType == ItemType.anime
+                            ? 1
+                            : 2,
+                      ),
+                    );
+                    Navigator.pop(context);
+                  },
+                ),
+                ShioriButton.quiet(
+                  label: l10n.cancel,
+                  onPressed: () => Navigator.pop(context),
+                ),
+                ShioriButton(
+                  label: l10n.ok,
+                  onPressed: () async {
+                    final model = widget.manga;
+                    final manga = Manga(
+                      name: model.name,
+                      artist: model.artist,
+                      author: model.author,
+                      description: model.description,
+                      imageUrl: model.imageUrl,
+                      link: model.link,
+                      genre: model.genre,
+                      status: model.status ?? Status.unknown,
+                      source: widget.source.name,
+                      lang: widget.source.lang,
+                      itemType: widget.oldManga.itemType,
+                      favorite: true,
+                      categories: categoryIds,
+                      dateAdded: DateTime.now().millisecondsSinceEpoch,
+                      updatedAt: DateTime.now().millisecondsSinceEpoch,
+                      sourceId: widget.source.id,
+                    );
+                    final mangaId = await mangaRepository.put(manga);
+                    if (mangaId != -1) {
+                      await ref
+                          .read(
+                            trackStateProvider(
+                              track: null,
                               itemType: widget.oldManga.itemType,
-                              favorite: true,
-                              categories: categoryIds,
-                              dateAdded: DateTime.now().millisecondsSinceEpoch,
-                              updatedAt: DateTime.now().millisecondsSinceEpoch,
-                              sourceId: widget.source.id,
-                            );
-                            final mangaId = await mangaRepository.put(manga);
-                            if (mangaId != -1) {
-                              await ref
-                                  .read(
-                                    trackStateProvider(
-                                      track: null,
-                                      itemType: widget.oldManga.itemType,
-                                      widgetRef: ref,
-                                    ).notifier,
-                                  )
-                                  .setTrackSearch(
-                                    widget.trackSearch!,
-                                    mangaId,
-                                    widget.trackSearch!.syncId!,
-                                  );
-                            }
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            }
-                          },
-                          child: Text(l10n.ok),
-                        ),
-                      ],
-                    ),
-                  ],
+                              widgetRef: ref,
+                            ).notifier,
+                          )
+                          .setTrackSearch(
+                            widget.trackSearch!,
+                            mangaId,
+                            widget.trackSearch!.syncId!,
+                          );
+                    }
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    }
+                  },
                 ),
               ],
             );

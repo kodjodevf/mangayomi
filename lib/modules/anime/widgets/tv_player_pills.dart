@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -74,7 +75,7 @@ class TvPlayerPillBar extends StatelessWidget {
                     for (final q in quality)
                       _TrackPill(
                         accent: accent,
-                        icon: Icons.high_quality_outlined,
+                        icon: Symbols.high_quality_rounded,
                         label: q.label,
                         selected: q.selected,
                         onTap: q.onSelect,
@@ -90,7 +91,7 @@ class TvPlayerPillBar extends StatelessWidget {
                     for (final s in subs)
                       _TrackPill(
                         accent: accent,
-                        icon: Icons.subtitles_outlined,
+                        icon: Symbols.subtitles_rounded,
                         label: _trackLabel(s.title, s.language, s.id),
                         selected: s.id == current.subtitle.id,
                         onTap: () => player.setSubtitleTrack(
@@ -120,7 +121,7 @@ class TvPlayerPillBar extends StatelessWidget {
                 children.add(
                   _TrackPill(
                     accent: accent,
-                    icon: Icons.settings,
+                    icon: Symbols.settings_rounded,
                     label: context.l10n.settings,
                     selected: false,
                     onTap: onSettings,
@@ -180,7 +181,7 @@ class _SpeedPill extends StatelessWidget {
       valueListenable: speedListenable,
       builder: (context, rate, _) => _TrackPill(
         accent: accent,
-        icon: Icons.speed,
+        icon: Symbols.speed_rounded,
         label: _formatRate(rate),
         selected: (rate - 1.0).abs() > 0.001,
         onTap: () => _showMenu(context, rate),
@@ -298,13 +299,13 @@ class _SpeedMenuState extends State<_SpeedMenu> {
                     ),
                     child: InkWell(
                       onTap: () => _pick(i),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(ShioriShape.card),
                       child: Ink(
                         decoration: BoxDecoration(
                           color: i == _index
                               ? widget.accent.withValues(alpha: 0.18)
                               : null,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(ShioriShape.card),
                         ),
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -319,7 +320,11 @@ class _SpeedMenuState extends State<_SpeedMenu> {
                             ),
                             if ((widget.presets[i] - widget.current).abs() <
                                 0.001)
-                              Icon(Icons.check, color: widget.accent),
+                              Icon(
+                                Symbols.check_rounded,
+                                fill: 1,
+                                color: widget.accent,
+                              ),
                           ],
                         ),
                       ),
@@ -382,10 +387,10 @@ class _AutoplayToggleState extends State<TvAutoplayToggle> {
       child: GestureDetector(
         onTap: widget.onToggle,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
+          duration: ShioriMotion.fast,
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(ShioriShape.sheet),
             // Theme tint on focus (like the settings toggles), not an outline.
             color: _focused
                 ? widget.accent.withValues(alpha: 0.25)
@@ -420,7 +425,7 @@ class AutoplaySwitch extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
+            duration: ShioriMotion.standard,
             width: w - 4,
             height: trackH,
             decoration: BoxDecoration(
@@ -431,7 +436,7 @@ class AutoplaySwitch extends StatelessWidget {
             ),
           ),
           AnimatedAlign(
-            duration: const Duration(milliseconds: 180),
+            duration: ShioriMotion.standard,
             curve: Curves.easeOut,
             alignment: on ? Alignment.centerRight : Alignment.centerLeft,
             child: Container(
@@ -449,7 +454,8 @@ class AutoplaySwitch extends StatelessWidget {
                 ],
               ),
               child: Icon(
-                on ? Icons.play_arrow : Icons.pause,
+                fill: 1,
+                on ? Symbols.play_arrow_rounded : Symbols.pause_rounded,
                 color: Colors.white,
                 size: 16,
               ),
@@ -500,6 +506,8 @@ class _TrackPillState extends State<_TrackPill> {
         : widget.selected
         ? widget.accent.withValues(alpha: 0.4)
         : Colors.white.withValues(alpha: 0.15);
+    // Read on the accent once focused; white on the video otherwise.
+    final fg = _focused ? ShioriColors.onFill(widget.accent) : Colors.white;
     return Focus(
       onFocusChange: (f) => setState(() => _focused = f),
       onKeyEvent: (node, event) {
@@ -512,24 +520,28 @@ class _TrackPillState extends State<_TrackPill> {
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
+          duration: ShioriMotion.fast,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(ShioriShape.card),
             color: bg,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                widget.selected ? Icons.check : widget.icon,
-                color: Colors.white,
+                fill: 1,
+                widget.selected ? Symbols.check_rounded : widget.icon,
+                color: fg,
                 size: 14,
               ),
               const SizedBox(width: 6),
               Text(
                 widget.label,
-                style: const TextStyle(color: Colors.white, fontSize: 12),
+                style: TextStyle(
+                  color: fg,
+                  fontSize: ShioriType.reference.meta.fontSize,
+                ),
               ),
             ],
           ),

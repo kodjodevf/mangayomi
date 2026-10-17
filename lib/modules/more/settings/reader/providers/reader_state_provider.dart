@@ -94,6 +94,67 @@ class BackgroundColorState extends _$BackgroundColorState {
   }
 }
 
+/// The screen's brightness while a reader is open, 1 to 100, or -1 to
+/// leave it to the system.
+@riverpod
+class ReaderScreenBrightnessState extends _$ReaderScreenBrightnessState {
+  @override
+  int build() {
+    return settingsRepository.current.readerScreenBrightness ?? -1;
+  }
+
+  /// [end] saves it; while a slider moves, only the screen follows.
+  void set(int value, {bool end = true}) {
+    state = value;
+    if (end) {
+      settingsRepository.update((s) => s.readerScreenBrightness = value);
+    }
+  }
+}
+
+/// How the readers hold the screen: 0 follows the device, 1 portrait,
+/// 2 landscape.
+@riverpod
+class ReaderOrientationState extends _$ReaderOrientationState {
+  @override
+  int build() {
+    return settingsRepository.current.readerOrientation ?? 0;
+  }
+
+  void set(int value) {
+    state = value;
+    settingsRepository.update((s) => s.readerOrientation = value);
+  }
+}
+
+/// Whether the volume buttons turn the reader's pages.
+@riverpod
+class VolumeKeysPagingState extends _$VolumeKeysPagingState {
+  @override
+  bool build() {
+    return settingsRepository.current.volumeKeysPaging ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.volumeKeysPaging = value);
+  }
+}
+
+/// Whether volume up turns forward rather than back.
+@riverpod
+class VolumeKeysInvertedState extends _$VolumeKeysInvertedState {
+  @override
+  bool build() {
+    return settingsRepository.current.volumeKeysInverted ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.volumeKeysInverted = value);
+  }
+}
+
 @riverpod
 class UsePageTapZonesState extends _$UsePageTapZonesState {
   @override
@@ -315,7 +376,7 @@ class NovelTapToScrollState extends _$NovelTapToScrollState {
 @riverpod
 class ShowPagesNumberState extends _$ShowPagesNumberState {
   @override
-  build() {
+  bool build() {
     return settingsRepository.current.showPagesNumber ?? true;
   }
 

@@ -126,19 +126,23 @@ class HistoryRepository {
   Future<void> deleteAll(List<int> ids) =>
       dbWriteQueue.run(() => isar.writeTxn(() => isar.historys.deleteAll(ids)));
 
-  Future<void> delete(WidgetRef ref, int id) => dbWriteQueue.run(() {
+  Future<void> delete(WidgetRef ref, int id) =>
+      deleteRecorded(ref.read(synchingProvider(syncId: 1).notifier), id);
+
+  /// [delete] with the sync notifier already in hand, for a caller that may
+  /// no longer hold a ref when the deletion is written (a deferred removal
+  /// committed as its screen goes away).
+  Future<void> deleteRecorded(Synching sync, int id) => dbWriteQueue.run(() {
     isar.writeTxnSync(() {
       final clientId = isar.historys.getSync(id)?.clientId;
       isar.historys.deleteSync(id);
-      ref
-          .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(
-            ActionType.removeHistory,
-            id,
-            "{}",
-            false,
-            clientId: clientId,
-          );
+      sync.addChangedPart(
+        ActionType.removeHistory,
+        id,
+        "{}",
+        false,
+        clientId: clientId,
+      );
     });
   });
 

@@ -9,6 +9,7 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,7 +30,10 @@ import 'package:mangayomi/modules/anime/utils/playback_media.dart';
 import 'package:mangayomi/modules/anime/utils/video_prefs.dart';
 import 'package:mangayomi/modules/anime/providers/state_provider.dart';
 import 'package:mangayomi/modules/anime/utils/player_lifecycle.dart';
+import 'package:mangayomi/modules/anime/utils/player_shortcuts.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
+import 'package:mangayomi/modules/anime/widgets/gesture_hint_overlay.dart';
+import 'package:mangayomi/modules/anime/widgets/up_next_chip.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_controls.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_pills.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_settings_panel.dart';
@@ -51,6 +55,11 @@ import 'package:mangayomi/modules/more/settings/player/providers/player_audio_st
 import 'package:mangayomi/modules/more/settings/player/providers/player_decoder_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mangayomi/modules/manga/detail/providers/chapter_display.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/chapter_bar_title.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/reader_app_bar.dart'
+    show buildWebViewData;
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -106,16 +115,25 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     super.dispose();
   }
 
-  Widget _buildLoading() {
+  Widget _buildLoading() =>
+      _stateScaffold(const ProgressCenter(), onImage: true);
+
+  /// The loading, failure and no-video states, under a bar that says which
+  /// episode is being opened, as the player's own top bar does. The bodies
+  /// hold nothing to focus first, so the back button takes the remote's
+  /// focus on TV (an IconButton, as only it takes autofocus); it also gives
+  /// the system bars back.
+  Widget _stateScaffold(Widget body, {bool onImage = false}) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      extendBodyBehindAppBar: true,
+      backgroundColor: onImage ? Colors.black : context.shiori.color.ink0,
+      extendBodyBehindAppBar: onImage,
       appBar: AppBar(
-        title: const Text(''),
+        backgroundColor: onImage ? Colors.transparent : null,
+        titleSpacing: 0,
+        title: ChapterBarTitle(chapter: episode, onImage: onImage),
         leading: IconButton(
-          color: Colors.white,
-          // Lets the remote bail out of a hung load. IconButton, not
-          // BackButton, because only it takes autofocus.
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          color: onImage ? Colors.white : null,
           autofocus: isTv,
           icon: const BackButtonIcon(),
           onPressed: () {
@@ -124,8 +142,17 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
           },
         ),
       ),
-      body: const ProgressCenter(),
+      body: body,
     );
+  }
+
+  /// The source's own page for the episode, where a viewer can see why it
+  /// gives no video; local files have none.
+  VoidCallback? get _openWebView {
+    if (episode.manga.value?.isLocalArchive ?? true) return null;
+    final data = buildWebViewData(episode);
+    if (data == null) return null;
+    return () => context.push("/mangawebview", extra: data);
   }
 
   @override
@@ -149,17 +176,19 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
         final (videos, isLocal, infoHashList, mpvDirectory) = data;
         _infoHashList = infoHashList;
         if (videos.isEmpty && !(episode.manga.value!.isLocalArchive ?? false)) {
-          return Scaffold(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            appBar: AppBar(
-              title: const Text(''),
-              leading: BackButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
+          // No video is a failure like another: say so, and offer to try
+          // again or to look at the source's page.
+          final openWebView = _openWebView;
+          return _stateScaffold(
+            ErrorState(
+              message: context.l10n.video_list_empty,
+              autofocusRetry: false,
+              onRetry: () =>
+                  ref.invalidate(getVideoListProvider(episode: episode)),
+              secondaryLabel: openWebView == null ? null : context.l10n.webview,
+              secondaryIcon: Symbols.public_rounded,
+              onSecondary: openWebView,
             ),
-            body: Center(child: Text(context.l10n.video_list_empty)),
           );
         }
 
@@ -185,28 +214,18 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
         if (serversData.isRefreshing || serversData.isReloading) {
           return _buildLoading();
         }
-        return Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          appBar: AppBar(
-            title: const Text(''),
-            leading: IconButton(
-              // The error body is just text, so focus this or the remote is stuck.
-              // IconButton, not BackButton, because only it takes autofocus.
-              autofocus: isTv,
-              icon: const BackButtonIcon(),
-              onPressed: () {
-                restoreSystemUI();
-                Navigator.pop(context);
-              },
-            ),
-          ),
-          // The back button above already claims TV focus, so the retry must
-          // not also ask for it; it stays reachable with the d-pad.
-          body: ErrorState(
+        final openWebView = _openWebView;
+        // The back button above already claims TV focus, so the retry must
+        // not also ask for it; it stays reachable with the d-pad.
+        return _stateScaffold(
+          ErrorState(
             autofocusRetry: false,
             detail: error.toString(),
             onRetry: () =>
                 ref.invalidate(getVideoListProvider(episode: episode)),
+            secondaryLabel: openWebView == null ? null : context.l10n.webview,
+            secondaryIcon: Symbols.public_rounded,
+            onSecondary: openWebView,
           ),
         );
       },
@@ -257,6 +276,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         WidgetsBindingObserver {
   bool _routeExitInProgress = false;
   bool _videoTextureVisible = true;
+
+  /// The gesture guide, over the first video on a phone only: a desktop
+  /// has a pointer and a TV a remote, neither of which swipes.
+  late bool _showGestureHint = !isDesktop && !isTv && shouldShowGestureHint();
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
   late final useLibass = ref.read(useLibassStateProvider);
   late final useMpvConfig = ref.read(useMpvConfigStateProvider);
@@ -405,6 +428,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   bool get hasNextEpisode => _streamController.hasNextEpisode;
 
+  /// The viewer chose to stay on this episode from the "up next" chip, so
+  /// it does not roll on into the next one when it ends.
+  final ValueNotifier<bool> _stayOnEpisode = ValueNotifier(false);
+
   late final StreamSubscription<bool> _completed = _player.stream.completed
       .listen(_handlePlaybackCompleted);
 
@@ -427,7 +454,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (!mounted) return;
 
     final hasNext = hasNextEpisode;
-    if (hasNext && ref.read(autoPlayNextEpisodeProvider)) {
+    if (hasNext &&
+        ref.read(autoPlayNextEpisodeProvider) &&
+        !_stayOnEpisode.value) {
       pushToNewEpisode(context, _streamController.getNextEpisode());
       return;
     }
@@ -655,62 +684,47 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         await showDialog(
           context: context,
           builder: (context) {
-            return AlertDialog(
-              title: Text(data[0]),
+            return ShioriDialog(
+              title: data[0],
               content: StatefulBuilder(
-                builder: (context, setState) => SizedBox(
-                  height: 200,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      NumberPicker(
-                        value: currentValue,
-                        minValue: start,
-                        maxValue: stop,
-                        step: step,
-                        haptics: true,
-                        textMapper: (numberText) =>
-                            data[1].replaceAll("%d", numberText),
-                        onChanged: (value) =>
-                            setState(() => currentValue = value),
-                      ),
-                    ],
-                  ),
+                // The picker's own height, not a fixed one around it.
+                builder: (context, setState) => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    NumberPicker(
+                      value: currentValue,
+                      minValue: start,
+                      maxValue: stop,
+                      step: step,
+                      haptics: true,
+                      textMapper: (numberText) =>
+                          data[1].replaceAll("%d", numberText),
+                      onChanged: (value) =>
+                          setState(() => currentValue = value),
+                    ),
+                  ],
                 ),
               ),
               actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () async {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        context.l10n.cancel,
-                        style: TextStyle(color: context.primaryColor),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () async {
-                        final namePtr = data[5].toNativeUtf8();
-                        final valuePtr = calloc<Int64>(1)..value = currentValue;
-                        nativePlayer.mpv.mpv_set_property(
-                          nativePlayer.ctx,
-                          namePtr.cast(),
-                          generated.mpv_format.MPV_FORMAT_INT64,
-                          valuePtr.cast(),
-                        );
-                        malloc.free(namePtr);
-                        malloc.free(valuePtr);
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        context.l10n.ok,
-                        style: TextStyle(color: context.primaryColor),
-                      ),
-                    ),
-                  ],
+                ShioriButton.quiet(
+                  label: context.l10n.cancel,
+                  onPressed: () => Navigator.pop(context),
+                ),
+                ShioriButton(
+                  label: context.l10n.ok,
+                  onPressed: () async {
+                    final namePtr = data[5].toNativeUtf8();
+                    final valuePtr = calloc<Int64>(1)..value = currentValue;
+                    nativePlayer.mpv.mpv_set_property(
+                      nativePlayer.ctx,
+                      namePtr.cast(),
+                      generated.mpv_format.MPV_FORMAT_INT64,
+                      valuePtr.cast(),
+                    );
+                    malloc.free(namePtr);
+                    malloc.free(valuePtr);
+                    Navigator.pop(context);
+                  },
                 ),
               ],
             );
@@ -1619,6 +1633,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
     unawaited(playerCleanup.catchError((_) {}));
     _currentPosition.dispose();
+    _stayOnEpisode.dispose();
     _currentTotalDuration.dispose();
     _video.dispose();
     _playbackSpeed.dispose();
@@ -1724,7 +1739,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     return [
       SettingsEntry(
         label: context.l10n.video_quality,
-        icon: Icons.high_quality_outlined,
+        icon: Symbols.high_quality_rounded,
         valueBuilder: (context) => ValueListenableBuilder<VideoPrefs?>(
           valueListenable: _video,
           builder: (context, v, _) => Text(
@@ -1737,7 +1752,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       ),
       SettingsEntry(
         label: context.l10n.video_audio,
-        icon: Icons.audiotrack_outlined,
+        icon: Symbols.audiotrack_rounded,
         valueBuilder: (context) => StreamBuilder<Track>(
           stream: _player.stream.track,
           initialData: _player.state.track,
@@ -1768,7 +1783,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       ),
       SettingsEntry(
         label: context.l10n.video_subtitle,
-        icon: Icons.subtitles_outlined,
+        icon: Symbols.subtitles_rounded,
         valueBuilder: (context) => StreamBuilder<Track>(
           stream: _player.stream.track,
           initialData: _player.state.track,
@@ -1794,14 +1809,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       ),
       SettingsEntry(
         label: context.l10n.appearance,
-        icon: Icons.palette_outlined,
+        icon: Symbols.palette_rounded,
         contentBuilder: (context) =>
             _appearanceSectionWidget(context, hasSubtitleTrack),
       ),
       if (_chapterMarks.value.isNotEmpty)
         SettingsEntry(
           label: context.l10n.chapters,
-          icon: Icons.list_outlined,
+          icon: Symbols.list_rounded,
           valueBuilder: (context) => ValueListenableBuilder<int?>(
             valueListenable: _currentChapterMark,
             builder: (context, i, _) => Text(
@@ -1814,7 +1829,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         ),
       SettingsEntry(
         label: context.l10n.playback_speed,
-        icon: Icons.speed_outlined,
+        icon: Symbols.speed_rounded,
         valueBuilder: (context) => ValueListenableBuilder<double>(
           valueListenable: _playbackSpeed,
           builder: (context, v, _) => Text('${v}x'),
@@ -1823,7 +1838,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       ),
       SettingsEntry(
         label: context.l10n.video_fit,
-        icon: Icons.fit_screen_outlined,
+        icon: Symbols.fit_screen_rounded,
         valueBuilder: (context) => ValueListenableBuilder<BoxFit>(
           valueListenable: _fit,
           builder: (context, fit, _) => Text(fitShortLabel(fit)),
@@ -1837,7 +1852,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       if (useMpvConfig)
         SettingsEntry(
           label: context.l10n.shaders,
-          icon: Icons.auto_awesome_outlined,
+          icon: Symbols.auto_awesome_rounded,
           valueBuilder: (context) => ValueListenableBuilder<String>(
             valueListenable: _selectedShader,
             builder: (context, shader, _) => Text(
@@ -1851,14 +1866,27 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       if (useMpvConfig)
         SettingsEntry(
           label: context.l10n.statistics,
-          icon: Icons.query_stats_outlined,
+          icon: Symbols.query_stats_rounded,
           contentBuilder: (context) => _statsSectionWidget(context),
         ),
       if (useMpvConfig && (_customButtons.value?.isNotEmpty ?? false))
         SettingsEntry(
           label: context.l10n.custom_buttons,
-          icon: Icons.terminal_outlined,
+          icon: Symbols.terminal_rounded,
           contentBuilder: (context) => _customButtonsSectionWidget(context),
+        ),
+      if (isDesktop)
+        SettingsEntry(
+          label: context.l10n.keyboard_shortcuts,
+          icon: Symbols.keyboard_rounded,
+          onTap: (sheetContext) {
+            Navigator.pop(sheetContext);
+            showPlayerShortcuts(
+              context,
+              skipIntroSeconds: ref.read(defaultSkipIntroLengthStateProvider),
+              shaders: useMpvConfig,
+            );
+          },
         ),
       if (_usesCompactPortraitControls(context))
         SettingsEntry(
@@ -1895,26 +1923,30 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     await _syncActiveSubtitleTrackFromMpv();
     if (!context.mounted) return;
     final entries = _buildSettingsEntries(context);
-    _player.pause();
     if (isDesktop) {
+      // The popup leaves the video playing, or paused, as it was.
       await showDesktopPlayerSettingsMenu(
         context,
         title: context.l10n.settings,
         entries: entries,
         initialIndex: initialIndex,
       );
-      setState(() {});
-      _player.play();
+      if (mounted) setState(() {});
       return;
     }
+    // The sheet covers the video, so it pauses it, and plays it again only
+    // if it was playing: a paused video stays paused.
+    final wasPlaying = _player.state.playing;
+    _player.pause();
     await showUnifiedPlayerSettings(
       context,
       title: context.l10n.settings,
       entries: entries,
       initialIndex: initialIndex,
     );
+    if (!mounted) return;
     setState(() {});
-    _player.play();
+    if (wasPlaying) _player.play();
   }
 
   bool _computeHasSubtitleTrack() {
@@ -2140,11 +2172,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     }
     _fit.value = fit;
     _key.currentState?.update(fit: fit);
-    BotToast.showText(
+    final label = fit.name.toUpperCase();
+    BotToast.showCustomText(
       onlyOne: true,
       align: const Alignment(0, 0.90),
       duration: const Duration(seconds: 1),
-      text: fit.name.toUpperCase(),
+      toastBuilder: (_) => ShioriOverlayLabel(label),
     );
   }
 
@@ -2170,29 +2203,25 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         if (iconOnly) {
           return MobilePlayerCompactSeekControl(
             key: const ValueKey('mobile-player-portrait-seek-button'),
-            tooltip: value?.currentTitle ?? '+$defaultSkipIntroLength seconds',
+            tooltip:
+                value?.currentTitle ??
+                context.l10n.shortcut_seek_forward(defaultSkipIntroLength),
             seconds: value == null ? defaultSkipIntroLength : null,
             onPressed: onPressed,
             onLongPress: onLongPress,
           );
         }
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          child: SizedBox(
-            height: 35,
-            child: ElevatedButton(
-              onPressed: onPressed,
-              onLongPress: onLongPress,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  label,
-                  style: const TextStyle(fontWeight: FontWeight.w100),
-                ),
-              ),
-            ),
-          ),
+        // One of the player's pills, so it reads over the video in either
+        // theme; a long press is the custom button's second action.
+        return PlayerPillButton(
+          icon: Symbols.fast_forward_rounded,
+          label: label,
+          tooltip:
+              value?.currentTitle ??
+              context.l10n.shortcut_seek_forward(defaultSkipIntroLength),
+          onTap: onPressed,
+          onLongPress: onLongPress,
         );
       },
     );
@@ -2218,45 +2247,35 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         void onPressed() =>
             _openPlayerSettings(context, initialIndex: _chaptersSectionIndex);
 
-        if (iconOnly) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2.5),
-            child: PlayerPillButton(
-              icon: Icons.bookmark_outline,
-              label: label,
-              showLabel: false,
-              tooltip: label,
-              isCompact: true,
-              onTap: onPressed,
-            ),
-          );
-        }
-
+        // The chapter of the video now, as one of the player's pills; the
+        // label is left out where the row is short.
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-          child: SizedBox(
-            height: 35,
-            child: Material(
-              type: MaterialType.transparency,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(8),
-                onTap: onPressed,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    label,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
+          child: PlayerPillButton(
+            icon: Symbols.bookmark_rounded,
+            label: label,
+            showLabel: !iconOnly,
+            tooltip: label,
+            isCompact: iconOnly,
+            onTap: onPressed,
           ),
         );
       },
+    );
+  }
+
+  /// The episode as the series' list names it: its title, or "Episode 3".
+  String _episodeLabel() {
+    final episode = widget.episode;
+    final manga = episode.manga.value;
+    if (manga == null) return episode.name ?? '';
+    return chapterDisplayName(
+      episode,
+      manga,
+      context.l10n,
+      byNumber: ref.watch(
+        chapterNumberDisplayProvider.select((ids) => ids.contains(manga.id)),
+      ),
     );
   }
 
@@ -2265,7 +2284,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       player: _player,
       revealControls: _revealControls,
       title: widget.episode.manga.value?.name ?? '',
-      episodeLabel: widget.episode.name ?? '',
+      episodeLabel: _episodeLabel(),
       // Direct pop, not maybePop: the on-screen back arrow always exits the
       // player, bypassing the PopScope that makes the remote Back hide the
       // panel first.
@@ -2345,7 +2364,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               key: const ValueKey('mobile-player-lock-button'),
               tooltip: context.l10n.lock,
               icon: const Icon(
-                Icons.lock_open_outlined,
+                Symbols.lock_open_rounded,
                 size: mobilePlayerPortraitControlIconSize,
                 color: Colors.white,
               ),
@@ -2376,7 +2395,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           tooltip: context.l10n.fullscreen,
           onPressed: () => _toggleFullscreen(isFullscreen),
           icon: Icon(
-            isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
+            fill: 1,
+            isFullscreen
+                ? Symbols.fullscreen_exit_rounded
+                : Symbols.fullscreen_rounded,
             size: mobilePlayerPortraitControlIconSize,
             color: Colors.white,
           ),
@@ -2408,7 +2430,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                           );
                         },
                         icon: const Icon(
-                          Icons.skip_previous,
+                          Symbols.skip_previous_rounded,
+                          fill: 1,
                           color: Colors.white,
                         ),
                       ),
@@ -2422,74 +2445,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                             _streamController.getNextEpisode(),
                           );
                         },
-                        icon: const Icon(Icons.skip_next, color: Colors.white),
-                      ),
-                    SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: IconButton(
-                        tooltip: '-$skipDuration seconds',
-                        onPressed: () async => await _seekBy(-skipDuration),
-                        icon: Stack(
-                          children: [
-                            const Positioned.fill(
-                              child: Icon(
-                                Icons.rotate_left_outlined,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                            ),
-                            Positioned.fill(
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    skipDuration.toString(),
-                                    style: const TextStyle(
-                                      fontSize: 9,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                        icon: const Icon(
+                          Symbols.skip_next_rounded,
+                          fill: 1,
+                          color: Colors.white,
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 50,
-                      width: 50,
-                      child: IconButton(
-                        tooltip: '+$skipDuration seconds',
-                        onPressed: () async => await _seekBy(skipDuration),
-                        icon: Stack(
-                          children: [
-                            const Positioned.fill(
-                              child: Icon(
-                                Icons.rotate_right_outlined,
-                                color: Colors.white,
-                                size: 30,
-                              ),
-                            ),
-                            Positioned.fill(
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 2),
-                                  child: Text(
-                                    skipDuration.toString(),
-                                    style: const TextStyle(
-                                      fontSize: 9,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    _desktopSeekButton(context, -skipDuration),
+                    _desktopSeekButton(context, skipDuration),
                     CustomMaterialDesktopVolumeButton(controller: _controller),
                     ValueListenableBuilder(
                       valueListenable: _tempPosition,
@@ -2514,6 +2477,49 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           ],
         ),
       ],
+    );
+  }
+
+  /// Seeks [seconds] back (negative) or on, the count drawn in the arrow.
+  Widget _desktopSeekButton(BuildContext context, int seconds) {
+    final back = seconds < 0;
+    final count = seconds.abs();
+    return SizedBox(
+      height: 50,
+      width: 50,
+      child: IconButton(
+        tooltip: back
+            ? context.l10n.shortcut_seek_back(count)
+            : context.l10n.shortcut_seek_forward(count),
+        onPressed: () => _seekBy(seconds),
+        icon: Stack(
+          children: [
+            Positioned.fill(
+              child: Icon(
+                back
+                    ? Symbols.rotate_left_rounded
+                    : Symbols.rotate_right_rounded,
+                color: Colors.white,
+                size: 30,
+              ),
+            ),
+            Positioned.fill(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Text(
+                    '$count',
+                    style: TextStyle(
+                      fontSize: context.shiori.text.badge.fontSize,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -2553,6 +2559,20 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     }
   }
 
+  bool _playAfterOverlay = false;
+
+  /// Pauses while the episode list or the share sheet is open
+  /// ([closed] true once it has closed), and plays again only if it was playing.
+  void _pauseWhileOpen(bool closed) {
+    if (!closed) {
+      _playAfterOverlay = _player.state.playing;
+      _player.pause();
+    } else if (_playAfterOverlay) {
+      _playAfterOverlay = false;
+      _player.play();
+    }
+  }
+
   Widget _topButtonBar(BuildContext context) {
     final compactPortrait = _usesCompactPortraitControls(context);
 
@@ -2562,10 +2582,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           final autoPlay = ref.watch(autoPlayNextEpisodeProvider);
           return Tooltip(
             message: autoPlay
-                ? 'Autoplay next episode: on'
-                : 'Autoplay next episode: off',
+                ? context.l10n.autoplay_next_on
+                : context.l10n.autoplay_next_off,
             child: InkWell(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(ShioriShape.sheet),
               onTap: () =>
                   ref.read(autoPlayNextEpisodeProvider.notifier).toggle(),
               child: Padding(
@@ -2575,7 +2595,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 ),
                 child: AutoplaySwitch(
                   on: autoPlay,
-                  accent: Theme.of(context).colorScheme.primary,
+                  accent: context.shiori.color.accentInk,
                 ),
               ),
             ),
@@ -2589,12 +2609,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         context,
         context.l10n.episodes,
         widget.episode,
-        onChanged: (v) {
-          if (v) {
-            _player.play();
-          } else {
-            _player.pause();
-          }
+        // Wider than tall, the list opens beside the video, which keeps
+        // playing; the sheet from the bottom covers it, so that pauses.
+        onChanged: (closed) {
+          final size = MediaQuery.sizeOf(context);
+          if (closed || size.width <= size.height) _pauseWhileOpen(closed);
         },
         iconColor: Colors.white,
       );
@@ -2603,36 +2622,18 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     Widget shareButton() {
       return btnToShowShareScreenshot(
         widget.episode,
-        onChanged: (v) {
-          if (v) {
-            _player.play();
-          } else {
-            _player.pause();
-          }
-        },
+        onChanged: _pauseWhileOpen,
       );
     }
 
-    final title = ListTile(
-      dense: true,
-      contentPadding: compactPortrait ? EdgeInsets.zero : null,
-      title: Text(
-        widget.episode.manga.value?.name ?? '',
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-        overflow: TextOverflow.ellipsis,
+    // The series and the episode, as the readers' bars and the loading
+    // state name them.
+    final title = Padding(
+      padding: EdgeInsetsDirectional.only(
+        start: compactPortrait ? 0 : ShioriSpace.s8,
+        end: ShioriSpace.s8,
       ),
-      subtitle: Text(
-        widget.episode.name ?? '',
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-          color: Colors.white.withValues(alpha: 0.7),
-        ),
-        overflow: TextOverflow.ellipsis,
-      ),
+      child: ChapterBarTitle(chapter: widget.episode, onImage: true),
     );
 
     return MobilePlayerTopSafeArea(
@@ -2647,8 +2648,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             autoplayButton(),
             if (supportsAlwaysOnTop)
               IconButton(
+                tooltip: context.l10n.always_on_top,
                 icon: Icon(
-                  alwaysOnTop ? Icons.push_pin : Icons.push_pin_outlined,
+                  fill: 1,
+                  alwaysOnTop
+                      ? Symbols.push_pin_rounded
+                      : Symbols.push_pin_rounded,
                   color: Colors.white,
                 ),
                 onPressed: toggleAlwaysOnTop,
@@ -2678,7 +2683,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     initialIndex: _subtitleSectionIndex,
                   ),
                   icon: const Icon(
-                    Icons.closed_caption_outlined,
+                    Symbols.closed_caption_rounded,
                     color: Colors.white,
                   ),
                 ),
@@ -2689,7 +2694,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   tooltip: context.l10n.settings,
                   onPressed: () => _openPlayerSettings(buttonContext),
                   icon: const Icon(
-                    Icons.settings_outlined,
+                    Symbols.settings_rounded,
                     color: Colors.white,
                   ),
                 ),
@@ -2748,7 +2753,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     bottomButtonBarWidget: _desktopBottomButtonBar(context),
                     streamController: _streamController,
                     seekToWidget: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: ShioriSpace.s16,
+                      ),
                       child: Row(children: [_seekToWidget()]),
                     ),
                     tempDuration: (value) {
@@ -2794,7 +2801,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     TextSpan(
                       style: TextStyle(
                         background: Paint()
-                          ..color = Theme.of(context).scaffoldBackgroundColor
+                          ..color = context.shiori.color.ink0
                           ..strokeWidth = 30.0
                           ..strokeJoin = StrokeJoin.round
                           ..style = PaintingStyle.stroke,
@@ -2803,14 +2810,17 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                           ? [
                               TextSpan(
                                 text: " 2X ",
-                                style: const TextStyle(
-                                  fontSize: 16,
+                                style: TextStyle(
+                                  fontSize: context.shiori.text.body.fontSize,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.middle,
-                                child: Icon(Icons.fast_forward),
+                                child: Icon(
+                                  Symbols.fast_forward_rounded,
+                                  fill: 1,
+                                ),
                               ),
                             ]
                           : [],
@@ -2853,20 +2863,69 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               },
             ),
           ),
+        // "Next episode in 12 s" over the last seconds, when the player is set
+        // to roll on: say so, and let the viewer stay.
+        if (hasNextEpisode)
+          Positioned(
+            right: ShioriSpace.s16,
+            bottom: 140,
+            child: Consumer(
+              builder: (context, ref, _) {
+                if (!ref.watch(autoPlayNextEpisodeProvider)) {
+                  return const SizedBox.shrink();
+                }
+                return ValueListenableBuilder<bool>(
+                  valueListenable: _stayOnEpisode,
+                  builder: (context, stay, _) => stay
+                      ? const SizedBox.shrink()
+                      : ValueListenableBuilder<Duration>(
+                          valueListenable: _currentPosition,
+                          builder: (context, position, _) {
+                            final total = _currentTotalDuration.value;
+                            if (total == null || total <= Duration.zero) {
+                              return const SizedBox.shrink();
+                            }
+                            final left = total - position;
+                            if (left <= Duration.zero || left > upNextWindow) {
+                              return const SizedBox.shrink();
+                            }
+                            return UpNextChip(
+                              secondsLeft: left.inSeconds,
+                              onPlayNow: () => pushToNewEpisode(
+                                context,
+                                _streamController.getNextEpisode(),
+                              ),
+                              onCancel: () => _stayOnEpisode.value = true,
+                            );
+                          },
+                        ),
+                );
+              },
+            ),
+          ),
+        if (_showGestureHint)
+          Positioned.fill(
+            child: GestureHintOverlay(
+              onDismiss: () {
+                markGestureHintSeen();
+                setState(() => _showGestureHint = false);
+              },
+            ),
+          ),
       ],
     );
     if (!docked) return player;
     // YouTube-style split: video docks left (a single focusable unit — Left
     // from the panel focuses it, Select toggles play/pause), a gap, then the
     // settings panel on the right.
-    final accent = Theme.of(context).colorScheme.primary;
+    final accent = context.shiori.color.accentInk;
     return ColoredBox(
       color: Colors.black,
       child: Row(
         children: [
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(ShioriSpace.s16),
               child: TvVideoFocusFrame(
                 accent: accent,
                 player: _player,
@@ -2907,11 +2966,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     final name =
         "${episode.manga.value!.name} ${episode.name} - ${_currentPosition.value.toString()}"
             .replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_');
-    await showModalBottomSheet(
-      context: sheetContext,
-      constraints: BoxConstraints(
-        maxWidth: MediaQuery.sizeOf(sheetContext).width,
-      ),
+    await showShioriSheet<void>(
+      sheetContext,
       builder: (context) => ImageActionsSheet(
         onSetCover: (context) async {
           final imageBytes = await screenshot();
@@ -2952,13 +3008,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         // The sheet is its own route, so the player's setState alone
         // would leave the switch showing the old value.
         footer: StatefulBuilder(
-          builder: (context, setSheetState) => SwitchListTile(
+          builder: (context, setSheetState) => ShioriSwitchRow(
+            title: context.l10n.include_subtitles,
+            value: _includeSubtitles,
             onChanged: (value) {
               setState(() => _includeSubtitles = value);
               setSheetState(() {});
             },
-            title: Text(context.l10n.include_subtitles),
-            value: _includeSubtitles,
           ),
         ),
       ),
@@ -2971,6 +3027,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     void Function(bool)? onChanged,
   }) {
     return IconButton(
+      tooltip: context.l10n.share,
       onPressed: () =>
           _showShareScreenshotActions(context, episode, onChanged: onChanged),
       icon: Icon(Icons.adaptive.share, color: Colors.white),

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_track_shape.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
@@ -177,15 +178,16 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         trackHeight: 4.0,
-                        activeTrackColor: Theme.of(context).colorScheme.primary,
+                        activeTrackColor: context.shiori.color.accentInk,
                         inactiveTrackColor: Colors.white.withValues(
                           alpha: 0.22,
                         ),
                         secondaryActiveTrackColor: Colors.white.withValues(
                           alpha: 0.45,
                         ),
-                        overlayColor: Theme.of(context).colorScheme.primary
-                            .withValues(alpha: 0.20),
+                        overlayColor: context.shiori.color.accentInk.withValues(
+                          alpha: 0.20,
+                        ),
                         thumbShape: const _M3SliderThumbShape(),
                         trackShape: CustomTrackShape(
                           currentPosition: clampedValue,
@@ -295,23 +297,22 @@ class _ScrubPreviewBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
+    // Over the video, so on the scrim rather than a theme surface: white
+    // text on a light surface was unreadable in the light theme.
+    final text = context.shiori.text;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(
+        horizontal: ShioriSpace.s12,
+        vertical: ShioriSpace.s4,
+      ),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.92),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: colorScheme.outlineVariant.withValues(alpha: 0.35),
-          width: 1.0,
-        ),
-        boxShadow: [
+        color: ShioriScrim.underText,
+        borderRadius: BorderRadius.circular(ShioriShape.card),
+        boxShadow: const [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.30),
+            color: ShioriScrim.shadow,
             blurRadius: 12,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -320,7 +321,7 @@ class _ScrubPreviewBubble extends StatelessWidget {
         children: [
           Text(
             label,
-            style: (textTheme.labelMedium ?? const TextStyle()).copyWith(
+            style: text.row.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w700,
               fontFeatures: const [FontFeature.tabularFigures()],
@@ -333,10 +334,8 @@ class _ScrubPreviewBubble extends StatelessWidget {
                 chapterLabel!,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w500,
-                  color: colorScheme.primary,
+                style: text.meta.copyWith(
+                  color: Colors.white.withValues(alpha: Alphas.secondary),
                 ),
               ),
             ),

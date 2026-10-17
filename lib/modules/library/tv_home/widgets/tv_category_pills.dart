@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -94,7 +95,7 @@ class _CategoryPillsState extends State<TvCategoryPills> {
                     padding: const EdgeInsets.only(left: 8),
                     child: TvPill(
                       label: context.l10n.category,
-                      icon: Icons.add,
+                      icon: Symbols.add_rounded,
                       onTap: () =>
                           _showAddCategoryDialog(context, widget.categories),
                     ),
@@ -118,80 +119,42 @@ class _CategoryPillsState extends State<TvCategoryPills> {
 /// advertise the categories the user hid, which is most of what hiding is for.
 /// Reached from the "All" pill — hold OK on it, or press Menu while it's
 /// focused. Hiding leaves focus there, so the toast can name the way back.
-void _showHiddenCategoriesDialog(BuildContext context, List<Category> hidden) {
+Future<void> _showHiddenCategoriesDialog(
+  BuildContext context,
+  List<Category> hidden,
+) async {
   if (hidden.isEmpty) {
     botToast('No hidden categories');
     return;
   }
-  showDialog(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      title: Text(context.l10n.hidden_categories),
-      content: SizedBox(
-        width: 380,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (var i = 0; i < hidden.length; i++)
-              ListTile(
-                autofocus: i == 0,
-                title: Text(hidden[i].name ?? ''),
-                trailing: const Icon(Icons.visibility_outlined),
-                onTap: () {
-                  categoryRepository.setHidden(hidden[i], false);
-                  Navigator.pop(dialogContext);
-                },
-              ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(dialogContext),
-          child: Text(context.l10n.close),
-        ),
-      ],
-    ),
+  // Picking one shows it again.
+  final category = await showShioriChoice<Category>(
+    context,
+    title: context.l10n.hidden_categories,
+    options: [
+      for (final c in hidden)
+        ShioriChoice(c, c.name ?? '', icon: Symbols.visibility_rounded),
+    ],
   );
+  if (category != null) categoryRepository.setHidden(category, false);
 }
 
-void _showAddCategoryDialog(BuildContext context, List<Category> existing) {
-  final controller = TextEditingController();
-  bool isExist = false;
-  showDialog(
-    context: context,
-    builder: (context) => StatefulBuilder(
-      builder: (context, setState) => AlertDialog(
-        title: Text(context.l10n.new_category),
-        content: CustomTextFormField(
-          controller: controller,
-          entries: existing,
-          context: context,
-          exist: (v) => setState(() => isExist = v),
-          isExist: isExist,
-          val: (_) => setState(() {}),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(context.l10n.cancel),
-          ),
-          TextButton(
-            onPressed: controller.text.trim().isEmpty || isExist
-                ? null
-                : () {
-                    final category = Category(
-                      forItemType: ItemType.anime,
-                      name: controller.text.trim(),
-                      updatedAt: DateTime.now().millisecondsSinceEpoch,
-                    );
-                    categoryRepository.create(category);
-                    Navigator.pop(context);
-                  },
-            child: const Text('Add'),
-          ),
-        ],
-      ),
+Future<void> _showAddCategoryDialog(
+  BuildContext context,
+  List<Category> existing,
+) async {
+  final name = await promptCategoryName(
+    context,
+    title: context.l10n.new_category,
+    confirmLabel: context.l10n.add,
+    existing: existing,
+  );
+  if (name == null) return;
+  categoryRepository.create(
+    Category(
+      forItemType: ItemType.anime,
+      name: name,
+      updatedAt: DateTime.now().millisecondsSinceEpoch,
     ),
   );
 }

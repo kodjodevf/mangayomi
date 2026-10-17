@@ -1,4 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:shiori/shiori.dart';
+
+/// The map of tap zones drawn over the page: where a tap turns back, turns
+/// on, or shows the bars. Shown on start (when set to) and for a moment
+/// after the reading mode or the layout changes.
+///
+/// Each zone is tinted in a status colour that keeps them apart at a
+/// glance (next in the completed green, previous in the offline orange,
+/// the menu neutral), lightly enough to leave the page readable, and named
+/// on the reader's own label with an arrow or the menu glyph. It used to
+/// say MENU, PREV and NEXT in English over heavy hand-picked colours, and
+/// did not say a tap closes it.
 
 class ReaderNavigationOverlay extends StatelessWidget {
   final int navigationLayout;
@@ -19,70 +32,56 @@ class ReaderNavigationOverlay extends StatelessWidget {
   bool get _shouldInvertVertical =>
       tappingInversion == 2 || tappingInversion == 3;
 
-  Color get _menuColor => const Color(0xCC95818D);
-  Color get _prevColor => const Color(0xCCFF7733);
-  Color get _nextColor => const Color(0xCC84E296);
+  // A zone's tint stands for its action; the label inside names it.
+  static const _menuColor = _Tint.menu;
+  static const _prevColor = _Tint.previous;
+  static const _nextColor = _Tint.next;
 
-  String get _menuText => "MENU";
-  String get _prevText => "PREV";
-  String get _nextText => "NEXT";
+  static const _menuText = _Action.menu;
+  static const _prevText = _Action.previous;
+  static const _nextText = _Action.next;
 
-  Widget _zone(Color color, String text) {
-    return Container(
-      decoration: BoxDecoration(
-        color: color,
-        border: Border.all(color: Colors.black26, width: 0.5),
-      ),
-      child: Center(
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-            shadows: [
-              Shadow(
-                blurRadius: 4.0,
-                color: Colors.black54,
-                offset: Offset(1.0, 1.0),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  Widget _zone(_Tint tint, _Action action) => _Zone(tint: tint, action: action);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: onClose,
-      child: IgnorePointer(
-        ignoring: false,
-        child: Container(
-          color: Colors.transparent,
-          child: switch (navigationLayout) {
-            1 => _buildLShaped(),
-            2 => _buildKindle(),
-            3 => _buildEdge(),
-            4 => _buildRightAndLeft(),
-            5 => _buildDisabled(),
-            _ => _buildDefault(),
-          },
-        ),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: switch (navigationLayout) {
+              1 => _buildLShaped(),
+              2 => _buildKindle(),
+              3 => _buildEdge(),
+              4 => _buildRightAndLeft(),
+              5 => _buildDisabled(),
+              _ => _buildDefault(),
+            },
+          ),
+          // How to be rid of it.
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: MediaQuery.paddingOf(context).bottom + ShioriSpace.s24,
+            child: Center(
+              child: ShioriOverlayLabel(context.l10n.tap_to_continue),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   // Helper values for LTR vs RTL
-  (Color, String) get _hLeft =>
+  (_Tint, _Action) get _hLeft =>
       isRTL ? (_nextColor, _nextText) : (_prevColor, _prevText);
-  (Color, String) get _hRight =>
+  (_Tint, _Action) get _hRight =>
       isRTL ? (_prevColor, _prevText) : (_nextColor, _nextText);
 
-  (Color, String) get _leftZone => _shouldInvertHorizontal ? _hRight : _hLeft;
-  (Color, String) get _rightZone => _shouldInvertHorizontal ? _hLeft : _hRight;
+  (_Tint, _Action) get _leftZone => _shouldInvertHorizontal ? _hRight : _hLeft;
+  (_Tint, _Action) get _rightZone => _shouldInvertHorizontal ? _hLeft : _hRight;
 
   Widget _buildDefault() {
     return Stack(
@@ -201,5 +200,74 @@ class ReaderNavigationOverlay extends StatelessWidget {
 
   Widget _buildDisabled() {
     return SizedBox.expand(child: _zone(_menuColor, _menuText));
+  }
+}
+
+enum _Tint { menu, previous, next }
+
+enum _Action { menu, previous, next }
+
+class _Zone extends StatelessWidget {
+  const _Zone({required this.tint, required this.action});
+
+  final _Tint tint;
+  final _Action action;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.shiori.color;
+    final l10n = context.l10n;
+    final color = switch (tint) {
+      _Tint.next => c.completed.foreground,
+      _Tint.previous => c.offline.foreground,
+      _Tint.menu => c.ink3,
+    };
+    final (IconData icon, String label) = switch (action) {
+      _Action.next => (Symbols.arrow_forward_rounded, l10n.tap_zone_next),
+      _Action.previous => (Symbols.arrow_back_rounded, l10n.tap_zone_previous),
+      _Action.menu => (Symbols.menu_rounded, l10n.tap_zone_menu),
+    };
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.35),
+        border: Border.all(color: c.ink0.withValues(alpha: 0.4), width: 0.5),
+      ),
+      child: Center(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: ShioriScrim.underText,
+            borderRadius: BorderRadius.circular(ShioriShape.pill),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: ShioriSpace.s12,
+              vertical: ShioriSpace.s4,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              spacing: ShioriSpace.s4,
+              children: [
+                Icon(
+                  icon,
+                  size: context.shiori.scaled(18),
+                  color: Colors.white,
+                ),
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.shiori.text.row.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/mass_migration/mass_migration_runner_screen.dart';
@@ -27,11 +28,10 @@ class MassMigrationDestinationScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.mass_migration_destination_source)),
       body: sources.isEmpty
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(l10n.mass_migration_no_destination_sources),
-              ),
+          ? ShioriEmptyState(
+              icon: Symbols.travel_explore_rounded,
+              title: l10n.mass_migration_no_destination_sources,
+              compact: true,
             )
           : ListView.separated(
               padding: tvPageInsets,
@@ -80,11 +80,11 @@ class _DestinationSourceTile extends StatelessWidget {
       subtitle: Text(
         [
           if ((source.lang ?? '').isNotEmpty)
-            completeLanguageName(source.lang!),
+            languageName(context, source.lang!),
           l10n.mass_migration_installed,
-        ].join(' • '),
+        ].join(' · '),
       ),
-      trailing: const Icon(Icons.chevron_right),
+      trailing: const Icon(Symbols.chevron_right_rounded, fill: 1),
     );
     if (isTv) {
       return TvListRow(
