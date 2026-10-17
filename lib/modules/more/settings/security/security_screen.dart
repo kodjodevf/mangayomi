@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
@@ -56,59 +57,37 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.security)),
-      body: SingleChildScrollView(
+      body: ListView(
         padding: tvPageInsets,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SwitchListTile(
-              value: appLockEnabled,
-              title: Text(l10n.app_lock),
-              subtitle: Text(
-                _canCheckBiometrics
+        children: [
+          ShioriSettingsGroup(
+            footer: l10n.app_lock_description,
+            children: [
+              ShioriSwitchRow(
+                autofocus: isTv,
+                icon: Symbols.lock_rounded,
+                title: l10n.app_lock,
+                subtitle: _canCheckBiometrics
                     ? l10n.require_biometric_or_device_credential
                     : l10n.biometric_or_device_credential_not_available,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Theme.of(context).hintColor,
-                ),
-              ),
-              onChanged: _canCheckBiometrics
-                  ? (value) async {
-                      if (value) {
-                        final authenticated = await _authenticate();
-                        if (authenticated) {
-                          ref
-                              .read(appLockEnabledStateProvider.notifier)
-                              .set(true);
-                        }
-                      } else {
-                        final authenticated = await _authenticate();
-                        if (authenticated) {
-                          ref
-                              .read(appLockEnabledStateProvider.notifier)
-                              .set(false);
+                value: appLockEnabled,
+                // Turning the lock either way asks for the device's own
+                // authentication first.
+                onChanged: _canCheckBiometrics
+                    ? (value) async {
+                        if (!await _authenticate()) return;
+                        ref
+                            .read(appLockEnabledStateProvider.notifier)
+                            .set(value);
+                        if (!value) {
                           ref.read(appUnlockedStateProvider.notifier).unlock();
                         }
                       }
-                    }
-                  : null,
-            ),
-
-            const Divider(),
-
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                l10n.app_lock_description,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Theme.of(context).hintColor,
-                ),
+                    : null,
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }

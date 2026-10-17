@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
@@ -9,6 +10,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/browse/extension/extension_screen.dart';
 import 'package:mangayomi/modules/browse/sources/sources_screen.dart';
+import 'package:mangayomi/modules/widgets/entry_badge_chip.dart';
 import 'package:mangayomi/modules/widgets/tv_row_button.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
@@ -47,6 +49,17 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   late TabController _tabBarController;
   late List<BrowseTab> _tabList;
 
+  /// Sources or Extensions, off TV: the media is picked by the segmented
+  /// control above it, so this bar only ever has two tabs. Kept in step with
+  /// [_tabBarController], which stays the one truth for every layout.
+  late final TabController _kindController = TabController(
+    length: 2,
+    initialIndex: _tabList.isEmpty
+        ? 0
+        : _tabList[_tabBarController.index].kind.index,
+    vsync: this,
+  );
+
   // Hide manga & novel from Browse (sources + extensions) on the anime-only TV
   // layout so only anime shows. Recomputed live so toggling "Anime only" updates
   // the tabs without a restart. Defaults to isTv, user-overridable. See #729.
@@ -75,6 +88,17 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
       vsync: this,
     );
     _tabBarController.addListener(_onTabChanged);
+    _kindController.addListener(_onKindChanged);
+  }
+
+  /// A swipe between Sources and Extensions, once it settles, opens that
+  /// kind for the media on show.
+  void _onKindChanged() {
+    if (_kindController.indexIsChanging || _tabList.isEmpty) return;
+    _open(
+      _tabList[_tabBarController.index].type,
+      BrowseTabKind.values[_kindController.index],
+    );
   }
 
   /// The index of the tab somebody asked us to open on, or zero.
@@ -95,6 +119,10 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   }
 
   void _onTabChanged() {
+    if (_tabList.isNotEmpty) {
+      final kind = _tabList[_tabBarController.index].kind.index;
+      if (_kindController.index != kind) _kindController.index = kind;
+    }
     _chekPermission();
     setState(() {
       _textEditingController.clear();
@@ -109,6 +137,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   @override
   void dispose() {
     _tvActiveRow.dispose();
+    _kindController.dispose();
     _tabBarController.dispose();
     _textEditingController.dispose();
     super.dispose();
@@ -146,20 +175,20 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
               children: [
                 if (isExtensionTab && ref.watch(developerModeStateProvider))
                   IconButton(
-                    focusColor: Theme.of(context).colorScheme.primary
-                        .withValues(alpha: 0.4),
+                    tooltip: context.l10n.add,
                     onPressed: () {
                       context.push('/createExtension');
                     },
                     icon: Icon(
-                      Icons.add_outlined,
-                      color: Theme.of(context).hintColor,
+                      Symbols.add_rounded,
+                      color: context.shiori.color.fgMuted,
                     ),
                   ),
                 IconButton(
+                  tooltip: isExtensionTab
+                      ? MaterialLocalizations.of(context).searchFieldLabel
+                      : context.l10n.global_search,
                   splashRadius: 20,
-                  focusColor: Theme.of(context).colorScheme.primary
-                      .withValues(alpha: 0.4),
                   onPressed: () {
                     if (isExtensionTab) {
                       setState(() {
@@ -170,18 +199,18 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                     }
                   },
                   icon: Icon(
+                    fill: 1,
                     !isExtensionTab
-                        ? Icons.travel_explore_rounded
-                        : Icons.search_rounded,
-                    color: Theme.of(context).hintColor,
+                        ? Symbols.travel_explore_rounded
+                        : Symbols.search_rounded,
+                    color: context.shiori.color.fgMuted,
                   ),
                 ),
               ],
             ),
       IconButton(
+        tooltip: context.l10n.filter,
         splashRadius: 20,
-        focusColor: Theme.of(context).colorScheme.primary
-            .withValues(alpha: 0.4),
         onPressed: () {
           context.push(
             isExtensionTab ? '/ExtensionLang' : '/sourceFilter',
@@ -189,11 +218,22 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
           );
         },
         icon: Icon(
-          !isExtensionTab ? Icons.filter_list_sharp : Icons.translate_rounded,
-          color: Theme.of(context).hintColor,
+          fill: 1,
+          !isExtensionTab
+              ? Symbols.filter_list_rounded
+              : Symbols.translate_rounded,
+          color: context.shiori.color.fgMuted,
         ),
       ),
     ];
+  }
+
+  /// Opens the tab for [type] and [kind], when it is visible.
+  void _open(ItemType type, BrowseTabKind kind) {
+    final index = _tabList.indexWhere((t) => t.type == type && t.kind == kind);
+    if (index >= 0 && index != _tabBarController.index) {
+      _tabBarController.index = index;
+    }
   }
 
   List<Widget> _tabViews() => _tabList.map((tab) {
@@ -240,16 +280,14 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
             children: [
               Padding(
                 padding: horizontalInsets.add(
-                  const EdgeInsets.only(top: 6, bottom: 2),
+                  const EdgeInsets.only(top: ShioriSpace.s8, bottom: 2),
                 ),
                 child: Row(
                   children: [
                     Text(
                       l10n.browse,
-                      style: TextStyle(
-                        color: Theme.of(context).hintColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                      style: context.shiori.text.screenTitle.copyWith(
+                        color: context.shiori.color.fg,
                       ),
                     ),
                     const Spacer(),
@@ -261,7 +299,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
               // translations or a compact TV viewport need more room.
               Padding(
                 padding: horizontalInsets.add(
-                  const EdgeInsets.symmetric(vertical: 6),
+                  const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
                 ),
                 child: TvBrowseTabStrip(
                   labels: tabLabels,
@@ -308,49 +346,100 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     final currentTab = _tabList[_tabBarController.index];
     final isExtensionTab = currentTab.kind == BrowseTabKind.extensions;
 
+    // Browse stays mounted between visits, so a request made while it is
+    // already built (an empty library sending the user to its sources) is
+    // taken here rather than only on the way in.
+    ref.listen<BrowseTab?>(browseInitialTabProvider, (_, tab) {
+      if (tab == null) return;
+      _open(tab.type, tab.kind);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) ref.read(browseInitialTabProvider.notifier).clear();
+      });
+      setState(() {});
+    });
     final l10n = l10nLocalizations(context)!;
     if (isTv) {
       return _buildTvLayout(context, currentTab, isExtensionTab, l10n);
     }
-    return DefaultTabController(
-      animationDuration: Duration.zero,
-      length: _tabList.length,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          title: Text(
-            l10n.browse,
-            style: TextStyle(color: Theme.of(context).hintColor),
-          ),
-          actions: _actions(context, isExtensionTab, currentTab.type),
-          bottom: TabBar(
-            indicatorSize: TabBarIndicatorSize.label,
-            isScrollable: true,
-            controller: _tabBarController,
-            tabs: _tabList.map((tab) {
-              final type = tab.type;
-              final isExt = tab.kind == BrowseTabKind.extensions;
-
-              return Tab(
-                child: Row(
-                  children: [
-                    Text(
-                      isExt
-                          ? type.localizedExtensions(l10n)
-                          : type.localizedSources(l10n),
-                    ),
-                    if (isExt) ...[
-                      const SizedBox(width: 8),
-                      ExtensionUpdateNumbersBadge(itemType: type),
+    final types = [
+      for (final tab in _tabList)
+        if (tab.kind == BrowseTabKind.sources) tab.type,
+    ];
+    final tokens = context.shiori;
+    final hasMediaSwitch = types.length > 1;
+    final switchHeight = hasMediaSwitch
+        ? tokens.density.minTarget + ShioriSpace.s4 + ShioriSpace.s8
+        : 0.0;
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        // A main destination's title, as Library, Activity and More set it.
+        title: Text(
+          l10n.browse,
+          style: tokens.text.screenTitle.copyWith(color: tokens.color.fg),
+        ),
+        actions: _actions(context, isExtensionTab, currentTab.type),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(switchHeight + kTextTabBarHeight),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // The media first, then what to browse for it: two tabs instead
+              // of six.
+              if (hasMediaSwitch)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    ShioriSpace.s16,
+                    ShioriSpace.s4,
+                    ShioriSpace.s16,
+                    ShioriSpace.s8,
+                  ),
+                  child: ShioriSegmentedControl<ItemType>(
+                    segments: [
+                      for (final type in types)
+                        ShioriSegment(value: type, label: type.localized(l10n)),
                     ],
-                  ],
+                    selected: currentTab.type,
+                    onSelected: (type) => _open(type, currentTab.kind),
+                  ),
                 ),
-              );
-            }).toList(),
+              TabBar(
+                controller: _kindController,
+                onTap: (kind) =>
+                    _open(currentTab.type, BrowseTabKind.values[kind]),
+                tabs: [
+                  Tab(text: l10n.sources),
+                  Tab(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: ShioriSpace.s8,
+                      children: [
+                        Text(l10n.extensions),
+                        ExtensionUpdateNumbersBadge(itemType: currentTab.type),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
-        body: TabBarView(controller: _tabBarController, children: _tabViews()),
+      ),
+      // Sources and Extensions of the media picked above, side by side, so a
+      // swipe moves between them as a tap on their tabs does.
+      body: TabBarView(
+        controller: _kindController,
+        children: [
+          for (final kind in BrowseTabKind.values)
+            KeyedSubtree(
+              key: ValueKey((currentTab.type, kind)),
+              child:
+                  _tabViews()[_tabList.indexWhere(
+                    (t) => t.type == currentTab.type && t.kind == kind,
+                  )],
+            ),
+        ],
       ),
     );
   }
@@ -388,14 +477,9 @@ class ExtensionUpdateNumbersBadge extends ConsumerWidget {
     return countAsync.when(
       data: (count) {
         if (count == 0) return const SizedBox.shrink();
-        return Badge(
-          backgroundColor: Theme.of(context).focusColor,
-          label: Text(
-            count.toString(),
-            style: TextStyle(
-              color: Theme.of(context).textTheme.bodySmall!.color,
-            ),
-          ),
+        return EntryBadgeChip(
+          label: count.toString(),
+          tone: context.shiori.color.unread,
         );
       },
       error: (error, stackTrace) => const SizedBox.shrink(),

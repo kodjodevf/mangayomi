@@ -1,4 +1,3 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,10 +11,9 @@ import 'package:mangayomi/modules/more/data_and_storage/widgets/rollback_last_ch
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/more/widgets/dialog_actions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/error_toast.dart';
 import 'package:mangayomi/utils/log/logger.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:shiori/shiori.dart';
 
 /// Whether there's a sync server configured to ask about (regardless of
 /// whether sync is currently on or off) and, if so, whether it's on.
@@ -324,249 +322,107 @@ Future<bool> _performMangayomiRestore(
 
 Future<bool?> _confirmPlainRestore(BuildContext context) {
   final l10n = context.l10n;
-  return showDialog<bool>(
-    context: context,
-    builder: (dialogContext) {
-      return AlertDialog(
-        title: Text(l10n.restore_backup),
-        content: Row(
-          children: [
-            Icon(Icons.info_outline_rounded, color: context.secondaryColor),
-            const SizedBox(width: 8),
-            Expanded(child: Text(l10n.restore_backup_warning_title)),
-          ],
-        ),
-        actions: dialogCancelConfirmActions(
-          dialogContext: dialogContext,
-          confirmLabel: l10n.ok,
-        ),
-      );
-    },
+  return showShioriConfirm(
+    context,
+    title: l10n.restore_backup,
+    message: l10n.restore_backup_warning_title,
+    confirmLabel: l10n.restore_backup,
   );
 }
 
+/// Keep what is in the library and add the backup's, or replace it.
 Future<bool?> _chooseImportMode(BuildContext context) {
   final l10n = context.l10n;
-  return showDialog<bool>(
-    context: context,
-    builder: (dialogContext) {
-      return AlertDialog(
-        title: Text(l10n.import_mode_title),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 8,
-          children: [
-            Text(
-              l10n.import_mode_message,
-              style: TextStyle(fontSize: 12, color: context.secondaryColor),
-            ),
-            const SizedBox(height: 4),
-            ListTile(
-              leading: const Icon(Icons.merge_type_rounded),
-              title: Text(l10n.import_mode_keep_existing),
-              subtitle: Text(
-                l10n.import_mode_keep_existing_subtitle,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
-              ),
-              onTap: () => Navigator.pop(dialogContext, true),
-            ),
-            ListTile(
-              leading: const Icon(
-                Icons.delete_sweep_outlined,
-                color: Colors.red,
-              ),
-              title: Text(
-                l10n.import_mode_replace,
-                style: const TextStyle(color: Colors.red),
-              ),
-              subtitle: Text(
-                l10n.import_mode_replace_subtitle,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
-              ),
-              onTap: () => Navigator.pop(dialogContext, false),
-            ),
-          ],
-        ),
-        actions: dialogCancelOnlyAction(dialogContext),
-      );
-    },
+  return showShioriChoice<bool>(
+    context,
+    title: l10n.import_mode_title,
+    message: l10n.import_mode_message,
+    options: [
+      ShioriChoice(
+        true,
+        l10n.import_mode_keep_existing,
+        subtitle: l10n.import_mode_keep_existing_subtitle,
+        icon: Symbols.merge_type_rounded,
+      ),
+      ShioriChoice(
+        false,
+        l10n.import_mode_replace,
+        subtitle: l10n.import_mode_replace_subtitle,
+        icon: Symbols.delete_sweep_rounded,
+      ),
+    ],
   );
 }
 
+/// The categories both sides have: the ticked ones are kept.
 Future<Map<String, bool>?> _resolveCategoryConflicts(
   BuildContext context,
   List<String> conflicts,
 ) async {
   final l10n = context.l10n;
-  final decisions = {for (final name in conflicts) name: true};
-  return showDialog<Map<String, bool>>(
-    context: context,
-    builder: (dialogContext) {
-      return StatefulBuilder(
-        builder: (dialogContext, setState) {
-          return AlertDialog(
-            title: Text(l10n.category_conflict_title),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    l10n.category_conflict_message,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: context.secondaryColor,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Flexible(
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: conflicts
-                          .map(
-                            (name) => CheckboxListTile(
-                              contentPadding: EdgeInsets.zero,
-                              title: Text(name),
-                              subtitle: Text(
-                                decisions[name]!
-                                    ? l10n.category_conflict_keep
-                                    : l10n.category_conflict_delete,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  color: context.secondaryColor,
-                                ),
-                              ),
-                              value: decisions[name],
-                              onChanged: (value) => setState(
-                                () => decisions[name] = value ?? true,
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            actions: dialogCancelConfirmActions(
-              dialogContext: dialogContext,
-              confirmLabel: l10n.ok,
-              onCancel: () => Navigator.pop(dialogContext, null),
-              onConfirm: () => Navigator.pop(dialogContext, decisions),
-            ),
-          );
-        },
-      );
-    },
+  final kept = await showShioriMultiChoice<String>(
+    context,
+    title: l10n.category_conflict_title,
+    message: l10n.category_conflict_message,
+    selected: conflicts.toSet(),
+    confirmLabel: l10n.ok,
+    options: [for (final name in conflicts) ShioriChoice(name, name)],
   );
+  if (kept == null) return null;
+  return {for (final name in conflicts) name: kept.contains(name)};
 }
 
+/// For each source the backup names and this device lacks, an installed
+/// one to use instead, or none.
 Future<Map<String, int>?> _resolveSourceConflicts(
   BuildContext context,
   Map<String, ItemType> unmatched,
 ) async {
   final l10n = context.l10n;
-  final selections = <String, int?>{
-    for (final name in unmatched.keys) name: null,
+  // The choice sheet answers null when dismissed; "keep" needs its own
+  // value.
+  const keep = -1;
+  final selections = <String, int>{
+    for (final name in unmatched.keys) name: keep,
   };
   return showDialog<Map<String, int>>(
     context: context,
     builder: (dialogContext) {
       return StatefulBuilder(
         builder: (dialogContext, setState) {
-          return AlertDialog(
-            title: Text(l10n.source_conflict_title),
+          return ShioriDialog(
+            title: l10n.source_conflict_title,
             content: SizedBox(
               width: double.maxFinite,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    l10n.source_conflict_message,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: context.secondaryColor,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                  Text(l10n.source_conflict_message),
+                  const SizedBox(height: ShioriSpace.s8),
                   Flexible(
                     child: ListView(
                       shrinkWrap: true,
-                      children: unmatched.entries.map((entry) {
-                        final name = entry.key;
-                        final itemType = entry.value;
-                        final options = installedSourcesFor(itemType);
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6),
-                          child: DropdownButtonFormField<int?>(
-                            initialValue: selections[name],
-                            isExpanded: true,
-                            decoration: InputDecoration(
-                              label: Text(
-                                name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              isDense: true,
-                              filled: true,
-                              fillColor: Color.alphaBlend(
-                                context.primaryColor.withValues(alpha: 0.05),
-                                Theme.of(context).scaffoldBackgroundColor,
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 12,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: context.primaryColor.withValues(
-                                    alpha: 0.2,
-                                  ),
+                      children: [
+                        for (final MapEntry(key: name, value: itemType)
+                            in unmatched.entries)
+                          ShioriValueRow<int>(
+                            title: name,
+                            value: selections[name]!,
+                            options: [
+                              ShioriChoice(keep, l10n.source_conflict_keep),
+                              for (final source in installedSourcesFor(
+                                itemType,
+                              ))
+                                ShioriChoice(
+                                  source.id!,
+                                  "${source.name} (${source.lang})",
                                 ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: context.primaryColor.withValues(
-                                    alpha: 0.2,
-                                  ),
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: context.primaryColor,
-                                  width: 2,
-                                ),
-                              ),
-                            ),
-                            items: [
-                              DropdownMenuItem<int?>(
-                                value: null,
-                                child: Text(
-                                  l10n.source_conflict_keep,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              ...options.map(
-                                (s) => DropdownMenuItem<int?>(
-                                  value: s.id,
-                                  child: Text(
-                                    "${s.name} (${s.lang})",
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ),
                             ],
-                            onChanged: (value) =>
-                                setState(() => selections[name] = value),
+                            onChanged: (v) =>
+                                setState(() => selections[name] = v),
                           ),
-                        );
-                      }).toList(),
+                      ],
                     ),
                   ),
                 ],
@@ -578,7 +434,7 @@ Future<Map<String, int>?> _resolveSourceConflicts(
               onCancel: () => Navigator.pop(dialogContext, null),
               onConfirm: () => Navigator.pop(dialogContext, {
                 for (final e in selections.entries)
-                  if (e.value != null) e.key: e.value!,
+                  if (e.value != keep) e.key: e.value,
               }),
             ),
           );
@@ -593,24 +449,15 @@ Future<bool?> _confirmImportSummary(
   TachiBkImportPreview preview,
 ) {
   final l10n = context.l10n;
-  return showDialog<bool>(
-    context: context,
-    builder: (dialogContext) {
-      return AlertDialog(
-        title: Text(l10n.import_summary_title),
-        content: Text(
-          l10n.import_summary_message(
-            preview.newSeriesCount,
-            preview.updatedSeriesCount,
-            preview.newChapterCount,
-          ),
-        ),
-        actions: dialogCancelConfirmActions(
-          dialogContext: dialogContext,
-          confirmLabel: l10n.import_summary_confirm,
-        ),
-      );
-    },
+  return showShioriConfirm(
+    context,
+    title: l10n.import_summary_title,
+    message: l10n.import_summary_message(
+      preview.newSeriesCount,
+      preview.updatedSeriesCount,
+      preview.newChapterCount,
+    ),
+    confirmLabel: l10n.import_summary_confirm,
   );
 }
 
@@ -621,19 +468,12 @@ Future<bool?> _confirmReplaceSummary(
   final l10n = context.l10n;
   final currentCount = currentFavoriteMangaCount();
   final backupCount = preview.newSeriesCount + preview.updatedSeriesCount;
-  return showDialog<bool>(
-    context: context,
-    builder: (dialogContext) {
-      return AlertDialog(
-        title: Text(l10n.replace_summary_title),
-        content: Text(l10n.replace_summary_message(currentCount, backupCount)),
-        actions: dialogCancelConfirmActions(
-          dialogContext: dialogContext,
-          confirmLabel: l10n.replace_summary_confirm,
-          confirmColor: Colors.red,
-        ),
-      );
-    },
+  return showShioriConfirm(
+    context,
+    title: l10n.replace_summary_title,
+    message: l10n.replace_summary_message(currentCount, backupCount),
+    confirmLabel: l10n.replace_summary_confirm,
+    destructive: true,
   );
 }
 
@@ -644,31 +484,16 @@ void _showImportResultToast(
   String? safetyBackupPath,
 ) {
   final l10n = context.l10n;
-  BotToast.showNotification(
-    animationDuration: const Duration(milliseconds: 200),
-    animationReverseDuration: const Duration(milliseconds: 200),
-    duration: const Duration(seconds: 8),
-    backButtonBehavior: BackButtonBehavior.none,
-    leading: (_) => Image.asset(appIconAssets[1], height: 32),
-    title: (_) => Text(
-      resultDescription,
-      style: const TextStyle(fontWeight: FontWeight.bold),
-    ),
-    trailing: safetyBackupPath == null
-        ? null
-        : (_) => UnconstrainedBox(
-            alignment: Alignment.topLeft,
-            child: TextButton(
-              onPressed: () =>
-                  offerLibraryRollback(context, ref, safetyBackupPath),
-              child: Text(
-                l10n.roll_back,
-                style: const TextStyle(color: Colors.red),
-              ),
-            ),
-          ),
-    enableSlideOff: true,
-    onlyOne: true,
-    crossPage: true,
+  botToast(
+    resultDescription,
+    tone: ShioriToastTone.success,
+    second: 8,
+    actions: [
+      if (safetyBackupPath != null)
+        ShioriToastAction(
+          l10n.roll_back,
+          () => offerLibraryRollback(context, ref, safetyBackupPath),
+        ),
+    ],
   );
 }

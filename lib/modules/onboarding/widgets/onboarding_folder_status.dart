@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:path/path.dart' as p;
 
 /// What became of the folder that was just added.
@@ -57,8 +58,7 @@ class _FolderStatusState extends State<OnboardingFolderStatus> {
   /// Tapping toggles it. The count is the affordance: it is drawn in the
   /// accent colour so it reads as something to press, which is as much
   /// decoration as a first run screen should spend on this.
-  Widget _titleList(TextStyle? muted) {
-    final scheme = Theme.of(context).colorScheme;
+  Widget _titleList(TextStyle muted) {
     final collapsedCount = widget.titles.length <= 4 ? widget.titles.length : 3;
     final shown = _expanded
         ? widget.titles.take(_expandedLimit).toList()
@@ -77,16 +77,16 @@ class _FolderStatusState extends State<OnboardingFolderStatus> {
             if (hidden > 0)
               TextSpan(
                 text: '  +$hidden',
-                style: muted?.copyWith(
-                  color: scheme.primary,
+                style: muted.copyWith(
+                  color: context.shiori.color.accentInk,
                   fontWeight: FontWeight.w600,
                 ),
               )
             else if (_expanded)
               TextSpan(
                 text: '  ${'−'}',
-                style: muted?.copyWith(
-                  color: scheme.primary,
+                style: muted.copyWith(
+                  color: context.shiori.color.accentInk,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -105,11 +105,10 @@ class _FolderStatusState extends State<OnboardingFolderStatus> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final color = widget.warn ? theme.colorScheme.error : theme.hintColor;
-    final muted = theme.textTheme.bodySmall?.copyWith(
-      color: theme.colorScheme.onSurfaceVariant,
-    );
+    final color = widget.warn
+        ? context.shiori.color.error.foreground
+        : context.shiori.color.fgMuted;
+    final muted = context.shiori.caption;
     return Column(
       children: [
         Row(
@@ -123,31 +122,33 @@ class _FolderStatusState extends State<OnboardingFolderStatus> {
               )
             else
               Icon(
-                widget.warn ? Icons.info_outline : Icons.check_circle_outline,
+                widget.warn
+                    ? Symbols.info_rounded
+                    : Symbols.check_circle_rounded,
                 size: 18,
                 color: color,
               ),
-            const SizedBox(width: 8),
+            const SizedBox(width: ShioriSpace.s8),
             Flexible(
               child: Text(
                 widget.message,
-                style: theme.textTheme.bodySmall?.copyWith(color: color),
+                style: context.shiori.text.meta.copyWith(color: color),
               ),
             ),
           ],
         ),
         if (widget.path != null) ...[
-          const SizedBox(height: 6),
+          const SizedBox(height: ShioriSpace.s8),
           Text(
             _tail(widget.path!),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: muted?.copyWith(fontSize: 11),
+            style: muted.copyWith(fontSize: context.shiori.text.badge.fontSize),
           ),
         ],
         if (widget.titles.isNotEmpty) ...[
-          const SizedBox(height: 4),
+          const SizedBox(height: ShioriSpace.s4),
           _titleList(muted),
         ],
       ],

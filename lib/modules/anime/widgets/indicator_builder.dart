@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/anime/widgets/player_overlay_surface.dart';
+import 'package:shiori/shiori.dart';
 
 class MediaIndicatorBuilder extends StatelessWidget {
   final bool isVolumeIndicator;
@@ -17,7 +19,6 @@ class MediaIndicatorBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final mediaQuery = MediaQuery.of(context);
     final portraitTop = math.max(
       mediaQuery.viewPadding.top + 72,
@@ -38,90 +39,85 @@ class MediaIndicatorBuilder extends StatelessWidget {
             alignment: Alignment.topCenter,
             child: Padding(
               padding: EdgeInsets.only(top: top),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  key: ValueKey(
-                    isVolumeIndicator
-                        ? 'volume-indicator-card'
-                        : 'brightness-indicator-card',
-                  ),
-                  height: 42,
-                  width: 210,
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest.withValues(
-                      alpha: 0.92,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: colorScheme.outlineVariant.withValues(alpha: 0.35),
-                      width: 1.0,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: colorScheme.shadow.withValues(alpha: 0.25),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
+              child: SizedBox(
+                key: ValueKey(
+                  isVolumeIndicator
+                      ? 'volume-indicator-card'
+                      : 'brightness-indicator-card',
+                ),
+                height: 42,
+                width: 210,
+                child: PlayerOverlaySurface(
+                  padding: EdgeInsets.zero,
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: ShioriSpace.s12,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
+                            fill: 1,
                             isVolumeIndicator
                                 ? switch (value) {
-                                    == 0.0 => Icons.volume_off,
-                                    < 0.5 => Icons.volume_down,
-                                    _ => Icons.volume_up,
+                                    == 0.0 => Symbols.volume_off_rounded,
+                                    < 0.5 => Symbols.volume_down_rounded,
+                                    _ => Symbols.volume_up_rounded,
                                   }
                                 : switch (value) {
-                                    < 1.0 / 3.0 => Icons.brightness_low,
-                                    < 2.0 / 3.0 => Icons.brightness_medium,
-                                    _ => Icons.brightness_high,
+                                    < 1.0 / 3.0 =>
+                                      Symbols.brightness_low_rounded,
+                                    < 2.0 / 3.0 =>
+                                      Symbols.brightness_medium_rounded,
+                                    _ => Symbols.brightness_high_rounded,
                                   },
-                            color: colorScheme.onSurface,
                             size: 20,
                           ),
                           Expanded(
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
+                                horizontal: ShioriSpace.s12,
                               ),
                               child: Container(
                                 clipBehavior: Clip.antiAlias,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
+                                  borderRadius: BorderRadius.circular(
+                                    ShioriShape.pill,
+                                  ),
                                 ),
                                 child: SizedBox(
                                   height: 6,
                                   child: LinearProgressIndicator(
                                     value: value,
-                                    color: colorScheme.primary,
-                                    backgroundColor: colorScheme.onSurface
-                                        .withValues(alpha: 0.18),
+                                    color: context.shiori.color.accentInk,
+                                    backgroundColor: Colors.white.withValues(
+                                      alpha: Alphas.hairline,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
                           Icon(
+                            fill: 1,
                             isVolumeIndicator
                                 ? switch (value) {
-                                    == 0.0 => Icons.volume_off,
-                                    < 0.5 => Icons.volume_down,
-                                    _ => Icons.volume_up,
+                                    == 0.0 => Symbols.volume_off_rounded,
+                                    < 0.5 => Symbols.volume_down_rounded,
+                                    _ => Symbols.volume_up_rounded,
                                   }
                                 : switch (value) {
-                                    < 1.0 / 3.0 => Icons.brightness_low,
-                                    < 2.0 / 3.0 => Icons.brightness_medium,
-                                    _ => Icons.brightness_high,
+                                    < 1.0 / 3.0 =>
+                                      Symbols.brightness_low_rounded,
+                                    < 2.0 / 3.0 =>
+                                      Symbols.brightness_medium_rounded,
+                                    _ => Symbols.brightness_high_rounded,
                                   },
                             size: 16,
-                            color: colorScheme.onSurfaceVariant,
+                            color: Colors.white.withValues(
+                              alpha: Alphas.secondary,
+                            ),
                           ),
                         ],
                       ),

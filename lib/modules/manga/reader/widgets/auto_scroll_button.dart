@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 /// Auto-scroll play/pause button for continuous reading modes.
 ///
@@ -45,10 +47,31 @@ class ReaderAutoScrollButton extends StatelessWidget {
               builder: (context, isEnabled, child) => isEnabled
                   ? ValueListenableBuilder(
                       valueListenable: autoScroll,
-                      builder: (context, isPlaying, child) => IconButton(
-                        onPressed: onToggle,
-                        icon: Icon(
-                          isPlaying ? Icons.pause_circle : Icons.play_circle,
+                      // On the scrim the page number uses, so it reads on a
+                      // white page as on a black one, clear of the edges.
+                      builder: (context, isPlaying, child) => Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          0,
+                          0,
+                          ShioriSpace.s12,
+                          MediaQuery.paddingOf(context).bottom +
+                              ShioriSpace.s12,
+                        ),
+                        child: IconButton(
+                          tooltip: isPlaying
+                              ? context.l10n.pause
+                              : context.l10n.play,
+                          onPressed: onToggle,
+                          style: IconButton.styleFrom(
+                            backgroundColor: ShioriScrim.underText,
+                            foregroundColor: Colors.white,
+                          ),
+                          icon: Icon(
+                            fill: 1,
+                            isPlaying
+                                ? Symbols.pause_rounded
+                                : Symbols.play_arrow_rounded,
+                          ),
                         ),
                       ),
                     )

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:archive/archive_io.dart';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
@@ -47,9 +46,9 @@ import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/services/sync_server.dart';
-import 'package:mangayomi/utils/constant.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/tint_surfaces_state_provider.dart';
 part 'restore.g.dart';
 
 /// Restores the backup at [path], replacing or merging into the library.
@@ -207,17 +206,7 @@ Future<void> _uploadToSyncServerIfConnected(
 }
 
 void showBotToast(String text) {
-  BotToast.showNotification(
-    animationDuration: const Duration(milliseconds: 200),
-    animationReverseDuration: const Duration(milliseconds: 200),
-    duration: const Duration(seconds: 5),
-    backButtonBehavior: BackButtonBehavior.none,
-    leading: (_) => Image.asset(appIconAssets[1], height: 40),
-    title: (_) => Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
-    enableSlideOff: true,
-    onlyOne: true,
-    crossPage: true,
-  );
+  botToast(text, second: 5);
 }
 
 @riverpod
@@ -962,6 +951,7 @@ void _invalidateCommonState(Ref ref) {
   ref.invalidate(blendLevelStateProvider);
   ref.invalidate(flexSchemeColorStateProvider);
   ref.invalidate(pureBlackDarkModeStateProvider);
+  ref.invalidate(tintSurfacesStateProvider);
   ref.invalidate(floatingNavigationBarStateProvider);
   ref.invalidate(l10nLocaleStateProvider);
   ref.invalidate(navigationOrderStateProvider);

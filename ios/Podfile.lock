@@ -49,8 +49,6 @@ PODS:
     - Flutter
   - rust_lib_mangayomi (0.0.1):
     - Flutter
-  - screen_brightness_ios (2.1.3):
-    - Flutter
   - share_plus (0.0.1):
     - Flutter
   - swift-collections (1.1.1):
@@ -98,7 +96,6 @@ DEPENDENCIES:
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - rust_lib_mangayomi (from `.symlinks/plugins/rust_lib_mangayomi/ios`)
-  - screen_brightness_ios (from `.symlinks/plugins/screen_brightness_ios/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - volume_controller (from `.symlinks/plugins/volume_controller/ios`)
@@ -152,8 +149,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   rust_lib_mangayomi:
     :path: ".symlinks/plugins/rust_lib_mangayomi/ios"
-  screen_brightness_ios:
-    :path: ".symlinks/plugins/screen_brightness_ios/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   url_launcher_ios:
@@ -186,7 +181,6 @@ SPEC CHECKSUMS:
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   permission_handler_apple: 92d754bbaa7361d436db2d6c3c1c2a0fdcec462e
   rust_lib_mangayomi: 360a904274b47351a0f7c26d3ce5aa6392bb8db3
-  screen_brightness_ios: 212d950bb99c915eee971c884f4a6c87c92cd13d
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
   swift-collections: ba248ecaf44ef500b27d5cf94d304218c89892ff
   url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b

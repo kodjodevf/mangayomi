@@ -272,7 +272,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String mass_migration_finding_matches(Object source, Object language) {
-    return 'البحث عن مطابقات في $source • $language';
+    return 'البحث عن مطابقات في $source · $language';
   }
 
   @override
@@ -587,6 +587,20 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get pure_black_dark_mode => 'الوضع المظلم الأسود النقي';
+
+  @override
+  String get tint_surfaces_with_palette => 'تلوين الأسطح بلوحة الألوان';
+
+  @override
+  String get tint_surfaces_with_palette_subtitle =>
+      'يلوّن الخلفيات والبطاقات والأشرطة باللوحة المختارة، كما في السابق. عند الإيقاف تبقى محايدة ولا تلوّن اللوحة إلا لون التمييز.';
+
+  @override
+  String get novel_reader_font => 'خط قارئ الروايات';
+
+  @override
+  String get novel_reader_font_subtitle =>
+      'يستخدمه الخط الافتراضي في قارئ الروايات. يستخدم باقي التطبيق خط Figtree.';
 
   @override
   String get timestamp => 'طابع الوقت';
@@ -1183,11 +1197,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'أعد ترتيب وتبديل كل تنقل حسب احتياجاتك.';
 
   @override
-  String get floating_navigation_bar => 'Floating navigation bar';
+  String get floating_navigation_bar => 'شريط تنقل عائم';
 
   @override
   String get floating_navigation_bar_description =>
-      'Use a floating capsule instead of the standard attached navigation bar.';
+      'استخدام كبسولة عائمة بدل شريط التنقل الثابت.';
 
   @override
   String get full_screen_player => 'استخدام الشاشة الكاملة';
@@ -2006,11 +2020,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get add_repo => 'إضافة مستودع؟';
 
   @override
-  String get add_repo_sources_to_add => 'Extension lists that will be added:';
+  String get add_repo_sources_to_add => 'قوائم الإضافات التي ستُضاف:';
 
   @override
   String get add_repo_warning =>
-      'Extensions from these repositories run inside the app. Only add repositories you trust.';
+      'تعمل الإضافات من هذه المستودعات داخل التطبيق. لا تضف إلا المستودعات التي تثق بها.';
 
   @override
   String get genre_search_library => 'بحث النوع في المكتبة';
@@ -2157,7 +2171,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get custom_buttons_add_warning =>
-      'This button runs the Lua code below in the video player, which can access your files and run programs. Only add it if you trust where this link came from.';
+      'يشغّل هذا الزر شيفرة Lua أدناه في مشغل الفيديو، وهي قادرة على الوصول إلى ملفاتك وتشغيل البرامج. لا تضفه إلا إذا كنت تثق بمصدر هذا الرابط.';
 
   @override
   String n_days(Object n) {
@@ -2268,48 +2282,48 @@ class AppLocalizationsAr extends AppLocalizations {
   String get watch_order => 'ترتيب المشاهدة';
 
   @override
-  String get watch_order_role_current => 'Current';
+  String get watch_order_role_current => 'الحالي';
 
   @override
-  String get watch_order_role_previous => 'Previous';
+  String get watch_order_role_previous => 'السابق';
 
   @override
-  String get watch_order_role_next => 'Next';
+  String get watch_order_role_next => 'التالي';
 
   @override
-  String get watch_order_source_release_order => 'Release order';
+  String get watch_order_source_release_order => 'ترتيب الإصدار';
 
   @override
   String watch_order_source_community_list(String name, String author) {
-    return '$name by $author';
+    return '$name بواسطة $author';
   }
 
   @override
   String watch_order_source_official_collection(String name) {
-    return 'Official Trakt collection: $name';
+    return 'مجموعة Trakt الرسمية: $name';
   }
 
   @override
   String watch_order_source_trakt_collection(String name) {
-    return 'Trakt collection: $name';
+    return 'مجموعة Trakt: $name';
   }
 
   @override
   String watch_order_source_seasons(String title) {
-    return 'Seasons for $title';
+    return 'مواسم $title';
   }
 
   @override
-  String get watch_order_select_source => 'Order source';
+  String get watch_order_select_source => 'مصدر الترتيب';
 
   @override
   String watch_order_season(int number) {
-    return 'Season $number';
+    return 'الموسم $number';
   }
 
   @override
   String watch_order_episode(int number) {
-    return 'Episode $number';
+    return 'الحلقة $number';
   }
 
   @override
@@ -2320,7 +2334,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String recommendation_rating_accessibility(String rating) {
-    return 'Rating $rating';
+    return 'التقييم $rating';
   }
 
   @override
@@ -3491,92 +3505,833 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chapter_swipe_disabled => 'معطل';
 
   @override
-  String get update_errors => 'Update errors';
+  String get update_errors => 'أخطاء التحديث';
 
   @override
-  String get no_update_errors => 'No update errors';
+  String get no_update_errors => 'لا توجد أخطاء تحديث';
 
   @override
-  String get clear_all => 'Clear all';
+  String get clear_all => 'مسح الكل';
 
   @override
-  String get dismiss => 'Dismiss';
+  String get dismiss => 'إغلاق';
 
   @override
-  String get previous_episode => 'Previous episode';
+  String get previous_episode => 'الحلقة السابقة';
 
   @override
-  String get clear_logs => 'Clear logs';
+  String get clear_logs => 'مسح السجلات';
 
   @override
-  String get bold => 'Bold';
+  String get bold => 'عريض';
 
   @override
-  String get italic => 'Italic';
+  String get italic => 'مائل';
 
   @override
-  String get color_yellow => 'Yellow';
+  String get color_yellow => 'أصفر';
 
   @override
-  String get color_cyan => 'Cyan';
+  String get color_cyan => 'سماوي';
 
   @override
-  String get color_green => 'Green';
+  String get color_green => 'أخضر';
 
   @override
-  String get color_orange => 'Orange';
+  String get color_orange => 'برتقالي';
 
   @override
-  String get continue_watching => 'Continue Watching';
+  String get continue_watching => 'متابعة المشاهدة';
 
   @override
-  String get search_your_anime => 'Search your anime';
+  String get search_your_anime => 'ابحث في الأنمي الخاص بك';
 
   @override
-  String get category => 'Category';
+  String get category => 'الفئة';
 
   @override
-  String get hidden_categories => 'Hidden categories';
+  String get hidden_categories => 'الفئات المخفية';
 
   @override
-  String get new_category => 'New category';
+  String get new_category => 'فئة جديدة';
 
   @override
-  String get local => 'Local';
+  String get local => 'محلي';
 
   @override
-  String get tv_home_rows => 'Rows';
+  String get tv_home_rows => 'الصفوف';
 
   @override
-  String get genre_rows => 'Genre rows';
+  String get genre_rows => 'صفوف التصنيفات';
 
   @override
-  String get share_backup_file => 'Share Mangayomi backup file';
+  String get share_backup_file => 'مشاركة نسخة Mangayomi الاحتياطية';
 
   @override
-  String get close => 'Close';
+  String get close => 'إغلاق';
 
   @override
-  String get migrate_source => 'Migrate source';
+  String get migrate_source => 'ترحيل المصدر';
 
   @override
-  String get cloudflare_bypass_proxy => 'Cloudflare bypass proxy';
+  String get cloudflare_bypass_proxy => 'وكيل تجاوز Cloudflare';
 
   @override
-  String get custom_doh_url => 'Custom DoH URL';
+  String get custom_doh_url => 'رابط DoH مخصص';
 
   @override
-  String get custom_doh_url_helper => 'Must be an https DoH (JSON) endpoint';
+  String get custom_doh_url_helper => 'يجب أن يكون نقطة DoH (JSON) عبر https';
 
   @override
-  String get anime_only_tv_layout => 'Anime-only TV layout';
+  String get anime_only_tv_layout => 'تخطيط التلفاز للأنمي فقط';
 
   @override
-  String get anime_only_beta => 'Anime only (beta)';
+  String get anime_only_beta => 'الأنمي فقط (تجريبي)';
 
   @override
-  String get tv_home_beta => 'TV home (beta)';
+  String get tv_home_beta => 'رئيسية التلفاز (تجريبي)';
 
   @override
-  String get tv_player_beta => 'TV player (beta)';
+  String get tv_player_beta => 'مشغل التلفاز (تجريبي)';
+
+  @override
+  String get mark_as_read => 'تعليم كمقروء';
+
+  @override
+  String get mark_as_unread => 'تعليم كغير مقروء';
+
+  @override
+  String get bookmark => 'إشارة مرجعية';
+
+  @override
+  String get remove_bookmark => 'إزالة الإشارة المرجعية';
+
+  @override
+  String get mark_below_as_read => 'تعليم ما بالأسفل كمقروء';
+
+  @override
+  String get previous_chapter => 'الفصل السابق';
+
+  @override
+  String get pin => 'تثبيت';
+
+  @override
+  String get go_forward => 'التقدم';
+
+  @override
+  String get invert_selection => 'عكس التحديد';
+
+  @override
+  String get show_password => 'إظهار كلمة المرور';
+
+  @override
+  String get hide_password => 'إخفاء كلمة المرور';
+
+  @override
+  String get always_on_top => 'دائمًا في المقدمة';
+
+  @override
+  String get mute => 'كتم الصوت';
+
+  @override
+  String get unmute => 'إلغاء الكتم';
+
+  @override
+  String get exit_fullscreen => 'الخروج من ملء الشاشة';
+
+  @override
+  String get play => 'تشغيل';
+
+  @override
+  String get pause => 'إيقاف مؤقت';
+
+  @override
+  String get switch_tracker => 'تبديل المتتبع';
+
+  @override
+  String get rename => 'إعادة التسمية';
+
+  @override
+  String get show_category => 'إظهار الفئة';
+
+  @override
+  String get hide_category => 'إخفاء الفئة';
+
+  @override
+  String get update_with_library => 'التحديث مع المكتبة';
+
+  @override
+  String get skip_updates => 'التخطي عند تحديث المكتبة';
+
+  @override
+  String get show_repository => 'إظهار المستودع';
+
+  @override
+  String get hide_repository => 'إخفاء المستودع';
+
+  @override
+  String get set_as_default => 'تعيين كافتراضي';
+
+  @override
+  String get change_display_mode => 'تغيير وضع العرض';
+
+  @override
+  String get back_to_results => 'العودة إلى النتائج';
+
+  @override
+  String get activity => 'النشاط';
+
+  @override
+  String get group_nav_destinations => 'تجميع التنقل';
+
+  @override
+  String get group_nav_destinations_subtitle =>
+      'تبويب مكتبة واحد بمبدّل للمانغا والأنمي والروايات، وتبويب نشاط واحد للتحديثات والسجل';
+
+  @override
+  String get search_all_sources => 'البحث في كل المصادر';
+
+  @override
+  String get continue_reading => 'متابعة';
+
+  @override
+  String get show_continue_shelf => 'إظهار ما تقرأه';
+
+  @override
+  String get show_continue_shelf_subtitle => 'صف للسلاسل الجارية أعلى المكتبة';
+
+  @override
+  String get excluded => 'مستبعد';
+
+  @override
+  String get remove_filter => 'إزالة الفلتر';
+
+  @override
+  String get current_chapter => 'الفصل الحالي';
+
+  @override
+  String get series => 'السلسلة';
+
+  @override
+  String get chapters_read => 'الفصول المقروءة';
+
+  @override
+  String get search_settings => 'البحث في الإعدادات';
+
+  @override
+  String get search_settings_hint => 'اكتب اسم إعداد أو كلمة من وصفه';
+
+  @override
+  String reading_mode_for(String name) {
+    return 'وضع القراءة لـ $name';
+  }
+
+  @override
+  String default_is(String name) {
+    return 'الافتراضي: $name';
+  }
+
+  @override
+  String get use_default => 'استخدام الافتراضي';
+
+  @override
+  String get is_the_default => 'هذا وضع القراءة الافتراضي لديك';
+
+  @override
+  String get page_layout => 'تخطيط الصفحة والتكبير';
+
+  @override
+  String get reader_section_mode_summary =>
+      'الوضع الافتراضي، التحجيم، الخلفية، التحميل المسبق، ملء الشاشة';
+
+  @override
+  String get reader_section_layout_summary =>
+      'الصفحات العريضة، الصفحات المزدوجة، التكبير الأفقي';
+
+  @override
+  String get reader_section_navigation_summary =>
+      'مناطق اللمس، التخطيط، إخفاء القائمة، وميض الصفحة';
+
+  @override
+  String get reader_section_swipe_summary => 'ما يفعله سحب فصل في قائمة';
+
+  @override
+  String get all_reader_settings => 'كل إعدادات القارئ';
+
+  @override
+  String get undo => 'تراجع';
+
+  @override
+  String get removed_from_history => 'أُزيل من السجل';
+
+  @override
+  String n_new_chapters(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count فصول جديدة',
+      one: 'فصل جديد واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get page_color_white => 'أبيض';
+
+  @override
+  String get page_color_black => 'أسود';
+
+  @override
+  String get page_color_night => 'ليلي';
+
+  @override
+  String get page_color_sepia => 'بني داكن';
+
+  @override
+  String get page_color_coffee => 'قهوة';
+
+  @override
+  String get page_color_silver => 'فضي';
+
+  @override
+  String get page_color_graphite => 'جرافيت';
+
+  @override
+  String get page_color_mist => 'ضباب';
+
+  @override
+  String get page_color_paper => 'ورق';
+
+  @override
+  String get page_color_sky => 'سماء';
+
+  @override
+  String get page_color_mint => 'نعناع';
+
+  @override
+  String get page_color_honey => 'عسل';
+
+  @override
+  String next_episode_in(int seconds) {
+    return 'الحلقة التالية بعد $seconds ث';
+  }
+
+  @override
+  String get stay_on_this_episode => 'البقاء في هذه الحلقة';
+
+  @override
+  String get got_it => 'فهمت';
+
+  @override
+  String get gesture_brightness => 'اسحب لأعلى أو لأسفل على اليسار لضبط السطوع';
+
+  @override
+  String get gesture_volume => 'اسحب لأعلى أو لأسفل على اليمين لضبط الصوت';
+
+  @override
+  String get gesture_double_tap_skip =>
+      'انقر مرتين على أحد الجانبين للرجوع أو التقدم';
+
+  @override
+  String get gesture_drag_seek => 'اسحب جانبيًا للتنقل في الفيديو';
+
+  @override
+  String get gesture_long_press_speed => 'اضغط مطولًا للتسريع';
+
+  @override
+  String get tap_to_continue => 'انقر في أي مكان للمتابعة';
+
+  @override
+  String get empty_library_hint => 'ابحث عن سلسلة في التصفح وأضفها إلى مكتبتك.';
+
+  @override
+  String get more_filters => 'مزيد من الفلاتر';
+
+  @override
+  String get resume_all_downloads => 'استئناف كل التنزيلات';
+
+  @override
+  String get download_failed => 'فشل';
+
+  @override
+  String get download_all => 'تنزيل الكل';
+
+  @override
+  String n_chapters_queued(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count فصول في قائمة الانتظار',
+      one: 'فصل واحد في قائمة الانتظار',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String n_selected(int count) {
+    return 'تم تحديد $count';
+  }
+
+  @override
+  String get settings_general_summary => 'اللغة، تحديثات المكتبة، الشبكة';
+
+  @override
+  String get settings_appearance_summary => 'السمة، لوحة الألوان، التنقل، الخط';
+
+  @override
+  String get settings_novel_reader_summary =>
+      'الخط، لون الصفحة، القراءة الصوتية';
+
+  @override
+  String get settings_player_summary => 'التشغيل، الترجمات، الصوت، فك الترميز';
+
+  @override
+  String get settings_downloads_summary =>
+      'الموقع، Wi-Fi فقط، التنزيلات المتزامنة';
+
+  @override
+  String get settings_tracking_summary => 'MyAnimeList وAniList وKitsu وغيرها';
+
+  @override
+  String get settings_syncing_summary => 'أبقِ تقدمك متزامنًا على خادمك الخاص';
+
+  @override
+  String get settings_browse_summary => 'الإضافات، المستودعات، المصادر';
+
+  @override
+  String get settings_security_summary => 'قفل التطبيق';
+
+  @override
+  String get settings_about_summary => 'الإصدار، التحديثات، تقارير الأخطاء';
+
+  @override
+  String minutes_left(int minutes) {
+    return '≈ تبقى $minutes د';
+  }
+
+  @override
+  String get group_playback => 'التشغيل';
+
+  @override
+  String get group_subtitles => 'الترجمات';
+
+  @override
+  String get group_screen => 'الشاشة';
+
+  @override
+  String get aniskip => 'AniSkip';
+
+  @override
+  String seconds_short(int n) {
+    return '$n ث';
+  }
+
+  @override
+  String unknown_language_codes(String codes) {
+    return 'رمز لغة غير معروف: $codes';
+  }
+
+  @override
+  String get group_network => 'الشبكة';
+
+  @override
+  String get group_discord => 'Discord';
+
+  @override
+  String invalid_url(String scheme) {
+    return 'أدخل رابطًا يبدأ بـ $scheme';
+  }
+
+  @override
+  String get group_cleanup => 'التنظيف';
+
+  @override
+  String remove_entries_confirm(int n) {
+    return 'إزالة $n من العناصر وسجلها؟ لا يمكن التراجع عن ذلك.';
+  }
+
+  @override
+  String get group_library_maintenance => 'صيانة المكتبة';
+
+  @override
+  String get group_diagnostics => 'التشخيص';
+
+  @override
+  String get update_no_notes => 'لا توجد ملاحظات إصدار.';
+
+  @override
+  String update_download_failed(String error) {
+    return 'فشل التنزيل: $error';
+  }
+
+  @override
+  String get update_network_error => 'خطأ في الشبكة أثناء التنزيل.';
+
+  @override
+  String get update_write_failed => 'تعذّرت كتابة ملف APK.';
+
+  @override
+  String get deselect_all => 'إلغاء تحديد الكل';
+
+  @override
+  String update_failed_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تعذّر تحديث $count من العناصر',
+      one: 'تعذّر تحديث عنصر واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sort_ascending => 'تصاعدي';
+
+  @override
+  String get sort_descending => 'تنازلي';
+
+  @override
+  String get not_downloaded => 'غير منزَّل';
+
+  @override
+  String n_tracked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count من العناصر متتبَّعة',
+      one: 'عنصر واحد متتبَّع',
+      zero: 'لا شيء متتبَّع بعد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get no_tracker_connected => 'لا يوجد متتبع متصل';
+
+  @override
+  String get no_tracker_connected_message =>
+      'سجّل الدخول إلى خدمة من الإعدادات › التتبع لرؤية قوائمها هنا.';
+
+  @override
+  String get edit_metadata => 'تعديل البيانات الوصفية';
+
+  @override
+  String get group_modes => 'الأوضاع';
+
+  @override
+  String get group_app => 'التطبيق';
+
+  @override
+  String get group_sources_services => 'المصادر والخدمات';
+
+  @override
+  String n_sources(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count من المصادر',
+      one: 'مصدر واحد',
+      zero: 'لا توجد مصادر',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tv_player_beta_subtitle =>
+      'تشغيل: المشغل المصمم لجهاز التحكم بالتلفاز. إيقاف: المشغل الأصلي.';
+
+  @override
+  String get anime_only_beta_subtitle =>
+      'إخفاء المانغا والروايات في كامل التطبيق. أوقفه لإظهار كل شيء.';
+
+  @override
+  String download_queue_start_failed(String error) {
+    return 'تعذّر بدء قائمة التنزيل: $error';
+  }
+
+  @override
+  String get group_interface => 'الواجهة';
+
+  @override
+  String get group_navigation => 'التنقل';
+
+  @override
+  String get tv_home_beta_subtitle =>
+      'رئيسية أنمي على شكل صفوف (المتابعة، الحلقات الجديدة، الفئات) بدل الشبكة المسطحة';
+
+  @override
+  String get cloudflare_bypass_proxy_hint =>
+      'عنوان FlareSolverr أو Byparr اختياري';
+
+  @override
+  String get cloudflare_bypass_proxy_message =>
+      'نقطة FlareSolverr أو Byparr. اتركه فارغًا لإيقافه.';
+
+  @override
+  String get group_explore => 'استكشاف';
+
+  @override
+  String get explore_recommendations_subtitle => 'عناوين مشابهة لهذا';
+
+  @override
+  String get explore_related_subtitle =>
+      'اقتباساته وأعماله الجانبية ونسخه الأخرى';
+
+  @override
+  String get explore_watch_order_subtitle => 'ترتيب مشاهدة القصة كاملة';
+
+  @override
+  String get explore_sequels_subtitle => 'ما يأتي بعده، من متتبعك';
+
+  @override
+  String get tap_zone_menu => 'القائمة';
+
+  @override
+  String get tap_zone_previous => 'السابق';
+
+  @override
+  String get tap_zone_next => 'التالي';
+
+  @override
+  String get back_to_series => 'العودة إلى السلسلة';
+
+  @override
+  String get keyboard_shortcuts => 'اختصارات لوحة المفاتيح';
+
+  @override
+  String get shortcut_previous_page => 'الصفحة السابقة';
+
+  @override
+  String get shortcut_next_page => 'الصفحة التالية';
+
+  @override
+  String get shortcut_toggle_bars => 'إظهار الأشرطة أو إخفاؤها';
+
+  @override
+  String get shortcut_zoom_in => 'تكبير';
+
+  @override
+  String get shortcut_zoom_out => 'تصغير';
+
+  @override
+  String get shortcut_zoom_reset => 'ملاءمة الصفحة';
+
+  @override
+  String get shortcut_leave => 'مغادرة القارئ';
+
+  @override
+  String get shortcut_show => 'إظهار هذه الاختصارات';
+
+  @override
+  String get color_red => 'أحمر';
+
+  @override
+  String get color_blue => 'أزرق';
+
+  @override
+  String get color_opacity => 'العتامة';
+
+  @override
+  String get volume_keys_paging => 'تقليب الصفحات بأزرار الصوت';
+
+  @override
+  String get volume_keys_paging_ios =>
+      'يُبقى الصوت عند المنتصف أثناء القراءة كي يعمل الزران، ويعود كما كان عند المغادرة.';
+
+  @override
+  String get volume_keys_inverted => 'عكس أزرار الصوت';
+
+  @override
+  String get reader_orientation => 'اتجاه الشاشة';
+
+  @override
+  String get orientation_free => 'اتباع الجهاز';
+
+  @override
+  String get orientation_portrait => 'عمودي';
+
+  @override
+  String get orientation_landscape => 'أفقي';
+
+  @override
+  String get screen_brightness => 'سطوع الشاشة';
+
+  @override
+  String get screen_brightness_system => 'يتبع النظام';
+
+  @override
+  String get shortcut_play_pause => 'تشغيل أو إيقاف مؤقت';
+
+  @override
+  String shortcut_seek_back(int n) {
+    return 'الرجوع $n ث';
+  }
+
+  @override
+  String shortcut_seek_forward(int n) {
+    return 'التقدم $n ث';
+  }
+
+  @override
+  String get shortcut_volume_up => 'رفع الصوت';
+
+  @override
+  String get shortcut_volume_down => 'خفض الصوت';
+
+  @override
+  String get shortcut_mute => 'كتم الصوت أو إلغاؤه';
+
+  @override
+  String shortcut_skip_intro(int n) {
+    return 'تخطي المقدمة ($n ث)';
+  }
+
+  @override
+  String get shortcut_previous_frame => 'الإطار السابق';
+
+  @override
+  String get shortcut_next_frame => 'الإطار التالي';
+
+  @override
+  String get shortcut_shaders => 'مظللات Anime4K';
+
+  @override
+  String get shortcut_shaders_off => 'إيقاف المظللات';
+
+  @override
+  String get autoplay_next_on => 'التشغيل التلقائي للحلقة التالية: مفعّل';
+
+  @override
+  String get autoplay_next_off => 'التشغيل التلقائي للحلقة التالية: معطّل';
+
+  @override
+  String get subtitle_preview_sample => 'الرحلة مستمرة.';
+
+  @override
+  String get text_style => 'النمط';
+
+  @override
+  String get code_editor => 'محرر الشيفرة';
+
+  @override
+  String get code_view_code => 'الشيفرة';
+
+  @override
+  String get code_view_test => 'اختبار';
+
+  @override
+  String get code_view_console => 'وحدة التحكم';
+
+  @override
+  String get code_function => 'الدالة';
+
+  @override
+  String get code_page => 'الصفحة';
+
+  @override
+  String get code_query => 'الاستعلام';
+
+  @override
+  String get code_url => 'URL';
+
+  @override
+  String get code_html => 'HTML';
+
+  @override
+  String get code_execute => 'تشغيل';
+
+  @override
+  String get code_executing => 'جارٍ التشغيل…';
+
+  @override
+  String get code_no_result => 'لا نتيجة بعد';
+
+  @override
+  String get code_no_result_message => 'شغّل دالة لرؤية ما تُرجعه.';
+
+  @override
+  String get code_console => 'وحدة التحكم';
+
+  @override
+  String get code_no_logs => 'لا سجلات بعد';
+
+  @override
+  String get tv_empty_anime_library => 'مكتبة الأنمي فارغة';
+
+  @override
+  String get tv_empty_anime_library_hint =>
+      'أضف أنمي من التصفح لملء الصفحة الرئيسية';
+
+  @override
+  String get browse_anime => 'تصفح الأنمي';
+
+  @override
+  String get no_episodes_yet => 'لا حلقات بعد';
+
+  @override
+  String get filler => 'حلقة حشو';
+
+  @override
+  String get obsolete => 'قديمة';
+
+  @override
+  String every_n_days(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'كل $n أيام',
+      one: 'كل يوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get update_interval_unknown => 'لا يوجد تقدير';
+
+  @override
+  String get group_reading => 'القراءة';
+
+  @override
+  String get group_reading_watching => 'القراءة والمشاهدة';
+
+  @override
+  String get novel_reader => 'قارئ الروايات';
+
+  @override
+  String get all_languages => 'كل اللغات';
+
+  @override
+  String get custom_dns_title => 'DNS مخصص';
+
+  @override
+  String get custom_dns_system => 'DNS النظام';
+
+  @override
+  String get calendar_format_month => 'شهر';
+
+  @override
+  String get calendar_format_two_weeks => 'أسبوعان';
+
+  @override
+  String get calendar_format_week => 'أسبوع';
+
+  @override
+  String get read_count => 'مقروءة';
+
+  @override
+  String get watched_count => 'مُشاهَدة';
+
+  @override
+  String get source_code_error_title => 'لم تعمل شيفرة هذا المصدر';
+
+  @override
+  String source_code_error_failed(String what) {
+    return 'فشل $what: استخدمت الشاشة قيمة احتياطية لتتمكن من المتابعة';
+  }
+
+  @override
+  String get copy_error => 'نسخ';
+
+  @override
+  String get error_copied => 'تم نسخ الخطأ';
 }

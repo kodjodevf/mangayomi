@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/mass_migration/mass_migration_destination_screen.dart';
 import 'package:mangayomi/modules/mass_migration/models/mass_migration_models.dart';
 import 'package:mangayomi/modules/mass_migration/widgets/mass_migration_widgets.dart';
@@ -74,9 +75,16 @@ class _MassMigrationPreviewScreenState
       appBar: AppBar(
         title: Text(l10n.mass_migration_preview_items),
         actions: [
-          TextButton(
+          IconButton(
+            tooltip: allSelected
+                ? l10n.deselect_all
+                : MaterialLocalizations.of(context).selectAllButtonLabel,
             onPressed: total == 0 ? null : () => _setAll(!allSelected),
-            child: Text(allSelected ? 'Deselect all' : 'Select all'),
+            icon: Icon(
+              allSelected
+                  ? Symbols.deselect_rounded
+                  : Symbols.select_all_rounded,
+            ),
           ),
         ],
       ),
@@ -88,31 +96,31 @@ class _MassMigrationPreviewScreenState
             subtitle: Text(
               [
                 if ((sourceGroup.lang ?? '').isNotEmpty)
-                  completeLanguageName(sourceGroup.lang!),
-                '${_selected.length}/$total selected',
-              ].join(' • '),
+                  languageName(context, sourceGroup.lang!),
+                l10n.n_selected(_selected.length),
+              ].join(' · '),
             ),
           ),
           const Divider(height: 1),
           Expanded(
-            child: ListView.separated(
+            child: ListView.builder(
               itemCount: sourceGroup.items.length,
-              separatorBuilder: (_, _) => const Divider(height: 1),
               itemBuilder: (context, index) {
                 final manga = sourceGroup.items[index];
                 final selected = _selected.contains(index);
                 return Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
+                    horizontal: ShioriSpace.s12,
+                    vertical: ShioriSpace.s4,
                   ),
                   child: Card(
                     color: selected
-                        ? Theme.of(context).colorScheme.primaryContainer
-                              .withValues(alpha: 0.4)
+                        ? context.shiori.color.accent.withValues(
+                            alpha: Alphas.accentTint,
+                          )
                         : null,
                     child: Padding(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(ShioriSpace.s12),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -132,12 +140,12 @@ class _MassMigrationPreviewScreenState
                                     onChanged: (_) {},
                                   ),
                                 ),
-                                const SizedBox(width: 4),
+                                const SizedBox(width: ShioriSpace.s4),
                                 MassMigrationCover(
                                   libraryItem: manga,
                                   source: sourceGroup.source,
                                 ),
-                                const SizedBox(width: 12),
+                                const SizedBox(width: ShioriSpace.s12),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -146,11 +154,12 @@ class _MassMigrationPreviewScreenState
                                       Text(
                                         manga.name ??
                                             l10n.mass_migration_unknown_title,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium,
+                                        style: context.shiori.text.row.copyWith(
+                                          color: context.shiori.color.fg,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                      const SizedBox(height: 6),
+                                      const SizedBox(height: ShioriSpace.s4),
                                       Text(
                                         [
                                           if ((manga.author ?? '')
@@ -164,7 +173,8 @@ class _MassMigrationPreviewScreenState
                                           l10n.mass_migration_chapter_count(
                                             manga.chapters.length,
                                           ),
-                                        ].join(' • '),
+                                        ].join(' · '),
+                                        style: context.shiori.caption,
                                       ),
                                     ],
                                   ),
@@ -172,7 +182,7 @@ class _MassMigrationPreviewScreenState
                               ],
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: ShioriSpace.s8),
                           MassMigrationChapterSection(
                             title: l10n.mass_migration_source_chapters,
                             chapters: manga.chapters
@@ -192,10 +202,12 @@ class _MassMigrationPreviewScreenState
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(ShioriSpace.s16),
             child: SizedBox(
               width: double.infinity,
-              child: FilledButton(
+              child: ShioriButton(
+                expand: true,
+                label: l10n.mass_migration_select_destination_source,
                 onPressed: _selected.isEmpty
                     ? null
                     : () {
@@ -220,7 +232,6 @@ class _MassMigrationPreviewScreenState
                           ),
                         );
                       },
-                child: Text(l10n.mass_migration_select_destination_source),
               ),
             ),
           ),

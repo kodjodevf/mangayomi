@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/pre_import_backup.dart';
@@ -7,7 +8,6 @@ import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.da
 import 'package:mangayomi/modules/more/widgets/dialog_actions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/error_toast.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class RollbackLastChangeTile extends ConsumerWidget {
   const RollbackLastChangeTile({super.key});
@@ -18,59 +18,33 @@ class RollbackLastChangeTile extends ConsumerWidget {
     if (snapshots == null || snapshots.isEmpty) return const SizedBox.shrink();
     final l10n = context.l10n;
 
-    if (snapshots.length == 1) {
-      final snapshot = snapshots.first;
-      return ListTile(
-        leading: const Icon(
-          Icons.settings_backup_restore_rounded,
-          color: Colors.red,
-        ),
-        title: Text(
-          l10n.roll_back_last_change,
-          style: const TextStyle(color: Colors.red),
-        ),
-        subtitle: Text(
-          l10n.roll_back_last_change_subtitle(
-            DateTime.fromMillisecondsSinceEpoch(snapshot.createdAt).toString(),
-            snapshot.description,
-          ),
-          style: TextStyle(fontSize: 11, color: context.secondaryColor),
-        ),
-        onTap: () => offerLibraryRollback(context, ref, snapshot.backupPath),
-      );
-    }
-
-    return ExpansionTile(
-      leading: const Icon(
-        Icons.settings_backup_restore_rounded,
-        color: Colors.red,
-      ),
-      title: Text(
-        l10n.roll_back_last_change,
-        style: const TextStyle(color: Colors.red),
-      ),
-      subtitle: Text(
-        l10n.roll_back_available_count(snapshots.length),
-        style: TextStyle(fontSize: 11, color: context.secondaryColor),
-      ),
-      children: [
-        for (final snapshot in snapshots)
-          ListTile(
-            contentPadding: const EdgeInsets.fromLTRB(32, 0, 16, 0),
-            title: Text(
-              snapshot.description,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            subtitle: Text(
-              DateTime.fromMillisecondsSinceEpoch(snapshot.createdAt)
-                  .toString(),
-              style: TextStyle(fontSize: 11, color: context.secondaryColor),
-            ),
-            onTap: () =>
-                offerLibraryRollback(context, ref, snapshot.backupPath),
-          ),
-      ],
+    String when(LibrarySafetySnapshot snapshot) =>
+        DateTime.fromMillisecondsSinceEpoch(snapshot.createdAt).toString();
+    final single = snapshots.length == 1;
+    return ShioriSettingRow(
+      icon: Symbols.settings_backup_restore_rounded,
+      title: l10n.roll_back_last_change,
+      subtitle: single
+          ? l10n.roll_back_last_change_subtitle(
+              when(snapshots.first),
+              snapshots.first.description,
+            )
+          : l10n.roll_back_available_count(snapshots.length),
+      destructive: true,
+      onTap: () async {
+        final snapshot = single
+            ? snapshots.first
+            : await showShioriChoice<LibrarySafetySnapshot>(
+                context,
+                title: l10n.roll_back_last_change,
+                options: [
+                  for (final s in snapshots)
+                    ShioriChoice(s, s.description, subtitle: when(s)),
+                ],
+              );
+        if (snapshot == null || !context.mounted) return;
+        await offerLibraryRollback(context, ref, snapshot.backupPath);
+      },
     );
   }
 }
@@ -81,21 +55,14 @@ Future<void> offerLibraryRollback(
   String safetyBackupPath,
 ) async {
   final l10n = context.l10n;
-  final confirmed = await showDialog<bool>(
-    context: context,
-    builder: (dialogContext) {
-      return AlertDialog(
-        title: Text(l10n.roll_back),
-        content: Text(l10n.roll_back_confirm_message),
-        actions: dialogCancelConfirmActions(
-          dialogContext: dialogContext,
-          confirmLabel: l10n.roll_back,
-          confirmColor: Colors.red,
-        ),
-      );
-    },
+  final confirmed = await showShioriConfirm(
+    context,
+    title: l10n.roll_back,
+    message: l10n.roll_back_confirm_message,
+    confirmLabel: l10n.roll_back,
+    destructive: true,
   );
-  if (confirmed != true || !context.mounted) return;
+  if (!confirmed || !context.mounted) return;
 
   bool? syncAfterRestore;
   final syncPreference = ref.read(synchingProvider(syncId: 1));

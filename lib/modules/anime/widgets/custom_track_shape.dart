@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 
 /// Material Design 3 Slider Track Shape with support for buffer progress and chapter mark ticks.
 class CustomTrackShape extends SliderTrackShape {
@@ -75,7 +76,8 @@ class CustomTrackShape extends SliderTrackShape {
 
     // 1. Inactive full track (M3 base)
     final inactivePaint = Paint()
-      ..color = sliderTheme.inactiveTrackColor ?? const Color(0x33FFFFFF)
+      ..color = sliderTheme.inactiveTrackColor ??
+          Colors.white.withValues(alpha: Alphas.hairline)
       ..style = PaintingStyle.fill;
     canvas.drawRRect(
       RRect.fromRectAndRadius(trackRect, trackRadius),
@@ -91,7 +93,8 @@ class CustomTrackShape extends SliderTrackShape {
         trackRect.bottom,
       );
       final bufferPaint = Paint()
-        ..color = sliderTheme.secondaryActiveTrackColor ?? const Color(0x66FFFFFF)
+        ..color = sliderTheme.secondaryActiveTrackColor ??
+          Colors.white.withValues(alpha: Alphas.disabled)
         ..style = PaintingStyle.fill;
       canvas.drawRRect(
         RRect.fromRectAndRadius(bufferRect, trackRadius),
@@ -108,7 +111,7 @@ class CustomTrackShape extends SliderTrackShape {
         trackRect.bottom,
       );
       final activePaint = Paint()
-        ..color = sliderTheme.activeTrackColor ?? const Color(0xFFFFFFFF)
+        ..color = sliderTheme.activeTrackColor ?? Colors.white
         ..style = PaintingStyle.fill;
       canvas.drawRRect(
         RRect.fromRectAndRadius(activeRect, trackRadius),
@@ -132,7 +135,7 @@ class CustomTrackShape extends SliderTrackShape {
             chapterMarkWidth,
             trackRect.height + 3.0,
           ),
-          const Radius.circular(2),
+          const Radius.circular(ShioriShape.badge),
         );
         canvas.drawRRect(markRect, markPaint);
       }

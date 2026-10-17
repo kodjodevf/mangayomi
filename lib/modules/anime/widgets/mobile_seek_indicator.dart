@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 
 const _seekFeedbackShadow = Shadow(
+  // shiori: a hairline shadow under white text on video, a const top-level value
   color: Color(0x30000000),
   blurRadius: 3,
   offset: Offset(0, 1),
@@ -35,7 +38,7 @@ class MobileSeekIndicator extends StatefulWidget {
 
 class _SeekIndicatorState extends State<MobileSeekIndicator>
     with SingleTickerProviderStateMixin {
-  static const _chevronAnimationDuration = Duration(milliseconds: 220);
+  static const _chevronAnimationDuration = ShioriMotion.standard;
 
   late Duration _value;
   late final AnimationController _chevronController;
@@ -93,7 +96,14 @@ class _SeekIndicatorState extends State<MobileSeekIndicator>
             bottom: safeInsets.bottom + mobilePlayerBottomControlsBottomPadding,
           );
     final valueLabel = '${widget.forward ? '+' : '-'}${_value.inSeconds.abs()}';
-    final directionLabel = widget.forward ? 'Seek forward' : 'Seek backward';
+    // Read out in the app's language where it has one (tests may not).
+    final l10n = l10nLocalizations(context);
+    final seconds = _value.inSeconds.abs();
+    final directionLabel = l10n == null
+        ? (widget.forward ? 'Seek forward' : 'Seek backward')
+        : (widget.forward
+              ? l10n.shortcut_seek_forward(seconds)
+              : l10n.shortcut_seek_back(seconds));
     final direction = widget.forward ? 1.0 : -1.0;
     final chevrons = SizedBox(
       width: 54,
@@ -120,9 +130,10 @@ class _SeekIndicatorState extends State<MobileSeekIndicator>
                   ),
                   opacity: trailingOpacity,
                   child: Icon(
+                    fill: 1,
                     widget.forward
-                        ? Icons.keyboard_arrow_right_rounded
-                        : Icons.keyboard_arrow_left_rounded,
+                        ? Symbols.keyboard_arrow_right_rounded
+                        : Symbols.keyboard_arrow_left_rounded,
                     size: 32,
                     color: Colors.white,
                     shadows: const [_seekFeedbackShadow],
@@ -138,9 +149,10 @@ class _SeekIndicatorState extends State<MobileSeekIndicator>
                   ),
                   opacity: leadingOpacity,
                   child: Icon(
+                    fill: 1,
                     widget.forward
-                        ? Icons.keyboard_arrow_right_rounded
-                        : Icons.keyboard_arrow_left_rounded,
+                        ? Symbols.keyboard_arrow_right_rounded
+                        : Symbols.keyboard_arrow_left_rounded,
                     size: 32,
                     color: Colors.white,
                     shadows: const [_seekFeedbackShadow],
@@ -155,7 +167,7 @@ class _SeekIndicatorState extends State<MobileSeekIndicator>
     final value = TweenAnimationBuilder<double>(
       key: ValueKey('mobile-seek-value-${_value.inSeconds}'),
       tween: Tween(begin: 0.0, end: 1.0),
-      duration: const Duration(milliseconds: 90),
+      duration: ShioriMotion.fast,
       curve: Curves.easeOut,
       builder: (context, progress, child) => Opacity(
         opacity: progress,
@@ -166,7 +178,7 @@ class _SeekIndicatorState extends State<MobileSeekIndicator>
         key: const ValueKey('mobile-seek-value'),
         style: (textTheme.titleLarge ?? const TextStyle()).copyWith(
           color: Colors.white,
-          fontSize: 24,
+          fontSize: context.shiori.text.seriesTitle.fontSize,
           fontWeight: FontWeight.w700,
           fontFeatures: const [FontFeature.tabularFigures()],
           shadows: const [_seekFeedbackShadow],
@@ -178,7 +190,7 @@ class _SeekIndicatorState extends State<MobileSeekIndicator>
       button: true,
       liveRegion: true,
       label: directionLabel,
-      value: '${_value.inSeconds.abs()} seconds',
+      value: l10n == null ? '$seconds seconds' : null,
       onTap: increment,
       child: ExcludeSemantics(
         child: GestureDetector(

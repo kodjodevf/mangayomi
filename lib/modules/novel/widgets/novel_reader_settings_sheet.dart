@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -6,6 +7,7 @@ import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
 import 'package:mangayomi/modules/novel/utils/novel_reader_fonts.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_settings_controls.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 
 class ReaderSettingsTab extends ConsumerStatefulWidget {
   final NovelReaderController? readerController;
@@ -59,7 +61,7 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
     final fontFamilyKey = ref.watch(novelFontFamilyStateProvider);
     final fontSize = ref.watch(novelFontSizeStateProvider);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.only(bottom: ShioriSpace.s16),
       child: Column(
         children: [
           NovelSettingSection(
@@ -84,7 +86,7 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                         },
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: ShioriSpace.s8),
                     Expanded(
                       child: NovelThemeButton(
                         backgroundColor: '#FFFFFF',
@@ -101,7 +103,7 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                         },
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: ShioriSpace.s8),
                     Expanded(
                       child: NovelThemeButton(
                         backgroundColor: '#000000',
@@ -118,7 +120,7 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                         },
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: ShioriSpace.s8),
                     Expanded(
                       child: NovelThemeButton(
                         backgroundColor: '#F5E6D3',
@@ -137,7 +139,7 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: ShioriSpace.s12),
                 Row(
                   children: [
                     Expanded(
@@ -151,7 +153,7 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                         },
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: ShioriSpace.s8),
                     Expanded(
                       child: NovelColorPicker(
                         label: context.l10n.text,
@@ -168,15 +170,13 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
               ],
             ),
           ),
-
-          const SizedBox(height: 10),
           NovelSettingSection(
             title: context.l10n.text_align,
             child: Row(
               children: [
                 Expanded(
                   child: NovelAlignButton(
-                    icon: Icons.format_align_left,
+                    icon: Symbols.format_align_left_rounded,
                     isSelected: textAlign == NovelTextAlign.left,
                     onTap: () {
                       ref
@@ -185,10 +185,10 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                     },
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: ShioriSpace.s8),
                 Expanded(
                   child: NovelAlignButton(
-                    icon: Icons.format_align_center,
+                    icon: Symbols.format_align_center_rounded,
                     isSelected: textAlign == NovelTextAlign.center,
                     onTap: () {
                       ref
@@ -197,10 +197,10 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                     },
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: ShioriSpace.s8),
                 Expanded(
                   child: NovelAlignButton(
-                    icon: Icons.format_align_right,
+                    icon: Symbols.format_align_right_rounded,
                     isSelected: textAlign == NovelTextAlign.right,
                     onTap: () {
                       ref
@@ -209,10 +209,10 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                     },
                   ),
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: ShioriSpace.s8),
                 Expanded(
                   child: NovelAlignButton(
-                    icon: Icons.format_align_justify,
+                    icon: Symbols.format_align_justify_rounded,
                     isSelected: textAlign == NovelTextAlign.block,
                     onTap: () {
                       ref
@@ -224,242 +224,67 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
               ],
             ),
           ),
-
-          const SizedBox(height: 10),
-
+          // Size, margins and spacing of the text.
           NovelSettingSection(
-            title: context.l10n.font_size,
-            child: Row(
+            title: context.l10n.display,
+            inset: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.format_size_rounded,
-                  size: 20,
-                  color: Theme.of(context).primaryColor,
+                ShioriSliderRow(
+                  icon: Symbols.format_size_rounded,
+                  title: context.l10n.font_size,
+                  value: fontSize.toDouble().clamp(8, 40),
+                  min: 8,
+                  max: 40,
+                  divisions: 32,
+                  valueLabel: (v) => '${v.round()} px',
+                  stepTooltips: (context.l10n.decrease, context.l10n.increase),
+                  defaultValue: 14,
+                  onReset: () =>
+                      ref.read(novelFontSizeStateProvider.notifier).set(14),
+                  resetTooltip: context.l10n.reset,
+                  onChanged: (v) => ref
+                      .read(novelFontSizeStateProvider.notifier)
+                      .set(v.round()),
                 ),
-                const SizedBox(width: 4),
-                IconButton(
-                  visualDensity: VisualDensity.compact,
-                  constraints: const BoxConstraints(
-                    minWidth: 32,
-                    minHeight: 32,
-                  ),
-                  padding: EdgeInsets.zero,
-                  onPressed: fontSize > 8
-                      ? () {
-                          ref
-                              .read(novelFontSizeStateProvider.notifier)
-                              .set(fontSize - 1);
-                        }
-                      : null,
-                  icon: const Icon(Icons.remove_rounded, size: 18),
-                  tooltip: context.l10n.decrease,
+                ShioriSliderRow(
+                  icon: Symbols.space_bar_rounded,
+                  title: context.l10n.padding,
+                  value: padding.toDouble(),
+                  min: 0,
+                  max: 50,
+                  divisions: 50,
+                  valueLabel: (v) => '${v.round()} px',
+                  defaultValue: 16,
+                  onReset: () => ref
+                      .read(novelReaderPaddingStateProvider.notifier)
+                      .set(16),
+                  resetTooltip: context.l10n.reset,
+                  onChanged: (v) => ref
+                      .read(novelReaderPaddingStateProvider.notifier)
+                      .set(v.round()),
                 ),
-                Expanded(
-                  child: SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight: 3,
-                      thumbShape: const RoundSliderThumbShape(
-                        enabledThumbRadius: 6,
-                      ),
-                      overlayShape: const RoundSliderOverlayShape(
-                        overlayRadius: 12,
-                      ),
-                      activeTrackColor: Theme.of(context).primaryColor,
-                      inactiveTrackColor: Theme.of(context).primaryColor
-                          .withValues(alpha: 0.2),
-                      thumbColor: Theme.of(context).primaryColor,
-                      overlayColor: Theme.of(context).primaryColor
-                          .withValues(alpha: 0.2),
-                    ),
-                    child: Slider(
-                      value: fontSize.toDouble().clamp(8.0, 40.0),
-                      min: 8,
-                      max: 40,
-                      divisions: 32,
-                      label: '$fontSize px',
-                      onChanged: (value) {
-                        ref
-                            .read(novelFontSizeStateProvider.notifier)
-                            .set(value.toInt());
-                      },
-                    ),
-                  ),
-                ),
-                IconButton(
-                  visualDensity: VisualDensity.compact,
-                  constraints: const BoxConstraints(
-                    minWidth: 32,
-                    minHeight: 32,
-                  ),
-                  padding: EdgeInsets.zero,
-                  onPressed: fontSize < 40
-                      ? () {
-                          ref
-                              .read(novelFontSizeStateProvider.notifier)
-                              .set(fontSize + 1);
-                        }
-                      : null,
-                  icon: const Icon(Icons.add_rounded, size: 18),
-                  tooltip: context.l10n.increase,
-                ),
-                const SizedBox(width: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor
-                        .withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    '${fontSize}px',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
+                ShioriSliderRow(
+                  icon: Symbols.height_rounded,
+                  title: context.l10n.line_height,
+                  value: lineHeight,
+                  min: 1,
+                  max: 3,
+                  divisions: 20,
+                  valueLabel: (v) => v.toStringAsFixed(1),
+                  defaultValue: 1.5,
+                  onReset: () => ref
+                      .read(novelReaderLineHeightStateProvider.notifier)
+                      .set(1.5),
+                  resetTooltip: context.l10n.reset,
+                  onChanged: (v) => ref
+                      .read(novelReaderLineHeightStateProvider.notifier)
+                      .set(v),
                 ),
               ],
             ),
           ),
-
-          const SizedBox(height: 10),
-
-          NovelSettingSection(
-            title: context.l10n.padding,
-            child: Row(
-              children: [
-                Icon(
-                  Icons.space_bar_rounded,
-                  size: 20,
-                  color: Theme.of(context).primaryColor,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight: 3,
-                      thumbShape: const RoundSliderThumbShape(
-                        enabledThumbRadius: 6,
-                      ),
-                      overlayShape: const RoundSliderOverlayShape(
-                        overlayRadius: 12,
-                      ),
-                      activeTrackColor: Theme.of(context).primaryColor,
-                      inactiveTrackColor: Theme.of(context).primaryColor
-                          .withValues(alpha: 0.2),
-                      thumbColor: Theme.of(context).primaryColor,
-                      overlayColor: Theme.of(context).primaryColor
-                          .withValues(alpha: 0.2),
-                    ),
-                    child: Slider(
-                      value: padding.toDouble(),
-                      min: 0,
-                      max: 50,
-                      divisions: 50,
-                      label: '$padding px',
-                      onChanged: (value) {
-                        ref
-                            .read(novelReaderPaddingStateProvider.notifier)
-                            .set(value.toInt());
-                      },
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor
-                        .withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    '${padding}px',
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          NovelSettingSection(
-            title: context.l10n.line_height,
-            child: Row(
-              children: [
-                Icon(
-                  Icons.height_rounded,
-                  size: 20,
-                  color: Theme.of(context).primaryColor,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight: 3,
-                      thumbShape: const RoundSliderThumbShape(
-                        enabledThumbRadius: 6,
-                      ),
-                      overlayShape: const RoundSliderOverlayShape(
-                        overlayRadius: 12,
-                      ),
-                      activeTrackColor: Theme.of(context).primaryColor,
-                      inactiveTrackColor: Theme.of(context).primaryColor
-                          .withValues(alpha: 0.2),
-                      thumbColor: Theme.of(context).primaryColor,
-                      overlayColor: Theme.of(context).primaryColor
-                          .withValues(alpha: 0.2),
-                    ),
-                    child: Slider(
-                      value: lineHeight,
-                      min: 1.0,
-                      max: 3.0,
-                      divisions: 20,
-                      label: lineHeight.toStringAsFixed(1),
-                      onChanged: (value) {
-                        ref
-                            .read(novelReaderLineHeightStateProvider.notifier)
-                            .set(value);
-                      },
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor
-                        .withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    lineHeight.toStringAsFixed(1),
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
           NovelSettingSection(
             title: context.l10n.font,
             child: Wrap(
@@ -471,12 +296,17 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                     visualDensity: VisualDensity.compact,
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
+                      horizontal: ShioriSpace.s8,
                       vertical: 2,
                     ),
-                    labelStyle: const TextStyle(fontSize: 11),
+                    labelStyle: context.shiori.text.meta,
                     label: Text(
-                      option.key == null ? context.l10n.default0 : option.label,
+                      option.key == null
+                          ? ref.watch(
+                                  appFontFamilyProvider.select((t) => t.$1),
+                                ) ??
+                                context.l10n.default0
+                          : option.label,
                     ),
                     selected: fontFamilyKey == option.key,
                     onSelected: (_) {
@@ -488,9 +318,6 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
               ],
             ),
           ),
-
-          const SizedBox(height: 10),
-
           if (_readerMode != null) ...[
             NovelSettingSection(
               title: context.l10n.reading_mode,
@@ -498,7 +325,7 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                 children: [
                   Expanded(
                     child: NovelModeChipButton(
-                      icon: Icons.swap_vert_rounded,
+                      icon: Symbols.swap_vert_rounded,
                       label: context.l10n.reading_mode_vertical_continuous,
                       isSelected: _readerMode!.isContinuous,
                       onTap: () {
@@ -514,10 +341,10 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                       },
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: ShioriSpace.s8),
                   Expanded(
                     child: NovelModeChipButton(
-                      icon: Icons.auto_stories_rounded,
+                      icon: Symbols.auto_stories_rounded,
                       label: context.l10n.reading_mode_left_to_right,
                       isSelected: !_readerMode!.isContinuous,
                       onTap: () {
@@ -532,7 +359,6 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                 ],
               ),
             ),
-            const SizedBox(height: 10),
           ],
 
           if (_readerMode == null || !_readerMode!.isContinuous) ...[
@@ -548,16 +374,22 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
 
                 return NovelSettingSection(
                   title: context.l10n.page_mode,
+                  inset: false,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.fromLTRB(
+                          ShioriSpace.s16,
+                          0,
+                          ShioriSpace.s16,
+                          ShioriSpace.s8,
+                        ),
                         child: Row(
                           children: [
                             Expanded(
                               child: NovelModeChipButton(
-                                icon: Icons.article_outlined,
+                                icon: Symbols.article_rounded,
                                 label: context.l10n.single_page,
                                 isSelected:
                                     effectivePageMode == PageMode.onePage,
@@ -579,10 +411,10 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                                 },
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: ShioriSpace.s8),
                             Expanded(
                               child: NovelModeChipButton(
-                                icon: Icons.auto_stories_outlined,
+                                icon: Symbols.auto_stories_rounded,
                                 label: context.l10n.double_page,
                                 isSelected:
                                     effectivePageMode == PageMode.doublePage,
@@ -609,10 +441,7 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                       ),
                       NovelSwitchSetting(
                         title: context.l10n.double_page_auto,
-                        secondary: const Icon(
-                          Icons.screen_rotation_outlined,
-                          size: 20,
-                        ),
+                        icon: Symbols.screen_rotation_rounded,
                         value: doublePageAuto,
                         onChanged: (value) {
                           ref

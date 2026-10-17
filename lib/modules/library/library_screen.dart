@@ -3,6 +3,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/main_view/nav_groups.dart';
+import 'package:mangayomi/modules/main_view/widgets/nav_group_switcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -26,7 +28,10 @@ import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/modules/library/widgets/active_filter_chips.dart';
+import 'package:mangayomi/modules/library/widgets/continue_shelf.dart';
+import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
+import 'package:shiori/shiori.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 /// Main library screen — refactored from 2309 lines to ~350 lines.
@@ -110,7 +115,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     );
   }
 
+  /// The settings of the build in progress, for the header's filter chips.
+  late Settings _settings;
+
   Widget _buildWithSettings(Settings settings) {
+    _settings = settings;
     // On Android TV the anime library shows the dedicated rows-based home
     // instead of the flat grid - a d-pad-first, cover-forward shelf. Toggleable
     // via tvHomeStyleProvider; every other surface keeps the grid.
@@ -331,7 +340,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       setState(() => _ignoreFiltersOnSearch = val),
                   vsync: this,
                 ),
-                body: bodyForCategory(),
+                body: _withLibraryHeader(bodyForCategory()),
               );
             },
             error: (error, _) => ErrorText(error),
@@ -428,29 +437,33 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         // grid while Browse (a direct grid) works. So for one category, render
         // the grid directly like Browse; keep the tabs only for 2+ categories.
         body: tabCount <= 1
-            ? (withoutCategory.isEmpty && entr.isNotEmpty
-                  ? bodyForCategory(categoryId: entr.first.id!)
-                  : bodyForCategory())
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildCategoryTabs(
-                    entr: entr,
-                    withoutCategory: withoutCategory,
-                    showNumbersOfItems: showNumbersOfItems,
-                    badgeForCategory: badgeForCategory,
-                  ),
-                  Flexible(
-                    child: TabBarView(
-                      controller: tabBarController,
-                      children: _buildCategoryBodies(
-                        entr: entr,
-                        withoutCategory: withoutCategory,
-                        bodyForCategory: bodyForCategory,
+            ? _withLibraryHeader(
+                withoutCategory.isEmpty && entr.isNotEmpty
+                    ? bodyForCategory(categoryId: entr.first.id!)
+                    : bodyForCategory(),
+              )
+            : _withLibraryHeader(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildCategoryTabs(
+                      entr: entr,
+                      withoutCategory: withoutCategory,
+                      showNumbersOfItems: showNumbersOfItems,
+                      badgeForCategory: badgeForCategory,
+                    ),
+                    Flexible(
+                      child: TabBarView(
+                        controller: tabBarController,
+                        children: _buildCategoryBodies(
+                          entr: entr,
+                          withoutCategory: withoutCategory,
+                          bodyForCategory: bodyForCategory,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
       ),
     );
@@ -472,7 +485,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             children: [
               Tab(text: l10n.default0),
               if (showNumbersOfItems) ...[
-                const SizedBox(width: 4),
+                const SizedBox(width: ShioriSpace.s4),
                 // Default category doesn't have a single ID — use inline count
                 _DefaultCategoryBadge(itemType: widget.itemType),
               ],
@@ -483,7 +496,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             children: [
               Tab(text: entr[i].name),
               if (showNumbersOfItems) ...[
-                const SizedBox(width: 4),
+                const SizedBox(width: ShioriSpace.s4),
                 badgeForCategory(entr[i].id!),
               ],
             ],
@@ -505,16 +518,55 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     ];
   }
 
+  /// [body] under the library's header: the media switcher when the
+  /// navigation is grouped, then the "Continue" row. Both scroll away with
+  /// the grid, so they never hold a phone's height for good. Left out while
+  /// searching or selecting, where they would only be in the way, and on a
+  /// TV, whose home already leads with what is in progress.
+  Widget _withLibraryHeader(Widget body) {
+    final route = libraryRouteFor(widget.itemType);
+    final selecting = ref.watch(isLongPressedStateProvider);
+    final showShelf = !isTv && !_isSearch && !selecting;
+    if (!showShelf) {
+      return Column(
+        children: [
+          // Not while selecting: switching to Anime mid-selection would mix
+          // series of two kinds in one action, and the navigation bar is
+          // already hidden for the same reason.
+          if (!selecting) NavGroupSwitcher(route: route),
+          ActiveFilterChips(itemType: widget.itemType, settings: _settings),
+          Expanded(child: body),
+        ],
+      );
+    }
+    return NestedScrollView(
+      headerSliverBuilder: (context, _) => [
+        SliverToBoxAdapter(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              NavGroupSwitcher(route: route),
+              ContinueShelf(itemType: widget.itemType),
+              ActiveFilterChips(itemType: widget.itemType, settings: _settings),
+            ],
+          ),
+        ),
+      ],
+      body: body,
+    );
+  }
+
   Widget _buildBottomBar() {
     return Builder(
       builder: (context) {
         final mangaIds = ref.watch(mangasListStateProvider);
-        final color = Theme.of(context).textTheme.bodyLarge!.color!;
+        final l10n = context.l10n;
         return BottomSelectBar(
           isVisible: ref.watch(isLongPressedStateProvider),
           actions: [
             BottomSelectButton(
-              icon: Icon(Icons.label_outline_rounded, color: color),
+              icon: const Icon(Symbols.label_rounded),
+              tooltip: l10n.set_categories,
               onPressed: () {
                 final List<Manga> bulkMangas = mangaIds
                     .map((id) => mangaRepository.getById(id))
@@ -528,7 +580,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
               },
             ),
             BottomSelectButton(
-              icon: Icon(Icons.done_all_sharp, color: color),
+              icon: const Icon(Symbols.done_all_rounded),
+              tooltip: l10n.mark_as_read,
               onPressed: () {
                 ref
                     .read(
@@ -542,7 +595,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
               },
             ),
             BottomSelectButton(
-              icon: Icon(Icons.remove_done_sharp, color: color),
+              icon: const Icon(Symbols.remove_done_rounded),
+              tooltip: l10n.mark_as_unread,
               onPressed: () {
                 ref
                     .read(
@@ -556,7 +610,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
               },
             ),
             BottomSelectButton(
-              icon: Icon(Icons.swap_horiz_rounded, color: color),
+              icon: const Icon(Symbols.swap_horiz_rounded),
+              tooltip: l10n.migrate,
               onPressed: () {
                 final List<Manga> bulkMangas = mangaIds
                     .map((id) => mangaRepository.getById(id))
@@ -571,7 +626,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
               },
             ),
             BottomSelectButton(
-              icon: Icon(Icons.delete_outline_outlined, color: color),
+              icon: const Icon(Symbols.delete_rounded),
+              tooltip: l10n.delete,
               onPressed: () => showDeleteMangaDialog(
                 context: context,
                 ref: ref,
@@ -606,17 +662,7 @@ class _DefaultCategoryBadge extends ConsumerWidget {
         final count = data
             .where((m) => m.categories == null || m.categories!.isEmpty)
             .length;
-        return CircleAvatar(
-          backgroundColor: Theme.of(context).focusColor,
-          radius: 8,
-          child: Text(
-            count.toString(),
-            style: TextStyle(
-              fontSize: 10,
-              color: Theme.of(context).textTheme.bodySmall!.color,
-            ),
-          ),
-        );
+        return EntryBadgeChip(label: count.toString());
       },
       error: (_, _) => const SizedBox.shrink(),
       loading: () => const SizedBox.shrink(),
@@ -626,187 +672,73 @@ class _DefaultCategoryBadge extends ConsumerWidget {
 
 /// Top-level utility — shows a dialog to add a torrent by URL or .torrent file.
 void addTorrent(BuildContext context, {Manga? manga}) {
-  final l10n = l10nLocalizations(context)!;
+  final l10n = context.l10n;
   String torrentUrl = "";
   bool isLoading = false;
   showDialog(
     context: context,
-    barrierDismissible: !isLoading,
-    builder: (context) {
-      return AlertDialog(
-        title: Text(l10n.add_torrent),
-        content: StatefulBuilder(
-          builder: (context, setState) {
-            return Consumer(
-              builder: (context, ref, _) {
-                return SizedBox(
-                  height: 150,
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              onChanged: (value) {
-                                setState(() {
-                                  torrentUrl = value;
-                                });
-                              },
-                              decoration: InputDecoration(
-                                hintText: l10n.enter_torrent_hint_text,
-                                labelText: l10n.torrent_url,
-                                isDense: true,
-                                filled: true,
-                                fillColor: Colors.transparent,
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: context.secondaryColor,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: context.secondaryColor,
-                                  ),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: context.secondaryColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: isLoading
-                                ? null
-                                : () async {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    try {
-                                      await ref.watch(
-                                        addTorrentFromUrlOrFromFileProvider(
-                                          manga,
-                                          init: true,
-                                          url: torrentUrl,
-                                        ).future,
-                                      );
-                                    } catch (_) {}
+    builder: (context) => StatefulBuilder(
+      builder: (context, setState) => Consumer(
+        builder: (context, ref, _) {
+          // From the URL when one is given, else from a file picked on the
+          // device.
+          Future<void> add({required bool fromUrl}) async {
+            setState(() => isLoading = true);
+            try {
+              await ref.watch(
+                addTorrentFromUrlOrFromFileProvider(
+                  manga,
+                  init: true,
+                  url: fromUrl ? torrentUrl : null,
+                ).future,
+              );
+            } catch (_) {}
+            if (!context.mounted) return;
+            setState(() => isLoading = false);
+            Navigator.pop(context);
+          }
 
-                                    setState(() {
-                                      isLoading = false;
-                                    });
-                                    Navigator.pop(context);
-                                  },
-                            child: Text(l10n.add),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Text(l10n.or),
-                      ),
-                      Stack(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(3),
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                    onPressed: isLoading
-                                        ? null
-                                        : () async {
-                                            setState(() {
-                                              isLoading = true;
-                                            });
-                                            try {
-                                              await ref.watch(
-                                                addTorrentFromUrlOrFromFileProvider(
-                                                  manga,
-                                                  init: true,
-                                                ).future,
-                                              );
-                                            } catch (_) {}
-
-                                            setState(() {
-                                              isLoading = false;
-                                            });
-                                            Navigator.pop(context);
-                                          },
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        const Icon(Icons.archive_outlined),
-                                        Text(
-                                          "import .torrent file",
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall!
-                                                .color,
-                                            fontSize: 10,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          if (isLoading)
-                            Positioned.fill(
-                              child: Container(
-                                width: 300,
-                                height: 150,
-                                color: Colors.transparent,
-                                child: UnconstrainedBox(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                    ),
-                                    height: 50,
-                                    width: 50,
-                                    child: const Center(
-                                      child: ProgressCenter(),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
-            );
-          },
-        ),
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text(l10n.cancel),
+          return PopScope(
+            canPop: !isLoading,
+            child: ShioriDialog(
+              title: l10n.add_torrent,
+              content: TextField(
+                enabled: !isLoading,
+                keyboardType: TextInputType.url,
+                onChanged: (value) => setState(() => torrentUrl = value),
+                decoration: InputDecoration(
+                  labelText: l10n.torrent_url,
+                  hintText: l10n.enter_torrent_hint_text,
+                ),
               ),
-              const SizedBox(width: 15),
-            ],
-          ),
-        ],
-      );
-    },
+              actions: [
+                ShioriButton.quiet(
+                  label: l10n.cancel,
+                  onPressed: isLoading ? null : () => Navigator.pop(context),
+                ),
+                if (isLoading)
+                  const Padding(
+                    padding: EdgeInsets.all(ShioriSpace.s8),
+                    child: ShioriLoading.inline(),
+                  )
+                else ...[
+                  ShioriButton.secondary(
+                    icon: Symbols.file_open_rounded,
+                    label: l10n.import_files,
+                    onPressed: () => add(fromUrl: false),
+                  ),
+                  ShioriButton(
+                    label: l10n.add,
+                    onPressed: torrentUrl.trim().isEmpty
+                        ? null
+                        : () => add(fromUrl: true),
+                  ),
+                ],
+              ],
+            ),
+          );
+        },
+      ),
+    ),
   );
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:shiori/shiori.dart';
 
 class CoverViewWidget extends StatefulWidget {
   final List<Widget> children;
@@ -22,6 +22,9 @@ class CoverViewWidget extends StatefulWidget {
   final ValueChanged<bool>? onFocusChange;
   // 0..1 watch/read progress; when > 0 draws a thin bar along the cover bottom.
   final double progress;
+  // Flies the cover to its detail page; see coverHeroTag. Only one cover per
+  // series on a screen may carry a tag.
+  final Object? heroTag;
   const CoverViewWidget({
     super.key,
     required this.children,
@@ -35,6 +38,7 @@ class CoverViewWidget extends StatefulWidget {
     this.autofocus = false,
     this.onFocusChange,
     this.progress = 0,
+    this.heroTag,
   });
 
   @override
@@ -70,6 +74,11 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
   void dispose() {
     FocusManager.instance.removeHighlightModeListener(_onHighlightModeChanged);
     super.dispose();
+  }
+
+  Widget _hero(Widget child) {
+    final tag = widget.heroTag;
+    return tag == null ? child : Hero(tag: tag, child: child);
   }
 
   void _onHighlightModeChanged(FocusHighlightMode mode) {
@@ -110,85 +119,94 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
     // key above the InkWell and resolve tap vs hold on release, exactly like
     // TvPill: press-and-release opens, press-and-hold selects. The wrapper
     // takes no focus of its own; it only sees keys bubbling from the InkWell.
+    final tokens = context.shiori;
+    final c = tokens.color;
+    final motion = ShioriMotion.of(context, ShioriMotion.fast);
+    // Multi-selection: the accent veils the cover and a check confirms it,
+    // the same treatment as ShioriCover.
+    final selection = showOverlay
+        ? Positioned.fill(
+            child: ColoredBox(
+              color: c.accent.withValues(alpha: Alphas.secondary),
+              child: Center(
+                child: Icon(
+                  Symbols.check_circle_rounded,
+                  fill: 1,
+                  color: c.onAccent,
+                  size: tokens.scaled(32),
+                ),
+              ),
+            ),
+          )
+        : null;
     Widget card = Padding(
-      padding: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(ShioriSpace.s4),
       child: Column(
         children: [
           Expanded(
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 130),
-              curve: Curves.easeOut,
+              duration: motion,
+              curve: ShioriMotion.standardCurve,
               // Focus "pop" — the focused cover lifts slightly, TV-style.
               transform: Matrix4.identity()..scaleByDouble(pop, pop, pop, 1),
               transformAlignment: Alignment.center,
               decoration: BoxDecoration(
-                // Outer radius = inner clip radius (5) + border width (3) so the
-                // ring's corners stay concentric with the card and don't clip.
-                borderRadius: BorderRadius.circular(8),
+                // The ring sits outside the clip, its radius grown by its
+                // width so the corners stay concentric with the cover.
+                borderRadius: BorderRadius.circular(ShioriShape.cover + 3),
                 border: Border.all(
-                  color: _focused ? context.primaryColor : Colors.transparent,
+                  color: _focused ? c.accent : Colors.transparent,
                   width: 3,
                 ),
               ),
-              child: Material(
-                borderRadius: BorderRadius.circular(5),
-                color: Colors.transparent,
-                clipBehavior: Clip.antiAlias,
-                child: InkWell(
-                  autofocus: widget.autofocus,
-                  onTap: widget.onTap,
-                  onLongPress: widget.onLongPress,
-                  onSecondaryTap: widget.onSecondaryTap,
-                  onFocusChange: _onFocusChange,
-                  child: widget.image == null
-                      ? Container(
-                          color: showOverlay
-                              ? context.primaryColor.withValues(alpha: 0.4)
-                              : Colors.transparent,
-                          child: widget.isComfortableGrid
-                              ? Column(children: widget.children)
-                              : Stack(children: widget.children),
-                        )
-                      : Ink.image(
-                          fit: BoxFit.cover,
-                          image: widget.image!,
-                          child: Stack(
+              child: _hero(
+                Material(
+                  borderRadius: BorderRadius.circular(ShioriShape.cover),
+                  color: widget.image == null ? Colors.transparent : c.ink2,
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    autofocus: widget.autofocus,
+                    onTap: widget.onTap,
+                    onLongPress: widget.onLongPress,
+                    onSecondaryTap: widget.onSecondaryTap,
+                    onFocusChange: _onFocusChange,
+                    child: widget.image == null
+                        ? Stack(
                             children: [
-                              if (showOverlay)
-                                Positioned.fill(
-                                  child: Container(
-                                    color: context.primaryColor.withValues(
-                                      alpha: 0.4,
-                                    ),
-                                  ),
-                                ),
-                              ...widget.children,
-                              if (widget.progress > 0)
-                                Positioned(
-                                  left: 0,
-                                  right: 0,
-                                  bottom: 0,
-                                  child: LinearProgressIndicator(
-                                    value: widget.progress.clamp(0.0, 1.0),
-                                    minHeight: 3,
-                                    backgroundColor: Colors.black.withValues(
-                                      alpha: 0.35,
-                                    ),
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      context.primaryColor,
-                                    ),
-                                  ),
-                                ),
+                              widget.isComfortableGrid
+                                  ? Column(children: widget.children)
+                                  : Stack(children: widget.children),
+                              ?selection,
                             ],
+                          )
+                        : Ink.image(
+                            fit: BoxFit.cover,
+                            image: widget.image!,
+                            child: Stack(
+                              children: [
+                                ?selection,
+                                ...widget.children,
+                                if (widget.progress > 0)
+                                  Positioned(
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    child: _ProgressBar(
+                                      value: widget.progress,
+                                      color: c.accent,
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
+                  ),
                 ),
               ),
             ),
           ),
           // A small gap so the focused card's 3px ring (and its slight scale)
           // clears the title below instead of bleeding onto it.
-          if (showBottomText) const SizedBox(height: 4),
+          if (showBottomText) const SizedBox(height: ShioriSpace.s4),
           if (showBottomText) widget.bottomTextWidget!,
         ],
       ),
@@ -229,5 +247,31 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
       );
     }
     return card;
+  }
+}
+
+/// A thin reading-progress track along the bottom of a cover.
+class _ProgressBar extends StatelessWidget {
+  const _ProgressBar({required this.value, required this.color});
+
+  final double value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 3,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          const ColoredBox(color: ShioriScrim.onImage),
+          FractionallySizedBox(
+            alignment: AlignmentDirectional.centerStart,
+            widthFactor: value.clamp(0.0, 1.0),
+            child: ColoredBox(color: color),
+          ),
+        ],
+      ),
+    );
   }
 }

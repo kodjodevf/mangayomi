@@ -239,6 +239,11 @@ class RouterNotifier extends ChangeNotifier {
     _genericRoute(name: "statistics", child: const StatisticsScreen()),
     _genericRoute(name: "general", child: const GeneralScreen()),
     _genericRoute(name: "readerMode", child: const ReaderScreen()),
+    _genericRoute<int>(
+      name: "readerSettingsSection",
+      builder: (index) =>
+          ReaderScreen(section: ReaderSettingsSection.values[index]),
+    ),
     _genericRoute(name: "novelReaderMode", child: const NovelReaderScreen()),
     _genericRoute(name: "browseS", child: const BrowseSScreen()),
     _genericRoute(

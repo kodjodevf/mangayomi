@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -125,23 +126,30 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
                   controller: _textEditingController,
                 )
               : IconButton(
+                  tooltip: MaterialLocalizations.of(context).searchFieldLabel,
                   splashRadius: 20,
                   onPressed: () {
                     setState(() {
                       _isSearch = true;
                     });
                   },
-                  icon: Icon(Icons.search, color: Theme.of(context).hintColor),
+                  icon: Icon(
+                    Symbols.search_rounded,
+                    fill: 1,
+                    color: context.shiori.color.fgMuted,
+                  ),
                 ),
           IconButton(
+            tooltip: context.l10n.refresh,
             splashRadius: 20,
             onPressed: () async => await _resetData(trackerProvider, itemType),
             icon: Icon(
-              Icons.refresh_outlined,
-              color: Theme.of(context).hintColor,
+              Symbols.refresh_rounded,
+              color: context.shiori.color.fgMuted,
             ),
           ),
           IconButton(
+            tooltip: l10n.switch_tracker,
             splashRadius: 20,
             onPressed: () {
               _openSwitchProviderDialog(l10n);
@@ -150,7 +158,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
               radius: 14,
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(ShioriShape.card),
                   color: trackInfos(trackerProvider.syncId).$3,
                 ),
                 width: 60,
@@ -165,7 +173,10 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        padding: const EdgeInsets.symmetric(
+          horizontal: ShioriSpace.s16,
+          vertical: ShioriSpace.s4,
+        ),
         child: StreamBuilder(
           stream: trackRepository.watchAllNotRefreshing(),
           builder: (context, snapshot) {
@@ -674,8 +685,8 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
     showDialog(
       context: context,
       builder: (ctx) {
-        return AlertDialog(
-          title: Text(l10n.track_library_switch),
+        return ShioriDialog(
+          title: l10n.track_library_switch,
           content: SingleChildScrollView(
             child: Column(
               children: [
@@ -696,8 +707,8 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
     showDialog(
       context: context,
       builder: (ctx) {
-        return AlertDialog(
-          title: Text(l10n.track_library_switch),
+        return ShioriDialog(
+          title: l10n.track_library_switch,
           content: SingleChildScrollView(
             child: Column(
               children: [
@@ -714,12 +725,14 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
   Widget _getListile(AppLocalizations l10n, int syncId, {bool? isManga}) {
     final isLoggedIn = _preferences.any((p) => p.syncId == syncId);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s4),
       child: ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ShioriShape.card),
+        ),
         leading: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(ShioriShape.card),
             color: trackInfos(syncId).$3,
           ),
           width: 60,
@@ -727,7 +740,9 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
           child: isManga == null
               ? Image.asset(trackInfos(syncId).$1, height: 30)
               : Icon(
-                  isManga ? Icons.collections_bookmark : Icons.video_collection,
+                  isManga
+                      ? Symbols.collections_bookmark_rounded
+                      : Symbols.video_library_rounded,
                   size: 30,
                 ),
         ),
@@ -783,7 +798,7 @@ class _TrackerLibraryTitle extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         TrackerAccountAvatar(preference: preference, radius: 14),
-        const SizedBox(width: 10),
+        const SizedBox(width: ShioriSpace.s12),
         Flexible(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -793,9 +808,7 @@ class _TrackerLibraryTitle extends ConsumerWidget {
               Text(
                 label,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+                style: context.shiori.caption,
               ),
             ],
           ),

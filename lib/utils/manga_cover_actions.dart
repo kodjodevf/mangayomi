@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
@@ -12,22 +13,16 @@ import 'package:mangayomi/repositories/manga_repository.dart';
 Future<bool> confirmUseAsMangaCover(BuildContext context) async {
   final res = await showDialog<bool>(
     context: context,
-    builder: (context) => AlertDialog(
-      content: Text(context.l10n.use_this_as_cover_art),
+    builder: (context) => ShioriDialog(
+      title: context.l10n.use_this_as_cover_art,
       actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(context.l10n.cancel),
-            ),
-            const SizedBox(width: 15),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text(context.l10n.ok),
-            ),
-          ],
+        ShioriButton.quiet(
+          label: context.l10n.cancel,
+          onPressed: () => Navigator.pop(context, false),
+        ),
+        ShioriButton(
+          label: context.l10n.ok,
+          onPressed: () => Navigator.pop(context, true),
         ),
       ],
     ),

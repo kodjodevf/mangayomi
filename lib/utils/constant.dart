@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -38,12 +39,12 @@ String getMangaStatusName(Status status, BuildContext context) {
 
 IconData getMangaStatusIcon(Status status) {
   return switch (status) {
-    Status.ongoing => Icons.schedule_rounded,
-    Status.onHiatus => Icons.pause_circle_rounded,
-    Status.canceled => Icons.cancel_rounded,
-    Status.completed => Icons.done_all_outlined,
-    Status.publishingFinished => Icons.done,
-    _ => Icons.block_outlined,
+    Status.ongoing => Symbols.schedule_rounded,
+    Status.onHiatus => Symbols.pause_circle_rounded,
+    Status.canceled => Symbols.cancel_rounded,
+    Status.completed => Symbols.done_all_rounded,
+    Status.publishingFinished => Symbols.done_rounded,
+    _ => Symbols.block_rounded,
   };
 }
 
@@ -107,5 +108,9 @@ String toImgUrl(String url) {
   return url.isEmpty ? _emptyImg : url;
 }
 
+/// A series with no cover gets a transparent pixel, decoded on the spot, so
+/// the cover's own ground shows. It was a white image fetched from
+/// Wikimedia: a request to a third party for every coverless series, a
+/// white card in the dark theme, and a failure offline.
 const _emptyImg =
-    "https://upload.wikimedia.org/wikipedia/commons/1/12/White_background.png";
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";

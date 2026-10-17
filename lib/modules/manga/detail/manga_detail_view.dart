@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/chapter_quick_filters.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/manga/detail/providers/chapter_display.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -25,7 +27,7 @@ import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
-import 'package:mangayomi/modules/widgets/error_text.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -34,9 +36,10 @@ import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/riverpod.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/read_action.dart';
+import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 
 class MangaDetailView extends ConsumerStatefulWidget {
-  final Function(bool) isExtended;
   final Widget? titleDescription;
   final List<Color>? backButtonColors;
   final Widget? action;
@@ -47,7 +50,6 @@ class MangaDetailView extends ConsumerStatefulWidget {
 
   const MangaDetailView({
     super.key,
-    required this.isExtended,
     this.titleDescription,
     this.backButtonColors,
     this.action,
@@ -75,6 +77,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   @override
   void dispose() {
     _scrollController.dispose();
+    _listController.dispose();
     super.dispose();
   }
 
@@ -95,6 +98,26 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   final offetProvider = StateProvider(() => 0.0);
   bool _shownUnrecognizedNotice = false;
   late final ScrollController _scrollController;
+
+  /// Lets "Current chapter" scroll a list of a thousand chapters to the one
+  /// being read, without laying out everything in between.
+  final _listController = ListController();
+
+  /// Scrolls to [chapter] in [chapters], or does nothing when it is not in
+  /// the list as filtered now.
+  void _jumpTo(List<Chapter> chapters, Chapter chapter) {
+    final index = chapters.indexWhere((c) => c.id == chapter.id);
+    if (index < 0) return;
+    _listController.animateToItem(
+      // The header is the list's first item.
+      index: index + 1,
+      scrollController: _scrollController,
+      alignment: 0.3,
+      duration: (_) => ShioriMotion.of(context, ShioriMotion.enter),
+      curve: (_) => ShioriMotion.enterCurve,
+    );
+  }
+
   late final isLocalArchive = widget.manga!.isLocalArchive ?? false;
 
   /// The detail overflow actions, shared by the popup menu off-TV and the
@@ -132,30 +155,19 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         ref.read(isLongPressedStateProvider.notifier).update(false);
         ref.read(chaptersListStateProvider.notifier).clear();
       },
-      child: NotificationListener<UserScrollNotification>(
-        onNotification: (notification) {
-          if (notification.direction == ScrollDirection.forward) {
-            widget.isExtended(true);
-          }
-          if (notification.direction == ScrollDirection.reverse) {
-            widget.isExtended(false);
-          }
-          return true;
+      child: chapters.when(
+        data: (_) {
+          List<Chapter> chapters = widget.manga!.getSortedFilteredChapters();
+          ref.read(chaptersListttStateProvider.notifier).set(chapters);
+          _notifyUnrecognizedChapterNumbers();
+          return _buildWidget(chapters: chapters);
         },
-        child: chapters.when(
-          data: (_) {
-            List<Chapter> chapters = widget.manga!.getSortedFilteredChapters();
-            ref.read(chaptersListttStateProvider.notifier).set(chapters);
-            _notifyUnrecognizedChapterNumbers();
-            return _buildWidget(chapters: chapters);
-          },
-          error: (Object error, StackTrace stackTrace) {
-            return ErrorText(error);
-          },
-          loading: () {
-            return _buildWidget(chapters: widget.manga!.chapters.toList());
-          },
-        ),
+        error: (Object error, StackTrace stackTrace) {
+          return ErrorState(detail: error.toString());
+        },
+        loading: () {
+          return _buildWidget(chapters: widget.manga!.chapters.toList());
+        },
       ),
     );
   }
@@ -180,6 +192,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
 
   Widget _buildWidget({required List<Chapter> chapters}) {
     final chapterList = ref.watch(chaptersListStateProvider);
+    final current = resumeChapterFor(
+      widget.manga!,
+      incognito: ref.watch(incognitoModeStateProvider),
+    );
+    final onJumpToCurrent =
+        current != null && chapters.any((c) => c.id == current.id)
+        ? () => _jumpTo(chapters, current)
+        : null;
     final isLongPressed = ref.watch(isLongPressedStateProvider);
     return Stack(
       children: [
@@ -211,6 +231,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         titleDescription: widget.titleDescription!,
                         action: widget.action!,
                         chapterLength: chapters.length,
+                        onJumpToCurrent: onJumpToCurrent,
                       ),
                     ),
                   ),
@@ -218,7 +239,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   child: Scrollbar(
                     interactive: true,
                     thickness: 12,
-                    radius: const Radius.circular(10),
+                    radius: const Radius.circular(ShioriShape.card),
                     controller: _scrollController,
                     child: CustomScrollView(
                       controller: _scrollController,
@@ -226,6 +247,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         SliverPadding(
                           padding: const EdgeInsets.only(top: 0, bottom: 60),
                           sliver: SuperSliverList.builder(
+                            listController: _listController,
                             itemCount: chapters.length + 1,
                             itemBuilder: (context, index) {
                               final l10n = l10nLocalizations(context)!;
@@ -235,7 +257,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     ? Column(
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                            padding: const EdgeInsets.all(
+                                              ShioriSpace.s8,
+                                            ),
                                             child: Row(
                                               mainAxisAlignment: isLocalArchive
                                                   ? MainAxisAlignment
@@ -246,12 +270,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                   height: chapters.isEmpty
                                                       ? context.height(1)
                                                       : null,
-                                                  color: Theme.of(context)
-                                                      .scaffoldBackgroundColor,
+                                                  color:
+                                                      context.shiori.color.ink0,
                                                   child: Padding(
                                                     padding:
                                                         const EdgeInsets.symmetric(
-                                                          horizontal: 8,
+                                                          horizontal:
+                                                              ShioriSpace.s8,
                                                         ),
                                                     child: Column(
                                                       crossAxisAlignment:
@@ -273,11 +298,15 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                   chapters
                                                                       .length,
                                                                 ),
-                                                          style:
-                                                              const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
+                                                          style: context
+                                                              .shiori
+                                                              .text
+                                                              .section
+                                                              .copyWith(
+                                                                color: context
+                                                                    .shiori
+                                                                    .color
+                                                                    .fg,
                                                               ),
                                                         ),
                                                         Builder(
@@ -298,11 +327,17 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                   : l10n.missing_episodes(
                                                                       missing,
                                                                     ),
-                                                              style: TextStyle(
-                                                                fontSize: 12,
-                                                                color: Colors
-                                                                    .red[400],
-                                                              ),
+                                                              style: context
+                                                                  .shiori
+                                                                  .text
+                                                                  .meta
+                                                                  .copyWith(
+                                                                    color: context
+                                                                        .shiori
+                                                                        .color
+                                                                        .error
+                                                                        .foreground,
+                                                                  ),
                                                             );
                                                           },
                                                         ),
@@ -310,37 +345,24 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                     ),
                                                   ),
                                                 ),
+                                                const Spacer(),
+                                                if (onJumpToCurrent != null)
+                                                  ShioriButton.quiet(
+                                                    icon: Symbols
+                                                        .my_location_rounded,
+                                                    label: l10n.current_chapter,
+                                                    onPressed: onJumpToCurrent,
+                                                  ),
                                                 if (isLocalArchive)
-                                                  ElevatedButton.icon(
-                                                    style: ElevatedButton.styleFrom(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                            5,
-                                                          ),
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              5,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                    icon: Icon(
-                                                      Icons.add,
-                                                      color: context
-                                                          .secondaryColor,
-                                                    ),
-                                                    label: Text(
-                                                      widget.manga!.itemType !=
-                                                              ItemType.anime
-                                                          ? l10n.add_chapters
-                                                          : l10n.add_episodes,
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: context
-                                                            .secondaryColor,
-                                                      ),
-                                                    ),
+                                                  ShioriButton.secondary(
+                                                    icon: Symbols.add_rounded,
+                                                    label:
+                                                        widget
+                                                                .manga!
+                                                                .itemType !=
+                                                            ItemType.anime
+                                                        ? l10n.add_chapters
+                                                        : l10n.add_episodes,
                                                     onPressed: () async {
                                                       final manga =
                                                           widget.manga;
@@ -377,6 +399,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                               ],
                                             ),
                                           ),
+                                          ChapterQuickFilters(
+                                            manga: widget.manga!,
+                                            onMore: _showDraggableMenu,
+                                          ),
                                         ],
                                       )
                                     : MangaInfoHeader(
@@ -386,6 +412,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                             widget.titleDescription!,
                                         action: widget.action!,
                                         chapterLength: chapters.length,
+                                        onJumpToCurrent: onJumpToCurrent,
+                                        chapterFilters: ChapterQuickFilters(
+                                          manga: widget.manga!,
+                                          onMore: _showDraggableMenu,
+                                        ),
                                       );
                               }
                               return ChapterListTileWidget(
@@ -414,7 +445,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               bool checkReadBookmarked =
                   chap.isNotEmpty && chap.first.isRead! && getLength1;
               final l10n = l10nLocalizations(context)!;
-              final color = Theme.of(context).textTheme.bodyLarge!.color!;
               final downloadedIds =
                   ref.watch(downloadedChapterIdsProvider).asData?.value ??
                   const <int>{};
@@ -425,11 +455,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 isVisible: isLongPressed,
                 actions: [
                   BottomSelectButton(
+                    tooltip: checkFirstBookmarked
+                        ? l10n.remove_bookmark
+                        : l10n.bookmark,
                     icon: Icon(
                       checkFirstBookmarked
-                          ? Icons.bookmark_remove_outlined
-                          : Icons.bookmark_add_outlined,
-                      color: color,
+                          ? Symbols.bookmark_remove_rounded
+                          : Symbols.bookmark_add_rounded,
                     ),
                     onPressed: () {
                       final chapters = ref.watch(chaptersListStateProvider);
@@ -449,11 +481,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     },
                   ),
                   BottomSelectButton(
+                    tooltip: checkReadBookmarked
+                        ? l10n.mark_as_unread
+                        : l10n.mark_as_read,
                     icon: Icon(
                       checkReadBookmarked
-                          ? Icons.remove_done_sharp
-                          : Icons.done_all_sharp,
-                      color: color,
+                          ? Symbols.remove_done_rounded
+                          : Symbols.done_all_rounded,
                     ),
                     onPressed: () {
                       final chapters = ref.watch(chaptersListStateProvider);
@@ -494,20 +528,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   ),
                   if (getLength1)
                     BottomSelectButton(
-                      icon: Stack(
-                        children: [
-                          Icon(Icons.done_outlined, color: color),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: Icon(
-                              Icons.arrow_downward_outlined,
-                              size: 11,
-                              color: color,
-                            ),
-                          ),
-                        ],
-                      ),
+                      tooltip: l10n.mark_below_as_read,
+                      icon: const Icon(Symbols.done_rounded),
                       onPressed: () {
                         int index = chapters.indexOf(chap.first);
                         final List<Chapter> updatedChapters = [];
@@ -536,7 +558,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   // If not local archive and not downloaded, show download button
                   if (!isLocalArchive && isDownloaded.isEmpty && !isTv)
                     BottomSelectButton(
-                      icon: Icon(Icons.download_outlined, color: color),
+                      tooltip: l10n.download,
+                      icon: const Icon(Symbols.download_rounded),
                       onPressed: () async {
                         await _downloadChaptersWithDestination(
                           context,
@@ -551,7 +574,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   // show delete button if local archive or downloaded
                   if (isLocalArchive || isDownloaded.isNotEmpty)
                     BottomSelectButton(
-                      icon: Icon(Icons.delete_outline_outlined, color: color),
+                      tooltip: l10n.delete,
+                      icon: const Icon(Symbols.delete_rounded),
                       onPressed: () {
                         final selectedChapters = ref.watch(
                           chaptersListStateProvider,
@@ -574,81 +598,65 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         showDialog(
                           context: context,
                           builder: (context) {
-                            return AlertDialog(
-                              title: Text(l10n.delete_chapters),
+                            return ShioriDialog(
+                              title: l10n.delete_chapters,
                               content: isLocalArchive && isLastChapters
-                                  ? Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Icon(
-                                          Icons.warning_amber_rounded,
-                                          color: Colors.orange,
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Text(
-                                            warningMessage,
-                                            style: TextStyle(color: Colors.red),
-                                          ),
-                                        ),
-                                      ],
+                                  ? Text(
+                                      warningMessage,
+                                      style: TextStyle(
+                                        color: context
+                                            .shiori
+                                            .color
+                                            .error
+                                            .foreground,
+                                      ),
                                     )
                                   : null,
                               actions: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text(l10n.cancel),
-                                    ),
-                                    const SizedBox(width: 15),
-                                    TextButton(
-                                      onPressed: () async {
-                                        final navigator = Navigator.of(context);
-                                        if (isLocalArchive) {
-                                          final idsToDelete = selectedChapters
-                                              .map((c) => c.id!)
-                                              .toList();
-                                          await chapterRepository.deleteAll(
-                                            idsToDelete,
+                                ShioriButton.quiet(
+                                  label: l10n.cancel,
+                                  onPressed: () => Navigator.pop(context),
+                                ),
+                                ShioriButton(
+                                  label: l10n.delete,
+                                  destructive: true,
+                                  onPressed: () async {
+                                    final navigator = Navigator.of(context);
+                                    if (isLocalArchive) {
+                                      final idsToDelete = selectedChapters
+                                          .map((c) => c.id!)
+                                          .toList();
+                                      await chapterRepository.deleteAll(
+                                        idsToDelete,
+                                      );
+                                    }
+                                    for (final chapter in isDownloaded) {
+                                      await chapter.deleteDownloadedFiles();
+                                    }
+                                    if (!mounted) return;
+                                    ref
+                                        .read(
+                                          isLongPressedStateProvider.notifier,
+                                        )
+                                        .update(false);
+                                    ref
+                                        .read(
+                                          chaptersListStateProvider.notifier,
+                                        )
+                                        .clear();
+                                    navigator.pop();
+                                    if (isLocalArchive && isLastChapters) {
+                                      navigator.pop();
+                                      Future.delayed(
+                                        const Duration(milliseconds: 350),
+                                        () {
+                                          mangaRepository.delete(
+                                            widget.manga!.id!,
                                           );
-                                        }
-                                        for (final chapter in isDownloaded) {
-                                          await chapter.deleteDownloadedFiles();
-                                        }
-                                        if (!mounted) return;
-                                        ref
-                                            .read(
-                                              isLongPressedStateProvider
-                                                  .notifier,
-                                            )
-                                            .update(false);
-                                        ref
-                                            .read(
-                                              chaptersListStateProvider
-                                                  .notifier,
-                                            )
-                                            .clear();
-                                        navigator.pop();
-                                        if (isLocalArchive && isLastChapters) {
-                                          navigator.pop();
-                                          Future.delayed(
-                                            const Duration(milliseconds: 350),
-                                            () {
-                                              mangaRepository.delete(
-                                                widget.manga!.id!,
-                                              );
-                                            },
-                                          );
-                                        }
-                                      },
-                                      child: Text(l10n.delete),
-                                    ),
-                                  ],
+                                        },
+                                      );
+                                    }
+                                  },
                                 ),
                               ],
                             );
@@ -734,149 +742,37 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   },
                 ),
                 if (scanlators.$1.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return Consumer(
-                                    builder: (context, ref, child) {
-                                      final scanlators = ref.watch(
-                                        scanlatorsFilterStateProvider(
-                                          widget.manga!,
-                                        ),
-                                      );
-                                      return AlertDialog(
-                                        title: Text(
-                                          l10n.filter_scanlator_groups,
-                                        ),
-                                        content: SizedBox(
-                                          width: context.width(0.8),
-                                          child: SuperListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: scanlators.$1.length,
-                                            itemBuilder: (context, index) {
-                                              return ListTileChapterFilter(
-                                                label: scanlators.$1[index],
-                                                type:
-                                                    scanlators.$3.contains(
-                                                      scanlators.$1[index],
-                                                    )
-                                                    ? 2
-                                                    : 0,
-                                                onTap: () {
-                                                  ref
-                                                      .read(
-                                                        scanlatorsFilterStateProvider(
-                                                          widget.manga!,
-                                                        ).notifier,
-                                                      )
-                                                      .setFilteredList(
-                                                        scanlators.$1[index],
-                                                      );
-                                                },
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                        actions: [
-                                          Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Row(
-                                                      children: [
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            ref
-                                                                .read(
-                                                                  scanlatorsFilterStateProvider(
-                                                                    widget
-                                                                        .manga!,
-                                                                  ).notifier,
-                                                                )
-                                                                .set([]);
-                                                            Navigator.pop(
-                                                              context,
-                                                            );
-                                                          },
-                                                          child: Text(
-                                                            l10n.reset,
-                                                            style: TextStyle(
-                                                              color: context
-                                                                  .primaryColor,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      TextButton(
-                                                        onPressed: () async {
-                                                          Navigator.pop(
-                                                            context,
-                                                          );
-                                                        },
-                                                        child: Text(
-                                                          l10n.cancel,
-                                                          style: TextStyle(
-                                                            color: context
-                                                                .primaryColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          ref
-                                                              .read(
-                                                                scanlatorsFilterStateProvider(
-                                                                  widget.manga!,
-                                                                ).notifier,
-                                                              )
-                                                              .set(
-                                                                scanlators.$3,
-                                                              );
-                                                          Navigator.pop(
-                                                            context,
-                                                          );
-                                                        },
-                                                        child: Text(
-                                                          l10n.filter,
-                                                          style: TextStyle(
-                                                            color: context
-                                                                .primaryColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                              );
-                            },
-                            child: Text(l10n.filter_scanlator_groups),
-                          ),
-                        ),
-                      ],
-                    ),
+                  ShioriSettingRow(
+                    icon: Symbols.group_rounded,
+                    title: l10n.filter_scanlator_groups,
+                    subtitle: scanlators.$2.isEmpty
+                        ? null
+                        : '${scanlators.$1.length - scanlators.$2.length} / ${scanlators.$1.length}',
+                    onTap: () async {
+                      // Ticked is shown; what is stored is what is left out.
+                      final shown = await showShioriMultiChoice<String>(
+                        context,
+                        title: l10n.filter_scanlator_groups,
+                        confirmLabel: l10n.filter,
+                        selected: {
+                          for (final g in scanlators.$1)
+                            if (!scanlators.$2.contains(g)) g,
+                        },
+                        options: [
+                          for (final g in scanlators.$1) ShioriChoice(g, g),
+                        ],
+                      );
+                      if (shown == null) return;
+                      ref
+                          .read(
+                            scanlatorsFilterStateProvider(widget.manga!)
+                                .notifier,
+                          )
+                          .set([
+                            for (final g in scanlators.$1)
+                              if (!shown.contains(g)) g,
+                          ]);
+                    },
                   ),
               ],
             );
@@ -929,28 +825,36 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             );
           },
         ),
-        RadioGroup(
-          groupValue: "e",
-          onChanged: (value) {},
-          child: Column(
-            children: [
-              RadioListTile(
-                dense: true,
-                title: Text(l10n.source_title),
-                value: "e",
-                selected: true,
+        // How each chapter is named in the list: as the source titles it,
+        // or by its number.
+        Consumer(
+          builder: (context, ref, _) => RadioGroup<bool>(
+            groupValue: ref.watch(
+              chapterNumberDisplayProvider.select(
+                (ids) => ids.contains(widget.manga!.id),
               ),
-              RadioListTile(
-                dense: true,
-                title: Text(
-                  widget.itemType != ItemType.anime
-                      ? l10n.chapter_number
-                      : l10n.episode_number,
+            ),
+            onChanged: (byNumber) => ref
+                .read(chapterNumberDisplayProvider.notifier)
+                .set(widget.manga!.id!, byNumber: byNumber ?? false),
+            child: Column(
+              children: [
+                RadioListTile<bool>(
+                  dense: true,
+                  title: Text(l10n.source_title),
+                  value: false,
                 ),
-                value: "ej",
-                selected: false,
-              ),
-            ],
+                RadioListTile<bool>(
+                  dense: true,
+                  title: Text(
+                    widget.itemType != ItemType.anime
+                        ? l10n.chapter_number
+                        : l10n.episode_number,
+                  ),
+                  value: true,
+                ),
+              ],
+            ),
           ),
         ),
       ],

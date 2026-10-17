@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -7,8 +8,6 @@ import 'package:mangayomi/modules/manga/detail/widgets/download_quick_menu.dart'
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/widgets/tv_menu.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 /// The detail page's app bar: the normal title/actions bar, or - while a
@@ -64,29 +63,37 @@ class DetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
     return isLongPressed
         ? Container(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            color: context.shiori.color.ink0,
             child: AppBar(
-              title: Text(chapterList.length.toString()),
-              backgroundColor: context.primaryColor.withValues(alpha: 0.2),
+              title: Text(context.l10n.n_selected(chapterList.length)),
+              backgroundColor: context.shiori.color.accent.withValues(
+                alpha: 0.2,
+              ),
               leading: IconButton(
+                tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                 onPressed: () {
                   ref.read(chaptersListStateProvider.notifier).clear();
                   ref
                       .read(isLongPressedStateProvider.notifier)
                       .update(!isLongPressed);
                 },
-                icon: const Icon(Icons.clear),
+                icon: const Icon(Symbols.close_rounded),
               ),
               actions: [
                 IconButton(
+                  tooltip: MaterialLocalizations.of(context)
+                      .selectAllButtonLabel,
                   onPressed: () {
                     for (var chapter in chapters) {
-                      ref.read(chaptersListStateProvider.notifier).selectAll(chapter);
+                      ref
+                          .read(chaptersListStateProvider.notifier)
+                          .selectAll(chapter);
                     }
                   },
-                  icon: const Icon(Icons.select_all),
+                  icon: const Icon(Symbols.select_all_rounded),
                 ),
                 IconButton(
+                  tooltip: context.l10n.invert_selection,
                   onPressed: () {
                     if (chapters.length == chapterList.length) {
                       for (var chapter in chapters) {
@@ -105,19 +112,24 @@ class DetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       }
                     }
                   },
-                  icon: const Icon(Icons.flip_to_back_rounded),
+                  icon: const Icon(Symbols.flip_to_back_rounded),
                 ),
               ],
             ),
           )
         : AppBar(
             title: ref.watch(offsetProvider.select((val) => val > 200))
-                ? Text(manga.name!, style: const TextStyle(fontSize: 17))
+                ? Text(
+                    manga.name!,
+                    style: context.shiori.text.section.copyWith(
+                      color: context.shiori.color.fg,
+                    ),
+                  )
                 : null,
             backgroundColor:
                 ref.watch(offsetProvider.select((val) => val == 0.0))
                 ? Colors.transparent
-                : Theme.of(context).scaffoldBackgroundColor,
+                : context.shiori.color.ink0,
             actions: [
               // Downloads are hidden on TV.
               if (!isLocalArchive && !isTv) ...[
@@ -128,11 +140,13 @@ class DetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
                 ),
               ],
               IconButton(
+                tooltip: context.l10n.filter,
                 splashRadius: 20,
                 onPressed: onShowFilterMenu,
                 icon: Icon(
-                  Icons.filter_list_sharp,
-                  color: isNotFiltering ? null : Colors.yellow,
+                  Symbols.filter_list_rounded,
+                  fill: isNotFiltering ? 0 : 1,
+                  color: isNotFiltering ? null : context.shiori.color.accentInk,
                 ),
               ),
               // The menu's items are conditional, so its values
@@ -152,7 +166,9 @@ class DetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       (l10n.export_metadata, 5),
                     ];
                     return IconButton(
-                      icon: const Icon(Icons.more_vert),
+                      tooltip: MaterialLocalizations.of(context)
+                          .moreButtonTooltip,
+                      icon: const Icon(Symbols.more_vert_rounded),
                       onPressed: () async {
                         final picked = await showTvMenu(
                           context,
@@ -169,45 +185,51 @@ class DetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   },
                 )
               else
-                PopupMenuButton(
-                  popUpAnimationStyle: popupAnimationStyle,
-                  itemBuilder: (context) {
-                    return [
-                      if (!isLocalArchive)
-                        PopupMenuItem<int>(
-                          value: 0,
-                          child: Text(l10n.refresh),
-                        ),
-                      if (manga.favorite! && checkCategoryList)
-                        PopupMenuItem<int>(
-                          value: 1,
-                          child: Text(l10n.set_categories),
-                        ),
-                      if (!isLocalArchive)
-                        PopupMenuItem<int>(
-                          value: 2,
-                          child: Text(l10n.share),
-                        ),
-                      PopupMenuItem<int>(
-                        value: 3,
-                        child: Text(l10n.migrate),
+                ShioriMenuButton(
+                  tooltip: MaterialLocalizations.of(context).moreButtonTooltip,
+                  items: [
+                    if (!isLocalArchive)
+                      ShioriMenuItem(
+                        label: l10n.refresh,
+                        icon: Symbols.refresh_rounded,
+                        onSelected: () => onOverflowAction(0),
                       ),
-                      PopupMenuItem<int>(
-                        value: 6,
-                        child: Text(l10n.mass_migration_title),
+                    if (manga.favorite! && checkCategoryList)
+                      ShioriMenuItem(
+                        label: l10n.set_categories,
+                        icon: Symbols.label_rounded,
+                        onSelected: () => onOverflowAction(1),
                       ),
-                      if (!isLocalArchive)
-                        PopupMenuItem<int>(
-                          value: 4,
-                          child: Text(l10n.extension_settings),
-                        ),
-                      PopupMenuItem<int>(
-                        value: 5,
-                        child: Text(l10n.export_metadata),
+                    if (!isLocalArchive)
+                      ShioriMenuItem(
+                        label: l10n.share,
+                        icon: Symbols.share_rounded,
+                        onSelected: () => onOverflowAction(2),
                       ),
-                    ];
-                  },
-                  onSelected: onOverflowAction,
+                    null,
+                    ShioriMenuItem(
+                      label: l10n.migrate,
+                      icon: Symbols.swap_horiz_rounded,
+                      onSelected: () => onOverflowAction(3),
+                    ),
+                    ShioriMenuItem(
+                      label: l10n.mass_migration_title,
+                      icon: Symbols.move_up_rounded,
+                      onSelected: () => onOverflowAction(6),
+                    ),
+                    null,
+                    if (!isLocalArchive)
+                      ShioriMenuItem(
+                        label: l10n.extension_settings,
+                        icon: Symbols.extension_rounded,
+                        onSelected: () => onOverflowAction(4),
+                      ),
+                    ShioriMenuItem(
+                      label: l10n.export_metadata,
+                      icon: Symbols.ios_share_rounded,
+                      onSelected: () => onOverflowAction(5),
+                    ),
+                  ],
                 ),
             ],
           );

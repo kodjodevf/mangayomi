@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/category.dart';
@@ -325,7 +326,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
                   'Every title sits in a hidden category.\n'
                   'Hold OK on “All” to unhide one.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Theme.of(context).hintColor),
+                  style: TextStyle(color: context.shiori.color.fgMuted),
                 ),
               ),
             );
@@ -370,7 +371,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
                   'No anime matches the current filters.\n'
                   'Change them from the button beside search.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Theme.of(context).hintColor),
+                  style: TextStyle(color: context.shiori.color.fgMuted),
                 ),
               ),
             );
@@ -490,8 +491,8 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
                       padding: const EdgeInsets.fromLTRB(22, 16, 22, 8),
                       child: Text(
                         catName ?? '',
-                        style: const TextStyle(
-                          fontSize: 16,
+                        style: TextStyle(
+                          fontSize: ShioriType.reference.section.fontSize,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -510,7 +511,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
 
           // Whatever is painted behind the pills — the colour the scrolling
           // content has to dissolve into at the top of its viewport.
-          final pageBg = Theme.of(context).scaffoldBackgroundColor;
+          final pageBg = context.shiori.color.ink0;
           return Focus(
             onKeyEvent: _handleVertical,
             child: Column(

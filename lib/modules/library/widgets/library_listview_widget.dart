@@ -5,8 +5,8 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/widgets/continue_reader_button.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/widgets/listview_widget.dart';
+import 'package:shiori/shiori.dart';
 
 class LibraryListViewWidget extends StatelessWidget {
   final List<Manga> entriesManga;
@@ -36,98 +36,67 @@ class LibraryListViewWidget extends StatelessWidget {
         return Consumer(
           builder: (context, ref, child) {
             final isLongPressed = ref.watch(isLongPressedStateProvider);
-            return Material(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.transparent,
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                onTap: () => onTapEntry(
-                  isLongPressed: isLongPressed,
-                  ref: ref,
-                  context: context,
-                  entry: entry,
-                ),
-                onLongPress: () =>
-                    handleLongOrSecondaryTap(isLongPressed, ref, entry),
-                onSecondaryTap: () =>
-                    handleLongOrSecondaryTap(isLongPressed, ref, entry),
-                child: Container(
-                  color: mangaIdsList.contains(entry.id)
-                      ? context.primaryColor.withValues(alpha: 0.4)
-                      : Colors.transparent,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
+            final selected = mangaIdsList.contains(entry.id);
+            final tokens = context.shiori;
+            final c = tokens.color;
+            return ShioriListRow(
+              selected: selected,
+              titleMaxLines: 2,
+              title: entry.name!,
+              // Where it comes from, as every other list of series says.
+              subtitle: entry.source,
+              onTap: () => onTapEntry(
+                isLongPressed: isLongPressed,
+                ref: ref,
+                context: context,
+                entry: entry,
+              ),
+              onLongPress: () =>
+                  handleLongOrSecondaryTap(isLongPressed, ref, entry),
+              onSecondaryTap: () =>
+                  handleLongOrSecondaryTap(isLongPressed, ref, entry),
+              leading: ShioriThumbnail(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image(
+                      image: resolveCoverImage(entry, ref),
+                      fit: BoxFit.cover,
+                      gaplessPlayback: true,
+                      errorBuilder: (_, _, _) => const SizedBox.shrink(),
                     ),
-                    child: SizedBox(
-                      height: 45,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // ── Thumbnail + title ──
-                          Expanded(
-                            child: Row(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Material(
-                                    child: Ink.image(
-                                      fit: BoxFit.cover,
-                                      width: 40,
-                                      height: 45,
-                                      image: resolveCoverImage(entry, ref),
-                                      child: InkWell(
-                                        child: Container(
-                                          color: mangaIdsList.contains(entry.id)
-                                              ? context.primaryColor.withValues(
-                                                  alpha: 0.4,
-                                                )
-                                              : Colors.transparent,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                    ),
-                                    child: Text(entry.name!),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // ── Right-side badge row ──
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              LibraryBadgeWidget(
-                                entry: entry,
-                                showLocal: localSource,
-                                showDownloaded: downloadedChapter,
-                                settings: settings,
-                              ),
-                              if (language && (entry.lang?.isNotEmpty ?? false))
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 3),
-                                  child: EntryBadgeChip(
-                                    label: entry.lang!.toUpperCase(),
-                                    borderRadius: BorderRadius.circular(3),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          if (continueReaderBtn)
-                            ContinueReaderButton(entry: entry),
-                        ],
+                    if (selected)
+                      ColoredBox(
+                        color: c.accent.withValues(alpha: Alphas.secondary),
+                        child: Icon(
+                          Symbols.check_rounded,
+                          color: c.onAccent,
+                          size: tokens.scaled(20),
+                        ),
                       ),
-                    ),
-                  ),
+                  ],
                 ),
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                spacing: ShioriSpace.s12,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: 2,
+                    children: [
+                      LibraryBadgeWidget(
+                        entry: entry,
+                        showLocal: localSource,
+                        showDownloaded: downloadedChapter,
+                        settings: settings,
+                      ),
+                      if (language && (entry.lang?.isNotEmpty ?? false))
+                        EntryBadgeChip(label: entry.lang!.toUpperCase()),
+                    ],
+                  ),
+                  if (continueReaderBtn) ContinueReaderButton(entry: entry),
+                ],
               ),
             );
           },
