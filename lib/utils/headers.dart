@@ -5,6 +5,7 @@ import 'package:mangayomi/eval/http_response_extensions.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/services/source_code_errors.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -40,15 +41,22 @@ Map<String, String> headers(
       '${mSource.id}|${mSource.version}|${mSource.sourceCode?.hashCode}|$androidProxyServer';
   final base = _sourceHeadersCache.putIfAbsent(cacheKey, () {
     final headers = <String, String>{};
-    final fromSource = mSource.headers;
-    if (fromSource != null && fromSource.isNotEmpty) {
-      headers.addAll((jsonDecode(fromSource) as Map).toMapStringString!);
-    }
-    final service = getExtensionService(mSource, androidProxyServer);
+    // A source whose code will not run (empty, broken, half installed) has
+    // no headers of its own, but its covers still load: before, the error
+    // reached every cover of it, and the calendar failed to build.
     try {
-      headers.addAll(service.getHeaders());
-    } finally {
-      service.dispose();
+      final fromSource = mSource.headers;
+      if (fromSource != null && fromSource.isNotEmpty) {
+        headers.addAll((jsonDecode(fromSource) as Map).toMapStringString!);
+      }
+      final service = getExtensionService(mSource, androidProxyServer);
+      try {
+        headers.addAll(service.getHeaders());
+      } finally {
+        service.dispose();
+      }
+    } catch (e, stack) {
+      SourceCodeErrors.report(mSource, 'Headers', e, stack);
     }
     return headers;
   });

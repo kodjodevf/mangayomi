@@ -9,6 +9,7 @@ import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -183,7 +184,12 @@ class _StartupErrorApp extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const Icon(
+                  Symbols.error_outline_rounded,
+                  fill: 1,
+                  size: 64,
+                  color: Colors.red,
+                ),
                 const SizedBox(height: 16),
                 const Text(
                   'Failed to start Mangayomi',
@@ -504,8 +510,8 @@ class _MyAppState extends ConsumerState<MyApp>
           showDialog(
             context: navigatorKey.currentContext!,
             builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text(l10n.add_repo),
+              return ShioriDialog(
+                title: l10n.add_repo,
                 content: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -528,19 +534,19 @@ class _MyAppState extends ConsumerState<MyApp>
                       Text(
                         l10n.add_repo_warning,
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
+                          color: context.shiori.color.error.foreground,
                         ),
                       ),
                     ],
                   ),
                 ),
                 actions: [
-                  TextButton(
-                    child: Text(l10n.cancel),
+                  ShioriButton.quiet(
+                    label: l10n.cancel,
                     onPressed: () => Navigator.of(context).pop(),
                   ),
-                  FilledButton(
-                    child: Text(l10n.add),
+                  ShioriButton(
+                    label: l10n.add,
                     onPressed: () async {
                       if (context.mounted) Navigator.of(context).pop();
 
@@ -633,8 +639,8 @@ class _MyAppState extends ConsumerState<MyApp>
               await showDialog(
                 context: navigatorKey.currentContext!,
                 builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text(l10n.custom_buttons_add),
+                  return ShioriDialog(
+                    title: l10n.custom_buttons_add,
                     content: SingleChildScrollView(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -650,7 +656,7 @@ class _MyAppState extends ConsumerState<MyApp>
                           Text(
                             l10n.custom_buttons_add_warning,
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.error,
+                              color: context.shiori.color.error.foreground,
                             ),
                           ),
                           for (final (label, code) in codeSections) ...[
@@ -660,9 +666,7 @@ class _MyAppState extends ConsumerState<MyApp>
                             Container(
                               width: double.infinity,
                               padding: const EdgeInsets.all(8),
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerHighest,
+                              color: context.shiori.color.ink2,
                               child: SelectableText(
                                 code!,
                                 style: const TextStyle(
@@ -676,12 +680,12 @@ class _MyAppState extends ConsumerState<MyApp>
                       ),
                     ),
                     actions: [
-                      TextButton(
-                        child: Text(l10n.cancel),
+                      ShioriButton.quiet(
+                        label: l10n.cancel,
                         onPressed: () => Navigator.of(context).pop(),
                       ),
-                      FilledButton(
-                        child: Text(l10n.add),
+                      ShioriButton(
+                        label: l10n.add,
                         onPressed: () async {
                           if (context.mounted) Navigator.of(context).pop();
                           final pos = await customButtonRepository.count();

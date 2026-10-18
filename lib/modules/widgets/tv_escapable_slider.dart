@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 
 /// Makes a Material [Slider] usable with a TV remote.
@@ -36,7 +37,7 @@ class _TvEscapableSliderState extends State<TvEscapableSlider> {
     // The inner Slider gives no focus cue of its own (it's ExcludeFocus'd), so
     // draw a rounded accent tint + ring around it while this owns focus, so it's
     // obvious which slider the d-pad is currently on.
-    final accent = Theme.of(context).colorScheme.primary;
+    final accent = context.shiori.color.accentInk;
     return Focus(
       onFocusChange: (f) => setState(() => _focused = f),
       onKeyEvent: (node, event) {
@@ -55,12 +56,12 @@ class _TvEscapableSliderState extends State<TvEscapableSlider> {
         return KeyEventResult.ignored;
       },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 130),
+        duration: ShioriMotion.fast,
         // Border is always present (transparent when idle) so focusing never
         // shifts the slider's layout.
         decoration: BoxDecoration(
           color: _focused ? accent.withValues(alpha: 0.14) : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(ShioriShape.card),
           border: Border.all(
             color: _focused ? accent : Colors.transparent,
             width: 1.5,
