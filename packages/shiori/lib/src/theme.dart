@@ -1,8 +1,10 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 
 import 'alphas.dart';
 import 'components/tab_indicator.dart';
+import 'page_transitions.dart';
 import 'tokens.dart';
 
 /// The sub-theme settings both brightnesses share.
@@ -144,6 +146,18 @@ ThemeData _withTokens(ThemeData theme, ShioriDensity density) {
     // A floating action is the screen's main one: the accent, as a primary
     // button, read on it with onAccent and round as a pill. Material's own
     // primary container drew it a darker shade than every other button.
+    // Pages move on Shiori's short shared axis; Apple platforms keep their
+    // own, which carries the edge swipe back.
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: ShioriPageTransitionsBuilder(),
+        TargetPlatform.fuchsia: ShioriPageTransitionsBuilder(),
+        TargetPlatform.linux: ShioriPageTransitionsBuilder(),
+        TargetPlatform.windows: ShioriPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+      },
+    ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: colors.accent,
       foregroundColor: colors.onAccent,

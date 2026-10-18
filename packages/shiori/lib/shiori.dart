@@ -28,5 +28,6 @@ export 'src/components/sheet.dart';
 export 'src/components/skeleton.dart';
 export 'src/components/tab_indicator.dart';
 export 'src/components/toast.dart';
+export 'src/page_transitions.dart';
 export 'src/theme.dart';
 export 'src/tokens.dart';

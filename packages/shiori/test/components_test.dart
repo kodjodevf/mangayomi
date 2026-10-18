@@ -894,4 +894,30 @@ void main() {
 
     expect((box.decoration as BoxDecoration).color, ShioriScrim.panel);
   });
+
+  testWidgets('a page transition steps aside under reduced motion', (
+    tester,
+  ) async {
+    const child = SizedBox(key: ValueKey('page'));
+    late Widget built;
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(disableAnimations: true),
+        child: Builder(
+          builder: (context) {
+            built = const ShioriPageTransitionsBuilder().buildTransitions(
+              MaterialPageRoute<void>(builder: (_) => child),
+              context,
+              kAlwaysCompleteAnimation,
+              kAlwaysDismissedAnimation,
+              child,
+            );
+            return const SizedBox();
+          },
+        ),
+      ),
+    );
+
+    expect(built, same(child));
+  });
 }

@@ -274,6 +274,23 @@ void main() {
       expect(theme.dividerColor, tokens.color.hairline);
     });
 
+    test('pages move on Shiori\'s axis, Apple keeps its own', () {
+      final theme = build(Brightness.dark);
+      final builders = theme.pageTransitionsTheme.builders;
+      expect(
+        builders[TargetPlatform.android],
+        isA<ShioriPageTransitionsBuilder>(),
+      );
+      expect(
+        builders[TargetPlatform.windows],
+        isA<ShioriPageTransitionsBuilder>(),
+      );
+      expect(
+        builders[TargetPlatform.iOS],
+        isNot(isA<ShioriPageTransitionsBuilder>()),
+      );
+    });
+
     test('tabs mark the current one with an accent pill', () {
       final theme = build(Brightness.dark);
       final tokens = theme.extension<ShioriTokens>()!;
