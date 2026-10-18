@@ -19,6 +19,19 @@ import '../../models/manga.dart';
 import '../interface.dart';
 import 'models.dart';
 
+/// Some Mihon sources return memo data without repeating the requested slug.
+/// The memo enriches that address; storing it alone loses the work on refresh.
+String resolveMihonDetailUrl(String requestedUrl, String? returnedUrl) {
+  const memoMarker = '|mangayomi-memo|';
+  final returned = returnedUrl?.trim() ?? '';
+  if (returned.isEmpty) return requestedUrl;
+  if (returned.startsWith(memoMarker)) {
+    final base = requestedUrl.split(memoMarker).first;
+    return base.isEmpty ? requestedUrl : '$base$returned';
+  }
+  return returned;
+}
+
 class MihonExtensionService implements ExtensionService {
   late String androidProxyServer;
   @override
@@ -166,7 +179,7 @@ class MihonExtensionService implements ExtensionService {
     final chapters = await getChapterList(url);
     return MManga(
       name: data['title'],
-      link: data['url'],
+      link: resolveMihonDetailUrl(url, data['url'] as String?),
       artist: data['artist'],
       author: data['author'],
       description: data['description'],
