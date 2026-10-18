@@ -584,6 +584,8 @@
   "grayscale": "ग्रेस्केल",
   "brightness": "चमक",
   "volume": "वॉल्यूम",
+  "autoplay_next": "अगला एपिसोड अपने-आप चलाएँ",
+  "next_episode_short": "अगला",
   "contrast": "विपरीतता",
   "saturation": "संतृप्ति",
   "navigation_layout": "नेविगेशन लेआउट",

@@ -7513,6 +7513,18 @@ abstract class AppLocalizations {
   /// **'Autoplay next episode: off'**
   String get autoplay_next_off;
 
+  /// No description provided for @autoplay_next.
+  ///
+  /// In en, this message translates to:
+  /// **'Autoplay next episode'**
+  String get autoplay_next;
+
+  /// No description provided for @next_episode_short.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next_episode_short;
+
   /// No description provided for @subtitle_preview_sample.
   ///
   /// In en, this message translates to:

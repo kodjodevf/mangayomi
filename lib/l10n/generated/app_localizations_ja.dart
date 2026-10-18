@@ -4118,6 +4118,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get autoplay_next_off => '次のエピソードを自動再生: オフ';
 
   @override
+  String get autoplay_next => '次のエピソードを自動再生';
+
+  @override
+  String get next_episode_short => '次へ';
+
+  @override
   String get subtitle_preview_sample => '旅はまだ続く。';
 
   @override

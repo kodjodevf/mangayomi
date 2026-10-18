@@ -4208,6 +4208,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get autoplay_next_off => 'التشغيل التلقائي للحلقة التالية: معطّل';
 
   @override
+  String get autoplay_next => 'تشغيل الحلقة التالية تلقائيًا';
+
+  @override
+  String get next_episode_short => 'التالي';
+
+  @override
   String get subtitle_preview_sample => 'الرحلة مستمرة.';
 
   @override

@@ -397,6 +397,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   Results? _openingResult;
   Results? _endingResult;
 
+  /// The autoplay switch in the settings, mirroring its provider.
+  final ValueNotifier<bool> _autoplayNext = ValueNotifier(true);
+
   /// The opening and the ending, in milliseconds, for the timeline to mark.
   final ValueNotifier<List<(int, int)>> _skipRanges = ValueNotifier(const []);
   bool _hasOpeningSkip = false;
@@ -1656,6 +1659,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _fit.dispose();
     _isLocked.dispose();
     _skipRanges.dispose();
+    _autoplayNext.dispose();
     _skipPhase.dispose();
     _subDelayController.dispose();
     _subSpeedController.dispose();
@@ -1752,7 +1756,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     return [
       SettingsEntry(
         label: context.l10n.video_quality,
-        icon: Symbols.high_quality_rounded,
+        icon: Symbols.hd_rounded,
+        featured: true,
         valueBuilder: (context) => ValueListenableBuilder<VideoPrefs?>(
           valueListenable: _video,
           builder: (context, v, _) => Text(
@@ -1765,7 +1770,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       ),
       SettingsEntry(
         label: context.l10n.video_audio,
-        icon: Symbols.audiotrack_rounded,
+        icon: Symbols.graphic_eq_rounded,
+        featured: true,
         valueBuilder: (context) => StreamBuilder<Track>(
           stream: _player.stream.track,
           initialData: _player.state.track,
@@ -1796,7 +1802,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       ),
       SettingsEntry(
         label: context.l10n.video_subtitle,
-        icon: Symbols.subtitles_rounded,
+        icon: Symbols.closed_caption_rounded,
+        featured: true,
         valueBuilder: (context) => StreamBuilder<Track>(
           stream: _player.stream.track,
           initialData: _player.state.track,
@@ -1822,14 +1829,16 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       ),
       SettingsEntry(
         label: context.l10n.appearance,
-        icon: Symbols.palette_rounded,
+        icon: Symbols.text_fields_rounded,
+        group: context.l10n.group_subtitles,
         contentBuilder: (context) =>
             _appearanceSectionWidget(context, hasSubtitleTrack),
       ),
       if (_chapterMarks.value.isNotEmpty)
         SettingsEntry(
           label: context.l10n.chapters,
-          icon: Symbols.list_rounded,
+          icon: Symbols.bookmarks_rounded,
+          group: context.l10n.group_playback,
           valueBuilder: (context) => ValueListenableBuilder<int?>(
             valueListenable: _currentChapterMark,
             builder: (context, i, _) => Text(
@@ -1842,7 +1851,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         ),
       SettingsEntry(
         label: context.l10n.playback_speed,
-        icon: Symbols.speed_rounded,
+        icon: Symbols.slow_motion_video_rounded,
+        featured: true,
         valueBuilder: (context) => ValueListenableBuilder<double>(
           valueListenable: _playbackSpeed,
           builder: (context, v, _) => Text(temporaryPlaybackSpeedLabel(v)),
@@ -1851,12 +1861,26 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       ),
       SettingsEntry(
         label: context.l10n.video_fit,
-        icon: Symbols.fit_screen_rounded,
+        icon: Symbols.aspect_ratio_rounded,
+        group: context.l10n.group_playback,
         valueBuilder: (context) => ValueListenableBuilder<BoxFit>(
           valueListenable: _fit,
           builder: (context, fit, _) => Text(fitShortLabel(fit)),
         ),
         contentBuilder: (context) => _fitSectionWidget(context),
+      ),
+      // Off the top bar: a choice made once, not while watching.
+      SettingsEntry(
+        label: context.l10n.autoplay_next,
+        icon: Symbols.autoplay_rounded,
+        group: context.l10n.group_playback,
+        toggle: _autoplayNext..value = ref.read(autoPlayNextEpisodeProvider),
+        onToggle: (on) {
+          if (on != ref.read(autoPlayNextEpisodeProvider)) {
+            ref.read(autoPlayNextEpisodeProvider.notifier).toggle();
+          }
+          _autoplayNext.value = on;
+        },
       ),
       // Each its own entry rather than grouped under one "Advanced" umbrella
       // — shaders, stats and custom buttons are unrelated to each other, and
@@ -1865,7 +1889,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       if (useMpvConfig)
         SettingsEntry(
           label: context.l10n.shaders,
-          icon: Symbols.auto_awesome_rounded,
+          icon: Symbols.auto_fix_high_rounded,
+          group: context.l10n.advanced,
           valueBuilder: (context) => ValueListenableBuilder<String>(
             valueListenable: _selectedShader,
             builder: (context, shader, _) => Text(
@@ -1879,19 +1904,22 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       if (useMpvConfig)
         SettingsEntry(
           label: context.l10n.statistics,
-          icon: Symbols.query_stats_rounded,
+          icon: Symbols.monitoring_rounded,
+          group: context.l10n.advanced,
           contentBuilder: (context) => _statsSectionWidget(context),
         ),
       if (useMpvConfig && (_customButtons.value?.isNotEmpty ?? false))
         SettingsEntry(
           label: context.l10n.custom_buttons,
-          icon: Symbols.terminal_rounded,
+          icon: Symbols.smart_button_rounded,
+          group: context.l10n.advanced,
           contentBuilder: (context) => _customButtonsSectionWidget(context),
         ),
       if (isDesktop)
         SettingsEntry(
           label: context.l10n.keyboard_shortcuts,
           icon: Symbols.keyboard_rounded,
+          group: context.l10n.advanced,
           onTap: (sheetContext) {
             Navigator.pop(sheetContext);
             showPlayerShortcuts(
@@ -1901,10 +1929,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             );
           },
         ),
-      if (_usesCompactPortraitControls(context))
+      // Moved off the top bar, which keeps what is changed while watching.
+      if (!isDesktop)
         SettingsEntry(
           label: context.l10n.share,
           icon: Icons.adaptive.share,
+          group: context.l10n.group_playback,
           onTap: (sheetContext) {
             unawaited(
               _showShareScreenshotActions(sheetContext, widget.episode),
@@ -1948,9 +1978,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       return;
     }
     // The sheet covers the video, so it pauses it, and plays it again only
-    // if it was playing: a paused video stays paused.
-    final wasPlaying = _player.state.playing;
-    _player.pause();
+    // if it was playing: a paused video stays paused. Beside the video, in
+    // landscape, it keeps playing, as the episode list does there.
+    final beside = playerSettingsOpenBeside(context);
+    final wasPlaying = !beside && _player.state.playing;
+    if (!beside) _player.pause();
     await showUnifiedPlayerSettings(
       context,
       title: context.l10n.settings,
@@ -2369,28 +2401,94 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   Widget _mobileBottomButtonBar(BuildContext context) {
     final compactPortrait = _usesCompactPortraitControls(context);
     // The second line of the floating panel, under the timeline; the panel
-    // gives it its ground and its margins.
+    // gives it its ground and its margins. Left, how it plays: the lock,
+    // the speed, the fit. Right, what comes next: the episodes, and the
+    // next one in the accent, the row's one action.
     return MobilePlayerBottomControlsLayout(
       compactPortrait: compactPortrait,
-      lockButton: KeyedSubtree(
-        key: const ValueKey('mobile-player-lock-button'),
-        child: ShioriOverlayPill(
-          icon: Symbols.lock_open_rounded,
-          tooltip: context.l10n.lock,
-          compact: true,
-          onTap: () {
-            HapticFeedback.lightImpact();
-            _isLocked.value = true;
-          },
-        ),
+      lockButton: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          KeyedSubtree(
+            key: const ValueKey('mobile-player-lock-button'),
+            child: ShioriOverlayPill(
+              icon: Symbols.lock_open_rounded,
+              tooltip: context.l10n.lock,
+              compact: true,
+              onTap: () {
+                HapticFeedback.lightImpact();
+                _isLocked.value = true;
+              },
+            ),
+          ),
+          // The stream's choices and the playback's, each a pill with its
+          // value; a narrow portrait row keeps the subtitles and the speed.
+          _buildSettingsButtons(
+            context,
+            iconOnly: compactPortrait,
+            pills: compactPortrait
+                ? const {PlayerPill.subtitles, PlayerPill.speed}
+                : const {
+                    PlayerPill.quality,
+                    PlayerPill.subtitles,
+                    PlayerPill.audio,
+                    PlayerPill.speed,
+                    PlayerPill.fit,
+                  },
+          ),
+        ],
       ),
       seekButton: _seekToWidget(iconOnly: compactPortrait),
       chapterButton: compactPortrait
           ? const SizedBox.shrink()
           : _chapterMarkWidget(),
-      shortcutButtons: compactPortrait
-          ? _portraitFullscreenButton(context)
-          : _buildSettingsButtons(context),
+      shortcutButtons: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (!compactPortrait) _episodesPill(context),
+          if (_streamController.hasPreviousEpisode && !compactPortrait)
+            ShioriOverlayPill(
+              icon: Symbols.skip_previous_rounded,
+              tooltip: context.l10n.previous_episode,
+              compact: true,
+              onTap: () =>
+                  pushToNewEpisode(context, _streamController.getPrevEpisode()),
+            ),
+          if (hasNextEpisode)
+            ShioriOverlayPill(
+              label: compactPortrait ? null : context.l10n.next_episode_short,
+              icon: compactPortrait ? Symbols.skip_next_rounded : null,
+              trailingIcon: compactPortrait ? null : Symbols.skip_next_rounded,
+              tooltip: context.l10n.next_episode,
+              emphasized: true,
+              compact: true,
+              onTap: () =>
+                  pushToNewEpisode(context, _streamController.getNextEpisode()),
+            ),
+          _portraitFullscreenButton(context),
+        ],
+      ),
+    );
+  }
+
+  /// The episode list as a pill in the panel: beside a landscape video it
+  /// keeps playing; the sheet over a portrait one pauses it.
+  Widget _episodesPill(BuildContext context) {
+    return ShioriOverlayPill(
+      icon: Symbols.video_library_rounded,
+      label: context.l10n.episodes,
+      compact: true,
+      onTap: () async {
+        final size = MediaQuery.sizeOf(context);
+        final pauses = size.width <= size.height;
+        if (pauses) _pauseWhileOpen(false);
+        await showChapterListPanel(
+          context,
+          title: context.l10n.episodes,
+          chapter: widget.episode,
+        );
+        if (pauses) _pauseWhileOpen(true);
+      },
     );
   }
 
@@ -2530,28 +2628,32 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   /// helper method for _mobileBottomButtonBar() and _desktopBottomButtonBar()
-  Widget _buildSettingsButtons(BuildContext context, {bool iconOnly = false}) =>
-      PlayerShortcutPills(
-        videos: widget.videos,
-        video: _video,
-        player: _player,
-        subtitleTrack: () => _effectiveSubtitleTrack,
-        audioTrack: () => _effectiveAudioTrack,
-        playbackSpeed: _playbackSpeed,
-        fit: _fit,
-        iconOnly: iconOnly,
-        onQuality: (context) =>
-            _openPlayerSettings(context, initialIndex: _qualitySectionIndex),
-        onSubtitles: (context) =>
-            _openPlayerSettings(context, initialIndex: _subtitleSectionIndex),
-        onAudio: (context) =>
-            _openPlayerSettings(context, initialIndex: _audioSectionIndex),
-        onSpeed: (context) =>
-            _openPlayerSettings(context, initialIndex: _speedSectionIndex),
-        onSettings: _openPlayerSettings,
-        onChangeFit: () => _changeFitLabel(ref),
-        onToggleFullscreen: _toggleFullscreen,
-      );
+  Widget _buildSettingsButtons(
+    BuildContext context, {
+    bool iconOnly = false,
+    Set<PlayerPill> pills = const {...PlayerPill.values},
+  }) => PlayerShortcutPills(
+    pills: pills,
+    videos: widget.videos,
+    video: _video,
+    player: _player,
+    subtitleTrack: () => _effectiveSubtitleTrack,
+    audioTrack: () => _effectiveAudioTrack,
+    playbackSpeed: _playbackSpeed,
+    fit: _fit,
+    iconOnly: iconOnly,
+    onQuality: (context) =>
+        _openPlayerSettings(context, initialIndex: _qualitySectionIndex),
+    onSubtitles: (context) =>
+        _openPlayerSettings(context, initialIndex: _subtitleSectionIndex),
+    onAudio: (context) =>
+        _openPlayerSettings(context, initialIndex: _audioSectionIndex),
+    onSpeed: (context) =>
+        _openPlayerSettings(context, initialIndex: _speedSectionIndex),
+    onSettings: _openPlayerSettings,
+    onChangeFit: () => _changeFitLabel(ref),
+    onToggleFullscreen: _toggleFullscreen,
+  );
 
   Future<void> _toggleFullscreen(bool isFullscreen) async {
     if (isDesktop) {
@@ -2582,34 +2684,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   Widget _topButtonBar(BuildContext context) {
     final compactPortrait = _usesCompactPortraitControls(context);
 
-    Widget autoplayButton({bool portrait = false}) {
-      return Consumer(
-        builder: (context, ref, _) {
-          final autoPlay = ref.watch(autoPlayNextEpisodeProvider);
-          return Tooltip(
-            message: autoPlay
-                ? context.l10n.autoplay_next_on
-                : context.l10n.autoplay_next_off,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(ShioriShape.sheet),
-              onTap: () =>
-                  ref.read(autoPlayNextEpisodeProvider.notifier).toggle(),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: portrait ? 0 : 8,
-                  vertical: portrait ? 10 : 8,
-                ),
-                child: AutoplaySwitch(
-                  on: autoPlay,
-                  accent: context.shiori.color.accentInk,
-                ),
-              ),
-            ),
-          );
-        },
-      );
-    }
-
     Widget episodesButton() {
       return btnToShowChapterListDialog(
         context,
@@ -2625,12 +2699,15 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       );
     }
 
-    Widget shareButton() {
-      return btnToShowShareScreenshot(
-        widget.episode,
-        onChanged: _pauseWhileOpen,
-      );
-    }
+    Widget settingsButton({Key? key}) => Builder(
+      builder: (buttonContext) => ShioriOverlayIconButton(
+        key: key,
+        tooltip: context.l10n.settings,
+        size: 24,
+        onPressed: () => _openPlayerSettings(buttonContext),
+        icon: const Icon(Symbols.tune_rounded),
+      ),
+    );
 
     // The series and the episode, as the readers' bars and the loading
     // state name them.
@@ -2642,30 +2719,43 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       child: ChapterBarTitle(chapter: widget.episode, onImage: true),
     );
 
+    // The top keeps who and where: the way back, what is playing, and the
+    // settings. What is changed while watching is in the panel at the foot;
+    // autoplay and sharing are in the settings.
     return MobilePlayerTopSafeArea(
       isDesktop: isDesktop,
       child: MobilePlayerTopControlsLayout(
         compactPortrait: compactPortrait,
-        backButton: BackButton(color: Colors.white, onPressed: _goBackToDetail),
+        backButton: ShioriOverlayIconButton(
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+          size: 24,
+          onPressed: _goBackToDetail,
+          icon: const Icon(Symbols.arrow_back_rounded),
+        ),
         title: title,
         wideActions: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            autoplayButton(),
             if (supportsAlwaysOnTop)
               IconButton(
                 tooltip: context.l10n.always_on_top,
-                icon: Icon(
+                icon: const Icon(
                   fill: 1,
-                  alwaysOnTop
-                      ? Symbols.push_pin_rounded
-                      : Symbols.push_pin_rounded,
+                  Symbols.push_pin_rounded,
                   color: Colors.white,
                 ),
                 onPressed: toggleAlwaysOnTop,
               ),
-            episodesButton(),
-            shareButton(),
+            // On a phone the episodes are in the panel; desktop's bar has
+            // no room for them, nor a settings sheet with sharing in it.
+            if (isDesktop) ...[
+              episodesButton(),
+              btnToShowShareScreenshot(
+                widget.episode,
+                onChanged: _pauseWhileOpen,
+              ),
+            ],
+            settingsButton(),
           ],
         ),
         portraitActions: MobilePlayerPortraitActionTheme(
@@ -2673,37 +2763,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             mainAxisSize: MainAxisSize.min,
             children: [
               KeyedSubtree(
-                key: const ValueKey('mobile-player-portrait-autoplay'),
-                child: autoplayButton(portrait: true),
-              ),
-              KeyedSubtree(
                 key: const ValueKey('mobile-player-portrait-episodes'),
                 child: episodesButton(),
               ),
-              Builder(
-                builder: (buttonContext) => IconButton(
-                  key: const ValueKey('mobile-player-portrait-subtitles'),
-                  tooltip: context.l10n.video_subtitle,
-                  onPressed: () => _openPlayerSettings(
-                    buttonContext,
-                    initialIndex: _subtitleSectionIndex,
-                  ),
-                  icon: const Icon(
-                    Symbols.closed_caption_rounded,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              Builder(
-                builder: (buttonContext) => IconButton(
-                  key: const ValueKey('mobile-player-portrait-settings'),
-                  tooltip: context.l10n.settings,
-                  onPressed: () => _openPlayerSettings(buttonContext),
-                  icon: const Icon(
-                    Symbols.settings_rounded,
-                    color: Colors.white,
-                  ),
-                ),
+              settingsButton(
+                key: const ValueKey('mobile-player-portrait-settings'),
               ),
             ],
           ),

@@ -4197,6 +4197,12 @@ class AppLocalizationsTh extends AppLocalizations {
   String get autoplay_next_off => 'เล่นตอนถัดไปอัตโนมัติ: ปิด';
 
   @override
+  String get autoplay_next => 'เล่นตอนถัดไปอัตโนมัติ';
+
+  @override
+  String get next_episode_short => 'ถัดไป';
+
+  @override
   String get subtitle_preview_sample => 'การเดินทางยังดำเนินต่อไป';
 
   @override

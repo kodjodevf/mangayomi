@@ -806,6 +806,63 @@ void main() {
     expect(find.byKey(const ValueKey('home')), findsOneWidget);
     expect(find.byKey(const ValueKey('section-0')), findsNothing);
   });
+
+  testWidgets('settings home leads with tiles, then grouped rows', (
+    tester,
+  ) async {
+    final autoplay = ValueNotifier(false);
+    addTearDown(autoplay.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SettingsDrilldown(
+            title: 'Settings',
+            entries: [
+              SettingsEntry(
+                label: 'Quality',
+                icon: Icons.hd,
+                featured: true,
+                valueBuilder: (_) => const Text('1080p'),
+                contentBuilder: (_) => const Text('quality list'),
+              ),
+              SettingsEntry(
+                label: 'Fit',
+                icon: Icons.aspect_ratio,
+                group: 'Playback',
+                contentBuilder: (_) => const Text('fit list'),
+              ),
+              SettingsEntry(
+                label: 'Autoplay',
+                icon: Icons.play_circle,
+                group: 'Playback',
+                toggle: autoplay,
+                onToggle: (on) => autoplay.value = on,
+              ),
+            ],
+            onClose: () {},
+          ),
+        ),
+      ),
+    );
+
+    // The featured entry is a tile above the group's label.
+    expect(find.text('1080p'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('Quality')).dy,
+      lessThan(tester.getTopLeft(find.text('PLAYBACK')).dy),
+    );
+
+    // A toggle row flips its switch in place.
+    await tester.tap(find.text('Autoplay'));
+    await tester.pump();
+    expect(autoplay.value, isTrue);
+    expect(tester.widget<Switch>(find.byType(Switch)).value, isTrue);
+
+    // A tile opens its section.
+    await tester.tap(find.text('1080p'));
+    await tester.pumpAndSettle();
+    expect(find.text('quality list'), findsOneWidget);
+  });
 }
 
 Widget _testApp({

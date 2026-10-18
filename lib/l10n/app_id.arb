@@ -584,6 +584,8 @@
   "grayscale": "Skala Abu-abu",
   "brightness": "Kecerahan",
   "volume": "Volume",
+  "autoplay_next": "Putar episode berikutnya otomatis",
+  "next_episode_short": "Berikutnya",
   "contrast": "Kontras",
   "saturation": "Saturasi",
   "navigation_layout": "Tata Letak Navigasi",

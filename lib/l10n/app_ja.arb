@@ -534,6 +534,8 @@
   "grayscale": "グレースケール",
   "brightness": "明るさ",
   "volume": "音量",
+  "autoplay_next": "次のエピソードを自動再生",
+  "next_episode_short": "次へ",
   "contrast": "コントラスト",
   "saturation": "彩度",
   "navigation_layout": "ナビゲーションレイアウト",

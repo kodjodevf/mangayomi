@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
 
@@ -342,15 +343,22 @@ class PlayerPillButton extends StatelessWidget {
 
 typedef SettingsSectionBuilder = Widget Function(BuildContext context);
 
-/// One entry in the settings home list ("Qualité", "Vitesse"...): an icon, a
-/// label, an optional live current-value widget shown to the right of it
-/// (e.g. "1.0×"), and either drill-down content or a direct action.
+/// One entry in the settings home: an icon, a label, its current value
+/// (e.g. "1×"), and what a tap does: open a section ([contentBuilder]), run
+/// an action ([onTap]), or flip a switch ([toggle] and [onToggle]).
+///
+/// [featured] entries, the ones changed while watching, open the home as
+/// tiles; the rest follow as rows under their [group]'s label.
 class SettingsEntry {
   final String label;
   final IconData icon;
   final WidgetBuilder? valueBuilder;
   final SettingsSectionBuilder? contentBuilder;
   final ValueChanged<BuildContext>? onTap;
+  final ValueListenable<bool>? toggle;
+  final ValueChanged<bool>? onToggle;
+  final bool featured;
+  final String? group;
 
   const SettingsEntry({
     required this.label,
@@ -358,10 +366,110 @@ class SettingsEntry {
     this.contentBuilder,
     this.onTap,
     this.valueBuilder,
+    this.toggle,
+    this.onToggle,
+    this.featured = false,
+    this.group,
   }) : assert(
-         (contentBuilder == null) != (onTap == null),
-         'Provide either contentBuilder or onTap',
-       );
+         (contentBuilder != null ? 1 : 0) +
+                 (onTap != null ? 1 : 0) +
+                 (toggle != null ? 1 : 0) ==
+             1,
+         'Provide one of contentBuilder, onTap or toggle',
+       ),
+       assert(toggle == null || onToggle != null, 'A toggle needs onToggle');
+}
+
+/// The icon of a settings row, on a small tile of its own so the column of
+/// icons reads as a column, as the app's lists do with thumbnails.
+class _EntryIcon extends StatelessWidget {
+  const _EntryIcon(this.icon, {this.accent = false});
+
+  final IconData icon;
+  final bool accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.shiori;
+    final c = tokens.color;
+    final extent = tokens.scaled(36);
+    return Container(
+      width: extent,
+      height: extent,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: accent ? c.accent.withValues(alpha: Alphas.accentTint) : c.ink2,
+        borderRadius: BorderRadius.circular(ShioriShape.card),
+      ),
+      child: Icon(
+        icon,
+        size: tokens.scaled(20),
+        color: accent ? c.accentInk : c.fg,
+      ),
+    );
+  }
+}
+
+/// A featured entry: a tile with its icon, its name and, largest, its value,
+/// the thing one opens the settings to read or change.
+class _SettingsTile extends StatelessWidget {
+  const _SettingsTile({
+    required this.entry,
+    required this.width,
+    required this.onTap,
+  });
+
+  final SettingsEntry entry;
+  final double width;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.shiori;
+    final c = tokens.color;
+    return SizedBox(
+      width: width,
+      child: Material(
+        color: c.ink2,
+        borderRadius: BorderRadius.circular(ShioriShape.card),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(ShioriSpace.s12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: ShioriSpace.s8,
+              children: [
+                _EntryIcon(entry.icon, accent: true),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      entry.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: tokens.caption,
+                    ),
+                    if (entry.valueBuilder != null)
+                      DefaultTextStyle.merge(
+                        style: tokens.text.row.copyWith(
+                          color: c.fg,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        child: entry.valueBuilder!(context),
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _SettingsHomeRow extends StatelessWidget {
@@ -371,76 +479,125 @@ class _SettingsHomeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onSurface = context.shiori.color.fg;
-    final maxLabelWidth = (MediaQuery.sizeOf(context).width * 0.45).clamp(
-      120.0,
-      180.0,
+    final tokens = context.shiori;
+    final c = tokens.color;
+    final toggle = entry.toggle;
+    // Two lines before it is cut: "Autoplay next episode" runs long in
+    // French and German beside a switch.
+    final label = Text(
+      entry.label,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: tokens.text.row.copyWith(color: c.fg),
+    );
+    final row = Container(
+      constraints: BoxConstraints(minHeight: tokens.density.rowHeight),
+      padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s16),
+      child: Row(
+        spacing: ShioriSpace.s12,
+        children: [
+          _EntryIcon(entry.icon),
+          Expanded(child: label),
+          if (entry.valueBuilder != null)
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: (MediaQuery.sizeOf(context).width * 0.3).clamp(
+                  80.0,
+                  160.0,
+                ),
+              ),
+              child: DefaultTextStyle.merge(
+                style: tokens.caption,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.end,
+                child: entry.valueBuilder!(context),
+              ),
+            ),
+          if (toggle != null)
+            ValueListenableBuilder<bool>(
+              valueListenable: toggle,
+              builder: (context, on, _) =>
+                  Switch(value: on, onChanged: entry.onToggle),
+            )
+          else if (entry.contentBuilder != null)
+            Icon(
+              Symbols.chevron_right_rounded,
+              size: tokens.scaled(20),
+              color: c.fgMuted,
+            ),
+        ],
+      ),
     );
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
-        onTap: onTap,
-        // As the app's setting rows: the icon muted at their size, the
-        // label at their weight, at the density's row height.
-        child: Container(
-          constraints: BoxConstraints(
-            minHeight: context.shiori.density.rowHeight,
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s16),
-          child: Row(
-            children: [
-              Icon(
-                entry.icon,
-                size: context.shiori.scaled(24),
-                color: context.shiori.color.fgMuted,
-              ),
-              const SizedBox(width: ShioriSpace.s16),
-              if (entry.valueBuilder == null)
-                Expanded(
-                  child: Text(
-                    entry.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.shiori.text.row.copyWith(color: onSurface),
-                  ),
-                )
-              else ...[
-                ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: maxLabelWidth),
-                  child: Text(
-                    entry.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.shiori.text.row.copyWith(color: onSurface),
-                  ),
-                ),
-                const SizedBox(width: ShioriSpace.s8),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: DefaultTextStyle.merge(
-                      style: context.shiori.text.meta.copyWith(
-                        color: context.shiori.color.fgMuted,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.end,
-                      child: entry.valueBuilder!(context),
-                    ),
-                  ),
-                ),
-              ],
-              const SizedBox(width: ShioriSpace.s4),
-              Icon(
-                Symbols.chevron_right_rounded,
-                fill: 1,
-                size: 18,
-                color: context.shiori.color.fgMuted.withValues(alpha: 0.70),
-              ),
-            ],
-          ),
-        ),
+        onTap: toggle != null ? () => entry.onToggle!(!toggle.value) : onTap,
+        child: row,
       ),
+    );
+  }
+}
+
+/// The settings home: the featured entries as tiles, two or four across,
+/// then the others in their groups.
+class _SettingsHome extends StatelessWidget {
+  const _SettingsHome({required this.entries, required this.onOpen});
+
+  final List<SettingsEntry> entries;
+  final ValueChanged<int> onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final featured = [
+      for (var i = 0; i < entries.length; i++)
+        if (entries[i].featured) i,
+    ];
+    final groups = <String?, List<int>>{};
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].featured) continue;
+      groups.putIfAbsent(entries[i].group, () => []).add(i);
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (featured.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              ShioriSpace.s16,
+              ShioriSpace.s12,
+              ShioriSpace.s16,
+              ShioriSpace.s4,
+            ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                const gap = ShioriSpace.s8;
+                final columns = constraints.maxWidth >= 560 ? 4 : 2;
+                final width =
+                    (constraints.maxWidth - gap * (columns - 1)) / columns;
+                return Wrap(
+                  spacing: gap,
+                  runSpacing: gap,
+                  children: [
+                    for (final i in featured)
+                      _SettingsTile(
+                        entry: entries[i],
+                        width: width,
+                        onTap: () => onOpen(i),
+                      ),
+                  ],
+                );
+              },
+            ),
+          ),
+        for (final MapEntry(key: group, value: indices) in groups.entries) ...[
+          if (group != null) SettingsSectionLabel(group),
+          for (final i in indices)
+            _SettingsHomeRow(entry: entries[i], onTap: () => onOpen(i)),
+        ],
+        const SizedBox(height: ShioriSpace.s4),
+      ],
     );
   }
 }
@@ -666,12 +823,17 @@ class SettingsDrilldown extends StatefulWidget {
   final int initialIndex;
   final VoidCallback onClose;
 
+  /// The most the body may take before it scrolls; most of the screen's
+  /// height when null.
+  final double? maxBodyHeight;
+
   const SettingsDrilldown({
     super.key,
     required this.title,
     required this.entries,
     required this.onClose,
     this.initialIndex = -1,
+    this.maxBodyHeight,
   });
 
   @override
@@ -731,7 +893,7 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
         : ValueKey('section-$active');
 
     final screenHeight = MediaQuery.of(context).size.height;
-    final maxBodyHeight = screenHeight * 0.72;
+    final maxBodyHeight = widget.maxBodyHeight ?? screenHeight * 0.72;
 
     return SettingsDrilldownScope(
       goHome: _goHome,
@@ -817,23 +979,16 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.only(bottom: ShioriSpace.s12),
                     child: active == null
-                        ? Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              for (var i = 0; i < widget.entries.length; i++)
-                                _SettingsHomeRow(
-                                  entry: widget.entries[i],
-                                  onTap: () {
-                                    final action = widget.entries[i].onTap;
-                                    if (action != null) {
-                                      action(context);
-                                    } else {
-                                      _open(i);
-                                    }
-                                  },
-                                ),
-                              const SizedBox(height: ShioriSpace.s4),
-                            ],
+                        ? _SettingsHome(
+                            entries: widget.entries,
+                            onOpen: (i) {
+                              final entry = widget.entries[i];
+                              if (entry.onTap != null) {
+                                entry.onTap!(context);
+                              } else if (entry.contentBuilder != null) {
+                                _open(i);
+                              }
+                            },
                           )
                         : Padding(
                             padding: const EdgeInsets.only(
@@ -909,13 +1064,70 @@ class UnifiedSettingsSheet extends StatelessWidget {
   }
 }
 
-/// Opens the mobile settings bottom sheet.
+/// Whether the player's settings open beside the video rather than over
+/// it: on a screen wider than tall, as the episode list does, so what they
+/// change (a subtitle's size, the fit) can be seen while it is changed.
+bool playerSettingsOpenBeside(BuildContext context) {
+  final size = MediaQuery.sizeOf(context);
+  return size.width > size.height && size.width >= 600;
+}
+
+/// Opens the mobile settings: a panel from the side in landscape, a sheet
+/// from the bottom in portrait.
 Future<T?> showUnifiedPlayerSettings<T>(
   BuildContext context, {
   required String title,
   required List<SettingsEntry> entries,
   int initialIndex = -1,
 }) {
+  if (playerSettingsOpenBeside(context)) {
+    final size = MediaQuery.sizeOf(context);
+    final width = (size.width * 0.42).clamp(340.0, 440.0);
+    return showGeneralDialog<T>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.transparent,
+      transitionDuration: ShioriMotion.of(context, ShioriMotion.enter),
+      transitionBuilder: (context, animation, _, child) => SlideTransition(
+        position: Tween(begin: const Offset(1, 0), end: Offset.zero).animate(
+          CurvedAnimation(parent: animation, curve: ShioriMotion.enterCurve),
+        ),
+        child: child,
+      ),
+      pageBuilder: (dialogContext, _, _) => Align(
+        alignment: AlignmentDirectional.centerEnd,
+        child: SizedBox(
+          width: width,
+          height: double.infinity,
+          child: Material(
+            color: dialogContext.shiori.color.ink1.withValues(
+              alpha: Alphas.chrome,
+            ),
+            borderRadius: const BorderRadiusDirectional.horizontal(
+              start: Radius.circular(ShioriShape.sheet),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: SafeArea(
+              left: false,
+              child: SettingsDrilldown(
+                title: title,
+                entries: entries,
+                initialIndex: initialIndex,
+                // The header's height off the panel's.
+                maxBodyHeight:
+                    MediaQuery.sizeOf(dialogContext).height -
+                    MediaQuery.paddingOf(dialogContext).vertical -
+                    ShioriSpace.s48 -
+                    ShioriSpace.s16,
+                onClose: () => Navigator.pop(dialogContext),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
   return showModalBottomSheet<T>(
     context: context,
     backgroundColor: Colors.transparent,

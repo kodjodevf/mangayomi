@@ -4227,6 +4227,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get autoplay_next_off => 'Putar otomatis episode berikutnya: mati';
 
   @override
+  String get autoplay_next => 'Putar episode berikutnya otomatis';
+
+  @override
+  String get next_episode_short => 'Berikutnya';
+
+  @override
   String get subtitle_preview_sample => 'Perjalanan berlanjut.';
 
   @override

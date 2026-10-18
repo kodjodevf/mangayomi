@@ -1657,6 +1657,8 @@
   "shortcut_shaders_off": "Shaders off",
   "autoplay_next_on": "Autoplay next episode: on",
   "autoplay_next_off": "Autoplay next episode: off",
+  "autoplay_next": "Autoplay next episode",
+  "next_episode_short": "Next",
   "subtitle_preview_sample": "The journey goes on.",
   "text_style": "Style",
   "code_editor": "Code editor",

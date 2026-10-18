@@ -12,9 +12,14 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:media_kit/media_kit.dart';
 
-/// The row of shortcut pills in the player's bottom bar: quality, subtitles,
+/// The pills [PlayerShortcutPills] can show.
+enum PlayerPill { quality, subtitles, audio, speed, fit, settings, fullscreen }
+
+/// The row of shortcut pills in the player's bars: quality, subtitles,
 /// audio, speed and fit each open their section of the player settings,
-/// followed by the full settings and the fullscreen toggle.
+/// followed by the full settings and the fullscreen toggle. [pills] picks
+/// which, so a phone can put the stream's at the top and the playback's at
+/// the foot.
 class PlayerShortcutPills extends StatelessWidget {
   const PlayerShortcutPills({
     super.key,
@@ -33,7 +38,10 @@ class PlayerShortcutPills extends StatelessWidget {
     required this.onChangeFit,
     required this.onToggleFullscreen,
     this.iconOnly = false,
+    this.pills = const {...PlayerPill.values},
   });
+
+  final Set<PlayerPill> pills;
 
   final List<vid.Video> videos;
   final ValueNotifier<VideoPrefs?> video;
@@ -61,7 +69,7 @@ class PlayerShortcutPills extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Quality shortcut pill
-        if (hasMultipleVideos)
+        if (hasMultipleVideos && pills.contains(PlayerPill.quality))
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
             child: Builder(
@@ -73,7 +81,7 @@ class PlayerShortcutPills extends StatelessWidget {
                       (videos.isNotEmpty ? videos.first.quality : '');
                   final qualityLabel = shortQualityLabel(rawQuality);
                   return PlayerPillButton(
-                    icon: Symbols.high_quality_rounded,
+                    icon: Symbols.hd_rounded,
                     label: qualityLabel.isNotEmpty ? qualityLabel : null,
                     showLabel: !iconOnly,
                     tooltip: context.l10n.video_quality,
@@ -86,99 +94,104 @@ class PlayerShortcutPills extends StatelessWidget {
           ),
 
         // Subtitles CC shortcut pill
-        _trackPill(
-          builder: (context) {
-            final subTrack = subtitleTrack();
-            final isSubOff = subTrack == null || subTrack.id == 'no';
-            final shortLabel = isSubOff
-                ? ''
-                : _shortTrackName(subtitleTrackLabel(subTrack));
+        if (pills.contains(PlayerPill.subtitles))
+          _trackPill(
+            builder: (context) {
+              final subTrack = subtitleTrack();
+              final isSubOff = subTrack == null || subTrack.id == 'no';
+              final shortLabel = isSubOff
+                  ? ''
+                  : _shortTrackName(subtitleTrackLabel(subTrack));
 
-            return PlayerPillButton(
-              icon: Symbols.subtitles_rounded,
-              label: !isSubOff && shortLabel.isNotEmpty ? shortLabel : 'Off',
-              showLabel: !iconOnly,
-              tooltip: context.l10n.video_subtitle,
-              isCompact: isMobile,
-              onTap: () => onSubtitles(context),
-            );
-          },
-        ),
+              return PlayerPillButton(
+                icon: Symbols.closed_caption_rounded,
+                label: !isSubOff && shortLabel.isNotEmpty ? shortLabel : 'Off',
+                showLabel: !iconOnly,
+                tooltip: context.l10n.video_subtitle,
+                isCompact: isMobile,
+                onTap: () => onSubtitles(context),
+              );
+            },
+          ),
 
         // Audio track shortcut pill (if multiple audio tracks or explicitly set)
-        _trackPill(
-          builder: (context) {
-            final track = audioTrack();
-            final isAudioOff = track == null || track.id == 'no';
-            final shortLabel = isAudioOff
-                ? ''
-                : _shortTrackName(audioTrackLabel(track));
-            final hasMultipleAudios =
-                player.state.tracks.audio.length > 1 ||
-                videos.any((v) => (v.audios?.length ?? 0) > 1);
+        if (pills.contains(PlayerPill.audio))
+          _trackPill(
+            builder: (context) {
+              final track = audioTrack();
+              final isAudioOff = track == null || track.id == 'no';
+              final shortLabel = isAudioOff
+                  ? ''
+                  : _shortTrackName(audioTrackLabel(track));
+              final hasMultipleAudios =
+                  player.state.tracks.audio.length > 1 ||
+                  videos.any((v) => (v.audios?.length ?? 0) > 1);
 
-            if (!hasMultipleAudios && shortLabel.isEmpty) {
-              return const SizedBox.shrink();
-            }
+              if (!hasMultipleAudios && shortLabel.isEmpty) {
+                return const SizedBox.shrink();
+              }
 
-            return PlayerPillButton(
-              icon: Symbols.audiotrack_rounded,
-              label: shortLabel.isNotEmpty ? shortLabel : null,
-              showLabel: !iconOnly,
-              tooltip: context.l10n.video_audio,
-              isCompact: isMobile,
-              onTap: () => onAudio(context),
-            );
-          },
-        ),
+              return PlayerPillButton(
+                icon: Symbols.graphic_eq_rounded,
+                label: shortLabel.isNotEmpty ? shortLabel : null,
+                showLabel: !iconOnly,
+                tooltip: context.l10n.video_audio,
+                isCompact: isMobile,
+                onTap: () => onAudio(context),
+              );
+            },
+          ),
 
         // Playback speed pill
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
-          child: Builder(
-            builder: (context) => ValueListenableBuilder<double>(
-              valueListenable: playbackSpeed,
-              builder: (context, speed, _) => PlayerPillButton(
-                icon: Symbols.speed_rounded,
-                label: temporaryPlaybackSpeedLabel(speed),
-                showLabel: !iconOnly,
-                tooltip: context.l10n.playback_speed,
-                isCompact: isMobile,
-                onTap: () => onSpeed(context),
+        if (pills.contains(PlayerPill.speed))
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
+            child: Builder(
+              builder: (context) => ValueListenableBuilder<double>(
+                valueListenable: playbackSpeed,
+                builder: (context, speed, _) => PlayerPillButton(
+                  icon: Symbols.slow_motion_video_rounded,
+                  label: temporaryPlaybackSpeedLabel(speed),
+                  showLabel: !iconOnly,
+                  tooltip: context.l10n.playback_speed,
+                  isCompact: isMobile,
+                  onTap: () => onSpeed(context),
+                ),
               ),
             ),
           ),
-        ),
 
         // Fit screen pill
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
-          child: ValueListenableBuilder<BoxFit>(
-            valueListenable: fit,
-            builder: (context, fit, _) => PlayerPillButton(
-              icon: Symbols.fit_screen_rounded,
-              label: fitShortLabel(fit),
-              showLabel: !iconOnly,
-              tooltip: context.l10n.scale_type_fit_screen,
-              isCompact: isMobile,
-              onTap: onChangeFit,
+        if (pills.contains(PlayerPill.fit))
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
+            child: ValueListenableBuilder<BoxFit>(
+              valueListenable: fit,
+              builder: (context, fit, _) => PlayerPillButton(
+                icon: Symbols.aspect_ratio_rounded,
+                label: fitShortLabel(fit),
+                showLabel: !iconOnly,
+                tooltip: context.l10n.scale_type_fit_screen,
+                isCompact: isMobile,
+                onTap: onChangeFit,
+              ),
             ),
           ),
-        ),
 
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
-          child: Builder(
-            builder: (btnContext) => PlayerPillButton(
-              icon: Symbols.video_settings_rounded,
-              tooltip: context.l10n.settings,
-              isCompact: isMobile,
-              onTap: () => onSettings(btnContext),
+        if (pills.contains(PlayerPill.settings))
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
+            child: Builder(
+              builder: (btnContext) => PlayerPillButton(
+                icon: Symbols.tune_rounded,
+                tooltip: context.l10n.settings,
+                isCompact: isMobile,
+                onTap: () => onSettings(btnContext),
+              ),
             ),
           ),
-        ),
 
-        if (!isTv)
+        if (!isTv && pills.contains(PlayerPill.fullscreen))
           Consumer(
             builder: (context, ref, _) {
               final isFullscreen = ref.watch(fullscreenProvider);

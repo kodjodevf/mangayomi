@@ -943,6 +943,8 @@
   "grayscale": "흑백",
   "brightness": "밝기",
   "volume": "볼륨",
+  "autoplay_next": "다음 에피소드 자동 재생",
+  "next_episode_short": "다음",
   "contrast": "대비",
   "saturation": "채도",
   "navigation_layout": "탐색 레이아웃",

@@ -584,6 +584,8 @@
   "grayscale": "Scala di grigi",
   "brightness": "Luminosità",
   "volume": "Volume",
+  "autoplay_next": "Riproduci automaticamente l'episodio successivo",
+  "next_episode_short": "Successivo",
   "contrast": "Contrasto",
   "saturation": "Saturazione",
   "navigation_layout": "Layout di navigazione",

@@ -4213,6 +4213,12 @@ class AppLocalizationsAs extends AppLocalizations {
   String get autoplay_next_off => 'পিছৰ পৰ্ব নিজে চলাওক: অফ';
 
   @override
+  String get autoplay_next => 'পৰৱৰ্তী পৰ্ব স্বয়ংক্ৰিয়ভাৱে চলাওক';
+
+  @override
+  String get next_episode_short => 'পৰৱৰ্তী';
+
+  @override
   String get subtitle_preview_sample => 'যাত্ৰা চলি আছে।';
 
   @override

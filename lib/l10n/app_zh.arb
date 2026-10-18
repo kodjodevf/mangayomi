@@ -587,6 +587,8 @@
   "grayscale": "灰度",
   "brightness": "亮度",
   "volume": "音量",
+  "autoplay_next": "自动播放下一集",
+  "next_episode_short": "下一集",
   "contrast": "对比度",
   "saturation": "饱和度",
   "navigation_layout": "导航布局",

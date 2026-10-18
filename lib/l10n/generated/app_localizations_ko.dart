@@ -4130,6 +4130,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get autoplay_next_off => '다음 에피소드 자동 재생: 꺼짐';
 
   @override
+  String get autoplay_next => '다음 에피소드 자동 재생';
+
+  @override
+  String get next_episode_short => '다음';
+
+  @override
   String get subtitle_preview_sample => '여정은 계속된다.';
 
   @override

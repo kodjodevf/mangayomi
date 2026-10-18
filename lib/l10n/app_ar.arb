@@ -586,6 +586,8 @@
   "grayscale": "تدرج رمادي",
   "brightness": "السطوع",
   "volume": "مستوى الصوت",
+  "autoplay_next": "تشغيل الحلقة التالية تلقائيًا",
+  "next_episode_short": "التالي",
   "contrast": "التباين",
   "saturation": "التشبع",
   "navigation_layout": "تخطيط الملاحة",

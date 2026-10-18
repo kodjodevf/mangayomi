@@ -4216,6 +4216,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get autoplay_next_off => 'अगला एपिसोड अपने आप चलाएँ: बंद';
 
   @override
+  String get autoplay_next => 'अगला एपिसोड अपने-आप चलाएँ';
+
+  @override
+  String get next_episode_short => 'अगला';
+
+  @override
   String get subtitle_preview_sample => 'सफ़र जारी है।';
 
   @override

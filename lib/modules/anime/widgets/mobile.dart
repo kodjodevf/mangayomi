@@ -11,7 +11,6 @@ import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
 import 'package:mangayomi/modules/anime/widgets/player_overlay_surface.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
-import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -958,9 +957,9 @@ class _MobileControllerWidgetState
   }
 }
 
-/// The controls in the middle of the picture: the episodes on either side,
-/// a jump of [skipSeconds] back and forward, and play in the accent between
-/// them, the one control the eye goes to.
+/// The controls in the middle of the picture: a jump of [skipSeconds] back
+/// and forward, and play in the accent between them, the one control the
+/// eye goes to. The episodes, previous and next, are in the panel below.
 List<Widget> mobilePrimaryButtonBar(
   BuildContext context,
   GlobalKey<VideoState> key,
@@ -969,11 +968,6 @@ List<Widget> mobilePrimaryButtonBar(
   FocusNode? playPauseFocus,
   int skipSeconds = 10,
 }) {
-  bool hasPrevEpisode =
-      streamController.getEpisodeIndex().$1 + 1 !=
-      streamController.getEpisodesLength(streamController.getEpisodeIndex().$2);
-  bool hasNextEpisode = streamController.getEpisodeIndex().$1 != 0;
-  final isFullScreen = isFullscreen(context);
   final l10n = context.l10n;
   void seekBy(int seconds) {
     final player = controller.player;
@@ -982,28 +976,12 @@ List<Widget> mobilePrimaryButtonBar(
   }
 
   return [
-    const Spacer(flex: 3),
-    ShioriOverlayIconButton(
-      onPressed: hasPrevEpisode
-          ? () {
-              if (isFullScreen) {
-                key.currentState?.exitFullscreen();
-              }
-              pushReplacementMangaReaderView(
-                context: context,
-                chapter: streamController.getPrevEpisode(),
-              );
-            }
-          : null,
-      tooltip: l10n.previous_episode,
-      size: 26,
-      icon: const Icon(Symbols.skip_previous_rounded, fill: 1),
-    ),
-    const Spacer(),
+    const Spacer(flex: 2),
     ShioriOverlayIconButton(
       onPressed: () => seekBy(-skipSeconds),
       tooltip: l10n.shortcut_seek_back(skipSeconds),
       caption: '$skipSeconds s',
+      size: 30,
       icon: const Icon(Symbols.fast_rewind_rounded, fill: 1),
     ),
     const Spacer(),
@@ -1013,25 +991,9 @@ List<Widget> mobilePrimaryButtonBar(
       onPressed: () => seekBy(skipSeconds),
       tooltip: l10n.shortcut_seek_forward(skipSeconds),
       caption: '$skipSeconds s',
+      size: 30,
       icon: const Icon(Symbols.fast_forward_rounded, fill: 1),
     ),
-    const Spacer(),
-    ShioriOverlayIconButton(
-      onPressed: hasNextEpisode
-          ? () {
-              if (isFullScreen) {
-                key.currentState?.exitFullscreen();
-              }
-              pushReplacementMangaReaderView(
-                context: context,
-                chapter: streamController.getNextEpisode(),
-              );
-            }
-          : null,
-      tooltip: l10n.next_episode,
-      size: 26,
-      icon: const Icon(Symbols.skip_next_rounded, fill: 1),
-    ),
-    const Spacer(flex: 3),
+    const Spacer(flex: 2),
   ];
 }

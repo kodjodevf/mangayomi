@@ -4268,6 +4268,12 @@ class AppLocalizationsRu extends AppLocalizations {
       'Автовоспроизведение следующего эпизода: выкл.';
 
   @override
+  String get autoplay_next => 'Автовоспроизведение следующей серии';
+
+  @override
+  String get next_episode_short => 'Далее';
+
+  @override
   String get subtitle_preview_sample => 'Путешествие продолжается.';
 
   @override

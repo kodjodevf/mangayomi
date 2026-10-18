@@ -4228,6 +4228,12 @@ class AppLocalizationsTr extends AppLocalizations {
   String get autoplay_next_off => 'Sonraki bölümü otomatik oynat: kapalı';
 
   @override
+  String get autoplay_next => 'Sonraki bölümü otomatik oynat';
+
+  @override
+  String get next_episode_short => 'Sonraki';
+
+  @override
   String get subtitle_preview_sample => 'Yolculuk sürüyor.';
 
   @override

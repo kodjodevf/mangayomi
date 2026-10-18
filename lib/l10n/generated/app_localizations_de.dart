@@ -4255,6 +4255,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get autoplay_next_off => 'Nächste Folge automatisch: aus';
 
   @override
+  String get autoplay_next => 'Nächste Folge automatisch abspielen';
+
+  @override
+  String get next_episode_short => 'Weiter';
+
+  @override
   String get subtitle_preview_sample => 'Die Reise geht weiter.';
 
   @override

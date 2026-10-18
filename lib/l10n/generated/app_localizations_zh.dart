@@ -4064,6 +4064,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get autoplay_next_off => '自动播放下一集：关';
 
   @override
+  String get autoplay_next => '自动播放下一集';
+
+  @override
+  String get next_episode_short => '下一集';
+
+  @override
   String get subtitle_preview_sample => '旅程仍在继续。';
 
   @override

@@ -584,6 +584,8 @@
   "grayscale": "Оттенки серого",
   "brightness": "Яркость",
   "volume": "Громкость",
+  "autoplay_next": "Автовоспроизведение следующей серии",
+  "next_episode_short": "Далее",
   "contrast": "Контраст",
   "saturation": "Насыщенность",
   "navigation_layout": "Макет навигации",

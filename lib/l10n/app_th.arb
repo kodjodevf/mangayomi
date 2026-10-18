@@ -587,6 +587,8 @@
   "grayscale": "โทนสีเทา",
   "brightness": "ความสว่าง",
   "volume": "ระดับเสียง",
+  "autoplay_next": "เล่นตอนถัดไปอัตโนมัติ",
+  "next_episode_short": "ถัดไป",
   "contrast": "ความเปนสัน",
   "saturation": "ความเข้ม",
   "navigation_layout": "เลย์เอาต์การนำทาง",

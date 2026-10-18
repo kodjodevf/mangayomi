@@ -4258,6 +4258,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get autoplay_next_off => 'Próximo episódio automático: desligado';
 
   @override
+  String get autoplay_next => 'Reproduzir o próximo episódio automaticamente';
+
+  @override
+  String get next_episode_short => 'Próximo';
+
+  @override
   String get subtitle_preview_sample => 'A jornada continua.';
 
   @override

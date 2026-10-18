@@ -584,6 +584,8 @@
   "grayscale": "Gri Tonlama",
   "brightness": "Parlaklık",
   "volume": "Ses düzeyi",
+  "autoplay_next": "Sonraki bölümü otomatik oynat",
+  "next_episode_short": "Sonraki",
   "contrast": "Kontrast",
   "saturation": "Doyum",
   "navigation_layout": "Navigasyon Düzeni",

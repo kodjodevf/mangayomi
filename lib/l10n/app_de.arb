@@ -830,6 +830,8 @@
   "grayscale": "Graustufen",
   "brightness": "Helligkeit",
   "volume": "Lautstärke",
+  "autoplay_next": "Nächste Folge automatisch abspielen",
+  "next_episode_short": "Weiter",
   "contrast": "Kontrast",
   "saturation": "Sättigung",
   "navigation_layout": "Navigations-Layout",
