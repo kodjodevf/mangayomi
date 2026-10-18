@@ -36,10 +36,15 @@ class MainMobileBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final height = _getBottomNavigationHeight(isLongPressed, location);
+    if (height == 0) {
+      return const SizedBox.shrink();
+    }
+
     if (useFloatingNav) {
       return SizedBox(
         width: context.width(1),
-        height: _getBottomNavigationHeight(isLongPressed, location),
+        height: height,
         child: FloatingNavBar(
           destinations: buildNavigationWidgetsMobile(
             ref,
@@ -55,10 +60,9 @@ class MainMobileBottomNavigation extends StatelessWidget {
       );
     }
 
-    return AnimatedContainer(
-      duration: ShioriMotion.fast,
+    return SizedBox(
       width: context.width(1),
-      height: _getBottomNavigationHeight(isLongPressed, location),
+      height: height,
       child: NavigationBarTheme(
         data: NavigationBarThemeData(
           labelTextStyle: const WidgetStatePropertyAll(
