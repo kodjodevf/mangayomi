@@ -396,9 +396,23 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                     ShioriSpace.s8,
                   ),
                   child: ShioriSegmentedControl<ItemType>(
+                    // Another media's extension updates are counted on its
+                    // segment; the current one's are on the Extensions tab.
                     segments: [
                       for (final type in types)
-                        ShioriSegment(value: type, label: type.localized(l10n)),
+                        ShioriSegment(
+                          value: type,
+                          label: type.localized(l10n),
+                          badge: type == currentTab.type
+                              ? 0
+                              : ref
+                                        .watch(
+                                          extensionUpdateCountProvider(type),
+                                        )
+                                        .asData
+                                        ?.value ??
+                                    0,
+                        ),
                     ],
                     selected: currentTab.type,
                     onSelected: (type) => _open(type, currentTab.kind),
