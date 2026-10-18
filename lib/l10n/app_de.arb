@@ -1637,5 +1637,7 @@
   "source_code_error_title": "Der Code dieser Quelle lief nicht",
   "source_code_error_failed": "{what} fehlgeschlagen: Der Bildschirm nutzt einen Ersatz, damit es weitergeht",
   "copy_error": "Kopieren",
-  "error_copied": "Fehler kopiert"
+  "error_copied": "Fehler kopiert",
+  "no_categories_yet": "Noch keine Kategorien",
+  "no_categories_yet_message": "Ordne deine Bibliothek in Kategorien, die du selbst benennst und sortierst."
 }

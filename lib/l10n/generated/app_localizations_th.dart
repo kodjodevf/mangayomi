@@ -4323,4 +4323,11 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get error_copied => 'คัดลอกข้อผิดพลาดแล้ว';
+
+  @override
+  String get no_categories_yet => 'ยังไม่มีหมวดหมู่';
+
+  @override
+  String get no_categories_yet_message =>
+      'จัดคลังของคุณเป็นหมวดหมู่ที่คุณตั้งชื่อและเรียงลำดับเอง';
 }

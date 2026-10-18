@@ -4189,4 +4189,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get error_copied => '已复制错误';
+
+  @override
+  String get no_categories_yet => '还没有分类';
+
+  @override
+  String get no_categories_yet_message => '用你自己命名和排序的分类来整理书库。';
 }

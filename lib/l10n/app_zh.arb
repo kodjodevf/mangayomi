@@ -1667,5 +1667,7 @@
   "source_code_error_title": "此来源的代码未能运行",
   "source_code_error_failed": "{what} 失败：界面已改用备用值，以便继续使用",
   "copy_error": "复制",
-  "error_copied": "已复制错误"
+  "error_copied": "已复制错误",
+  "no_categories_yet": "还没有分类",
+  "no_categories_yet_message": "用你自己命名和排序的分类来整理书库。"
 }

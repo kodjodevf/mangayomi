@@ -179,7 +179,7 @@ abstract class AppLocalizations {
   /// No description provided for @ignore_filters.
   ///
   /// In en, this message translates to:
-  /// **'Ignore Filters'**
+  /// **'Ignore filters'**
   String get ignore_filters;
 
   /// No description provided for @downloaded.
@@ -472,7 +472,7 @@ abstract class AppLocalizations {
   /// No description provided for @last_used.
   ///
   /// In en, this message translates to:
-  /// **'Last Used'**
+  /// **'Last used'**
   String get last_used;
 
   /// No description provided for @pinned.
@@ -718,13 +718,13 @@ abstract class AppLocalizations {
   /// No description provided for @mass_migration_failed_items.
   ///
   /// In en, this message translates to:
-  /// **'Failed Items'**
+  /// **'Failed items'**
   String get mass_migration_failed_items;
 
   /// No description provided for @mass_migration_exit.
   ///
   /// In en, this message translates to:
-  /// **'Exit Mass Migration'**
+  /// **'Exit mass migration'**
   String get mass_migration_exit;
 
   /// No description provided for @mass_migration_no_destination_match.
@@ -850,7 +850,7 @@ abstract class AppLocalizations {
   /// No description provided for @incognito_mode.
   ///
   /// In en, this message translates to:
-  /// **'Incognito Mode'**
+  /// **'Incognito mode'**
   String get incognito_mode;
 
   /// No description provided for @incognito_mode_description.
@@ -874,7 +874,7 @@ abstract class AppLocalizations {
   /// No description provided for @download_queue.
   ///
   /// In en, this message translates to:
-  /// **'Download Queue'**
+  /// **'Download queue'**
   String get download_queue;
 
   /// No description provided for @categories.
@@ -910,13 +910,13 @@ abstract class AppLocalizations {
   /// No description provided for @no_downloads.
   ///
   /// In en, this message translates to:
-  /// **'No Downloads'**
+  /// **'No downloads'**
   String get no_downloads;
 
   /// No description provided for @edit_categories.
   ///
   /// In en, this message translates to:
-  /// **'Edit Categories'**
+  /// **'Edit categories'**
   String get edit_categories;
 
   /// No description provided for @edit_categories_description.
@@ -934,7 +934,7 @@ abstract class AppLocalizations {
   /// No description provided for @add_category.
   ///
   /// In en, this message translates to:
-  /// **'Add Category'**
+  /// **'Add category'**
   String get add_category;
 
   /// No description provided for @name.
@@ -970,7 +970,7 @@ abstract class AppLocalizations {
   /// No description provided for @delete_category.
   ///
   /// In en, this message translates to:
-  /// **'Delete Category'**
+  /// **'Delete category'**
   String get delete_category;
 
   /// No description provided for @delete_category_msg.
@@ -982,7 +982,7 @@ abstract class AppLocalizations {
   /// No description provided for @rename_category.
   ///
   /// In en, this message translates to:
-  /// **'Rename Category'**
+  /// **'Rename category'**
   String get rename_category;
 
   /// No description provided for @general.
@@ -1378,7 +1378,7 @@ abstract class AppLocalizations {
   /// No description provided for @on_hiatus.
   ///
   /// In en, this message translates to:
-  /// **'On Hiatus'**
+  /// **'On hiatus'**
   String get on_hiatus;
 
   /// No description provided for @canceled.
@@ -1486,7 +1486,7 @@ abstract class AppLocalizations {
   /// No description provided for @create_extension.
   ///
   /// In en, this message translates to:
-  /// **'Create Extension'**
+  /// **'Create extension'**
   String get create_extension;
 
   /// No description provided for @developer_mode.
@@ -1822,7 +1822,7 @@ abstract class AppLocalizations {
   /// No description provided for @add_chapters.
   ///
   /// In en, this message translates to:
-  /// **'Add Chapters'**
+  /// **'Add chapters'**
   String get add_chapters;
 
   /// No description provided for @delete_chapters.
@@ -1840,7 +1840,7 @@ abstract class AppLocalizations {
   /// No description provided for @total_chapters.
   ///
   /// In en, this message translates to:
-  /// **'Total Chapters'**
+  /// **'Total chapters'**
   String get total_chapters;
 
   /// No description provided for @total_episodes.
@@ -2002,7 +2002,7 @@ abstract class AppLocalizations {
   /// No description provided for @sync_server.
   ///
   /// In en, this message translates to:
-  /// **'Sync Server Address'**
+  /// **'Sync server address'**
   String get sync_server;
 
   /// No description provided for @sync_starting.
@@ -2116,7 +2116,7 @@ abstract class AppLocalizations {
   /// No description provided for @sync_auto.
   ///
   /// In en, this message translates to:
-  /// **'Auto Sync'**
+  /// **'Auto sync'**
   String get sync_auto;
 
   /// No description provided for @sync_auto_warning.
@@ -2218,7 +2218,7 @@ abstract class AppLocalizations {
   /// No description provided for @full_screen_player.
   ///
   /// In en, this message translates to:
-  /// **'Use Fullscreen'**
+  /// **'Use fullscreen'**
   String get full_screen_player;
 
   /// No description provided for @full_screen_player_info.
@@ -2248,37 +2248,37 @@ abstract class AppLocalizations {
   /// No description provided for @manga_sources.
   ///
   /// In en, this message translates to:
-  /// **'Manga Sources'**
+  /// **'Manga sources'**
   String get manga_sources;
 
   /// No description provided for @anime_sources.
   ///
   /// In en, this message translates to:
-  /// **'Anime Sources'**
+  /// **'Anime sources'**
   String get anime_sources;
 
   /// No description provided for @novel_sources.
   ///
   /// In en, this message translates to:
-  /// **'Novel Sources'**
+  /// **'Novel sources'**
   String get novel_sources;
 
   /// No description provided for @anime_extensions.
   ///
   /// In en, this message translates to:
-  /// **'Anime Extensions'**
+  /// **'Anime extensions'**
   String get anime_extensions;
 
   /// No description provided for @manga_extensions.
   ///
   /// In en, this message translates to:
-  /// **'Manga Extensions'**
+  /// **'Manga extensions'**
   String get manga_extensions;
 
   /// No description provided for @novel_extensions.
   ///
   /// In en, this message translates to:
-  /// **'Novel Extensions'**
+  /// **'Novel extensions'**
   String get novel_extensions;
 
   /// No description provided for @extension_settings.
@@ -2404,7 +2404,7 @@ abstract class AppLocalizations {
   /// No description provided for @add_anyway.
   ///
   /// In en, this message translates to:
-  /// **'Add Anyway'**
+  /// **'Add anyway'**
   String get add_anyway;
 
   /// No description provided for @langauage.
@@ -2482,7 +2482,7 @@ abstract class AppLocalizations {
   /// No description provided for @add_episodes.
   ///
   /// In en, this message translates to:
-  /// **'Add Episodes'**
+  /// **'Add episodes'**
   String get add_episodes;
 
   /// No description provided for @video_quality.
@@ -2566,13 +2566,13 @@ abstract class AppLocalizations {
   /// No description provided for @preferred_domain.
   ///
   /// In en, this message translates to:
-  /// **'Preferred Domain'**
+  /// **'Preferred domain'**
   String get preferred_domain;
 
   /// No description provided for @load_more.
   ///
   /// In en, this message translates to:
-  /// **'Load More'**
+  /// **'Load more'**
   String get load_more;
 
   /// No description provided for @cancel_all_for_this_series.
@@ -2596,7 +2596,7 @@ abstract class AppLocalizations {
   /// No description provided for @email_adress.
   ///
   /// In en, this message translates to:
-  /// **'Email Address'**
+  /// **'Email address'**
   String get email_adress;
 
   /// No description provided for @password.
@@ -3364,7 +3364,7 @@ abstract class AppLocalizations {
   /// No description provided for @torrent_stream.
   ///
   /// In en, this message translates to:
-  /// **'Torrent Stream'**
+  /// **'Torrent stream'**
   String get torrent_stream;
 
   /// No description provided for @add_torrent.
@@ -3538,31 +3538,31 @@ abstract class AppLocalizations {
   /// No description provided for @recommendations_weights.
   ///
   /// In en, this message translates to:
-  /// **'Recommendation Weights'**
+  /// **'Recommendation weights'**
   String get recommendations_weights;
 
   /// No description provided for @recommendations_weights_genre.
   ///
   /// In en, this message translates to:
-  /// **'Genre Similarity'**
+  /// **'Genre similarity'**
   String get recommendations_weights_genre;
 
   /// No description provided for @recommendations_weights_setting.
   ///
   /// In en, this message translates to:
-  /// **'Setting Similarity'**
+  /// **'Setting similarity'**
   String get recommendations_weights_setting;
 
   /// No description provided for @recommendations_weights_synopsis.
   ///
   /// In en, this message translates to:
-  /// **'Story Similarity'**
+  /// **'Story similarity'**
   String get recommendations_weights_synopsis;
 
   /// No description provided for @recommendations_weights_theme.
   ///
   /// In en, this message translates to:
-  /// **'Theme Similarity'**
+  /// **'Theme similarity'**
   String get recommendations_weights_theme;
 
   /// No description provided for @manga_extensions_repo.
@@ -3802,13 +3802,13 @@ abstract class AppLocalizations {
   /// No description provided for @hwdec.
   ///
   /// In en, this message translates to:
-  /// **'Hardware Decoder'**
+  /// **'Hardware decoder'**
   String get hwdec;
 
   /// No description provided for @enable_hardware_accel.
   ///
   /// In en, this message translates to:
-  /// **'Hardware Acceleration'**
+  /// **'Hardware acceleration'**
   String get enable_hardware_accel;
 
   /// No description provided for @enable_hardware_accel_info.
@@ -4456,25 +4456,25 @@ abstract class AppLocalizations {
   /// No description provided for @text_align.
   ///
   /// In en, this message translates to:
-  /// **'Text Align'**
+  /// **'Text align'**
   String get text_align;
 
   /// No description provided for @line_height.
   ///
   /// In en, this message translates to:
-  /// **'Line Height'**
+  /// **'Line height'**
   String get line_height;
 
   /// No description provided for @show_scroll_percentage.
   ///
   /// In en, this message translates to:
-  /// **'Show Scroll Percentage'**
+  /// **'Show scroll percentage'**
   String get show_scroll_percentage;
 
   /// No description provided for @remove_extra_paragraph_spacing.
   ///
   /// In en, this message translates to:
-  /// **'Remove Extra Paragraph Spacing'**
+  /// **'Remove extra paragraph spacing'**
   String get remove_extra_paragraph_spacing;
 
   /// No description provided for @select_label_color.
@@ -4696,37 +4696,37 @@ abstract class AppLocalizations {
   /// No description provided for @mean_per_title.
   ///
   /// In en, this message translates to:
-  /// **'Mean per Title'**
+  /// **'Mean per title'**
   String get mean_per_title;
 
   /// No description provided for @completion_rate.
   ///
   /// In en, this message translates to:
-  /// **'Completion Rate'**
+  /// **'Completion rate'**
   String get completion_rate;
 
   /// No description provided for @watching_time.
   ///
   /// In en, this message translates to:
-  /// **'Watch Time'**
+  /// **'Watch time'**
   String get watching_time;
 
   /// No description provided for @reading_time.
   ///
   /// In en, this message translates to:
-  /// **'Reading Time'**
+  /// **'Reading time'**
   String get reading_time;
 
   /// No description provided for @average_chapters_per_title.
   ///
   /// In en, this message translates to:
-  /// **'Average Chapters per {title}'**
+  /// **'Average chapters per {title}'**
   String average_chapters_per_title(Object title);
 
   /// No description provided for @read_percentage.
   ///
   /// In en, this message translates to:
-  /// **'Read Percentage'**
+  /// **'Read percentage'**
   String get read_percentage;
 
   /// No description provided for @entries.
@@ -5212,7 +5212,7 @@ abstract class AppLocalizations {
   /// No description provided for @tapping_inversion.
   ///
   /// In en, this message translates to:
-  /// **'Tapping Inversion'**
+  /// **'Tapping inversion'**
   String get tapping_inversion;
 
   /// No description provided for @tapping_inversion_none.
@@ -5254,7 +5254,7 @@ abstract class AppLocalizations {
   /// No description provided for @flash_color.
   ///
   /// In en, this message translates to:
-  /// **'Flash Color'**
+  /// **'Flash color'**
   String get flash_color;
 
   /// No description provided for @flash_color_black.
@@ -5296,7 +5296,7 @@ abstract class AppLocalizations {
   /// No description provided for @reader_hide_threshold.
   ///
   /// In en, this message translates to:
-  /// **'Reader Hide Threshold'**
+  /// **'Reader hide threshold'**
   String get reader_hide_threshold;
 
   /// No description provided for @reader_hide_threshold_highest.
@@ -6352,7 +6352,7 @@ abstract class AppLocalizations {
   /// No description provided for @continue_watching.
   ///
   /// In en, this message translates to:
-  /// **'Continue Watching'**
+  /// **'Continue watching'**
   String get continue_watching;
 
   /// No description provided for @search_your_anime.
@@ -7746,6 +7746,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error copied'**
   String get error_copied;
+
+  /// No description provided for @no_categories_yet.
+  ///
+  /// In en, this message translates to:
+  /// **'No categories yet'**
+  String get no_categories_yet;
+
+  /// No description provided for @no_categories_yet_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Group your library into categories you name and order yourself.'**
+  String get no_categories_yet_message;
 }
 
 class _AppLocalizationsDelegate

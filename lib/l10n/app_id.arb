@@ -1634,5 +1634,7 @@
   "source_code_error_title": "Kode sumber ini tidak berjalan",
   "source_code_error_failed": "{what} gagal: layar memakai nilai cadangan agar bisa terus dipakai",
   "copy_error": "Salin",
-  "error_copied": "Galat disalin"
+  "error_copied": "Galat disalin",
+  "no_categories_yet": "Belum ada kategori",
+  "no_categories_yet_message": "Kelompokkan pustakamu ke dalam kategori yang kamu beri nama dan urutkan sendiri."
 }

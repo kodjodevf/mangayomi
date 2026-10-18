@@ -1664,5 +1664,7 @@
   "source_code_error_title": "O código desta fonte não rodou",
   "source_code_error_failed": "{what} falhou: a tela usou um valor reserva para continuar",
   "copy_error": "Copiar",
-  "error_copied": "Erro copiado"
+  "error_copied": "Erro copiado",
+  "no_categories_yet": "Ainda não há categorias",
+  "no_categories_yet_message": "Agrupe sua biblioteca em categorias que você mesmo nomeia e ordena."
 }

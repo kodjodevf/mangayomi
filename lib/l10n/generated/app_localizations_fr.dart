@@ -4416,4 +4416,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get error_copied => 'Erreur copiée';
+
+  @override
+  String get no_categories_yet => 'Aucune catégorie pour l\'instant';
+
+  @override
+  String get no_categories_yet_message =>
+      'Rangez votre bibliothèque dans des catégories que vous nommez et ordonnez vous-même.';
 }

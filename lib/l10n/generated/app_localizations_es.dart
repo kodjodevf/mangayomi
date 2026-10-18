@@ -4398,6 +4398,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get error_copied => 'Error copiado';
+
+  @override
+  String get no_categories_yet => 'Aún no hay categorías';
+
+  @override
+  String get no_categories_yet_message =>
+      'Agrupa tu biblioteca en categorías que tú mismo nombras y ordenas.';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

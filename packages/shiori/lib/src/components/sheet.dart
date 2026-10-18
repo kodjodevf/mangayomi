@@ -12,7 +12,7 @@ Future<T?> showShioriSheet<T>(
   required WidgetBuilder builder,
   String? title,
   double maxHeightFactor = 0.9,
-  bool useRootNavigator = false,
+  bool useRootNavigator = true,
 }) {
   final tokens = context.shiori;
   return showModalBottomSheet<T>(

@@ -4255,4 +4255,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get error_copied => '오류를 복사했습니다';
+
+  @override
+  String get no_categories_yet => '아직 카테고리가 없습니다';
+
+  @override
+  String get no_categories_yet_message => '직접 이름과 순서를 정한 카테고리로 라이브러리를 정리하세요.';
 }

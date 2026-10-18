@@ -1634,5 +1634,7 @@
   "source_code_error_title": "Il codice di questa fonte non è stato eseguito",
   "source_code_error_failed": "{what} non riuscito: la schermata usa un valore di riserva per poter continuare",
   "copy_error": "Copia",
-  "error_copied": "Errore copiato"
+  "error_copied": "Errore copiato",
+  "no_categories_yet": "Ancora nessuna categoria",
+  "no_categories_yet_message": "Raggruppa la libreria in categorie che nomini e ordini tu."
 }

@@ -1664,5 +1664,7 @@
   "source_code_error_title": "Le code de cette source ne s'exécute pas",
   "source_code_error_failed": "Échec de {what} : l'écran se rabat pour que la lecture continue",
   "copy_error": "Copier",
-  "error_copied": "Erreur copiée"
+  "error_copied": "Erreur copiée",
+  "no_categories_yet": "Aucune catégorie pour l'instant",
+  "no_categories_yet_message": "Rangez votre bibliothèque dans des catégories que vous nommez et ordonnez vous-même."
 }

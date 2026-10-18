@@ -4339,4 +4339,11 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get error_copied => 'ত্ৰুটি কপি কৰা হ\'ল';
+
+  @override
+  String get no_categories_yet => 'এতিয়ালৈকে কোনো শ্ৰেণী নাই';
+
+  @override
+  String get no_categories_yet_message =>
+      'আপুনি নিজে নাম দিয়া আৰু সজোৱা শ্ৰেণীত আপোনাৰ লাইব্ৰেৰী ভাগ কৰক।';
 }

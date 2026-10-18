@@ -1634,5 +1634,7 @@
   "source_code_error_title": "এই উৎসৰ ক'ড চলা নাছিল",
   "source_code_error_failed": "{what} বিফল: আগবাঢ়িব পৰাকৈ স্ক্ৰীনে বিকল্প মান ল'লে",
   "copy_error": "কপি কৰক",
-  "error_copied": "ত্ৰুটি কপি কৰা হ'ল"
+  "error_copied": "ত্ৰুটি কপি কৰা হ'ল",
+  "no_categories_yet": "এতিয়ালৈকে কোনো শ্ৰেণী নাই",
+  "no_categories_yet_message": "আপুনি নিজে নাম দিয়া আৰু সজোৱা শ্ৰেণীত আপোনাৰ লাইব্ৰেৰী ভাগ কৰক।"
 }

@@ -139,6 +139,15 @@ ThemeData _withTokens(ThemeData theme, ShioriDensity density) {
     appBarTheme: theme.appBarTheme.copyWith(
       titleTextStyle: text.section.copyWith(color: colors.fg),
     ),
+    // A floating action is the screen's main one: the accent, as a primary
+    // button, read on it with onAccent and round as a pill. Material's own
+    // primary container drew it a darker shade than every other button.
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: colors.accent,
+      foregroundColor: colors.onAccent,
+      extendedTextStyle: text.row.copyWith(fontWeight: FontWeight.w700),
+      shape: const StadiumBorder(),
+    ),
     // Tabs read as a quiet row of labels: the current one in the foreground
     // with an accent pill under it, the rest muted, and no full-width rule.
     tabBarTheme: TabBarThemeData(

@@ -4355,4 +4355,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get error_copied => 'Hata kopyalandı';
+
+  @override
+  String get no_categories_yet => 'Henüz kategori yok';
+
+  @override
+  String get no_categories_yet_message =>
+      'Kütüphaneni kendi adlandırıp sıraladığın kategorilere ayır.';
 }

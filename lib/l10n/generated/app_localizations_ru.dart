@@ -4395,4 +4395,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get error_copied => 'Ошибка скопирована';
+
+  @override
+  String get no_categories_yet => 'Категорий пока нет';
+
+  @override
+  String get no_categories_yet_message =>
+      'Разложите библиотеку по категориям, которые вы сами называете и упорядочиваете.';
 }

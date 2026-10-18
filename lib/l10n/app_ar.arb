@@ -1666,5 +1666,7 @@
   "source_code_error_title": "لم تعمل شيفرة هذا المصدر",
   "source_code_error_failed": "فشل {what}: استخدمت الشاشة قيمة احتياطية لتتمكن من المتابعة",
   "copy_error": "نسخ",
-  "error_copied": "تم نسخ الخطأ"
+  "error_copied": "تم نسخ الخطأ",
+  "no_categories_yet": "لا توجد فئات بعد",
+  "no_categories_yet_message": "نظّم مكتبتك في فئات تسمّيها وترتّبها بنفسك."
 }

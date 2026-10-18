@@ -110,7 +110,8 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
             _entries = [];
             return ShioriEmptyState(
               icon: Symbols.label_rounded,
-              title: l10n.edit_categories_description,
+              title: l10n.no_categories_yet,
+              message: l10n.no_categories_yet_message,
               actionLabel: l10n.add_category,
               onAction: _addCategory,
             );
@@ -148,11 +149,14 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
           return const ShioriLoading();
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addCategory,
-        icon: const Icon(Symbols.add_rounded),
-        label: Text(l10n.add),
-      ),
+      // Only beside a list: an empty screen offers its own Add.
+      floatingActionButton: (categories.asData?.value.isEmpty ?? true)
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _addCategory,
+              icon: const Icon(Symbols.add_rounded),
+              label: Text(l10n.add),
+            ),
     );
   }
 

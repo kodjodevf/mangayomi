@@ -1731,5 +1731,7 @@
   "source_code_error_title": "このソースのコードが実行できませんでした",
   "source_code_error_failed": "{what} に失敗しました: 続けられるよう、画面は代替の値を使っています",
   "copy_error": "コピー",
-  "error_copied": "エラーをコピーしました"
+  "error_copied": "エラーをコピーしました",
+  "no_categories_yet": "カテゴリはまだありません",
+  "no_categories_yet_message": "ライブラリを、自分で名前と順番を決めたカテゴリに分けましょう。"
 }

@@ -4382,4 +4382,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get error_copied => 'Fehler kopiert';
+
+  @override
+  String get no_categories_yet => 'Noch keine Kategorien';
+
+  @override
+  String get no_categories_yet_message =>
+      'Ordne deine Bibliothek in Kategorien, die du selbst benennst und sortierst.';
 }

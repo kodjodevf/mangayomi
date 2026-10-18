@@ -188,36 +188,49 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
       groupBy: (_) => "",
       groupSeparatorBuilder: (_) => StatefulBuilder(
         builder: (context, setState) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(child: ShioriGroupLabel(l10n.update_pending)),
-                if (isUpdating)
-                  const Padding(
-                    padding: EdgeInsets.all(ShioriSpace.s12),
-                    child: ShioriLoading.inline(),
-                  )
-                else
-                  ShioriButton.secondary(
-                    icon: Symbols.system_update_alt_rounded,
-                    label: l10n.update_all,
-                    onPressed: () async {
-                      setState(() => isUpdating = true);
-                      try {
-                        for (var source in updateEntries) {
-                          await _updateSource(source);
-                        }
-                      } finally {
-                        if (context.mounted) {
-                          setState(() => isUpdating = false);
-                        }
-                      }
-                    },
+          // The group's label as the other groups', with Update all as its
+          // action, as Download all heads a day of updates: a full button
+          // stood taller than the label and pushed into the row above.
+          return Row(
+            children: [
+              Expanded(
+                child: ShioriSectionHeader(
+                  overline: true,
+                  title: l10n.update_pending,
+                  padding: const EdgeInsets.fromLTRB(
+                    ShioriSpace.s16,
+                    ShioriSpace.s16,
+                    ShioriSpace.s8,
+                    ShioriSpace.s4,
                   ),
-              ],
-            ),
+                  actionLabel: isUpdating ? null : l10n.update_all,
+                  onAction: isUpdating
+                      ? null
+                      : () async {
+                          setState(() => isUpdating = true);
+                          try {
+                            for (var source in updateEntries) {
+                              await _updateSource(source);
+                            }
+                          } finally {
+                            if (context.mounted) {
+                              setState(() => isUpdating = false);
+                            }
+                          }
+                        },
+                ),
+              ),
+              if (isUpdating)
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    0,
+                    ShioriSpace.s12,
+                    ShioriSpace.s16,
+                    0,
+                  ),
+                  child: ShioriLoading.inline(),
+                ),
+            ],
           );
         },
       ),

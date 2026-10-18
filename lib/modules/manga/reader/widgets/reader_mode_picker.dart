@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_mode_glyph.dart';
@@ -51,17 +53,33 @@ class ReaderModePicker extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: tokens.text.section.copyWith(color: c.fg),
           ),
-          Wrap(
-            spacing: ShioriSpace.s8,
-            runSpacing: ShioriSpace.s8,
-            children: [
-              for (final m in ReaderMode.values)
-                _ModeTile(
-                  mode: m,
-                  selected: m == mode,
-                  onTap: () => onChanged(m),
-                ),
-            ],
+          // Equal columns across the whole width: as many as fit at a
+          // tile's least width, at least three. Fixed-width tiles left a gap
+          // at the end of each row and cut the longer names.
+          LayoutBuilder(
+            builder: (context, constraints) {
+              const gap = ShioriSpace.s8;
+              final columns = math.max(
+                3,
+                ((constraints.maxWidth + gap) / (tokens.scaled(112) + gap))
+                    .floor(),
+              );
+              final width =
+                  (constraints.maxWidth - gap * (columns - 1)) / columns;
+              return Wrap(
+                spacing: gap,
+                runSpacing: gap,
+                children: [
+                  for (final m in ReaderMode.values)
+                    _ModeTile(
+                      mode: m,
+                      width: width,
+                      selected: m == mode,
+                      onTap: () => onChanged(m),
+                    ),
+                ],
+              );
+            },
           ),
           if (differs)
             Row(
@@ -102,11 +120,13 @@ class ReaderModePicker extends StatelessWidget {
 class _ModeTile extends StatelessWidget {
   const _ModeTile({
     required this.mode,
+    required this.width,
     required this.selected,
     required this.onTap,
   });
 
   final ReaderMode mode;
+  final double width;
   final bool selected;
   final VoidCallback onTap;
 
@@ -115,7 +135,6 @@ class _ModeTile extends StatelessWidget {
     final tokens = context.shiori;
     final c = tokens.color;
     final fg = selected ? c.accentInk : c.fgMuted;
-    final width = tokens.scaled(92);
     final label = tokens.text.meta.copyWith(
       color: fg,
       fontWeight: selected ? FontWeight.w700 : null,

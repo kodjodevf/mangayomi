@@ -4354,4 +4354,11 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get error_copied => 'Galat disalin';
+
+  @override
+  String get no_categories_yet => 'Belum ada kategori';
+
+  @override
+  String get no_categories_yet_message =>
+      'Kelompokkan pustakamu ke dalam kategori yang kamu beri nama dan urutkan sendiri.';
 }

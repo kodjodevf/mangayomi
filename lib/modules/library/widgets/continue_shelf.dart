@@ -118,12 +118,32 @@ class ContinueShelf extends ConsumerWidget {
 
     final tokens = context.shiori;
     final text = tokens.text;
-    // A cover, then two lines of title and one of chapter under it.
+    // A cover, then two lines of title and one of chapter under it,
+    // measured in the fonts and text size they are drawn in: an estimate
+    // from the font sizes alone fell a few pixels short of a two-line title.
+    // Each style is merged into the ambient one, as Text does, so the
+    // measure uses the theme's font family and not the default one.
+    final scaler = MediaQuery.textScalerOf(context);
+    final ambient = DefaultTextStyle.of(context).style;
+    double linesOf(TextStyle style, int count) {
+      final painter = TextPainter(
+        text: TextSpan(
+          text: List.filled(count, 'Hg').join('\n'),
+          style: ambient.merge(style),
+        ),
+        textDirection: TextDirection.ltr,
+        textScaler: scaler,
+      )..layout();
+      final height = painter.height;
+      painter.dispose();
+      return height;
+    }
+
     final tileHeight =
         _coverWidth / coverAspect +
         ShioriSpace.s4 +
-        text.card.fontSize! * 1.3 * 2 +
-        text.meta.fontSize! * 1.4;
+        linesOf(text.card, 2) +
+        linesOf(text.meta, 1);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

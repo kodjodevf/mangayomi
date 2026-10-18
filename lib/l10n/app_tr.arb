@@ -1634,5 +1634,7 @@
   "source_code_error_title": "Bu kaynağın kodu çalışmadı",
   "source_code_error_failed": "{what} başarısız: ekran devam edebilmek için yedek değere döndü",
   "copy_error": "Kopyala",
-  "error_copied": "Hata kopyalandı"
+  "error_copied": "Hata kopyalandı",
+  "no_categories_yet": "Henüz kategori yok",
+  "no_categories_yet_message": "Kütüphaneni kendi adlandırıp sıraladığın kategorilere ayır."
 }

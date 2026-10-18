@@ -1626,5 +1626,7 @@
   "source_code_error_title": "이 소스의 코드가 실행되지 않았습니다",
   "source_code_error_failed": "{what} 실패: 계속할 수 있도록 화면이 대체 값을 사용했습니다",
   "copy_error": "복사",
-  "error_copied": "오류를 복사했습니다"
+  "error_copied": "오류를 복사했습니다",
+  "no_categories_yet": "아직 카테고리가 없습니다",
+  "no_categories_yet_message": "직접 이름과 순서를 정한 카테고리로 라이브러리를 정리하세요."
 }

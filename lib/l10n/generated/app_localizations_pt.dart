@@ -4385,6 +4385,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get error_copied => 'Erro copiado';
+
+  @override
+  String get no_categories_yet => 'Ainda não há categorias';
+
+  @override
+  String get no_categories_yet_message =>
+      'Agrupe sua biblioteca em categorias que você mesmo nomeia e ordena.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).

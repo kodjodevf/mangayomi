@@ -1664,5 +1664,7 @@
   "source_code_error_title": "El código de esta fuente no se ejecutó",
   "source_code_error_failed": "Falló {what}: la pantalla usa un valor de reserva para que se pueda seguir",
   "copy_error": "Copiar",
-  "error_copied": "Error copiado"
+  "error_copied": "Error copiado",
+  "no_categories_yet": "Aún no hay categorías",
+  "no_categories_yet_message": "Agrupa tu biblioteca en categorías que tú mismo nombras y ordenas."
 }

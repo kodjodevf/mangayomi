@@ -40,6 +40,9 @@ Future<void> customDraggableTabBar({
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
+    // Over the whole app, the navigation bar included: inside the shell the
+    // bar was drawn over the sheet's foot.
+    useRootNavigator: true,
     // The sheet paints its own ground, so it can let the page show through.
     backgroundColor: Colors.transparent,
     barrierColor: dimBehind ? null : Colors.transparent,

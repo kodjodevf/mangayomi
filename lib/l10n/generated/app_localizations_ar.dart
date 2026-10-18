@@ -4334,4 +4334,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get error_copied => 'تم نسخ الخطأ';
+
+  @override
+  String get no_categories_yet => 'لا توجد فئات بعد';
+
+  @override
+  String get no_categories_yet_message =>
+      'نظّم مكتبتك في فئات تسمّيها وترتّبها بنفسك.';
 }

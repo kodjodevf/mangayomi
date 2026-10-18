@@ -4243,4 +4243,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get error_copied => 'エラーをコピーしました';
+
+  @override
+  String get no_categories_yet => 'カテゴリはまだありません';
+
+  @override
+  String get no_categories_yet_message => 'ライブラリを、自分で名前と順番を決めたカテゴリに分けましょう。';
 }

@@ -34,7 +34,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filter => 'Filter';
 
   @override
-  String get ignore_filters => 'Ignore Filters';
+  String get ignore_filters => 'Ignore filters';
 
   @override
   String get downloaded => 'Downloaded';
@@ -197,7 +197,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'This will remove the read date of this chapter. Are you sure?';
 
   @override
-  String get last_used => 'Last Used';
+  String get last_used => 'Last used';
 
   @override
   String get pinned => 'Pinned';
@@ -368,10 +368,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mass_migration_failed => 'Failed';
 
   @override
-  String get mass_migration_failed_items => 'Failed Items';
+  String get mass_migration_failed_items => 'Failed items';
 
   @override
-  String get mass_migration_exit => 'Exit Mass Migration';
+  String get mass_migration_exit => 'Exit mass migration';
 
   @override
   String get mass_migration_no_destination_match =>
@@ -466,7 +466,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'This will remove all items that are not added to the library!';
 
   @override
-  String get incognito_mode => 'Incognito Mode';
+  String get incognito_mode => 'Incognito mode';
 
   @override
   String get incognito_mode_description => 'Pauses reading history';
@@ -479,7 +479,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Only show downloaded entries in your library';
 
   @override
-  String get download_queue => 'Download Queue';
+  String get download_queue => 'Download queue';
 
   @override
   String get categories => 'Categories';
@@ -497,10 +497,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get help => 'Help';
 
   @override
-  String get no_downloads => 'No Downloads';
+  String get no_downloads => 'No downloads';
 
   @override
-  String get edit_categories => 'Edit Categories';
+  String get edit_categories => 'Edit categories';
 
   @override
   String get edit_categories_description =>
@@ -510,7 +510,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get add => 'Add';
 
   @override
-  String get add_category => 'Add Category';
+  String get add_category => 'Add category';
 
   @override
   String get name => 'Name';
@@ -531,7 +531,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'A category with this name already exist!';
 
   @override
-  String get delete_category => 'Delete Category';
+  String get delete_category => 'Delete category';
 
   @override
   String delete_category_msg(Object name) {
@@ -539,7 +539,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get rename_category => 'Rename Category';
+  String get rename_category => 'Rename category';
 
   @override
   String get general => 'General';
@@ -744,7 +744,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ongoing => 'Ongoing';
 
   @override
-  String get on_hiatus => 'On Hiatus';
+  String get on_hiatus => 'On hiatus';
 
   @override
   String get canceled => 'Canceled';
@@ -800,7 +800,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get source_title => 'Source title';
 
   @override
-  String get create_extension => 'Create Extension';
+  String get create_extension => 'Create extension';
 
   @override
   String get developer_mode => 'Developer mode';
@@ -983,7 +983,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get retry => 'Retry';
 
   @override
-  String get add_chapters => 'Add Chapters';
+  String get add_chapters => 'Add chapters';
 
   @override
   String get delete_chapters => 'Delete Chapter?';
@@ -992,7 +992,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get default0 => 'Default';
 
   @override
-  String get total_chapters => 'Total Chapters';
+  String get total_chapters => 'Total chapters';
 
   @override
   String get total_episodes => 'Total episodes';
@@ -1077,7 +1077,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sync_login_browser => 'Log in with browser';
 
   @override
-  String get sync_server => 'Sync Server Address';
+  String get sync_server => 'Sync server address';
 
   @override
   String get sync_starting => 'Starting sync...';
@@ -1138,7 +1138,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sync_on => 'Enable sync';
 
   @override
-  String get sync_auto => 'Auto Sync';
+  String get sync_auto => 'Auto sync';
 
   @override
   String get sync_auto_warning =>
@@ -1192,7 +1192,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Use a floating capsule instead of the standard attached navigation bar.';
 
   @override
-  String get full_screen_player => 'Use Fullscreen';
+  String get full_screen_player => 'Use fullscreen';
 
   @override
   String get full_screen_player_info =>
@@ -1220,22 +1220,22 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get manga_sources => 'Manga Sources';
+  String get manga_sources => 'Manga sources';
 
   @override
-  String get anime_sources => 'Anime Sources';
+  String get anime_sources => 'Anime sources';
 
   @override
-  String get novel_sources => 'Novel Sources';
+  String get novel_sources => 'Novel sources';
 
   @override
-  String get anime_extensions => 'Anime Extensions';
+  String get anime_extensions => 'Anime extensions';
 
   @override
-  String get manga_extensions => 'Manga Extensions';
+  String get manga_extensions => 'Manga extensions';
 
   @override
-  String get novel_extensions => 'Novel Extensions';
+  String get novel_extensions => 'Novel extensions';
 
   @override
   String get extension_settings => 'Extension settings';
@@ -1307,7 +1307,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get add_anyway => 'Add Anyway';
+  String get add_anyway => 'Add anyway';
 
   @override
   String get langauage => 'Language';
@@ -1347,7 +1347,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get image_loading_error => 'This image couldn\'t be loaded';
 
   @override
-  String get add_episodes => 'Add Episodes';
+  String get add_episodes => 'Add episodes';
 
   @override
   String get video_quality => 'Quality';
@@ -1390,10 +1390,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get automaic => 'Automatic';
 
   @override
-  String get preferred_domain => 'Preferred Domain';
+  String get preferred_domain => 'Preferred domain';
 
   @override
-  String get load_more => 'Load More';
+  String get load_more => 'Load more';
 
   @override
   String get cancel_all_for_this_series => 'Cancel all for this series';
@@ -1407,7 +1407,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get email_adress => 'Email Address';
+  String get email_adress => 'Email address';
 
   @override
   String get password => 'Password';
@@ -1817,7 +1817,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Apply custom styling to ASS/SSA subtitles';
 
   @override
-  String get torrent_stream => 'Torrent Stream';
+  String get torrent_stream => 'Torrent stream';
 
   @override
   String get add_torrent => 'Add torrent';
@@ -1921,19 +1921,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recommendations_similar => 'similar';
 
   @override
-  String get recommendations_weights => 'Recommendation Weights';
+  String get recommendations_weights => 'Recommendation weights';
 
   @override
-  String get recommendations_weights_genre => 'Genre Similarity';
+  String get recommendations_weights_genre => 'Genre similarity';
 
   @override
-  String get recommendations_weights_setting => 'Setting Similarity';
+  String get recommendations_weights_setting => 'Setting similarity';
 
   @override
-  String get recommendations_weights_synopsis => 'Story Similarity';
+  String get recommendations_weights_synopsis => 'Story similarity';
 
   @override
-  String get recommendations_weights_theme => 'Theme Similarity';
+  String get recommendations_weights_theme => 'Theme similarity';
 
   @override
   String get manga_extensions_repo => 'Manga extensions repo';
@@ -2062,10 +2062,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get return_to_the_list_of_chapters => 'Return to the list of chapters';
 
   @override
-  String get hwdec => 'Hardware Decoder';
+  String get hwdec => 'Hardware decoder';
 
   @override
-  String get enable_hardware_accel => 'Hardware Acceleration';
+  String get enable_hardware_accel => 'Hardware acceleration';
 
   @override
   String get enable_hardware_accel_info =>
@@ -2449,16 +2449,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get text_size => 'Text Size :';
 
   @override
-  String get text_align => 'Text Align';
+  String get text_align => 'Text align';
 
   @override
-  String get line_height => 'Line Height';
+  String get line_height => 'Line height';
 
   @override
-  String get show_scroll_percentage => 'Show Scroll Percentage';
+  String get show_scroll_percentage => 'Show scroll percentage';
 
   @override
-  String get remove_extra_paragraph_spacing => 'Remove Extra Paragraph Spacing';
+  String get remove_extra_paragraph_spacing => 'Remove extra paragraph spacing';
 
   @override
   String select_label_color(Object label) {
@@ -2576,24 +2576,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get total => 'Total';
 
   @override
-  String get mean_per_title => 'Mean per Title';
+  String get mean_per_title => 'Mean per title';
 
   @override
-  String get completion_rate => 'Completion Rate';
+  String get completion_rate => 'Completion rate';
 
   @override
-  String get watching_time => 'Watch Time';
+  String get watching_time => 'Watch time';
 
   @override
-  String get reading_time => 'Reading Time';
+  String get reading_time => 'Reading time';
 
   @override
   String average_chapters_per_title(Object title) {
-    return 'Average Chapters per $title';
+    return 'Average chapters per $title';
   }
 
   @override
-  String get read_percentage => 'Read Percentage';
+  String get read_percentage => 'Read percentage';
 
   @override
   String get entries => 'Entries';
@@ -2862,7 +2862,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get automatic_background => 'Automatic background';
 
   @override
-  String get tapping_inversion => 'Tapping Inversion';
+  String get tapping_inversion => 'Tapping inversion';
 
   @override
   String get tapping_inversion_none => 'None';
@@ -2883,7 +2883,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get flash_on_page_change_subtitle => 'AMOLED anti-retention helper';
 
   @override
-  String get flash_color => 'Flash Color';
+  String get flash_color => 'Flash color';
 
   @override
   String get flash_color_black => 'Black';
@@ -2909,7 +2909,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Show Navigation Overlay on startup';
 
   @override
-  String get reader_hide_threshold => 'Reader Hide Threshold';
+  String get reader_hide_threshold => 'Reader hide threshold';
 
   @override
   String get reader_hide_threshold_highest => 'Highest (5 px)';
@@ -3545,7 +3545,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get color_orange => 'Orange';
 
   @override
-  String get continue_watching => 'Continue Watching';
+  String get continue_watching => 'Continue watching';
 
   @override
   String get search_your_anime => 'Search your anime';
@@ -4346,4 +4346,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get error_copied => 'Error copied';
+
+  @override
+  String get no_categories_yet => 'No categories yet';
+
+  @override
+  String get no_categories_yet_message =>
+      'Group your library into categories you name and order yourself.';
 }

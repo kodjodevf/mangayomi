@@ -1664,5 +1664,7 @@
   "source_code_error_title": "इस स्रोत का कोड नहीं चला",
   "source_code_error_failed": "{what} विफल: स्क्रीन ने आगे बढ़ने के लिए वैकल्पिक मान अपनाया",
   "copy_error": "कॉपी करें",
-  "error_copied": "त्रुटि कॉपी की गई"
+  "error_copied": "त्रुटि कॉपी की गई",
+  "no_categories_yet": "अभी कोई श्रेणी नहीं",
+  "no_categories_yet_message": "अपनी लाइब्रेरी को अपनी नाम दी और क्रमबद्ध की गई श्रेणियों में बाँटें।"
 }

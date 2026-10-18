@@ -4343,4 +4343,11 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get error_copied => 'त्रुटि कॉपी की गई';
+
+  @override
+  String get no_categories_yet => 'अभी कोई श्रेणी नहीं';
+
+  @override
+  String get no_categories_yet_message =>
+      'अपनी लाइब्रेरी को अपनी नाम दी और क्रमबद्ध की गई श्रेणियों में बाँटें।';
 }

@@ -4391,4 +4391,11 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get error_copied => 'Errore copiato';
+
+  @override
+  String get no_categories_yet => 'Ancora nessuna categoria';
+
+  @override
+  String get no_categories_yet_message =>
+      'Raggruppa la libreria in categorie che nomini e ordini tu.';
 }
