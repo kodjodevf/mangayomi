@@ -22,8 +22,9 @@ Future<dynamic> updateMangaDetail(
   bool showToast = true,
 }) async {
   try {
-    final manga = mangaRepository.findById(mangaId!);
-    if (manga == null) return;
+    final initialManga = mangaRepository.findById(mangaId!);
+    if (initialManga == null) return;
+    var manga = initialManga;
 
     manga.chapters.loadSync();
 
@@ -38,6 +39,11 @@ Future<dynamic> updateMangaDetail(
       installedOnly: true,
     );
     if (source == null) return;
+    final requestedLink = manga.link;
+    final requestedSourceId = manga.sourceId;
+    final requestedSource = manga.source;
+    final requestedLang = manga.lang;
+    final requestedItemType = manga.itemType;
 
     final getManga = await ref.read(
       getDetailProvider(url: manga.link!, source: source).future,
@@ -78,12 +84,39 @@ Future<dynamic> updateMangaDetail(
 
     final chaps = getManga.chapters;
 
+    final metadata = manga;
     await mangaRepository.writeTransactionAsync(() async {
+      // Reading, another refresh, or source migration may have changed the
+      // stored objects while the network request was in flight.
+      final current = await mangaRepository.findByIdAsync(mangaId);
+      if (current == null ||
+          current.link != requestedLink ||
+          current.sourceId != requestedSourceId ||
+          current.source != requestedSource ||
+          current.lang != requestedLang ||
+          current.itemType != requestedItemType) {
+        return;
+      }
+      current
+        ..imageUrl = metadata.imageUrl
+        ..name = metadata.name
+        ..genre = metadata.genre
+        ..author = metadata.author
+        ..artist = metadata.artist
+        ..status = metadata.status
+        ..description = metadata.description
+        ..link = metadata.link
+        ..itemType = metadata.itemType
+        ..lastUpdate = now
+        ..updatedAt = now;
+      manga = current;
       final savedMangaId = await mangaRepository.putAsync(manga);
 
       if (chaps == null || chaps.isEmpty) return;
 
-      final existingChapters = manga.chapters.toList();
+      final existingChapters = await chapterRepository.getAllByMangaIds([
+        savedMangaId,
+      ]);
       final recognition = ChapterRecognition();
 
       // Season and episode together, never the episode alone. The episode
@@ -104,7 +137,6 @@ Future<dynamic> updateMangaDetail(
 
       final existingByUrl = <String, Chapter>{};
       final existingByComposite = <String, Chapter>{};
-      final duplicateIds = <int>{};
       for (final c in existingChapters) {
         final u = c.url?.trim();
         final urlKey = (u == null || u.isEmpty) ? null : u.getUrlWithoutDomain;
@@ -120,10 +152,10 @@ Future<dynamic> updateMangaDetail(
           final priorHasState =
               (prior.isRead ?? false) || (prior.lastPageRead ?? '').isNotEmpty;
           final keep = priorHasState ? prior : c;
-          final drop = identical(keep, prior) ? c : prior;
           if (urlKey != null) existingByUrl[urlKey] = keep;
           if (compositeKey != null) existingByComposite[compositeKey] = keep;
-          if (drop.id != null) duplicateIds.add(drop.id!);
+          // Matching labels do not make existing IDs disposable: history,
+          // bookmarks, downloads and continuation indices can reference either.
         }
       }
 
@@ -257,18 +289,9 @@ Future<dynamic> updateMangaDetail(
         }
       }
 
-      if (duplicateIds.isNotEmpty) {
-        await chapterRepository.deleteAllAsync(duplicateIds.toList());
-      }
-
-      final dedupedExisting = duplicateIds.isEmpty
-          ? existingChapters
-          : existingChapters
-                .where((c) => c.id == null || !duplicateIds.contains(c.id))
-                .toList();
       final allChapters = newChapters.isEmpty
-          ? dedupedExisting
-          : [...dedupedExisting, ...newChapters];
+          ? existingChapters
+          : [...existingChapters, ...newChapters];
       if (allChapters.isNotEmpty) {
         final interval = FetchInterval.calculateInterval(allChapters);
         manga
