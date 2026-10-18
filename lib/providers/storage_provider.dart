@@ -153,11 +153,11 @@ class StorageProvider {
     return Directory(dbDir);
   }
 
-  Future<Directory?> getDirectory() async {
+  Future<Directory?> getDirectory({Settings? settings}) async {
     Directory? directory;
     String dPath = "";
     try {
-      final setting = settingsRepository.currentOrNull;
+      final setting = settings ?? settingsRepository.currentOrNull;
       dPath = setting?.downloadLocation ?? "";
     } catch (e) {
       if (kDebugMode) {
@@ -180,7 +180,10 @@ class StorageProvider {
     return directory;
   }
 
-  Future<Directory?> getMangaMainDirectory(Chapter chapter) async {
+  Future<Directory?> getMangaMainDirectory(
+    Chapter chapter, {
+    Settings? settings,
+  }) async {
     final manga = chapter.manga.value!;
     final itemType = chapter.manga.value!.itemType;
     final itemTypePath = itemType == ItemType.manga
@@ -188,7 +191,7 @@ class StorageProvider {
         : itemType == ItemType.anime
         ? "Anime"
         : "Novel";
-    final dir = await getDirectory();
+    final dir = await getDirectory(settings: settings);
     return Directory(
       path.join(
         dir!.path,

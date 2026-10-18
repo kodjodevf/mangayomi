@@ -50,8 +50,20 @@ Future<void> downloadChapter(
   bool? useWifi,
   VoidCallback? callback,
 }) async {
-  if (!scheduleDownload(chapter.id!)) return;
   final keepAlive = ref.keepAlive();
+  // Enqueue under the same write queue as consolidation before claiming an ID.
+  // An old Updates/detail widget may still carry an ID merged during its click.
+  try {
+    final current = await downloadRepository.enqueue(chapter);
+    if (current == null || !scheduleDownload(current.id!)) {
+      keepAlive.close();
+      return;
+    }
+    chapter = current;
+  } catch (_) {
+    keepAlive.close();
+    rethrow;
+  }
 
   // Every download path funnels through here, so acquiring the shared gate is
   // what makes the concurrency limit, per-source serialization (#645) and the
@@ -63,7 +75,6 @@ Future<void> downloadChapter(
         ? ref.read(concurrentDownloadsStateProvider)
         : 1;
     final delaySeconds = ref.read(downloadDelaySecondsStateProvider);
-    await downloadRepository.enqueue(chapter);
     if (downloadRepository.getById(chapter.id!)?.isDownload == true) return;
     await DownloadGate.instance.acquire(
       id: chapter.id!,
