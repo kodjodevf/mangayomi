@@ -3299,6 +3299,24 @@ class AppLocalizationsRu extends AppLocalizations {
   String get onboarding_title => 'Добро пожаловать в Mangayomi';
 
   @override
+  String get onboarding_language_title => 'Выберите язык';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi отображается на этом языке. Его можно изменить позже в разделе «Оформление».';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'Оставьте по вкладке для каждой библиотеки или объедините их в одну вкладку «Библиотека», а «Обновления» и «История» — в одну вкладку «Активность».';
+
+  @override
+  String get onboarding_nav_grouped => 'Сгруппированные вкладки';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'Каждая сгруппированная вкладка переключается в верхней части своего экрана';
+
+  @override
   String get onboarding_libraries_body =>
       'Выберите, что вы читаете и смотрите.';
 
@@ -3306,18 +3324,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get onboarding_nav_title => 'Ваши библиотеки';
 
   @override
-  String get onboarding_nav_body =>
-      'Отдельная вкладка для каждой или объединение в общую вкладку Библиотека.';
-
-  @override
   String get onboarding_nav_split => 'Отдельные вкладки';
-
-  @override
-  String get onboarding_nav_merged => 'Одна вкладка Библиотека';
-
-  @override
-  String get onboarding_nav_inside =>
-      'Нажатие на Библиотеку переключает эти вкладки';
 
   @override
   String get onboarding_next => 'Далее';

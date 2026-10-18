@@ -3184,22 +3184,30 @@ class AppLocalizationsJa extends AppLocalizations {
   String get onboarding_title => 'Mangayomiへようこそ';
 
   @override
+  String get onboarding_language_title => '言語を選択';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi はこの言語で表示されます。あとで「外観」から変更できます。';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'ライブラリごとにタブを分けるか、ひとつの「ライブラリ」タブにまとめます。「更新」と「履歴」はひとつの「アクティビティ」タブにまとまります。';
+
+  @override
+  String get onboarding_nav_grouped => 'グループ化したタブ';
+
+  @override
+  String get onboarding_nav_grouped_inside => 'グループ化したタブは画面上部で切り替えます';
+
+  @override
   String get onboarding_libraries_body => '読みたいもの、観たいものを選択してください。';
 
   @override
   String get onboarding_nav_title => 'ライブラリ';
 
   @override
-  String get onboarding_nav_body => '個別のタブで表示するか、1つのライブラリタブにまとめるか選択できます。';
-
-  @override
   String get onboarding_nav_split => '個別のタブ';
-
-  @override
-  String get onboarding_nav_merged => '1つのライブラリタブ';
-
-  @override
-  String get onboarding_nav_inside => 'ライブラリをタップして切り替え';
 
   @override
   String get onboarding_next => '次へ';

@@ -3255,23 +3255,31 @@ class AppLocalizationsAs extends AppLocalizations {
   String get onboarding_title => 'Mangayomi লৈ স্বাগতম';
 
   @override
+  String get onboarding_language_title => 'আপোনাৰ ভাষা বাছক';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi এই ভাষাত দেখুওৱা হ\'ব। পিছত ৰূপ-সজ্জাত সলনি কৰিব পাৰে।';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'প্ৰতিটো লাইব্ৰেৰীৰ বাবে এটা টেব ৰাখক, নাইবা সেইবোৰ এটা লাইব্ৰেৰী টেবত গোট কৰক, আপডেট আৰু ইতিহাস এটা কাৰ্যকলাপ টেবত।';
+
+  @override
+  String get onboarding_nav_grouped => 'গোট কৰা টেব';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'প্ৰতিটো গোট কৰা টেব ইয়াৰ স্ক্ৰীণৰ ওপৰৰ পৰা সলনি কৰা হয়';
+
+  @override
   String get onboarding_libraries_body => 'আপুনি কি পঢ়িব আৰু চাব বিচাৰে বাছক।';
 
   @override
   String get onboarding_nav_title => 'আপোনাৰ লাইব্ৰেৰীসমূহ';
 
   @override
-  String get onboarding_nav_body =>
-      'প্ৰতিটোৰ বাবে সুকীয়া টেব ৰাখক বা এটা লাইব্ৰেৰী টেবৰ অধীনত একত্ৰিত কৰক।';
-
-  @override
   String get onboarding_nav_split => 'সুকীয়া টেব';
-
-  @override
-  String get onboarding_nav_merged => 'এটা লাইব্ৰেৰী টেব';
-
-  @override
-  String get onboarding_nav_inside => 'লাইব্ৰেৰীত টিপিলে এই টেববোৰ সলনি হয়';
 
   @override
   String get onboarding_next => 'পৰৱৰ্তী';

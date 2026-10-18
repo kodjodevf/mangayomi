@@ -3266,6 +3266,24 @@ class AppLocalizationsTr extends AppLocalizations {
   String get onboarding_title => 'Mangayomi\'ye Hoş Geldiniz';
 
   @override
+  String get onboarding_language_title => 'Dilinizi seçin';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi bu dilde gösterilir. Daha sonra Görünüm bölümünden değiştirebilirsiniz.';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'Her kütüphane için ayrı bir sekme kullanın ya da hepsini tek bir Kütüphane sekmesinde, Güncellemeler ve Geçmiş\'i de tek bir Etkinlik sekmesinde toplayın.';
+
+  @override
+  String get onboarding_nav_grouped => 'Gruplanmış sekmeler';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'Her gruplanmış sekme, ekranının üst kısmından değiştirilir';
+
+  @override
   String get onboarding_libraries_body =>
       'Okumak ve izlemek istediklerinizi seçin.';
 
@@ -3273,18 +3291,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get onboarding_nav_title => 'Kitaplıklarınız';
 
   @override
-  String get onboarding_nav_body =>
-      'Her biri için ayrı sekme veya tek bir Kitaplık sekmesi altında toplayın.';
-
-  @override
   String get onboarding_nav_split => 'Ayrı sekmeler';
-
-  @override
-  String get onboarding_nav_merged => 'Tek Kitaplık sekmesi';
-
-  @override
-  String get onboarding_nav_inside =>
-      'Kitaplık\'a dokunmak sekmeleri değiştirir';
 
   @override
   String get onboarding_next => 'İleri';

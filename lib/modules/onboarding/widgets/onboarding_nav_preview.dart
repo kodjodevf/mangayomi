@@ -34,41 +34,46 @@ class OnboardingNavPreview extends StatelessWidget {
     };
 
     final bar = <(IconData, String)>[
-      if (merged)
-        (Symbols.collections_bookmark_rounded, l10n.library)
-      else
+      if (merged) ...[
+        (Symbols.collections_bookmark_rounded, l10n.library),
+        (Symbols.notifications_rounded, l10n.activity),
+      ] else ...[
         for (final type in libraries) (_icons[type]!, labels[type]!),
+        (Symbols.new_releases_rounded, l10n.updates),
+        (Symbols.history_rounded, l10n.history),
+      ],
       (Symbols.explore_rounded, l10n.browse),
       (Symbols.more_horiz_rounded, l10n.more),
     ];
 
-    // Merged hides a second bar behind the first: tapping Library swaps the
-    // whole row for the libraries plus a way back. That is the part of the
-    // choice the words cannot describe, so it is drawn too.
-    final insideLibrary = <(IconData, String)>[
-      (Symbols.arrow_back_rounded, l10n.go_back),
-      for (final type in libraries) (_icons[type]!, labels[type]!),
-    ];
-
+    // Grouped, Library opens on a switcher between the libraries, as the
+    // real screen does; Activity does the same for Updates and History. That
+    // is the part of the choice the words cannot describe, so it is drawn.
     return Column(
       children: [
         _NavPreviewBar(items: bar),
         if (merged) ...[
-          const SizedBox(height: ShioriSpace.s8),
-          Icon(
-            Symbols.keyboard_arrow_down_rounded,
-            fill: 1,
-            size: 18,
-            color: context.shiori.color.fgMuted,
-          ),
-          const SizedBox(height: ShioriSpace.s8),
+          const SizedBox(height: ShioriSpace.s12),
           Text(
-            l10n.onboarding_nav_inside,
+            l10n.onboarding_nav_grouped_inside,
             textAlign: TextAlign.center,
             style: context.shiori.caption,
           ),
           const SizedBox(height: ShioriSpace.s8),
-          _NavPreviewBar(items: insideLibrary),
+          IgnorePointer(
+            child: ShioriSegmentedControl<ItemType>(
+              segments: [
+                for (final type in libraries)
+                  ShioriSegment(
+                    value: type,
+                    label: labels[type]!,
+                    icon: _icons[type],
+                  ),
+              ],
+              selected: libraries.first,
+              onSelected: (_) {},
+            ),
+          ),
         ],
       ],
     );

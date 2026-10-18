@@ -3254,23 +3254,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get onboarding_title => 'مرحباً بك في Mangayomi';
 
   @override
+  String get onboarding_language_title => 'اختر لغتك';
+
+  @override
+  String get onboarding_language_body =>
+      'يُعرض Mangayomi بهذه اللغة. يمكنك تغييرها لاحقًا من المظهر.';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'احتفظ بعلامة تبويب لكل مكتبة، أو اجمعها خلف علامة تبويب واحدة للمكتبة، مع التحديثات والسجل خلف علامة تبويب واحدة للنشاط.';
+
+  @override
+  String get onboarding_nav_grouped => 'علامات تبويب مجمّعة';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'يُبدَّل كل تبويب مجمّع من أعلى شاشته';
+
+  @override
   String get onboarding_libraries_body => 'اختر ما تقرأه وتشاهده.';
 
   @override
   String get onboarding_nav_title => 'مكتباتك';
 
   @override
-  String get onboarding_nav_body =>
-      'تبويب لكل منها أو تجميعها في تبويب مكتبة واحد.';
-
-  @override
   String get onboarding_nav_split => 'تبويب لكل نوع';
-
-  @override
-  String get onboarding_nav_merged => 'تبويب مكتبة موحد';
-
-  @override
-  String get onboarding_nav_inside => 'الضغط على المكتبة يبدل هذه التبويبات';
 
   @override
   String get onboarding_next => 'التالي';

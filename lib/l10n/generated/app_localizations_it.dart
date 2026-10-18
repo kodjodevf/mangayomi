@@ -3292,24 +3292,31 @@ class AppLocalizationsIt extends AppLocalizations {
   String get onboarding_title => 'Benvenuto in Mangayomi';
 
   @override
+  String get onboarding_language_title => 'Scegli la tua lingua';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi viene mostrato in questa lingua. Puoi cambiarla più tardi in Aspetto.';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'Tieni una scheda per ogni libreria, oppure raggruppale in un\'unica scheda Libreria, con Aggiornamenti e Cronologia in un\'unica scheda Attività.';
+
+  @override
+  String get onboarding_nav_grouped => 'Schede raggruppate';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'Ogni scheda raggruppata si cambia dalla parte superiore della sua schermata';
+
+  @override
   String get onboarding_libraries_body => 'Scegli cosa leggere e guardare.';
 
   @override
   String get onboarding_nav_title => 'Le tue librerie';
 
   @override
-  String get onboarding_nav_body =>
-      'Una scheda per ciascuna o raggruppate in una sola scheda Libreria.';
-
-  @override
   String get onboarding_nav_split => 'Schede separate';
-
-  @override
-  String get onboarding_nav_merged => 'Una scheda Libreria';
-
-  @override
-  String get onboarding_nav_inside =>
-      'Toccando Libreria si scambiano le schede';
 
   @override
   String get onboarding_next => 'Avanti';

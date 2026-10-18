@@ -5845,6 +5845,36 @@ abstract class AppLocalizations {
   /// **'Welcome to Mangayomi'**
   String get onboarding_title;
 
+  /// No description provided for @onboarding_language_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your language'**
+  String get onboarding_language_title;
+
+  /// No description provided for @onboarding_language_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangayomi is shown in this language. You can change it later under Appearance.'**
+  String get onboarding_language_body;
+
+  /// No description provided for @onboarding_nav_grouped_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep a tab for each library, or group them behind one Library tab, with Updates and History behind one Activity tab.'**
+  String get onboarding_nav_grouped_body;
+
+  /// No description provided for @onboarding_nav_grouped.
+  ///
+  /// In en, this message translates to:
+  /// **'Grouped tabs'**
+  String get onboarding_nav_grouped;
+
+  /// No description provided for @onboarding_nav_grouped_inside.
+  ///
+  /// In en, this message translates to:
+  /// **'Each grouped tab switches from the top of its screen'**
+  String get onboarding_nav_grouped_inside;
+
   /// No description provided for @onboarding_libraries_body.
   ///
   /// In en, this message translates to:
@@ -5857,29 +5887,11 @@ abstract class AppLocalizations {
   /// **'Your libraries'**
   String get onboarding_nav_title;
 
-  /// No description provided for @onboarding_nav_body.
-  ///
-  /// In en, this message translates to:
-  /// **'Keep a tab for each of them, or put them together behind one Library tab you can switch inside.'**
-  String get onboarding_nav_body;
-
   /// No description provided for @onboarding_nav_split.
   ///
   /// In en, this message translates to:
   /// **'A tab each'**
   String get onboarding_nav_split;
-
-  /// No description provided for @onboarding_nav_merged.
-  ///
-  /// In en, this message translates to:
-  /// **'One Library tab'**
-  String get onboarding_nav_merged;
-
-  /// No description provided for @onboarding_nav_inside.
-  ///
-  /// In en, this message translates to:
-  /// **'Tapping Library swaps the bar for these'**
-  String get onboarding_nav_inside;
 
   /// No description provided for @onboarding_next.
   ///

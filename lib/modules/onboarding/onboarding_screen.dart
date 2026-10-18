@@ -22,8 +22,9 @@ import 'package:mangayomi/utils/local_directory_access.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/modules/main_view/nav_groups.dart';
+import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/onboarding/widgets/onboarding_nav_preview.dart';
 import 'package:mangayomi/modules/onboarding/widgets/onboarding_folder_status.dart';
 import 'package:mangayomi/modules/onboarding/widgets/onboarding_controls.dart';
@@ -93,7 +94,7 @@ class _OnboardingBody extends ConsumerStatefulWidget {
   ConsumerState<_OnboardingBody> createState() => _OnboardingScreenState();
 }
 
-enum _Step { libraries, navigation, repository }
+enum _Step { language, libraries, navigation, repository }
 
 class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
     with WidgetsBindingObserver {
@@ -112,7 +113,11 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   final Set<ItemType> _libraries = isTv
       ? {ItemType.anime}
       : {...ItemType.values};
-  bool _mergeLibraries = false;
+
+  /// Whether the navigation groups the libraries behind one Library tab, and
+  /// Updates and History behind one Activity tab. Starts on the app's own
+  /// setting, which is on for a new install.
+  late bool _mergeLibraries = ref.read(navGroupingProvider);
   ItemType _repoType = ItemType.manga;
 
   bool _adding = false;
@@ -178,6 +183,13 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
     // registers after the router, so it gets first refusal for as long as it
     // is on screen.
     WidgetsBinding.instance.addObserver(this);
+    // The very first question is asked in the reader's language when the
+    // app speaks it, not in English.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(l10nLocaleStateProvider.notifier).adoptDeviceLocaleIfUnset();
+      }
+    });
     // A television never visits the library step, so the step that would have
     // written the choice never runs. Write it here instead, or the answer the
     // flow made on the reader's behalf would be silently dropped and manga and
@@ -228,26 +240,30 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   /// Not a constant: the arrange step drops out for a single library or a wide
   /// window, so the flow is two steps long as often as three.
   List<_Step> get _visibleSteps => [
+    _Step.language,
     if (!isTv) _Step.libraries,
     if (_shouldArrangeBar) _Step.navigation,
     _Step.repository,
   ];
 
-  /// Where the flow starts. A television skips straight to the source, because
-  /// the two questions before it have one answer each there: anime, and a rail
-  /// rather than a bar.
-  static _Step get _firstStep => isTv ? _Step.repository : _Step.libraries;
+  /// Where the flow starts: the language, since every word after it depends
+  /// on it. A television then skips straight to the source, because the two
+  /// questions between have one answer each there: anime, and a rail rather
+  /// than a bar.
+  static const _Step _firstStep = _Step.language;
 
-  /// Whether the arrange step has anything to offer.
-  ///
-  /// Nothing to arrange with one library in the bar. And the merge setting it
-  /// writes is read as `mergeLibraryNavMobile && !context.isTablet`, so on
-  /// anything 600dp or wider, tablets and TVs included, the answer would be
-  /// stored and then ignored. Better not to ask.
-  bool get _shouldArrangeBar =>
-      _chosen.length > 1 && !context.isTablet && !isTv;
+  /// Whether the arrange step has anything to offer: nothing with one library,
+  /// and a television keeps one destination per route whatever the answer.
+  bool get _shouldArrangeBar => _chosen.length > 1 && !isTv;
 
   void _next() {
+    if (_step == _Step.language) {
+      setState(() {
+        _forward = true;
+        _step = isTv ? _Step.repository : _Step.libraries;
+      });
+      return;
+    }
     if (_step == _Step.libraries) {
       _applyLibraries();
       setState(() {
@@ -257,7 +273,10 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
       });
       return;
     }
-    ref.read(mergeLibraryNavMobileStateProvider.notifier).set(_mergeLibraries);
+    // Shiori's grouping, which also folds Updates and History into Activity.
+    // The older swap-the-bar switch is left off so the two never stack.
+    ref.read(navGroupingProvider.notifier).set(_mergeLibraries);
+    ref.read(mergeLibraryNavMobileStateProvider.notifier).set(false);
     setState(() {
       _forward = true;
       _step = _Step.repository;
@@ -416,11 +435,12 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   /// Nothing is undone. Each step applies its answer as it is left, and coming
   /// back and going forward again simply applies the new one.
   void _back() {
+    final steps = _visibleSteps;
+    final index = steps.indexOf(_step);
+    if (index <= 0) return;
     setState(() {
       _forward = false;
-      _step = _step == _Step.repository && _shouldArrangeBar
-          ? _Step.navigation
-          : _firstStep;
+      _step = steps[index - 1];
     });
   }
 
@@ -672,14 +692,16 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   }
 
   String _title(AppLocalizations l10n) => switch (_step) {
+    _Step.language => l10n.onboarding_language_title,
     _Step.libraries => l10n.onboarding_title,
     _Step.navigation => l10n.onboarding_nav_title,
     _Step.repository => l10n.onboarding_repo_title,
   };
 
   String _body(AppLocalizations l10n) => switch (_step) {
+    _Step.language => l10n.onboarding_language_body,
     _Step.libraries => l10n.onboarding_libraries_body,
-    _Step.navigation => l10n.onboarding_nav_body,
+    _Step.navigation => l10n.onboarding_nav_grouped_body,
     _Step.repository => l10n.onboarding_body,
   };
 
@@ -690,6 +712,11 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
       : l10n.onboarding_skip;
 
   List<Widget> _stepBody(AppLocalizations l10n) => switch (_step) {
+    _Step.language => [
+      const _LanguageList(),
+      const SizedBox(height: ShioriSpace.s16),
+      ShioriButton(expand: true, onPressed: _next, label: l10n.onboarding_next),
+    ],
     _Step.libraries => [
       OnboardingChoiceRow<ItemType>(
         values: ItemType.values,
@@ -723,7 +750,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
       OnboardingChoiceRow<bool>(
         values: const [false, true],
         label: (merged) =>
-            merged ? l10n.onboarding_nav_merged : l10n.onboarding_nav_split,
+            merged ? l10n.onboarding_nav_grouped : l10n.onboarding_nav_split,
         isSelected: (merged) => merged == _mergeLibraries,
         onTap: (merged) => setState(() => _mergeLibraries = merged),
       ),
@@ -850,4 +877,61 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
     ItemType.anime => l10n.anime,
     ItemType.novel => l10n.novel,
   };
+}
+
+/// Every language the app speaks, each under its own name so a reader finds
+/// theirs whatever the app is showing now. A tap applies it at once, so the
+/// rest of the flow is already in that language.
+class _LanguageList extends ConsumerWidget {
+  const _LanguageList();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tokens = context.shiori;
+    final c = tokens.color;
+    final current = ref.watch(l10nLocaleStateProvider);
+    final locales = [...AppLocalizations.supportedLocales]
+      ..sort(
+        (a, b) => languageName(context, a.toLanguageTag())
+            .toLowerCase()
+            .compareTo(languageName(context, b.toLanguageTag()).toLowerCase()),
+      );
+    bool isCurrent(Locale l) =>
+        l.languageCode == current.languageCode &&
+        (l.countryCode ?? '') == (current.countryCode ?? '');
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: isTv ? 360 : 300),
+      child: Material(
+        color: c.ink2,
+        borderRadius: BorderRadius.circular(ShioriShape.card),
+        clipBehavior: Clip.antiAlias,
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s4),
+          children: [
+            for (final locale in locales)
+              ListTile(
+                autofocus: isTv && isCurrent(locale),
+                selected: isCurrent(locale),
+                title: Text(
+                  languageName(context, locale.toLanguageTag()),
+                  style: tokens.text.row.copyWith(
+                    color: c.fg,
+                    fontWeight: isCurrent(locale)
+                        ? FontWeight.w700
+                        : FontWeight.w400,
+                  ),
+                ),
+                trailing: isCurrent(locale)
+                    ? Icon(Symbols.check_rounded, color: c.accentInk)
+                    : null,
+                onTap: () => ref
+                    .read(l10nLocaleStateProvider.notifier)
+                    .setLocale(locale),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 }

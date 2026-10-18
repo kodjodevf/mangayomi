@@ -3253,6 +3253,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboarding_title => 'Welcome to Mangayomi';
 
   @override
+  String get onboarding_language_title => 'Choose your language';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi is shown in this language. You can change it later under Appearance.';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'Keep a tab for each library, or group them behind one Library tab, with Updates and History behind one Activity tab.';
+
+  @override
+  String get onboarding_nav_grouped => 'Grouped tabs';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'Each grouped tab switches from the top of its screen';
+
+  @override
   String get onboarding_libraries_body =>
       'Pick what you read and watch. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.';
 
@@ -3260,17 +3278,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get onboarding_nav_title => 'Your libraries';
 
   @override
-  String get onboarding_nav_body =>
-      'Keep a tab for each of them, or put them together behind one Library tab you can switch inside.';
-
-  @override
   String get onboarding_nav_split => 'A tab each';
-
-  @override
-  String get onboarding_nav_merged => 'One Library tab';
-
-  @override
-  String get onboarding_nav_inside => 'Tapping Library swaps the bar for these';
 
   @override
   String get onboarding_next => 'Next';

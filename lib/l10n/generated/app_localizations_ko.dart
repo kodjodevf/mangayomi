@@ -3186,6 +3186,23 @@ class AppLocalizationsKo extends AppLocalizations {
   String get onboarding_title => 'Mangayomi에 오신 것을 환영합니다';
 
   @override
+  String get onboarding_language_title => '언어 선택';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi가 이 언어로 표시됩니다. 나중에 테마 설정에서 변경할 수 있습니다.';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      '라이브러리마다 탭을 따로 두거나, 하나의 라이브러리 탭으로 묶고 업데이트와 기록은 하나의 활동 탭으로 묶을 수 있습니다.';
+
+  @override
+  String get onboarding_nav_grouped => '그룹화된 탭';
+
+  @override
+  String get onboarding_nav_grouped_inside => '그룹화된 각 탭은 화면 상단에서 전환합니다';
+
+  @override
   String get onboarding_libraries_body =>
       '읽거나 볼 카테고리를 선택하세요. 선택하지 않은 항목은 하단 바에 표시되지 않으며 나중에 설정의 모양 메뉴에서 변경할 수 있습니다.';
 
@@ -3193,17 +3210,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get onboarding_nav_title => '보관함 설정';
 
   @override
-  String get onboarding_nav_body =>
-      '각각의 탭으로 유지하거나 보관함 탭 하나에 모아서 탭 안에서 전환할 수 있습니다.';
-
-  @override
   String get onboarding_nav_split => '각각의 탭 사용';
-
-  @override
-  String get onboarding_nav_merged => '하나의 보관함 탭 사용';
-
-  @override
-  String get onboarding_nav_inside => '보관함 탭 안에서 메뉴 전환';
 
   @override
   String get onboarding_next => '다음';

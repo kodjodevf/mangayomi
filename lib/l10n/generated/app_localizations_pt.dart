@@ -3286,6 +3286,24 @@ class AppLocalizationsPt extends AppLocalizations {
   String get onboarding_title => 'Bem-vindo ao Mangayomi';
 
   @override
+  String get onboarding_language_title => 'Escolha o seu idioma';
+
+  @override
+  String get onboarding_language_body =>
+      'O Mangayomi é mostrado neste idioma. Pode alterá-lo mais tarde em Aparência.';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'Mantenha um separador para cada biblioteca, ou agrupe-as num único separador Biblioteca, com Atualizações e Histórico num único separador Atividade.';
+
+  @override
+  String get onboarding_nav_grouped => 'Separadores agrupados';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'Cada separador agrupado muda a partir do topo do seu ecrã';
+
+  @override
   String get onboarding_libraries_body =>
       'Escolha o que pretende ler e assistir.';
 
@@ -3293,18 +3311,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get onboarding_nav_title => 'As suas bibliotecas';
 
   @override
-  String get onboarding_nav_body =>
-      'Um separador para cada ou agrupadas num único separador Biblioteca.';
-
-  @override
   String get onboarding_nav_split => 'Separadores individuais';
-
-  @override
-  String get onboarding_nav_merged => 'Um separador Biblioteca';
-
-  @override
-  String get onboarding_nav_inside =>
-      'Tocar em Biblioteca alterna os separadores';
 
   @override
   String get onboarding_next => 'Seguinte';
@@ -7606,18 +7613,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get onboarding_nav_title => 'As suas bibliotecas';
 
   @override
-  String get onboarding_nav_body =>
-      'Um separador para cada ou agrupadas num único separador Biblioteca.';
-
-  @override
   String get onboarding_nav_split => 'Separadores individuais';
-
-  @override
-  String get onboarding_nav_merged => 'Um separador Biblioteca';
-
-  @override
-  String get onboarding_nav_inside =>
-      'Tocar em Biblioteca alterna os separadores';
 
   @override
   String get onboarding_next => 'Seguinte';

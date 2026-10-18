@@ -3295,6 +3295,24 @@ class AppLocalizationsEs extends AppLocalizations {
   String get onboarding_title => 'Bienvenido a Mangayomi';
 
   @override
+  String get onboarding_language_title => 'Elige tu idioma';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi se muestra en este idioma. Puedes cambiarlo más tarde en Apariencia.';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'Mantén una pestaña para cada biblioteca, o agrúpalas tras una sola pestaña Biblioteca, con Actualizaciones e Historial tras una sola pestaña Actividad.';
+
+  @override
+  String get onboarding_nav_grouped => 'Pestañas agrupadas';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'Cada pestaña agrupada se cambia desde la parte superior de su pantalla';
+
+  @override
   String get onboarding_libraries_body =>
       'Elige lo que lees y ves. Lo que no elijas quedará fuera de la barra de navegación; podrás cambiarlo más tarde en Apariencia.';
 
@@ -3302,18 +3320,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get onboarding_nav_title => 'Tus bibliotecas';
 
   @override
-  String get onboarding_nav_body =>
-      'Mantén una pestaña para cada una, o únelas en una sola pestaña Biblioteca donde podrás alternar.';
-
-  @override
   String get onboarding_nav_split => 'Una pestaña por tipo';
-
-  @override
-  String get onboarding_nav_merged => 'Una pestaña Biblioteca';
-
-  @override
-  String get onboarding_nav_inside =>
-      'Al pulsar Biblioteca se cambian las pestañas por estas';
 
   @override
   String get onboarding_next => 'Siguiente';
@@ -7626,18 +7633,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get onboarding_nav_title => 'Tus bibliotecas';
 
   @override
-  String get onboarding_nav_body =>
-      'Mantén una pestaña para cada una, o únelas en una sola pestaña Biblioteca donde podrás alternar.';
-
-  @override
   String get onboarding_nav_split => 'Una pestaña por tipo';
-
-  @override
-  String get onboarding_nav_merged => 'Una pestaña Biblioteca';
-
-  @override
-  String get onboarding_nav_inside =>
-      'Al pulsar Biblioteca se cambian las pestañas por estas';
 
   @override
   String get onboarding_next => 'Siguiente';

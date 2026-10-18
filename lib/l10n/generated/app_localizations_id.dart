@@ -3263,6 +3263,24 @@ class AppLocalizationsId extends AppLocalizations {
   String get onboarding_title => 'Selamat datang di Mangayomi';
 
   @override
+  String get onboarding_language_title => 'Pilih bahasa Anda';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi ditampilkan dalam bahasa ini. Anda bisa mengubahnya nanti di Tampilan.';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'Simpan satu tab untuk setiap pustaka, atau kelompokkan dalam satu tab Pustaka, dengan Pembaruan dan Riwayat dalam satu tab Aktivitas.';
+
+  @override
+  String get onboarding_nav_grouped => 'Tab yang dikelompokkan';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'Setiap tab yang dikelompokkan dialihkan dari bagian atas layarnya';
+
+  @override
   String get onboarding_libraries_body =>
       'Pilih apa yang ingin Anda baca dan tonton.';
 
@@ -3270,17 +3288,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get onboarding_nav_title => 'Pustaka Anda';
 
   @override
-  String get onboarding_nav_body =>
-      'Tab terpisah untuk masing-masing atau digabung di bawah satu tab Pustaka.';
-
-  @override
   String get onboarding_nav_split => 'Tab terpisah';
-
-  @override
-  String get onboarding_nav_merged => 'Satu tab Pustaka';
-
-  @override
-  String get onboarding_nav_inside => 'Mengetuk Pustaka akan mengganti tab ini';
 
   @override
   String get onboarding_next => 'Berikutnya';

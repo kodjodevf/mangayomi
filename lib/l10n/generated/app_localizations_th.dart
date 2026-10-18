@@ -3246,23 +3246,31 @@ class AppLocalizationsTh extends AppLocalizations {
   String get onboarding_title => 'ยินดีต้อนรับสู่ Mangayomi';
 
   @override
+  String get onboarding_language_title => 'เลือกภาษาของคุณ';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi จะแสดงเป็นภาษานี้ คุณเปลี่ยนได้ภายหลังในส่วนรูปลักษณ์';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'แยกแท็บให้แต่ละคลัง หรือรวมไว้ในแท็บคลังเดียว โดยรวมอัปเดตและประวัติไว้ในแท็บกิจกรรมเดียว';
+
+  @override
+  String get onboarding_nav_grouped => 'แท็บแบบรวมกลุ่ม';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'แท็บที่รวมกลุ่มแต่ละแท็บสลับได้จากด้านบนของหน้าจอ';
+
+  @override
   String get onboarding_libraries_body => 'เลือกสิ่งที่คุณต้องการอ่านและดู';
 
   @override
   String get onboarding_nav_title => 'คลังของคุณ';
 
   @override
-  String get onboarding_nav_body =>
-      'แยกแท็บสำหรับแต่ละประเภท หรือรวมไว้ในแท็บคลังเดียว';
-
-  @override
   String get onboarding_nav_split => 'แยกแท็บ';
-
-  @override
-  String get onboarding_nav_merged => 'แท็บคลังเดียว';
-
-  @override
-  String get onboarding_nav_inside => 'แตะคลังเพื่อสลับแท็บเหล่านี้';
 
   @override
   String get onboarding_next => 'ถัดไป';

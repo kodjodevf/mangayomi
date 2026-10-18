@@ -3137,22 +3137,29 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboarding_title => '欢迎使用 Mangayomi';
 
   @override
+  String get onboarding_language_title => '选择语言';
+
+  @override
+  String get onboarding_language_body => 'Mangayomi 将以此语言显示。之后可在“外观”中更改。';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      '为每个书库保留一个标签页，或将它们合并到一个“书库”标签页，并将“更新”和“历史”合并到一个“动态”标签页。';
+
+  @override
+  String get onboarding_nav_grouped => '合并的标签页';
+
+  @override
+  String get onboarding_nav_grouped_inside => '每个合并的标签页都在其屏幕顶部切换';
+
+  @override
   String get onboarding_libraries_body => '选择您要阅读和观看的内容类型。';
 
   @override
   String get onboarding_nav_title => '您的书库';
 
   @override
-  String get onboarding_nav_body => '可以为每种类型设置独立标签页，或合并在一个“书库”标签页中。';
-
-  @override
   String get onboarding_nav_split => '独立标签页';
-
-  @override
-  String get onboarding_nav_merged => '统一书库标签页';
-
-  @override
-  String get onboarding_nav_inside => '点击“书库”可在各类型间切换';
 
   @override
   String get onboarding_next => '下一步';

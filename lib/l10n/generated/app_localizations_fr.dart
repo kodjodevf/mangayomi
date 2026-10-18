@@ -3301,6 +3301,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get onboarding_title => 'Bienvenue sur Mangayomi';
 
   @override
+  String get onboarding_language_title => 'Choisissez votre langue';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi s\'affiche dans cette langue. Vous pourrez la changer plus tard dans Apparence.';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'Gardez un onglet par bibliothèque, ou regroupez-les derrière un seul onglet Bibliothèque, avec Mises à jour et Historique derrière un seul onglet Activité.';
+
+  @override
+  String get onboarding_nav_grouped => 'Onglets regroupés';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'Chaque onglet regroupé se change depuis le haut de son écran';
+
+  @override
   String get onboarding_libraries_body =>
       'Choisissez ce que vous lisez et regardez. Les éléments que vous laissez de côté n\'apparaîtront pas dans la barre de navigation, vous pourrez modifier cela plus tard dans Apparence.';
 
@@ -3308,18 +3326,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get onboarding_nav_title => 'Vos bibliothèques';
 
   @override
-  String get onboarding_nav_body =>
-      'Gardez un onglet pour chacune d\'elles, ou regroupez-les sous un seul onglet Bibliothèque dans lequel vous pourrez basculer.';
-
-  @override
   String get onboarding_nav_split => 'Un onglet par catégorie';
-
-  @override
-  String get onboarding_nav_merged => 'Un seul onglet Bibliothèque';
-
-  @override
-  String get onboarding_nav_inside =>
-      'Appuyer sur Bibliothèque échange la barre pour ceux-ci';
 
   @override
   String get onboarding_next => 'Suivant';

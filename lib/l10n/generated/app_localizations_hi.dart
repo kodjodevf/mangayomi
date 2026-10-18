@@ -3257,6 +3257,24 @@ class AppLocalizationsHi extends AppLocalizations {
   String get onboarding_title => 'Mangayomi में आपका स्वागत है';
 
   @override
+  String get onboarding_language_title => 'अपनी भाषा चुनें';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi इसी भाषा में दिखेगा। आप इसे बाद में रूप-रंग में बदल सकते हैं।';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'हर लाइब्रेरी के लिए अलग टैब रखें, या उन्हें एक लाइब्रेरी टैब में समूहित करें, और अपडेट व इतिहास को एक गतिविधि टैब में।';
+
+  @override
+  String get onboarding_nav_grouped => 'समूहित टैब';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'हर समूहित टैब अपनी स्क्रीन के ऊपर से बदला जाता है';
+
+  @override
   String get onboarding_libraries_body =>
       'चुनें कि आप क्या पढ़ना और देखना चाहते हैं।';
 
@@ -3264,18 +3282,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get onboarding_nav_title => 'आपकी लाइब्रेरी';
 
   @override
-  String get onboarding_nav_body =>
-      'प्रत्येक के लिए अलग टैब रखें या एक लाइब्रेरी टैब में संयोजित करें।';
-
-  @override
   String get onboarding_nav_split => 'अलग-अलग टैब';
-
-  @override
-  String get onboarding_nav_merged => 'एक लाइब्रेरी टैब';
-
-  @override
-  String get onboarding_nav_inside =>
-      'लाइब्रेरी टैप करने पर ये टैब बदल जाते हैं';
 
   @override
   String get onboarding_next => 'अगला';
