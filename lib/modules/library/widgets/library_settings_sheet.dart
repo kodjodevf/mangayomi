@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:mangayomi/modules/library/widgets/continue_shelf.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -10,9 +11,7 @@ import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_sort_list_tile_widget.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
 
 /// Shows the library filter/sort/display settings sheet.
 void showLibrarySettingsSheet({
@@ -62,6 +61,13 @@ class _FilterTab extends ConsumerWidget {
         settings: settings,
       ),
     );
+    final sourceFilterTitle =
+        "${l10n.filter} "
+        "${switch (itemType) {
+          ItemType.manga => l10n.manga_extensions,
+          ItemType.anime => l10n.anime_extensions,
+          _ => l10n.novel_extensions,
+        }}";
     return Column(
       children: [
         ListTileChapterFilter(
@@ -191,130 +197,30 @@ class _FilterTab extends ConsumerWidget {
           },
         ),
         if (sources.$1.length > 1)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Consumer(
-                            builder: (context, ref, child) {
-                              final sources = ref.watch(
-                                mangaFilterSourceStateProvider(
-                                  mangaList: entries,
-                                  itemType: itemType,
-                                  settings: settings,
-                                ),
-                              );
-                              return AlertDialog(
-                                title: Text(
-                                  "${l10n.filter} "
-                                  "${itemType == ItemType.manga
-                                      ? l10n.manga_extensions
-                                      : itemType == ItemType.anime
-                                      ? l10n.anime_extensions
-                                      : l10n.novel_extensions}",
-                                ),
-                                content: SizedBox(
-                                  width: context.width(0.8),
-                                  child: SuperListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: sources.$1.length,
-                                    itemBuilder: (context, index) {
-                                      final source = sources.$1[index];
-                                      return ListTileChapterFilter(
-                                        label: source,
-                                        type: sources.$3.contains(source)
-                                            ? 1
-                                            : 0,
-                                        onTap: () {
-                                          ref
-                                              .read(
-                                                mangaFilterSourceStateProvider(
-                                                  mangaList: entries,
-                                                  itemType: itemType,
-                                                  settings: settings,
-                                                ).notifier,
-                                              )
-                                              .setFilteredList(source);
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      ref
-                                          .read(
-                                            mangaFilterSourceStateProvider(
-                                              mangaList: entries,
-                                              itemType: itemType,
-                                              settings: settings,
-                                            ).notifier,
-                                          )
-                                          .set([]);
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      l10n.reset,
-                                      style: TextStyle(
-                                        color: context.primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text(
-                                      l10n.cancel,
-                                      style: TextStyle(
-                                        color: context.primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      ref
-                                          .read(
-                                            mangaFilterSourceStateProvider(
-                                              mangaList: entries,
-                                              itemType: itemType,
-                                              settings: settings,
-                                            ).notifier,
-                                          )
-                                          .set(sources.$3);
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      l10n.filter,
-                                      style: TextStyle(
-                                        color: context.primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
-                    child: Text(
-                      "${l10n.filter} "
-                      "${itemType == ItemType.manga
-                          ? l10n.manga_extensions
-                          : itemType == ItemType.anime
-                          ? l10n.anime_extensions
-                          : l10n.novel_extensions}",
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          ShioriSettingRow(
+            icon: Symbols.filter_list_rounded,
+            title: sourceFilterTitle,
+            // The ones shown; all of them when none is ticked.
+            subtitle: sources.$2.isEmpty ? null : sources.$2.join(', '),
+            onTap: () async {
+              final picked = await showShioriMultiChoice<String>(
+                context,
+                title: sourceFilterTitle,
+                confirmLabel: l10n.filter,
+                selected: sources.$2.toSet(),
+                options: [for (final s in sources.$1) ShioriChoice(s, s)],
+              );
+              if (picked == null) return;
+              ref
+                  .read(
+                    mangaFilterSourceStateProvider(
+                      mangaList: entries,
+                      itemType: itemType,
+                      settings: settings,
+                    ).notifier,
+                  )
+                  .set(picked.toList());
+            },
           ),
       ],
     );
@@ -435,51 +341,23 @@ class _DisplayTab extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Display mode
+          _SectionLabel(l10n.display_mode),
           Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
-            child: Row(children: [Text(l10n.display_mode)]),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+            padding: const EdgeInsets.symmetric(
+              vertical: ShioriSpace.s8,
+              horizontal: ShioriSpace.s16,
+            ),
             child: Wrap(
-              children: DisplayType.values.map((e) {
-                final selected = e == display;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 5),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      surfaceTintColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      side: selected
-                          ? null
-                          : BorderSide(
-                              color: context.isLight
-                                  ? Colors.black
-                                  : Colors.white,
-                              width: 0.8,
-                            ),
-                      shadowColor: Colors.transparent,
-                      elevation: 0,
-                      backgroundColor: selected
-                          ? context.primaryColor.withValues(alpha: 0.2)
-                          : Colors.transparent,
-                    ),
-                    onPressed: () {
-                      displayV.setLibraryDisplayType(e);
-                    },
-                    child: Text(
-                      displayV.getLibraryDisplayTypeName(e, context),
-                      style: TextStyle(
-                        color: Theme.of(context).textTheme.bodyLarge!.color,
-                        fontSize: 14,
-                      ),
-                    ),
+              spacing: ShioriSpace.s8,
+              runSpacing: ShioriSpace.s8,
+              children: [
+                for (final e in DisplayType.values)
+                  ChoiceChip(
+                    label: Text(displayV.getLibraryDisplayTypeName(e, context)),
+                    selected: e == display,
+                    onSelected: (_) => displayV.setLibraryDisplayType(e),
                   ),
-                );
-              }).toList(),
+              ],
             ),
           ),
 
@@ -487,12 +365,9 @@ class _DisplayTab extends ConsumerWidget {
           _GridSizeSlider(itemType: itemType),
 
           // Badges section
+          _SectionLabel(l10n.badges),
           Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
-            child: Row(children: [Text(l10n.badges)]),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 5),
+            padding: const EdgeInsets.only(top: ShioriSpace.s4),
             child: Column(
               children: [
                 ListTileChapterFilter(
@@ -569,12 +444,9 @@ class _DisplayTab extends ConsumerWidget {
           ),
 
           // Tabs section
+          _SectionLabel(l10n.tabs),
           Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
-            child: Row(children: [Text(l10n.tabs)]),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 5),
+            padding: const EdgeInsets.only(top: ShioriSpace.s4),
             child: Column(
               children: [
                 ListTileChapterFilter(
@@ -605,18 +477,27 @@ class _DisplayTab extends ConsumerWidget {
                         .set(!showNumbersOfItems);
                   },
                 ),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final showShelf = ref.watch(continueShelfProvider);
+                    return ListTileChapterFilter(
+                      label: l10n.show_continue_shelf,
+                      type: showShelf ? 1 : 0,
+                      onTap: () => ref
+                          .read(continueShelfProvider.notifier)
+                          .set(!showShelf),
+                    );
+                  },
+                ),
               ],
             ),
           ),
 
           // TV home section - only the anime home has these rows.
           if (isTv && itemType == ItemType.anime) ...[
+            _SectionLabel(context.l10n.tv_home_rows),
             Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
-              child: Row(children: [Text(context.l10n.tv_home_rows)]),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 5),
+              padding: const EdgeInsets.only(top: ShioriSpace.s4),
               child: Column(
                 children: [
                   ListTileChapterFilter(
@@ -636,6 +517,25 @@ class _DisplayTab extends ConsumerWidget {
   }
 }
 
+/// A section's title in the sheet: the group label, where a settings group
+/// puts it.
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.title);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(
+      ShioriSpace.s16,
+      ShioriSpace.s16,
+      ShioriSpace.s16,
+      ShioriSpace.s4,
+    ),
+    child: ShioriGroupLabel(title),
+  );
+}
+
 // ─── Grid Size Slider ─────────────────────────────────────────────────────────
 
 class _GridSizeSlider extends ConsumerWidget {
@@ -646,56 +546,21 @@ class _GridSizeSlider extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final gridSize =
         ref.watch(libraryGridSizeStateProvider(itemType: itemType)) ?? 0;
-    return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 8, top: 10),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                Text(context.l10n.grid_size),
-                Text(
-                  gridSize == 0
-                      ? context.l10n.default0
-                      : context.l10n.n_per_row(gridSize.toString()),
-                ),
-              ],
-            ),
-          ),
-          Flexible(
-            flex: 7,
-            child: SliderTheme(
-              data: SliderTheme.of(context).copyWith(
-                overlayShape: const RoundSliderOverlayShape(overlayRadius: 5.0),
-              ),
-              child: Slider(
-                min: 0.0,
-                max: 7,
-                divisions: 7,
-                value: gridSize.toDouble(),
-                onChanged: (value) {
-                  HapticFeedback.vibrate();
-                  ref
-                      .read(
-                        libraryGridSizeStateProvider(itemType: itemType)
-                            .notifier,
-                      )
-                      .set(value.toInt());
-                },
-                onChangeEnd: (value) {
-                  ref
-                      .read(
-                        libraryGridSizeStateProvider(itemType: itemType)
-                            .notifier,
-                      )
-                      .set(value.toInt(), end: true);
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
+    final notifier = ref.read(
+      libraryGridSizeStateProvider(itemType: itemType).notifier,
+    );
+    return ShioriSliderRow(
+      title: context.l10n.grid_size,
+      value: gridSize.toDouble(),
+      min: 0,
+      max: 7,
+      divisions: 7,
+      // 0 lets the screen width decide.
+      valueLabel: (v) => v == 0
+          ? context.l10n.default0
+          : context.l10n.n_per_row(v.round().toString()),
+      onChanged: (v) => notifier.set(v.round()),
+      onChangeEnd: (v) => notifier.set(v.round(), end: true),
     );
   }
 }
