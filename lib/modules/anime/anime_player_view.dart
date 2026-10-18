@@ -1842,7 +1842,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           valueBuilder: (context) => ValueListenableBuilder<int?>(
             valueListenable: _currentChapterMark,
             builder: (context, i, _) => Text(
-              i != null ? _chapterMarks.value[i].$1 : '',
+              i != null ? _chapterMarks.value.elementAtOrNull(i)?.$1 ?? '' : '',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -2284,9 +2284,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     return ValueListenableBuilder(
       valueListenable: _currentChapterMark,
       builder: (context, value, child) {
-        if (value == null) return const SizedBox.shrink();
-
-        final chapter = _chapterMarks.value[value];
+        // The marks of the previous video can be gone while the index stays.
+        final chapter = value == null
+            ? null
+            : _chapterMarks.value.elementAtOrNull(value);
+        if (chapter == null) return const SizedBox.shrink();
         // A chapter with no title of its own is named by its start alone,
         // not " - 00:00".
         final start = Duration(milliseconds: chapter.$2).label();

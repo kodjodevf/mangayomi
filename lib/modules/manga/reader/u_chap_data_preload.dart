@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/modules/manga/reader/utils/decoded_image_budget.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
 
@@ -33,8 +34,39 @@ class UChapDataPreload {
   double? loadedHeight;
   double? loadedWidth;
 
-  /// Cached decoded image for MinSubsamplingImage to avoid re-decoding on scroll
-  Image? decodedImage;
+  Image? _decodedImage;
+
+  /// Cached decoded image for MinSubsamplingImage to avoid re-decoding on scroll.
+  ///
+  /// Bounded by [DecodedImageBudget]: when too many pages hold decoded pixels,
+  /// the least recently used are released and re-decoded from the on-disk file
+  /// when needed again. Callers keep the existing contract: dispose the old
+  /// value yourself before assigning a new one (or null).
+  Image? get decodedImage {
+    final image = _decodedImage;
+    if (image != null) DecodedImageBudget.instance.touch(this);
+    return image;
+  }
+
+  set decodedImage(Image? image) {
+    _decodedImage = image;
+    if (image == null) {
+      DecodedImageBudget.instance.unregister(this);
+    } else {
+      DecodedImageBudget.instance.register(
+        this,
+        image.width * image.height * 4, // RGBA, 4 bytes per pixel
+        _releaseDecodedImage,
+      );
+    }
+  }
+
+  /// Called by [DecodedImageBudget] to give the pixels back. Widgets showing
+  /// this page hold their own clone, so they are unaffected.
+  void _releaseDecodedImage() {
+    _decodedImage?.dispose();
+    _decodedImage = null;
+  }
 
   /// Cached resolved local file path for SubsamplingScaleImageView to avoid resolving on scroll
   String? resolvedFilePath;

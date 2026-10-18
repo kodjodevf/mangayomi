@@ -19,6 +19,8 @@ const double _coverHeight = 144;
 /// Cover plus the card's vertical padding.
 const double _cardExtent = _coverHeight + 12;
 
+const double _descriptionLineHeight = 1.35;
+
 /// One column on a phone, two above this, and never more than two: a third
 /// column turns a scannable list of cover-plus-prose into a wall.
 const double _twoColumnBreakpoint = 700;
@@ -93,7 +95,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
               compact: true,
             )
           // Poster list: a cover, the catalog rating as a filled pill, the
-          // title, a two-line capped synopsis and genre chips. Rows used to
+          // title, a synopsis filling the remaining height and genre chips. Rows used to
           // stretch the full width of a TV or desktop panel; the grid reflows
           // to two columns instead so they never run into empty space.
           : LayoutBuilder(
@@ -153,34 +155,57 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (rec.rating case CatalogRating rating) ...[
-                          _ratingPill(context, rating),
-                          const SizedBox(width: ShioriSpace.s8),
-                        ],
-                        Expanded(
-                          child: Text(
-                            title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: context.shiori.text.row.fontSize,
-                              fontWeight: FontWeight.w700,
+                    // The pill is an inline span, so a wrapped title continues
+                    // under the badge instead of hanging at the text column.
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          if (rec.rating case CatalogRating rating) ...[
+                            WidgetSpan(
+                              alignment: PlaceholderAlignment.middle,
+                              child: _ratingPill(context, rating),
                             ),
-                          ),
-                        ),
-                      ],
+                            const WidgetSpan(
+                              child: SizedBox(width: ShioriSpace.s8),
+                            ),
+                          ],
+                          TextSpan(text: title),
+                        ],
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.shiori.text.row.copyWith(
+                        color: context.shiori.color.fg,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     if (rec.description != null &&
                         rec.description!.isNotEmpty) ...[
                       const SizedBox(height: ShioriSpace.s4),
-                      Text(
-                        rec.description!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: context.shiori.caption.copyWith(height: 1.35),
+                      // Non-flex children (title, chips) are laid out first,
+                      // so this gets whatever height the fixed-size card has
+                      // left. Fill it with as many lines as fit.
+                      Flexible(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final style = context.shiori.caption.copyWith(
+                              height: _descriptionLineHeight,
+                            );
+                            final lineExtent =
+                                MediaQuery.textScalerOf(context)
+                                    .scale(style.fontSize!) *
+                                _descriptionLineHeight;
+                            final lines = (constraints.maxHeight / lineExtent)
+                                .floor();
+                            if (lines < 1) return const SizedBox.shrink();
+                            return Text(
+                              rec.description!,
+                              maxLines: lines,
+                              overflow: TextOverflow.ellipsis,
+                              style: style,
+                            );
+                          },
+                        ),
                       ),
                     ],
                     if (rec.genres.isNotEmpty) ...[
@@ -209,10 +234,42 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
     return Semantics(
       label: context.l10n.recommendation_rating_accessibility(label),
       child: ExcludeSemantics(
-        child: EntryBadgeChip(
-          label: label,
-          tone: EntryBadgeChip.accent(context),
-          strong: true,
+        // The star marks this as the catalog's average score, not a match
+        // percentage; the order of the list is the provider's own ranking.
+        child: Builder(
+          builder: (context) {
+            final tone = EntryBadgeChip.accent(context);
+            final tokens = context.shiori;
+            return Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: ShioriSpace.s4 + 2,
+                vertical: 2,
+              ),
+              decoration: BoxDecoration(
+                color: tone.background,
+                borderRadius: BorderRadius.circular(ShioriShape.badge),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 2,
+                children: [
+                  Icon(
+                    Symbols.star_rounded,
+                    fill: 1,
+                    size: tokens.scaled(12),
+                    color: tone.foreground,
+                  ),
+                  Text(
+                    label,
+                    style: tokens.text.badge.copyWith(
+                      color: tone.foreground,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
