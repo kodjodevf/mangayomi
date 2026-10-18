@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:archive/archive.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -138,6 +139,122 @@ void main() {
     if (directory.existsSync()) directory.deleteSync(recursive: true);
   });
 
+  testWidgets(
+    'local archive backup restores parents, links and reading state',
+    (tester) async {
+      final (ctx, ref) = await _pumpShell(tester);
+      await tester.runAsync(() async {
+        final localFile = File('${directory.path}/fixture.cbz');
+        final originalBytes = ZipEncoder().encode(
+          Archive()
+            ..addFile(ArchiveFile('fixture.txt', 4, [116, 101, 115, 116])),
+        );
+        await localFile.writeAsBytes(originalBytes);
+        await isar.writeTxn(() async {
+          await isar.mangas.clear();
+          final local = _manga('Local fixture')
+            ..id = 10
+            ..source = 'archive'
+            ..isLocalArchive = true
+            ..link = localFile.path;
+          await isar.mangas.putAll([
+            local,
+            _manga('Online fixture')..id = 11,
+            _manga('Unfavorited local fixture')
+              ..id = 12
+              ..isLocalArchive = true
+              ..favorite = false,
+          ]);
+          final chapter = Chapter(
+            id: 20,
+            mangaId: 10,
+            name: 'Chapter 1',
+            url: localFile.path,
+            isRead: true,
+            isBookmarked: true,
+            lastPageRead: '7',
+          )..manga.value = local;
+          await isar.chapters.put(chapter);
+          await chapter.manga.save();
+          final history = History(
+            id: 30,
+            mangaId: 10,
+            chapterId: 20,
+            itemType: ItemType.manga,
+            date: '1000',
+          )..chapter.value = chapter;
+          await isar.historys.put(history);
+          await history.chapter.save();
+          final download = Download(
+            id: 20,
+            succeeded: 1,
+            failed: 0,
+            total: 1,
+            isDownload: true,
+            isStartDownload: false,
+          )..chapter.value = chapter;
+          await isar.downloads.put(download);
+          await download.chapter.save();
+          await isar.settings.put(
+            Settings()
+              ..chapterPageIndexList = [
+                ChapterPageIndex(chapterId: 20, index: 6),
+              ],
+          );
+        });
+        final path = await writeMangayomiBackupZip(
+          list: const [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+          directory: directory.path,
+          encrypt: false,
+        );
+        final archive = ZipDecoder().decodeBytes(
+          await File(path).readAsBytes(),
+        );
+        final data = jsonDecode(
+          utf8.decode(archive.files.single.content as List<int>),
+        ) as Map<String, dynamic>;
+        expect(
+          (data['manga'] as List).map((m) => m['id']),
+          unorderedEquals([10, 11]),
+        );
+
+        // Restore through the real replace entry point, not a fixture-only decoder.
+        await isar.writeTxn(() async {
+          await isar.mangas.clear();
+          await isar.mangas.put(_manga('Unrelated fixture'));
+        });
+        await ref.read(
+          doRestoreProvider(path: path, context: ctx, merge: false).future,
+        );
+        expect(
+          _library(),
+          unorderedEquals(['Local fixture', 'Online fixture']),
+        );
+        final local = isar.mangas.getSync(10)!;
+        expect(local.isLocalArchive, true);
+        expect(local.link, localFile.path);
+        final chapter = isar.chapters.getSync(20)!;
+        chapter.manga.loadSync();
+        expect(chapter.manga.value?.id, 10);
+        expect(chapter.isRead, true);
+        expect(chapter.isBookmarked, true);
+        expect(chapter.lastPageRead, '7');
+        final history = isar.historys.getSync(30)!;
+        history.chapter.loadSync();
+        expect(history.chapter.value?.id, 20);
+        final download = isar.downloads.getSync(20)!;
+        download.chapter.loadSync();
+        expect(download.chapter.value?.id, 20);
+        expect(download.isDownload, true);
+        expect(
+          isar.settings.getSync(227)!.chapterPageIndexList!.single.index,
+          6,
+        );
+        expect(await localFile.readAsBytes(), originalBytes);
+      });
+    },
+  );
+
   testWidgets('replace with a mangayomi backup swaps the library', (
     tester,
   ) async {
@@ -185,9 +302,8 @@ void main() {
         ],
       );
       final path = '${directory.path}/mihon_test.tachibk';
-      File(
-        path,
-      ).writeAsBytesSync(GZipEncoder().encodeBytes(backup.writeToBuffer()));
+      File(path)
+          .writeAsBytesSync(GZipEncoder().encodeBytes(backup.writeToBuffer()));
 
       await ref.read(
         doRestoreProvider(path: path, context: ctx, merge: false).future,
