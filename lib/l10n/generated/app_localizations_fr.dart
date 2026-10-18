@@ -2580,6 +2580,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get brightness => 'Luminosité';
 
   @override
+  String get volume => 'Volume';
+
+  @override
   String get contrast => 'Contraste';
 
   @override

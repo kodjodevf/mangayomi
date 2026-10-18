@@ -2570,6 +2570,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get brightness => 'Brilho';
 
   @override
+  String get volume => 'Volume';
+
+  @override
   String get contrast => 'Contraste';
 
   @override

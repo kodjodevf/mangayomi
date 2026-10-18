@@ -435,6 +435,20 @@ shortcuts have their own table (`playerShortcutKeys`), listed behind ? or
 F1 and in the settings, in the readers' dialog (`showKeyboardShortcuts`);
 a seek from the keyboard, with the controls hidden, says how far it went.
 The phone's brightness swipe goes through the readers' `ScreenBrightness`.
+On a phone the controls fall in three places, each with one role. At the
+top, the series, the episode and the actions that leave the video (the
+episode list, sharing). In the middle, the episodes on either side, a jump
+back and forward captioned with its length, and play between them as the
+accent disc (`ShioriOverlayIconButton`), the one control the eye goes to.
+At the foot, one `ShioriOverlayPanel` floating clear of the edges, as the
+manga reader's: the timeline, with the time played on the left and the time
+left on the right (a tap shows the length), the chapters and the opening
+and ending AniSkip knows marked on it, then a row of `ShioriOverlayPill`s
+that keep each setting's value in sight. A swipe for the brightness or the
+volume shows a `ShioriGestureGauge` on the side the thumb is on. Locked,
+only a labelled Unlock pill remains. Skip intro and Next episode sit above
+the panel, never under it. A speed is written one way everywhere: "1×",
+"1.5×".
 Whatever floats over the video (a seek, the volume or brightness, the
 speed held down, Skip intro, the pills) stands on `PlayerOverlaySurface`,
 the readers' scrim with white on it, never on a theme surface, so it reads

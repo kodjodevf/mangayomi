@@ -323,68 +323,20 @@ class PlayerPillButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Over the video, so on the scrim whatever the theme (a theme surface
-    // turned the pill light under its white label in the light theme); on,
-    // it is filled with the accent and labelled to be read on it.
-    final tokens = context.shiori;
-    final bgColor = active ? tokens.color.accent : ShioriScrim.underText;
-    final fgColor = active ? tokens.color.onAccent : Colors.white;
+    // Shiori's pill over a picture: on the scrim whatever the theme, filled
+    // with the accent when on, a full-size target around a small pill.
     final visibleLabel = showLabel ? label : null;
-
-    final padH = isCompact ? 8.0 : 10.0;
-    final padV = isCompact ? 4.5 : 6.0;
-
-    final button = Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(ShioriShape.cover),
-        onTap: onTap,
-        onLongPress: onLongPress,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: padH, vertical: padV),
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(ShioriShape.cover),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) ...[
-                Icon(icon, size: isCompact ? 14 : 15, color: fgColor),
-                if (visibleLabel != null) SizedBox(width: isCompact ? 4 : 6),
-              ],
-              if (visibleLabel != null)
-                Text(
-                  visibleLabel,
-                  style: context.shiori.text.meta.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: fgColor,
-                    fontSize: isCompact ? 11 : null,
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-    // The pill stays small over the video, but takes a tap anywhere in a
-    // target of the density's size around it.
-    final target = GestureDetector(
-      behavior: HitTestBehavior.opaque,
+    return ShioriOverlayPill(
+      icon: icon,
+      label: visibleLabel,
+      // Named whole for a screen reader even when only the icon shows.
+      tooltip: tooltip ?? (visibleLabel == null ? label : null),
+      semanticsValue: visibleLabel == null && tooltip != null ? label : null,
+      emphasized: active,
+      compact: isCompact,
       onTap: onTap,
       onLongPress: onLongPress,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(minHeight: tokens.density.minTarget),
-        child: Center(widthFactor: 1, heightFactor: 1, child: button),
-      ),
     );
-    final accessibleButton = !showLabel && label != null
-        ? Semantics(value: label, child: target)
-        : target;
-    return tooltip != null
-        ? Tooltip(message: tooltip!, child: accessibleButton)
-        : accessibleButton;
   }
 }
 

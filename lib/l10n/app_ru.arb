@@ -583,6 +583,7 @@
   "invert_colors": "Инвертировать цвета",
   "grayscale": "Оттенки серого",
   "brightness": "Яркость",
+  "volume": "Громкость",
   "contrast": "Контраст",
   "saturation": "Насыщенность",
   "navigation_layout": "Макет навигации",

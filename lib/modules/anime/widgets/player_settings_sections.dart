@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/anime/utils/temporary_playback_speed.dart';
 import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/modules/anime/providers/state_provider.dart';
 import 'package:mangayomi/modules/anime/utils/video_prefs.dart';
@@ -124,7 +125,7 @@ class SpeedSectionWidget extends StatelessWidget {
           return ValueListenableBuilder<double>(
             valueListenable: playbackSpeed,
             builder: (context, current, _) => SettingsOptionRow(
-              label: '${speed}x',
+              label: temporaryPlaybackSpeedLabel(speed),
               selected: current == speed,
               onTap: () {
                 onSelect(speed);

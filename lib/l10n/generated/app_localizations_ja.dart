@@ -2494,6 +2494,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get brightness => '明るさ';
 
   @override
+  String get volume => '音量';
+
+  @override
   String get contrast => 'コントラスト';
 
   @override

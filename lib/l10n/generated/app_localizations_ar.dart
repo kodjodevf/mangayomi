@@ -2551,6 +2551,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get brightness => 'السطوع';
 
   @override
+  String get volume => 'مستوى الصوت';
+
+  @override
   String get contrast => 'التباين';
 
   @override

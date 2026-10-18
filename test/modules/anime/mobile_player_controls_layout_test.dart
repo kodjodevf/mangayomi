@@ -220,21 +220,6 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  test('keeps episode navigation buttons free of a resting tint', () {
-    final style = mobilePlayerEpisodeNavigationButtonStyle();
-
-    expect(style.backgroundColor?.resolve({}), Colors.transparent);
-    expect(
-      style.backgroundColor?.resolve({WidgetState.disabled}),
-      Colors.transparent,
-    );
-    expect(style.foregroundColor?.resolve({}), Colors.white);
-    expect(
-      style.foregroundColor?.resolve({WidgetState.disabled}),
-      Colors.white.withValues(alpha: 0.35),
-    );
-  });
-
   testWidgets('keeps the original one-row top bar in landscape', (
     tester,
   ) async {
@@ -697,7 +682,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('compact shortcut pills use the original visual sizing', (
+  testWidgets('compact shortcut pills stay small in a full-size target', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -707,7 +692,7 @@ void main() {
             child: PlayerPillButton(
               isCompact: true,
               icon: Icons.speed,
-              label: '1.0x',
+              label: '1×',
               onTap: () {},
             ),
           ),
@@ -715,13 +700,17 @@ void main() {
       ),
     );
 
-    // The pill keeps its size; only the tap target around it grows.
+    // Shiori's overlay pill: the pill keeps its size; only the tap target
+    // around it grows.
     final button = find.byType(PlayerPillButton);
-    final pill = find.descendant(of: button, matching: find.byType(Container));
-    expect(tester.getSize(pill.first).height, lessThan(44));
+    final pill = find.descendant(
+      of: button,
+      matching: find.byType(AnimatedContainer),
+    );
+    expect(find.byType(ShioriOverlayPill), findsOneWidget);
+    expect(tester.getSize(pill).height, lessThan(44));
     expect(tester.getSize(button).height, greaterThanOrEqualTo(44));
-    expect(tester.widget<Icon>(find.byIcon(Icons.speed)).size, 14);
-    expect(tester.widget<Text>(find.text('1.0x')).style?.fontSize, 11);
+    expect(tester.widget<Icon>(find.byIcon(Icons.speed)).size, 16);
   });
 
   testWidgets('icon-only shortcut keeps its icon and tooltip', (tester) async {

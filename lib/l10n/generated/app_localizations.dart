@@ -4627,6 +4627,12 @@ abstract class AppLocalizations {
   /// **'Brightness'**
   String get brightness;
 
+  /// No description provided for @volume.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume'**
+  String get volume;
+
   /// No description provided for @contrast.
   ///
   /// In en, this message translates to:

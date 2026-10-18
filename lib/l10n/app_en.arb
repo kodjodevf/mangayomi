@@ -1036,6 +1036,7 @@
   "invert_colors": "Invert colors",
   "grayscale": "Grayscale",
   "brightness": "Brightness",
+  "volume": "Volume",
   "contrast": "Contrast",
   "saturation": "Saturation",
   "navigation_layout": "Navigation layout",

@@ -594,6 +594,7 @@
   "invert_colors": "Inverser les couleurs",
   "grayscale": "Niveaux de gris",
   "brightness": "Luminosité",
+  "volume": "Volume",
   "contrast": "Contraste",
   "saturation": "Saturation",
   "navigation_layout": "Disposition de navigation",

@@ -2555,6 +2555,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get brightness => 'Parlaklık';
 
   @override
+  String get volume => 'Ses düzeyi';
+
+  @override
   String get contrast => 'Kontrast';
 
   @override

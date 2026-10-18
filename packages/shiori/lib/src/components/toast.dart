@@ -106,7 +106,10 @@ class ShioriToastCard extends StatelessWidget {
                         Icon(icon, size: tokens.scaled(20), color: tint),
                   ),
                 Expanded(
+                  // As tall as the message and its actions: the overlay
+                  // gives the card the whole screen's height to fill.
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: ShioriSpace.s4,
                     children: [

@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:mangayomi/utils/platform_utils.dart';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_track_shape.dart';
@@ -17,6 +18,9 @@ class CustomSeekBar extends StatefulWidget {
   final ValueNotifier<List<(String, int)>> chapterMarks;
   final ValueChanged<bool>? onHoverChanged;
 
+  /// The opening and the ending, in milliseconds, marked on the track.
+  final ValueListenable<List<(int, int)>>? skipRanges;
+
   const CustomSeekBar({
     super.key,
     this.onSeekStart,
@@ -25,6 +29,7 @@ class CustomSeekBar extends StatefulWidget {
     this.delta,
     required this.chapterMarks,
     this.onHoverChanged,
+    this.skipRanges,
   });
 
   @override
@@ -39,6 +44,10 @@ class CustomSeekBarState extends State<CustomSeekBar> {
   Duration buffer = Duration.zero;
 
   bool _dragging = false;
+
+  // The right-hand figure: the time left, or the length once tapped. Kept
+  // across episodes for as long as the app runs.
+  static bool _showRemaining = true;
   // Mouse-only: moving the cursor over the track previews the timecode there
   // without touching playback, same as dragging does — just without a seek.
   bool _hovering = false;
@@ -142,24 +151,21 @@ class CustomSeekBarState extends State<CustomSeekBar> {
         ? previewPosition
         : (_hoverPosition ?? previewPosition);
     final showBubble = _dragging || _hovering;
+    final timeStyle = context.shiori.text.meta.copyWith(
+      color: Colors.white,
+      fontWeight: FontWeight.w600,
+      fontFeatures: const [FontFeature.tabularFigures()],
+    );
     return SizedBox(
-      height: 20,
+      height: isDesktop ? 20 : 32,
       child: Row(
         children: [
           if (!isDesktop)
-            SizedBox(
-              width: 70,
-              child: Center(
-                child: Text(
-                  (widget.delta ?? tempPosition ?? position).label(
-                    reference: duration,
-                  ),
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: Colors.white,
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: ShioriSpace.s8),
+              child: Text(
+                previewPosition.label(reference: duration),
+                style: timeStyle,
               ),
             ),
           Expanded(
@@ -178,7 +184,7 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
                         trackHeight: 4.0,
-                        activeTrackColor: context.shiori.color.accentInk,
+                        activeTrackColor: context.shiori.color.accent,
                         inactiveTrackColor: Colors.white.withValues(
                           alpha: 0.22,
                         ),
@@ -199,6 +205,7 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                           minValue: 0,
                           chapterMarks: widget.chapterMarks.value,
                           chapterMarkWidth: 2.5,
+                          highlights: widget.skipRanges?.value ?? const [],
                         ),
                       ),
                       child: Slider(
@@ -268,15 +275,25 @@ class CustomSeekBarState extends State<CustomSeekBar> {
             ),
           ),
           if (!isDesktop)
-            SizedBox(
-              width: 70,
-              child: Center(
-                child: Text(
-                  duration.label(reference: duration),
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: Colors.white,
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                    fontWeight: FontWeight.w600,
+            // The time left by default, which is what one wants to know
+            // mid-episode; a tap shows the length instead, and back.
+            Semantics(
+              button: true,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(ShioriShape.pill),
+                onTap: () => setState(() => _showRemaining = !_showRemaining),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: ShioriSpace.s8,
+                    vertical: ShioriSpace.s4,
+                  ),
+                  child: Text(
+                    _showRemaining
+                        ? '−${(duration - previewPosition).clamp(Duration.zero, duration).label(reference: duration)}'
+                        : duration.label(reference: duration),
+                    style: timeStyle.copyWith(
+                      color: Colors.white.withValues(alpha: Alphas.secondary),
+                    ),
                   ),
                 ),
               ),

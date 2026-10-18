@@ -28,6 +28,7 @@ class ShioriOverlayPill extends StatefulWidget {
     this.compact = false,
     this.trailingIcon,
     this.focusNode,
+    this.semanticsValue,
   }) : assert(icon != null || label != null, 'An icon or a label is needed.');
 
   final VoidCallback onTap;
@@ -45,6 +46,10 @@ class ShioriOverlayPill extends StatefulWidget {
   /// After the label, such as the arrow of "Next".
   final IconData? trailingIcon;
   final FocusNode? focusNode;
+
+  /// The value read out when the pill shows only its icon, such as the
+  /// speed on a narrow row.
+  final String? semanticsValue;
 
   @override
   State<ShioriOverlayPill> createState() => _ShioriOverlayPillState();
@@ -80,14 +85,20 @@ class _ShioriOverlayPillState extends State<ShioriOverlayPill> {
         children: [
           if (widget.icon != null)
             Icon(widget.icon, size: iconSize, color: foreground),
+          // A value is a glance, not a sentence: a long one (a mirror's full
+          // name) is cut, and read whole where it is chosen.
           if (widget.label != null)
-            Text(
-              widget.label!,
-              maxLines: 1,
-              style: tokens.text.meta.copyWith(
-                color: foreground,
-                fontWeight: FontWeight.w700,
-                fontFeatures: const [FontFeature.tabularFigures()],
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: tokens.scaled(160)),
+              child: Text(
+                widget.label!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: tokens.text.meta.copyWith(
+                  color: foreground,
+                  fontWeight: FontWeight.w700,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
               ),
             ),
           if (widget.trailingIcon != null)
@@ -100,7 +111,9 @@ class _ShioriOverlayPillState extends State<ShioriOverlayPill> {
       child: Semantics(
         button: true,
         label: widget.tooltip ?? widget.label,
-        value: widget.tooltip != null ? widget.label : null,
+        value:
+            widget.semanticsValue ??
+            (widget.tooltip != null ? widget.label : null),
         child: InkWell(
           focusNode: widget.focusNode,
           onTap: widget.onTap,

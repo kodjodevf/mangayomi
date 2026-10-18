@@ -2569,6 +2569,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get brightness => 'Helligkeit';
 
   @override
+  String get volume => 'Lautstärke';
+
+  @override
   String get contrast => 'Kontrast';
 
   @override

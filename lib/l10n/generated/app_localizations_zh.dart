@@ -2462,6 +2462,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get brightness => '亮度';
 
   @override
+  String get volume => '音量';
+
+  @override
   String get contrast => '对比度';
 
   @override

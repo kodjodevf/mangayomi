@@ -829,6 +829,7 @@
   "invert_colors": "Farben invertieren",
   "grayscale": "Graustufen",
   "brightness": "Helligkeit",
+  "volume": "Lautstärke",
   "contrast": "Kontrast",
   "saturation": "Sättigung",
   "navigation_layout": "Navigations-Layout",

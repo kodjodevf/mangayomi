@@ -2491,6 +2491,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get brightness => '밝기';
 
   @override
+  String get volume => '볼륨';
+
+  @override
   String get contrast => '대비';
 
   @override

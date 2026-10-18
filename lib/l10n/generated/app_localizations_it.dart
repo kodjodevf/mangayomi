@@ -2575,6 +2575,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get brightness => 'Luminosità';
 
   @override
+  String get volume => 'Volume';
+
+  @override
   String get contrast => 'Contrasto';
 
   @override

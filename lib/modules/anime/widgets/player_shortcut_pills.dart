@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/anime/utils/temporary_playback_speed.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/utils/audio_track_label.dart';
@@ -139,7 +140,7 @@ class PlayerShortcutPills extends StatelessWidget {
               valueListenable: playbackSpeed,
               builder: (context, speed, _) => PlayerPillButton(
                 icon: Symbols.speed_rounded,
-                label: '${speed}x',
+                label: temporaryPlaybackSpeedLabel(speed),
                 showLabel: !iconOnly,
                 tooltip: context.l10n.playback_speed,
                 isCompact: isMobile,

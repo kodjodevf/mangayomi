@@ -586,6 +586,7 @@
   "invert_colors": "反转颜色",
   "grayscale": "灰度",
   "brightness": "亮度",
+  "volume": "音量",
   "contrast": "对比度",
   "saturation": "饱和度",
   "navigation_layout": "导航布局",

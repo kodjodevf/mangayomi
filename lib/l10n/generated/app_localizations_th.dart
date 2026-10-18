@@ -2539,6 +2539,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get brightness => 'ความสว่าง';
 
   @override
+  String get volume => 'ระดับเสียง';
+
+  @override
   String get contrast => 'ความเปนสัน';
 
   @override

@@ -2543,6 +2543,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get brightness => 'Brightness';
 
   @override
+  String get volume => 'Volume';
+
+  @override
   String get contrast => 'Contrast';
 
   @override

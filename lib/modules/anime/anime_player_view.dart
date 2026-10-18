@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
+import 'package:mangayomi/modules/anime/utils/temporary_playback_speed.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
@@ -395,6 +396,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   );
   Results? _openingResult;
   Results? _endingResult;
+
+  /// The opening and the ending, in milliseconds, for the timeline to mark.
+  final ValueNotifier<List<(int, int)>> _skipRanges = ValueNotifier(const []);
   bool _hasOpeningSkip = false;
   bool _hasEndingSkip = false;
   bool _initSubtitleAndAudio = true;
@@ -1588,6 +1592,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           .toList();
       _hasEndingSkip = endingRes.isNotEmpty;
       if (_hasEndingSkip) _endingResult = endingRes.first;
+      _skipRanges.value = [
+        for (final r in [?_openingResult, ?_endingResult])
+          if (r.interval?.startTime != null && r.interval?.endTime != null)
+            (
+              (r.interval!.startTime! * 1000).round(),
+              (r.interval!.endTime! * 1000).round(),
+            ),
+      ];
       if (mounted) {
         setState(() {});
       }
@@ -1643,6 +1655,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _tempPosition.dispose();
     _fit.dispose();
     _isLocked.dispose();
+    _skipRanges.dispose();
     _skipPhase.dispose();
     _subDelayController.dispose();
     _subSpeedController.dispose();
@@ -1832,7 +1845,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         icon: Symbols.speed_rounded,
         valueBuilder: (context) => ValueListenableBuilder<double>(
           valueListenable: _playbackSpeed,
-          builder: (context, v, _) => Text('${v}x'),
+          builder: (context, v, _) => Text(temporaryPlaybackSpeedLabel(v)),
         ),
         contentBuilder: (context) => _speedSectionWidget(context),
       ),
@@ -2242,8 +2255,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         if (value == null) return const SizedBox.shrink();
 
         final chapter = _chapterMarks.value[value];
-        final label =
-            "${chapter.$1} - ${Duration(milliseconds: chapter.$2).label()}";
+        // A chapter with no title of its own is named by its start alone,
+        // not " - 00:00".
+        final start = Duration(milliseconds: chapter.$2).label();
+        final label = chapter.$1.trim().isEmpty
+            ? start
+            : "${chapter.$1} · $start";
         void onPressed() =>
             _openPlayerSettings(context, initialIndex: _chaptersSectionIndex);
 
@@ -2351,38 +2368,29 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   Widget _mobileBottomButtonBar(BuildContext context) {
     final compactPortrait = _usesCompactPortraitControls(context);
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: mobilePlayerBottomControlsBottomPadding,
+    // The second line of the floating panel, under the timeline; the panel
+    // gives it its ground and its margins.
+    return MobilePlayerBottomControlsLayout(
+      compactPortrait: compactPortrait,
+      lockButton: KeyedSubtree(
+        key: const ValueKey('mobile-player-lock-button'),
+        child: ShioriOverlayPill(
+          icon: Symbols.lock_open_rounded,
+          tooltip: context.l10n.lock,
+          compact: true,
+          onTap: () {
+            HapticFeedback.lightImpact();
+            _isLocked.value = true;
+          },
+        ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          MobilePlayerBottomControlsLayout(
-            compactPortrait: compactPortrait,
-            lockButton: IconButton(
-              key: const ValueKey('mobile-player-lock-button'),
-              tooltip: context.l10n.lock,
-              icon: const Icon(
-                Symbols.lock_open_rounded,
-                size: mobilePlayerPortraitControlIconSize,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                HapticFeedback.lightImpact();
-                _isLocked.value = true;
-              },
-            ),
-            seekButton: _seekToWidget(iconOnly: compactPortrait),
-            chapterButton: compactPortrait
-                ? const SizedBox.shrink()
-                : _chapterMarkWidget(),
-            shortcutButtons: compactPortrait
-                ? _portraitFullscreenButton(context)
-                : _buildSettingsButtons(context),
-          ),
-        ],
-      ),
+      seekButton: _seekToWidget(iconOnly: compactPortrait),
+      chapterButton: compactPortrait
+          ? const SizedBox.shrink()
+          : _chapterMarkWidget(),
+      shortcutButtons: compactPortrait
+          ? _portraitFullscreenButton(context)
+          : _buildSettingsButtons(context),
     );
   }
 
@@ -2390,17 +2398,15 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     return Consumer(
       builder: (context, ref, _) {
         final isFullscreen = ref.watch(fullscreenProvider);
-        return IconButton(
+        return KeyedSubtree(
           key: const ValueKey('mobile-player-portrait-fullscreen'),
-          tooltip: context.l10n.fullscreen,
-          onPressed: () => _toggleFullscreen(isFullscreen),
-          icon: Icon(
-            fill: 1,
-            isFullscreen
+          child: ShioriOverlayPill(
+            icon: isFullscreen
                 ? Symbols.fullscreen_exit_rounded
                 : Symbols.fullscreen_rounded,
-            size: mobilePlayerPortraitControlIconSize,
-            color: Colors.white,
+            tooltip: context.l10n.fullscreen,
+            compact: true,
+            onTap: () => _toggleFullscreen(isFullscreen),
           ),
         );
       },
@@ -2706,6 +2712,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
+  /// How high above the bottom edge (past the system's inset) what floats
+  /// over the video sits so the controls panel never covers it: the
+  /// timeline, a row of pills and the panel's margins.
+  static const double _aboveControlsPanel = 128;
+
   BoxFit? _lastFit;
   void _resize(BoxFit fit) async {
     if (fit == _lastFit) return;
@@ -2730,6 +2741,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     final skipIntroLength = ref.read(defaultSkipIntroLengthStateProvider);
     final splitSettingsTv = isTv && _tvSettingsOpen;
     final docked = splitSettingsTv;
+    final insets = MediaQuery.viewPaddingOf(context);
     final Widget player = Stack(
       children: [
         if (_videoTextureVisible)
@@ -2778,6 +2790,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     revealControls: _revealControls,
                     chapterMarks: _chapterMarks,
                     isLocked: _isLocked,
+                    skipRanges: _skipRanges,
                   ),
             controller: _controller,
             // When docked left for the settings panel, fill the (narrower) slot
@@ -2831,10 +2844,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             ),
           ],
         ),
+        // Above the floating panel, on its right edge, where the eye already
+        // goes for what comes next.
         if (enableAniSkip && (_hasOpeningSkip || _hasEndingSkip))
           Positioned(
-            right: 0,
-            bottom: 80,
+            right: insets.right + ShioriSpace.s8,
+            bottom: insets.bottom + _aboveControlsPanel,
             child: ValueListenableBuilder<bool>(
               valueListenable: _isLocked,
               builder: (context, isLocked, _) {
@@ -2867,8 +2882,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         // to roll on: say so, and let the viewer stay.
         if (hasNextEpisode)
           Positioned(
-            right: ShioriSpace.s16,
-            bottom: 140,
+            right: insets.right + ShioriSpace.s16,
+            bottom: insets.bottom + _aboveControlsPanel + ShioriSpace.s48,
             child: Consumer(
               builder: (context, ref, _) {
                 if (!ref.watch(autoPlayNextEpisodeProvider)) {

@@ -1,11 +1,11 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
+import 'package:shiori/shiori.dart';
 
 void main() {
-  testWidgets('places mobile media indicators below the portrait header', (
+  testWidgets('places a phone gauge on the side its swipe is on', (
     tester,
   ) async {
     const size = Size(390, 844);
@@ -32,10 +32,12 @@ void main() {
           isVolume ? 'volume-indicator-card' : 'brightness-indicator-card',
         ),
       );
-      final expectedTop = math.max(insets.top + 72, size.height * 0.18);
-      expect(tester.getTopLeft(indicator).dy, closeTo(expectedTop, 0.1));
-      expect(tester.getCenter(indicator).dx, size.width / 2);
-      expect(tester.getSize(indicator), const Size(210, 42));
+      expect(find.byType(ShioriGestureGauge), findsOneWidget);
+      // Volume on the right, brightness on the left, centred in height.
+      final center = tester.getCenter(indicator);
+      expect(center.dx > size.width / 2, isVolume);
+      expect(center.dy, closeTo(size.height / 2, 1));
+      expect(find.text('50'), findsOneWidget);
 
       value.value = 0;
       await tester.pump();
@@ -64,9 +66,7 @@ void main() {
     expect(tester.getTopLeft(indicator).dy, 80);
   });
 
-  testWidgets('keeps adaptive landscape placement near the top controls', (
-    tester,
-  ) async {
+  testWidgets('keeps a shorter gauge in landscape', (tester) async {
     const size = Size(568, 320);
     await _setSurfaceSize(tester, size);
     final value = ValueNotifier(0.5);
@@ -84,7 +84,8 @@ void main() {
     );
 
     final indicator = find.byKey(const ValueKey('volume-indicator-card'));
-    expect(tester.getTopLeft(indicator).dy, 72);
+    expect(tester.getSize(indicator).height, lessThan(size.height));
+    expect(tester.takeException(), isNull);
   });
 }
 
@@ -94,6 +95,8 @@ Widget _testApp({
   EdgeInsets insets = EdgeInsets.zero,
 }) {
   return MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
     home: MediaQuery(
       data: MediaQueryData(size: size, padding: insets, viewPadding: insets),
       child: Scaffold(body: child),

@@ -215,6 +215,28 @@ void main() {
   });
 
   group('ShioriToastCard', () {
+    testWidgets('is as tall as its content when given the whole screen', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _host(
+          Align(
+            alignment: Alignment.topCenter,
+            child: ShioriToastCard(
+              message: 'Source is not installed',
+              tone: ShioriToastTone.warning,
+              actions: [ShioriToastAction('Migrate', () {})],
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSize(find.byType(ShioriToastCard)).height,
+        lessThan(200),
+      );
+    });
+
     testWidgets('shows the message and runs its actions', (tester) async {
       var undone = false;
       await tester.pumpWidget(

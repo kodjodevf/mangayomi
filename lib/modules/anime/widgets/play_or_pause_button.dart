@@ -33,7 +33,7 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
 
   StreamSubscription<bool>? subscription;
 
-  double get iconSize => isDesktop ? 25 : 65;
+  static const double iconSize = 25;
 
   @override
   void setState(VoidCallback fn) {
@@ -63,6 +63,18 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
 
   @override
   Widget build(BuildContext context) {
+    // On a phone, the screen's one main control: the accent disc, as
+    // Shiori draws it over a picture. Desktop keeps a glyph in its bar.
+    if (!isDesktop) {
+      return ShioriOverlayIconButton(
+        tooltip: '${context.l10n.play} / ${context.l10n.pause}',
+        focusNode: widget.focusNode,
+        onPressed: widget.controller.player.playOrPause,
+        emphasized: true,
+        size: 34,
+        icon: AnimatedIcon(progress: animation, icon: AnimatedIcons.play_pause),
+      );
+    }
     return IconButton(
       // One button for both: the icon shows which, the label names the pair.
       tooltip: '${context.l10n.play} / ${context.l10n.pause}',

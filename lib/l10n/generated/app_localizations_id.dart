@@ -2552,6 +2552,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get brightness => 'Kecerahan';
 
   @override
+  String get volume => 'Volume';
+
+  @override
   String get contrast => 'Kontras';
 
   @override

@@ -17,6 +17,7 @@ import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:mangayomi/services/screen_brightness.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
 import 'package:media_kit_video/media_kit_video.dart';
@@ -31,6 +32,9 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
   final GlobalKey<VideoState> videoStatekey;
   final Widget bottomButtonBarWidget;
   final ValueNotifier<List<(String, int)>> chapterMarks;
+
+  /// The opening and the ending AniSkip knows, marked on the timeline.
+  final ValueListenable<List<(int, int)>>? skipRanges;
   // Bumped by the player on each d-pad key so the controls reveal on a TV remote.
   final ValueNotifier<int> revealControls;
   final ValueNotifier<bool>? isLocked;
@@ -44,6 +48,7 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
     required this.chapterMarks,
     required this.revealControls,
     this.isLocked,
+    this.skipRanges,
   });
 
   @override
@@ -522,30 +527,6 @@ class _MobileControllerWidgetState
                                   ),
                                 ),
                               ),
-                              Positioned(
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                height: 180,
-                                child: IgnorePointer(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.bottomCenter,
-                                        end: Alignment.topCenter,
-                                        colors: [
-                                          Theme.of(context).colorScheme.scrim
-                                              .withValues(alpha: 0.85),
-                                          Theme.of(context).colorScheme.scrim
-                                              .withValues(alpha: 0.40),
-                                          Colors.transparent,
-                                        ],
-                                        stops: const [0.0, 0.70, 1.0],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
                             ],
                             Positioned.fill(
                               child: Listener(
@@ -672,44 +653,54 @@ class _MobileControllerWidgetState
                                     widget.streamController,
                                     widget.videoController,
                                     playPauseFocus: _playPauseFocus,
+                                    skipSeconds: skipDuration,
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          bottomControls: Stack(
-                            alignment: Alignment.bottomCenter,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: ShioriSpace.s12,
-                                ),
-                                child: CustomSeekBar(
-                                  onSeekStart: (value) {
-                                    setState(() {
-                                      swipeDuration = value.inSeconds;
-                                      showSwipeDuration = true;
-                                    });
-                                    _timer?.cancel();
-                                  },
-                                  onSeekEnd: (value) {
-                                    _timer = Timer(controlsHoverDuration, () {
-                                      if (mounted) {
-                                        setState(() {
-                                          visible = false;
-                                        });
-                                      }
-                                    });
-                                    setState(() {
-                                      showSwipeDuration = false;
-                                    });
-                                  },
-                                  player: widget.videoController.player,
-                                  chapterMarks: widget.chapterMarks,
-                                ),
+                          // The timeline and the settings in one panel
+                          // floating over the foot of the picture, as the
+                          // manga reader's: its own ground, so no gradient.
+                          bottomControls: Padding(
+                            padding: const EdgeInsets.fromLTRB(
+                              ShioriSpace.s8,
+                              0,
+                              ShioriSpace.s8,
+                              ShioriSpace.s8,
+                            ),
+                            child: ShioriOverlayPanel(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  CustomSeekBar(
+                                    onSeekStart: (value) {
+                                      setState(() {
+                                        swipeDuration = value.inSeconds;
+                                        showSwipeDuration = true;
+                                      });
+                                      _timer?.cancel();
+                                    },
+                                    onSeekEnd: (value) {
+                                      _timer = Timer(controlsHoverDuration, () {
+                                        if (mounted) {
+                                          setState(() {
+                                            visible = false;
+                                          });
+                                        }
+                                      });
+                                      setState(() {
+                                        showSwipeDuration = false;
+                                      });
+                                    },
+                                    player: widget.videoController.player,
+                                    chapterMarks: widget.chapterMarks,
+                                    skipRanges: widget.skipRanges,
+                                  ),
+                                  widget.bottomButtonBarWidget,
+                                ],
                               ),
-                              widget.bottomButtonBarWidget,
-                            ],
+                            ),
                           ),
                         ),
                   ],
@@ -729,20 +720,27 @@ class _MobileControllerWidgetState
                     child: Column(
                       children: [
                         const Spacer(),
-                        Stack(
-                          alignment: Alignment.bottomCenter,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: ShioriSpace.s12,
-                              ),
-                              child: CustomSeekBar(
-                                delta: _seekBarDeltaValueNotifier,
-                                player: widget.videoController.player,
-                                chapterMarks: widget.chapterMarks,
-                              ),
+                        // The timeline alone while a double tap or a swipe
+                        // seeks, in the same panel as with the controls.
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            ShioriSpace.s8,
+                            0,
+                            ShioriSpace.s8,
+                            ShioriSpace.s8,
+                          ),
+                          child: ShioriOverlayPanel(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: ShioriSpace.s12,
+                              vertical: ShioriSpace.s8,
                             ),
-                          ],
+                            child: CustomSeekBar(
+                              delta: _seekBarDeltaValueNotifier,
+                              player: widget.videoController.player,
+                              chapterMarks: widget.chapterMarks,
+                              skipRanges: widget.skipRanges,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -960,22 +958,32 @@ class _MobileControllerWidgetState
   }
 }
 
+/// The controls in the middle of the picture: the episodes on either side,
+/// a jump of [skipSeconds] back and forward, and play in the accent between
+/// them, the one control the eye goes to.
 List<Widget> mobilePrimaryButtonBar(
   BuildContext context,
   GlobalKey<VideoState> key,
   AnimeStreamController streamController,
   VideoController controller, {
   FocusNode? playPauseFocus,
+  int skipSeconds = 10,
 }) {
   bool hasPrevEpisode =
       streamController.getEpisodeIndex().$1 + 1 !=
       streamController.getEpisodesLength(streamController.getEpisodeIndex().$2);
   bool hasNextEpisode = streamController.getEpisodeIndex().$1 != 0;
   final isFullScreen = isFullscreen(context);
+  final l10n = context.l10n;
+  void seekBy(int seconds) {
+    final player = controller.player;
+    final target = player.state.position + Duration(seconds: seconds);
+    player.seek(target.clamp(Duration.zero, player.state.duration));
+  }
+
   return [
     const Spacer(flex: 3),
-    IconButton(
-      style: mobilePlayerEpisodeNavigationButtonStyle(),
+    ShioriOverlayIconButton(
       onPressed: hasPrevEpisode
           ? () {
               if (isFullScreen) {
@@ -987,14 +995,28 @@ List<Widget> mobilePrimaryButtonBar(
               );
             }
           : null,
-      tooltip: context.l10n.previous_episode,
-      icon: const Icon(Symbols.skip_previous_rounded, fill: 1, size: 28),
+      tooltip: l10n.previous_episode,
+      size: 26,
+      icon: const Icon(Symbols.skip_previous_rounded, fill: 1),
+    ),
+    const Spacer(),
+    ShioriOverlayIconButton(
+      onPressed: () => seekBy(-skipSeconds),
+      tooltip: l10n.shortcut_seek_back(skipSeconds),
+      caption: '$skipSeconds s',
+      icon: const Icon(Symbols.fast_rewind_rounded, fill: 1),
     ),
     const Spacer(),
     CustomPlayOrPauseButton(controller: controller, focusNode: playPauseFocus),
     const Spacer(),
-    IconButton(
-      style: mobilePlayerEpisodeNavigationButtonStyle(),
+    ShioriOverlayIconButton(
+      onPressed: () => seekBy(skipSeconds),
+      tooltip: l10n.shortcut_seek_forward(skipSeconds),
+      caption: '$skipSeconds s',
+      icon: const Icon(Symbols.fast_forward_rounded, fill: 1),
+    ),
+    const Spacer(),
+    ShioriOverlayIconButton(
       onPressed: hasNextEpisode
           ? () {
               if (isFullScreen) {
@@ -1006,8 +1028,9 @@ List<Widget> mobilePrimaryButtonBar(
               );
             }
           : null,
-      tooltip: context.l10n.next_episode,
-      icon: const Icon(Symbols.skip_next_rounded, fill: 1, size: 28),
+      tooltip: l10n.next_episode,
+      size: 26,
+      icon: const Icon(Symbols.skip_next_rounded, fill: 1),
     ),
     const Spacer(flex: 3),
   ];

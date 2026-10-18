@@ -533,6 +533,7 @@
   "invert_colors": "色を反転",
   "grayscale": "グレースケール",
   "brightness": "明るさ",
+  "volume": "音量",
   "contrast": "コントラスト",
   "saturation": "彩度",
   "navigation_layout": "ナビゲーションレイアウト",

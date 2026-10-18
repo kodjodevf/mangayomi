@@ -2583,6 +2583,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get brightness => 'Яркость';
 
   @override
+  String get volume => 'Громкость';
+
+  @override
   String get contrast => 'Контраст';
 
   @override

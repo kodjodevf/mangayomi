@@ -942,6 +942,7 @@
   "invert_colors": "색상 반전",
   "grayscale": "흑백",
   "brightness": "밝기",
+  "volume": "볼륨",
   "contrast": "대비",
   "saturation": "채도",
   "navigation_layout": "탐색 레이아웃",

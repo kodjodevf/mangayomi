@@ -9,6 +9,10 @@ class CustomTrackShape extends SliderTrackShape {
   final double bufferPosition;
   final List<(String, int)> chapterMarks;
   final double chapterMarkWidth;
+
+  /// Stretches of the video to mark on the track, in milliseconds: the
+  /// opening and the ending AniSkip knows.
+  final List<(int, int)> highlights;
   double trackWidth;
 
   CustomTrackShape({
@@ -19,6 +23,7 @@ class CustomTrackShape extends SliderTrackShape {
     required this.chapterMarks,
     this.chapterMarkWidth = 3,
     this.trackWidth = 5,
+    this.highlights = const [],
   });
 
   @override
@@ -119,7 +124,32 @@ class CustomTrackShape extends SliderTrackShape {
       );
     }
 
-    // 4. Chapter Marks / Ticks
+    // 4. Marked stretches (opening, ending): lighter over the track, so
+    // they read ahead of the play head and behind it alike.
+    if (highlights.isNotEmpty && maxValue > 0) {
+      final highlightPaint = Paint()
+        ..color = Colors.white.withValues(alpha: Alphas.disabled)
+        ..style = PaintingStyle.fill;
+      for (final (start, end) in highlights) {
+        final from = (start / maxValue).clamp(0.0, 1.0);
+        final to = (end / maxValue).clamp(0.0, 1.0);
+        if (to <= from) continue;
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromLTRB(
+              trackRect.left + trackWidth * from,
+              trackRect.top,
+              trackRect.left + trackWidth * to,
+              trackRect.bottom,
+            ),
+            trackRadius,
+          ),
+          highlightPaint,
+        );
+      }
+    }
+
+    // 5. Chapter Marks / Ticks
     if (chapterMarks.isNotEmpty && maxValue > 0) {
       final markPaint = Paint()
         ..color = Colors.white.withValues(alpha: 0.70)
