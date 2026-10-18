@@ -146,8 +146,10 @@ ThemeData _withTokens(ThemeData theme, ShioriDensity density) {
     // A floating action is the screen's main one: the accent, as a primary
     // button, read on it with onAccent and round as a pill. Material's own
     // primary container drew it a darker shade than every other button.
-    // Pages move on Shiori's short shared axis; Apple platforms keep their
-    // own, which carries the edge swipe back.
+    // Every page moves on Shiori's shared axis, the same on every platform,
+    // so a screen opened from More moves as one opened from the library.
+    // Pages move on Material's shared axis, as Mihon's do, everywhere but
+    // Apple, which keeps Cupertino's and its edge swipe back.
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
         TargetPlatform.android: ShioriPageTransitionsBuilder(),

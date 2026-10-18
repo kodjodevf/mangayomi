@@ -1,4 +1,5 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shiori/shiori.dart';
@@ -274,21 +275,18 @@ void main() {
       expect(theme.dividerColor, tokens.color.hairline);
     });
 
-    test('pages move on Shiori\'s axis, Apple keeps its own', () {
-      final theme = build(Brightness.dark);
-      final builders = theme.pageTransitionsTheme.builders;
-      expect(
-        builders[TargetPlatform.android],
-        isA<ShioriPageTransitionsBuilder>(),
-      );
-      expect(
-        builders[TargetPlatform.windows],
-        isA<ShioriPageTransitionsBuilder>(),
-      );
-      expect(
-        builders[TargetPlatform.iOS],
-        isNot(isA<ShioriPageTransitionsBuilder>()),
-      );
+    test('pages move on Shiori\'s axis, Apple keeps Cupertino\'s', () {
+      final builders = build(Brightness.dark).pageTransitionsTheme.builders;
+      for (final platform in TargetPlatform.values) {
+        final apple =
+            platform == TargetPlatform.iOS || platform == TargetPlatform.macOS;
+        expect(
+          builders[platform],
+          apple
+              ? isA<CupertinoPageTransitionsBuilder>()
+              : isA<ShioriPageTransitionsBuilder>(),
+        );
+      }
     });
 
     test('tabs mark the current one with an accent pill', () {
