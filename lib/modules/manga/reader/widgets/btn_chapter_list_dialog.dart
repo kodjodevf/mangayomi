@@ -329,35 +329,39 @@ class _ChapterListTileState extends State<ChapterListTile> {
                                     : const SizedBox.shrink();
                               },
                             ),
+                          // Bounded by the row: a long scanlator name is
+                          // cut, where its Flexible needs a width to cut at.
                           if (chapter.scanlator != null &&
                               chapter.scanlator!.isNotEmpty)
-                            Row(
-                              children: [
-                                if (!(chapter.manga.value!.isLocalArchive ??
-                                        false) &&
-                                    (chapter.dateUpload != null &&
-                                        chapter.dateUpload!.isNotEmpty))
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: ShioriSpace.s8,
+                            Flexible(
+                              child: Row(
+                                children: [
+                                  if (!(chapter.manga.value!.isLocalArchive ??
+                                          false) &&
+                                      (chapter.dateUpload != null &&
+                                          chapter.dateUpload!.isNotEmpty))
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: ShioriSpace.s8,
+                                      ),
+                                      child: Text('·', style: meta),
                                     ),
-                                    child: Text('·', style: meta),
+                                  Icon(
+                                    Symbols.group_rounded,
+                                    fill: 1,
+                                    size: 12,
+                                    color: c.fgMuted,
                                   ),
-                                Icon(
-                                  Symbols.group_rounded,
-                                  fill: 1,
-                                  size: 12,
-                                  color: c.fgMuted,
-                                ),
-                                const SizedBox(width: ShioriSpace.s4),
-                                Flexible(
-                                  child: Text(
-                                    chapter.scanlator!,
-                                    style: meta,
-                                    overflow: TextOverflow.ellipsis,
+                                  const SizedBox(width: ShioriSpace.s4),
+                                  Flexible(
+                                    child: Text(
+                                      chapter.scanlator!,
+                                      style: meta,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                         ],
                       ),
