@@ -25,6 +25,10 @@ import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_gate.dart';
+import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
+import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
+import 'package:mangayomi/modules/manga/reader/mixins/chapter_controller_mixin.dart';
 import 'package:mangayomi/services/chapter_cache.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/services/downloaded_chapter.dart';
@@ -794,6 +798,151 @@ void main() {
       }
     },
   );
+
+  test(
+    'an open reader keeps its ID until final progress and history are saved',
+    () async {
+      final openChapter = db.chapters.getSync(10)!;
+      db.writeTxnSync(() {
+        final duplicate = Chapter(
+          id: 11,
+          mangaId: 1,
+          name: 'Chapter 1',
+          url: '/alternate',
+        )..manga.value = db.mangas.getSync(1);
+        db.chapters.putSync(duplicate);
+        duplicate.manga.saveSync();
+        final download = Download(
+          id: 11,
+          succeeded: 100,
+          failed: 0,
+          total: 100,
+          isDownload: true,
+          isStartDownload: false,
+        )..chapter.value = duplicate;
+        db.downloads.putSync(download);
+        download.chapter.saveSync();
+      });
+      final container = ProviderContainer(
+        overrides: [
+          getDetailProvider.overrideWith((ref, args) async => _catalog()),
+        ],
+      );
+      final reader = container.read(
+        readerControllerProvider(chapter: openChapter).notifier,
+      );
+      final refresh = updateMangaDetailProvider(
+        mangaId: 1,
+        isInit: false,
+        showToast: false,
+      );
+      try {
+        await container.read(refresh.future);
+        expect(db.chapters.getSync(10), isNotNull);
+        expect(db.chapters.getSync(11), isNotNull);
+        reader.setPageIndex(7, true, List.filled(30, 'page'));
+        await dbWriteQueue.run(() {});
+        expect(db.chapters.getSync(10)!.lastPageRead, '8');
+      } catch (_) {
+        container.dispose();
+        rethrow;
+      }
+      final next = ProviderContainer(
+        overrides: [
+          getDetailProvider.overrideWith((ref, args) async => _catalog()),
+        ],
+      );
+      addTearDown(next.dispose);
+      // A reader's dispose starts an async history save and closes its provider
+      // without awaiting it. Put refresh between that save's two queued writes.
+      final entered = Completer<void>(), release = Completer<void>();
+      final blocker = dbWriteQueue.run(() async {
+        entered.complete();
+        await release.future;
+      });
+      await entered.future;
+      final historySave = reader.setHistoryUpdate();
+      container.dispose();
+      final duringClose = next.read(refresh.future);
+      await Future<void>.delayed(Duration.zero);
+      release.complete();
+      await blocker;
+      await duringClose;
+      await historySave;
+      await dbWriteQueue.run(() {});
+      expect(db.chapters.getSync(10), isNotNull);
+      await next.refresh(refresh.future);
+      expect(db.chapters.getSync(10), isNull);
+      expect(db.chapters.getSync(11)!.lastPageRead, '8');
+      expect(db.downloads.getSync(11)!.isDownload, true);
+      final index = db.settings.getSync(227)!.chapterPageIndexList!.single;
+      expect((index.chapterId, index.index), (11, 7));
+      final history = db.historys.where().findFirstSync()!;
+      history.chapter.loadSync();
+      expect((history.chapterId, history.chapter.value?.id), (11, 11));
+    },
+  );
+
+  for (final kind in ['manga', 'novel', 'anime']) {
+    test(
+      '$kind opening a stale chapter follows the survivor for history',
+      () async {
+        final stale = db.chapters.getSync(10)!;
+        db.writeTxnSync(() {
+          final duplicate = Chapter(
+            id: 11,
+            mangaId: 1,
+            name: 'Chapter 1',
+            url: '/alternate',
+          )..manga.value = db.mangas.getSync(1);
+          db.chapters.putSync(duplicate);
+          duplicate.manga.saveSync();
+          final download = Download(
+            id: 11,
+            succeeded: 100,
+            failed: 0,
+            total: 100,
+            isDownload: true,
+            isStartDownload: false,
+          )..chapter.value = duplicate;
+          db.downloads.putSync(download);
+          download.chapter.saveSync();
+        });
+        final container = ProviderContainer(
+          overrides: [
+            getDetailProvider.overrideWith((ref, args) async => _catalog()),
+          ],
+        );
+        addTearDown(container.dispose);
+        await container.read(
+          updateMangaDetailProvider(
+            mangaId: 1,
+            isInit: false,
+            showToast: false,
+          ).future,
+        );
+        expect(db.chapters.getSync(10), isNull);
+        final ChapterControllerMixin controller = switch (kind) {
+          'novel' => container.read(
+            novelReaderControllerProvider(chapter: stale).notifier,
+          ),
+          'anime' => container.read(
+            animeStreamControllerProvider(episode: stale).notifier,
+          ),
+          _ => container.read(
+            readerControllerProvider(chapter: stale).notifier,
+          ),
+        };
+        expect(controller.chapter.id, 11);
+        await controller.setHistoryUpdate();
+        expect(db.chapters.getSync(10), isNull);
+        final history = db.historys.where().findFirstSync()!;
+        history.chapter.loadSync();
+        expect((history.chapterId, history.chapter.value?.id), (11, 11));
+        expect(db.downloads.getSync(11)!.isDownload, true);
+      },
+    );
+  }
 
   for (final markedB in [false, true]) {
     test(

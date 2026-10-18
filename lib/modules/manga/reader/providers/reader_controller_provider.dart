@@ -46,9 +46,15 @@ class ReaderController extends _$ReaderController
     with ChapterControllerMixin, ChapterReaderSettingsMixin {
   @override
   KeepAliveLink build({required Chapter chapter}) {
+    _sessionChapter = chapterRepository.resolveForReading(chapter);
+    ref.onDispose(chapterRepository.retainForReading(this.chapter));
     _keepAliveLink = ref.keepAlive();
     return _keepAliveLink!;
   }
+
+  Chapter? _sessionChapter;
+  @override
+  Chapter get chapter => _sessionChapter ?? super.chapter;
 
   KeepAliveLink? _keepAliveLink;
   KeepAliveLink? get keepAliveLink => _keepAliveLink;

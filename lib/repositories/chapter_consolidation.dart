@@ -6,6 +6,7 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/update.dart';
+import 'package:mangayomi/repositories/db_write_queue.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/services/downloaded_chapter.dart';
@@ -35,6 +36,30 @@ int resolveChapterAlias(Isar database, int id) {
 }
 
 void clearChapterAliases(Isar database) => _chapterAliases[database] = null;
+
+// Readers retain their ID until disposal and queued final writes have drained.
+final _readingChapters = Expando<Map<int, int>>();
+
+void Function() retainReadingChapter(Isar database, int id) {
+  final readers = _readingChapters[database] ??= {};
+  readers[id] = (readers[id] ?? 0) + 1;
+  var released = false;
+  return () {
+    if (released) return;
+    released = true;
+    dbWriteQueue.run(() {
+      final count = readers[id] ?? 0;
+      if (count <= 1) {
+        readers.remove(id);
+      } else {
+        readers[id] = count - 1;
+      }
+    });
+  };
+}
+
+bool _isReadingChapter(Isar database, int id) =>
+    (_readingChapters[database]?[id] ?? 0) > 0;
 
 class ChapterConsolidation {
   ChapterConsolidation(
@@ -70,7 +95,8 @@ Future<ChapterConsolidation> consolidateChapterDuplicates(
   };
   final activeIds = {
     for (final c in chapters)
-      if (isScheduled(c.id!) ||
+      if (_isReadingChapter(database, c.id!) ||
+          isScheduled(c.id!) ||
           (downloads[c.id!]?.isStartDownload == true &&
               downloads[c.id!]?.isDownload != true))
         c.id!,
@@ -205,7 +231,14 @@ Future<ChapterConsolidation> consolidateChapterDuplicates(
     final ids = group.map((c) => c.id!).toSet();
     // Keep an in-flight worker's ID, path and queue record valid. A later
     // refresh can consolidate once the workers/queued requests have finished.
-    if (ids.any((id) => activeIds.contains(id) || isScheduled(id))) continue;
+    if (ids.any(
+      (id) =>
+          activeIds.contains(id) ||
+          isScheduled(id) ||
+          _isReadingChapter(database, id),
+    )) {
+      continue;
+    }
     final stored = group.where((c) => storageIds.contains(c.id)).toList();
     final physical = stored
         .where((c) => (actualPaths[c.id]?.isNotEmpty ?? false))

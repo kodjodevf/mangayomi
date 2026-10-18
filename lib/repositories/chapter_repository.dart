@@ -147,6 +147,18 @@ class ChapterRepository {
     isar.chapters.clearSync();
   }
 
+  Chapter resolveForReading(Chapter chapter) {
+    final current = isar.chapters.getSync(
+      resolveChapterAlias(isar, chapter.id!),
+    );
+    return current != null && current.mangaId == chapter.mangaId
+        ? current
+        : chapter;
+  }
+
+  void Function() retainForReading(Chapter chapter) =>
+      retainReadingChapter(isar, chapter.id!);
+
   void publishAliases(Map<int, Chapter> canonical) =>
       publishChapterAliases(isar, canonical);
 

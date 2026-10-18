@@ -11,7 +11,14 @@ part 'novel_reader_controller_provider.g.dart';
 class NovelReaderController extends _$NovelReaderController
     with ChapterControllerMixin, ChapterReaderSettingsMixin {
   @override
-  void build({required Chapter chapter}) {}
+  void build({required Chapter chapter}) {
+    _sessionChapter = chapterRepository.resolveForReading(chapter);
+    ref.onDispose(chapterRepository.retainForReading(this.chapter));
+  }
+
+  Chapter? _sessionChapter;
+  @override
+  Chapter get chapter => _sessionChapter ?? super.chapter;
 
   // Keep incognitoMode as a final field (read once, not on every access).
   @override
