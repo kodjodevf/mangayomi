@@ -435,21 +435,23 @@ shortcuts have their own table (`playerShortcutKeys`), listed behind ? or
 F1 and in the settings, in the readers' dialog (`showKeyboardShortcuts`);
 a seek from the keyboard, with the controls hidden, says how far it went.
 The phone's brightness swipe goes through the readers' `ScreenBrightness`.
-On a phone the controls fall in three places, each with one role. At the
-top, who and where: the way back, the series and the episode, the episode
-list and the settings (`Symbols.tune_rounded`). In the middle, the previous
-and the next episode, and play between them as the accent disc
-(`ShioriOverlayIconButton`), the one control the eye goes to; a jump within
-the episode is a double tap on either side. At the foot, one
-`ShioriOverlayPanel` floating clear of the edges, as the manga reader's: the
-timeline, with the time played on the left and the time left on the right (a
-tap shows the length), the chapters and the opening and ending AniSkip knows
-marked on it; under it, how it plays, as `ShioriOverlayPill`s that keep their
-value in sight (lock, subtitles, audio, quality, speed, fit), then
-fullscreen. A swipe for the brightness or the volume shows a
-`ShioriGestureGauge` on the side the thumb is on. Locked, only a labelled
-Unlock pill remains. Skip intro and Next episode sit above the panel, never
-under it. A speed is written one way everywhere: "1×", "1.5×".
+On a phone the controls fall in three places, each with one role, laid out
+as desktop's so each control has one place. At the top, who and where: the
+way back, the series and the episode, and the episode list. In the middle,
+the previous and the next episode, and play between them as the accent disc
+(`ShioriOverlayIconButton`); a jump within the episode is a double tap on
+either side. Just above the foot, on the left, the lock and the skip (+85 s
+or the source's own button), where desktop puts its skip. At the foot, one
+`ShioriOverlayPanel` floating clear of the edges: the timeline, with the time
+played on the left and the time left on the right (a tap shows the length),
+the chapters and the opening and ending AniSkip knows marked on it; under
+it, the chapter on the left and, on the right, `ShioriOverlayPill`s that keep
+their value in sight (quality, subtitles, audio, speed, fit), then the
+settings and fullscreen. The settings are only there, on every platform. A
+swipe for the brightness or the volume shows a `ShioriGestureGauge` on the
+side the thumb is on. Locked, only a labelled Unlock pill remains. Skip intro
+and Next episode sit above the panel, never under it. A speed is written one
+way everywhere: "1×", "1.5×".
 
 Desktop and TV share the panel. On desktop, the bar under the timeline
 (episodes, play as a small accent disc, the jumps, the volume, the pills)

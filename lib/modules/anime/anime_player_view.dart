@@ -2400,68 +2400,56 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   Widget _mobileBottomButtonBar(BuildContext context) {
     final compactPortrait = _usesCompactPortraitControls(context);
-    // The second line of the floating panel, under the timeline; the panel
-    // gives it its ground and its margins: how it plays (the lock, the
-    // stream's choices, the speed, the fit), then fullscreen. The episodes
+    // The line under the timeline, laid out as desktop's: the chapter on
+    // the left; on the right the stream's and the playback's choices, each
+    // a pill with its value, then the settings and fullscreen. The lock and
+    // the skip sit above the panel (see [_mobileAbovePanel]); the episodes
     // are in the middle of the picture and in the top bar.
     return MobilePlayerBottomControlsLayout(
       compactPortrait: compactPortrait,
-      lockButton: Row(
-        mainAxisSize: MainAxisSize.min,
+      lockButton: const SizedBox.shrink(),
+      seekButton: const SizedBox.shrink(),
+      chapterButton: compactPortrait
+          ? const SizedBox.shrink()
+          : _chapterMarkWidget(),
+      shortcutButtons: _buildSettingsButtons(
+        context,
+        iconOnly: compactPortrait,
+        pills: compactPortrait
+            ? const {
+                PlayerPill.subtitles,
+                PlayerPill.speed,
+                PlayerPill.settings,
+                PlayerPill.fullscreen,
+              }
+            : const {...PlayerPill.values},
+      ),
+    );
+  }
+
+  /// Above the panel, on the left as desktop's skip: the lock and the
+  /// skip (+85 s, or the source's own button).
+  Widget _mobileAbovePanel(BuildContext context) {
+    final compactPortrait = _usesCompactPortraitControls(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s8),
+      child: Row(
         children: [
           KeyedSubtree(
             key: const ValueKey('mobile-player-lock-button'),
             child: ShioriOverlayPill(
               icon: Symbols.lock_open_rounded,
               tooltip: context.l10n.lock,
-              compact: true,
               onTap: () {
                 HapticFeedback.lightImpact();
                 _isLocked.value = true;
               },
             ),
           ),
-          // The stream's choices and the playback's, each a pill with its
-          // value; a narrow portrait row keeps the subtitles and the speed.
-          _buildSettingsButtons(
-            context,
-            iconOnly: compactPortrait,
-            pills: compactPortrait
-                ? const {PlayerPill.subtitles, PlayerPill.speed}
-                : const {
-                    PlayerPill.quality,
-                    PlayerPill.subtitles,
-                    PlayerPill.audio,
-                    PlayerPill.speed,
-                    PlayerPill.fit,
-                  },
-          ),
+          const SizedBox(width: ShioriSpace.s8),
+          _seekToWidget(iconOnly: compactPortrait),
         ],
       ),
-      seekButton: _seekToWidget(iconOnly: compactPortrait),
-      chapterButton: compactPortrait
-          ? const SizedBox.shrink()
-          : _chapterMarkWidget(),
-      shortcutButtons: _portraitFullscreenButton(context),
-    );
-  }
-
-  Widget _portraitFullscreenButton(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, _) {
-        final isFullscreen = ref.watch(fullscreenProvider);
-        return KeyedSubtree(
-          key: const ValueKey('mobile-player-portrait-fullscreen'),
-          child: ShioriOverlayPill(
-            icon: isFullscreen
-                ? Symbols.fullscreen_exit_rounded
-                : Symbols.fullscreen_rounded,
-            tooltip: context.l10n.fullscreen,
-            compact: true,
-            onTap: () => _toggleFullscreen(isFullscreen),
-          ),
-        );
-      },
     );
   }
 
@@ -2646,16 +2634,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       );
     }
 
-    Widget settingsButton({Key? key}) => Builder(
-      builder: (buttonContext) => ShioriOverlayIconButton(
-        key: key,
-        tooltip: context.l10n.settings,
-        size: 24,
-        onPressed: () => _openPlayerSettings(buttonContext),
-        icon: const Icon(Symbols.tune_rounded),
-      ),
-    );
-
     // The series and the episode, as the readers' bars and the loading
     // state name them.
     final title = Padding(
@@ -2694,13 +2672,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 onPressed: toggleAlwaysOnTop,
               ),
             episodesButton(),
-            // A phone shares from the settings.
+            // A phone shares from the settings. The settings themselves are
+            // in the panel at the foot, on every platform, not here too.
             if (isDesktop)
               btnToShowShareScreenshot(
                 widget.episode,
                 onChanged: _pauseWhileOpen,
               ),
-            settingsButton(),
           ],
         ),
         portraitActions: MobilePlayerPortraitActionTheme(
@@ -2710,9 +2688,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               KeyedSubtree(
                 key: const ValueKey('mobile-player-portrait-episodes'),
                 child: episodesButton(),
-              ),
-              settingsButton(
-                key: const ValueKey('mobile-player-portrait-settings'),
               ),
             ],
           ),
@@ -2796,6 +2771,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     topButtonBarWidget: _topButtonBar(context),
                     videoStatekey: _key,
                     bottomButtonBarWidget: _mobileBottomButtonBar(context),
+                    abovePanelWidget: _mobileAbovePanel(context),
                     streamController: _streamController,
                     revealControls: _revealControls,
                     chapterMarks: _chapterMarks,

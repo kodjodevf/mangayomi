@@ -36,6 +36,10 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
 
   /// The opening and the ending AniSkip knows, marked on the timeline.
   final ValueListenable<List<(int, int)>>? skipRanges;
+
+  /// A row just above the panel, on the left: the lock and the skip, as
+  /// desktop's skip sits above its bar.
+  final Widget? abovePanelWidget;
   // Bumped by the player on each d-pad key so the controls reveal on a TV remote.
   final ValueNotifier<int> revealControls;
   final ValueNotifier<bool>? isLocked;
@@ -50,6 +54,7 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
     required this.revealControls,
     this.isLocked,
     this.skipRanges,
+    this.abovePanelWidget,
   });
 
   @override
@@ -662,45 +667,55 @@ class _MobileControllerWidgetState
                           // The timeline and the settings in one panel
                           // floating over the foot of the picture, as the
                           // manga reader's: its own ground, so no gradient.
-                          bottomControls: Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              ShioriSpace.s8,
-                              0,
-                              ShioriSpace.s8,
-                              ShioriSpace.s8,
-                            ),
-                            child: ShioriOverlayPanel(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  CustomSeekBar(
-                                    onSeekStart: (value) {
-                                      setState(() {
-                                        swipeDuration = value.inSeconds;
-                                        showSwipeDuration = true;
-                                      });
-                                      _timer?.cancel();
-                                    },
-                                    onSeekEnd: (value) {
-                                      _timer = Timer(controlsHoverDuration, () {
-                                        if (mounted) {
+                          bottomControls: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ?widget.abovePanelWidget,
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  ShioriSpace.s8,
+                                  0,
+                                  ShioriSpace.s8,
+                                  ShioriSpace.s8,
+                                ),
+                                child: ShioriOverlayPanel(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      CustomSeekBar(
+                                        onSeekStart: (value) {
                                           setState(() {
-                                            visible = false;
+                                            swipeDuration = value.inSeconds;
+                                            showSwipeDuration = true;
                                           });
-                                        }
-                                      });
-                                      setState(() {
-                                        showSwipeDuration = false;
-                                      });
-                                    },
-                                    player: widget.videoController.player,
-                                    chapterMarks: widget.chapterMarks,
-                                    skipRanges: widget.skipRanges,
+                                          _timer?.cancel();
+                                        },
+                                        onSeekEnd: (value) {
+                                          _timer = Timer(
+                                            controlsHoverDuration,
+                                            () {
+                                              if (mounted) {
+                                                setState(() {
+                                                  visible = false;
+                                                });
+                                              }
+                                            },
+                                          );
+                                          setState(() {
+                                            showSwipeDuration = false;
+                                          });
+                                        },
+                                        player: widget.videoController.player,
+                                        chapterMarks: widget.chapterMarks,
+                                        skipRanges: widget.skipRanges,
+                                      ),
+                                      widget.bottomButtonBarWidget,
+                                    ],
                                   ),
-                                  widget.bottomButtonBarWidget,
-                                ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         ),
                   ],
