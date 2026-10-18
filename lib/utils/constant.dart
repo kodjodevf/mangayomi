@@ -83,7 +83,7 @@ TrackStatus toTrackStatus(TrackStatus status, ItemType itemType, int syncId) {
     ),
     2 => (
       "assets/trackers_icons/tracker_anilist.webp",
-      "Anilist",
+      "AniList",
       const Color.fromRGBO(51, 37, 50, 1),
     ),
     3 => (

@@ -30,7 +30,8 @@ void applyReaderOrientation(int value) {
 void releaseReaderOrientation() => applyReaderOrientation(0);
 
 /// The orientation setting as a row, for Settings › Reader and the readers'
-/// sheets; nothing where the screen cannot be held.
+/// sheets; nothing where the screen cannot be held. No icon, as none of the
+/// rows around it in those groups has one.
 class ReaderOrientationRow extends ConsumerWidget {
   const ReaderOrientationRow({super.key});
 
@@ -39,7 +40,6 @@ class ReaderOrientationRow extends ConsumerWidget {
     if (!readerOrientationSupported) return const SizedBox.shrink();
     final l10n = context.l10n;
     return ShioriValueRow<int>(
-      icon: Symbols.screen_rotation_rounded,
       title: l10n.reader_orientation,
       value: ref.watch(readerOrientationStateProvider),
       options: [
@@ -78,7 +78,6 @@ class ReaderScreenBrightnessRow extends ConsumerWidget {
     final shown = system ? 50.0 : value.toDouble();
     final notifier = ref.read(readerScreenBrightnessStateProvider.notifier);
     return ShioriSliderRow(
-      icon: Symbols.brightness_6_rounded,
       title: l10n.screen_brightness,
       subtitle: system ? l10n.screen_brightness_system : null,
       value: shown,
