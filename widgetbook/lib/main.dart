@@ -131,7 +131,17 @@ final catalogue = <WidgetbookNode>[
       ),
       WidgetbookComponent(
         name: 'ShioriSegmentedControl',
-        useCases: [WidgetbookUseCase(name: 'Media', builder: _segmented)],
+        useCases: [
+          WidgetbookUseCase(name: 'Media', builder: _segmented),
+          WidgetbookUseCase(name: 'With tabs under it', builder: _switcher),
+        ],
+      ),
+      WidgetbookComponent(
+        name: 'Overlay controls',
+        useCases: [
+          WidgetbookUseCase(name: 'Video player', builder: _playerOverlay),
+          WidgetbookUseCase(name: 'Gesture gauges', builder: _gauges),
+        ],
       ),
       WidgetbookComponent(
         name: 'ShioriSectionHeader',
@@ -740,9 +750,14 @@ Widget _segmented(BuildContext context) {
     label: 'Selected',
     options: const ['Manga', 'Anime', 'Novel'],
   );
+  final badge = context.knobs.int.slider(
+    label: 'Anime badge',
+    initialValue: 4,
+    max: 120,
+  );
   return _padded(
     ShioriSegmentedControl<String>(
-      segments: const [
+      segments: [
         ShioriSegment(
           value: 'Manga',
           label: 'Manga',
@@ -752,6 +767,7 @@ Widget _segmented(BuildContext context) {
           value: 'Anime',
           label: 'Anime',
           icon: Symbols.video_library_rounded,
+          badge: badge,
         ),
         ShioriSegment(
           value: 'Novel',
@@ -761,6 +777,217 @@ Widget _segmented(BuildContext context) {
       ],
       selected: selected,
       onSelected: (_) {},
+    ),
+  );
+}
+
+/// The two levels of switching as a screen stacks them: the media in a
+/// segmented control, then the pages of that media as tabs with an accent
+/// pill that follows a swipe.
+Widget _switcher(BuildContext context) {
+  return DefaultTabController(
+    length: 2,
+    child: Column(
+      children: [
+        _padded(
+          ShioriSegmentedControl<String>(
+            segments: const [
+              ShioriSegment(
+                value: 'Manga',
+                label: 'Manga',
+                icon: Symbols.book_rounded,
+              ),
+              ShioriSegment(
+                value: 'Anime',
+                label: 'Anime',
+                icon: Symbols.video_library_rounded,
+                badge: 4,
+              ),
+              ShioriSegment(
+                value: 'Novel',
+                label: 'Novel',
+                icon: Symbols.auto_stories_rounded,
+              ),
+            ],
+            selected: 'Manga',
+            onSelected: (_) {},
+          ),
+        ),
+        const TabBar(
+          tabs: [
+            Tab(text: 'Sources'),
+            Tab(text: 'Extensions'),
+          ],
+        ),
+        const Expanded(
+          child: TabBarView(
+            children: [
+              Center(child: Text('Sources')),
+              Center(child: Text('Extensions')),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+/// The player's controls over a frame: identity and quick settings at the
+/// top, the one accented control in the middle, the floating panel at the
+/// foot with the timeline, the settings in sight and the next episode.
+Widget _playerOverlay(BuildContext context) {
+  final ground = context.knobs.object.dropdown<Color>(
+    label: 'Frame',
+    options: const [Colors.black, Colors.white],
+    labelBuilder: (c) => c == Colors.black ? 'Dark frame' : 'Light frame',
+  );
+  final tokens = context.shiori;
+  return ColoredBox(
+    color: ground,
+    child: Stack(
+      fit: StackFit.expand,
+      children: [
+        const ColoredBox(color: ShioriScrim.onImage),
+        Positioned(
+          top: ShioriSpace.s8,
+          left: ShioriSpace.s8,
+          right: ShioriSpace.s8,
+          child: Row(
+            children: [
+              ShioriOverlayIconButton(
+                icon: const Icon(Symbols.keyboard_arrow_down_rounded),
+                tooltip: 'Close',
+                onPressed: () {},
+              ),
+              Expanded(
+                child: Text(
+                  'Naruto: Shippuuden · Episode 495',
+                  style: tokens.text.section.copyWith(color: Colors.white),
+                ),
+              ),
+              ShioriOverlayPill(
+                icon: Symbols.high_quality_rounded,
+                label: '1080p',
+                tooltip: 'Quality',
+                onTap: () {},
+              ),
+              ShioriOverlayPill(
+                icon: Symbols.subtitles_rounded,
+                label: 'FR',
+                tooltip: 'Subtitles',
+                onTap: () {},
+              ),
+            ],
+          ),
+        ),
+        Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            spacing: ShioriSpace.s48,
+            children: [
+              ShioriOverlayIconButton(
+                icon: const Icon(Symbols.replay_10_rounded),
+                tooltip: 'Back 10 seconds',
+                onPressed: () {},
+              ),
+              ShioriOverlayIconButton(
+                icon: const Icon(Symbols.pause_rounded, fill: 1),
+                tooltip: 'Pause',
+                emphasized: true,
+                size: 32,
+                onPressed: () {},
+              ),
+              ShioriOverlayIconButton(
+                icon: const Icon(Symbols.forward_10_rounded),
+                tooltip: 'Forward 10 seconds',
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          left: ShioriSpace.s8,
+          right: ShioriSpace.s8,
+          bottom: ShioriSpace.s8,
+          child: ShioriOverlayPanel(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  spacing: ShioriSpace.s12,
+                  children: [
+                    const Text('12:04'),
+                    Expanded(child: Slider(value: 0.52, onChanged: (_) {})),
+                    const Text('−11:16'),
+                  ],
+                ),
+                Row(
+                  children: [
+                    ShioriOverlayPill(
+                      icon: Symbols.lock_open_rounded,
+                      tooltip: 'Lock',
+                      compact: true,
+                      onTap: () {},
+                    ),
+                    ShioriOverlayPill(
+                      icon: Symbols.speed_rounded,
+                      label: '1.0×',
+                      compact: true,
+                      onTap: () {},
+                    ),
+                    ShioriOverlayPill(
+                      icon: Symbols.fit_screen_rounded,
+                      label: 'Fit',
+                      compact: true,
+                      onTap: () {},
+                    ),
+                    const Spacer(),
+                    ShioriOverlayPill(
+                      icon: Symbols.video_library_rounded,
+                      label: 'Episodes',
+                      compact: true,
+                      onTap: () {},
+                    ),
+                    ShioriOverlayPill(
+                      label: 'Next',
+                      trailingIcon: Symbols.skip_next_rounded,
+                      emphasized: true,
+                      compact: true,
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _gauges(BuildContext context) {
+  final value = context.knobs.double.slider(
+    label: 'Level',
+    initialValue: 0.6,
+    max: 1,
+  );
+  return ColoredBox(
+    color: Colors.black,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        ShioriGestureGauge(
+          value: value,
+          icon: Symbols.brightness_6_rounded,
+          label: 'Brightness',
+        ),
+        ShioriGestureGauge(
+          value: value,
+          icon: Symbols.volume_up_rounded,
+          label: 'Volume',
+        ),
+      ],
     ),
   );
 }

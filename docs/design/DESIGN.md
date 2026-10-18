@@ -129,7 +129,8 @@ The ladder is closed.
 Over an image the ground is unknown, so scrims are fixed instead:
 `ShioriScrim.onImage` under a progress bar drawn on a cover,
 `ShioriScrim.underText` under white text on a cover, a page or a video, and
-`ShioriScrim.shadow` for what floats. A reader's chrome is `ink1` at
+`ShioriScrim.shadow` for what floats, and `ShioriScrim.panel` under a panel
+of controls over a picture (the video player's). A reader's chrome is `ink1` at
 `Alphas.chrome` (0.92): readable over any page, with the page still present
 behind it.
 
@@ -249,8 +250,13 @@ and the density without being told.
 | `showShioriConfirm`, `ShioriDialog` | confirm `AlertDialog`s |
 | `showShioriSheet`, `ShioriSheet` | `showModalBottomSheet` with a handle and a title |
 | `ShioriListRow`, `ShioriThumbnail` | hand-built rows of a cover, a title and a muted line (updates, history, library list) |
-| `ShioriSegmentedControl` | a row of exclusive choices that switch what a screen shows: the media, Updates or History |
+| `ShioriSegmentedControl` | a row of exclusive choices that switch what a screen shows: the media, Updates or History; a segment can carry a count (`badge`) |
+| `ShioriTabIndicator` | the underline of a `TabBar`; set by the theme, see below |
 | `ShioriOverlayLabel` | outlined text over a page or a video: the page count, the zoom mode |
+| `ShioriOverlayPill` | an icon or a value over a picture that opens its choice (quality, subtitles, speed); `emphasized` for the row's one action |
+| `ShioriOverlayIconButton` | a round control over a picture; `emphasized` is the accent disc of the screen's main control (play) |
+| `ShioriOverlayPanel` | a floating panel of controls at the foot of a picture, on `ShioriScrim.panel` |
+| `ShioriGestureGauge` | the level a swipe sets over a picture: brightness, volume |
 | `ShioriSettingsGroup` | long flat settings lists; a quiet label over a group of rows, an optional note under it |
 | `ShioriSettingRow` | a `ListTile` that opens a screen or runs an action; `destructive` for resets and deletions |
 | `ShioriSwitchRow` | `SwitchListTile` |
@@ -293,9 +299,17 @@ its colour.
 
 **Theme-level shapes.** Dialogs, sheets, cards, menus, chips, fields,
 tooltips and snack bars take their radius from the theme, so the Material
-widgets not yet replaced already have Shiori's shapes. Tabs come from the
-theme too: the current one in the foreground over an accent pill, the rest
-muted, no full-width rule.
+widgets not yet replaced already have Shiori's shapes.
+
+**Switching, in two levels.** A screen that switches what it shows does it
+in at most two levels, each with one look. The first, the universe (the
+media, Updates or History), is a `ShioriSegmentedControl` across the width.
+The second, the pages of that universe (Sources and Extensions, the
+categories, a sheet's tabs), is a `TabBar` styled by the theme: the current
+tab in accent ink on a pill tinted with the accent (`ShioriTabIndicator`),
+the rest muted, no rule across the width. The pill follows a swipe between
+the pages. A count that waits behind a choice sits after its label, as a
+`ShioriBadge`.
 
 **The shared cover.** A library cover flies to the top of its detail page
 under `coverHeroTag(mangaId)` (`lib/modules/widgets/cover_hero.dart`). Only

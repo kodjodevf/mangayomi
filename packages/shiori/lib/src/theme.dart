@@ -1,6 +1,8 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 
+import 'alphas.dart';
+import 'components/tab_indicator.dart';
 import 'tokens.dart';
 
 /// The sub-theme settings both brightnesses share.
@@ -148,18 +150,30 @@ ThemeData _withTokens(ThemeData theme, ShioriDensity density) {
       extendedTextStyle: text.row.copyWith(fontWeight: FontWeight.w700),
       shape: const StadiumBorder(),
     ),
-    // Tabs read as a quiet row of labels: the current one in the foreground
-    // with an accent pill under it, the rest muted, and no full-width rule.
+    // Tabs, the second level of switching under a segmented control: the
+    // current one on a pill tinted with the accent and set in accent ink,
+    // the rest muted, no rule across the width. The pill follows a swipe
+    // between pages as the underline did.
     tabBarTheme: TabBarThemeData(
-      labelColor: colors.fg,
+      labelColor: colors.accentInk,
       unselectedLabelColor: colors.fgMuted,
       labelStyle: text.row.copyWith(fontWeight: FontWeight.w700),
-      unselectedLabelStyle: text.row,
+      unselectedLabelStyle: text.row.copyWith(fontWeight: FontWeight.w500),
       indicatorSize: TabBarIndicatorSize.label,
       dividerColor: Colors.transparent,
-      indicator: UnderlineTabIndicator(
-        borderRadius: BorderRadius.circular(ShioriShape.pill),
-        borderSide: BorderSide(color: colors.accent, width: 3),
+      // A press, a hover or a focus (a remote's) shows as a faint pill.
+      overlayColor: WidgetStateProperty.resolveWith(
+        (states) =>
+            states.contains(WidgetState.pressed) ||
+                states.contains(WidgetState.hovered) ||
+                states.contains(WidgetState.focused)
+            ? colors.accent.withValues(alpha: Alphas.tint)
+            : Colors.transparent,
+      ),
+      splashBorderRadius: BorderRadius.circular(ShioriShape.pill),
+      indicator: ShioriTabIndicator(
+        color: colors.accent.withValues(alpha: Alphas.accentTint),
+        height: 32 * density.typeScale,
       ),
     ),
     // Rows, the bulk of every settings screen: a title in the body size, a

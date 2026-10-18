@@ -274,13 +274,17 @@ void main() {
       expect(theme.dividerColor, tokens.color.hairline);
     });
 
-    test('tabs mark the current one with the accent', () {
+    test('tabs mark the current one with an accent pill', () {
       final theme = build(Brightness.dark);
       final tokens = theme.extension<ShioriTokens>()!;
-      expect(theme.tabBarTheme.labelColor, tokens.color.fg);
+      expect(theme.tabBarTheme.labelColor, tokens.color.accentInk);
       expect(theme.tabBarTheme.unselectedLabelColor, tokens.color.fgMuted);
-      final indicator = theme.tabBarTheme.indicator! as UnderlineTabIndicator;
-      expect(indicator.borderSide.color, tokens.color.accent);
+      expect(theme.tabBarTheme.dividerColor, Colors.transparent);
+      final indicator = theme.tabBarTheme.indicator! as ShioriTabIndicator;
+      expect(
+        indicator.color,
+        tokens.color.accent.withValues(alpha: Alphas.accentTint),
+      );
     });
   });
 

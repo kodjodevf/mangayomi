@@ -492,6 +492,11 @@ abstract final class ShioriScrim {
 
   /// The foot of the gradient that carries a title over a cover.
   static const Color underText = Color(0x99000000);
+
+  /// The ground of a panel of controls floating over a picture, such as the
+  /// video player's: dark enough for white text on a white frame, light
+  /// enough to keep the picture there.
+  static const Color panel = Color(0xC7000000);
 }
 
 /// The three ways the interface is used, and how big things get for each.

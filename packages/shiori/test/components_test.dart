@@ -685,4 +685,191 @@ void main() {
       expect(bar.value, isNull);
     });
   });
+
+  group('ShioriSegmentedControl badge', () {
+    testWidgets('shows a count after the label, and nothing at zero', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _host(
+          ShioriSegmentedControl<int>(
+            segments: const [
+              ShioriSegment(value: 0, label: 'Manga'),
+              ShioriSegment(value: 1, label: 'Anime', badge: 4),
+            ],
+            selected: 0,
+            onSelected: (_) {},
+          ),
+        ),
+      );
+
+      expect(find.text('4'), findsOneWidget);
+      expect(find.byType(ShioriBadge), findsOneWidget);
+    });
+  });
+
+  group('ShioriTabIndicator', () {
+    testWidgets('paints a pill around the current tab', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          const DefaultTabController(
+            length: 2,
+            child: TabBar(
+              tabs: [
+                Tab(text: 'Sources'),
+                Tab(text: 'Extensions'),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      final bar = tester.widget<TabBar>(find.byType(TabBar));
+      expect(bar.indicator, isNull);
+      expect(
+        Theme.of(tester.element(find.byType(TabBar))).tabBarTheme.indicator,
+        isA<ShioriTabIndicator>(),
+      );
+    });
+  });
+
+  group('ShioriOverlayPill', () {
+    testWidgets('names its value and reacts to a tap', (tester) async {
+      var taps = 0;
+      await tester.pumpWidget(
+        _host(
+          ShioriOverlayPill(
+            icon: Symbols.speed_rounded,
+            label: '1.5×',
+            tooltip: 'Playback speed',
+            onTap: () => taps++,
+          ),
+        ),
+      );
+
+      expect(find.text('1.5×'), findsOneWidget);
+      expect(
+        tester.getSemantics(find.bySemanticsLabel('Playback speed')),
+        matchesSemantics(
+          label: 'Playback speed',
+          value: '1.5×',
+          isButton: true,
+          hasTapAction: true,
+          isFocusable: true,
+          hasFocusAction: true,
+        ),
+      );
+      await tester.tap(find.text('1.5×'));
+      expect(taps, 1);
+    });
+
+    testWidgets('takes a target of the density size', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          Center(
+            child: ShioriOverlayPill(label: 'FR', onTap: () {}),
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSize(find.byType(InkWell)).height,
+        greaterThanOrEqualTo(ShioriDensity.phone.minTarget),
+      );
+    });
+
+    testWidgets('an emphasized pill sits on the accent', (tester) async {
+      await tester.pumpWidget(
+        _host(ShioriOverlayPill(label: 'Next', emphasized: true, onTap: () {})),
+      );
+      final box = tester.widget<AnimatedContainer>(
+        find.byType(AnimatedContainer),
+      );
+
+      expect(
+        (box.decoration! as BoxDecoration).color,
+        _theme().extension<ShioriTokens>()!.color.accent,
+      );
+    });
+  });
+
+  group('ShioriOverlayIconButton', () {
+    testWidgets('a disabled button says so and ignores taps', (tester) async {
+      await tester.pumpWidget(
+        _host(
+          const ShioriOverlayIconButton(
+            icon: Icon(Symbols.skip_next_rounded),
+            tooltip: 'Next episode',
+            onPressed: null,
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSemantics(find.byType(ShioriOverlayIconButton)),
+        matchesSemantics(
+          label: 'Next episode',
+          isButton: true,
+          hasEnabledState: true,
+        ),
+      );
+    });
+
+    testWidgets('the emphasized one is a disc of twice its glyph', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _host(
+          Center(
+            child: ShioriOverlayIconButton(
+              icon: const Icon(Symbols.play_arrow_rounded),
+              tooltip: 'Play',
+              emphasized: true,
+              size: 32,
+              onPressed: () {},
+            ),
+          ),
+        ),
+      );
+
+      expect(
+        tester.getSize(find.byType(AnimatedContainer)),
+        const Size(64, 64),
+      );
+    });
+  });
+
+  testWidgets('ShioriGestureGauge reads its level in percent', (tester) async {
+    await tester.pumpWidget(
+      _host(
+        const Center(
+          child: ShioriGestureGauge(
+            value: 0.42,
+            icon: Symbols.volume_up_rounded,
+            label: 'Volume',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('42'), findsOneWidget);
+    expect(
+      tester.getSemantics(find.byType(ShioriGestureGauge)),
+      matchesSemantics(label: 'Volume', value: '42 %'),
+    );
+  });
+
+  testWidgets('ShioriOverlayPanel draws on the panel scrim', (tester) async {
+    await tester.pumpWidget(
+      _host(const ShioriOverlayPanel(child: Text('12:04'))),
+    );
+    final box = tester.widget<DecoratedBox>(
+      find
+          .ancestor(of: find.text('12:04'), matching: find.byType(DecoratedBox))
+          .last,
+    );
+
+    expect((box.decoration as BoxDecoration).color, ShioriScrim.panel);
+  });
 }

@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
 
 import '../tokens.dart';
+import 'badge.dart';
 
 /// One choice in a [ShioriSegmentedControl].
 class ShioriSegment<T> {
-  const ShioriSegment({required this.value, required this.label, this.icon});
+  const ShioriSegment({
+    required this.value,
+    required this.label,
+    this.icon,
+    this.badge = 0,
+  });
 
   final T value;
   final String label;
   final IconData? icon;
+
+  /// What waits behind the segment, such as new updates; shown as a count
+  /// after the label, and nothing at zero.
+  final int badge;
 }
 
 /// A row of mutually exclusive choices that switch what the screen shows:
@@ -121,6 +131,8 @@ class _Segment<T> extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (segment.badge > 0)
+                  ShioriBadge(segment.badge, kind: ShioriStatusKind.newChapter),
               ],
             ),
           ),
