@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/modules/main_view/nav_groups.dart';
 import 'package:mangayomi/modules/main_view/widgets/nav_group_switcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,7 +27,6 @@ import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.
 import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
-import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/library/widgets/active_filter_chips.dart';
 import 'package:mangayomi/modules/library/widgets/continue_shelf.dart';
@@ -111,7 +111,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     return settingsStream.when(
       data: (settings) => _buildWithSettings(settings),
       error: (error, _) => ErrorText(error),
-      loading: () => const ProgressCenter(),
+      loading: _loadingLibrary,
     );
   }
 
@@ -344,11 +344,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
               );
             },
             error: (error, _) => ErrorText(error),
-            loading: () => const ProgressCenter(),
+            loading: _loadingLibrary,
           );
         },
         error: (error, _) => ErrorText(error),
-        loading: () => const ProgressCenter(),
+        loading: _loadingLibrary,
       ),
       bottomNavigationBar: _buildBottomBar(),
     );
@@ -516,6 +516,34 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       for (var i = 0; i < entr.length; i++)
         bodyForCategory(categoryId: entr[i].id!),
     ];
+  }
+
+  /// The library while its settings and series load, the first time a media
+  /// is opened: its title, the media switcher and a grid of placeholder
+  /// covers, so switching from Manga to Anime keeps the page's frame rather
+  /// than flashing an empty screen for the moment the query takes.
+  Widget _loadingLibrary() {
+    final route = libraryRouteFor(widget.itemType);
+    final tokens = context.shiori;
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: false,
+        backgroundColor: Colors.transparent,
+        title: Text(
+          isGroupedNavRoute(ref, route)
+              ? navGroupTitle(context, route)
+              : widget.itemType.localized(context.l10n),
+          style: tokens.text.screenTitle.copyWith(color: tokens.color.fg),
+        ),
+      ),
+      body: Column(
+        children: [
+          if (!isTv) NavGroupSwitcher(route: route),
+          const Expanded(child: ShioriCoverGrid.skeleton()),
+        ],
+      ),
+    );
   }
 
   /// [body] under the library's header: the media switcher when the

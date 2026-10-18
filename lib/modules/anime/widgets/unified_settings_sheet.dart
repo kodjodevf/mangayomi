@@ -413,58 +413,50 @@ class _EntryIcon extends StatelessWidget {
 /// A featured entry: a tile with its icon, its name and, largest, its value,
 /// the thing one opens the settings to read or change.
 class _SettingsTile extends StatelessWidget {
-  const _SettingsTile({
-    required this.entry,
-    required this.width,
-    required this.onTap,
-  });
+  const _SettingsTile({required this.entry, required this.onTap});
 
   final SettingsEntry entry;
-  final double width;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.shiori;
     final c = tokens.color;
-    return SizedBox(
-      width: width,
-      child: Material(
-        color: c.ink2,
-        borderRadius: BorderRadius.circular(ShioriShape.card),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.all(ShioriSpace.s12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: ShioriSpace.s8,
-              children: [
-                _EntryIcon(entry.icon, accent: true),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      entry.label,
+    return Material(
+      color: c.ink2,
+      borderRadius: BorderRadius.circular(ShioriShape.card),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(ShioriSpace.s12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: ShioriSpace.s8,
+            children: [
+              _EntryIcon(entry.icon, accent: true),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    entry.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: tokens.caption,
+                  ),
+                  if (entry.valueBuilder != null)
+                    DefaultTextStyle.merge(
+                      style: tokens.text.row.copyWith(
+                        color: c.fg,
+                        fontWeight: FontWeight.w700,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: tokens.caption,
+                      child: entry.valueBuilder!(context),
                     ),
-                    if (entry.valueBuilder != null)
-                      DefaultTextStyle.merge(
-                        style: tokens.text.row.copyWith(
-                          color: c.fg,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        child: entry.valueBuilder!(context),
-                      ),
-                  ],
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -570,25 +562,31 @@ class _SettingsHome extends StatelessWidget {
               ShioriSpace.s16,
               ShioriSpace.s4,
             ),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                const gap = ShioriSpace.s8;
-                final columns = constraints.maxWidth >= 560 ? 4 : 2;
-                final width =
-                    (constraints.maxWidth - gap * (columns - 1)) / columns;
-                return Wrap(
-                  spacing: gap,
-                  runSpacing: gap,
-                  children: [
-                    for (final i in featured)
-                      _SettingsTile(
-                        entry: entries[i],
-                        width: width,
-                        onTap: () => onOpen(i),
-                      ),
-                  ],
-                );
-              },
+            // Two across in rows of Expanded, not a LayoutBuilder: the
+            // desktop popup measures its content's intrinsic width, which a
+            // LayoutBuilder cannot answer.
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              spacing: ShioriSpace.s8,
+              children: [
+                for (var r = 0; r < featured.length; r += 2)
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: ShioriSpace.s8,
+                      children: [
+                        for (final i in featured.skip(r).take(2))
+                          Expanded(
+                            child: _SettingsTile(
+                              entry: entries[i],
+                              onTap: () => onOpen(i),
+                            ),
+                          ),
+                        if (r + 1 >= featured.length) const Spacer(),
+                      ],
+                    ),
+                  ),
+              ],
             ),
           ),
         for (final MapEntry(key: group, value: indices) in groups.entries) ...[

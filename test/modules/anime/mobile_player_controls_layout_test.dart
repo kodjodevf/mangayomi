@@ -863,6 +863,48 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('quality list'), findsOneWidget);
   });
+
+  testWidgets('settings home lays out in a popup that sizes to content', (
+    tester,
+  ) async {
+    // The desktop menu (showMenu) wraps its content in an IntrinsicWidth.
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: IntrinsicWidth(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 300, maxWidth: 360),
+                child: SettingsDrilldown(
+                  title: 'Settings',
+                  entries: [
+                    for (final label in ['Quality', 'Audio', 'Subtitles'])
+                      SettingsEntry(
+                        label: label,
+                        icon: Icons.hd,
+                        featured: true,
+                        valueBuilder: (_) => const Text('value'),
+                        contentBuilder: (_) => const SizedBox(),
+                      ),
+                    SettingsEntry(
+                      label: 'Fit',
+                      icon: Icons.aspect_ratio,
+                      group: 'Playback',
+                      contentBuilder: (_) => const SizedBox(),
+                    ),
+                  ],
+                  onClose: () {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Subtitles'), findsOneWidget);
+  });
 }
 
 Widget _testApp({
