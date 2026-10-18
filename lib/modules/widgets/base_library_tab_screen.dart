@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/main_view/widgets/nav_group_switcher.dart';
+import 'package:mangayomi/modules/widgets/collapsing_header.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -20,6 +21,10 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
   late List<ItemType> visibleTabTypes;
   late final List<String> hideItems;
   bool isSearch = false;
+
+  /// Whether the content has scrolled the group's switcher out of sight, in
+  /// which case the title names this screen rather than the group.
+  final ValueNotifier<bool> headerCollapsed = ValueNotifier(false);
 
   /// Screen-specific title
   String get title;
@@ -57,6 +62,8 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
     tabController = TabController(length: visibleTabTypes.length, vsync: this);
 
     tabController.addListener(() {
+      // Another tab's list starts at its top: the header comes back.
+      headerCollapsed.value = false;
       onTabChanged(visibleTabTypes[tabController.index]);
       setState(() {
         textEditingController.clear();
@@ -72,6 +79,7 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
   void dispose() {
     tabController.dispose();
     textEditingController.dispose();
+    headerCollapsed.dispose();
     super.dispose();
   }
 
@@ -128,25 +136,6 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
     );
   }
 
-  /// The group's switcher above this screen's own tabs.
-  PreferredSizeWidget _withGroupSwitcher(BuildContext context) {
-    final tabs = _buildTabSwitcher(context);
-    final switcherHeight =
-        context.shiori.density.minTarget + ShioriSpace.s4 + ShioriSpace.s8;
-    return PreferredSize(
-      preferredSize: Size.fromHeight(
-        switcherHeight + (tabs?.preferredSize.height ?? 0),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          NavGroupSwitcher(route: navRoute!),
-          ?tabs,
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final grouped = navRoute != null && isGroupedNavRoute(ref, navRoute!);
@@ -157,10 +146,17 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
         title: isSearch
             ? null
             // A main destination's title, as Library, Browse and More set it.
-            : Text(
-                grouped ? navGroupTitle(context, navRoute!) : title,
-                style: context.shiori.text.screenTitle.copyWith(
-                  color: context.shiori.color.fg,
+            // Grouped, it names the group until the switcher scrolls away,
+            // then this screen ("Activity", then "Updates").
+            : ValueListenableBuilder<bool>(
+                valueListenable: headerCollapsed,
+                builder: (context, collapsed, _) => CollapsingTitle(
+                  grouped && !collapsed
+                      ? navGroupTitle(context, navRoute!)
+                      : title,
+                  style: context.shiori.text.screenTitle.copyWith(
+                    color: context.shiori.color.fg,
+                  ),
                 ),
               ),
         actions: [
@@ -190,14 +186,38 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
                 ),
           ...buildExtraActions(context),
         ],
-        bottom: grouped
-            ? _withGroupSwitcher(context)
-            : _buildTabSwitcher(context),
+        // Grouped, the switcher and the tabs sit in the body instead, so
+        // the switcher can fold away without resizing the app bar.
+        bottom: grouped ? null : _buildTabSwitcher(context),
       ),
-      body: TabBarView(
-        controller: tabController,
-        children: visibleTabTypes.map(buildTab).toList(),
-      ),
+      body: grouped
+          ? CollapseOnScroll(
+              collapsed: headerCollapsed,
+              child: Column(
+                children: [
+                  ValueListenableBuilder<bool>(
+                    valueListenable: headerCollapsed,
+                    builder: (context, collapsed, child) =>
+                        CollapsibleHeaderPart(
+                          collapsed: collapsed,
+                          child: child!,
+                        ),
+                    child: NavGroupSwitcher(route: navRoute!),
+                  ),
+                  ?_buildTabSwitcher(context),
+                  Expanded(
+                    child: TabBarView(
+                      controller: tabController,
+                      children: visibleTabTypes.map(buildTab).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : TabBarView(
+              controller: tabController,
+              children: visibleTabTypes.map(buildTab).toList(),
+            ),
     );
   }
 }

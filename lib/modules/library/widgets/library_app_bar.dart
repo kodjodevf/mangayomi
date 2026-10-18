@@ -1,5 +1,7 @@
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/widgets/collapsing_header.dart';
 import 'package:mangayomi/modules/main_view/nav_groups.dart';
 import 'package:mangayomi/modules/main_view/widgets/nav_group_switcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,6 +44,10 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final ValueChanged<bool> onIgnoreFiltersChanged;
   final TickerProvider vsync;
 
+  /// Whether the library's switcher has scrolled out of sight; grouped, the
+  /// title then names the media instead of the group.
+  final ValueListenable<bool>? headerCollapsed;
+
   const LibraryAppBar({
     super.key,
     required this.itemType,
@@ -59,6 +65,7 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
     required this.onSearchClear,
     required this.onIgnoreFiltersChanged,
     required this.vsync,
+    this.headerCollapsed,
   });
 
   @override
@@ -145,12 +152,19 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
           : Row(
               spacing: ShioriSpace.s8,
               children: [
-                Text(
-                  isGroupedNavRoute(ref, libraryRouteFor(itemType))
-                      ? navGroupTitle(context, libraryRouteFor(itemType))
-                      : itemType.localized(l10n),
-                  style: context.shiori.text.screenTitle.copyWith(
-                    color: context.shiori.color.fg,
+                Flexible(
+                  child: ValueListenableBuilder<bool>(
+                    valueListenable:
+                        headerCollapsed ?? const AlwaysStoppedAnimation(false),
+                    builder: (context, collapsed, _) => CollapsingTitle(
+                      isGroupedNavRoute(ref, libraryRouteFor(itemType)) &&
+                              !collapsed
+                          ? navGroupTitle(context, libraryRouteFor(itemType))
+                          : itemType.localized(l10n),
+                      style: context.shiori.text.screenTitle.copyWith(
+                        color: context.shiori.color.fg,
+                      ),
+                    ),
                   ),
                 ),
                 if (showNumbersOfItems)

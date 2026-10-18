@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/widgets/collapsing_header.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -136,6 +137,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
 
   @override
   void dispose() {
+    _headerCollapsed.dispose();
     _tvActiveRow.dispose();
     _kindController.dispose();
     _tabBarController.dispose();
@@ -228,11 +230,17 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     ];
   }
 
+  /// Whether the list has scrolled the media switch out of sight, in which
+  /// case the title names the media rather than Browse.
+  final ValueNotifier<bool> _headerCollapsed = ValueNotifier(false);
+
   /// Opens the tab for [type] and [kind], when it is visible.
   void _open(ItemType type, BrowseTabKind kind) {
     final index = _tabList.indexWhere((t) => t.type == type && t.kind == kind);
     if (index >= 0 && index != _tabBarController.index) {
       _tabBarController.index = index;
+      // The other list starts at its top: the switch comes back.
+      _headerCollapsed.value = false;
     }
   }
 
@@ -367,28 +375,37 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     ];
     final tokens = context.shiori;
     final hasMediaSwitch = types.length > 1;
-    final switchHeight = hasMediaSwitch
-        ? tokens.density.minTarget + ShioriSpace.s4 + ShioriSpace.s8
-        : 0.0;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
         // A main destination's title, as Library, Activity and More set it.
-        title: Text(
-          l10n.browse,
-          style: tokens.text.screenTitle.copyWith(color: tokens.color.fg),
+        // Once the media switch scrolls away, it names the media instead.
+        title: ValueListenableBuilder<bool>(
+          valueListenable: _headerCollapsed,
+          builder: (context, collapsed, _) => CollapsingTitle(
+            collapsed && hasMediaSwitch
+                ? currentTab.type.localized(l10n)
+                : l10n.browse,
+            style: tokens.text.screenTitle.copyWith(color: tokens.color.fg),
+          ),
         ),
         actions: _actions(context, isExtensionTab, currentTab.type),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(switchHeight + kTextTabBarHeight),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // The media first, then what to browse for it: two tabs instead
-              // of six.
-              if (hasMediaSwitch)
-                Padding(
+      ),
+      // The switch and the tabs sit in the body, so the switch can fold
+      // away while the list scrolls without resizing the app bar.
+      body: CollapseOnScroll(
+        collapsed: _headerCollapsed,
+        child: Column(
+          children: [
+            // The media first, then what to browse for it: two tabs instead
+            // of six.
+            if (hasMediaSwitch)
+              ValueListenableBuilder<bool>(
+                valueListenable: _headerCollapsed,
+                builder: (context, collapsed, child) =>
+                    CollapsibleHeaderPart(collapsed: collapsed, child: child!),
+                child: Padding(
                   padding: const EdgeInsets.fromLTRB(
                     ShioriSpace.s16,
                     ShioriSpace.s4,
@@ -418,42 +435,45 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                     onSelected: (type) => _open(type, currentTab.kind),
                   ),
                 ),
-              TabBar(
-                controller: _kindController,
-                onTap: (kind) =>
-                    _open(currentTab.type, BrowseTabKind.values[kind]),
-                tabs: [
-                  Tab(text: l10n.sources),
-                  Tab(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      spacing: ShioriSpace.s8,
-                      children: [
-                        Text(l10n.extensions),
-                        ExtensionUpdateNumbersBadge(itemType: currentTab.type),
-                      ],
-                    ),
+              ),
+            TabBar(
+              controller: _kindController,
+              onTap: (kind) =>
+                  _open(currentTab.type, BrowseTabKind.values[kind]),
+              tabs: [
+                Tab(text: l10n.sources),
+                Tab(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: ShioriSpace.s8,
+                    children: [
+                      Text(l10n.extensions),
+                      ExtensionUpdateNumbersBadge(itemType: currentTab.type),
+                    ],
                   ),
+                ),
+              ],
+            ),
+            // Sources and Extensions of the media picked above, side by
+            // side, so a swipe moves between them as a tap on their tabs
+            // does.
+            Expanded(
+              child: TabBarView(
+                controller: _kindController,
+                children: [
+                  for (final kind in BrowseTabKind.values)
+                    KeyedSubtree(
+                      key: ValueKey((currentTab.type, kind)),
+                      child:
+                          _tabViews()[_tabList.indexWhere(
+                            (t) => t.type == currentTab.type && t.kind == kind,
+                          )],
+                    ),
                 ],
               ),
-            ],
-          ),
-        ),
-      ),
-      // Sources and Extensions of the media picked above, side by side, so a
-      // swipe moves between them as a tap on their tabs does.
-      body: TabBarView(
-        controller: _kindController,
-        children: [
-          for (final kind in BrowseTabKind.values)
-            KeyedSubtree(
-              key: ValueKey((currentTab.type, kind)),
-              child:
-                  _tabViews()[_tabList.indexWhere(
-                    (t) => t.type == currentTab.type && t.kind == kind,
-                  )],
             ),
-        ],
+          ],
+        ),
       ),
     );
   }

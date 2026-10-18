@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/widgets/collapsing_header.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/modules/main_view/nav_groups.dart';
 import 'package:mangayomi/modules/main_view/widgets/nav_group_switcher.dart';
@@ -85,8 +86,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     }
     _retiredTabControllers.clear();
     _searchDebounce?.cancel();
+    _headerCollapsed.dispose();
     super.dispose();
   }
+
+  /// Whether the switcher at the top has scrolled out of sight, for the
+  /// title to name the media instead of the group.
+  final ValueNotifier<bool> _headerCollapsed = ValueNotifier(false);
 
   /// Controllers replaced this frame, disposed once nothing can still paint
   /// from them.
@@ -339,6 +345,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   onIgnoreFiltersChanged: (val) =>
                       setState(() => _ignoreFiltersOnSearch = val),
                   vsync: this,
+                  headerCollapsed: _headerCollapsed,
                 ),
                 body: _withLibraryHeader(bodyForCategory()),
               );
@@ -430,6 +437,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           onIgnoreFiltersChanged: (val) =>
               setState(() => _ignoreFiltersOnSearch = val),
           vsync: this,
+          headerCollapsed: _headerCollapsed,
         ),
         // A single category doesn't need the tab bar + TabBarView. The
         // TabBarView (a PageView) blocks directional d-pad focus from crossing
@@ -567,20 +575,30 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         ],
       );
     }
-    return NestedScrollView(
-      headerSliverBuilder: (context, _) => [
-        SliverToBoxAdapter(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              NavGroupSwitcher(route: route),
-              ContinueShelf(itemType: widget.itemType),
-              ActiveFilterChips(itemType: widget.itemType, settings: _settings),
-            ],
+    // The outer scroll of the NestedScrollView moves the header; past the
+    // switcher's height the title names the media instead of the group.
+    return CollapseOnScroll(
+      collapsed: _headerCollapsed,
+      threshold: context.shiori.density.minTarget + ShioriSpace.s12,
+      accept: (notification) => notification.depth == 0,
+      child: NestedScrollView(
+        headerSliverBuilder: (context, _) => [
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                NavGroupSwitcher(route: route),
+                ContinueShelf(itemType: widget.itemType),
+                ActiveFilterChips(
+                  itemType: widget.itemType,
+                  settings: _settings,
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
-      body: body,
+        ],
+        body: body,
+      ),
     );
   }
 
