@@ -1,16 +1,20 @@
-import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
-import 'package:mangayomi/modules/widgets/error_text.dart';
-import 'package:mangayomi/modules/widgets/progress_center.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:mangayomi/utils/constant.dart';
 
+/// Looks a series up on a tracker and lets the reader pick the match.
+///
+/// The search starts from the series' title; the field is at the head of
+/// the sheet, as in every Shiori choice with a search, and each result is a
+/// row with its cover, its type and status, and the start of its summary.
 class TrackerWidgetSearch extends ConsumerStatefulWidget {
   final ItemType itemType;
   final Track track;
@@ -26,40 +30,19 @@ class TrackerWidgetSearch extends ConsumerStatefulWidget {
 }
 
 class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
+  late final _controller = TextEditingController(
+    text: widget.track.title?.trim() ?? '',
+  );
+  List<TrackSearch> _results = [];
+  String? _error;
+  bool _loading = true;
+
   @override
-  initState() {
+  void initState() {
     super.initState();
-    _init();
+    // After the first frame, so the provider isn't read during build.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _search());
   }
-
-  late String query = widget.track.title!.trim();
-  bool hide = false;
-  late List<TrackSearch>? tracks = [];
-  String? _errorMsg;
-  Future<void> _init() async {
-    // Yield to microtask queue so initState completes before async work
-    await Future(() {});
-    try {
-      tracks = await ref
-          .read(
-            trackStateProvider(
-              track: widget.track,
-              itemType: widget.itemType,
-              widgetRef: ref,
-            ).notifier,
-          )
-          .search(query);
-    } catch (e) {
-      _errorMsg = e.toString();
-    }
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  late final _controller = TextEditingController(text: query);
 
   @override
   void dispose() {
@@ -67,267 +50,190 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
     super.dispose();
   }
 
-  bool _isLoading = true;
+  Future<void> _search() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final results = await ref
+          .read(
+            trackStateProvider(
+              track: widget.track,
+              itemType: widget.itemType,
+              widgetRef: ref,
+            ).notifier,
+          )
+          .search(_controller.text.trim());
+      _results = results ?? [];
+    } catch (e) {
+      _error = e.toString();
+    }
+    if (mounted) setState(() => _loading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      borderRadius: const BorderRadius.only(
-        bottomLeft: Radius.circular(20),
-        bottomRight: Radius.circular(20),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: _isLoading
-          ? SizedBox(
-              height: context.height(0.3),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: const ProgressCenter(),
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: SizedBox(
-                height: context.height(0.8),
-                child: Column(
-                  mainAxisAlignment: _errorMsg != null
-                      ? MainAxisAlignment.center
-                      : MainAxisAlignment.start,
-                  children: [
-                    if (_errorMsg != null)
-                      Padding(
-                        padding: const EdgeInsets.all(30),
-                        child: ErrorText(_errorMsg!),
-                      ),
-                    if (_errorMsg == null && !hide)
-                      Flexible(
-                        child: SuperListView.separated(
-                          padding: const EdgeInsets.only(top: 20),
-                          itemCount: tracks!.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 5),
-                              child: InkWell(
-                                onTap: () {
-                                  Navigator.pop(context, tracks![index]);
-                                },
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Material(
-                                          borderRadius: BorderRadius.circular(
-                                            5,
-                                          ),
-                                          color: Colors.transparent,
-                                          clipBehavior: Clip.antiAlias,
-                                          child: Ink.image(
-                                            height: 120,
-                                            width: 80,
-                                            fit: BoxFit.cover,
-                                            image: coverProvider(
-                                              tracks![index].coverUrl!,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              width: context.width(0.6),
-                                              child: Text(
-                                                tracks![index].title!,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            Row(
-                                              children: [
-                                                const Text(
-                                                  "Type : ",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  tracks![index]
-                                                      .publishingType!,
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                const Text(
-                                                  "Status : ",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  tracks![index]
-                                                      .publishingStatus!,
-                                                  style: const TextStyle(
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    Text(
-                                      tracks![index].summary!,
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      maxLines: 3,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return const Divider();
-                          },
-                        ),
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: TextFormField(
-                        onTap: () {
-                          if (isMobile) {
-                            setState(() {
-                              hide = true;
-                            });
-                          }
-                        },
-                        controller: _controller,
-                        keyboardType: TextInputType.text,
-                        onChanged: (d) {
-                          setState(() {
-                            query = d;
-                          });
-                        },
-                        onFieldSubmitted: (d) async {
-                          setState(() {
-                            _isLoading = true;
-                            _errorMsg = null;
-                          });
-                          try {
-                            tracks = await ref
-                                .read(
-                                  trackStateProvider(
-                                    track: widget.track,
-                                    itemType: widget.itemType,
-                                    widgetRef: ref,
-                                  ).notifier,
-                                )
-                                .search(d.trim());
-                          } catch (e) {
-                            _errorMsg = e.toString();
-                            hide = false;
-                          }
-
-                          if (mounted) {
-                            setState(() {
-                              _isLoading = false;
-                              hide = false;
-                            });
-                          }
-                        },
-                        decoration: InputDecoration(
-                          isDense: true,
-                          filled: true,
-                          fillColor: Colors.transparent,
-                          suffixIcon: query.isEmpty
-                              ? null
-                              : IconButton(
-                                  onPressed: () {
-                                    _controller.clear();
-                                  },
-                                  icon: const Icon(Icons.clear),
-                                ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: context.primaryColor),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: context.primaryColor),
-                          ),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: context.primaryColor),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-    );
-  }
-}
-
-Future<dynamic> trackersSearchDraggableMenu(
-  BuildContext context, {
-  required Track track,
-  required ItemType itemType,
-}) async {
-  var padding = MediaQuery.of(context).padding;
-  return await showDialog(
-    context: context,
-    builder: (context) => Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: context.height(1) - padding.top - padding.bottom,
+    final l10n = context.l10n;
+    final media = MediaQuery.of(context);
+    final Widget body;
+    if (_loading) {
+      body = const ShioriLoading();
+    } else if (_error != null) {
+      body = ErrorState(detail: _error, onRetry: _search);
+    } else if (_results.isEmpty) {
+      body = ShioriEmptyState(
+        icon: Symbols.search_off_rounded,
+        title: l10n.no_result,
+        compact: true,
+      );
+    } else {
+      body = ListView.builder(
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(bottom: ShioriSpace.s16),
+        itemCount: _results.length,
+        itemBuilder: (context, index) => _ResultRow(
+          result: _results[index],
+          onTap: () => Navigator.pop(context, _results[index]),
+        ),
+      );
+    }
+    return Padding(
+      // The keyboard covers the sheet's foot; the results stay above it.
+      padding: EdgeInsets.only(bottom: media.viewInsets.bottom),
+      // As tall as the results, up to three quarters of the screen; the
+      // loading, empty and failed states keep a modest height of their own.
+      child: AnimatedSize(
+        duration: ShioriMotion.of(context, ShioriMotion.standard),
+        curve: ShioriMotion.standardCurve,
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: media.size.height * 0.75),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  ShioriSpace.s16,
+                  0,
+                  ShioriSpace.s16,
+                  ShioriSpace.s8,
+                ),
+                child: ListenableBuilder(
+                  listenable: _controller,
+                  builder: (context, _) => TextField(
+                    controller: _controller,
+                    textInputAction: TextInputAction.search,
+                    decoration: InputDecoration(
+                      hintText: l10n.search,
+                      prefixIcon: const Icon(Symbols.search_rounded),
+                      suffixIcon: _controller.text.isEmpty
+                          ? null
+                          : IconButton(
+                              tooltip: MaterialLocalizations.of(context)
+                                  .clearButtonTooltip,
+                              onPressed: _controller.clear,
+                              icon: const Icon(Symbols.close_rounded),
+                            ),
+                    ),
+                    onSubmitted: (_) => _search(),
                   ),
                 ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(Icons.clear),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
               ),
-              TrackerWidgetSearch(track: track, itemType: itemType),
+              Flexible(
+                child: body is ListView
+                    ? body
+                    : SizedBox(height: context.shiori.scaled(240), child: body),
+              ),
             ],
           ),
         ),
       ),
-    ),
+    );
+  }
+}
+
+/// One match: the cover, the title, its type and status, and the start of
+/// its summary.
+class _ResultRow extends StatelessWidget {
+  const _ResultRow({required this.result, required this.onTap});
+
+  final TrackSearch result;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.shiori;
+    final c = tokens.color;
+    final meta = [
+      result.publishingType,
+      result.publishingStatus,
+    ].whereType<String>().where((s) => s.isNotEmpty).join(' · ');
+    final summary = result.summary?.trim() ?? '';
+    final cover = result.coverUrl ?? '';
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: ShioriSpace.s16,
+          vertical: ShioriSpace.s8,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: ShioriSpace.s12,
+          children: [
+            ShioriThumbnail(
+              height: tokens.scaled(96),
+              child: cover.isEmpty
+                  ? Icon(Symbols.image_rounded, color: c.fgMuted)
+                  : Image(image: coverProvider(cover), fit: BoxFit.cover),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 2,
+                children: [
+                  Text(
+                    result.title ?? '',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: tokens.text.row.copyWith(
+                      color: c.fg,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (meta.isNotEmpty) Text(meta, style: tokens.caption),
+                  if (summary.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: ShioriSpace.s4),
+                      child: Text(
+                        summary,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        style: tokens.text.meta.copyWith(color: c.fgMuted),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Opens the search on [track]'s tracker; resolves to the [TrackSearch]
+/// picked, or null.
+Future<TrackSearch?> trackersSearchDraggableMenu(
+  BuildContext context, {
+  required Track track,
+  required ItemType itemType,
+}) {
+  return showShioriSheet<TrackSearch>(
+    context,
+    title: track.syncId == null ? null : trackInfos(track.syncId!).$2,
+    builder: (_) => TrackerWidgetSearch(track: track, itemType: itemType),
   );
 }

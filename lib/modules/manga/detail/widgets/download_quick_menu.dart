@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/services/download_manager/next_downloads.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
-import 'package:mangayomi/utils/global_style.dart';
 
 /// The detail page app bar's download shortcut: pick "next N" / "unread" /
 /// "all" and queue those chapters, without opening the full filter/sort
@@ -25,76 +25,43 @@ class DownloadQuickMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = l10nLocalizations(context)!;
-    return PopupMenuButton(
-      popUpAnimationStyle: popupAnimationStyle,
-      icon: const Icon(Icons.download_outlined),
+    final l10n = context.l10n;
+    final anime = itemType == ItemType.anime;
+    Future<void> download(int value) async {
+      final chapters = manga.getFilteredChapters();
+      final chaptersToDownload = value <= 3
+          ? selectNextDownloads(
+              chapters,
+              count: [1, 5, 10, 25][value],
+              downloads: downloadRepository.getAll(),
+            )
+          : chapters
+                .where((chapter) => value == 5 || chapter.isRead != true)
+                .toList();
+      await onDownload(context, chaptersToDownload);
+    }
+
+    return ShioriMenuButton(
+      icon: Symbols.download_rounded,
       tooltip: l10n.download,
-      itemBuilder: (context) {
-        return [
-          PopupMenuItem<int>(
-            value: 0,
-            child: Text(
-              itemType != ItemType.anime
-                  ? context.l10n.next_chapter
-                  : context.l10n.next_episode,
-            ),
-          ),
-          PopupMenuItem<int>(
-            value: 1,
-            child: Text(
-              itemType != ItemType.anime
-                  ? context.l10n.next_5_chapters
-                  : context.l10n.next_5_episodes,
-            ),
-          ),
-          PopupMenuItem<int>(
-            value: 2,
-            child: Text(
-              itemType != ItemType.anime
-                  ? context.l10n.next_10_chapters
-                  : context.l10n.next_10_episodes,
-            ),
-          ),
-          PopupMenuItem<int>(
-            value: 3,
-            child: Text(
-              itemType != ItemType.anime
-                  ? context.l10n.next_25_chapters
-                  : context.l10n.next_25_episodes,
-            ),
-          ),
-          PopupMenuItem<int>(
-            value: 4,
-            child: Text(
-              itemType != ItemType.anime
-                  ? context.l10n.unread
-                  : context.l10n.unwatched,
-            ),
-          ),
-          PopupMenuItem<int>(
-            value: 5,
-            child: Text(
-              itemType != ItemType.anime
-                  ? context.l10n.all_chapters
-                  : context.l10n.all_episodes,
-            ),
-          ),
-        ];
-      },
-      onSelected: (value) async {
-        final chapters = manga.getFilteredChapters();
-        final chaptersToDownload = value <= 3
-            ? selectNextDownloads(
-                chapters,
-                count: [1, 5, 10, 25][value],
-                downloads: downloadRepository.getAll(),
-              )
-            : chapters
-                  .where((chapter) => value == 5 || chapter.isRead != true)
-                  .toList();
-        await onDownload(context, chaptersToDownload);
-      },
+      items: [
+        for (final (i, label) in [
+          anime ? l10n.next_episode : l10n.next_chapter,
+          anime ? l10n.next_5_episodes : l10n.next_5_chapters,
+          anime ? l10n.next_10_episodes : l10n.next_10_chapters,
+          anime ? l10n.next_25_episodes : l10n.next_25_chapters,
+        ].indexed)
+          ShioriMenuItem(label: label, onSelected: () => download(i)),
+        null,
+        ShioriMenuItem(
+          label: anime ? l10n.unwatched : l10n.unread,
+          onSelected: () => download(4),
+        ),
+        ShioriMenuItem(
+          label: anime ? l10n.all_episodes : l10n.all_chapters,
+          onSelected: () => download(5),
+        ),
+      ],
     );
   }
 }

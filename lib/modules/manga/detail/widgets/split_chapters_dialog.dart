@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
 /// Confirms whether to split an imported EPUB into one chapter per file.
@@ -8,17 +9,17 @@ Future<bool> showSplitChaptersDialog(BuildContext context) async {
   final l10n = l10nLocalizations(context)!;
   return await showDialog<bool>(
         context: context,
-        builder: (context) => AlertDialog(
-          title: Text(l10n.split_epub_chapters),
+        builder: (context) => ShioriDialog(
+          title: l10n.split_epub_chapters,
           content: Text(l10n.split_epub_chapters_description),
           actions: [
-            TextButton(
+            ShioriButton.quiet(
+              label: l10n.cancel,
               onPressed: () => Navigator.pop(context, false),
-              child: Text(l10n.cancel),
             ),
-            FilledButton(
+            ShioriButton(
+              label: l10n.split_epub_chapters,
               onPressed: () => Navigator.pop(context, true),
-              child: Text(l10n.split_epub_chapters),
             ),
           ],
         ),

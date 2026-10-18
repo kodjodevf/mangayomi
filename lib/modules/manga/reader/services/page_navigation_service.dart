@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
@@ -100,7 +101,7 @@ class PageNavigationService {
         final clampedOffset = offset.clamp(minExtent, maxExtent);
         continuousScrollController.animateTo(
           clampedOffset,
-          duration: const Duration(milliseconds: 200),
+          duration: ShioriMotion.standard,
           curve: Curves.easeOutCubic,
         );
       } else {
@@ -125,7 +126,7 @@ class PageNavigationService {
     if (animate) {
       extendedController.animateToPage(
         index,
-        duration: const Duration(milliseconds: 150),
+        duration: ShioriMotion.fast,
         curve: Curves.ease,
       );
     } else {
