@@ -2401,9 +2401,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   Widget _mobileBottomButtonBar(BuildContext context) {
     final compactPortrait = _usesCompactPortraitControls(context);
     // The second line of the floating panel, under the timeline; the panel
-    // gives it its ground and its margins. Left, how it plays: the lock,
-    // the speed, the fit. Right, what comes next: the episodes, and the
-    // next one in the accent, the row's one action.
+    // gives it its ground and its margins: how it plays (the lock, the
+    // stream's choices, the speed, the fit), then fullscreen. The episodes
+    // are in the middle of the picture and in the top bar.
     return MobilePlayerBottomControlsLayout(
       compactPortrait: compactPortrait,
       lockButton: Row(
@@ -2442,53 +2442,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       chapterButton: compactPortrait
           ? const SizedBox.shrink()
           : _chapterMarkWidget(),
-      shortcutButtons: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (!compactPortrait) _episodesPill(context),
-          if (_streamController.hasPreviousEpisode && !compactPortrait)
-            ShioriOverlayPill(
-              icon: Symbols.skip_previous_rounded,
-              tooltip: context.l10n.previous_episode,
-              compact: true,
-              onTap: () =>
-                  pushToNewEpisode(context, _streamController.getPrevEpisode()),
-            ),
-          if (hasNextEpisode)
-            ShioriOverlayPill(
-              label: compactPortrait ? null : context.l10n.next_episode_short,
-              icon: compactPortrait ? Symbols.skip_next_rounded : null,
-              trailingIcon: compactPortrait ? null : Symbols.skip_next_rounded,
-              tooltip: context.l10n.next_episode,
-              emphasized: true,
-              compact: true,
-              onTap: () =>
-                  pushToNewEpisode(context, _streamController.getNextEpisode()),
-            ),
-          _portraitFullscreenButton(context),
-        ],
-      ),
-    );
-  }
-
-  /// The episode list as a pill in the panel: beside a landscape video it
-  /// keeps playing; the sheet over a portrait one pauses it.
-  Widget _episodesPill(BuildContext context) {
-    return ShioriOverlayPill(
-      icon: Symbols.video_library_rounded,
-      label: context.l10n.episodes,
-      compact: true,
-      onTap: () async {
-        final size = MediaQuery.sizeOf(context);
-        final pauses = size.width <= size.height;
-        if (pauses) _pauseWhileOpen(false);
-        await showChapterListPanel(
-          context,
-          title: context.l10n.episodes,
-          chapter: widget.episode,
-        );
-        if (pauses) _pauseWhileOpen(true);
-      },
+      shortcutButtons: _portraitFullscreenButton(context),
     );
   }
 
@@ -2525,35 +2479,28 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 child: Row(
                   children: [
                     if (_streamController.hasPreviousEpisode)
-                      IconButton(
+                      ShioriOverlayIconButton(
                         tooltip: context.l10n.previous_episode,
-                        onPressed: () {
-                          pushToNewEpisode(
-                            context,
-                            _streamController.getPrevEpisode(),
-                          );
-                        },
+                        size: 22,
+                        onPressed: () => pushToNewEpisode(
+                          context,
+                          _streamController.getPrevEpisode(),
+                        ),
                         icon: const Icon(
                           Symbols.skip_previous_rounded,
                           fill: 1,
-                          color: Colors.white,
                         ),
                       ),
                     CustomPlayOrPauseButton(controller: _controller),
                     if (hasNextEpisode)
-                      IconButton(
+                      ShioriOverlayIconButton(
                         tooltip: context.l10n.next_episode,
-                        onPressed: () async {
-                          pushToNewEpisode(
-                            context,
-                            _streamController.getNextEpisode(),
-                          );
-                        },
-                        icon: const Icon(
-                          Symbols.skip_next_rounded,
-                          fill: 1,
-                          color: Colors.white,
+                        size: 22,
+                        onPressed: () => pushToNewEpisode(
+                          context,
+                          _streamController.getNextEpisode(),
                         ),
+                        icon: const Icon(Symbols.skip_next_rounded, fill: 1),
                       ),
                     _desktopSeekButton(context, -skipDuration),
                     _desktopSeekButton(context, skipDuration),
@@ -2746,15 +2693,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 ),
                 onPressed: toggleAlwaysOnTop,
               ),
-            // On a phone the episodes are in the panel; desktop's bar has
-            // no room for them, nor a settings sheet with sharing in it.
-            if (isDesktop) ...[
-              episodesButton(),
+            episodesButton(),
+            // A phone shares from the settings.
+            if (isDesktop)
               btnToShowShareScreenshot(
                 widget.episode,
                 onChanged: _pauseWhileOpen,
               ),
-            ],
             settingsButton(),
           ],
         ),
@@ -2844,6 +2789,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
                     chapterMarks: _chapterMarks,
                     revealControls: _revealControls,
+                    skipRanges: _skipRanges,
                   )
                 : MobileControllerWidget(
                     videoController: _controller,

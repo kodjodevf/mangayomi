@@ -75,7 +75,7 @@ class TvPlayerPillBar extends StatelessWidget {
                     for (final q in quality)
                       _TrackPill(
                         accent: accent,
-                        icon: Symbols.high_quality_rounded,
+                        icon: Symbols.hd_rounded,
                         label: q.label,
                         selected: q.selected,
                         onTap: q.onSelect,
@@ -91,7 +91,7 @@ class TvPlayerPillBar extends StatelessWidget {
                     for (final s in subs)
                       _TrackPill(
                         accent: accent,
-                        icon: Symbols.subtitles_rounded,
+                        icon: Symbols.closed_caption_rounded,
                         label: _trackLabel(s.title, s.language, s.id),
                         selected: s.id == current.subtitle.id,
                         onTap: () => player.setSubtitleTrack(
@@ -121,7 +121,7 @@ class TvPlayerPillBar extends StatelessWidget {
                 children.add(
                   _TrackPill(
                     accent: accent,
-                    icon: Symbols.settings_rounded,
+                    icon: Symbols.tune_rounded,
                     label: context.l10n.settings,
                     selected: false,
                     onTap: onSettings,
@@ -181,7 +181,7 @@ class _SpeedPill extends StatelessWidget {
       valueListenable: speedListenable,
       builder: (context, rate, _) => _TrackPill(
         accent: accent,
-        icon: Symbols.speed_rounded,
+        icon: Symbols.slow_motion_video_rounded,
         label: _formatRate(rate),
         selected: (rate - 1.0).abs() > 0.001,
         onTap: () => _showMenu(context, rate),
@@ -522,8 +522,9 @@ class _TrackPillState extends State<_TrackPill> {
         child: AnimatedContainer(
           duration: ShioriMotion.fast,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          // A pill, as the phone's: the panel's choices read as one family.
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(ShioriShape.card),
+            borderRadius: BorderRadius.circular(ShioriShape.pill),
             color: bg,
           ),
           child: Row(

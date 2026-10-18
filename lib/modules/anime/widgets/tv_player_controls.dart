@@ -208,27 +208,29 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
               ? const SizedBox.expand()
               : Stack(
                   children: [
-                    // Scrim so white controls read over any frame.
-                    Positioned.fill(
-                      child: DecoratedBox(
+                    // Only the top is shaded, for the title; the controls at
+                    // the foot have the panel's own ground.
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: size.height * 0.3,
+                      child: const DecoratedBox(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.black.withValues(alpha: 0.55),
-                              Colors.black.withValues(alpha: 0.15),
-                              Colors.black.withValues(alpha: 0.65),
-                            ],
-                            stops: const [0.0, 0.45, 1.0],
+                            colors: [ShioriScrim.underText, Colors.transparent],
                           ),
                         ),
                       ),
                     ),
-                    // Top-left: back / restart / autoplay (gear lives by the pills).
+                    // Top: the way back and what is playing, read from the
+                    // left as on the phone; restart and autoplay on the right.
                     Positioned(
                       top: safeV,
                       left: safeH,
+                      right: safeH,
                       child: Row(
                         children: [
                           TvFocusable(
@@ -239,14 +241,48 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
                               fill: 1,
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          const SizedBox(width: ShioriSpace.s16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (widget.title.isNotEmpty)
+                                  Text(
+                                    widget.title,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: ShioriType
+                                          .reference
+                                          .seriesTitle
+                                          .fontSize,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                if (widget.episodeLabel.isNotEmpty)
+                                  Text(
+                                    widget.episodeLabel,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white.withValues(
+                                        alpha: Alphas.secondary,
+                                      ),
+                                      fontSize:
+                                          ShioriType.reference.row.fontSize,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
                           TvFocusable(
                             accent: accent,
                             onPressed: widget.onRestart,
                             child: const Icon(Symbols.replay_rounded),
                           ),
-                          const SizedBox(width: 8),
-                          // Autoplay-next — YouTube-style labelled switch.
+                          const SizedBox(width: ShioriSpace.s8),
                           Consumer(
                             builder: (context, ref, _) {
                               final on = ref.watch(autoPlayNextEpisodeProvider);
@@ -262,95 +298,80 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
                         ],
                       ),
                     ),
-                    // Top-right: title + episode.
-                    Positioned(
-                      top: safeV,
-                      right: safeH,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          if (widget.title.isNotEmpty)
-                            Text(
-                              widget.title,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize:
-                                    ShioriType.reference.seriesTitle.fontSize,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          if (widget.episodeLabel.isNotEmpty)
-                            Text(
-                              widget.episodeLabel,
-                              style: TextStyle(
-                                color: Colors.white.withValues(
-                                  alpha: Alphas.secondary,
-                                ),
-                                fontSize: ShioriType.reference.row.fontSize,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    // Bottom: controls + seek + tracks.
+                    // Foot: one floating panel, as on the phone: the
+                    // timeline, then play in the accent disc, the next
+                    // episode, and the stream's choices.
                     Positioned(
                       left: safeH,
                       right: safeH,
                       bottom: safeV,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Play/pause inline on the left of the seek line. Default
-                          // focus + highlighted; OK on the seek bar also toggles it.
-                          Row(
-                            children: [
-                              TvPlayPauseButton(
-                                player: widget.player,
-                                accent: accent,
-                                focusNode: _playFocus,
-                              ),
-                              const SizedBox(width: 14),
-                              TvPositionText(player: widget.player),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: TvSeekBar(
+                      child: ShioriOverlayPanel(
+                        maxWidth: double.infinity,
+                        padding: const EdgeInsets.fromLTRB(
+                          ShioriSpace.s24,
+                          ShioriSpace.s12,
+                          ShioriSpace.s24,
+                          ShioriSpace.s12,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              children: [
+                                TvPositionText(player: widget.player),
+                                const SizedBox(width: ShioriSpace.s12),
+                                Expanded(
+                                  child: TvSeekBar(
+                                    player: widget.player,
+                                    accent: accent,
+                                  ),
+                                ),
+                                const SizedBox(width: ShioriSpace.s12),
+                                TvRemainingText(player: widget.player),
+                              ],
+                            ),
+                            const SizedBox(height: ShioriSpace.s8),
+                            Row(
+                              children: [
+                                TvPlayPauseButton(
                                   player: widget.player,
                                   accent: accent,
+                                  focusNode: _playFocus,
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              TvRemainingText(player: widget.player),
-                              // Manual skip to the next episode (autoplay still
-                              // auto-advances at the end); shown only if there is one.
-                              if (widget.hasNext) ...[
-                                const SizedBox(width: 8),
-                                TvFocusable(
-                                  accent: accent,
-                                  onPressed: widget.onNext,
-                                  // Match the play/pause size (34) so the two
-                                  // transport controls frame the seek bar evenly.
-                                  child: const Icon(
-                                    Symbols.skip_next_rounded,
-                                    fill: 1,
-                                    size: 34,
+                                if (widget.hasNext) ...[
+                                  const SizedBox(width: ShioriSpace.s12),
+                                  TvFocusable(
+                                    accent: accent,
+                                    onPressed: widget.onNext,
+                                    child: const Icon(
+                                      Symbols.skip_next_rounded,
+                                      fill: 1,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ],
+                                const SizedBox(width: ShioriSpace.s24),
+                                Expanded(
+                                  child: Align(
+                                    alignment: AlignmentDirectional.centerEnd,
+                                    child: TvPlayerPillBar(
+                                      player: widget.player,
+                                      accent: accent,
+                                      qualityListenable:
+                                          widget.qualityListenable,
+                                      buildQualityOptions:
+                                          widget.buildQualityOptions,
+                                      onSettings: widget.onSettings,
+                                      speedListenable: widget.speedListenable,
+                                      onSetSpeed: widget.onSetSpeed,
+                                    ),
                                   ),
                                 ),
                               ],
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          // Quality | Subtitles | Speed | Settings pills.
-                          TvPlayerPillBar(
-                            player: widget.player,
-                            accent: accent,
-                            qualityListenable: widget.qualityListenable,
-                            buildQualityOptions: widget.buildQualityOptions,
-                            onSettings: widget.onSettings,
-                            speedListenable: widget.speedListenable,
-                            onSetSpeed: widget.onSetSpeed,
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bot_toast/bot_toast.dart';
 
 import 'package:flutter/gestures.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:shiori/shiori.dart';
@@ -32,6 +33,9 @@ class DesktopControllerWidget extends ConsumerStatefulWidget {
   final GlobalKey<VideoState> videoStatekey;
   final Widget bottomButtonBarWidget;
   final Widget seekToWidget;
+
+  /// The opening and the ending, in milliseconds, marked on the timeline.
+  final ValueListenable<List<(int, int)>>? skipRanges;
   final int defaultSkipIntroLength;
   final void Function(bool) desktopFullScreenPlayer;
   final ValueNotifier<List<(String, int)>> chapterMarks;
@@ -46,6 +50,7 @@ class DesktopControllerWidget extends ConsumerStatefulWidget {
     required this.streamController,
     required this.videoStatekey,
     required this.seekToWidget,
+    this.skipRanges,
     required this.tempDuration,
     required this.doubleSpeed,
     required this.defaultSkipIntroLength,
@@ -540,28 +545,6 @@ class _DesktopControllerWidgetState
                                 ),
                               ),
                             ),
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              height: 180,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.bottomCenter,
-                                    end: Alignment.topCenter,
-                                    colors: [
-                                      Theme.of(context).colorScheme.scrim
-                                          .withValues(alpha: 0.85),
-                                      Theme.of(context).colorScheme.scrim
-                                          .withValues(alpha: 0.40),
-                                      Colors.transparent,
-                                    ],
-                                    stops: const [0.0, 0.70, 1.0],
-                                  ),
-                                ),
-                              ),
-                            ),
                             if (mount)
                               Padding(
                                 padding:
@@ -599,52 +582,71 @@ class _DesktopControllerWidgetState
                                       ),
                                     ),
                                     widget.seekToWidget,
-                                    Transform.translate(
-                                      offset: Offset.zero,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: ShioriSpace.s4,
+                                    // The timeline and the bar in one panel
+                                    // floating over the foot, as on a phone.
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                        ShioriSpace.s12,
+                                        0,
+                                        ShioriSpace.s12,
+                                        ShioriSpace.s12,
+                                      ),
+                                      child: ShioriOverlayPanel(
+                                        padding: const EdgeInsets.fromLTRB(
+                                          ShioriSpace.s8,
+                                          ShioriSpace.s8,
+                                          ShioriSpace.s8,
+                                          ShioriSpace.s4,
                                         ),
-                                        child: CustomSeekBar(
-                                          onSeekStart: (value) {
-                                            setState(() {
-                                              swipeDuration = value.inSeconds;
-                                              showSwipeDuration = true;
-                                              widget.tempDuration(
-                                                widget
-                                                        .videoController
-                                                        .player
-                                                        .state
-                                                        .position +
-                                                    value,
-                                              );
-                                            });
-                                            _timer?.cancel();
-                                          },
-                                          onSeekEnd: (value) {
-                                            _timer = Timer(
-                                              controlsHoverDuration,
-                                              () {
-                                                if (mounted) {
-                                                  setState(() {
-                                                    visible = false;
-                                                  });
-                                                }
+                                        maxWidth: double.infinity,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            CustomSeekBar(
+                                              onSeekStart: (value) {
+                                                setState(() {
+                                                  swipeDuration =
+                                                      value.inSeconds;
+                                                  showSwipeDuration = true;
+                                                  widget.tempDuration(
+                                                    widget
+                                                            .videoController
+                                                            .player
+                                                            .state
+                                                            .position +
+                                                        value,
+                                                  );
+                                                });
+                                                _timer?.cancel();
                                               },
-                                            );
-                                            setState(() {
-                                              showSwipeDuration = false;
-                                            });
-                                            widget.tempDuration(null);
-                                          },
-                                          player: widget.videoController.player,
-                                          chapterMarks: widget.chapterMarks,
-                                          onHoverChanged:
-                                              _onSeekbarHoverChanged,
+                                              onSeekEnd: (value) {
+                                                _timer = Timer(
+                                                  controlsHoverDuration,
+                                                  () {
+                                                    if (mounted) {
+                                                      setState(() {
+                                                        visible = false;
+                                                      });
+                                                    }
+                                                  },
+                                                );
+                                                setState(() {
+                                                  showSwipeDuration = false;
+                                                });
+                                                widget.tempDuration(null);
+                                              },
+                                              player:
+                                                  widget.videoController.player,
+                                              chapterMarks: widget.chapterMarks,
+                                              onHoverChanged:
+                                                  _onSeekbarHoverChanged,
+                                              skipRanges: widget.skipRanges,
+                                            ),
+                                            widget.bottomButtonBarWidget,
+                                          ],
                                         ),
                                       ),
                                     ),
-                                    widget.bottomButtonBarWidget,
                                   ],
                                 ),
                               ),

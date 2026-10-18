@@ -33,8 +33,6 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
 
   StreamSubscription<bool>? subscription;
 
-  static const double iconSize = 25;
-
   @override
   void setState(VoidCallback fn) {
     if (mounted) {
@@ -63,33 +61,15 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
 
   @override
   Widget build(BuildContext context) {
-    // On a phone, the screen's one main control: the accent disc, as
-    // Shiori draws it over a picture. Desktop keeps a glyph in its bar.
-    if (!isDesktop) {
-      return ShioriOverlayIconButton(
-        tooltip: '${context.l10n.play} / ${context.l10n.pause}',
-        focusNode: widget.focusNode,
-        onPressed: widget.controller.player.playOrPause,
-        emphasized: true,
-        size: 34,
-        icon: AnimatedIcon(progress: animation, icon: AnimatedIcons.play_pause),
-      );
-    }
-    return IconButton(
-      // One button for both: the icon shows which, the label names the pair.
+    // The screen's one main control: the accent disc, as Shiori draws it
+    // over a picture; smaller in desktop's bar than in a phone's middle.
+    return ShioriOverlayIconButton(
       tooltip: '${context.l10n.play} / ${context.l10n.pause}',
       focusNode: widget.focusNode,
       onPressed: widget.controller.player.playOrPause,
-      iconSize: iconSize,
-      color: Colors.white,
-      icon: IgnorePointer(
-        child: AnimatedIcon(
-          progress: animation,
-          icon: AnimatedIcons.play_pause,
-          size: iconSize,
-          color: Colors.white,
-        ),
-      ),
+      emphasized: true,
+      size: isDesktop ? 20 : 34,
+      icon: AnimatedIcon(progress: animation, icon: AnimatedIcons.play_pause),
     );
   }
 }

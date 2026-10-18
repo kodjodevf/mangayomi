@@ -436,21 +436,27 @@ F1 and in the settings, in the readers' dialog (`showKeyboardShortcuts`);
 a seek from the keyboard, with the controls hidden, says how far it went.
 The phone's brightness swipe goes through the readers' `ScreenBrightness`.
 On a phone the controls fall in three places, each with one role. At the
-top, who and where: the way back, the series and the episode, and the
-settings (`Symbols.tune_rounded`); the episode list too in portrait. In the
-middle, a jump back and forward captioned with its length, and play between
-them as the accent disc (`ShioriOverlayIconButton`), the one control the eye
-goes to. At the foot, one `ShioriOverlayPanel` floating clear of the edges,
-as the manga reader's: the timeline, with the time played on the left and
-the time left on the right (a tap shows the length), the chapters and the
-opening and ending AniSkip knows marked on it; under it, on the left, how it
-plays, as `ShioriOverlayPill`s that keep their value in sight (lock,
-subtitles, audio, quality, speed, fit), and on the right what comes next:
-the episodes, the previous one, and Next in the accent. A swipe for the
-brightness or the volume shows a `ShioriGestureGauge` on the side the thumb
-is on. Locked, only a labelled Unlock pill remains. Skip intro and Next
-episode sit above the panel, never under it. A speed is written one way
-everywhere: "1×", "1.5×".
+top, who and where: the way back, the series and the episode, the episode
+list and the settings (`Symbols.tune_rounded`). In the middle, the previous
+and the next episode, and play between them as the accent disc
+(`ShioriOverlayIconButton`), the one control the eye goes to; a jump within
+the episode is a double tap on either side. At the foot, one
+`ShioriOverlayPanel` floating clear of the edges, as the manga reader's: the
+timeline, with the time played on the left and the time left on the right (a
+tap shows the length), the chapters and the opening and ending AniSkip knows
+marked on it; under it, how it plays, as `ShioriOverlayPill`s that keep their
+value in sight (lock, subtitles, audio, quality, speed, fit), then
+fullscreen. A swipe for the brightness or the volume shows a
+`ShioriGestureGauge` on the side the thumb is on. Locked, only a labelled
+Unlock pill remains. Skip intro and Next episode sit above the panel, never
+under it. A speed is written one way everywhere: "1×", "1.5×".
+
+Desktop and TV share the panel. On desktop, the bar under the timeline
+(episodes, play as a small accent disc, the jumps, the volume, the pills)
+sits in it instead of over a gradient. On TV, the way back and the title
+read from the top left, restart and autoplay on the right; the panel holds
+the timeline, then play as the accent disc (ringed in white when focused),
+the next episode, and the stream's pills.
 
 The settings open as a sheet from the bottom in portrait and as a panel
 from the side in landscape, where the video keeps playing beside them. Their
