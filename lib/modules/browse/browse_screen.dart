@@ -457,17 +457,33 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
             // Sources and Extensions of the media picked above, side by
             // side, so a swipe moves between them as a tap on their tabs
             // does.
+            //
+            // Each media's pair is mounted up front and kept, and switching
+            // media fades through between them: rebuilding the lists on
+            // every switch showed a loading frame first, a visible hitch.
+            // Only the page on show of each is built (a TabBarView builds
+            // the current page), so this loads each media's sources and
+            // leaves its extensions until they are opened.
             Expanded(
-              child: TabBarView(
-                controller: _kindController,
+              child: ShioriFadeThroughStack(
+                index: types.contains(currentTab.type)
+                    ? types.indexOf(currentTab.type)
+                    : 0,
                 children: [
-                  for (final kind in BrowseTabKind.values)
-                    KeyedSubtree(
-                      key: ValueKey((currentTab.type, kind)),
-                      child:
-                          _tabViews()[_tabList.indexWhere(
-                            (t) => t.type == currentTab.type && t.kind == kind,
-                          )],
+                  for (final type in types)
+                    TabBarView(
+                      key: ValueKey(type),
+                      controller: _kindController,
+                      children: [
+                        for (final kind in BrowseTabKind.values)
+                          KeyedSubtree(
+                            key: ValueKey((type, kind)),
+                            child:
+                                _tabViews()[_tabList.indexWhere(
+                                  (t) => t.type == type && t.kind == kind,
+                                )],
+                          ),
+                      ],
                     ),
                 ],
               ),

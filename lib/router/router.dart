@@ -143,7 +143,9 @@ class RouterNotifier extends ChangeNotifier {
           MainScreen(child: navigationShell),
       navigatorContainerBuilder: (context, navigationShell, children) => isTv
           ? children[navigationShell.currentIndex]
-          : _FadingIndexedStack(
+          // Switched with Material's fade through, switches its
+          // tabs; every tab stays mounted.
+          : ShioriFadeThroughStack(
               index: navigationShell.currentIndex,
               children: children,
             ),
@@ -377,73 +379,4 @@ Route createRoute({required Widget page}) {
   return isApple
       ? CupertinoPageRoute(builder: (context) => page)
       : MaterialPageRoute(builder: (context) => page);
-}
-
-/// The tabs, each kept mounted as an [IndexedStack] keeps them, with the one
-/// being opened faded in and lifted a little rather than cut to. Every child
-/// sits in the same wrapper whether current or not, so switching never
-/// remounts a tab or loses its scroll.
-class _FadingIndexedStack extends StatefulWidget {
-  const _FadingIndexedStack({required this.index, required this.children});
-
-  final int index;
-  final List<Widget> children;
-
-  @override
-  State<_FadingIndexedStack> createState() => _FadingIndexedStackState();
-}
-
-class _FadingIndexedStackState extends State<_FadingIndexedStack>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: ShioriMotion.standard,
-    value: 1,
-  );
-  late final Animation<double> _opacity = CurvedAnimation(
-    parent: _controller,
-    curve: ShioriMotion.standardCurve,
-  );
-  late final Animation<Offset> _lift = Tween(
-    begin: const Offset(0, 0.015),
-    end: Offset.zero,
-  ).animate(_opacity);
-  static const _still = AlwaysStoppedAnimation<double>(1);
-
-  @override
-  void didUpdateWidget(_FadingIndexedStack oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.index != widget.index) {
-      if (MediaQuery.disableAnimationsOf(context)) {
-        _controller.value = 1;
-      } else {
-        _controller.forward(from: 0);
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return IndexedStack(
-      index: widget.index,
-      children: [
-        for (final (i, child) in widget.children.indexed)
-          FadeTransition(
-            opacity: i == widget.index ? _opacity : _still,
-            child: SlideTransition(
-              position: i == widget.index
-                  ? _lift
-                  : const AlwaysStoppedAnimation(Offset.zero),
-              child: child,
-            ),
-          ),
-      ],
-    );
-  }
 }

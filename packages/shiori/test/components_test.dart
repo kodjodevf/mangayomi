@@ -920,4 +920,80 @@ void main() {
 
     expect(built, same(child));
   });
+
+  group('ShioriFadeThroughStack', () {
+    Widget stack(int index, {bool lazy = false}) => _host(
+      ShioriFadeThroughStack(
+        index: index,
+        lazy: lazy,
+        children: const [_Counted('a'), _Counted('b')],
+      ),
+    );
+
+    testWidgets('builds a lazy child only once it is shown', (tester) async {
+      _Counted.inits.clear();
+      await tester.pumpWidget(stack(0, lazy: true));
+      expect(_Counted.inits, ['a']);
+
+      await tester.pumpWidget(stack(1, lazy: true));
+      await tester.pumpAndSettle();
+      expect(_Counted.inits, ['a', 'b']);
+    });
+
+    testWidgets('keeps every child mounted across switches', (tester) async {
+      _Counted.inits.clear();
+      await tester.pumpWidget(stack(0));
+      await tester.pumpWidget(stack(1));
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(stack(0));
+      await tester.pumpAndSettle();
+      // Each was created once; going back did not remount the first.
+      expect(_Counted.inits, ['a', 'b']);
+      expect(find.text('a', skipOffstage: false), findsOneWidget);
+    });
+
+    testWidgets('fades the old child out before the new one in', (
+      tester,
+    ) async {
+      await tester.pumpWidget(stack(0));
+      await tester.pumpWidget(stack(1));
+      await tester.pump(const Duration(milliseconds: 50));
+      double opacityOf(String label) => tester
+          .widget<Opacity>(
+            find
+                .ancestor(
+                  of: find.text(label, skipOffstage: false),
+                  matching: find.byType(Opacity),
+                )
+                .first,
+          )
+          .opacity;
+      // A quarter in: the old one still fading, the new one not yet in.
+      expect(opacityOf('a'), greaterThan(0));
+      expect(opacityOf('b'), 0);
+      await tester.pumpAndSettle();
+      expect(opacityOf('b'), 1);
+    });
+  });
+}
+
+class _Counted extends StatefulWidget {
+  const _Counted(this.label);
+
+  final String label;
+  static final inits = <String>[];
+
+  @override
+  State<_Counted> createState() => _CountedState();
+}
+
+class _CountedState extends State<_Counted> {
+  @override
+  void initState() {
+    super.initState();
+    _Counted.inits.add(widget.label);
+  }
+
+  @override
+  Widget build(BuildContext context) => Text(widget.label);
 }

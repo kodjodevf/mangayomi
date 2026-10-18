@@ -380,6 +380,13 @@ class _MyAppState extends ConsumerState<MyApp>
               ? const OnboardingScreen()
               : KeyedSubtree(key: const ValueKey('app'), child: content),
         );
+        // The theme's ground behind every page: a page transition fades the
+        // page it leaves, and the window's black showed through on a light
+        // theme.
+        content = ColoredBox(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: content,
+        );
         // On TV, a single-line text field consumes Up/Down for the text cursor,
         // trapping focus so the remote can't reach the surrounding buttons (a
         // dialog's Cancel/Add, etc.). Remap Up/Down to move focus app-wide: a
