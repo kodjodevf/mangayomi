@@ -30,11 +30,13 @@ class TrackListile extends ConsumerWidget {
     final isLogged = preference != null;
     return ShioriListRow(
       leading: TrackerLogo(syncId: id),
-      title: text ?? trackInfos(id).$2,
-      // Who is signed in, or what a tap does.
-      subtitle: text != null
-          ? null
-          : (isLogged ? (preference.accountLabel ?? l10n.log_out) : l10n.login),
+      // The tracker is always named: with only its logo to tell them apart,
+      // a series' sheet listed the same "Add tracking" once per tracker.
+      title: trackInfos(id).$2,
+      // What a tap does, or who is signed in.
+      subtitle:
+          text ??
+          (isLogged ? (preference.accountLabel ?? l10n.log_out) : l10n.login),
       trailing: isLogged
           ? Icon(
               Symbols.check_circle_rounded,

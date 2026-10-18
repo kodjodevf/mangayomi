@@ -365,7 +365,7 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
 
 Widget _updateNumbers(WidgetRef ref, ItemType itemType) {
   return StreamBuilder(
-    stream: updateRepository.watchByItemType(itemType),
+    stream: updateRepository.watchUnreadByItemType(itemType),
     builder: (context, snapshot) {
       final count = snapshot.data?.length ?? 0;
       if (count == 0) return const SizedBox.shrink();

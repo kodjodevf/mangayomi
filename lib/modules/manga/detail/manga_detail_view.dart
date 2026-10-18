@@ -828,34 +828,32 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         // How each chapter is named in the list: as the source titles it,
         // or by its number.
         Consumer(
-          builder: (context, ref, _) => RadioGroup<bool>(
-            groupValue: ref.watch(
+          builder: (context, ref, _) {
+            final byNumber = ref.watch(
               chapterNumberDisplayProvider.select(
                 (ids) => ids.contains(widget.manga!.id),
               ),
-            ),
-            onChanged: (byNumber) => ref
+            );
+            void set(bool value) => ref
                 .read(chapterNumberDisplayProvider.notifier)
-                .set(widget.manga!.id!, byNumber: byNumber ?? false),
-            child: Column(
+                .set(widget.manga!.id!, byNumber: value);
+            return Column(
               children: [
-                RadioListTile<bool>(
-                  dense: true,
-                  title: Text(l10n.source_title),
-                  value: false,
+                _DisplayChoiceRow(
+                  label: l10n.source_title,
+                  selected: !byNumber,
+                  onTap: () => set(false),
                 ),
-                RadioListTile<bool>(
-                  dense: true,
-                  title: Text(
-                    widget.itemType != ItemType.anime
-                        ? l10n.chapter_number
-                        : l10n.episode_number,
-                  ),
-                  value: true,
+                _DisplayChoiceRow(
+                  label: widget.itemType != ItemType.anime
+                      ? l10n.chapter_number
+                      : l10n.episode_number,
+                  selected: byNumber,
+                  onTap: () => set(true),
                 ),
               ],
-            ),
-          ),
+            );
+          },
         ),
       ],
       context: context,
@@ -875,5 +873,48 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       return l10n.by_upload_date;
     }
     return l10n.by_name;
+  }
+}
+
+/// One choice of the Display tab, laid out as the Filter tab's rows: the
+/// same inset, height and icon size, with a radio mark for the checkbox.
+/// Material's radio tiles sat further in than the rows beside them.
+class _DisplayChoiceRow extends StatelessWidget {
+  const _DisplayChoiceRow({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.shiori;
+    final c = tokens.color;
+    return MergeSemantics(
+      child: Semantics(
+        checked: selected,
+        inMutuallyExclusiveGroup: true,
+        child: Material(
+          type: MaterialType.transparency,
+          child: ListTile(
+            dense: true,
+            minTileHeight: tokens.density.minTarget,
+            leading: Icon(
+              selected
+                  ? Symbols.radio_button_checked_rounded
+                  : Symbols.radio_button_unchecked_rounded,
+              color: selected ? c.accentInk : c.fgMuted,
+              size: tokens.scaled(24),
+            ),
+            title: Text(label, style: tokens.text.row.copyWith(color: c.fg)),
+            onTap: onTap,
+          ),
+        ),
+      ),
+    );
   }
 }

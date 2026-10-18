@@ -5,7 +5,6 @@ import 'dart:ui' show lerpDouble;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:shiori/shiori.dart';
-import 'package:mangayomi/utils/platform_utils.dart';
 
 /// A sheet of tabs over the screen: the library's filter, sort and display,
 /// a series' chapter options, the readers' settings.
@@ -123,11 +122,10 @@ class _TabbedSheetState extends State<_TabbedSheet>
   @override
   Widget build(BuildContext context) {
     final tokens = context.shiori;
-    // The sheet is pushed inside the shell, so a floating navigation bar is
-    // drawn over its foot; the content keeps that much room at the end.
-    final overlap = FloatingNavigationScope.enabledOf(context)
-        ? MediaQuery.paddingOf(context).bottom
-        : 0.0;
+    // The sheet runs under the system's gesture bar, which its ground
+    // fills; the content keeps that much room at the end, so the last row
+    // is not drawn under the bar.
+    final overlap = MediaQuery.paddingOf(context).bottom;
     final sheet = Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -39,6 +39,9 @@ ImageProvider coverProvider(
       headers: headers,
       cache: cache,
       cacheMaxAge: cacheMaxAge,
+      // A cover from a host that does not answer gives up and shows its
+      // title, rather than staying an empty tile for minutes.
+      timeLimit: const Duration(seconds: 20),
     ),
     maxBytes: maxBytes,
   );
