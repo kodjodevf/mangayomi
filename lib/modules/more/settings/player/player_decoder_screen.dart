@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_decoder_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 class PlayerDecoderScreen extends ConsumerStatefulWidget {
@@ -24,188 +23,90 @@ class _PlayerDecoderScreenState extends ConsumerState<PlayerDecoderScreen> {
     final debandingType = ref.watch(debandingStateProvider);
     final useYUV420P = ref.watch(useYUV420PStateProvider);
 
+    final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.decoder)),
-      body: SingleChildScrollView(
+      appBar: AppBar(title: Text(l10n.decoder)),
+      body: ListView(
         padding: tvPageInsets,
-        child: Column(
-          children: [
-            SwitchListTile(
-              value: enableHardwareAccel,
-              title: Text(context.l10n.enable_hardware_accel),
-              subtitle: Text(
-                context.l10n.enable_hardware_accel_info,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+        children: [
+          ShioriSettingsGroup(
+            children: [
+              ShioriSwitchRow(
+                autofocus: isTv,
+                title: l10n.enable_hardware_accel,
+                subtitle: l10n.enable_hardware_accel_info,
+                value: enableHardwareAccel,
+                onChanged: (v) =>
+                    ref.read(enableHardwareAccelStateProvider.notifier).set(v),
               ),
-              onChanged: (value) {
-                ref.read(enableHardwareAccelStateProvider.notifier).set(value);
-              },
-            ),
-            ListTile(
-              onTap: () {
-                final values = [
-                  ("no", ""),
-                  ("auto", ""),
-                  ("d3d11va", "(Windows 8+)"),
-                  ("d3d11va-copy", "(Windows 8+)"),
-                  ("videotoolbox", "(iOS 9.0+)"),
-                  ("videotoolbox-copy", "(iOS 9.0+)"),
-                  ("nvdec", "(CUDA)"),
-                  ("nvdec-copy", "(CUDA)"),
-                  ("mediacodec", "- HW (Android)"),
-                  ("mediacodec-copy", "- HW+ (Android)"),
-                  ("crystalhd", ""),
-                ];
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(context.l10n.hwdec),
-                      content: SizedBox(
-                        width: context.width(0.8),
-                        child: RadioGroup(
-                          groupValue: hwdecMode,
-                          onChanged: (value) {
-                            ref
-                                .read(
-                                  hwdecModeStateProvider(rawValue: true)
-                                      .notifier,
-                                )
-                                .set(value!);
-                            Navigator.pop(context);
-                          },
-                          child: SuperListView.builder(
-                            shrinkWrap: true,
-                            itemCount: values.length,
-                            itemBuilder: (context, index) {
-                              return RadioListTile(
-                                dense: true,
-                                contentPadding: const EdgeInsets.all(0),
-                                value: values[index].$1,
-                                title: Row(
-                                  children: [
-                                    Text(
-                                      "${values[index].$1} ${values[index].$2}",
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                context.l10n.cancel,
-                                style: TextStyle(color: context.primaryColor),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              title: Text(context.l10n.hwdec),
-              subtitle: Text(
-                hwdecMode,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ShioriValueRow<String>(
+                title: l10n.hwdec,
+                value: hwdecMode,
+                options: const [
+                  ShioriChoice('no', 'no'),
+                  ShioriChoice('auto', 'auto'),
+                  ShioriChoice('d3d11va', 'd3d11va', subtitle: 'Windows 8+'),
+                  ShioriChoice(
+                    'd3d11va-copy',
+                    'd3d11va-copy',
+                    subtitle: 'Windows 8+',
+                  ),
+                  ShioriChoice(
+                    'videotoolbox',
+                    'videotoolbox',
+                    subtitle: 'iOS 9.0+',
+                  ),
+                  ShioriChoice(
+                    'videotoolbox-copy',
+                    'videotoolbox-copy',
+                    subtitle: 'iOS 9.0+',
+                  ),
+                  ShioriChoice('nvdec', 'nvdec', subtitle: 'CUDA'),
+                  ShioriChoice('nvdec-copy', 'nvdec-copy', subtitle: 'CUDA'),
+                  ShioriChoice(
+                    'mediacodec',
+                    'mediacodec',
+                    subtitle: 'HW (Android)',
+                  ),
+                  ShioriChoice(
+                    'mediacodec-copy',
+                    'mediacodec-copy',
+                    subtitle: 'HW+ (Android)',
+                  ),
+                  ShioriChoice('crystalhd', 'crystalhd'),
+                ],
+                onChanged: (v) => ref
+                    .read(hwdecModeStateProvider(rawValue: true).notifier)
+                    .set(v),
               ),
-            ),
-            SwitchListTile(
-              value: useGpuNext,
-              title: Text(context.l10n.enable_gpu_next),
-              subtitle: Text(
-                context.l10n.enable_gpu_next_info,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ShioriSwitchRow(
+                title: l10n.enable_gpu_next,
+                subtitle: l10n.enable_gpu_next_info,
+                value: useGpuNext,
+                onChanged: (v) =>
+                    ref.read(useGpuNextStateProvider.notifier).set(v),
               ),
-              onChanged: (value) {
-                ref.read(useGpuNextStateProvider.notifier).set(value);
-              },
-            ),
-            ListTile(
-              onTap: () {
-                final values = [
-                  (DebandingType.none, "None"),
-                  (DebandingType.cpu, "CPU"),
-                  (DebandingType.gpu, "GPU"),
-                ];
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(context.l10n.debanding),
-                      content: SizedBox(
-                        width: context.width(0.8),
-                        child: RadioGroup(
-                          groupValue: debandingType,
-                          onChanged: (value) {
-                            ref
-                                .read(debandingStateProvider.notifier)
-                                .set(value!);
-                            Navigator.pop(context);
-                          },
-                          child: SuperListView.builder(
-                            shrinkWrap: true,
-                            itemCount: values.length,
-                            itemBuilder: (context, index) {
-                              return RadioListTile(
-                                dense: true,
-                                contentPadding: const EdgeInsets.all(0),
-                                value: values[index].$1,
-                                title: Row(children: [Text(values[index].$2)]),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                context.l10n.cancel,
-                                style: TextStyle(color: context.primaryColor),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              title: Text(context.l10n.debanding),
-              subtitle: Text(
-                debandingType.name,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ShioriValueRow<DebandingType>(
+                title: l10n.debanding,
+                value: debandingType,
+                options: const [
+                  ShioriChoice(DebandingType.none, 'None'),
+                  ShioriChoice(DebandingType.cpu, 'CPU'),
+                  ShioriChoice(DebandingType.gpu, 'GPU'),
+                ],
+                onChanged: (v) =>
+                    ref.read(debandingStateProvider.notifier).set(v),
               ),
-            ),
-            SwitchListTile(
-              value: useYUV420P,
-              title: Text(context.l10n.use_yuv420p),
-              subtitle: Text(
-                context.l10n.use_yuv420p_info,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ShioriSwitchRow(
+                title: l10n.use_yuv420p,
+                subtitle: l10n.use_yuv420p_info,
+                value: useYUV420P,
+                onChanged: (v) =>
+                    ref.read(useYUV420PStateProvider.notifier).set(v),
               ),
-              onChanged: (value) {
-                ref.read(useYUV420PStateProvider.notifier).set(value);
-              },
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }

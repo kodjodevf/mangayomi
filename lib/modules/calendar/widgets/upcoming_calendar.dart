@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/calendar/widgets/calendar_indicator.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -44,7 +46,7 @@ class _UpcomingCalendarState extends State<UpcomingCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final tokens = context.shiori;
     final locale = Localizations.localeOf(context);
 
     return TableCalendar(
@@ -53,56 +55,68 @@ class _UpcomingCalendarState extends State<UpcomingCalendar> {
       focusedDay: _focusedDay,
       locale: locale.toLanguageTag(),
       calendarFormat: _calendarFormat,
+      // The switch's labels in the app's language, not the package's English.
+      availableCalendarFormats: {
+        CalendarFormat.month: context.l10n.calendar_format_month,
+        CalendarFormat.twoWeeks: context.l10n.calendar_format_two_weeks,
+        CalendarFormat.week: context.l10n.calendar_format_week,
+      },
       startingDayOfWeek: StartingDayOfWeek.monday,
       headerStyle: HeaderStyle(
         formatButtonVisible: true,
         titleCentered: true,
         formatButtonShowsNext: false,
-        titleTextStyle: theme.textTheme.titleMedium!.copyWith(
+        titleTextStyle: tokens.text.section.copyWith(color: tokens.color.fg),
+        // The month / two weeks / week switch as one of the app's pills.
+        formatButtonTextStyle: tokens.text.meta.copyWith(
+          color: tokens.color.fg,
           fontWeight: FontWeight.w600,
         ),
+        formatButtonDecoration: BoxDecoration(
+          color: tokens.color.ink2,
+          borderRadius: BorderRadius.circular(ShioriShape.pill),
+        ),
         leftChevronIcon: Icon(
-          Icons.keyboard_arrow_left,
-          color: theme.colorScheme.onSurface,
+          Symbols.keyboard_arrow_left_rounded,
+          fill: 1,
+          color: tokens.color.fg,
         ),
         rightChevronIcon: Icon(
-          Icons.keyboard_arrow_right,
-          color: theme.colorScheme.onSurface,
+          Symbols.keyboard_arrow_right_rounded,
+          fill: 1,
+          color: tokens.color.fg,
         ),
       ),
       daysOfWeekStyle: DaysOfWeekStyle(
-        weekdayStyle: TextStyle(
+        weekdayStyle: tokens.text.meta.copyWith(
           fontWeight: FontWeight.w600,
-          fontSize: 13,
-          color: theme.colorScheme.onSurface,
+          color: tokens.color.fgMuted,
         ),
-        weekendStyle: TextStyle(
+        weekendStyle: tokens.text.meta.copyWith(
           fontWeight: FontWeight.w600,
-          fontSize: 13,
-          color: theme.colorScheme.primary,
+          color: tokens.color.accentInk,
         ),
       ),
       calendarStyle: CalendarStyle(
         outsideDaysVisible: true,
         todayDecoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: theme.colorScheme.primary, width: 1.5),
+          border: Border.all(color: context.shiori.color.accentInk, width: 1.5),
         ),
-        todayTextStyle: TextStyle(
-          fontWeight: FontWeight.w600,
-          color: theme.colorScheme.primary,
+        todayTextStyle: tokens.text.row.copyWith(
+          fontWeight: FontWeight.w700,
+          color: tokens.color.accentInk,
         ),
-        defaultTextStyle: TextStyle(
+        defaultTextStyle: tokens.text.row.copyWith(
           fontWeight: FontWeight.w500,
-          color: theme.colorScheme.onSurface,
+          color: tokens.color.fg,
         ),
-        weekendTextStyle: TextStyle(
+        weekendTextStyle: tokens.text.row.copyWith(
           fontWeight: FontWeight.w500,
-          color: theme.colorScheme.primary,
+          color: tokens.color.accentInk,
         ),
-        outsideTextStyle: TextStyle(
-          fontWeight: FontWeight.w500,
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.38),
+        outsideTextStyle: tokens.text.row.copyWith(
+          color: tokens.color.fg.withValues(alpha: Alphas.disabled),
         ),
         // Disable default marker so we use our custom builder
         markersMaxCount: 0,
@@ -126,7 +140,7 @@ class _UpcomingCalendarState extends State<UpcomingCalendar> {
                 (index) => CalendarIndicator(
                   index: index,
                   size: 48,
-                  color: theme.colorScheme.primary,
+                  color: context.shiori.color.accentInk,
                 ),
               ),
             ),

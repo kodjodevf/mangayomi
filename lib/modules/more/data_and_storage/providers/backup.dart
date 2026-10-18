@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:archive/archive_io.dart';
-import 'package:bot_toast/bot_toast.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/backup_compression.dart';
@@ -20,12 +19,12 @@ import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/services/backup_password_storage.dart';
-import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/share.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path/path.dart' as p;
+import 'package:shiori/shiori.dart';
 part 'backup.g.dart';
 
 @riverpod
@@ -45,64 +44,37 @@ Future<void> doBackUp(
     );
     if (context != null && context.mounted) {
       Navigator.pop(context);
-      BotToast.showNotification(
-        animationDuration: const Duration(milliseconds: 200),
-        animationReverseDuration: const Duration(milliseconds: 200),
-        duration: const Duration(seconds: 5),
-        backButtonBehavior: BackButtonBehavior.none,
-        leading: (_) =>
-            Image.asset(appIconAssets[Random().nextInt(2)], height: 25),
-        title: (_) => const Text(
-          "Backup created!",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        // The button used to be hidden on Linux, where share_plus throws on a
-        // file. shareOrCopy answers there with the backup's path on the
-        // clipboard, which is the thing a Linux user wanted from it anyway.
-        trailing: (_) => UnconstrainedBox(
-          alignment: Alignment.topLeft,
-          child: ElevatedButton(
-            onPressed: () {
-              final RenderBox? box = context.findRenderObject() as RenderBox?;
-              shareOrCopy(
-                ShareParams(
-                  files: [XFile(zipPath)],
-                  subject: p.basename(zipPath),
-                  title: context.l10n.share_backup_file,
-                  sharePositionOrigin: box == null
-                      ? null
-                      : box.localToGlobal(Offset.zero) & box.size,
-                ),
-              );
-            },
-            child: Text(context.l10n.share),
-          ),
-        ),
-        enableSlideOff: true,
-        onlyOne: true,
-        crossPage: true,
+      botToast(
+        "Backup created!",
+        tone: ShioriToastTone.success,
+        second: 5,
+        actions: [
+          // The button used to be hidden on Linux, where share_plus throws on
+          // a file. shareOrCopy answers there with the backup's path on the
+          // clipboard, which is the thing a Linux user wanted from it anyway.
+          ShioriToastAction(context.l10n.share, () {
+            final RenderBox? box = context.findRenderObject() as RenderBox?;
+            shareOrCopy(
+              ShareParams(
+                files: [XFile(zipPath)],
+                subject: p.basename(zipPath),
+                title: context.l10n.share_backup_file,
+                sharePositionOrigin: box == null
+                    ? null
+                    : box.localToGlobal(Offset.zero) & box.size,
+              ),
+            );
+          }),
+        ],
       );
     }
   } catch (e) {
     if (context?.mounted ?? false) {
-      BotToast.showNotification(
-        animationDuration: const Duration(milliseconds: 200),
-        animationReverseDuration: const Duration(milliseconds: 200),
-        duration: const Duration(seconds: 7),
-        backButtonBehavior: BackButtonBehavior.none,
-        leading: (_) => const Icon(Icons.error, color: Colors.red),
-        title: (_) => Text(
-          "Backup failed: $e",
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.red,
-          ),
-          maxLines: 3,
-          overflow: TextOverflow.ellipsis,
-        ),
-        enableSlideOff: true,
-        onlyOne: true,
-        crossPage: true,
+      botToast(
+        "Backup failed: $e",
+        tone: ShioriToastTone.error,
+        second: 7,
+        maxLines: 3,
       );
     }
   }

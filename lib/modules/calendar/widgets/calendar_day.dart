@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/calendar/widgets/calendar_indicator.dart';
 
 const _maxEvents = 3;
@@ -21,9 +22,8 @@ class CalendarDay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final primaryColor = theme.colorScheme.primary;
-    final onBgColor = theme.colorScheme.onSurface;
+    final primaryColor = context.shiori.color.accentInk;
+    final onBgColor = context.shiori.color.fg;
 
     return InkWell(
       onTap: onDayClick,
@@ -44,9 +44,9 @@ class CalendarDay extends StatelessWidget {
                 '${date.day}',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: context.shiori.text.body.fontSize,
                   fontWeight: FontWeight.w600,
-                  color: isPast ? onBgColor.withValues(alpha: 0.38) : onBgColor,
+                  color: isPast ? onBgColor.withValues(alpha: Alphas.disabled) : onBgColor,
                 ),
               ),
               if (events > 0) ...[
