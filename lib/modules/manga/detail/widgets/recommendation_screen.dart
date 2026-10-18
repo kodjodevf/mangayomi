@@ -19,6 +19,9 @@ const double _coverHeight = 144;
 /// Cover plus the card's vertical padding.
 const double _cardExtent = _coverHeight + 12;
 
+const double _descriptionFontSize = 12;
+const double _descriptionLineHeight = 1.35;
+
 /// One column on a phone, two above this, and never more than two: a third
 /// column turns a scannable list of cover-plus-prose into a wall.
 const double _twoColumnBreakpoint = 700;
@@ -89,7 +92,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
           : (data == null || data!.isEmpty)
           ? Center(child: Text(l10n.no_result))
           // Poster list: a cover, the catalog rating as a filled pill, the
-          // title, a two-line capped synopsis and genre chips. Rows used to
+          // title, a synopsis filling the remaining height and genre chips. Rows used to
           // stretch the full width of a TV or desktop panel; the grid reflows
           // to two columns instead so they never run into empty space.
           : LayoutBuilder(
@@ -149,39 +152,58 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (rec.rating case CatalogRating rating) ...[
-                          _ratingPill(context, rating),
-                          const SizedBox(width: 8),
-                        ],
-                        Expanded(
-                          child: Text(
-                            title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
+                    // The pill is an inline span, so a wrapped title continues
+                    // under the badge instead of hanging at the text column.
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          if (rec.rating case CatalogRating rating) ...[
+                            WidgetSpan(
+                              alignment: PlaceholderAlignment.middle,
+                              child: _ratingPill(context, rating),
                             ),
-                          ),
-                        ),
-                      ],
+                            const WidgetSpan(child: SizedBox(width: 8)),
+                          ],
+                          TextSpan(text: title),
+                        ],
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     if (rec.description != null &&
                         rec.description!.isNotEmpty) ...[
                       const SizedBox(height: 5),
-                      Text(
-                        rec.description!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 12,
-                          height: 1.35,
-                          color: context.textColor.withValues(
-                            alpha: Alphas.secondary,
-                          ),
+                      // Non-flex children (title, chips) are laid out first,
+                      // so this gets whatever height the fixed-size card has
+                      // left. Fill it with as many lines as fit.
+                      Flexible(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            final style = TextStyle(
+                              fontSize: _descriptionFontSize,
+                              height: _descriptionLineHeight,
+                              color: context.textColor.withValues(
+                                alpha: Alphas.secondary,
+                              ),
+                            );
+                            final lineExtent =
+                                MediaQuery.textScalerOf(context)
+                                    .scale(_descriptionFontSize) *
+                                _descriptionLineHeight;
+                            final lines = (constraints.maxHeight / lineExtent)
+                                .floor();
+                            if (lines < 1) return const SizedBox.shrink();
+                            return Text(
+                              rec.description!,
+                              maxLines: lines,
+                              overflow: TextOverflow.ellipsis,
+                              style: style,
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -223,13 +245,22 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
             color: accent,
             borderRadius: BorderRadius.circular(6),
           ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-              color: onAccent,
-            ),
+          // The star marks this as the catalog's average score, not a match
+          // percentage; the order of the list is the provider's own ranking.
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.star_rounded, size: 12, color: onAccent),
+              const SizedBox(width: 2),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: onAccent,
+                ),
+              ),
+            ],
           ),
         ),
       ),
