@@ -274,7 +274,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String mass_migration_finding_matches(Object source, Object language) {
-    return 'Поиск совпадений в $source • $language';
+    return 'Поиск совпадений в $source · $language';
   }
 
   @override
@@ -588,6 +588,20 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get pure_black_dark_mode => 'Чисто черный темный режим';
+
+  @override
+  String get tint_surfaces_with_palette => 'Окрашивать поверхности палитрой';
+
+  @override
+  String get tint_surfaces_with_palette_subtitle =>
+      'Окрашивает фоны, карточки и панели в выбранную палитру, как раньше. Если выключено, они остаются нейтральными, а палитра окрашивает только акцент.';
+
+  @override
+  String get novel_reader_font => 'Шрифт читалки ранобэ';
+
+  @override
+  String get novel_reader_font_subtitle =>
+      'Используется шрифтом «По умолчанию» в читалке ранобэ. Остальное приложение использует Figtree.';
 
   @override
   String get timestamp => 'Временная метка';
@@ -1189,11 +1203,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Перестройте и настройте каждую навигацию в соответствии с вашими потребностями.';
 
   @override
-  String get floating_navigation_bar => 'Floating navigation bar';
+  String get floating_navigation_bar => 'Плавающая панель навигации';
 
   @override
   String get floating_navigation_bar_description =>
-      'Use a floating capsule instead of the standard attached navigation bar.';
+      'Плавающая капсула вместо обычной закреплённой панели навигации.';
 
   @override
   String get full_screen_player => 'Использовать полноэкранный режим';
@@ -2025,11 +2039,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get add_repo => 'Добавить репозиторий?';
 
   @override
-  String get add_repo_sources_to_add => 'Extension lists that will be added:';
+  String get add_repo_sources_to_add => 'Будут добавлены списки расширений:';
 
   @override
   String get add_repo_warning =>
-      'Extensions from these repositories run inside the app. Only add repositories you trust.';
+      'Расширения из этих репозиториев выполняются внутри приложения. Добавляйте только репозитории, которым доверяете.';
 
   @override
   String get genre_search_library => 'Поиск жанра в библиотеке';
@@ -2183,7 +2197,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get custom_buttons_add_warning =>
-      'This button runs the Lua code below in the video player, which can access your files and run programs. Only add it if you trust where this link came from.';
+      'Эта кнопка выполняет код Lua ниже в видеоплеере, а он может получить доступ к вашим файлам и запускать программы. Добавляйте её, только если доверяете источнику этой ссылки.';
 
   @override
   String n_days(Object n) {
@@ -2297,48 +2311,48 @@ class AppLocalizationsRu extends AppLocalizations {
   String get watch_order => 'Порядок просмотра';
 
   @override
-  String get watch_order_role_current => 'Current';
+  String get watch_order_role_current => 'Текущий';
 
   @override
-  String get watch_order_role_previous => 'Previous';
+  String get watch_order_role_previous => 'Предыдущий';
 
   @override
-  String get watch_order_role_next => 'Next';
+  String get watch_order_role_next => 'Следующий';
 
   @override
-  String get watch_order_source_release_order => 'Release order';
+  String get watch_order_source_release_order => 'Порядок выхода';
 
   @override
   String watch_order_source_community_list(String name, String author) {
-    return '$name by $author';
+    return '$name от $author';
   }
 
   @override
   String watch_order_source_official_collection(String name) {
-    return 'Official Trakt collection: $name';
+    return 'Официальная коллекция Trakt: $name';
   }
 
   @override
   String watch_order_source_trakt_collection(String name) {
-    return 'Trakt collection: $name';
+    return 'Коллекция Trakt: $name';
   }
 
   @override
   String watch_order_source_seasons(String title) {
-    return 'Seasons for $title';
+    return 'Сезоны «$title»';
   }
 
   @override
-  String get watch_order_select_source => 'Order source';
+  String get watch_order_select_source => 'Источник порядка';
 
   @override
   String watch_order_season(int number) {
-    return 'Season $number';
+    return 'Сезон $number';
   }
 
   @override
   String watch_order_episode(int number) {
-    return 'Episode $number';
+    return 'Эпизод $number';
   }
 
   @override
@@ -2349,7 +2363,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String recommendation_rating_accessibility(String rating) {
-    return 'Rating $rating';
+    return 'Оценка $rating';
   }
 
   @override
@@ -2567,6 +2581,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get brightness => 'Яркость';
+
+  @override
+  String get volume => 'Громкость';
 
   @override
   String get contrast => 'Контраст';
@@ -3542,92 +3559,856 @@ class AppLocalizationsRu extends AppLocalizations {
   String get chapter_swipe_disabled => 'Отключено';
 
   @override
-  String get update_errors => 'Update errors';
+  String get update_errors => 'Ошибки обновления';
 
   @override
-  String get no_update_errors => 'No update errors';
+  String get no_update_errors => 'Ошибок обновления нет';
 
   @override
-  String get clear_all => 'Clear all';
+  String get clear_all => 'Очистить всё';
 
   @override
-  String get dismiss => 'Dismiss';
+  String get dismiss => 'Скрыть';
 
   @override
-  String get previous_episode => 'Previous episode';
+  String get previous_episode => 'Предыдущий эпизод';
 
   @override
-  String get clear_logs => 'Clear logs';
+  String get clear_logs => 'Очистить журнал';
 
   @override
-  String get bold => 'Bold';
+  String get bold => 'Жирный';
 
   @override
-  String get italic => 'Italic';
+  String get italic => 'Курсив';
 
   @override
-  String get color_yellow => 'Yellow';
+  String get color_yellow => 'Жёлтый';
 
   @override
-  String get color_cyan => 'Cyan';
+  String get color_cyan => 'Голубой';
 
   @override
-  String get color_green => 'Green';
+  String get color_green => 'Зелёный';
 
   @override
-  String get color_orange => 'Orange';
+  String get color_orange => 'Оранжевый';
 
   @override
-  String get continue_watching => 'Continue Watching';
+  String get continue_watching => 'Продолжить просмотр';
 
   @override
-  String get search_your_anime => 'Search your anime';
+  String get search_your_anime => 'Поиск по вашему аниме';
 
   @override
-  String get category => 'Category';
+  String get category => 'Категория';
 
   @override
-  String get hidden_categories => 'Hidden categories';
+  String get hidden_categories => 'Скрытые категории';
 
   @override
-  String get new_category => 'New category';
+  String get new_category => 'Новая категория';
 
   @override
-  String get local => 'Local';
+  String get local => 'Локальные';
 
   @override
-  String get tv_home_rows => 'Rows';
+  String get tv_home_rows => 'Ряды';
 
   @override
-  String get genre_rows => 'Genre rows';
+  String get genre_rows => 'Ряды по жанрам';
 
   @override
-  String get share_backup_file => 'Share Mangayomi backup file';
+  String get share_backup_file => 'Поделиться резервной копией Mangayomi';
 
   @override
-  String get close => 'Close';
+  String get close => 'Закрыть';
 
   @override
-  String get migrate_source => 'Migrate source';
+  String get migrate_source => 'Перенести источник';
 
   @override
-  String get cloudflare_bypass_proxy => 'Cloudflare bypass proxy';
+  String get cloudflare_bypass_proxy => 'Прокси для обхода Cloudflare';
 
   @override
-  String get custom_doh_url => 'Custom DoH URL';
+  String get custom_doh_url => 'Свой URL DoH';
 
   @override
-  String get custom_doh_url_helper => 'Must be an https DoH (JSON) endpoint';
+  String get custom_doh_url_helper => 'Должен быть https-адрес DoH (JSON)';
 
   @override
-  String get anime_only_tv_layout => 'Anime-only TV layout';
+  String get anime_only_tv_layout => 'ТВ-интерфейс только для аниме';
 
   @override
-  String get anime_only_beta => 'Anime only (beta)';
+  String get anime_only_beta => 'Только аниме (бета)';
 
   @override
-  String get tv_home_beta => 'TV home (beta)';
+  String get tv_home_beta => 'Главная для ТВ (бета)';
 
   @override
-  String get tv_player_beta => 'TV player (beta)';
+  String get tv_player_beta => 'Плеер для ТВ (бета)';
+
+  @override
+  String get mark_as_read => 'Отметить прочитанным';
+
+  @override
+  String get mark_as_unread => 'Отметить непрочитанным';
+
+  @override
+  String get bookmark => 'Закладка';
+
+  @override
+  String get remove_bookmark => 'Убрать закладку';
+
+  @override
+  String get mark_below_as_read => 'Отметить нижние прочитанными';
+
+  @override
+  String get previous_chapter => 'Предыдущая глава';
+
+  @override
+  String get pin => 'Закрепить';
+
+  @override
+  String get go_forward => 'Вперёд';
+
+  @override
+  String get invert_selection => 'Инвертировать выбор';
+
+  @override
+  String get show_password => 'Показать пароль';
+
+  @override
+  String get hide_password => 'Скрыть пароль';
+
+  @override
+  String get always_on_top => 'Поверх всех окон';
+
+  @override
+  String get mute => 'Без звука';
+
+  @override
+  String get unmute => 'Включить звук';
+
+  @override
+  String get exit_fullscreen => 'Выйти из полноэкранного режима';
+
+  @override
+  String get play => 'Воспроизвести';
+
+  @override
+  String get pause => 'Пауза';
+
+  @override
+  String get switch_tracker => 'Сменить трекер';
+
+  @override
+  String get rename => 'Переименовать';
+
+  @override
+  String get show_category => 'Показать категорию';
+
+  @override
+  String get hide_category => 'Скрыть категорию';
+
+  @override
+  String get update_with_library => 'Обновлять вместе с библиотекой';
+
+  @override
+  String get skip_updates => 'Пропускать при обновлении библиотеки';
+
+  @override
+  String get show_repository => 'Показать репозиторий';
+
+  @override
+  String get hide_repository => 'Скрыть репозиторий';
+
+  @override
+  String get set_as_default => 'Сделать по умолчанию';
+
+  @override
+  String get change_display_mode => 'Сменить режим отображения';
+
+  @override
+  String get back_to_results => 'Назад к результатам';
+
+  @override
+  String get activity => 'Активность';
+
+  @override
+  String get group_nav_destinations => 'Группировать навигацию';
+
+  @override
+  String get group_nav_destinations_subtitle =>
+      'Одна вкладка «Библиотека» с переключателем манги, аниме и ранобэ и одна вкладка «Активность» для обновлений и истории';
+
+  @override
+  String get search_all_sources => 'Искать во всех источниках';
+
+  @override
+  String get continue_reading => 'Продолжить';
+
+  @override
+  String get show_continue_shelf => 'Показывать, что вы читаете';
+
+  @override
+  String get show_continue_shelf_subtitle =>
+      'Ряд начатых серий вверху библиотеки';
+
+  @override
+  String get excluded => 'Исключено';
+
+  @override
+  String get remove_filter => 'Убрать фильтр';
+
+  @override
+  String get current_chapter => 'Текущая глава';
+
+  @override
+  String get series => 'Серия';
+
+  @override
+  String get chapters_read => 'Прочитано глав';
+
+  @override
+  String get search_settings => 'Поиск настроек';
+
+  @override
+  String get search_settings_hint =>
+      'Введите название настройки или слово из её описания';
+
+  @override
+  String reading_mode_for(String name) {
+    return 'Режим чтения для «$name»';
+  }
+
+  @override
+  String default_is(String name) {
+    return 'По умолчанию: $name';
+  }
+
+  @override
+  String get use_default => 'Использовать по умолчанию';
+
+  @override
+  String get is_the_default => 'Это ваш режим чтения по умолчанию';
+
+  @override
+  String get page_layout => 'Макет страницы и масштаб';
+
+  @override
+  String get reader_section_mode_summary =>
+      'Режим по умолчанию, масштаб, фон, предзагрузка, полный экран';
+
+  @override
+  String get reader_section_layout_summary =>
+      'Широкие страницы, разворот, масштаб в альбомной ориентации';
+
+  @override
+  String get reader_section_navigation_summary =>
+      'Зоны нажатия, раскладка, скрытие меню, вспышка страницы';
+
+  @override
+  String get reader_section_swipe_summary =>
+      'Что делает свайп по главе в списке';
+
+  @override
+  String get all_reader_settings => 'Все настройки читалки';
+
+  @override
+  String get undo => 'Отменить';
+
+  @override
+  String get removed_from_history => 'Удалено из истории';
+
+  @override
+  String n_new_chapters(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Новых глав: $count',
+      one: '1 новая глава',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get page_color_white => 'Белый';
+
+  @override
+  String get page_color_black => 'Чёрный';
+
+  @override
+  String get page_color_night => 'Ночь';
+
+  @override
+  String get page_color_sepia => 'Сепия';
+
+  @override
+  String get page_color_coffee => 'Кофе';
+
+  @override
+  String get page_color_silver => 'Серебро';
+
+  @override
+  String get page_color_graphite => 'Графит';
+
+  @override
+  String get page_color_mist => 'Туман';
+
+  @override
+  String get page_color_paper => 'Бумага';
+
+  @override
+  String get page_color_sky => 'Небо';
+
+  @override
+  String get page_color_mint => 'Мята';
+
+  @override
+  String get page_color_honey => 'Мёд';
+
+  @override
+  String next_episode_in(int seconds) {
+    return 'Следующий эпизод через $seconds с';
+  }
+
+  @override
+  String get stay_on_this_episode => 'Остаться на этом эпизоде';
+
+  @override
+  String get got_it => 'Понятно';
+
+  @override
+  String get gesture_brightness =>
+      'Проведите вверх или вниз слева, чтобы изменить яркость';
+
+  @override
+  String get gesture_volume =>
+      'Проведите вверх или вниз справа, чтобы изменить громкость';
+
+  @override
+  String get gesture_double_tap_skip =>
+      'Дважды коснитесь стороны, чтобы перемотать назад или вперёд';
+
+  @override
+  String get gesture_drag_seek => 'Проведите вбок, чтобы перемещаться по видео';
+
+  @override
+  String get gesture_long_press_speed => 'Нажмите и удерживайте для ускорения';
+
+  @override
+  String get tap_to_continue => 'Коснитесь в любом месте, чтобы продолжить';
+
+  @override
+  String get empty_library_hint =>
+      'Найдите серию в разделе «Обзор» и добавьте её в библиотеку.';
+
+  @override
+  String get more_filters => 'Другие фильтры';
+
+  @override
+  String get resume_all_downloads => 'Возобновить все загрузки';
+
+  @override
+  String get download_failed => 'Ошибка';
+
+  @override
+  String get download_all => 'Скачать всё';
+
+  @override
+  String n_chapters_queued(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Глав в очереди: $count',
+      one: '1 глава в очереди',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String n_selected(int count) {
+    return 'Выбрано: $count';
+  }
+
+  @override
+  String get settings_general_summary => 'Язык, обновления библиотеки, сеть';
+
+  @override
+  String get settings_appearance_summary => 'Тема, палитра, навигация, шрифт';
+
+  @override
+  String get settings_novel_reader_summary =>
+      'Шрифт, цвет страницы, озвучивание';
+
+  @override
+  String get settings_player_summary =>
+      'Воспроизведение, субтитры, звук, декодер';
+
+  @override
+  String get settings_downloads_summary =>
+      'Расположение, только Wi-Fi, одновременные загрузки';
+
+  @override
+  String get settings_tracking_summary =>
+      'MyAnimeList, AniList, Kitsu и другие';
+
+  @override
+  String get settings_syncing_summary =>
+      'Синхронизируйте прогресс на своём сервере';
+
+  @override
+  String get settings_browse_summary => 'Расширения, репозитории, источники';
+
+  @override
+  String get settings_security_summary => 'Блокировка приложения';
+
+  @override
+  String get settings_about_summary => 'Версия, обновления, отчёты об ошибках';
+
+  @override
+  String minutes_left(int minutes) {
+    return '≈ осталось $minutes мин';
+  }
+
+  @override
+  String get group_playback => 'Воспроизведение';
+
+  @override
+  String get group_subtitles => 'Субтитры';
+
+  @override
+  String get group_screen => 'Экран';
+
+  @override
+  String get aniskip => 'AniSkip';
+
+  @override
+  String seconds_short(int n) {
+    return '$n с';
+  }
+
+  @override
+  String unknown_language_codes(String codes) {
+    return 'Неизвестный код языка: $codes';
+  }
+
+  @override
+  String get group_network => 'Сеть';
+
+  @override
+  String get group_discord => 'Discord';
+
+  @override
+  String invalid_url(String scheme) {
+    return 'Введите URL, начинающийся с $scheme';
+  }
+
+  @override
+  String get group_cleanup => 'Очистка';
+
+  @override
+  String remove_entries_confirm(int n) {
+    return 'Удалить записи ($n) и их историю? Это нельзя отменить.';
+  }
+
+  @override
+  String get group_library_maintenance => 'Обслуживание библиотеки';
+
+  @override
+  String get group_diagnostics => 'Диагностика';
+
+  @override
+  String get update_no_notes => 'Нет примечаний к выпуску.';
+
+  @override
+  String update_download_failed(String error) {
+    return 'Ошибка загрузки: $error';
+  }
+
+  @override
+  String get update_network_error => 'Ошибка сети при загрузке.';
+
+  @override
+  String get update_write_failed => 'Не удалось записать файл APK.';
+
+  @override
+  String get deselect_all => 'Снять выделение';
+
+  @override
+  String update_failed_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Не удалось обновить записей: $count',
+      one: 'Не удалось обновить 1 запись',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sort_ascending => 'По возрастанию';
+
+  @override
+  String get sort_descending => 'По убыванию';
+
+  @override
+  String get not_downloaded => 'Не скачано';
+
+  @override
+  String n_tracked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Отслеживается записей: $count',
+      one: 'Отслеживается 1 запись',
+      zero: 'Пока ничего не отслеживается',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get no_tracker_connected => 'Трекер не подключён';
+
+  @override
+  String get no_tracker_connected_message =>
+      'Войдите в сервис в разделе Настройки › Отслеживание, чтобы видеть здесь его списки.';
+
+  @override
+  String get edit_metadata => 'Изменить метаданные';
+
+  @override
+  String get group_modes => 'Режимы';
+
+  @override
+  String get group_app => 'Приложение';
+
+  @override
+  String get group_sources_services => 'Источники и сервисы';
+
+  @override
+  String n_sources(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Источников: $count',
+      one: '1 источник',
+      zero: 'Нет источников',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tv_player_beta_subtitle =>
+      'Вкл.: плеер для пульта ТВ. Выкл.: исходный плеер.';
+
+  @override
+  String get anime_only_beta_subtitle =>
+      'Скрыть мангу и ранобэ во всём приложении. Выключите, чтобы показать всё.';
+
+  @override
+  String download_queue_start_failed(String error) {
+    return 'Не удалось запустить очередь загрузок: $error';
+  }
+
+  @override
+  String get group_interface => 'Интерфейс';
+
+  @override
+  String get group_navigation => 'Навигация';
+
+  @override
+  String get tv_home_beta_subtitle =>
+      'Главная аниме в виде рядов (продолжить, новые эпизоды, категории) вместо сетки';
+
+  @override
+  String get cloudflare_bypass_proxy_hint =>
+      'Необязательный адрес FlareSolverr или Byparr';
+
+  @override
+  String get cloudflare_bypass_proxy_message =>
+      'Адрес FlareSolverr или Byparr. Оставьте пустым, чтобы выключить.';
+
+  @override
+  String get group_explore => 'Обзор';
+
+  @override
+  String get explore_recommendations_subtitle => 'Похожие тайтлы';
+
+  @override
+  String get explore_related_subtitle => 'Адаптации, спин-оффы и другие версии';
+
+  @override
+  String get explore_watch_order_subtitle => 'Порядок просмотра всей истории';
+
+  @override
+  String get explore_sequels_subtitle => 'Что дальше, по данным вашего трекера';
+
+  @override
+  String get tap_zone_menu => 'Меню';
+
+  @override
+  String get tap_zone_previous => 'Назад';
+
+  @override
+  String get tap_zone_next => 'Далее';
+
+  @override
+  String get back_to_series => 'Назад к серии';
+
+  @override
+  String get keyboard_shortcuts => 'Сочетания клавиш';
+
+  @override
+  String get shortcut_previous_page => 'Предыдущая страница';
+
+  @override
+  String get shortcut_next_page => 'Следующая страница';
+
+  @override
+  String get shortcut_toggle_bars => 'Показать или скрыть панели';
+
+  @override
+  String get shortcut_zoom_in => 'Увеличить';
+
+  @override
+  String get shortcut_zoom_out => 'Уменьшить';
+
+  @override
+  String get shortcut_zoom_reset => 'Вписать страницу';
+
+  @override
+  String get shortcut_leave => 'Выйти из читалки';
+
+  @override
+  String get shortcut_show => 'Показать эти сочетания';
+
+  @override
+  String get color_red => 'Красный';
+
+  @override
+  String get color_blue => 'Синий';
+
+  @override
+  String get color_opacity => 'Непрозрачность';
+
+  @override
+  String get volume_keys_paging => 'Листать кнопками громкости';
+
+  @override
+  String get volume_keys_paging_ios =>
+      'Во время чтения громкость держится на середине, чтобы работали обе кнопки, и возвращается к прежней при выходе.';
+
+  @override
+  String get volume_keys_inverted => 'Поменять кнопки громкости местами';
+
+  @override
+  String get reader_orientation => 'Ориентация экрана';
+
+  @override
+  String get orientation_free => 'Как на устройстве';
+
+  @override
+  String get orientation_portrait => 'Книжная';
+
+  @override
+  String get orientation_landscape => 'Альбомная';
+
+  @override
+  String get screen_brightness => 'Яркость экрана';
+
+  @override
+  String get screen_brightness_system => 'Как в системе';
+
+  @override
+  String get shortcut_play_pause => 'Воспроизведение или пауза';
+
+  @override
+  String shortcut_seek_back(int n) {
+    return 'Назад на $n с';
+  }
+
+  @override
+  String shortcut_seek_forward(int n) {
+    return 'Вперёд на $n с';
+  }
+
+  @override
+  String get shortcut_volume_up => 'Громче';
+
+  @override
+  String get shortcut_volume_down => 'Тише';
+
+  @override
+  String get shortcut_mute => 'Выключить или включить звук';
+
+  @override
+  String shortcut_skip_intro(int n) {
+    return 'Пропустить опенинг ($n с)';
+  }
+
+  @override
+  String get shortcut_previous_frame => 'Предыдущий кадр';
+
+  @override
+  String get shortcut_next_frame => 'Следующий кадр';
+
+  @override
+  String get shortcut_shaders => 'Шейдеры Anime4K';
+
+  @override
+  String get shortcut_shaders_off => 'Шейдеры выкл.';
+
+  @override
+  String get autoplay_next_on => 'Автовоспроизведение следующего эпизода: вкл.';
+
+  @override
+  String get autoplay_next_off =>
+      'Автовоспроизведение следующего эпизода: выкл.';
+
+  @override
+  String get autoplay_next => 'Автовоспроизведение следующей серии';
+
+  @override
+  String get next_episode_short => 'Далее';
+
+  @override
+  String get subtitle_preview_sample => 'Путешествие продолжается.';
+
+  @override
+  String get text_style => 'Стиль';
+
+  @override
+  String get code_editor => 'Редактор кода';
+
+  @override
+  String get code_view_code => 'Код';
+
+  @override
+  String get code_view_test => 'Тест';
+
+  @override
+  String get code_view_console => 'Консоль';
+
+  @override
+  String get code_function => 'Функция';
+
+  @override
+  String get code_page => 'Страница';
+
+  @override
+  String get code_query => 'Запрос';
+
+  @override
+  String get code_url => 'URL';
+
+  @override
+  String get code_html => 'HTML';
+
+  @override
+  String get code_execute => 'Запустить';
+
+  @override
+  String get code_executing => 'Выполняется…';
+
+  @override
+  String get code_no_result => 'Пока нет результата';
+
+  @override
+  String get code_no_result_message =>
+      'Запустите функцию, чтобы увидеть, что она возвращает.';
+
+  @override
+  String get code_console => 'Консоль';
+
+  @override
+  String get code_no_logs => 'Пока нет записей';
+
+  @override
+  String get tv_empty_anime_library => 'Ваша библиотека аниме пуста';
+
+  @override
+  String get tv_empty_anime_library_hint =>
+      'Добавьте аниме из раздела «Обзор», чтобы заполнить главную';
+
+  @override
+  String get browse_anime => 'Обзор аниме';
+
+  @override
+  String get no_episodes_yet => 'Пока нет эпизодов';
+
+  @override
+  String get filler => 'Филлер';
+
+  @override
+  String get obsolete => 'Устарело';
+
+  @override
+  String every_n_days(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Раз в $n дн.',
+      one: 'Каждый день',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get update_interval_unknown => 'Нет оценки';
+
+  @override
+  String get group_reading => 'Чтение';
+
+  @override
+  String get group_reading_watching => 'Чтение и просмотр';
+
+  @override
+  String get novel_reader => 'Читалка ранобэ';
+
+  @override
+  String get all_languages => 'Все языки';
+
+  @override
+  String get custom_dns_title => 'Свой DNS';
+
+  @override
+  String get custom_dns_system => 'Системный DNS';
+
+  @override
+  String get calendar_format_month => 'Месяц';
+
+  @override
+  String get calendar_format_two_weeks => '2 недели';
+
+  @override
+  String get calendar_format_week => 'Неделя';
+
+  @override
+  String get read_count => 'Прочитано';
+
+  @override
+  String get watched_count => 'Просмотрено';
+
+  @override
+  String get source_code_error_title => 'Код этого источника не выполнился';
+
+  @override
+  String source_code_error_failed(String what) {
+    return 'Сбой: $what. Экран использует запасной вариант, чтобы можно было продолжить';
+  }
+
+  @override
+  String get copy_error => 'Копировать';
+
+  @override
+  String get error_copied => 'Ошибка скопирована';
+
+  @override
+  String get no_categories_yet => 'Категорий пока нет';
+
+  @override
+  String get no_categories_yet_message =>
+      'Разложите библиотеку по категориям, которые вы сами называете и упорядочиваете.';
 }

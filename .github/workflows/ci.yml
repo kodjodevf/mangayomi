@@ -57,6 +57,38 @@ jobs:
       - name: Run tests
         run: flutter test
 
+  shiori:
+    name: Shiori design system
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # The package is analysed and tested on its own, so a component can't
+      # quietly start depending on the app.
+      - name: Analyze and test the package
+        working-directory: packages/shiori
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+
+      # Every use case in the catalogue is opened once, and the web build
+      # proves it still compiles for the browser.
+      - name: Analyze, test and build the catalogue
+        working-directory: widgetbook
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+          flutter build web
+
   build-android:
     name: Build (Android debug)
     runs-on: ubuntu-latest

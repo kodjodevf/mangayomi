@@ -330,6 +330,44 @@ class Settings {
   /// False by default so existing installs keep the standard attached bar.
   bool? useFloatingNavigationBar;
 
+  /// Lets the chosen palette colour the surfaces (backgrounds, cards, bars)
+  /// as well as the accent, the way the app looked before Shiori.
+  ///
+  /// False by default: surfaces stay on Shiori's neutrals and the palette
+  /// only drives the accent.
+  bool? tintSurfacesWithPalette;
+
+  /// Whether the navigation groups the three libraries into one Library
+  /// destination and Updates and History into one Activity destination,
+  /// each with a switcher on its screen. Null, for a library saved before
+  /// the option existed, means on.
+  bool? groupNavDestinations;
+
+  /// Whether a library opens on a row of the series in progress. Null, for a
+  /// library saved before the option existed, means on.
+  bool? showContinueShelf;
+
+  /// Whether the video player's gesture guide has been shown once already.
+  bool? playerGestureHintSeen;
+
+  /// The series whose chapters are listed by their number ("Chapter 12")
+  /// instead of the title the source gives them.
+  List<int>? chapterNumberDisplayMangaIds;
+
+  /// Whether the volume buttons turn the reader's pages (Android, iOS).
+  bool? volumeKeysPaging;
+
+  /// Whether volume up turns forward rather than back.
+  bool? volumeKeysInverted;
+
+  /// How the readers hold the screen: 0 follows the device, 1 portrait,
+  /// 2 landscape.
+  int? readerOrientation;
+
+  /// The screen's brightness while a reader is open, from 1 to 100; -1
+  /// leaves it to the system.
+  int? readerScreenBrightness;
+
   bool? enableDiscordRpc;
 
   bool? hideDiscordRpcInIncognito;
@@ -598,6 +636,15 @@ class Settings {
     this.mergeLibraryNavMobile = false,
     this.showNavDoubleTapTooltip = true,
     this.useFloatingNavigationBar = false,
+    this.tintSurfacesWithPalette = false,
+    this.groupNavDestinations = true,
+    this.showContinueShelf = true,
+    this.playerGestureHintSeen = false,
+    this.chapterNumberDisplayMangaIds = const [],
+    this.volumeKeysPaging = false,
+    this.volumeKeysInverted = false,
+    this.readerOrientation = 0,
+    this.readerScreenBrightness = -1,
     this.enableDiscordRpc = true,
     this.hideDiscordRpcInIncognito = true,
     this.rpcShowReadingWatchingProgress = true,
@@ -938,6 +985,16 @@ class Settings {
     mergeLibraryNavMobile = json['mergeLibraryNavMobile'];
     showNavDoubleTapTooltip = json['showNavDoubleTapTooltip'];
     useFloatingNavigationBar = json['useFloatingNavigationBar'] ?? false;
+    tintSurfacesWithPalette = json['tintSurfacesWithPalette'] ?? false;
+    groupNavDestinations = json['groupNavDestinations'] ?? true;
+    showContinueShelf = json['showContinueShelf'] ?? true;
+    playerGestureHintSeen = json['playerGestureHintSeen'] ?? false;
+    chapterNumberDisplayMangaIds =
+        (json['chapterNumberDisplayMangaIds'] as List?)?.cast<int>() ?? [];
+    volumeKeysPaging = json['volumeKeysPaging'] ?? false;
+    volumeKeysInverted = json['volumeKeysInverted'] ?? false;
+    readerOrientation = json['readerOrientation'] ?? 0;
+    readerScreenBrightness = json['readerScreenBrightness'] ?? -1;
     enableDiscordRpc = json['enableDiscordRpc'];
     hideDiscordRpcInIncognito = json['hideDiscordRpcInIncognito'];
     rpcShowReadingWatchingProgress = json['rpcShowReadingWatchingProgress'];
@@ -1188,6 +1245,15 @@ class Settings {
     'mergeLibraryNavMobile': mergeLibraryNavMobile,
     'showNavDoubleTapTooltip': showNavDoubleTapTooltip,
     'useFloatingNavigationBar': useFloatingNavigationBar,
+    'tintSurfacesWithPalette': tintSurfacesWithPalette,
+    'groupNavDestinations': groupNavDestinations,
+    'showContinueShelf': showContinueShelf,
+    'playerGestureHintSeen': playerGestureHintSeen,
+    'chapterNumberDisplayMangaIds': chapterNumberDisplayMangaIds,
+    'volumeKeysPaging': volumeKeysPaging,
+    'volumeKeysInverted': volumeKeysInverted,
+    'readerOrientation': readerOrientation,
+    'readerScreenBrightness': readerScreenBrightness,
     'enableDiscordRpc': enableDiscordRpc,
     'hideDiscordRpcInIncognito': hideDiscordRpcInIncognito,
     'rpcShowReadingWatchingProgress': rpcShowReadingWatchingProgress,
