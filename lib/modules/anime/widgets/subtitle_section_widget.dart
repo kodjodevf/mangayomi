@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart' as vid;
@@ -10,7 +11,6 @@ import 'package:mangayomi/modules/anime/utils/track_list_builder.dart';
 import 'package:mangayomi/modules/anime/widgets/search_subtitles.dart';
 import 'package:mangayomi/modules/anime/widgets/unified_settings_sheet.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/services/fetch_subtitles.dart';
 import 'package:media_kit/media_kit.dart';
 
 /// The player settings sheet's "subtitle" section: delay/speed steppers plus
@@ -64,7 +64,7 @@ class _SubtitleSectionWidgetState extends State<SubtitleSectionWidget> {
     );
     final effective = widget.effectiveSubtitleTrack;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
       child: Column(
         children: [
           Row(
@@ -76,6 +76,7 @@ class _SubtitleSectionWidgetState extends State<SubtitleSectionWidget> {
                 ),
               ),
               IconButton(
+                tooltip: context.l10n.refresh,
                 onPressed: () {
                   setState(() {
                     _subDelay = 0;
@@ -91,8 +92,9 @@ class _SubtitleSectionWidgetState extends State<SubtitleSectionWidget> {
                   });
                 },
                 icon: Icon(
-                  Icons.refresh,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  Symbols.refresh_rounded,
+                  fill: 1,
+                  color: context.shiori.color.fg,
                   size: 18,
                 ),
               ),
@@ -202,7 +204,7 @@ class _SubtitleSectionWidgetState extends State<SubtitleSectionWidget> {
           }),
           SettingsActionRow(
             label: context.l10n.load_own_subtitles,
-            icon: Icons.file_open_outlined,
+            icon: Symbols.file_open_rounded,
             onTap: () async {
               try {
                 final file = await FilePicker.pickFile(
@@ -223,14 +225,14 @@ class _SubtitleSectionWidgetState extends State<SubtitleSectionWidget> {
           ),
           SettingsActionRow(
             label: context.l10n.search_subtitles,
-            icon: Icons.search,
+            icon: Symbols.search_rounded,
             onTap: () async {
               try {
                 final subtitle = await subtitlesSearchraggableMenu(
                   context,
                   chapter: widget.episode,
                   isLocal: widget.isLocal,
-                ) as ImdbSubtitle?;
+                );
                 if (subtitle != null && context.mounted) {
                   final track = SubtitleTrack.uri(
                     subtitle.url!,

@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_decoder_state_provider.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 /// The YouTube-style settings panel that docks on the right of the TV player.
 /// A navigable drill-down: a category list, and selecting one replaces it with
@@ -104,7 +104,7 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.primaryColor;
+    final accent = context.shiori.color.accentInk;
     final size = MediaQuery.of(context).size;
     final width = (size.width * 0.26).clamp(300.0, 380.0);
     return PopScope(
@@ -128,7 +128,7 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
         child: FocusTraversalGroup(
           child: Container(
             width: width,
-            color: Theme.of(context).colorScheme.surface,
+            color: context.shiori.color.ink0,
             child: SafeArea(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,15 +156,24 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
       child: Row(
         children: [
           IconButton(
+            tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
             focusNode: widget.headerFocusNode,
             onPressed: _handleBack,
-            icon: Icon(_open == null ? Icons.close : Icons.arrow_back),
+            icon: Icon(
+              fill: 1,
+              _open == null
+                  ? Symbols.close_rounded
+                  : Symbols.arrow_back_rounded,
+            ),
           ),
           const SizedBox(width: 4),
           Expanded(
             child: Text(
               title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: ShioriType.reference.seriesTitle.fontSize,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -185,13 +194,13 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
 
   Widget _categoryList(BuildContext context, Color accent) {
     final entries = <(String, IconData, String)>[
-      ('playback', Icons.speed, 'Playback speed'),
-      ('quality', Icons.high_quality_outlined, 'Quality'),
-      ('subtitles', Icons.subtitles_outlined, 'Subtitles'),
-      ('audio', Icons.audiotrack_outlined, 'Audio'),
-      ('shaders', Icons.auto_awesome_outlined, 'Shaders'),
-      ('decoder', Icons.memory_outlined, 'Decoder'),
-      ('stats', Icons.insights_outlined, 'Stats for nerds'),
+      ('playback', Symbols.speed_rounded, 'Playback speed'),
+      ('quality', Symbols.high_quality_rounded, 'Quality'),
+      ('subtitles', Symbols.subtitles_rounded, 'Subtitles'),
+      ('audio', Symbols.audiotrack_rounded, 'Audio'),
+      ('shaders', Symbols.auto_awesome_rounded, 'Shaders'),
+      ('decoder', Symbols.memory_rounded, 'Decoder'),
+      ('stats', Symbols.insights_rounded, 'Stats for nerds'),
     ];
     return ListView(
       children: [
@@ -200,7 +209,11 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
             accent: accent,
             icon: e.$2,
             label: e.$3,
-            trailing: const Icon(Icons.chevron_right, size: 20),
+            trailing: const Icon(
+              Symbols.chevron_right_rounded,
+              fill: 1,
+              size: 20,
+            ),
             onTap: () => _drill(e.$1),
           ),
       ],
@@ -272,7 +285,7 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
               _NavRow(
                 accent: accent,
                 autofocus: i == 0,
-                icon: Icons.insights_outlined,
+                icon: Symbols.insights_rounded,
                 label: st.$1,
                 onTap: () => _native.command(['script-binding', st.$2]),
               ),
@@ -302,7 +315,7 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
               padding: const EdgeInsets.all(24),
               child: Text(
                 empty,
-                style: TextStyle(color: Theme.of(context).hintColor),
+                style: TextStyle(color: context.shiori.color.fgMuted),
               ),
             ),
           );
@@ -372,14 +385,14 @@ class _NavRowState extends State<_NavRow> {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
           decoration: BoxDecoration(
             color: _focused ? widget.accent.withValues(alpha: 0.18) : null,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(ShioriShape.card),
           ),
           child: Row(
             children: [
               Icon(widget.icon, size: 20, color: widget.accent),
               const SizedBox(width: 14),
               Expanded(
-                child: Text(widget.label, style: const TextStyle(fontSize: 15)),
+                child: Text(widget.label, style: context.shiori.text.body),
               ),
               if (widget.trailing != null) widget.trailing!,
             ],
@@ -431,7 +444,7 @@ class _OptionRowState extends State<_OptionRow> {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
             color: _focused ? widget.accent.withValues(alpha: 0.18) : null,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(ShioriShape.card),
           ),
           child: Row(
             children: [
@@ -439,7 +452,7 @@ class _OptionRowState extends State<_OptionRow> {
                 child: Text(
                   widget.label,
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: ShioriType.reference.body.fontSize,
                     fontWeight: widget.selected
                         ? FontWeight.w700
                         : FontWeight.normal,
@@ -448,7 +461,12 @@ class _OptionRowState extends State<_OptionRow> {
                 ),
               ),
               if (widget.selected)
-                Icon(Icons.check, size: 20, color: widget.accent),
+                Icon(
+                  Symbols.check_rounded,
+                  fill: 1,
+                  size: 20,
+                  color: widget.accent,
+                ),
             ],
           ),
         ),
@@ -512,16 +530,16 @@ class _TvVideoFocusFrameState extends State<TvVideoFocusFrame> {
         return KeyEventResult.ignored;
       },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 130),
+        duration: ShioriMotion.fast,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(ShioriShape.card),
           border: Border.all(
             color: _focused ? widget.accent : Colors.transparent,
             width: 3,
           ),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(11),
+          borderRadius: BorderRadius.circular(ShioriShape.card),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -541,7 +559,10 @@ class _TvVideoFocusFrameState extends State<TvVideoFocusFrame> {
                         child: Padding(
                           padding: const EdgeInsets.all(14),
                           child: Icon(
-                            playing ? Icons.pause : Icons.play_arrow,
+                            fill: 1,
+                            playing
+                                ? Symbols.pause_rounded
+                                : Symbols.play_arrow_rounded,
                             color: Colors.white,
                             size: 40,
                           ),

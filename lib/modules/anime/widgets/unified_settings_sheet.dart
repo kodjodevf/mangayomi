@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 
 /// One selectable row inside a [UnifiedSettingsSheet] section: a label, an
 /// optional trailing hint (codec, keyboard shortcut...) and a filled
@@ -22,69 +24,50 @@ class SettingsOptionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
-    final accent = colorScheme.primary;
-    final onSurface = colorScheme.onSurface;
+    // The app's own choice row (ShioriChoice): the label in bold and a check
+    // at the end when picked, at the density's row height. The check's room
+    // is kept when it is not there, so labels and hints do not shift.
+    final tokens = context.shiori;
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
         onTap: onTap,
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 4),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: selected
-                ? colorScheme.primaryContainer.withValues(alpha: 0.45)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: selected ? accent : Colors.transparent,
-                  border: Border.all(
-                    color: selected
-                        ? accent
-                        : colorScheme.outline.withValues(alpha: 0.50),
-                    width: 1.5,
-                  ),
-                ),
-                child: selected
-                    ? Icon(Icons.check, size: 13, color: colorScheme.onPrimary)
-                    : null,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  label,
-                  style: (textTheme.bodyMedium ?? const TextStyle()).copyWith(
-                    fontSize: 13.5,
-                    color: selected ? accent : onSurface,
-                    fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              if (hint != null)
-                Padding(
-                  padding: const EdgeInsets.only(left: 8),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: tokens.density.rowHeight),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s16),
+            child: Row(
+              spacing: ShioriSpace.s12,
+              children: [
+                Expanded(
                   child: Text(
+                    label,
+                    style: tokens.text.row.copyWith(
+                      color: tokens.color.fg,
+                      fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (hint != null)
+                  Text(
                     hint!,
-                    style: (textTheme.labelSmall ?? const TextStyle()).copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                    style: tokens.caption.copyWith(
                       fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
+                SizedBox.square(
+                  dimension: 24,
+                  child: selected
+                      ? Icon(
+                          Symbols.check_rounded,
+                          color: tokens.color.accentInk,
+                        )
+                      : null,
                 ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -110,35 +93,40 @@ class SettingsActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
-        borderRadius: BorderRadius.circular(10),
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          child: Row(
-            children: [
-              Icon(icon, size: 18, color: colorScheme.onSurfaceVariant),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  label,
-                  style: (textTheme.bodyMedium ?? const TextStyle()).copyWith(
-                    fontSize: 13.5,
-                    color: colorScheme.onSurface,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: context.shiori.density.rowHeight,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s16),
+            child: Row(
+              children: [
+                Icon(
+                  icon,
+                  size: context.shiori.scaled(24),
+                  color: context.shiori.color.fgMuted,
+                ),
+                const SizedBox(width: ShioriSpace.s16),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: context.shiori.text.row.copyWith(
+                      color: context.shiori.color.fg,
+                    ),
                   ),
                 ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                size: 18,
-                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.70),
-              ),
-            ],
+                Icon(
+                  Symbols.chevron_right_rounded,
+                  fill: 1,
+                  size: 18,
+                  color: context.shiori.color.fgMuted.withValues(alpha: 0.70),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -146,25 +134,24 @@ class SettingsActionRow extends StatelessWidget {
   }
 }
 
-/// Uppercase, muted group label ("QUALITÉ", "RENDU"...) inside a section body.
+/// A group label ("QUALITY", "RENDERING"...) inside a section body: the
+/// app's one group label.
 class SettingsSectionLabel extends StatelessWidget {
   final String text;
   const SettingsSectionLabel(this.text, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 14, 12, 6),
-      child: Text(
-        text.toUpperCase(),
-        style: (textTheme.labelSmall ?? const TextStyle()).copyWith(
-          letterSpacing: 0.8,
-          fontWeight: FontWeight.w600,
-          color: colorScheme.onSurfaceVariant,
-        ),
+      padding: const EdgeInsets.fromLTRB(
+        ShioriSpace.s16,
+        ShioriSpace.s12,
+        ShioriSpace.s16,
+        ShioriSpace.s8,
+      ),
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: ShioriGroupLabel(text),
       ),
     );
   }
@@ -200,37 +187,37 @@ class SettingsStepperRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
-    final onSurface = colorScheme.onSurface;
+    final onSurface = context.shiori.color.fg;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: ShioriSpace.s16,
+        vertical: ShioriSpace.s8,
+      ),
       child: Row(
         children: [
           Expanded(
             child: Text(
               label,
-              style: (textTheme.bodyMedium ?? const TextStyle()).copyWith(
-                fontSize: 13,
-                color: colorScheme.onSurfaceVariant,
+              style: context.shiori.text.row.copyWith(
+                color: context.shiori.color.fgMuted,
               ),
             ),
           ),
           Container(
             decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withValues(
-                alpha: 0.60,
-              ),
-              borderRadius: BorderRadius.circular(8),
+              color: context.shiori.color.ink3.withValues(alpha: 0.60),
+              borderRadius: BorderRadius.circular(ShioriShape.cover),
               border: Border.all(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.30),
+                color: context.shiori.color.hairline.withValues(alpha: 0.30),
               ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _StepperButton(icon: Icons.remove, onTap: onDecrement),
+                _StepperButton(
+                  icon: Symbols.remove_rounded,
+                  onTap: onDecrement,
+                ),
                 if (controller != null)
                   SizedBox(
                     width: 78,
@@ -239,28 +226,23 @@ class SettingsStepperRow extends StatelessWidget {
                       keyboardType: keyboardType,
                       textAlign: TextAlign.center,
                       cursorHeight: 14,
-                      style: (textTheme.labelMedium ?? const TextStyle())
-                          .copyWith(
-                            fontSize: 12,
-                            color: onSurface,
-                            fontFeatures: const [FontFeature.tabularFigures()],
-                            fontWeight: FontWeight.w600,
-                          ),
+                      style: context.shiori.text.meta.copyWith(
+                        color: onSurface,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                        fontWeight: FontWeight.w600,
+                      ),
                       decoration: InputDecoration(
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                          horizontal: 4,
+                          vertical: ShioriSpace.s8,
+                          horizontal: ShioriSpace.s4,
                         ),
                         border: InputBorder.none,
                         suffixText: suffix,
-                        suffixStyle:
-                            (textTheme.labelMedium ?? const TextStyle())
-                                .copyWith(
-                                  fontSize: 11,
-                                  color: colorScheme.onSurfaceVariant,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                        suffixStyle: context.shiori.text.badge.copyWith(
+                          color: context.shiori.color.fgMuted,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                       onChanged: onChanged,
                       onSubmitted: onSubmitted,
@@ -272,16 +254,14 @@ class SettingsStepperRow extends StatelessWidget {
                     child: Text(
                       value ?? '',
                       textAlign: TextAlign.center,
-                      style: (textTheme.labelMedium ?? const TextStyle())
-                          .copyWith(
-                            fontSize: 12,
-                            color: onSurface,
-                            fontFeatures: const [FontFeature.tabularFigures()],
-                            fontWeight: FontWeight.w600,
-                          ),
+                      style: context.shiori.text.meta.copyWith(
+                        color: onSurface,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                _StepperButton(icon: Icons.add, onTap: onIncrement),
+                _StepperButton(icon: Symbols.add_rounded, onTap: onIncrement),
               ],
             ),
           ),
@@ -298,17 +278,16 @@ class _StepperButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(ShioriShape.cover),
         onTap: onTap,
         child: Container(
           width: 36,
           height: 36,
           alignment: Alignment.center,
-          child: Icon(icon, size: 16, color: colorScheme.onSurface),
+          child: Icon(icon, size: 16, color: context.shiori.color.fg),
         ),
       ),
     );
@@ -345,76 +324,41 @@ class PlayerPillButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    final bgColor = active
-        ? colorScheme.primaryContainer.withValues(alpha: 0.85)
-        : colorScheme.surfaceContainerHighest.withValues(alpha: 0.70);
-    final borderColor = active
-        ? colorScheme.primary.withValues(alpha: 0.60)
-        : colorScheme.outlineVariant.withValues(alpha: 0.35);
-    final fgColor = active ? colorScheme.onPrimaryContainer : Colors.white;
+    // Shiori's pill over a picture: on the scrim whatever the theme, filled
+    // with the accent when on, a full-size target around a small pill.
     final visibleLabel = showLabel ? label : null;
-
-    final padH = isCompact ? 8.0 : 10.0;
-    final padV = isCompact ? 4.5 : 6.0;
-
-    final button = Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: onTap,
-        onLongPress: onLongPress,
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: padH, vertical: padV),
-          decoration: BoxDecoration(
-            color: bgColor,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: borderColor),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon != null) ...[
-                Icon(icon, size: isCompact ? 14 : 15, color: fgColor),
-                if (visibleLabel != null) SizedBox(width: isCompact ? 4 : 6),
-              ],
-              if (visibleLabel != null)
-                Text(
-                  visibleLabel,
-                  style: (textTheme.labelMedium ?? const TextStyle()).copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: fgColor,
-                    fontSize: isCompact ? 11 : null,
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
+    return ShioriOverlayPill(
+      icon: icon,
+      label: visibleLabel,
+      // Named whole for a screen reader even when only the icon shows.
+      tooltip: tooltip ?? (visibleLabel == null ? label : null),
+      semanticsValue: visibleLabel == null && tooltip != null ? label : null,
+      emphasized: active,
+      compact: isCompact,
+      onTap: onTap,
+      onLongPress: onLongPress,
     );
-    final accessibleButton = !showLabel && label != null
-        ? Semantics(value: label, child: button)
-        : button;
-    return tooltip != null
-        ? Tooltip(message: tooltip!, child: accessibleButton)
-        : accessibleButton;
   }
 }
 
 typedef SettingsSectionBuilder = Widget Function(BuildContext context);
 
-/// One entry in the settings home list ("Qualité", "Vitesse"...): an icon, a
-/// label, an optional live current-value widget shown to the right of it
-/// (e.g. "1.0×"), and either drill-down content or a direct action.
+/// One entry in the settings home: an icon, a label, its current value
+/// (e.g. "1×"), and what a tap does: open a section ([contentBuilder]), run
+/// an action ([onTap]), or flip a switch ([toggle] and [onToggle]).
+///
+/// [featured] entries, the ones changed while watching, open the home as
+/// tiles; the rest follow as rows under their [group]'s label.
 class SettingsEntry {
   final String label;
   final IconData icon;
   final WidgetBuilder? valueBuilder;
   final SettingsSectionBuilder? contentBuilder;
   final ValueChanged<BuildContext>? onTap;
+  final ValueListenable<bool>? toggle;
+  final ValueChanged<bool>? onToggle;
+  final bool featured;
+  final String? group;
 
   const SettingsEntry({
     required this.label,
@@ -422,10 +366,102 @@ class SettingsEntry {
     this.contentBuilder,
     this.onTap,
     this.valueBuilder,
+    this.toggle,
+    this.onToggle,
+    this.featured = false,
+    this.group,
   }) : assert(
-         (contentBuilder == null) != (onTap == null),
-         'Provide either contentBuilder or onTap',
-       );
+         (contentBuilder != null ? 1 : 0) +
+                 (onTap != null ? 1 : 0) +
+                 (toggle != null ? 1 : 0) ==
+             1,
+         'Provide one of contentBuilder, onTap or toggle',
+       ),
+       assert(toggle == null || onToggle != null, 'A toggle needs onToggle');
+}
+
+/// The icon of a settings row, on a small tile of its own so the column of
+/// icons reads as a column, as the app's lists do with thumbnails.
+class _EntryIcon extends StatelessWidget {
+  const _EntryIcon(this.icon, {this.accent = false});
+
+  final IconData icon;
+  final bool accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.shiori;
+    final c = tokens.color;
+    final extent = tokens.scaled(36);
+    return Container(
+      width: extent,
+      height: extent,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: accent ? c.accent.withValues(alpha: Alphas.accentTint) : c.ink2,
+        borderRadius: BorderRadius.circular(ShioriShape.card),
+      ),
+      child: Icon(
+        icon,
+        size: tokens.scaled(20),
+        color: accent ? c.accentInk : c.fg,
+      ),
+    );
+  }
+}
+
+/// A featured entry: a tile with its icon, its name and, largest, its value,
+/// the thing one opens the settings to read or change.
+class _SettingsTile extends StatelessWidget {
+  const _SettingsTile({required this.entry, required this.onTap});
+
+  final SettingsEntry entry;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.shiori;
+    final c = tokens.color;
+    return Material(
+      color: c.ink2,
+      borderRadius: BorderRadius.circular(ShioriShape.card),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(ShioriSpace.s12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: ShioriSpace.s8,
+            children: [
+              _EntryIcon(entry.icon, accent: true),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    entry.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: tokens.caption,
+                  ),
+                  if (entry.valueBuilder != null)
+                    DefaultTextStyle.merge(
+                      style: tokens.text.row.copyWith(
+                        color: c.fg,
+                        fontWeight: FontWeight.w700,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      child: entry.valueBuilder!(context),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _SettingsHomeRow extends StatelessWidget {
@@ -435,77 +471,131 @@ class _SettingsHomeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final textTheme = theme.textTheme;
-    final onSurface = colorScheme.onSurface;
-    final accent = colorScheme.primary;
-    final maxLabelWidth = (MediaQuery.sizeOf(context).width * 0.45).clamp(
-      120.0,
-      180.0,
+    final tokens = context.shiori;
+    final c = tokens.color;
+    final toggle = entry.toggle;
+    // Two lines before it is cut: "Autoplay next episode" runs long in
+    // French and German beside a switch.
+    final label = Text(
+      entry.label,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      style: tokens.text.row.copyWith(color: c.fg),
+    );
+    final row = Container(
+      constraints: BoxConstraints(minHeight: tokens.density.rowHeight),
+      padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s16),
+      child: Row(
+        spacing: ShioriSpace.s12,
+        children: [
+          _EntryIcon(entry.icon),
+          Expanded(child: label),
+          if (entry.valueBuilder != null)
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: (MediaQuery.sizeOf(context).width * 0.3).clamp(
+                  80.0,
+                  160.0,
+                ),
+              ),
+              child: DefaultTextStyle.merge(
+                style: tokens.caption,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.end,
+                child: entry.valueBuilder!(context),
+              ),
+            ),
+          if (toggle != null)
+            ValueListenableBuilder<bool>(
+              valueListenable: toggle,
+              builder: (context, on, _) =>
+                  Switch(value: on, onChanged: entry.onToggle),
+            )
+          else if (entry.contentBuilder != null)
+            Icon(
+              Symbols.chevron_right_rounded,
+              size: tokens.scaled(20),
+              color: c.fgMuted,
+            ),
+        ],
+      ),
     );
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-          child: Row(
-            children: [
-              Icon(entry.icon, size: 18, color: accent),
-              const SizedBox(width: 14),
-              if (entry.valueBuilder == null)
-                Expanded(
-                  child: Text(
-                    entry.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: (textTheme.bodyMedium ?? const TextStyle()).copyWith(
-                      fontSize: 13.5,
-                      color: onSurface,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                )
-              else ...[
-                ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: maxLabelWidth),
-                  child: Text(
-                    entry.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: (textTheme.bodyMedium ?? const TextStyle()).copyWith(
-                      fontSize: 13.5,
-                      color: onSurface,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: DefaultTextStyle.merge(
-                      style: (textTheme.bodySmall ?? const TextStyle())
-                          .copyWith(color: colorScheme.onSurfaceVariant),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.end,
-                      child: entry.valueBuilder!(context),
-                    ),
-                  ),
-                ),
-              ],
-              const SizedBox(width: 4),
-              Icon(
-                Icons.chevron_right,
-                size: 18,
-                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.70),
-              ),
-            ],
-          ),
-        ),
+        onTap: toggle != null ? () => entry.onToggle!(!toggle.value) : onTap,
+        child: row,
       ),
+    );
+  }
+}
+
+/// The settings home: the featured entries as tiles, two or four across,
+/// then the others in their groups.
+class _SettingsHome extends StatelessWidget {
+  const _SettingsHome({required this.entries, required this.onOpen});
+
+  final List<SettingsEntry> entries;
+  final ValueChanged<int> onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final featured = [
+      for (var i = 0; i < entries.length; i++)
+        if (entries[i].featured) i,
+    ];
+    final groups = <String?, List<int>>{};
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].featured) continue;
+      groups.putIfAbsent(entries[i].group, () => []).add(i);
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (featured.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              ShioriSpace.s16,
+              ShioriSpace.s12,
+              ShioriSpace.s16,
+              ShioriSpace.s4,
+            ),
+            // Two across in rows of Expanded, not a LayoutBuilder: the
+            // desktop popup measures its content's intrinsic width, which a
+            // LayoutBuilder cannot answer.
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              spacing: ShioriSpace.s8,
+              children: [
+                for (var r = 0; r < featured.length; r += 2)
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      spacing: ShioriSpace.s8,
+                      children: [
+                        for (final i in featured.skip(r).take(2))
+                          Expanded(
+                            child: _SettingsTile(
+                              entry: entries[i],
+                              onTap: () => onOpen(i),
+                            ),
+                          ),
+                        if (r + 1 >= featured.length) const Spacer(),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        for (final MapEntry(key: group, value: indices) in groups.entries) ...[
+          if (group != null) SettingsSectionLabel(group),
+          for (final i in indices)
+            _SettingsHomeRow(entry: entries[i], onTap: () => onOpen(i)),
+        ],
+        const SizedBox(height: ShioriSpace.s4),
+      ],
     );
   }
 }
@@ -553,17 +643,20 @@ class _DrilldownHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final onSurface = theme.colorScheme.onSurface;
-    final textTheme = theme.textTheme;
+    final onSurface = context.shiori.color.fg;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 4, 8, 4),
+      padding: const EdgeInsets.fromLTRB(
+        ShioriSpace.s4,
+        ShioriSpace.s4,
+        ShioriSpace.s8,
+        ShioriSpace.s4,
+      ),
       child: SizedBox(
         height: 44,
         child: Row(
           children: [
             AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
+              duration: ShioriMotion.enter,
               switchInCurve: Curves.easeOutCubic,
               switchOutCurve: Curves.easeOutCubic,
               transitionBuilder: (child, animation) {
@@ -585,22 +678,30 @@ class _DrilldownHeader extends StatelessWidget {
               },
               child: showBack
                   ? IconButton(
+                      tooltip: MaterialLocalizations.of(context)
+                          .backButtonTooltip,
                       key: const ValueKey('back-button'),
                       onPressed: onBack,
-                      icon: Icon(Icons.arrow_back, color: onSurface, size: 20),
+                      icon: Icon(
+                        Symbols.arrow_back_rounded,
+                        fill: 1,
+                        color: onSurface,
+                        size: 20,
+                      ),
                       splashRadius: 20,
-                      padding: const EdgeInsets.all(10),
-                      constraints: const BoxConstraints(
-                        minWidth: 40,
-                        minHeight: 40,
+                      padding: const EdgeInsets.all(ShioriSpace.s12),
+                      constraints: BoxConstraints(
+                        minWidth: context.shiori.density.minTarget,
+                        minHeight: context.shiori.density.minTarget,
                       ),
                     )
                   : const SizedBox.shrink(key: ValueKey('no-back')),
             ),
-            const SizedBox(width: 8),
+            // Without the back arrow, the title starts on the rows' edge.
+            SizedBox(width: showBack ? ShioriSpace.s4 : ShioriSpace.s12),
             Expanded(
               child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
+                duration: ShioriMotion.enter,
                 switchInCurve: Curves.easeOutCubic,
                 switchOutCurve: Curves.easeOutCubic,
                 layoutBuilder: (currentChild, previousChildren) {
@@ -650,7 +751,7 @@ class _DrilldownHeader extends StatelessWidget {
                 child: Text(
                   title,
                   key: ValueKey(title),
-                  style: (textTheme.titleMedium ?? const TextStyle()).copyWith(
+                  style: context.shiori.text.section.copyWith(
                     fontWeight: FontWeight.w700,
                     color: onSurface,
                   ),
@@ -660,11 +761,20 @@ class _DrilldownHeader extends StatelessWidget {
               ),
             ),
             IconButton(
+              tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
               onPressed: onClose,
-              icon: Icon(Icons.close, color: onSurface, size: 20),
+              icon: Icon(
+                Symbols.close_rounded,
+                fill: 1,
+                color: onSurface,
+                size: 20,
+              ),
               splashRadius: 20,
-              padding: const EdgeInsets.all(10),
-              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+              padding: const EdgeInsets.all(ShioriSpace.s12),
+              constraints: BoxConstraints(
+                minWidth: context.shiori.density.minTarget,
+                minHeight: context.shiori.density.minTarget,
+              ),
             ),
           ],
         ),
@@ -711,12 +821,17 @@ class SettingsDrilldown extends StatefulWidget {
   final int initialIndex;
   final VoidCallback onClose;
 
+  /// The most the body may take before it scrolls; most of the screen's
+  /// height when null.
+  final double? maxBodyHeight;
+
   const SettingsDrilldown({
     super.key,
     required this.title,
     required this.entries,
     required this.onClose,
     this.initialIndex = -1,
+    this.maxBodyHeight,
   });
 
   @override
@@ -776,7 +891,7 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
         : ValueKey('section-$active');
 
     final screenHeight = MediaQuery.of(context).size.height;
-    final maxBodyHeight = screenHeight * 0.72;
+    final maxBodyHeight = widget.maxBodyHeight ?? screenHeight * 0.72;
 
     return SettingsDrilldownScope(
       goHome: _goHome,
@@ -794,15 +909,15 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
           ),
           Divider(
             height: 1,
-            color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
+            color: context.shiori.color.hairline.withValues(alpha: 0.15),
           ),
           ClipRect(
             child: AnimatedSize(
-              duration: const Duration(milliseconds: 300),
+              duration: ShioriMotion.enter,
               curve: Curves.easeOutCubic,
               alignment: Alignment.topCenter,
               child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
+                duration: ShioriMotion.enter,
                 switchInCurve: Curves.easeOutCubic,
                 switchOutCurve: Curves.easeOutCubic,
                 layoutBuilder: (currentChild, previousChildren) {
@@ -860,28 +975,23 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
                   key: currentKey,
                   constraints: BoxConstraints(maxHeight: maxBodyHeight),
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.only(bottom: ShioriSpace.s12),
                     child: active == null
-                        ? Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              for (var i = 0; i < widget.entries.length; i++)
-                                _SettingsHomeRow(
-                                  entry: widget.entries[i],
-                                  onTap: () {
-                                    final action = widget.entries[i].onTap;
-                                    if (action != null) {
-                                      action(context);
-                                    } else {
-                                      _open(i);
-                                    }
-                                  },
-                                ),
-                              const SizedBox(height: 4),
-                            ],
+                        ? _SettingsHome(
+                            entries: widget.entries,
+                            onOpen: (i) {
+                              final entry = widget.entries[i];
+                              if (entry.onTap != null) {
+                                entry.onTap!(context);
+                              } else if (entry.contentBuilder != null) {
+                                _open(i);
+                              }
+                            },
                           )
                         : Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
+                            padding: const EdgeInsets.only(
+                              bottom: ShioriSpace.s8,
+                            ),
                             child: widget.entries[active].contentBuilder!(
                               context,
                             ),
@@ -914,29 +1024,30 @@ class UnifiedSettingsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Container(
         decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerLow,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          color: context.shiori.color.ink1,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(ShioriShape.sheet),
+          ),
         ),
         child: SafeArea(
           top: false,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 12),
+              const SizedBox(height: ShioriSpace.s12),
               Container(
                 width: 32,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.40),
-                  borderRadius: BorderRadius.circular(99),
+                  color: context.shiori.color.fgMuted.withValues(alpha: 0.40),
+                  borderRadius: BorderRadius.circular(ShioriShape.pill),
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: ShioriSpace.s8),
               SettingsDrilldown(
                 title: title,
                 entries: entries,
@@ -951,13 +1062,70 @@ class UnifiedSettingsSheet extends StatelessWidget {
   }
 }
 
-/// Opens the mobile settings bottom sheet.
+/// Whether the player's settings open beside the video rather than over
+/// it: on a screen wider than tall, as the episode list does, so what they
+/// change (a subtitle's size, the fit) can be seen while it is changed.
+bool playerSettingsOpenBeside(BuildContext context) {
+  final size = MediaQuery.sizeOf(context);
+  return size.width > size.height && size.width >= 600;
+}
+
+/// Opens the mobile settings: a panel from the side in landscape, a sheet
+/// from the bottom in portrait.
 Future<T?> showUnifiedPlayerSettings<T>(
   BuildContext context, {
   required String title,
   required List<SettingsEntry> entries,
   int initialIndex = -1,
 }) {
+  if (playerSettingsOpenBeside(context)) {
+    final size = MediaQuery.sizeOf(context);
+    final width = (size.width * 0.42).clamp(340.0, 440.0);
+    return showGeneralDialog<T>(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+      barrierColor: Colors.transparent,
+      transitionDuration: ShioriMotion.of(context, ShioriMotion.enter),
+      transitionBuilder: (context, animation, _, child) => SlideTransition(
+        position: Tween(begin: const Offset(1, 0), end: Offset.zero).animate(
+          CurvedAnimation(parent: animation, curve: ShioriMotion.enterCurve),
+        ),
+        child: child,
+      ),
+      pageBuilder: (dialogContext, _, _) => Align(
+        alignment: AlignmentDirectional.centerEnd,
+        child: SizedBox(
+          width: width,
+          height: double.infinity,
+          child: Material(
+            color: dialogContext.shiori.color.ink1.withValues(
+              alpha: Alphas.chrome,
+            ),
+            borderRadius: const BorderRadiusDirectional.horizontal(
+              start: Radius.circular(ShioriShape.sheet),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: SafeArea(
+              left: false,
+              child: SettingsDrilldown(
+                title: title,
+                entries: entries,
+                initialIndex: initialIndex,
+                // The header's height off the panel's.
+                maxBodyHeight:
+                    MediaQuery.sizeOf(dialogContext).height -
+                    MediaQuery.paddingOf(dialogContext).vertical -
+                    ShioriSpace.s48 -
+                    ShioriSpace.s16,
+                onClose: () => Navigator.pop(dialogContext),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
   return showModalBottomSheet<T>(
     context: context,
     backgroundColor: Colors.transparent,
@@ -1018,9 +1186,11 @@ Future<void> showDesktopPlayerSettingsMenu(
   return showMenu<void>(
     context: anchor,
     position: position,
-    color: Theme.of(anchor).colorScheme.surfaceContainerHigh,
+    color: anchor.shiori.color.ink2,
     surfaceTintColor: Colors.transparent,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(ShioriShape.card),
+    ),
     menuPadding: EdgeInsets.zero,
     constraints: const BoxConstraints(minWidth: 300, maxWidth: 360),
     items: [

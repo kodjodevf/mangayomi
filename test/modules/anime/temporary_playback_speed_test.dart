@@ -45,7 +45,7 @@ void main() {
   });
 
   test('speed labels avoid unnecessary decimal zeroes', () {
-    expect(temporaryPlaybackSpeedLabel(2.0), '2x');
-    expect(temporaryPlaybackSpeedLabel(0.75), '0.75x');
+    expect(temporaryPlaybackSpeedLabel(2.0), '2×');
+    expect(temporaryPlaybackSpeedLabel(0.75), '0.75×');
   });
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
 
@@ -19,6 +20,7 @@ class TvFocusable extends StatefulWidget {
     required this.onPressed,
     this.focusNode,
     this.autofocus = false,
+    this.emphasized = false,
   });
 
   final Color accent;
@@ -26,6 +28,10 @@ class TvFocusable extends StatefulWidget {
   final VoidCallback? onPressed;
   final FocusNode? focusNode;
   final bool autofocus;
+
+  /// The screen's main control (play): an accent disc at rest as on the
+  /// phone, ringed in white once focused.
+  final bool emphasized;
 
   @override
   State<TvFocusable> createState() => _TvFocusableState();
@@ -54,15 +60,30 @@ class _TvFocusableState extends State<TvFocusable> {
       child: GestureDetector(
         onTap: widget.onPressed,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
+          duration: ShioriMotion.fast,
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: _focused
+            color: _focused || widget.emphasized
                 ? widget.accent
-                : Colors.black.withValues(alpha: 0.35),
+                : ShioriScrim.underText,
+            border: Border.all(
+              color: widget.emphasized && _focused
+                  ? Colors.white
+                  : Colors.transparent,
+              width: 3,
+            ),
           ),
-          child: Opacity(opacity: enabled ? 1.0 : 0.4, child: widget.child),
+          // The icon is white on the video and takes the colour read on the
+          // accent once focused: white on a light accent was unreadable.
+          child: IconTheme.merge(
+            data: IconThemeData(
+              color: _focused || widget.emphasized
+                  ? ShioriColors.onFill(widget.accent)
+                  : Colors.white,
+            ),
+            child: Opacity(opacity: enabled ? 1.0 : 0.4, child: widget.child),
+          ),
         ),
       ),
     );
@@ -94,10 +115,11 @@ class TvPlayPauseButton extends StatelessWidget {
           accent: accent,
           focusNode: focusNode,
           autofocus: true,
+          emphasized: true,
           onPressed: player.playOrPause,
           child: Icon(
-            playing ? Icons.pause : Icons.play_arrow,
-            color: Colors.white,
+            fill: 1,
+            playing ? Symbols.pause_rounded : Symbols.play_arrow_rounded,
             size: 34,
           ),
         );
