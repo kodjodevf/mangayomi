@@ -43,6 +43,13 @@ Future<void> doBackUp(
       compressionLevel: compressionLevel,
     );
     if (context != null && context.mounted) {
+      // The share button outlives the dialog this context belongs to, so
+      // everything it needs is read before the dialog closes.
+      final l10n = context.l10n;
+      final box = context.findRenderObject() as RenderBox?;
+      final origin = box == null
+          ? null
+          : box.localToGlobal(Offset.zero) & box.size;
       Navigator.pop(context);
       botToast(
         "Backup created!",
@@ -52,16 +59,13 @@ Future<void> doBackUp(
           // The button used to be hidden on Linux, where share_plus throws on
           // a file. shareOrCopy answers there with the backup's path on the
           // clipboard, which is the thing a Linux user wanted from it anyway.
-          ShioriToastAction(context.l10n.share, () {
-            final RenderBox? box = context.findRenderObject() as RenderBox?;
+          ShioriToastAction(l10n.share, () {
             shareOrCopy(
               ShareParams(
                 files: [XFile(zipPath)],
                 subject: p.basename(zipPath),
-                title: context.l10n.share_backup_file,
-                sharePositionOrigin: box == null
-                    ? null
-                    : box.localToGlobal(Offset.zero) & box.size,
+                title: l10n.share_backup_file,
+                sharePositionOrigin: origin,
               ),
             );
           }),
