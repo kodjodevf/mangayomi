@@ -701,7 +701,7 @@ class _DrilldownHeader extends StatelessWidget {
             SizedBox(width: showBack ? ShioriSpace.s4 : ShioriSpace.s12),
             Expanded(
               child: AnimatedSwitcher(
-                duration: ShioriMotion.enter,
+                duration: ShioriMotion.standard,
                 switchInCurve: Curves.easeOutCubic,
                 switchOutCurve: Curves.easeOutCubic,
                 layoutBuilder: (currentChild, previousChildren) {
@@ -913,11 +913,11 @@ class _SettingsDrilldownState extends State<SettingsDrilldown> {
           ),
           ClipRect(
             child: AnimatedSize(
-              duration: ShioriMotion.enter,
+              duration: ShioriMotion.standard,
               curve: Curves.easeOutCubic,
               alignment: Alignment.topCenter,
               child: AnimatedSwitcher(
-                duration: ShioriMotion.enter,
+                duration: ShioriMotion.standard,
                 switchInCurve: Curves.easeOutCubic,
                 switchOutCurve: Curves.easeOutCubic,
                 layoutBuilder: (currentChild, previousChildren) {

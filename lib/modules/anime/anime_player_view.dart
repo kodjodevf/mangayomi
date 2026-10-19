@@ -2754,7 +2754,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     streamController: _streamController,
                     seekToWidget: Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: ShioriSpace.s16,
+                        horizontal: ShioriSpace.s12,
                       ),
                       child: Row(children: [_seekToWidget()]),
                     ),
