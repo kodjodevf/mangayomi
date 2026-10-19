@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/global_style.dart';
@@ -255,7 +256,9 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           IconButton(
                             icon: Icon(
                               Icons.arrow_back,
-                              color: _canGoback ? null : Theme.of(context).disabledColor,
+                              color: _canGoback
+                                  ? null
+                                  : Theme.of(context).disabledColor,
                             ),
                             onPressed: _canGoback
                                 ? () {
@@ -266,7 +269,9 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           IconButton(
                             icon: Icon(
                               Icons.arrow_forward,
-                              color: _canGoForward ? null : Theme.of(context).disabledColor,
+                              color: _canGoForward
+                                  ? null
+                                  : Theme.of(context).disabledColor,
                             ),
                             onPressed: _canGoForward
                                 ? () {
@@ -311,9 +316,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                                   ),
                                 );
                               } else if (value == 2) {
-                                await InAppBrowser.openWithSystemBrowser(
-                                  url: WebUri(_url),
-                                );
+                                await ExternalBrowser.open(_url);
                               } else if (value == 3) {
                                 CookieManager.instance().deleteAllCookies();
                                 MClient.deleteAllCookies(_url);
