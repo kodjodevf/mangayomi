@@ -67,38 +67,43 @@ class _SubtitleSectionWidgetState extends State<SubtitleSectionWidget> {
       padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  context.l10n.subtitle_delay_text,
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.75)),
+          Padding(
+            padding: const EdgeInsets.only(left: ShioriSpace.s16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    context.l10n.subtitle_delay_text,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.75),
+                    ),
+                  ),
                 ),
-              ),
-              IconButton(
-                tooltip: context.l10n.refresh,
-                onPressed: () {
-                  setState(() {
-                    _subDelay = 0;
-                    widget.subDelayController.value = const TextEditingValue(
-                      text: "0",
-                      selection: TextSelection.collapsed(offset: 1),
-                    );
-                    _subSpeed = 1;
-                    widget.subSpeedController.value = const TextEditingValue(
-                      text: "1.00",
-                      selection: TextSelection.collapsed(offset: 4),
-                    );
-                  });
-                },
-                icon: Icon(
-                  Symbols.refresh_rounded,
-                  fill: 1,
-                  color: context.shiori.color.fg,
-                  size: 18,
+                IconButton(
+                  tooltip: context.l10n.refresh,
+                  onPressed: () {
+                    setState(() {
+                      _subDelay = 0;
+                      widget.subDelayController.value = const TextEditingValue(
+                        text: "0",
+                        selection: TextSelection.collapsed(offset: 1),
+                      );
+                      _subSpeed = 1;
+                      widget.subSpeedController.value = const TextEditingValue(
+                        text: "1.00",
+                        selection: TextSelection.collapsed(offset: 4),
+                      );
+                    });
+                  },
+                  icon: Icon(
+                    Symbols.refresh_rounded,
+                    fill: 1,
+                    color: context.shiori.color.fg,
+                    size: 18,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           SettingsStepperRow(
             label: context.l10n.subtitle_delay,

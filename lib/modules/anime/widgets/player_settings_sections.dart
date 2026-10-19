@@ -349,15 +349,20 @@ class AppearanceSectionWidget extends ConsumerWidget {
             Consumer(
               builder: (context, ref, _) {
                 final overrideAss = ref.watch(overrideAssSubtitlesStateProvider);
-                return ShioriSwitchRow(
-                  value: overrideAss,
-                  title: context.l10n.override_ass_subtitles,
-                  subtitle: context.l10n.override_ass_subtitles_info,
-                  onChanged: (val) {
-                    ref
-                        .read(subtitleSettingsStateProvider.notifier)
-                        .setOverrideAss(val);
-                  },
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: ShioriSpace.s16,
+                  ),
+                  child: ShioriSwitchRow(
+                    value: overrideAss,
+                    title: context.l10n.override_ass_subtitles,
+                    subtitle: context.l10n.override_ass_subtitles_info,
+                    onChanged: (val) {
+                      ref
+                          .read(subtitleSettingsStateProvider.notifier)
+                          .setOverrideAss(val);
+                    },
+                  ),
                 );
               },
             ),

@@ -1922,8 +1922,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           group: context.l10n.advanced,
           onTap: (sheetContext) {
             Navigator.pop(sheetContext);
+            // The menu's own context is gone once it closes.
+            if (!mounted) return;
             showPlayerShortcuts(
-              context,
+              this.context,
               skipIntroSeconds: ref.read(defaultSkipIntroLengthStateProvider),
               shaders: useMpvConfig,
             );
