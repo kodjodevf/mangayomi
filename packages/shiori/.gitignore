@@ -1,0 +1,4 @@
+.dart_tool/
+build/
+# A package resolves against whatever app depends on it.
+pubspec.lock

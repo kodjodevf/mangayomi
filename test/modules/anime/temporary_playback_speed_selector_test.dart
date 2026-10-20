@@ -12,14 +12,14 @@ void main() {
 
     await tester.pumpWidget(_testApp(size: size, speed: 2.0));
 
-    expect(find.text('2x'), findsOneWidget);
-    expect(find.text('3x'), findsNothing);
-    expect(find.text('2.5x'), findsNothing);
-    expect(find.text('1.5x'), findsNothing);
-    expect(find.text('1x'), findsNothing);
-    expect(find.text('0.75x'), findsNothing);
-    expect(find.text('0.5x'), findsNothing);
-    expect(find.text('0.25x'), findsNothing);
+    expect(find.text('2×'), findsOneWidget);
+    expect(find.text('3×'), findsNothing);
+    expect(find.text('2.5×'), findsNothing);
+    expect(find.text('1.5×'), findsNothing);
+    expect(find.text('1×'), findsNothing);
+    expect(find.text('0.75×'), findsNothing);
+    expect(find.text('0.5×'), findsNothing);
+    expect(find.text('0.25×'), findsNothing);
 
     final indicator = find.byKey(const ValueKey('temporary-speed-indicator'));
     expect(tester.getSize(indicator), const Size(58, 34));
@@ -67,8 +67,8 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
-    expect(find.text('0.25x'), findsOneWidget);
-    expect(find.bySemanticsLabel('Playback speed: 0.25x'), findsOneWidget);
+    expect(find.text('0.25×'), findsOneWidget);
+    expect(find.bySemanticsLabel('Playback speed: 0.25×'), findsOneWidget);
     final indicator = tester.getRect(
       find.byKey(const ValueKey('temporary-speed-indicator')),
     );

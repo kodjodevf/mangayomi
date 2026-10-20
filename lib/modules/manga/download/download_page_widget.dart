@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
@@ -11,7 +12,6 @@ import 'package:mangayomi/modules/manga/download/providers/download_provider.dar
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
-import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/share.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path/path.dart' as p;
@@ -102,7 +102,7 @@ class ChapterPageDownload extends ConsumerWidget {
       height: 41,
       width: 35,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 3),
+        padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s4),
         child: StreamBuilder<List<Download>>(
           initialData: initialDownload != null ? [initialDownload] : const [],
           stream: downloadRepository.watchByChapterId(chapter.id),
@@ -113,24 +113,26 @@ class ChapterPageDownload extends ConsumerWidget {
 
               // 1. Completely downloaded
               if (download.isDownload == true) {
-                return PopupMenuButton<int>(
-                  popUpAnimationStyle: popupAnimationStyle,
-                  child: Icon(
-                    size: 25,
-                    Icons.check_circle,
-                    color: Theme.of(context).iconTheme.color!
-                        .withValues(alpha: 0.7),
+                return _statusMenu(
+                  context,
+                  tooltip: l10n.downloaded,
+                  icon: Icon(
+                    Symbols.check_circle_rounded,
+                    fill: 1,
+                    color: context.shiori.color.fgMuted,
                   ),
-                  onSelected: (value) {
-                    if (value == 0) {
-                      _sendFile(context);
-                    } else if (value == 1) {
-                      chapter.deleteDownloadedFiles();
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    PopupMenuItem(value: 0, child: Text(l10n.send)),
-                    PopupMenuItem(value: 1, child: Text(l10n.delete)),
+                  items: [
+                    ShioriMenuItem(
+                      label: l10n.send,
+                      icon: Symbols.send_rounded,
+                      onSelected: () => _sendFile(context),
+                    ),
+                    ShioriMenuItem(
+                      label: l10n.delete,
+                      icon: Symbols.delete_rounded,
+                      destructive: true,
+                      onSelected: () => chapter.deleteDownloadedFiles(),
+                    ),
                   ],
                 );
               }
@@ -138,23 +140,24 @@ class ChapterPageDownload extends ConsumerWidget {
               // 2. Failed download state
               if ((download.failed ?? 0) > 0 &&
                   download.isStartDownload != true) {
-                return PopupMenuButton<int>(
-                  popUpAnimationStyle: popupAnimationStyle,
-                  child: const Icon(
-                    Icons.error_outline_outlined,
-                    color: Colors.red,
-                    size: 25,
+                return _statusMenu(
+                  context,
+                  tooltip: l10n.download_failed,
+                  icon: Icon(
+                    Symbols.error_rounded,
+                    color: context.shiori.color.error.foreground,
                   ),
-                  onSelected: (value) {
-                    if (value == 0) {
-                      _downloadChapter(context, ref);
-                    } else if (value == 1) {
-                      _cancelTasks(downloadId: download.id);
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    PopupMenuItem(value: 0, child: Text(l10n.retry)),
-                    PopupMenuItem(value: 1, child: Text(l10n.cancel)),
+                  items: [
+                    ShioriMenuItem(
+                      label: l10n.retry,
+                      icon: Symbols.refresh_rounded,
+                      onSelected: () => _downloadChapter(context, ref),
+                    ),
+                    ShioriMenuItem(
+                      label: l10n.cancel,
+                      icon: Symbols.close_rounded,
+                      onSelected: () => _cancelTasks(downloadId: download.id),
+                    ),
                   ],
                 );
               }
@@ -166,14 +169,16 @@ class ChapterPageDownload extends ConsumerWidget {
 
                 if (succeeded > 0 && total > 0) {
                   final progress = (succeeded / total).clamp(0.0, 1.0);
-                  return PopupMenuButton<int>(
-                    popUpAnimationStyle: popupAnimationStyle,
-                    child: Stack(
+                  return _statusMenu(
+                    context,
+                    tooltip: l10n.download,
+                    items: _activeItems(context, ref, download, l10n.retry),
+                    icon: Stack(
                       children: [
                         Align(
                           alignment: Alignment.center,
                           child: TweenAnimationBuilder<double>(
-                            duration: const Duration(milliseconds: 250),
+                            duration: ShioriMotion.standard,
                             curve: Curves.easeInOut,
                             tween: Tween<double>(begin: 0, end: progress),
                             builder: (context, value, _) => SizedBox(
@@ -182,7 +187,7 @@ class ChapterPageDownload extends ConsumerWidget {
                               child: CircularProgressIndicator(
                                 strokeWidth: 19,
                                 value: value,
-                                color: Theme.of(context).iconTheme.color!
+                                color: context.shiori.color.fg
                                     .withValues(alpha: 0.7),
                               ),
                             ),
@@ -191,52 +196,36 @@ class ChapterPageDownload extends ConsumerWidget {
                         Align(
                           alignment: Alignment.center,
                           child: Icon(
-                            Icons.arrow_downward_sharp,
+                            Symbols.arrow_downward_rounded,
+                            fill: 1,
                             color: progress > 0.5
-                                ? Theme.of(context).scaffoldBackgroundColor
-                                : Theme.of(context).iconTheme.color!
+                                ? context.shiori.color.ink0
+                                : context.shiori.color.fg
                                       .withValues(alpha: 0.7),
                           ),
                         ),
                       ],
                     ),
-                    onSelected: (value) {
-                      if (value == 0) {
-                        _cancelTasks(downloadId: download.id);
-                      } else if (value == 1) {
-                        _downloadChapter(context, ref, useWifi: false);
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(value: 1, child: Text(l10n.retry)),
-                      PopupMenuItem(value: 0, child: Text(l10n.cancel)),
-                    ],
                   );
                 }
 
                 // Started / queued with zero progress yet
-                return PopupMenuButton<int>(
-                  popUpAnimationStyle: popupAnimationStyle,
-                  child: const _DownloadProgressIcon(isLoading: true),
-                  onSelected: (value) {
-                    if (value == 0) {
-                      _cancelTasks(downloadId: download.id);
-                    } else if (value == 1) {
-                      _downloadChapter(context, ref, useWifi: false);
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 1,
-                      child: Text(l10n.start_downloading),
-                    ),
-                    PopupMenuItem(value: 0, child: Text(l10n.cancel)),
-                  ],
+                return _statusMenu(
+                  context,
+                  tooltip: l10n.download,
+                  icon: const _DownloadProgressIcon(isLoading: true),
+                  items: _activeItems(
+                    context,
+                    ref,
+                    download,
+                    l10n.start_downloading,
+                  ),
                 );
               }
 
               // 4. Queued / paused but not started
               return IconButton(
+                tooltip: context.l10n.download,
                 splashRadius: 5,
                 iconSize: 17,
                 onPressed: () {
@@ -248,6 +237,7 @@ class ChapterPageDownload extends ConsumerWidget {
 
             // 5. Not downloaded
             return IconButton(
+              tooltip: context.l10n.download,
               splashRadius: 5,
               iconSize: 17,
               onPressed: () {
@@ -264,7 +254,44 @@ class ChapterPageDownload extends ConsumerWidget {
   void _cancelTasks({int? downloadId}) {
     chapter.cancelDownloads(downloadId);
   }
+
+  /// A download under way: start it again over any network, or cancel it.
+  List<ShioriMenuItem> _activeItems(
+    BuildContext context,
+    WidgetRef ref,
+    Download download,
+    String restartLabel,
+  ) => [
+    ShioriMenuItem(
+      label: restartLabel,
+      icon: Symbols.play_arrow_rounded,
+      onSelected: () => _downloadChapter(context, ref, useWifi: false),
+    ),
+    ShioriMenuItem(
+      label: context.l10n.cancel,
+      icon: Symbols.close_rounded,
+      onSelected: () => _cancelTasks(downloadId: download.id),
+    ),
+  ];
 }
+
+/// A chapter's download state as a button that opens what can be done
+/// with it, reachable by keyboard and remote and named for screen readers.
+Widget _statusMenu(
+  BuildContext context, {
+  required String tooltip,
+  required Widget icon,
+  required List<ShioriMenuItem> items,
+}) => MenuAnchor(
+  style: shioriMenuStyle(context),
+  menuChildren: [for (final item in items) ShioriMenuEntry(item)],
+  builder: (context, controller, _) => IconButton(
+    tooltip: tooltip,
+    padding: EdgeInsets.zero,
+    onPressed: () => controller.isOpen ? controller.close() : controller.open(),
+    icon: icon,
+  ),
+);
 
 class _DownloadProgressIcon extends StatelessWidget {
   final bool isLoading;
@@ -273,12 +300,12 @@ class _DownloadProgressIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = Theme.of(context).iconTheme.color!.withValues(alpha: 0.7);
+    final color = context.shiori.color.fg.withValues(alpha: 0.7);
     return Stack(
       children: [
         Align(
           alignment: Alignment.center,
-          child: Icon(size: 18, Icons.arrow_downward_sharp, color: color),
+          child: Icon(size: 18, Symbols.arrow_downward_rounded, color: color),
         ),
         Align(
           alignment: Alignment.center,

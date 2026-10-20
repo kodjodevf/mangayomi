@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/anime/widgets/player_overlay_surface.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/services/aniskip.dart';
 import 'package:media_kit/media_kit.dart';
@@ -73,15 +75,14 @@ class _AniSkipCountDownButtonState extends ConsumerState<AniSkipCountDownButton>
     if (!widget.active || widget.autoSkip || _isCompleted) {
       return const SizedBox.shrink();
     }
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final tokens = context.shiori;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 40),
+      padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s32),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(ShioriShape.pill),
           onTap: _seekTo,
           child: AnimatedBuilder(
             animation: _controller,
@@ -89,61 +90,46 @@ class _AniSkipCountDownButtonState extends ConsumerState<AniSkipCountDownButton>
               final remaining =
                   widget.timeoutLength -
                   (_controller.duration! * _controller.value).inSeconds;
-              return Container(
-                padding: const EdgeInsets.fromLTRB(8, 6, 16, 6),
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.90),
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(
-                    color: colorScheme.outlineVariant.withValues(alpha: 0.40),
-                    width: 1.0,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.28),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
+              return ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: tokens.density.minTarget,
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          CircularProgressIndicator(
-                            value: 1 - _controller.value,
-                            strokeWidth: 2.5,
-                            color: colorScheme.primary,
-                            backgroundColor: colorScheme.onSurface.withValues(
-                              alpha: 0.16,
+                child: PlayerOverlaySurface(
+                  padding: const EdgeInsetsDirectional.fromSTEB(
+                    ShioriSpace.s8,
+                    ShioriSpace.s8,
+                    ShioriSpace.s16,
+                    ShioriSpace.s8,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: ShioriSpace.s12,
+                    children: [
+                      SizedBox.square(
+                        dimension: 22,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            CircularProgressIndicator(
+                              value: 1 - _controller.value,
+                              strokeWidth: 2.5,
+                              color: tokens.color.accentInk,
+                              backgroundColor: Colors.white.withValues(
+                                alpha: Alphas.hairline,
+                              ),
                             ),
-                          ),
-                          Text(
-                            '$remaining',
-                            style: textTheme.labelSmall?.copyWith(
-                              fontSize: 9,
-                              fontWeight: FontWeight.w700,
-                              color: colorScheme.onSurface,
-                              fontFeatures: const [FontFeature.tabularFigures()],
+                            Text(
+                              '$remaining',
+                              style: TextStyle(
+                                fontSize: tokens.text.badge.fontSize,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      widget.skipTypeText,
-                      style: (textTheme.labelLarge ?? const TextStyle()).copyWith(
-                        color: colorScheme.onSurface,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+                      Text(widget.skipTypeText),
+                    ],
+                  ),
                 ),
               );
             },

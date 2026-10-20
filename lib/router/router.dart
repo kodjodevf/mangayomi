@@ -2,6 +2,7 @@ import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -66,7 +67,6 @@ import 'package:mangayomi/modules/more/settings/settings_screen.dart';
 import 'package:mangayomi/modules/more/settings/security/security_screen.dart';
 import 'package:mangayomi/services/crash_route_observer.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:cupertino_ui/cupertino_ui.dart';
 part 'router.g.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -138,11 +138,17 @@ class RouterNotifier extends ChangeNotifier {
     // around 300 MB free with most of its swap already spent. Off TV the
     // trade is the other way round and IndexedStack stays.
     StatefulShellRoute(
-      builder: (context, state, navigationShell) =>
-          MainScreen(child: navigationShell),
+      // A page of its own, so the shell recedes under a page pushed over it
+      // as any page does.
+      pageBuilder: (context, state, navigationShell) => transitionPage(
+        key: state.pageKey,
+        child: MainScreen(child: navigationShell),
+      ),
       navigatorContainerBuilder: (context, navigationShell, children) => isTv
           ? children[navigationShell.currentIndex]
-          : IndexedStack(
+          // Switched with Material's fade through, switches its
+          // tabs; every tab stays mounted.
+          : ShioriFadeThroughStack(
               index: navigationShell.currentIndex,
               children: children,
             ),
@@ -239,6 +245,11 @@ class RouterNotifier extends ChangeNotifier {
     _genericRoute(name: "statistics", child: const StatisticsScreen()),
     _genericRoute(name: "general", child: const GeneralScreen()),
     _genericRoute(name: "readerMode", child: const ReaderScreen()),
+    _genericRoute<int>(
+      name: "readerSettingsSection",
+      builder: (index) =>
+          ReaderScreen(section: ReaderSettingsSection.values[index]),
+    ),
     _genericRoute(name: "novelReaderMode", child: const NovelReaderScreen()),
     _genericRoute(name: "browseS", child: const BrowseSScreen()),
     _genericRoute(
@@ -343,32 +354,25 @@ class RouterNotifier extends ChangeNotifier {
     return GoRoute(
       path: path ?? (name != null ? "/$name" : "/"),
       name: name,
-      builder: (context, state) {
-        if (builder != null) {
-          final id = state.extra as T;
-          return builder(id);
-        } else {
-          return child!;
-        }
-      },
-      pageBuilder: isApple
-          ? (context, state) {
-              final pageChild = builder != null
-                  ? builder(state.extra as T)
-                  : child!;
-              return transitionPage(key: state.pageKey, child: pageChild);
-            }
-          : null,
+      // Explicit, not left to go_router: without a page builder it looks for
+      // a MaterialApp above it, does not find this app's, and falls back to
+      // a page with no transition, so every page outside Apple appeared at
+      // once.
+      pageBuilder: (context, state) => transitionPage(
+        key: state.pageKey,
+        child: builder != null ? builder(state.extra as T) : child!,
+      ),
     );
   }
 }
 
+/// A page that moves as the theme says: Shiori's page transition (Mihon's
+/// shared axis) everywhere but Apple, which keeps Cupertino's and its edge
+/// swipe back. A MaterialPage and a MaterialPageRoute both follow it.
 Page transitionPage({required LocalKey key, required child}) {
-  return CupertinoPage(key: key, child: child);
+  return MaterialPage(key: key, child: child);
 }
 
 Route createRoute({required Widget page}) {
-  return isApple
-      ? CupertinoPageRoute(builder: (context) => page)
-      : MaterialPageRoute(builder: (context) => page);
+  return MaterialPageRoute(builder: (context) => page);
 }

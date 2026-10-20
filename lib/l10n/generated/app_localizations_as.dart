@@ -269,7 +269,7 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String mass_migration_finding_matches(Object source, Object language) {
-    return '$source • $language ত মিল বিচাৰি থকা হৈছে';
+    return '$source · $language ত মিল বিচাৰি থকা হৈছে';
   }
 
   @override
@@ -576,6 +576,20 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get pure_black_dark_mode => 'পিউৰ ব্লেক ডাৰ্ক মোড';
+
+  @override
+  String get tint_surfaces_with_palette => 'পেলেটেৰে পৃষ্ঠবোৰ ৰং কৰক';
+
+  @override
+  String get tint_surfaces_with_palette_subtitle =>
+      'আগৰ দৰে বাছনি কৰা পেলেটেৰে পটভূমি, কাৰ্ড আৰু বাৰবোৰ ৰং কৰে। বন্ধ থাকিলে সেইবোৰ নিৰপেক্ষ হৈ থাকে আৰু পেলেটে কেৱল একচেণ্ট ৰং দিয়ে।';
+
+  @override
+  String get novel_reader_font => 'উপন্যাস পঢ়োতাৰ ফণ্ট';
+
+  @override
+  String get novel_reader_font_subtitle =>
+      'উপন্যাস পঢ়োতাৰ ডিফল্ট ফণ্টে ব্যৱহাৰ কৰে। এপৰ বাকী অংশই Figtree ব্যৱহাৰ কৰে।';
 
   @override
   String get timestamp => 'টাইমষ্টেম্প';
@@ -1175,11 +1189,11 @@ class AppLocalizationsAs extends AppLocalizations {
       'আপোনাৰ প্ৰয়োজন অনুসৰি প্ৰতিটো নেভিগেশ্বন পুনৰ্বিন্যাস আৰু টগল কৰক।';
 
   @override
-  String get floating_navigation_bar => 'Floating navigation bar';
+  String get floating_navigation_bar => 'ভাহি থকা নেভিগেচন বাৰ';
 
   @override
   String get floating_navigation_bar_description =>
-      'Use a floating capsule instead of the standard attached navigation bar.';
+      'সাধাৰণ লাগি থকা নেভিগেচন বাৰৰ সলনি এটা ভাহি থকা কেপচুল ব্যৱহাৰ কৰক।';
 
   @override
   String get full_screen_player => 'সম্পূৰ্ণ স্ক্ৰীন ব্যৱহাৰ কৰক';
@@ -1994,11 +2008,11 @@ class AppLocalizationsAs extends AppLocalizations {
   String get add_repo => 'ৰিপজিটৰী যোগ কৰিবনে?';
 
   @override
-  String get add_repo_sources_to_add => 'Extension lists that will be added:';
+  String get add_repo_sources_to_add => 'যোগ কৰা হ\'ব এই এক্সটেনচন তালিকাবোৰ:';
 
   @override
   String get add_repo_warning =>
-      'Extensions from these repositories run inside the app. Only add repositories you trust.';
+      'এই ৰিপজিটৰিবোৰৰ এক্সটেনচন এপৰ ভিতৰত চলে। কেৱল বিশ্বাসযোগ্য ৰিপজিটৰিহে যোগ কৰক।';
 
   @override
   String get genre_search_library => 'পুথিভঁৰালত ধাৰা বিচাৰক';
@@ -2150,7 +2164,7 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get custom_buttons_add_warning =>
-      'This button runs the Lua code below in the video player, which can access your files and run programs. Only add it if you trust where this link came from.';
+      'এই বুটামে তলৰ Lua ক\'ড ভিডিঅ\' প্লেয়াৰত চলায়, যিয়ে আপোনাৰ ফাইল চাব আৰু প্ৰ\'গ্ৰাম চলাব পাৰে। এই লিংকৰ উৎসক বিশ্বাস কৰিলেহে যোগ কৰক।';
 
   @override
   String n_days(Object n) {
@@ -2261,48 +2275,48 @@ class AppLocalizationsAs extends AppLocalizations {
   String get watch_order => 'চোৱাৰ ক্ৰম';
 
   @override
-  String get watch_order_role_current => 'Current';
+  String get watch_order_role_current => 'বৰ্তমান';
 
   @override
-  String get watch_order_role_previous => 'Previous';
+  String get watch_order_role_previous => 'আগৰ';
 
   @override
-  String get watch_order_role_next => 'Next';
+  String get watch_order_role_next => 'পিছৰ';
 
   @override
-  String get watch_order_source_release_order => 'Release order';
+  String get watch_order_source_release_order => 'মুক্তিৰ ক্ৰম';
 
   @override
   String watch_order_source_community_list(String name, String author) {
-    return '$name by $author';
+    return '$authorৰ $name';
   }
 
   @override
   String watch_order_source_official_collection(String name) {
-    return 'Official Trakt collection: $name';
+    return 'আনুষ্ঠানিক Trakt সংগ্ৰহ: $name';
   }
 
   @override
   String watch_order_source_trakt_collection(String name) {
-    return 'Trakt collection: $name';
+    return 'Trakt সংগ্ৰহ: $name';
   }
 
   @override
   String watch_order_source_seasons(String title) {
-    return 'Seasons for $title';
+    return '$titleৰ ছিজন';
   }
 
   @override
-  String get watch_order_select_source => 'Order source';
+  String get watch_order_select_source => 'ক্ৰমৰ উৎস';
 
   @override
   String watch_order_season(int number) {
-    return 'Season $number';
+    return 'ছিজন $number';
   }
 
   @override
   String watch_order_episode(int number) {
-    return 'Episode $number';
+    return 'পৰ্ব $number';
   }
 
   @override
@@ -2313,7 +2327,7 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String recommendation_rating_accessibility(String rating) {
-    return 'Rating $rating';
+    return 'ৰেটিং $rating';
   }
 
   @override
@@ -2530,6 +2544,9 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get brightness => 'উজ্জ্বলতা';
+
+  @override
+  String get volume => 'ভলিউম';
 
   @override
   String get contrast => 'বৈপৰীত্য';
@@ -3238,23 +3255,31 @@ class AppLocalizationsAs extends AppLocalizations {
   String get onboarding_title => 'Mangayomi লৈ স্বাগতম';
 
   @override
+  String get onboarding_language_title => 'আপোনাৰ ভাষা বাছক';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi এই ভাষাত দেখুওৱা হ\'ব। পিছত ৰূপ-সজ্জাত সলনি কৰিব পাৰে।';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'প্ৰতিটো লাইব্ৰেৰীৰ বাবে এটা টেব ৰাখক, নাইবা সেইবোৰ এটা লাইব্ৰেৰী টেবত গোট কৰক, আপডেট আৰু ইতিহাস এটা কাৰ্যকলাপ টেবত।';
+
+  @override
+  String get onboarding_nav_grouped => 'গোট কৰা টেব';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'প্ৰতিটো গোট কৰা টেব ইয়াৰ স্ক্ৰীণৰ ওপৰৰ পৰা সলনি কৰা হয়';
+
+  @override
   String get onboarding_libraries_body => 'আপুনি কি পঢ়িব আৰু চাব বিচাৰে বাছক।';
 
   @override
   String get onboarding_nav_title => 'আপোনাৰ লাইব্ৰেৰীসমূহ';
 
   @override
-  String get onboarding_nav_body =>
-      'প্ৰতিটোৰ বাবে সুকীয়া টেব ৰাখক বা এটা লাইব্ৰেৰী টেবৰ অধীনত একত্ৰিত কৰক।';
-
-  @override
   String get onboarding_nav_split => 'সুকীয়া টেব';
-
-  @override
-  String get onboarding_nav_merged => 'এটা লাইব্ৰেৰী টেব';
-
-  @override
-  String get onboarding_nav_inside => 'লাইব্ৰেৰীত টিপিলে এই টেববোৰ সলনি হয়';
 
   @override
   String get onboarding_next => 'পৰৱৰ্তী';
@@ -3490,92 +3515,852 @@ class AppLocalizationsAs extends AppLocalizations {
   String get chapter_swipe_disabled => 'অক্ষম কৰা হৈছে';
 
   @override
-  String get update_errors => 'Update errors';
+  String get update_errors => 'আপডেটৰ ত্ৰুটি';
 
   @override
-  String get no_update_errors => 'No update errors';
+  String get no_update_errors => 'আপডেটৰ কোনো ত্ৰুটি নাই';
 
   @override
-  String get clear_all => 'Clear all';
+  String get clear_all => 'সকলো মচক';
 
   @override
-  String get dismiss => 'Dismiss';
+  String get dismiss => 'বন্ধ কৰক';
 
   @override
-  String get previous_episode => 'Previous episode';
+  String get previous_episode => 'আগৰ পৰ্ব';
 
   @override
-  String get clear_logs => 'Clear logs';
+  String get clear_logs => 'লগ মচক';
 
   @override
-  String get bold => 'Bold';
+  String get bold => 'ডাঠ';
 
   @override
-  String get italic => 'Italic';
+  String get italic => 'হেলনীয়া';
 
   @override
-  String get color_yellow => 'Yellow';
+  String get color_yellow => 'হালধীয়া';
 
   @override
-  String get color_cyan => 'Cyan';
+  String get color_cyan => 'চায়ান';
 
   @override
-  String get color_green => 'Green';
+  String get color_green => 'সেউজীয়া';
 
   @override
-  String get color_orange => 'Orange';
+  String get color_orange => 'কমলা';
 
   @override
-  String get continue_watching => 'Continue Watching';
+  String get continue_watching => 'চাই থাকক';
 
   @override
-  String get search_your_anime => 'Search your anime';
+  String get search_your_anime => 'আপোনাৰ এনিমে বিচাৰক';
 
   @override
-  String get category => 'Category';
+  String get category => 'শ্ৰেণী';
 
   @override
-  String get hidden_categories => 'Hidden categories';
+  String get hidden_categories => 'লুকুৱাই ৰখা শ্ৰেণী';
 
   @override
-  String get new_category => 'New category';
+  String get new_category => 'নতুন শ্ৰেণী';
 
   @override
-  String get local => 'Local';
+  String get local => 'স্থানীয়';
 
   @override
-  String get tv_home_rows => 'Rows';
+  String get tv_home_rows => 'শাৰী';
 
   @override
-  String get genre_rows => 'Genre rows';
+  String get genre_rows => 'ধৰণ অনুসৰি শাৰী';
 
   @override
-  String get share_backup_file => 'Share Mangayomi backup file';
+  String get share_backup_file => 'Mangayomi বেকআপ শ্বেয়াৰ কৰক';
 
   @override
-  String get close => 'Close';
+  String get close => 'বন্ধ কৰক';
 
   @override
-  String get migrate_source => 'Migrate source';
+  String get migrate_source => 'উৎস স্থানান্তৰ কৰক';
 
   @override
-  String get cloudflare_bypass_proxy => 'Cloudflare bypass proxy';
+  String get cloudflare_bypass_proxy => 'Cloudflare বাইপাছ প্ৰক্সি';
 
   @override
-  String get custom_doh_url => 'Custom DoH URL';
+  String get custom_doh_url => 'নিজা DoH URL';
 
   @override
-  String get custom_doh_url_helper => 'Must be an https DoH (JSON) endpoint';
+  String get custom_doh_url_helper => 'https DoH (JSON) এণ্ডপইণ্ট হ\'ব লাগিব';
 
   @override
-  String get anime_only_tv_layout => 'Anime-only TV layout';
+  String get anime_only_tv_layout => 'কেৱল এনিমেৰ টিভি লেআউট';
 
   @override
-  String get anime_only_beta => 'Anime only (beta)';
+  String get anime_only_beta => 'কেৱল এনিমে (বিটা)';
 
   @override
-  String get tv_home_beta => 'TV home (beta)';
+  String get tv_home_beta => 'টিভি হোম (বিটা)';
 
   @override
-  String get tv_player_beta => 'TV player (beta)';
+  String get tv_player_beta => 'টিভি প্লেয়াৰ (বিটা)';
+
+  @override
+  String get mark_as_read => 'পঢ়া বুলি চিহ্নিত কৰক';
+
+  @override
+  String get mark_as_unread => 'নপঢ়া বুলি চিহ্নিত কৰক';
+
+  @override
+  String get bookmark => 'বুকমাৰ্ক';
+
+  @override
+  String get remove_bookmark => 'বুকমাৰ্ক আঁতৰাওক';
+
+  @override
+  String get mark_below_as_read => 'তলৰবোৰ পঢ়া বুলি চিহ্নিত কৰক';
+
+  @override
+  String get previous_chapter => 'আগৰ অধ্যায়';
+
+  @override
+  String get pin => 'পিন কৰক';
+
+  @override
+  String get go_forward => 'আগলৈ যাওক';
+
+  @override
+  String get invert_selection => 'বাছনি ওলোটাওক';
+
+  @override
+  String get show_password => 'পাছৱৰ্ড দেখুৱাওক';
+
+  @override
+  String get hide_password => 'পাছৱৰ্ড লুকুৱাওক';
+
+  @override
+  String get always_on_top => 'সদায় ওপৰত';
+
+  @override
+  String get mute => 'মিউট';
+
+  @override
+  String get unmute => 'আনমিউট';
+
+  @override
+  String get exit_fullscreen => 'সম্পূৰ্ণ স্ক্ৰীনৰ পৰা ওলাওক';
+
+  @override
+  String get play => 'চলাওক';
+
+  @override
+  String get pause => 'ৰখাওক';
+
+  @override
+  String get switch_tracker => 'ট্ৰেকাৰ সলনি কৰক';
+
+  @override
+  String get rename => 'নাম সলনি কৰক';
+
+  @override
+  String get show_category => 'শ্ৰেণী দেখুৱাওক';
+
+  @override
+  String get hide_category => 'শ্ৰেণী লুকুৱাওক';
+
+  @override
+  String get update_with_library => 'লাইব্ৰেৰীৰ সৈতে আপডেট কৰক';
+
+  @override
+  String get skip_updates => 'লাইব্ৰেৰী আপডেট কৰোঁতে এৰি দিয়ক';
+
+  @override
+  String get show_repository => 'ৰিপজিটৰি দেখুৱাওক';
+
+  @override
+  String get hide_repository => 'ৰিপজিটৰি লুকুৱাওক';
+
+  @override
+  String get set_as_default => 'ডিফল্ট হিচাপে ছেট কৰক';
+
+  @override
+  String get change_display_mode => 'প্ৰদৰ্শন মোড সলনি কৰক';
+
+  @override
+  String get back_to_results => 'ফলাফললৈ উভতি যাওক';
+
+  @override
+  String get activity => 'কাৰ্যকলাপ';
+
+  @override
+  String get group_nav_destinations => 'নেভিগেচন গোট কৰক';
+
+  @override
+  String get group_nav_destinations_subtitle =>
+      'মাংগা, এনিমে আৰু উপন্যাসৰ সলনিকৰণসহ এটা লাইব্ৰেৰী টেব, আৰু আপডেট আৰু ইতিহাসৰ বাবে এটা কাৰ্যকলাপ টেব';
+
+  @override
+  String get search_all_sources => 'সকলো উৎসত বিচাৰক';
+
+  @override
+  String get continue_reading => 'চলাই যাওক';
+
+  @override
+  String get show_continue_shelf => 'আপুনি পঢ়ি থকাবোৰ দেখুৱাওক';
+
+  @override
+  String get show_continue_shelf_subtitle =>
+      'লাইব্ৰেৰীৰ ওপৰত চলি থকা ছিৰিজৰ এটা শাৰী';
+
+  @override
+  String get excluded => 'বাদ দিয়া';
+
+  @override
+  String get remove_filter => 'ফিল্টাৰ আঁতৰাওক';
+
+  @override
+  String get current_chapter => 'বৰ্তমান অধ্যায়';
+
+  @override
+  String get series => 'ছিৰিজ';
+
+  @override
+  String get chapters_read => 'পঢ়া অধ্যায়';
+
+  @override
+  String get search_settings => 'ছেটিং বিচাৰক';
+
+  @override
+  String get search_settings_hint =>
+      'এটা ছেটিঙৰ নাম বা ইয়াৰ বিৱৰণৰ এটা শব্দ লিখক';
+
+  @override
+  String reading_mode_for(String name) {
+    return '$nameৰ বাবে পঢ়া মোড';
+  }
+
+  @override
+  String default_is(String name) {
+    return 'ডিফল্ট: $name';
+  }
+
+  @override
+  String get use_default => 'ডিফল্ট ব্যৱহাৰ কৰক';
+
+  @override
+  String get is_the_default => 'এইটো আপোনাৰ ডিফল্ট পঢ়া মোড';
+
+  @override
+  String get page_layout => 'পৃষ্ঠাৰ লেআউট আৰু জুম';
+
+  @override
+  String get reader_section_mode_summary =>
+      'ডিফল্ট মোড, স্কেল, পটভূমি, প্ৰিল\'ড, সম্পূৰ্ণ স্ক্ৰীন';
+
+  @override
+  String get reader_section_layout_summary =>
+      'বহল পৃষ্ঠা, দুটা পৃষ্ঠা, লেণ্ডস্কেপ জুম';
+
+  @override
+  String get reader_section_navigation_summary =>
+      'টেপ অঞ্চল, লেআউট, মেনু লুকুওৱা, পৃষ্ঠা ফ্লেচ';
+
+  @override
+  String get reader_section_swipe_summary =>
+      'তালিকাত অধ্যায় ছোৱাইপ কৰিলে কি হয়';
+
+  @override
+  String get all_reader_settings => 'পঢ়োতাৰ সকলো ছেটিং';
+
+  @override
+  String get undo => 'পূৰ্বাৱস্থালৈ নিয়ক';
+
+  @override
+  String get removed_from_history => 'ইতিহাসৰ পৰা আঁতৰোৱা হ\'ল';
+
+  @override
+  String n_new_chapters(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countটা নতুন অধ্যায়',
+      one: '1টা নতুন অধ্যায়',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get page_color_white => 'বগা';
+
+  @override
+  String get page_color_black => 'ক\'লা';
+
+  @override
+  String get page_color_night => 'ৰাতি';
+
+  @override
+  String get page_color_sepia => 'ছেপিয়া';
+
+  @override
+  String get page_color_coffee => 'কফি';
+
+  @override
+  String get page_color_silver => 'ৰূপালী';
+
+  @override
+  String get page_color_graphite => 'গ্ৰেফাইট';
+
+  @override
+  String get page_color_mist => 'কুঁৱলী';
+
+  @override
+  String get page_color_paper => 'কাগজ';
+
+  @override
+  String get page_color_sky => 'আকাশ';
+
+  @override
+  String get page_color_mint => 'পুদিনা';
+
+  @override
+  String get page_color_honey => 'মৌ';
+
+  @override
+  String next_episode_in(int seconds) {
+    return 'পিছৰ পৰ্ব $seconds ছেকেণ্ডত';
+  }
+
+  @override
+  String get stay_on_this_episode => 'এই পৰ্বতে থাকক';
+
+  @override
+  String get got_it => 'বুজিলোঁ';
+
+  @override
+  String get gesture_brightness =>
+      'উজ্জ্বলতাৰ বাবে বাওঁফালে ওপৰলৈ বা তললৈ ছোৱাইপ কৰক';
+
+  @override
+  String get gesture_volume => 'ভলিউমৰ বাবে সোঁফালে ওপৰলৈ বা তললৈ ছোৱাইপ কৰক';
+
+  @override
+  String get gesture_double_tap_skip =>
+      'পিছুৱাবলৈ বা আগুৱাবলৈ এফালে দুবাৰ টেপ কৰক';
+
+  @override
+  String get gesture_drag_seek => 'ভিডিঅ\'ত আগ-পিছ কৰিবলৈ কাষলৈ টানক';
+
+  @override
+  String get gesture_long_press_speed => 'খৰ কৰিবলৈ হেঁচি ধৰি ৰাখক';
+
+  @override
+  String get tap_to_continue => 'আগবাঢ়িবলৈ য\'তে-ত\'তে টেপ কৰক';
+
+  @override
+  String get empty_library_hint =>
+      'ব্ৰাউজত এটা ছিৰিজ বিচাৰি আপোনাৰ লাইব্ৰেৰীত যোগ কৰক।';
+
+  @override
+  String get more_filters => 'অধিক ফিল্টাৰ';
+
+  @override
+  String get resume_all_downloads => 'সকলো ডাউনলোড পুনৰ আৰম্ভ কৰক';
+
+  @override
+  String get download_failed => 'বিফল';
+
+  @override
+  String get download_all => 'সকলো ডাউনলোড কৰক';
+
+  @override
+  String n_chapters_queued(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countটা অধ্যায় শাৰীত',
+      one: '1টা অধ্যায় শাৰীত',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String n_selected(int count) {
+    return '$countটা বাছনি কৰা হ\'ল';
+  }
+
+  @override
+  String get settings_general_summary => 'ভাষা, লাইব্ৰেৰী আপডেট, নেটৱৰ্ক';
+
+  @override
+  String get settings_appearance_summary => 'থিম, পেলেট, নেভিগেচন, ফণ্ট';
+
+  @override
+  String get settings_novel_reader_summary => 'ফণ্ট, পৃষ্ঠাৰ ৰং, পাঠৰ পৰা কথন';
+
+  @override
+  String get settings_player_summary => 'প্লেবেক, ছাবটাইটেল, অডিঅ\', ডিক\'ডাৰ';
+
+  @override
+  String get settings_downloads_summary => 'স্থান, কেৱল Wi-Fi, একেলগে ডাউনলোড';
+
+  @override
+  String get settings_tracking_summary =>
+      'MyAnimeList, AniList, Kitsu আৰু অন্যান্য';
+
+  @override
+  String get settings_syncing_summary =>
+      'আপোনাৰ নিজা ছাৰ্ভাৰত অগ্ৰগতি মিলাই ৰাখক';
+
+  @override
+  String get settings_browse_summary => 'এক্সটেনচন, ৰিপজিটৰি, উৎস';
+
+  @override
+  String get settings_security_summary => 'এপ লক';
+
+  @override
+  String get settings_about_summary => 'সংস্কৰণ, আপডেট, ত্ৰুটিৰ প্ৰতিবেদন';
+
+  @override
+  String minutes_left(int minutes) {
+    return '≈ $minutes মিনিট বাকী';
+  }
+
+  @override
+  String get group_playback => 'প্লেবেক';
+
+  @override
+  String get group_subtitles => 'ছাবটাইটেল';
+
+  @override
+  String get group_screen => 'স্ক্ৰীন';
+
+  @override
+  String get aniskip => 'AniSkip';
+
+  @override
+  String seconds_short(int n) {
+    return '$n ছে.';
+  }
+
+  @override
+  String unknown_language_codes(String codes) {
+    return 'অজ্ঞাত ভাষা ক\'ড: $codes';
+  }
+
+  @override
+  String get group_network => 'নেটৱৰ্ক';
+
+  @override
+  String get group_discord => 'Discord';
+
+  @override
+  String invalid_url(String scheme) {
+    return '$schemeৰে আৰম্ভ হোৱা এটা URL দিয়ক';
+  }
+
+  @override
+  String get group_cleanup => 'চাফাই';
+
+  @override
+  String remove_entries_confirm(int n) {
+    return '$nটা প্ৰৱিষ্টি আৰু সেইবোৰৰ ইতিহাস আঁতৰাবনে? ইয়াক পূৰ্বাৱস্থালৈ নিব নোৱাৰি।';
+  }
+
+  @override
+  String get group_library_maintenance => 'লাইব্ৰেৰীৰ ৰক্ষণাবেক্ষণ';
+
+  @override
+  String get group_diagnostics => 'নিদান';
+
+  @override
+  String get update_no_notes => 'মুক্তিৰ টোকা নাই।';
+
+  @override
+  String update_download_failed(String error) {
+    return 'ডাউনলোড বিফল: $error';
+  }
+
+  @override
+  String get update_network_error => 'ডাউনলোড কৰোঁতে নেটৱৰ্ক ত্ৰুটি।';
+
+  @override
+  String get update_write_failed => 'APK ফাইল লিখিব পৰা নগ\'ল।';
+
+  @override
+  String get deselect_all => 'সকলো বাছনি আঁতৰাওক';
+
+  @override
+  String update_failed_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countটা প্ৰৱিষ্টি আপডেট কৰিব পৰা নগ\'ল',
+      one: '1টা প্ৰৱিষ্টি আপডেট কৰিব পৰা নগ\'ল',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sort_ascending => 'উৰ্ধ্বক্ৰম';
+
+  @override
+  String get sort_descending => 'অধঃক্ৰম';
+
+  @override
+  String get not_downloaded => 'ডাউনলোড কৰা হোৱা নাই';
+
+  @override
+  String n_tracked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countটা প্ৰৱিষ্টি ট্ৰেক কৰা হৈছে',
+      one: '1টা প্ৰৱিষ্টি ট্ৰেক কৰা হৈছে',
+      zero: 'এতিয়ালৈকে একো ট্ৰেক কৰা হোৱা নাই',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get no_tracker_connected => 'কোনো ট্ৰেকাৰ সংযুক্ত নাই';
+
+  @override
+  String get no_tracker_connected_message =>
+      'ইয়াত তালিকা চাবলৈ ছেটিং › ট্ৰেকিংত এটা সেৱাত লগ ইন কৰক।';
+
+  @override
+  String get edit_metadata => 'মেটাডেটা সম্পাদনা কৰক';
+
+  @override
+  String get group_modes => 'মোড';
+
+  @override
+  String get group_app => 'এপ';
+
+  @override
+  String get group_sources_services => 'উৎস আৰু সেৱা';
+
+  @override
+  String n_sources(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countটা উৎস',
+      one: '1টা উৎস',
+      zero: 'কোনো উৎস নাই',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tv_player_beta_subtitle =>
+      'অন: টিভি ৰিম\'টৰ বাবে বনোৱা প্লেয়াৰ। অফ: মূল প্লেয়াৰ।';
+
+  @override
+  String get anime_only_beta_subtitle =>
+      'গোটেই এপত মাংগা আৰু উপন্যাস লুকুৱাওক। সকলো দেখুৱাবলৈ বন্ধ কৰক।';
+
+  @override
+  String download_queue_start_failed(String error) {
+    return 'ডাউনলোডৰ শাৰী আৰম্ভ কৰিব পৰা নগ\'ল: $error';
+  }
+
+  @override
+  String get group_interface => 'ইণ্টাৰফেচ';
+
+  @override
+  String get group_navigation => 'নেভিগেচন';
+
+  @override
+  String get tv_home_beta_subtitle =>
+      'সমতল গ্ৰিডৰ সলনি শাৰীত সজোৱা এনিমে হোম (চাই থাকক, নতুন পৰ্ব, শ্ৰেণী)';
+
+  @override
+  String get cloudflare_bypass_proxy_hint =>
+      'ঐচ্ছিক FlareSolverr বা Byparr ঠিকনা';
+
+  @override
+  String get cloudflare_bypass_proxy_message =>
+      'এটা FlareSolverr বা Byparr এণ্ডপইণ্ট। বন্ধ কৰিবলৈ খালী ৰাখক।';
+
+  @override
+  String get group_explore => 'অন্বেষণ';
+
+  @override
+  String get explore_recommendations_subtitle => 'ইয়াৰ দৰে শিৰোনাম';
+
+  @override
+  String get explore_related_subtitle =>
+      'ইয়াৰ ৰূপান্তৰ, স্পিন-অফ আৰু আন সংস্কৰণ';
+
+  @override
+  String get explore_watch_order_subtitle => 'গোটেই কাহিনী চোৱাৰ ক্ৰম';
+
+  @override
+  String get explore_sequels_subtitle =>
+      'আপোনাৰ ট্ৰেকাৰৰ পৰা, ইয়াৰ পিছত কি আহে';
+
+  @override
+  String get tap_zone_menu => 'মেনু';
+
+  @override
+  String get tap_zone_previous => 'আগৰ';
+
+  @override
+  String get tap_zone_next => 'পিছৰ';
+
+  @override
+  String get back_to_series => 'ছিৰিজলৈ উভতি যাওক';
+
+  @override
+  String get keyboard_shortcuts => 'কীবৰ্ড চৰ্টকাট';
+
+  @override
+  String get shortcut_previous_page => 'আগৰ পৃষ্ঠা';
+
+  @override
+  String get shortcut_next_page => 'পিছৰ পৃষ্ঠা';
+
+  @override
+  String get shortcut_toggle_bars => 'বাৰ দেখুৱাওক বা লুকুৱাওক';
+
+  @override
+  String get shortcut_zoom_in => 'জুম ইন';
+
+  @override
+  String get shortcut_zoom_out => 'জুম আউট';
+
+  @override
+  String get shortcut_zoom_reset => 'পৃষ্ঠা খাপ খুৱাওক';
+
+  @override
+  String get shortcut_leave => 'পঢ়োতাৰ পৰা ওলাওক';
+
+  @override
+  String get shortcut_show => 'এই চৰ্টকাটবোৰ দেখুৱাওক';
+
+  @override
+  String get color_red => 'ৰঙা';
+
+  @override
+  String get color_blue => 'নীলা';
+
+  @override
+  String get color_opacity => 'অস্বচ্ছতা';
+
+  @override
+  String get volume_keys_paging => 'ভলিউম বুটামেৰে পৃষ্ঠা লুটিয়াওক';
+
+  @override
+  String get volume_keys_paging_ios =>
+      'পঢ়োঁতে ভলিউম আধাত ৰখা হয় যাতে দুয়োটা বুটাম কাম কৰে, আৰু ওলাই গ\'লে আগৰ দৰে হয়।';
+
+  @override
+  String get volume_keys_inverted => 'ভলিউম বুটাম ওলোটাওক';
+
+  @override
+  String get reader_orientation => 'স্ক্ৰীনৰ দিশ';
+
+  @override
+  String get orientation_free => 'ডিভাইচ অনুসৰি';
+
+  @override
+  String get orientation_portrait => 'প\'ৰ্ট্ৰেইট';
+
+  @override
+  String get orientation_landscape => 'লেণ্ডস্কেপ';
+
+  @override
+  String get screen_brightness => 'স্ক্ৰীনৰ উজ্জ্বলতা';
+
+  @override
+  String get screen_brightness_system => 'চিষ্টেম অনুসৰি';
+
+  @override
+  String get shortcut_play_pause => 'চলাওক বা ৰখাওক';
+
+  @override
+  String shortcut_seek_back(int n) {
+    return '$n ছেকেণ্ড পিছলৈ';
+  }
+
+  @override
+  String shortcut_seek_forward(int n) {
+    return '$n ছেকেণ্ড আগলৈ';
+  }
+
+  @override
+  String get shortcut_volume_up => 'ভলিউম বঢ়াওক';
+
+  @override
+  String get shortcut_volume_down => 'ভলিউম কমাওক';
+
+  @override
+  String get shortcut_mute => 'মিউট বা আনমিউট';
+
+  @override
+  String shortcut_skip_intro(int n) {
+    return 'আৰম্ভণি এৰক ($n ছেকেণ্ড)';
+  }
+
+  @override
+  String get shortcut_previous_frame => 'আগৰ ফ্ৰেম';
+
+  @override
+  String get shortcut_next_frame => 'পিছৰ ফ্ৰেম';
+
+  @override
+  String get shortcut_shaders => 'Anime4K শ্বেডাৰ';
+
+  @override
+  String get shortcut_shaders_off => 'শ্বেডাৰ বন্ধ';
+
+  @override
+  String get autoplay_next_on => 'পিছৰ পৰ্ব নিজে চলাওক: অন';
+
+  @override
+  String get autoplay_next_off => 'পিছৰ পৰ্ব নিজে চলাওক: অফ';
+
+  @override
+  String get autoplay_next => 'পৰৱৰ্তী পৰ্ব স্বয়ংক্ৰিয়ভাৱে চলাওক';
+
+  @override
+  String get next_episode_short => 'পৰৱৰ্তী';
+
+  @override
+  String get subtitle_preview_sample => 'যাত্ৰা চলি আছে।';
+
+  @override
+  String get text_style => 'শৈলী';
+
+  @override
+  String get code_editor => 'ক\'ড সম্পাদক';
+
+  @override
+  String get code_view_code => 'ক\'ড';
+
+  @override
+  String get code_view_test => 'পৰীক্ষা';
+
+  @override
+  String get code_view_console => 'কনছ\'ল';
+
+  @override
+  String get code_function => 'ফাংচন';
+
+  @override
+  String get code_page => 'পৃষ্ঠা';
+
+  @override
+  String get code_query => 'কুৱেৰী';
+
+  @override
+  String get code_url => 'URL';
+
+  @override
+  String get code_html => 'HTML';
+
+  @override
+  String get code_execute => 'চলাওক';
+
+  @override
+  String get code_executing => 'চলি আছে…';
+
+  @override
+  String get code_no_result => 'এতিয়ালৈকে কোনো ফলাফল নাই';
+
+  @override
+  String get code_no_result_message => 'এটা ফাংচন চলাই চাওক ই কি ঘূৰাই দিয়ে।';
+
+  @override
+  String get code_console => 'কনছ\'ল';
+
+  @override
+  String get code_no_logs => 'এতিয়ালৈকে কোনো লগ নাই';
+
+  @override
+  String get tv_empty_anime_library => 'আপোনাৰ এনিমে লাইব্ৰেৰী খালী';
+
+  @override
+  String get tv_empty_anime_library_hint =>
+      'আপোনাৰ হোম ভৰাবলৈ ব্ৰাউজৰ পৰা এনিমে যোগ কৰক';
+
+  @override
+  String get browse_anime => 'এনিমে ব্ৰাউজ কৰক';
+
+  @override
+  String get no_episodes_yet => 'এতিয়ালৈকে কোনো পৰ্ব নাই';
+
+  @override
+  String get filler => 'ফিলাৰ';
+
+  @override
+  String get obsolete => 'পুৰণি';
+
+  @override
+  String every_n_days(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'প্ৰতি $n দিনত',
+      one: 'প্ৰতিদিনে',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get update_interval_unknown => 'কোনো অনুমান নাই';
+
+  @override
+  String get group_reading => 'পঢ়া';
+
+  @override
+  String get group_reading_watching => 'পঢ়া আৰু চোৱা';
+
+  @override
+  String get novel_reader => 'উপন্যাস পঢ়োতা';
+
+  @override
+  String get all_languages => 'সকলো ভাষা';
+
+  @override
+  String get custom_dns_title => 'নিজা DNS';
+
+  @override
+  String get custom_dns_system => 'চিষ্টেম DNS';
+
+  @override
+  String get calendar_format_month => 'মাহ';
+
+  @override
+  String get calendar_format_two_weeks => '২ সপ্তাহ';
+
+  @override
+  String get calendar_format_week => 'সপ্তাহ';
+
+  @override
+  String get read_count => 'পঢ়া';
+
+  @override
+  String get watched_count => 'চোৱা';
+
+  @override
+  String get source_code_error_title => 'এই উৎসৰ ক\'ড চলা নাছিল';
+
+  @override
+  String source_code_error_failed(String what) {
+    return '$what বিফল: আগবাঢ়িব পৰাকৈ স্ক্ৰীনে বিকল্প মান ল\'লে';
+  }
+
+  @override
+  String get copy_error => 'কপি কৰক';
+
+  @override
+  String get error_copied => 'ত্ৰুটি কপি কৰা হ\'ল';
+
+  @override
+  String get no_categories_yet => 'এতিয়ালৈকে কোনো শ্ৰেণী নাই';
+
+  @override
+  String get no_categories_yet_message =>
+      'আপুনি নিজে নাম দিয়া আৰু সজোৱা শ্ৰেণীত আপোনাৰ লাইব্ৰেৰী ভাগ কৰক।';
 }

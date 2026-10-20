@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
+import 'package:mangayomi/modules/widgets/entry_badge_chip.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
@@ -8,8 +10,6 @@ import 'package:mangayomi/services/discovery/media_lookup_context.dart';
 import 'package:mangayomi/services/recommendation.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/utils/design_tokens.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 /// Covers are 2:3, so a grid of mixed sources does not visibly jitter.
@@ -19,7 +19,6 @@ const double _coverHeight = 144;
 /// Cover plus the card's vertical padding.
 const double _cardExtent = _coverHeight + 12;
 
-const double _descriptionFontSize = 12;
 const double _descriptionLineHeight = 1.35;
 
 /// One column on a phone, two above this, and never more than two: a third
@@ -90,7 +89,11 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
               },
             )
           : (data == null || data!.isEmpty)
-          ? Center(child: Text(l10n.no_result))
+          ? ShioriEmptyState(
+              icon: Symbols.auto_awesome_rounded,
+              title: l10n.no_result,
+              compact: true,
+            )
           // Poster list: a cover, the catalog rating as a filled pill, the
           // title, a synopsis filling the remaining height and genre chips. Rows used to
           // stretch the full width of a TV or desktop panel; the grid reflows
@@ -122,24 +125,24 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
     final coverUrl = rec.imgURLs.isNotEmpty ? rec.imgURLs.first : "";
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(ShioriShape.cover),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         // Nothing was focusable on entry, so a remote did nothing until the
         // user guessed a direction. The first card claims focus on a TV.
         autofocus: isTv && index == 0,
-        focusColor: context.primaryColor.withValues(alpha: Alphas.focus),
+        focusColor: context.shiori.color.accent.withValues(alpha: Alphas.focus),
         onTap: () => context.push(
           '/globalSearch',
           extra: (rec.searchTarget.query, rec.searchTarget.itemType),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(6),
+          padding: const EdgeInsets.all(ShioriSpace.s8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(6),
+                borderRadius: BorderRadius.circular(ShioriShape.cover),
                 child: Image(
                   image: coverProvider(toImgUrl(coverUrl)),
                   width: _coverWidth,
@@ -147,7 +150,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: ShioriSpace.s12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,37 +165,35 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                               alignment: PlaceholderAlignment.middle,
                               child: _ratingPill(context, rating),
                             ),
-                            const WidgetSpan(child: SizedBox(width: 8)),
+                            const WidgetSpan(
+                              child: SizedBox(width: ShioriSpace.s8),
+                            ),
                           ],
                           TextSpan(text: title),
                         ],
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 14,
+                      style: context.shiori.text.row.copyWith(
+                        color: context.shiori.color.fg,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     if (rec.description != null &&
                         rec.description!.isNotEmpty) ...[
-                      const SizedBox(height: 5),
+                      const SizedBox(height: ShioriSpace.s4),
                       // Non-flex children (title, chips) are laid out first,
                       // so this gets whatever height the fixed-size card has
                       // left. Fill it with as many lines as fit.
                       Flexible(
                         child: LayoutBuilder(
                           builder: (context, constraints) {
-                            final style = TextStyle(
-                              fontSize: _descriptionFontSize,
+                            final style = context.shiori.caption.copyWith(
                               height: _descriptionLineHeight,
-                              color: context.textColor.withValues(
-                                alpha: Alphas.secondary,
-                              ),
                             );
                             final lineExtent =
                                 MediaQuery.textScalerOf(context)
-                                    .scale(_descriptionFontSize) *
+                                    .scale(style.fontSize!) *
                                 _descriptionLineHeight;
                             final lines = (constraints.maxHeight / lineExtent)
                                 .floor();
@@ -208,7 +209,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                       ),
                     ],
                     if (rec.genres.isNotEmpty) ...[
-                      const SizedBox(height: 7),
+                      const SizedBox(height: ShioriSpace.s8),
                       Wrap(
                         spacing: 5,
                         runSpacing: 4,
@@ -227,60 +228,53 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
     );
   }
 
-  /// Filled with the accent. The label colour is computed against the accent
-  /// rather than the theme, so it stays readable whichever hue the user picked
-  /// and in either brightness.
+  /// The rating, filled with the accent.
   Widget _ratingPill(BuildContext context, CatalogRating rating) {
-    final accent = context.primaryColor;
-    final onAccent = accent.computeLuminance() > 0.5
-        ? Colors.black
-        : Colors.white;
     final label = rating.valueLabel;
     return Semantics(
       label: context.l10n.recommendation_rating_accessibility(label),
       child: ExcludeSemantics(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          decoration: BoxDecoration(
-            color: accent,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          // The star marks this as the catalog's average score, not a match
-          // percentage; the order of the list is the provider's own ranking.
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.star_rounded, size: 12, color: onAccent),
-              const SizedBox(width: 2),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
-                  color: onAccent,
-                ),
+        // The star marks this as the catalog's average score, not a match
+        // percentage; the order of the list is the provider's own ranking.
+        child: Builder(
+          builder: (context) {
+            final tone = EntryBadgeChip.accent(context);
+            final tokens = context.shiori;
+            return Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: ShioriSpace.s4 + 2,
+                vertical: 2,
               ),
-            ],
-          ),
+              decoration: BoxDecoration(
+                color: tone.background,
+                borderRadius: BorderRadius.circular(ShioriShape.badge),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 2,
+                children: [
+                  Icon(
+                    Symbols.star_rounded,
+                    fill: 1,
+                    size: tokens.scaled(12),
+                    color: tone.foreground,
+                  ),
+                  Text(
+                    label,
+                    style: tokens.text.badge.copyWith(
+                      color: tone.foreground,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _chip(BuildContext context, String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(
-        color: context.textColor.withValues(alpha: Alphas.tint),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 11,
-          color: context.textColor.withValues(alpha: Alphas.secondary),
-        ),
-      ),
-    );
-  }
+  Widget _chip(BuildContext context, String text) =>
+      EntryBadgeChip(label: text);
 }

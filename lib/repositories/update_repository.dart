@@ -40,10 +40,12 @@ class UpdateRepository {
   List<Update> getAllByMangaId(int? mangaId) =>
       isar.updates.filter().mangaIdEqualTo(mangaId).findAllSync();
 
-  Stream<List<Update>> watchByItemType(ItemType itemType) => isar.updates
+  /// The updates of [itemType] whose chapter is still unread: what the tab's
+  /// count shows, as the navigation badge counts across every type.
+  Stream<List<Update>> watchUnreadByItemType(ItemType itemType) => isar.updates
       .filter()
-      .idIsNotNull()
       .chapter((q) => q.manga((q) => q.itemTypeEqualTo(itemType)))
+      .chapter((c) => c.not().isReadEqualTo(true))
       .watch(fireImmediately: true);
 
   Future<List<Id>> getIdsByItemType(ItemType itemType) => isar.updates

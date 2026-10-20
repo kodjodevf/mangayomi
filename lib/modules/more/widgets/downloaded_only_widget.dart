@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
@@ -15,7 +16,7 @@ class DownloadedOnlyWidget extends ConsumerWidget {
       onTap: () => ref
           .read(downloadedOnlyStateProvider.notifier)
           .setDownloadedOnly(!downloadedOnly),
-      icon: Icons.cloud_off_outlined,
+      icon: Symbols.cloud_off_rounded,
       subtitle: l10n!.downloaded_only_description,
       title: l10n.downloaded_only,
       trailing: Switch(

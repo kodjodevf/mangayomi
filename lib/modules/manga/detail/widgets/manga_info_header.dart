@@ -9,12 +9,15 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/library/library_screen.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/detail_header_action.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/manga_cover_viewer.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/read_action.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/readmore.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/split_chapters_dialog.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracking_menu.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
+import 'package:mangayomi/modules/widgets/cover_hero.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
@@ -24,13 +27,13 @@ import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
-import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/utils.dart';
+import 'package:shiori/shiori.dart';
 
-/// The detail page's info block: cover, title, favourite/webview/tracker
-/// actions, description (collapsible), genre chips and the
-/// recommendations/related/watch-order strip. A separate widget so it owns
+/// The detail page's info block: cover, title, the quick actions (favourite,
+/// update days, tracking, Explore, webview), description (collapsible) and
+/// genre chips. A separate widget so it owns
 /// its own "description expanded" state instead of that living on the whole
 /// page's State.
 class MangaInfoHeader extends ConsumerStatefulWidget {
@@ -40,6 +43,13 @@ class MangaInfoHeader extends ConsumerStatefulWidget {
   final Widget action;
   final int chapterLength;
 
+  /// Scrolls the chapter list to the chapter being read; null when there is
+  /// none to go to.
+  final VoidCallback? onJumpToCurrent;
+
+  /// The chapter filter chips, shown under the chapter count.
+  final Widget? chapterFilters;
+
   const MangaInfoHeader({
     super.key,
     required this.manga,
@@ -47,6 +57,8 @@ class MangaInfoHeader extends ConsumerStatefulWidget {
     required this.titleDescription,
     required this.action,
     required this.chapterLength,
+    this.onJumpToCurrent,
+    this.chapterFilters,
   });
 
   @override
@@ -68,9 +80,8 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Theme.of(context).scaffoldBackgroundColor
-                    .withValues(alpha: 0.05),
-                Theme.of(context).scaffoldBackgroundColor,
+                context.shiori.color.ink0.withValues(alpha: 0.05),
+                context.shiori.color.ink0,
               ],
               stops: const [0, .3],
             ),
@@ -93,26 +104,27 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
                   Positioned(
                     top: 0,
                     right: 0,
-                    child: IconButton(
+                    child: IconButton.filledTonal(
+                      tooltip: l10n.edit,
                       onPressed: () {
                         _editLocalArchiveInfos();
                       },
-                      icon: const CircleAvatar(
-                        child: Icon(Icons.edit_outlined),
-                      ),
+                      icon: const Icon(Symbols.edit_rounded),
                     ),
                   ),
               ],
             ),
             _actionFavouriteAndWebview(),
+            // The numbers, then the one thing to do with them.
+            ReadActionButton(manga: widget.manga),
             Container(
-              color: Theme.of(context).scaffoldBackgroundColor,
+              color: context.shiori.color.ink0,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (widget.manga.description != null)
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(ShioriSpace.s8),
                       child: ReadMoreWidget(
                         text: widget.manga.description!,
                         onChanged: (value) {
@@ -123,9 +135,11 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
                       ),
                     ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: ShioriSpace.s12,
+                    ),
                     child: widget.manga.genre!.isEmpty
-                        ? const SizedBox(height: 30)
+                        ? const SizedBox(height: ShioriSpace.s32)
                         : _expanded || context.isTablet
                         ? Wrap(
                             children: [
@@ -152,15 +166,13 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
                             ),
                           ),
                   ),
-                  const SizedBox(height: 15),
-                  _DetailActions(manga: widget.manga),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: ShioriSpace.s16),
                   if (!context.isTablet)
                     Column(
                       children: [
                         //Description
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(ShioriSpace.s8),
                           child: Row(
                             mainAxisAlignment: widget.isLocalArchive
                                 ? MainAxisAlignment.spaceBetween
@@ -168,7 +180,7 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
+                                  horizontal: ShioriSpace.s8,
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,9 +194,10 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
                                           : l10n.n_episodes(
                                               widget.chapterLength,
                                             ),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: context.shiori.text.section
+                                          .copyWith(
+                                            color: context.shiori.color.fg,
+                                          ),
                                     ),
                                     Builder(
                                       builder: (context) {
@@ -198,37 +211,33 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
                                                   ItemType.anime
                                               ? l10n.missing_chapters(missing)
                                               : l10n.missing_episodes(missing),
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.red[400],
-                                          ),
+                                          style: context.shiori.text.meta
+                                              .copyWith(
+                                                color: context
+                                                    .shiori
+                                                    .color
+                                                    .error
+                                                    .foreground,
+                                              ),
                                         );
                                       },
                                     ),
                                   ],
                                 ),
                               ),
+                              const Spacer(),
+                              if (widget.onJumpToCurrent != null)
+                                ShioriButton.quiet(
+                                  icon: Symbols.my_location_rounded,
+                                  label: l10n.current_chapter,
+                                  onPressed: widget.onJumpToCurrent,
+                                ),
                               if (widget.isLocalArchive)
-                                ElevatedButton.icon(
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.all(5),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                  ),
-                                  icon: Icon(
-                                    Icons.add,
-                                    color: context.secondaryColor,
-                                  ),
-                                  label: Text(
-                                    widget.manga.itemType != ItemType.anime
-                                        ? l10n.add_chapters
-                                        : l10n.add_episodes,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: context.secondaryColor,
-                                    ),
-                                  ),
+                                ShioriButton.secondary(
+                                  icon: Symbols.add_rounded,
+                                  label: widget.manga.itemType != ItemType.anime
+                                      ? l10n.add_chapters
+                                      : l10n.add_episodes,
                                   onPressed: () async {
                                     final manga = widget.manga;
                                     if (manga.source == "torrent") {
@@ -255,6 +264,7 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
                             ],
                           ),
                         ),
+                        ?widget.chapterFilters,
                       ],
                     ),
                 ],
@@ -264,7 +274,7 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
               Container(
                 width: context.width(1),
                 height: context.height(1),
-                color: Theme.of(context).scaffoldBackgroundColor,
+                color: context.shiori.color.ink0,
               ),
           ],
         ),
@@ -330,20 +340,38 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
                     ),
                   ),
           );
+    final id = widget.manga.id;
+    final cover = ClipRRect(
+      borderRadius: BorderRadius.circular(ShioriShape.cover),
+      child: ColoredBox(
+        color: context.shiori.color.ink2,
+        child: Image(
+          image: imageProvider,
+          fit: BoxFit.cover,
+          gaplessPlayback: true,
+          errorBuilder: (_, _, _) => const SizedBox.shrink(),
+        ),
+      ),
+    );
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 20),
-      child: GestureDetector(
-        onTap: () {
-          _openImage(imageProvider);
-        },
-        child: SizedBox(
-          width: 65 * 1.5,
-          height: 65 * 2.3,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(5)),
-              image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-            ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: ShioriSpace.s16,
+        vertical: ShioriSpace.s16,
+      ),
+      child: Semantics(
+        button: true,
+        label: widget.manga.name,
+        child: GestureDetector(
+          onTap: () {
+            _openImage(imageProvider);
+          },
+          child: SizedBox(
+            width: 100,
+            height: 100 / coverAspect,
+            // The library cover lands here when the page opens.
+            child: id == null
+                ? cover
+                : Hero(tag: coverHeroTag(id), child: cover),
           ),
         ),
       ),
@@ -356,7 +384,7 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         InkWell(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(ShioriShape.badge),
           onTap: () {
             final name = widget.manga.name;
             if (name != null && name.trim().isNotEmpty) {
@@ -375,7 +403,14 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
               }
             }
           },
-          child: Text(widget.manga.name!, style: const TextStyle(fontSize: 20)),
+          child: Text(
+            widget.manga.name!,
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            style: context.shiori.text.seriesTitle.copyWith(
+              color: context.shiori.color.fg,
+            ),
+          ),
         ),
         widget.titleDescription,
       ],
@@ -384,68 +419,48 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
 
   Widget _actionFavouriteAndWebview() {
     return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
+      color: context.shiori.color.ink0,
+      padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(child: widget.action),
           if (!widget.isLocalArchive) Expanded(child: _smartUpdateDays()),
           _action(),
+          Expanded(child: _ExploreAction(manga: widget.manga)),
           if (!widget.isLocalArchive)
             Expanded(
-              child: SizedBox(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    elevation: 0,
-                  ),
-                  onPressed: () async {
-                    final manga = widget.manga;
+              child: DetailHeaderAction(
+                icon: Symbols.public_rounded,
+                label: context.l10n.webview,
+                onPressed: () async {
+                  final manga = widget.manga;
 
-                    final source = getSource(
-                      widget.manga.lang!,
-                      widget.manga.source!,
-                      widget.manga.sourceId,
-                    );
-                    if (source == null) return;
-                    String url = "";
-                    final baseUrl = source.baseUrl;
-                    final link = widget.manga.link!.getUrlWithoutDomain;
-                    if (baseUrl == null) return;
-                    if (baseUrl.endsWith("/") && link.startsWith("/")) {
-                      url = baseUrl + link.substring(1);
-                    } else if (!baseUrl.endsWith("/") &&
-                        !link.startsWith("/")) {
-                      url = "$baseUrl/$link";
-                    } else {
-                      url = "$baseUrl$link";
-                    }
+                  final source = getSource(
+                    widget.manga.lang!,
+                    widget.manga.source!,
+                    widget.manga.sourceId,
+                  );
+                  if (source == null) return;
+                  String url = "";
+                  final baseUrl = source.baseUrl;
+                  final link = widget.manga.link!.getUrlWithoutDomain;
+                  if (baseUrl == null) return;
+                  if (baseUrl.endsWith("/") && link.startsWith("/")) {
+                    url = baseUrl + link.substring(1);
+                  } else if (!baseUrl.endsWith("/") && !link.startsWith("/")) {
+                    url = "$baseUrl/$link";
+                  } else {
+                    url = "$baseUrl$link";
+                  }
 
-                    Map<String, dynamic> data = {
-                      'url': url,
-                      'sourceId': source.id.toString(),
-                      'title': manga.name!,
-                    };
-                    context.push("/mangawebview", extra: data);
-                  },
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.public,
-                        size: 20,
-                        color: context.secondaryColor,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        context.l10n.webview,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: context.secondaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                  Map<String, dynamic> data = {
+                    'url': url,
+                    'sourceId': source.id.toString(),
+                    'title': manga.name!,
+                  };
+                  context.push("/mangawebview", extra: data);
+                },
               ),
             ),
         ],
@@ -454,32 +469,14 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
   }
 
   Widget _smartUpdateDays() {
-    return SizedBox(
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          elevation: 0,
-        ),
-        onPressed: () =>
-            context.push("/calendarScreen", extra: widget.manga.itemType),
-        child: Column(
-          children: [
-            Icon(
-              Icons.hourglass_empty,
-              size: 20,
-              color: context.secondaryColor,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              widget.manga.smartUpdateDays != null
-                  ? context.l10n.n_days(widget.manga.smartUpdateDays!)
-                  : "N/A",
-              style: TextStyle(fontSize: 11, color: context.secondaryColor),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
+    return DetailHeaderAction(
+      icon: Symbols.hourglass_rounded,
+      // How often the series updates, as the calendar estimates it.
+      label: widget.manga.smartUpdateDays != null
+          ? context.l10n.every_n_days(widget.manga.smartUpdateDays!)
+          : context.l10n.update_interval_unknown,
+      onPressed: () =>
+          context.push("/calendarScreen", extra: widget.manga.itemType),
     );
   }
 
@@ -499,36 +496,17 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
               final l10n = l10nLocalizations(context)!;
               List<Track>? trackRes = snapshot.hasData ? snapshot.data : [];
               bool isNotEmpty = trackRes!.isNotEmpty;
-              Color color = isNotEmpty
-                  ? context.primaryColor
-                  : context.secondaryColor;
-              return ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  elevation: 0,
-                ),
+              return DetailHeaderAction(
+                icon: isNotEmpty ? Symbols.done_rounded : Symbols.sync_rounded,
+                active: isNotEmpty,
+                label: isNotEmpty
+                    ? trackRes.length == 1
+                          ? l10n.one_tracker
+                          : l10n.n_tracker(trackRes.length)
+                    : l10n.tracking,
                 onPressed: () {
                   _trackingDraggableMenu(entries);
                 },
-                child: Column(
-                  children: [
-                    Icon(
-                      isNotEmpty ? Icons.done_rounded : Icons.sync_outlined,
-                      size: 20,
-                      color: color,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      isNotEmpty
-                          ? trackRes.length == 1
-                                ? l10n.one_tracker
-                                : l10n.n_tracker(trackRes.length)
-                          : l10n.tracking,
-                      style: TextStyle(fontSize: 11, color: color),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
               );
             },
           ),
@@ -555,69 +533,41 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
     );
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(l10n.edit),
-          content: SizedBox(
-            height: 200,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: Text(l10n.name),
-                      ),
-                      TextFormField(controller: name),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15),
-                        child: Text(l10n.description),
-                      ),
-                      TextFormField(controller: description),
-                    ],
-                  ),
-                ),
-              ],
+      builder: (context) => ShioriDialog(
+        title: l10n.edit,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: ShioriSpace.s16,
+          children: [
+            TextField(
+              controller: name,
+              decoration: InputDecoration(labelText: l10n.name),
             ),
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(l10n.cancel),
-                ),
-                const SizedBox(width: 15),
-                TextButton(
-                  onPressed: () {
-                    final manga = widget.manga;
-                    manga.description = description.text;
-                    manga.name = name.text;
-                    mangaRepository.save(manga);
-                    Navigator.pop(context);
-                  },
-                  child: Text(l10n.edit),
-                ),
-              ],
+            TextField(
+              controller: description,
+              minLines: 2,
+              maxLines: 6,
+              decoration: InputDecoration(labelText: l10n.description),
             ),
           ],
-        );
-      },
+        ),
+        actions: [
+          ShioriButton.quiet(
+            label: l10n.cancel,
+            onPressed: () => Navigator.pop(context),
+          ),
+          ShioriButton(
+            label: l10n.save,
+            onPressed: () {
+              final manga = widget.manga;
+              manga.description = description.text;
+              manga.name = name.text;
+              mangaRepository.save(manga);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -648,36 +598,50 @@ class DetailGenreChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 2, right: 2, bottom: 5),
+      padding: const EdgeInsetsDirectional.only(
+        end: ShioriSpace.s4,
+        bottom: ShioriSpace.s4,
+      ),
       child: SizedBox(
-        height: 30,
-        child: PopupMenuButton<int>(
-          popUpAnimationStyle: popupAnimationStyle,
-          itemBuilder: (context) => [
-            // These are the only two menu rows in the app that set their own
-            // height, and 40 is under the minimum target on Material and Apple.
-            PopupMenuItem<int>(height: 48, value: 0, child: Text(libraryLabel)),
-            PopupMenuItem<int>(height: 48, value: 1, child: Text(sourceLabel)),
-          ],
-          onSelected: onSelected,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: Colors.grey.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(5),
+        height: 32,
+        child: MenuAnchor(
+          style: shioriMenuStyle(context),
+          menuChildren: [
+            ShioriMenuEntry(
+              ShioriMenuItem(
+                label: libraryLabel,
+                icon: Symbols.collections_bookmark_rounded,
+                onSelected: () => onSelected(0),
+              ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Align(
-                widthFactor: 1,
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    // 11 is the chip step. 11.5 is not on the scale and
-                    // renders inconsistently across platforms.
-                    fontSize: 11,
-                    // The theme already answers this; picking black or white
-                    // by hand ignores the palette.
-                    color: context.textColor,
+            ShioriMenuEntry(
+              ShioriMenuItem(
+                label: sourceLabel,
+                icon: Symbols.travel_explore_rounded,
+                onSelected: () => onSelected(1),
+              ),
+            ),
+          ],
+          builder: (context, controller, _) => Material(
+            color: context.shiori.color.ink2,
+            shape: StadiumBorder(
+              side: BorderSide(color: context.shiori.color.hairline),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () =>
+                  controller.isOpen ? controller.close() : controller.open(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: ShioriSpace.s12,
+                ),
+                child: Align(
+                  widthFactor: 1,
+                  child: Text(
+                    label,
+                    style: context.shiori.text.meta.copyWith(
+                      color: context.shiori.color.fg,
+                    ),
                   ),
                 ),
               ),
@@ -689,57 +653,94 @@ class DetailGenreChip extends StatelessWidget {
   }
 }
 
-/// One action on the detail page.
-class _DetailAction {
-  const _DetailAction({
+/// A place a title leads to from its detail page.
+class DetailExploreAction {
+  const DetailExploreAction({
     required this.icon,
     required this.label,
+    required this.description,
     required this.onPressed,
   });
 
   final IconData icon;
   final String label;
+
+  /// What is found there, under its name.
+  final String description;
   final VoidCallback onPressed;
 }
 
-/// The things you can do with a title from its detail page, as one control.
+/// Explore, among the quick actions under the cover: where the title leads
+/// (what is like it, what it is related to, the order to watch it in, what
+/// comes after), in a sheet.
 ///
-/// These used to be up to three full-width buttons stacked down the page, each
-/// carrying the same right-arrow icon, so the column said nothing about what
-/// any of them did and grew a row every time an action was added.
-///
-/// One bordered strip of equal segments rather than loose buttons. Loose ones
-/// size to their labels, so they sat ragged and adrift in the middle of a
-/// desktop window and left an orphan on the second line of a phone. Segments
-/// divide the width they are given, which means the strip looks deliberate at
-/// any width and with two, three or four actions in it.
-class _DetailActions extends ConsumerWidget {
-  const _DetailActions({required this.manga});
+/// These places were first a bordered strip of segments, then a row of
+/// cards down the page: either way a section of their own for what is
+/// secondary on a detail page, which is read and managed first. They are
+/// one action now, beside the others, and a tap opens a sheet where each
+/// place is a full row with a line saying what is there.
+class _ExploreAction extends StatelessWidget {
+  const _ExploreAction({required this.manga});
+
+  final Manga manga;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return DetailHeaderAction(
+      icon: Symbols.explore_rounded,
+      label: l10n.group_explore,
+      onPressed: () => showShioriSheet<void>(
+        context,
+        title: l10n.group_explore,
+        builder: (_) => _ExplorePlaces(manga: manga),
+      ),
+    );
+  }
+}
+
+/// The places [manga] leads to, worked out when the sheet opens: sequels
+/// need a MyAnimeList or AniList track to look anything up, so they appear
+/// once there is one.
+class _ExplorePlaces extends ConsumerWidget {
+  const _ExplorePlaces({required this.manga});
 
   final Manga manga;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = l10nLocalizations(context)!;
-
+    final l10n = context.l10n;
+    // Captured now: the sheet closes before the place opens.
+    final router = GoRouter.of(context);
+    DetailExploreAction recommendations(MediaLookupContext media) =>
+        DetailExploreAction(
+          icon: Symbols.auto_awesome_rounded,
+          label: l10n.recommendations,
+          description: l10n.explore_recommendations_subtitle,
+          onPressed: () => router.push(
+            "/recommendations",
+            extra: (media, ref.read(algorithmWeightsStateProvider)),
+          ),
+        );
     // Everything this title is related to, including the one thing that
     // cannot be reached any other way from in here: its adaptation in the
     // other medium.
-    final related = _DetailAction(
-      icon: Icons.account_tree_outlined,
+    final related = DetailExploreAction(
+      icon: Symbols.account_tree_rounded,
       label: l10n.related_titles,
+      description: l10n.explore_related_subtitle,
       onPressed: () =>
-          context.push("/related", extra: (manga.name!, manga.itemType)),
+          router.push("/related", extra: (manga.name!, manga.itemType)),
     );
 
     if (manga.itemType != ItemType.anime) {
-      final media = MediaLookupContext.fromManga(manga);
-      final recommendations = _recommendationsAction(context, ref, media);
-      return _strip(context, [recommendations, related]);
+      return DetailExploreList(
+        actions: [
+          recommendations(MediaLookupContext.fromManga(manga)),
+          related,
+        ],
+      );
     }
-
-    // Sequels needs a MyAnimeList or AniList track to look anything up, so it
-    // only appears once there is one.
     return StreamBuilder(
       stream: trackRepository.watchByMangaId(manga.id!),
       builder: (context, snapshot) {
@@ -755,107 +756,59 @@ class _DetailActions extends ConsumerWidget {
           }
         }
         final media = MediaLookupContext.fromManga(manga, tracks: tracks);
-        final recommendations = _recommendationsAction(context, ref, media);
-        final watchOrder = _DetailAction(
-          icon: Icons.format_list_numbered_outlined,
-          label: l10n.watch_order,
-          onPressed: () =>
-              context.push("/watchOrder", extra: (media, null as Track?)),
-        );
-
-        return _strip(context, [
-          recommendations,
-          related,
-          watchOrder,
-          if (sequelTrack != null)
-            _DetailAction(
-              icon: Icons.playlist_play_outlined,
-              label: l10n.sequels,
+        return DetailExploreList(
+          actions: [
+            recommendations(media),
+            related,
+            DetailExploreAction(
+              icon: Symbols.format_list_numbered_rounded,
+              label: l10n.watch_order,
+              description: l10n.explore_watch_order_subtitle,
               onPressed: () =>
-                  context.push("/watchOrder", extra: (media, sequelTrack)),
+                  router.push("/watchOrder", extra: (media, null as Track?)),
             ),
-        ]);
+            if (sequelTrack != null)
+              DetailExploreAction(
+                icon: Symbols.playlist_play_rounded,
+                label: l10n.sequels,
+                description: l10n.explore_sequels_subtitle,
+                onPressed: () =>
+                    router.push("/watchOrder", extra: (media, sequelTrack)),
+              ),
+          ],
+        );
       },
     );
   }
+}
 
-  _DetailAction _recommendationsAction(
-    BuildContext context,
-    WidgetRef ref,
-    MediaLookupContext media,
-  ) {
-    return _DetailAction(
-      icon: Icons.auto_awesome_outlined,
-      label: context.l10n.recommendations,
-      onPressed: () => context.push(
-        "/recommendations",
-        extra: (media, ref.read(algorithmWeightsStateProvider)),
-      ),
-    );
-  }
+/// The places to go, each a full row: its icon, its name, what is there, and
+/// a chevron. A tap closes the sheet, then opens the place.
+class DetailExploreList extends StatelessWidget {
+  const DetailExploreList({super.key, required this.actions});
 
-  Widget _strip(BuildContext context, List<_DetailAction> actions) {
-    // Tinted rather than the neutral outline, so the border belongs to the
-    // accent the segments are drawn in. Kept faint: it frames the strip, it
-    // is not another thing to look at.
-    final outline = context.primaryColor.withValues(alpha: 0.35);
+  final List<DetailExploreAction> actions;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: outline),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        // So a segment's ink and its focus highlight stay inside the border.
-        clipBehavior: Clip.antiAlias,
-        // Every segment as tall as the tallest, which is what keeps the
-        // dividers full height when one label wraps to two lines.
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (var i = 0; i < actions.length; i++) ...[
-                if (i > 0)
-                  VerticalDivider(width: 1, thickness: 1, color: outline),
-                Expanded(child: _segment(context, actions[i])),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Icon above label rather than beside it. These labels are localised and
-  /// some translations are long; stacked, a long one takes a second line
-  /// instead of pushing the icon out or clipping.
-  Widget _segment(BuildContext context, _DetailAction action) {
-    // The accent, so the strip reads as something to press and follows
-    // whichever colour the user picked rather than sitting in body-text grey.
-    final accent = context.primaryColor;
-
-    return InkWell(
-      onTap: action.onPressed,
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 10),
+        padding: const EdgeInsets.only(bottom: ShioriSpace.s8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(action.icon, size: 20, color: accent),
-            const SizedBox(height: 5),
-            Text(
-              action.label,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: accent,
+            for (final action in actions)
+              ShioriSettingRow(
+                icon: action.icon,
+                title: action.label,
+                subtitle: action.description,
+                trailing: const Icon(Symbols.chevron_forward_rounded),
+                onTap: () {
+                  Navigator.pop(context);
+                  action.onPressed();
+                },
               ),
-            ),
           ],
         ),
       ),

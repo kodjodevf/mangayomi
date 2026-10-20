@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 
@@ -26,12 +28,10 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
   late final animation = AnimationController(
     vsync: this,
     value: widget.controller.player.state.playing ? 1 : 0,
-    duration: const Duration(milliseconds: 200),
+    duration: ShioriMotion.standard,
   );
 
   StreamSubscription<bool>? subscription;
-
-  double get iconSize => isDesktop ? 25 : 65;
 
   @override
   void setState(VoidCallback fn) {
@@ -61,19 +61,15 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
+    // The screen's one main control: the accent disc, as Shiori draws it
+    // over a picture; smaller in desktop's bar than in a phone's middle.
+    return ShioriOverlayIconButton(
+      tooltip: '${context.l10n.play} / ${context.l10n.pause}',
       focusNode: widget.focusNode,
       onPressed: widget.controller.player.playOrPause,
-      iconSize: iconSize,
-      color: Colors.white,
-      icon: IgnorePointer(
-        child: AnimatedIcon(
-          progress: animation,
-          icon: AnimatedIcons.play_pause,
-          size: iconSize,
-          color: Colors.white,
-        ),
-      ),
+      emphasized: true,
+      size: isDesktop ? 20 : 34,
+      icon: AnimatedIcon(progress: animation, icon: AnimatedIcons.play_pause),
     );
   }
 }

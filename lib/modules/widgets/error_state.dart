@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:shiori/shiori.dart';
 
 /// The shared failure state.
 ///
@@ -20,6 +20,9 @@ class ErrorState extends StatelessWidget {
     this.onRetry,
     this.compact = false,
     this.autofocusRetry,
+    this.secondaryLabel,
+    this.secondaryIcon,
+    this.onSecondary,
   });
 
   /// Human readable line. Falls back to a generic message when null.
@@ -42,37 +45,53 @@ class ErrorState extends StatelessWidget {
   /// for autofocus in one scope resolve arbitrarily.
   final bool? autofocusRetry;
 
+  /// A second way out beside the retry, such as opening a source in the
+  /// browser to get past Cloudflare. Shown with [onSecondary].
+  final String? secondaryLabel;
+  final IconData? secondaryIcon;
+  final VoidCallback? onSecondary;
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final theme = Theme.of(context);
+    final tokens = context.shiori;
+    final c = tokens.color;
     final detailText = detail?.trim();
+    final circle = tokens.scaled(compact ? 56 : 72);
 
     return Center(
       child: SingleChildScrollView(
         padding: EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: compact ? 16 : 32,
+          horizontal: ShioriSpace.s24,
+          vertical: compact ? ShioriSpace.s16 : ShioriSpace.s32,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: compact ? 32 : 44,
-              color: theme.colorScheme.error,
+            ExcludeSemantics(
+              child: Container(
+                width: circle,
+                height: circle,
+                decoration: BoxDecoration(
+                  color: c.error.background,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Symbols.error_rounded,
+                  size: circle * 0.5,
+                  color: c.error.foreground,
+                ),
+              ),
             ),
-            SizedBox(height: compact ? 10 : 14),
+            SizedBox(height: compact ? ShioriSpace.s12 : ShioriSpace.s16),
             Text(
               message ?? l10n.something_went_wrong,
               textAlign: TextAlign.center,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: tokens.text.section.copyWith(color: c.fg),
             ),
             if (detailText != null && detailText.isNotEmpty) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: ShioriSpace.s8),
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 520),
                 child: Text(
@@ -80,21 +99,33 @@ class ErrorState extends StatelessWidget {
                   textAlign: TextAlign.center,
                   maxLines: 4,
                   overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: context.textColor.withValues(alpha: 0.7),
-                  ),
+                  style: tokens.text.meta.copyWith(color: c.fgMuted),
                 ),
               ),
             ],
-            if (onRetry != null) ...[
-              SizedBox(height: compact ? 14 : 20),
-              FilledButton.tonalIcon(
-                // On a TV there is no pointer, so the only actionable control
-                // on the screen takes focus straight away.
-                autofocus: autofocusRetry ?? isTv,
-                onPressed: onRetry,
-                icon: const Icon(Icons.refresh),
-                label: Text(l10n.retry),
+            if (onRetry != null || onSecondary != null) ...[
+              SizedBox(height: compact ? ShioriSpace.s16 : ShioriSpace.s24),
+              Wrap(
+                spacing: ShioriSpace.s8,
+                runSpacing: ShioriSpace.s8,
+                alignment: WrapAlignment.center,
+                children: [
+                  if (onRetry != null)
+                    ShioriButton.secondary(
+                      // On a TV there is no pointer, so the only actionable
+                      // control on the screen takes focus straight away.
+                      autofocus: autofocusRetry ?? isTv,
+                      onPressed: onRetry,
+                      icon: Symbols.refresh_rounded,
+                      label: l10n.retry,
+                    ),
+                  if (onSecondary != null && secondaryLabel != null)
+                    ShioriButton.quiet(
+                      onPressed: onSecondary,
+                      icon: secondaryIcon,
+                      label: secondaryLabel!,
+                    ),
+                ],
               ),
             ],
           ],

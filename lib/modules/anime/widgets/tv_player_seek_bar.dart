@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_focusable.dart';
@@ -148,7 +149,9 @@ class _TvSeekBarState extends State<TvSeekBar> {
                               width: w,
                               child: LinearProgressIndicator(
                                 value: frac,
-                                backgroundColor: Colors.white24,
+                                backgroundColor: Colors.white.withValues(
+                                  alpha: Alphas.hairline,
+                                ),
                                 valueColor: AlwaysStoppedAnimation<Color>(
                                   widget.accent,
                                 ),
@@ -203,7 +206,7 @@ String _fmt(Duration d) {
 // as the digits change.
 TextStyle _timeStyle(Color color) => TextStyle(
   color: color,
-  fontSize: 15,
+  fontSize: ShioriType.reference.body.fontSize,
   fontFamily: 'monospace',
   fontWeight: FontWeight.w600,
   letterSpacing: 0.3,
@@ -241,7 +244,10 @@ class TvRemainingText extends StatelessWidget {
         final dur = player.state.duration;
         var remaining = dur - pos;
         if (remaining < Duration.zero) remaining = Duration.zero;
-        return Text('-${_fmt(remaining)}', style: _timeStyle(Colors.white70));
+        return Text(
+          '-${_fmt(remaining)}',
+          style: _timeStyle(Colors.white.withValues(alpha: Alphas.secondary)),
+        );
       },
     );
   }

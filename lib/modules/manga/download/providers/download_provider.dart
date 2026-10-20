@@ -18,7 +18,9 @@ import 'package:mangayomi/modules/manga/download/providers/download_gate.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/download_manager/download_queue_order.dart';
 import 'package:mangayomi/services/download_manager/m_downloader.dart';
 import 'package:mangayomi/services/get_video_list.dart';
@@ -570,7 +572,14 @@ Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
       ref.read(provider);
     }
   } catch (error) {
-    botToast('Could not start download queue: $error');
+    final context = navigatorKey.currentContext;
+    final l10n = context == null || !context.mounted
+        ? null
+        : l10nLocalizations(context);
+    botToast(
+      l10n?.download_queue_start_failed('$error') ??
+          'Could not start the download queue: $error',
+    );
   } finally {
     keepAlive.close();
   }

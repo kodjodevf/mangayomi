@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,7 +8,6 @@ import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
-import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/trackers/anilist.dart';
@@ -15,8 +15,6 @@ import 'package:mangayomi/services/trackers/kitsu.dart';
 import 'package:mangayomi/services/trackers/myanimelist.dart';
 import 'package:mangayomi/services/trackers/simkl.dart';
 import 'package:mangayomi/services/trackers/trakt_tv.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:mangayomi/modules/more/widgets/outlined_field_decoration.dart';
 
 class TrackScreen extends ConsumerWidget {
   const TrackScreen({super.key});
@@ -26,10 +24,11 @@ class TrackScreen extends ConsumerWidget {
     final updateProgressAfterReading = ref.watch(
       updateProgressAfterReadingStateProvider,
     );
-    final l10n = l10nLocalizations(context)!;
+    final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: Text(l10nLocalizations(context)!.tracking)),
+      appBar: AppBar(title: Text(l10n.tracking)),
       body: SingleChildScrollView(
+        padding: tvPageInsets,
         child: StreamBuilder(
           stream: trackRepository.watchAllWithSyncId(),
           builder: (context, snapshot) {
@@ -38,122 +37,99 @@ class TrackScreen extends ConsumerWidget {
                 : [];
             return Column(
               children: [
-                SwitchListTile(
-                  value: updateProgressAfterReading,
-                  title: Text(context.l10n.updateProgressAfterReading),
-                  onChanged: (value) {
-                    ref
-                        .read(updateProgressAfterReadingStateProvider.notifier)
-                        .set(value);
-                  },
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 15,
-                    right: 15,
-                    bottom: 10,
-                    top: 5,
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        l10n.services,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: context.primaryColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                TrackListile(
-                  onTap: () async {
-                    await ref
-                        .read(
-                          anilistProvider(
-                            syncId: TrackerProviders.anilist.syncId,
-                            widgetRef: ref,
-                          ).notifier,
-                        )
-                        .login();
-                  },
-                  id: TrackerProviders.anilist.syncId,
-                  entries: entries!,
-                ),
-                TrackListile(
-                  onTap: () => _showDialogLogin(context, ref),
-                  id: TrackerProviders.kitsu.syncId,
-                  entries: entries,
-                ),
-                TrackListile(
-                  onTap: () async {
-                    await ref
-                        .read(
-                          myAnimeListProvider(
-                            syncId: TrackerProviders.myAnimeList.syncId,
-                            itemType: null,
-                            widgetRef: ref,
-                          ).notifier,
-                        )
-                        .login();
-                  },
-                  id: TrackerProviders.myAnimeList.syncId,
-                  entries: entries,
-                ),
-                TrackListile(
-                  onTap: () async {
-                    await ref
-                        .read(
-                          simklProvider(
-                            syncId: TrackerProviders.simkl.syncId,
-                            itemType: null,
-                            widgetRef: ref,
-                          ).notifier,
-                        )
-                        .login();
-                  },
-                  id: TrackerProviders.simkl.syncId,
-                  entries: entries,
-                ),
-                TrackListile(
-                  onTap: () async {
-                    await ref
-                        .read(
-                          traktTvProvider(
-                            syncId: TrackerProviders.trakt.syncId,
-                            itemType: null,
-                            widgetRef: ref,
-                          ).notifier,
-                        )
-                        .login();
-                  },
-                  id: TrackerProviders.trakt.syncId,
-                  entries: entries,
-                ),
-                ListTile(
-                  title: Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.info_outline_rounded,
-                          color: context.secondaryColor,
-                        ),
-                      ],
+                ShioriSettingsGroup(
+                  children: [
+                    ShioriSwitchRow(
+                      autofocus: isTv,
+                      title: l10n.updateProgressAfterReading,
+                      value: updateProgressAfterReading,
+                      onChanged: (v) => ref
+                          .read(
+                            updateProgressAfterReadingStateProvider.notifier,
+                          )
+                          .set(v),
                     ),
-                  ),
-                  subtitle: Text(
-                    l10n.tracking_warning_info,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: context.secondaryColor,
-                    ),
-                  ),
+                  ],
                 ),
-                ListTileWidget(
-                  title: l10n.manage_trackers,
-                  icon: Icons.settings,
-                  onTap: () => context.push('/manageTrackers'),
+                ShioriSettingsGroup(
+                  title: l10n.services,
+                  footer: l10n.tracking_warning_info,
+                  children: [
+                    TrackListile(
+                      onTap: () async {
+                        await ref
+                            .read(
+                              anilistProvider(
+                                syncId: TrackerProviders.anilist.syncId,
+                                widgetRef: ref,
+                              ).notifier,
+                            )
+                            .login();
+                      },
+                      id: TrackerProviders.anilist.syncId,
+                      entries: entries!,
+                    ),
+                    TrackListile(
+                      onTap: () => _showDialogLogin(context, ref),
+                      id: TrackerProviders.kitsu.syncId,
+                      entries: entries,
+                    ),
+                    TrackListile(
+                      onTap: () async {
+                        await ref
+                            .read(
+                              myAnimeListProvider(
+                                syncId: TrackerProviders.myAnimeList.syncId,
+                                itemType: null,
+                                widgetRef: ref,
+                              ).notifier,
+                            )
+                            .login();
+                      },
+                      id: TrackerProviders.myAnimeList.syncId,
+                      entries: entries,
+                    ),
+                    TrackListile(
+                      onTap: () async {
+                        await ref
+                            .read(
+                              simklProvider(
+                                syncId: TrackerProviders.simkl.syncId,
+                                itemType: null,
+                                widgetRef: ref,
+                              ).notifier,
+                            )
+                            .login();
+                      },
+                      id: TrackerProviders.simkl.syncId,
+                      entries: entries,
+                    ),
+                    TrackListile(
+                      onTap: () async {
+                        await ref
+                            .read(
+                              traktTvProvider(
+                                syncId: TrackerProviders.trakt.syncId,
+                                itemType: null,
+                                widgetRef: ref,
+                              ).notifier,
+                            )
+                            .login();
+                      },
+                      id: TrackerProviders.trakt.syncId,
+                      entries: entries,
+                    ),
+                  ],
+                ),
+                ShioriSettingsGroup(
+                  children: [
+                    ShioriSettingRow(
+                      icon: Symbols.tune_rounded,
+                      title: l10n.manage_trackers,
+                      trailing: const Icon(Symbols.chevron_forward_rounded),
+                      onTap: () => context.push('/manageTrackers'),
+                    ),
+                  ],
                 ),
               ],
             );
@@ -212,89 +188,78 @@ Future<void> _showDialogLogin(BuildContext context, WidgetRef ref) async {
           }
         }
 
-        return AlertDialog(
-          title: Text(
-            l10n.login_into("Kitsu"),
-            style: const TextStyle(fontSize: 30),
-          ),
-          content: SizedBox(
-            height: 300,
-            width: MediaQuery.of(context).size.width,
-            child: AutofillGroup(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: TextFormField(
-                      controller: emailController,
-                      focusNode: emailFocusNode,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      autofillHints: const [
-                        AutofillHints.email,
-                        AutofillHints.username,
-                      ],
-                      autofocus: !isTv,
-                      onChanged: (_) => setState(updateCanLogin),
-                      onFieldSubmitted: (_) => passwordFocusNode.requestFocus(),
-                      decoration: outlinedFieldDecoration(
-                        hintText: l10n.email_adress,
+        return ShioriDialog(
+          title: l10n.login_into("Kitsu"),
+          content: AutofillGroup(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: ShioriSpace.s16,
+              children: [
+                TextField(
+                  controller: emailController,
+                  focusNode: emailFocusNode,
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                  autofillHints: const [
+                    AutofillHints.email,
+                    AutofillHints.username,
+                  ],
+                  autofocus: !isTv,
+                  onChanged: (_) => setState(updateCanLogin),
+                  onSubmitted: (_) => passwordFocusNode.requestFocus(),
+                  decoration: InputDecoration(labelText: l10n.email_adress),
+                ),
+                TextField(
+                  controller: passwordController,
+                  focusNode: passwordFocusNode,
+                  obscureText: obscureText,
+                  onChanged: (_) => setState(updateCanLogin),
+                  keyboardType: TextInputType.visiblePassword,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) {
+                    if (canLogin && !isLoading) doLogin();
+                  },
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  autofillHints: const [AutofillHints.password],
+                  decoration: InputDecoration(
+                    labelText: l10n.password,
+                    errorText: errorMessage.isEmpty ? null : errorMessage,
+                    errorMaxLines: 3,
+                    suffixIcon: IconButton(
+                      tooltip: obscureText
+                          ? l10n.show_password
+                          : l10n.hide_password,
+                      onPressed: () =>
+                          setState(() => obscureText = !obscureText),
+                      icon: Icon(
+                        obscureText
+                            ? Symbols.visibility_rounded
+                            : Symbols.visibility_off_rounded,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: TextFormField(
-                      controller: passwordController,
-                      focusNode: passwordFocusNode,
-                      obscureText: obscureText,
-                      onChanged: (_) => setState(updateCanLogin),
-                      keyboardType: TextInputType.visiblePassword,
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) {
-                        if (canLogin && !isLoading) doLogin();
-                      },
-                      enableSuggestions: false,
-                      autocorrect: false,
-                      autofillHints: const [AutofillHints.password],
-                      decoration: outlinedFieldDecoration(
-                        hintText: l10n.password,
-                        suffixIcon: IconButton(
-                          onPressed: () => setState(() {
-                            obscureText = !obscureText;
-                          }),
-                          icon: Icon(
-                            obscureText
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(errorMessage, style: const TextStyle(color: Colors.red)),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: SizedBox(
-                      width: context.width(1),
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: (!canLogin || isLoading) ? null : doLogin,
-                        child: isLoading
-                            ? const CircularProgressIndicator()
-                            : Text(l10n.login),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
+          actions: [
+            ShioriButton.quiet(
+              label: l10n.cancel,
+              onPressed: () => Navigator.pop(context),
+            ),
+            if (isLoading)
+              const Padding(
+                padding: EdgeInsets.all(ShioriSpace.s8),
+                child: ShioriLoading.inline(),
+              )
+            else
+              ShioriButton(
+                label: l10n.login,
+                onPressed: canLogin ? doLogin : null,
+              ),
+          ],
         );
       },
     ),

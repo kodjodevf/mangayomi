@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:intl/intl.dart';
 
 class CalendarHeader extends StatelessWidget {
@@ -21,12 +22,15 @@ class CalendarHeader extends StatelessWidget {
     final title = formatter.format(yearMonth);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.symmetric(
+        vertical: ShioriSpace.s8,
+        horizontal: ShioriSpace.s16,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
+            duration: ShioriMotion.standard,
             transitionBuilder: (child, animation) => FadeTransition(
               opacity: animation,
               child: SlideTransition(
@@ -47,11 +51,13 @@ class CalendarHeader extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: const Icon(Icons.keyboard_arrow_left),
+                tooltip: MaterialLocalizations.of(context).previousMonthTooltip,
+                icon: const Icon(Symbols.keyboard_arrow_left_rounded, fill: 1),
                 onPressed: onPreviousClick,
               ),
               IconButton(
-                icon: const Icon(Icons.keyboard_arrow_right),
+                tooltip: MaterialLocalizations.of(context).nextMonthTooltip,
+                icon: const Icon(Symbols.keyboard_arrow_right_rounded, fill: 1),
                 onPressed: onNextClick,
               ),
             ],

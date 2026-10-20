@@ -270,7 +270,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String mass_migration_finding_matches(Object source, Object language) {
-    return 'Mencari kecocokan di $source • $language';
+    return 'Mencari kecocokan di $source · $language';
   }
 
   @override
@@ -577,6 +577,20 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get pure_black_dark_mode => 'Mode Gelap Hitam Murni';
+
+  @override
+  String get tint_surfaces_with_palette => 'Warnai permukaan dengan palet';
+
+  @override
+  String get tint_surfaces_with_palette_subtitle =>
+      'Mewarnai latar, kartu, dan bilah dengan palet pilihan, seperti dulu. Jika mati, semuanya tetap netral dan palet hanya mewarnai aksen.';
+
+  @override
+  String get novel_reader_font => 'Font pembaca novel';
+
+  @override
+  String get novel_reader_font_subtitle =>
+      'Dipakai oleh font Bawaan di pembaca novel. Bagian lain aplikasi memakai Figtree.';
 
   @override
   String get timestamp => 'Cap Waktu';
@@ -1175,11 +1189,11 @@ class AppLocalizationsId extends AppLocalizations {
       'Atur ulang dan sesuaikan setiap navigasi sesuai kebutuhan Anda.';
 
   @override
-  String get floating_navigation_bar => 'Floating navigation bar';
+  String get floating_navigation_bar => 'Bilah navigasi mengambang';
 
   @override
   String get floating_navigation_bar_description =>
-      'Use a floating capsule instead of the standard attached navigation bar.';
+      'Gunakan kapsul mengambang alih-alih bilah navigasi yang menempel.';
 
   @override
   String get full_screen_player => 'Gunakan Layar Penuh';
@@ -2000,11 +2014,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get add_repo => 'Tambahkan repositori?';
 
   @override
-  String get add_repo_sources_to_add => 'Extension lists that will be added:';
+  String get add_repo_sources_to_add =>
+      'Daftar ekstensi yang akan ditambahkan:';
 
   @override
   String get add_repo_warning =>
-      'Extensions from these repositories run inside the app. Only add repositories you trust.';
+      'Ekstensi dari repositori ini berjalan di dalam aplikasi. Tambahkan hanya repositori yang kamu percaya.';
 
   @override
   String get genre_search_library => 'Cari genre di perpustakaan';
@@ -2156,7 +2171,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get custom_buttons_add_warning =>
-      'This button runs the Lua code below in the video player, which can access your files and run programs. Only add it if you trust where this link came from.';
+      'Tombol ini menjalankan kode Lua di bawah dalam pemutar video, yang dapat mengakses berkasmu dan menjalankan program. Tambahkan hanya jika kamu memercayai asal tautan ini.';
 
   @override
   String n_days(Object n) {
@@ -2268,43 +2283,43 @@ class AppLocalizationsId extends AppLocalizations {
   String get watch_order => 'Urutan menonton';
 
   @override
-  String get watch_order_role_current => 'Current';
+  String get watch_order_role_current => 'Saat ini';
 
   @override
-  String get watch_order_role_previous => 'Previous';
+  String get watch_order_role_previous => 'Sebelumnya';
 
   @override
-  String get watch_order_role_next => 'Next';
+  String get watch_order_role_next => 'Berikutnya';
 
   @override
-  String get watch_order_source_release_order => 'Release order';
+  String get watch_order_source_release_order => 'Urutan rilis';
 
   @override
   String watch_order_source_community_list(String name, String author) {
-    return '$name by $author';
+    return '$name oleh $author';
   }
 
   @override
   String watch_order_source_official_collection(String name) {
-    return 'Official Trakt collection: $name';
+    return 'Koleksi resmi Trakt: $name';
   }
 
   @override
   String watch_order_source_trakt_collection(String name) {
-    return 'Trakt collection: $name';
+    return 'Koleksi Trakt: $name';
   }
 
   @override
   String watch_order_source_seasons(String title) {
-    return 'Seasons for $title';
+    return 'Musim $title';
   }
 
   @override
-  String get watch_order_select_source => 'Order source';
+  String get watch_order_select_source => 'Sumber urutan';
 
   @override
   String watch_order_season(int number) {
-    return 'Season $number';
+    return 'Musim $number';
   }
 
   @override
@@ -2535,6 +2550,9 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get brightness => 'Kecerahan';
+
+  @override
+  String get volume => 'Volume';
 
   @override
   String get contrast => 'Kontras';
@@ -3245,6 +3263,24 @@ class AppLocalizationsId extends AppLocalizations {
   String get onboarding_title => 'Selamat datang di Mangayomi';
 
   @override
+  String get onboarding_language_title => 'Pilih bahasa Anda';
+
+  @override
+  String get onboarding_language_body =>
+      'Mangayomi ditampilkan dalam bahasa ini. Anda bisa mengubahnya nanti di Tampilan.';
+
+  @override
+  String get onboarding_nav_grouped_body =>
+      'Simpan satu tab untuk setiap pustaka, atau kelompokkan dalam satu tab Pustaka, dengan Pembaruan dan Riwayat dalam satu tab Aktivitas.';
+
+  @override
+  String get onboarding_nav_grouped => 'Tab yang dikelompokkan';
+
+  @override
+  String get onboarding_nav_grouped_inside =>
+      'Setiap tab yang dikelompokkan dialihkan dari bagian atas layarnya';
+
+  @override
   String get onboarding_libraries_body =>
       'Pilih apa yang ingin Anda baca dan tonton.';
 
@@ -3252,17 +3288,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get onboarding_nav_title => 'Pustaka Anda';
 
   @override
-  String get onboarding_nav_body =>
-      'Tab terpisah untuk masing-masing atau digabung di bawah satu tab Pustaka.';
-
-  @override
   String get onboarding_nav_split => 'Tab terpisah';
-
-  @override
-  String get onboarding_nav_merged => 'Satu tab Pustaka';
-
-  @override
-  String get onboarding_nav_inside => 'Mengetuk Pustaka akan mengganti tab ini';
 
   @override
   String get onboarding_next => 'Berikutnya';
@@ -3502,92 +3528,854 @@ class AppLocalizationsId extends AppLocalizations {
   String get chapter_swipe_disabled => 'Dinonaktifkan';
 
   @override
-  String get update_errors => 'Update errors';
+  String get update_errors => 'Galat pembaruan';
 
   @override
-  String get no_update_errors => 'No update errors';
+  String get no_update_errors => 'Tidak ada galat pembaruan';
 
   @override
-  String get clear_all => 'Clear all';
+  String get clear_all => 'Hapus semua';
 
   @override
-  String get dismiss => 'Dismiss';
+  String get dismiss => 'Tutup';
 
   @override
-  String get previous_episode => 'Previous episode';
+  String get previous_episode => 'Episode sebelumnya';
 
   @override
-  String get clear_logs => 'Clear logs';
+  String get clear_logs => 'Hapus log';
 
   @override
-  String get bold => 'Bold';
+  String get bold => 'Tebal';
 
   @override
-  String get italic => 'Italic';
+  String get italic => 'Miring';
 
   @override
-  String get color_yellow => 'Yellow';
+  String get color_yellow => 'Kuning';
 
   @override
-  String get color_cyan => 'Cyan';
+  String get color_cyan => 'Sian';
 
   @override
-  String get color_green => 'Green';
+  String get color_green => 'Hijau';
 
   @override
-  String get color_orange => 'Orange';
+  String get color_orange => 'Oranye';
 
   @override
-  String get continue_watching => 'Continue Watching';
+  String get continue_watching => 'Lanjutkan menonton';
 
   @override
-  String get search_your_anime => 'Search your anime';
+  String get search_your_anime => 'Cari animemu';
 
   @override
-  String get category => 'Category';
+  String get category => 'Kategori';
 
   @override
-  String get hidden_categories => 'Hidden categories';
+  String get hidden_categories => 'Kategori tersembunyi';
 
   @override
-  String get new_category => 'New category';
+  String get new_category => 'Kategori baru';
 
   @override
-  String get local => 'Local';
+  String get local => 'Lokal';
 
   @override
-  String get tv_home_rows => 'Rows';
+  String get tv_home_rows => 'Baris';
 
   @override
-  String get genre_rows => 'Genre rows';
+  String get genre_rows => 'Baris genre';
 
   @override
-  String get share_backup_file => 'Share Mangayomi backup file';
+  String get share_backup_file => 'Bagikan cadangan Mangayomi';
 
   @override
-  String get close => 'Close';
+  String get close => 'Tutup';
 
   @override
-  String get migrate_source => 'Migrate source';
+  String get migrate_source => 'Migrasikan sumber';
 
   @override
-  String get cloudflare_bypass_proxy => 'Cloudflare bypass proxy';
+  String get cloudflare_bypass_proxy => 'Proksi pelewat Cloudflare';
 
   @override
-  String get custom_doh_url => 'Custom DoH URL';
+  String get custom_doh_url => 'URL DoH khusus';
 
   @override
-  String get custom_doh_url_helper => 'Must be an https DoH (JSON) endpoint';
+  String get custom_doh_url_helper => 'Harus berupa endpoint DoH (JSON) https';
 
   @override
-  String get anime_only_tv_layout => 'Anime-only TV layout';
+  String get anime_only_tv_layout => 'Tata letak TV khusus anime';
 
   @override
-  String get anime_only_beta => 'Anime only (beta)';
+  String get anime_only_beta => 'Hanya anime (beta)';
 
   @override
-  String get tv_home_beta => 'TV home (beta)';
+  String get tv_home_beta => 'Beranda TV (beta)';
 
   @override
-  String get tv_player_beta => 'TV player (beta)';
+  String get tv_player_beta => 'Pemutar TV (beta)';
+
+  @override
+  String get mark_as_read => 'Tandai sudah dibaca';
+
+  @override
+  String get mark_as_unread => 'Tandai belum dibaca';
+
+  @override
+  String get bookmark => 'Penanda';
+
+  @override
+  String get remove_bookmark => 'Hapus penanda';
+
+  @override
+  String get mark_below_as_read => 'Tandai di bawahnya sudah dibaca';
+
+  @override
+  String get previous_chapter => 'Bab sebelumnya';
+
+  @override
+  String get pin => 'Sematkan';
+
+  @override
+  String get go_forward => 'Maju';
+
+  @override
+  String get invert_selection => 'Balik pilihan';
+
+  @override
+  String get show_password => 'Tampilkan kata sandi';
+
+  @override
+  String get hide_password => 'Sembunyikan kata sandi';
+
+  @override
+  String get always_on_top => 'Selalu di atas';
+
+  @override
+  String get mute => 'Bisukan';
+
+  @override
+  String get unmute => 'Bunyikan';
+
+  @override
+  String get exit_fullscreen => 'Keluar dari layar penuh';
+
+  @override
+  String get play => 'Putar';
+
+  @override
+  String get pause => 'Jeda';
+
+  @override
+  String get switch_tracker => 'Ganti pelacak';
+
+  @override
+  String get rename => 'Ganti nama';
+
+  @override
+  String get show_category => 'Tampilkan kategori';
+
+  @override
+  String get hide_category => 'Sembunyikan kategori';
+
+  @override
+  String get update_with_library => 'Perbarui bersama pustaka';
+
+  @override
+  String get skip_updates => 'Lewati saat memperbarui pustaka';
+
+  @override
+  String get show_repository => 'Tampilkan repositori';
+
+  @override
+  String get hide_repository => 'Sembunyikan repositori';
+
+  @override
+  String get set_as_default => 'Jadikan bawaan';
+
+  @override
+  String get change_display_mode => 'Ubah mode tampilan';
+
+  @override
+  String get back_to_results => 'Kembali ke hasil';
+
+  @override
+  String get activity => 'Aktivitas';
+
+  @override
+  String get group_nav_destinations => 'Kelompokkan navigasi';
+
+  @override
+  String get group_nav_destinations_subtitle =>
+      'Satu tab Pustaka dengan pengalih manga, anime, dan novel, serta satu tab Aktivitas untuk pembaruan dan riwayat';
+
+  @override
+  String get search_all_sources => 'Cari di semua sumber';
+
+  @override
+  String get continue_reading => 'Lanjutkan';
+
+  @override
+  String get show_continue_shelf => 'Tampilkan yang sedang kamu baca';
+
+  @override
+  String get show_continue_shelf_subtitle =>
+      'Satu baris seri yang sedang berjalan di atas pustaka';
+
+  @override
+  String get excluded => 'Dikecualikan';
+
+  @override
+  String get remove_filter => 'Hapus filter';
+
+  @override
+  String get current_chapter => 'Bab saat ini';
+
+  @override
+  String get series => 'Seri';
+
+  @override
+  String get chapters_read => 'Bab dibaca';
+
+  @override
+  String get search_settings => 'Cari pengaturan';
+
+  @override
+  String get search_settings_hint =>
+      'Ketik nama pengaturan, atau kata dari deskripsinya';
+
+  @override
+  String reading_mode_for(String name) {
+    return 'Mode baca untuk $name';
+  }
+
+  @override
+  String default_is(String name) {
+    return 'Bawaan: $name';
+  }
+
+  @override
+  String get use_default => 'Gunakan bawaan';
+
+  @override
+  String get is_the_default => 'Ini mode baca bawaanmu';
+
+  @override
+  String get page_layout => 'Tata letak halaman dan zoom';
+
+  @override
+  String get reader_section_mode_summary =>
+      'Mode bawaan, skala, latar, pramuat, layar penuh';
+
+  @override
+  String get reader_section_layout_summary =>
+      'Halaman lebar, halaman ganda, zoom lanskap';
+
+  @override
+  String get reader_section_navigation_summary =>
+      'Zona ketuk, tata letak, sembunyikan menu, kilatan halaman';
+
+  @override
+  String get reader_section_swipe_summary =>
+      'Apa yang dilakukan menggeser bab di daftar';
+
+  @override
+  String get all_reader_settings => 'Semua pengaturan pembaca';
+
+  @override
+  String get undo => 'Urungkan';
+
+  @override
+  String get removed_from_history => 'Dihapus dari riwayat';
+
+  @override
+  String n_new_chapters(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bab baru',
+      one: '1 bab baru',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get page_color_white => 'Putih';
+
+  @override
+  String get page_color_black => 'Hitam';
+
+  @override
+  String get page_color_night => 'Malam';
+
+  @override
+  String get page_color_sepia => 'Sepia';
+
+  @override
+  String get page_color_coffee => 'Kopi';
+
+  @override
+  String get page_color_silver => 'Perak';
+
+  @override
+  String get page_color_graphite => 'Grafit';
+
+  @override
+  String get page_color_mist => 'Kabut';
+
+  @override
+  String get page_color_paper => 'Kertas';
+
+  @override
+  String get page_color_sky => 'Langit';
+
+  @override
+  String get page_color_mint => 'Mint';
+
+  @override
+  String get page_color_honey => 'Madu';
+
+  @override
+  String next_episode_in(int seconds) {
+    return 'Episode berikutnya dalam $seconds dtk';
+  }
+
+  @override
+  String get stay_on_this_episode => 'Tetap di episode ini';
+
+  @override
+  String get got_it => 'Mengerti';
+
+  @override
+  String get gesture_brightness =>
+      'Geser naik atau turun di kiri untuk kecerahan';
+
+  @override
+  String get gesture_volume => 'Geser naik atau turun di kanan untuk volume';
+
+  @override
+  String get gesture_double_tap_skip =>
+      'Ketuk dua kali satu sisi untuk mundur atau maju';
+
+  @override
+  String get gesture_drag_seek => 'Seret ke samping untuk menjelajahi video';
+
+  @override
+  String get gesture_long_press_speed => 'Tekan lama untuk mempercepat';
+
+  @override
+  String get tap_to_continue => 'Ketuk di mana saja untuk lanjut';
+
+  @override
+  String get empty_library_hint =>
+      'Temukan seri di Jelajah dan tambahkan ke pustakamu.';
+
+  @override
+  String get more_filters => 'Filter lainnya';
+
+  @override
+  String get resume_all_downloads => 'Lanjutkan semua unduhan';
+
+  @override
+  String get download_failed => 'Gagal';
+
+  @override
+  String get download_all => 'Unduh semua';
+
+  @override
+  String n_chapters_queued(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bab dalam antrean',
+      one: '1 bab dalam antrean',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String n_selected(int count) {
+    return '$count dipilih';
+  }
+
+  @override
+  String get settings_general_summary => 'Bahasa, pembaruan pustaka, jaringan';
+
+  @override
+  String get settings_appearance_summary => 'Tema, palet, navigasi, huruf';
+
+  @override
+  String get settings_novel_reader_summary =>
+      'Font, warna halaman, teks ke ucapan';
+
+  @override
+  String get settings_player_summary => 'Pemutaran, subtitel, audio, dekoder';
+
+  @override
+  String get settings_downloads_summary =>
+      'Lokasi, hanya Wi-Fi, unduhan bersamaan';
+
+  @override
+  String get settings_tracking_summary =>
+      'MyAnimeList, AniList, Kitsu, dan lainnya';
+
+  @override
+  String get settings_syncing_summary =>
+      'Sinkronkan progresmu di servermu sendiri';
+
+  @override
+  String get settings_browse_summary => 'Ekstensi, repositori, sumber';
+
+  @override
+  String get settings_security_summary => 'Kunci aplikasi';
+
+  @override
+  String get settings_about_summary => 'Versi, pembaruan, laporan galat';
+
+  @override
+  String minutes_left(int minutes) {
+    return '≈ $minutes mnt lagi';
+  }
+
+  @override
+  String get group_playback => 'Pemutaran';
+
+  @override
+  String get group_subtitles => 'Subtitel';
+
+  @override
+  String get group_screen => 'Layar';
+
+  @override
+  String get aniskip => 'AniSkip';
+
+  @override
+  String seconds_short(int n) {
+    return '$n dtk';
+  }
+
+  @override
+  String unknown_language_codes(String codes) {
+    return 'Kode bahasa tak dikenal: $codes';
+  }
+
+  @override
+  String get group_network => 'Jaringan';
+
+  @override
+  String get group_discord => 'Discord';
+
+  @override
+  String invalid_url(String scheme) {
+    return 'Masukkan URL yang diawali $scheme';
+  }
+
+  @override
+  String get group_cleanup => 'Pembersihan';
+
+  @override
+  String remove_entries_confirm(int n) {
+    return 'Hapus $n entri beserta riwayatnya? Ini tidak dapat diurungkan.';
+  }
+
+  @override
+  String get group_library_maintenance => 'Perawatan pustaka';
+
+  @override
+  String get group_diagnostics => 'Diagnostik';
+
+  @override
+  String get update_no_notes => 'Tidak ada catatan rilis.';
+
+  @override
+  String update_download_failed(String error) {
+    return 'Unduhan gagal: $error';
+  }
+
+  @override
+  String get update_network_error => 'Galat jaringan saat mengunduh.';
+
+  @override
+  String get update_write_failed => 'Tidak dapat menulis berkas APK.';
+
+  @override
+  String get deselect_all => 'Batalkan semua pilihan';
+
+  @override
+  String update_failed_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entri tidak dapat diperbarui',
+      one: '1 entri tidak dapat diperbarui',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sort_ascending => 'Naik';
+
+  @override
+  String get sort_descending => 'Turun';
+
+  @override
+  String get not_downloaded => 'Belum diunduh';
+
+  @override
+  String n_tracked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entri dilacak',
+      one: '1 entri dilacak',
+      zero: 'Belum ada yang dilacak',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get no_tracker_connected => 'Tidak ada pelacak yang terhubung';
+
+  @override
+  String get no_tracker_connected_message =>
+      'Masuk ke layanan di Pengaturan › Pelacakan untuk melihat daftarnya di sini.';
+
+  @override
+  String get edit_metadata => 'Edit metadata';
+
+  @override
+  String get group_modes => 'Mode';
+
+  @override
+  String get group_app => 'Aplikasi';
+
+  @override
+  String get group_sources_services => 'Sumber dan layanan';
+
+  @override
+  String n_sources(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sumber',
+      one: '1 sumber',
+      zero: 'Tidak ada sumber',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tv_player_beta_subtitle =>
+      'Nyala: pemutar yang dibuat untuk remote TV. Mati: pemutar asli.';
+
+  @override
+  String get anime_only_beta_subtitle =>
+      'Sembunyikan manga dan novel di seluruh aplikasi. Matikan untuk menampilkan semuanya.';
+
+  @override
+  String download_queue_start_failed(String error) {
+    return 'Tidak dapat memulai antrean unduhan: $error';
+  }
+
+  @override
+  String get group_interface => 'Antarmuka';
+
+  @override
+  String get group_navigation => 'Navigasi';
+
+  @override
+  String get tv_home_beta_subtitle =>
+      'Beranda anime berbentuk baris (lanjutkan, episode baru, kategori) alih-alih kisi datar';
+
+  @override
+  String get cloudflare_bypass_proxy_hint =>
+      'Alamat FlareSolverr atau Byparr opsional';
+
+  @override
+  String get cloudflare_bypass_proxy_message =>
+      'Endpoint FlareSolverr atau Byparr. Kosongkan untuk mematikannya.';
+
+  @override
+  String get group_explore => 'Jelajahi';
+
+  @override
+  String get explore_recommendations_subtitle => 'Judul yang mirip';
+
+  @override
+  String get explore_related_subtitle =>
+      'Adaptasi, spin-off, dan versi lainnya';
+
+  @override
+  String get explore_watch_order_subtitle => 'Urutan menonton seluruh cerita';
+
+  @override
+  String get explore_sequels_subtitle => 'Lanjutannya, dari pelacakmu';
+
+  @override
+  String get tap_zone_menu => 'Menu';
+
+  @override
+  String get tap_zone_previous => 'Sebelumnya';
+
+  @override
+  String get tap_zone_next => 'Berikutnya';
+
+  @override
+  String get back_to_series => 'Kembali ke seri';
+
+  @override
+  String get keyboard_shortcuts => 'Pintasan keyboard';
+
+  @override
+  String get shortcut_previous_page => 'Halaman sebelumnya';
+
+  @override
+  String get shortcut_next_page => 'Halaman berikutnya';
+
+  @override
+  String get shortcut_toggle_bars => 'Tampilkan atau sembunyikan bilah';
+
+  @override
+  String get shortcut_zoom_in => 'Perbesar';
+
+  @override
+  String get shortcut_zoom_out => 'Perkecil';
+
+  @override
+  String get shortcut_zoom_reset => 'Paskan halaman';
+
+  @override
+  String get shortcut_leave => 'Keluar dari pembaca';
+
+  @override
+  String get shortcut_show => 'Tampilkan pintasan ini';
+
+  @override
+  String get color_red => 'Merah';
+
+  @override
+  String get color_blue => 'Biru';
+
+  @override
+  String get color_opacity => 'Opasitas';
+
+  @override
+  String get volume_keys_paging => 'Balik halaman dengan tombol volume';
+
+  @override
+  String get volume_keys_paging_ios =>
+      'Volume ditahan di tengah selama membaca agar kedua tombol berfungsi, dan kembali seperti semula saat kamu keluar.';
+
+  @override
+  String get volume_keys_inverted => 'Balik tombol volume';
+
+  @override
+  String get reader_orientation => 'Orientasi layar';
+
+  @override
+  String get orientation_free => 'Ikuti perangkat';
+
+  @override
+  String get orientation_portrait => 'Potret';
+
+  @override
+  String get orientation_landscape => 'Lanskap';
+
+  @override
+  String get screen_brightness => 'Kecerahan layar';
+
+  @override
+  String get screen_brightness_system => 'Mengikuti sistem';
+
+  @override
+  String get shortcut_play_pause => 'Putar atau jeda';
+
+  @override
+  String shortcut_seek_back(int n) {
+    return 'Mundur $n dtk';
+  }
+
+  @override
+  String shortcut_seek_forward(int n) {
+    return 'Maju $n dtk';
+  }
+
+  @override
+  String get shortcut_volume_up => 'Volume naik';
+
+  @override
+  String get shortcut_volume_down => 'Volume turun';
+
+  @override
+  String get shortcut_mute => 'Bisukan atau bunyikan';
+
+  @override
+  String shortcut_skip_intro(int n) {
+    return 'Lewati intro ($n dtk)';
+  }
+
+  @override
+  String get shortcut_previous_frame => 'Bingkai sebelumnya';
+
+  @override
+  String get shortcut_next_frame => 'Bingkai berikutnya';
+
+  @override
+  String get shortcut_shaders => 'Shader Anime4K';
+
+  @override
+  String get shortcut_shaders_off => 'Shader mati';
+
+  @override
+  String get autoplay_next_on => 'Putar otomatis episode berikutnya: nyala';
+
+  @override
+  String get autoplay_next_off => 'Putar otomatis episode berikutnya: mati';
+
+  @override
+  String get autoplay_next => 'Putar episode berikutnya otomatis';
+
+  @override
+  String get next_episode_short => 'Berikutnya';
+
+  @override
+  String get subtitle_preview_sample => 'Perjalanan berlanjut.';
+
+  @override
+  String get text_style => 'Gaya';
+
+  @override
+  String get code_editor => 'Editor kode';
+
+  @override
+  String get code_view_code => 'Kode';
+
+  @override
+  String get code_view_test => 'Uji';
+
+  @override
+  String get code_view_console => 'Konsol';
+
+  @override
+  String get code_function => 'Fungsi';
+
+  @override
+  String get code_page => 'Halaman';
+
+  @override
+  String get code_query => 'Kueri';
+
+  @override
+  String get code_url => 'URL';
+
+  @override
+  String get code_html => 'HTML';
+
+  @override
+  String get code_execute => 'Jalankan';
+
+  @override
+  String get code_executing => 'Menjalankan…';
+
+  @override
+  String get code_no_result => 'Belum ada hasil';
+
+  @override
+  String get code_no_result_message =>
+      'Jalankan fungsi untuk melihat apa yang dikembalikannya.';
+
+  @override
+  String get code_console => 'Konsol';
+
+  @override
+  String get code_no_logs => 'Belum ada log';
+
+  @override
+  String get tv_empty_anime_library => 'Pustaka animemu kosong';
+
+  @override
+  String get tv_empty_anime_library_hint =>
+      'Tambahkan anime dari Jelajah untuk mengisi berandamu';
+
+  @override
+  String get browse_anime => 'Jelajahi anime';
+
+  @override
+  String get no_episodes_yet => 'Belum ada episode';
+
+  @override
+  String get filler => 'Filler';
+
+  @override
+  String get obsolete => 'Usang';
+
+  @override
+  String every_n_days(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Setiap $n hari',
+      one: 'Setiap hari',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get update_interval_unknown => 'Tidak ada perkiraan';
+
+  @override
+  String get group_reading => 'Membaca';
+
+  @override
+  String get group_reading_watching => 'Membaca dan menonton';
+
+  @override
+  String get novel_reader => 'Pembaca novel';
+
+  @override
+  String get all_languages => 'Semua bahasa';
+
+  @override
+  String get custom_dns_title => 'DNS khusus';
+
+  @override
+  String get custom_dns_system => 'DNS sistem';
+
+  @override
+  String get calendar_format_month => 'Bulan';
+
+  @override
+  String get calendar_format_two_weeks => '2 minggu';
+
+  @override
+  String get calendar_format_week => 'Minggu';
+
+  @override
+  String get read_count => 'Dibaca';
+
+  @override
+  String get watched_count => 'Ditonton';
+
+  @override
+  String get source_code_error_title => 'Kode sumber ini tidak berjalan';
+
+  @override
+  String source_code_error_failed(String what) {
+    return '$what gagal: layar memakai nilai cadangan agar bisa terus dipakai';
+  }
+
+  @override
+  String get copy_error => 'Salin';
+
+  @override
+  String get error_copied => 'Galat disalin';
+
+  @override
+  String get no_categories_yet => 'Belum ada kategori';
+
+  @override
+  String get no_categories_yet_message =>
+      'Kelompokkan pustakamu ke dalam kategori yang kamu beri nama dan urutkan sendiri.';
 }

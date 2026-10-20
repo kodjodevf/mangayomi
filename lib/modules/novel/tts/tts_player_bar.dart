@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/novel/tts/novel_tts_service.dart';
@@ -79,10 +80,13 @@ class _TtsPlayerBarState extends ConsumerState<TtsPlayerBar> {
     final theme = Theme.of(context);
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      margin: const EdgeInsets.symmetric(
+        horizontal: ShioriSpace.s12,
+        vertical: ShioriSpace.s8,
+      ),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(16),
+        color: context.shiori.color.ink2,
+        borderRadius: BorderRadius.circular(ShioriShape.card),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.2),
@@ -98,33 +102,37 @@ class _TtsPlayerBarState extends ConsumerState<TtsPlayerBar> {
           if (_totalParagraphs > 0)
             ClipRRect(
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(16),
+                top: Radius.circular(ShioriShape.card),
               ),
               child: LinearProgressIndicator(
                 value: _totalParagraphs > 0
                     ? (_currentIndex + 1) / _totalParagraphs
                     : 0,
                 minHeight: 3,
-                backgroundColor: theme.colorScheme.primary.withValues(
+                backgroundColor: context.shiori.color.accent.withValues(
                   alpha: 0.1,
                 ),
                 valueColor: AlwaysStoppedAnimation<Color>(
-                  theme.colorScheme.primary,
+                  context.shiori.color.accentInk,
                 ),
               ),
             ),
 
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(
+              horizontal: ShioriSpace.s8,
+              vertical: ShioriSpace.s4,
+            ),
             child: Row(
               children: [
                 // TTS icon
                 Icon(
-                  Icons.record_voice_over,
-                  color: theme.colorScheme.primary,
+                  Symbols.record_voice_over_rounded,
+                  fill: 1,
+                  color: context.shiori.color.accentInk,
                   size: 20,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: ShioriSpace.s8),
 
                 // Progress text
                 Expanded(
@@ -136,7 +144,7 @@ class _TtsPlayerBarState extends ConsumerState<TtsPlayerBar> {
                           )
                         : context.l10n.tts,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface,
+                      color: context.shiori.color.fg,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -145,12 +153,12 @@ class _TtsPlayerBarState extends ConsumerState<TtsPlayerBar> {
                 // Skip previous
                 IconButton(
                   onPressed: () => _tts.skipPrevious(),
-                  icon: const Icon(Icons.skip_previous_rounded),
+                  icon: const Icon(Symbols.skip_previous_rounded, fill: 1),
                   iconSize: 24,
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(
-                    minWidth: 36,
-                    minHeight: 36,
+                  constraints: BoxConstraints(
+                    minWidth: context.shiori.density.minTarget,
+                    minHeight: context.shiori.density.minTarget,
                   ),
                   tooltip: context.l10n.tts_previous,
                 ),
@@ -165,17 +173,18 @@ class _TtsPlayerBarState extends ConsumerState<TtsPlayerBar> {
                     }
                   },
                   icon: Icon(
+                    fill: 1,
                     _state == TtsState.playing
-                        ? Icons.pause_rounded
-                        : Icons.play_arrow_rounded,
+                        ? Symbols.pause_rounded
+                        : Symbols.play_arrow_rounded,
                   ),
                   iconSize: 28,
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(
-                    minWidth: 40,
-                    minHeight: 40,
+                  constraints: BoxConstraints(
+                    minWidth: context.shiori.density.minTarget,
+                    minHeight: context.shiori.density.minTarget,
                   ),
-                  color: theme.colorScheme.primary,
+                  color: context.shiori.color.accentInk,
                   tooltip: _state == TtsState.playing
                       ? context.l10n.tts_pause
                       : context.l10n.tts_play,
@@ -184,12 +193,12 @@ class _TtsPlayerBarState extends ConsumerState<TtsPlayerBar> {
                 // Skip next
                 IconButton(
                   onPressed: () => _tts.skipNext(),
-                  icon: const Icon(Icons.skip_next_rounded),
+                  icon: const Icon(Symbols.skip_next_rounded, fill: 1),
                   iconSize: 24,
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(
-                    minWidth: 36,
-                    minHeight: 36,
+                  constraints: BoxConstraints(
+                    minWidth: context.shiori.density.minTarget,
+                    minHeight: context.shiori.density.minTarget,
                   ),
                   tooltip: context.l10n.tts_next,
                 ),
@@ -200,12 +209,12 @@ class _TtsPlayerBarState extends ConsumerState<TtsPlayerBar> {
                     await _tts.stop();
                     widget.onClose();
                   },
-                  icon: const Icon(Icons.stop_rounded),
+                  icon: const Icon(Symbols.stop_rounded, fill: 1),
                   iconSize: 24,
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(
-                    minWidth: 36,
-                    minHeight: 36,
+                  constraints: BoxConstraints(
+                    minWidth: context.shiori.density.minTarget,
+                    minHeight: context.shiori.density.minTarget,
                   ),
                   tooltip: context.l10n.tts_stop,
                 ),

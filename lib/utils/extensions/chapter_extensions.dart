@@ -35,8 +35,13 @@ extension ChapterExtension on Chapter {
         }
         if (exist && !filteredChap.isRead!) {
           await pushMangaReaderView(context: context, chapter: filteredChap);
-          break;
+          return;
         }
+      }
+      // Nothing unread after it (the last chapter, all read, or hidden by
+      // the filters): open this one again rather than do nothing.
+      if (context.mounted) {
+        await pushMangaReaderView(context: context, chapter: this);
       }
     }
   }

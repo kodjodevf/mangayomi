@@ -1,6 +1,7 @@
 import 'dart:ui' show SemanticsAction;
 
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_pills.dart';
@@ -217,21 +218,6 @@ void main() {
     expect(bottom.right, size.width - insets.right);
     expect(bottom.bottom, size.height - insets.bottom);
     expect(tester.takeException(), isNull);
-  });
-
-  test('keeps episode navigation buttons free of a resting tint', () {
-    final style = mobilePlayerEpisodeNavigationButtonStyle();
-
-    expect(style.backgroundColor?.resolve({}), Colors.transparent);
-    expect(
-      style.backgroundColor?.resolve({WidgetState.disabled}),
-      Colors.transparent,
-    );
-    expect(style.foregroundColor?.resolve({}), Colors.white);
-    expect(
-      style.foregroundColor?.resolve({WidgetState.disabled}),
-      Colors.white.withValues(alpha: 0.35),
-    );
   });
 
   testWidgets('keeps the original one-row top bar in landscape', (
@@ -587,9 +573,9 @@ void main() {
       final control = find.byType(MobilePlayerCompactSeekControl);
       expect(tester.getSize(control), const Size.square(48));
       expect(find.text('85'), findsOneWidget);
-      expect(find.byIcon(Icons.rotate_right_outlined), findsOneWidget);
+      expect(find.byIcon(Symbols.rotate_right_rounded), findsOneWidget);
       expect(
-        tester.getSize(find.byIcon(Icons.rotate_right_outlined)),
+        tester.getSize(find.byIcon(Symbols.rotate_right_rounded)),
         const Size.square(mobilePlayerPortraitControlIconSize),
       );
       expect(
@@ -696,7 +682,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('compact shortcut pills use the original visual sizing', (
+  testWidgets('compact shortcut pills stay small in a full-size target', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -706,7 +692,7 @@ void main() {
             child: PlayerPillButton(
               isCompact: true,
               icon: Icons.speed,
-              label: '1.0x',
+              label: '1×',
               onTap: () {},
             ),
           ),
@@ -714,10 +700,17 @@ void main() {
       ),
     );
 
+    // Shiori's overlay pill: the pill keeps its size; only the tap target
+    // around it grows.
     final button = find.byType(PlayerPillButton);
-    expect(tester.getSize(button).height, lessThan(44));
-    expect(tester.widget<Icon>(find.byIcon(Icons.speed)).size, 14);
-    expect(tester.widget<Text>(find.text('1.0x')).style?.fontSize, 11);
+    final pill = find.descendant(
+      of: button,
+      matching: find.byType(AnimatedContainer),
+    );
+    expect(find.byType(ShioriOverlayPill), findsOneWidget);
+    expect(tester.getSize(pill).height, lessThan(44));
+    expect(tester.getSize(button).height, greaterThanOrEqualTo(44));
+    expect(tester.widget<Icon>(find.byIcon(Icons.speed)).size, 16);
   });
 
   testWidgets('icon-only shortcut keeps its icon and tooltip', (tester) async {
@@ -812,6 +805,105 @@ void main() {
     expect(actionCalled, isTrue);
     expect(find.byKey(const ValueKey('home')), findsOneWidget);
     expect(find.byKey(const ValueKey('section-0')), findsNothing);
+  });
+
+  testWidgets('settings home leads with tiles, then grouped rows', (
+    tester,
+  ) async {
+    final autoplay = ValueNotifier(false);
+    addTearDown(autoplay.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SettingsDrilldown(
+            title: 'Settings',
+            entries: [
+              SettingsEntry(
+                label: 'Quality',
+                icon: Icons.hd,
+                featured: true,
+                valueBuilder: (_) => const Text('1080p'),
+                contentBuilder: (_) => const Text('quality list'),
+              ),
+              SettingsEntry(
+                label: 'Fit',
+                icon: Icons.aspect_ratio,
+                group: 'Playback',
+                contentBuilder: (_) => const Text('fit list'),
+              ),
+              SettingsEntry(
+                label: 'Autoplay',
+                icon: Icons.play_circle,
+                group: 'Playback',
+                toggle: autoplay,
+                onToggle: (on) => autoplay.value = on,
+              ),
+            ],
+            onClose: () {},
+          ),
+        ),
+      ),
+    );
+
+    // The featured entry is a tile above the group's label.
+    expect(find.text('1080p'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('Quality')).dy,
+      lessThan(tester.getTopLeft(find.text('PLAYBACK')).dy),
+    );
+
+    // A toggle row flips its switch in place.
+    await tester.tap(find.text('Autoplay'));
+    await tester.pump();
+    expect(autoplay.value, isTrue);
+    expect(tester.widget<Switch>(find.byType(Switch)).value, isTrue);
+
+    // A tile opens its section.
+    await tester.tap(find.text('1080p'));
+    await tester.pumpAndSettle();
+    expect(find.text('quality list'), findsOneWidget);
+  });
+
+  testWidgets('settings home lays out in a popup that sizes to content', (
+    tester,
+  ) async {
+    // The desktop menu (showMenu) wraps its content in an IntrinsicWidth.
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: IntrinsicWidth(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 300, maxWidth: 360),
+                child: SettingsDrilldown(
+                  title: 'Settings',
+                  entries: [
+                    for (final label in ['Quality', 'Audio', 'Subtitles'])
+                      SettingsEntry(
+                        label: label,
+                        icon: Icons.hd,
+                        featured: true,
+                        valueBuilder: (_) => const Text('value'),
+                        contentBuilder: (_) => const SizedBox(),
+                      ),
+                    SettingsEntry(
+                      label: 'Fit',
+                      icon: Icons.aspect_ratio,
+                      group: 'Playback',
+                      contentBuilder: (_) => const SizedBox(),
+                    ),
+                  ],
+                  onClose: () {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Subtitles'), findsOneWidget);
   });
 }
 

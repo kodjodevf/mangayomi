@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,8 +22,9 @@ import 'package:mangayomi/utils/local_directory_access.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/modules/main_view/nav_groups.dart';
+import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/onboarding/widgets/onboarding_nav_preview.dart';
 import 'package:mangayomi/modules/onboarding/widgets/onboarding_folder_status.dart';
 import 'package:mangayomi/modules/onboarding/widgets/onboarding_controls.dart';
@@ -92,7 +94,7 @@ class _OnboardingBody extends ConsumerStatefulWidget {
   ConsumerState<_OnboardingBody> createState() => _OnboardingScreenState();
 }
 
-enum _Step { libraries, navigation, repository }
+enum _Step { language, libraries, navigation, repository }
 
 class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
     with WidgetsBindingObserver {
@@ -111,7 +113,11 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   final Set<ItemType> _libraries = isTv
       ? {ItemType.anime}
       : {...ItemType.values};
-  bool _mergeLibraries = false;
+
+  /// Whether the navigation groups the libraries behind one Library tab, and
+  /// Updates and History behind one Activity tab. Starts on the app's own
+  /// setting, which is on for a new install.
+  late bool _mergeLibraries = ref.read(navGroupingProvider);
   ItemType _repoType = ItemType.manga;
 
   bool _adding = false;
@@ -177,6 +183,13 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
     // registers after the router, so it gets first refusal for as long as it
     // is on screen.
     WidgetsBinding.instance.addObserver(this);
+    // The very first question is asked in the reader's language when the
+    // app speaks it, not in English.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(l10nLocaleStateProvider.notifier).adoptDeviceLocaleIfUnset();
+      }
+    });
     // A television never visits the library step, so the step that would have
     // written the choice never runs. Write it here instead, or the answer the
     // flow made on the reader's behalf would be silently dropped and manga and
@@ -227,26 +240,30 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   /// Not a constant: the arrange step drops out for a single library or a wide
   /// window, so the flow is two steps long as often as three.
   List<_Step> get _visibleSteps => [
+    _Step.language,
     if (!isTv) _Step.libraries,
     if (_shouldArrangeBar) _Step.navigation,
     _Step.repository,
   ];
 
-  /// Where the flow starts. A television skips straight to the source, because
-  /// the two questions before it have one answer each there: anime, and a rail
-  /// rather than a bar.
-  static _Step get _firstStep => isTv ? _Step.repository : _Step.libraries;
+  /// Where the flow starts: the language, since every word after it depends
+  /// on it. A television then skips straight to the source, because the two
+  /// questions between have one answer each there: anime, and a rail rather
+  /// than a bar.
+  static const _Step _firstStep = _Step.language;
 
-  /// Whether the arrange step has anything to offer.
-  ///
-  /// Nothing to arrange with one library in the bar. And the merge setting it
-  /// writes is read as `mergeLibraryNavMobile && !context.isTablet`, so on
-  /// anything 600dp or wider, tablets and TVs included, the answer would be
-  /// stored and then ignored. Better not to ask.
-  bool get _shouldArrangeBar =>
-      _chosen.length > 1 && !context.isTablet && !isTv;
+  /// Whether the arrange step has anything to offer: nothing with one library,
+  /// and a television keeps one destination per route whatever the answer.
+  bool get _shouldArrangeBar => _chosen.length > 1 && !isTv;
 
   void _next() {
+    if (_step == _Step.language) {
+      setState(() {
+        _forward = true;
+        _step = isTv ? _Step.repository : _Step.libraries;
+      });
+      return;
+    }
     if (_step == _Step.libraries) {
       _applyLibraries();
       setState(() {
@@ -256,7 +273,10 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
       });
       return;
     }
-    ref.read(mergeLibraryNavMobileStateProvider.notifier).set(_mergeLibraries);
+    // Shiori's grouping, which also folds Updates and History into Activity.
+    // The older swap-the-bar switch is left off so the two never stack.
+    ref.read(navGroupingProvider.notifier).set(_mergeLibraries);
+    ref.read(mergeLibraryNavMobileStateProvider.notifier).set(false);
     setState(() {
       _forward = true;
       _step = _Step.repository;
@@ -415,11 +435,12 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   /// Nothing is undone. Each step applies its answer as it is left, and coming
   /// back and going forward again simply applies the new one.
   void _back() {
+    final steps = _visibleSteps;
+    final index = steps.indexOf(_step);
+    if (index <= 0) return;
     setState(() {
       _forward = false;
-      _step = _step == _Step.repository && _shouldArrangeBar
-          ? _Step.navigation
-          : _firstStep;
+      _step = steps[index - 1];
     });
   }
 
@@ -531,7 +552,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
                   child: IconButton(
                     onPressed: _adding ? null : _back,
                     tooltip: l10n.go_back,
-                    icon: const Icon(Icons.arrow_back),
+                    icon: const Icon(Symbols.arrow_back_rounded, fill: 1),
                   ),
                 ),
               ),
@@ -571,7 +592,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
                     : Colors.white,
                 fit: BoxFit.contain,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: ShioriSpace.s16),
               // Above the words rather than below them, so it keeps its place
               // while the content underneath changes height. Not tappable:
               // going forward has to run through _next so each answer is
@@ -581,7 +602,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
                 current: _visibleSteps.indexOf(_step),
                 duration: _motion,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: ShioriSpace.s16),
               // Only the words and the controls change between steps. The mark
               // above keeps its place, so the screen reads as one place being
               // rewritten rather than three screens flipped through. The height
@@ -622,44 +643,45 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
                         textAlign: TextAlign.center,
                         style:
                             (isTv
-                                    ? theme.textTheme.headlineMedium
-                                    : theme.textTheme.headlineSmall)
-                                ?.copyWith(fontWeight: FontWeight.w600),
+                                    ? context.shiori.text.screenTitle
+                                    : context.shiori.text.seriesTitle)
+                                .copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: context.shiori.color.fg,
+                                ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: ShioriSpace.s12),
                       Text(
                         _body(l10n),
                         textAlign: TextAlign.center,
                         style:
                             (isTv
-                                    ? theme.textTheme.bodyLarge
-                                    : theme.textTheme.bodyMedium)
-                                ?.copyWith(
-                                  color: theme.hintColor,
+                                    ? context.shiori.text.body
+                                    : context.shiori.text.row)
+                                .copyWith(
+                                  color: context.shiori.color.fgMuted,
                                   height: 1.45,
                                 ),
                       ),
-                      const SizedBox(height: 28),
+                      const SizedBox(height: ShioriSpace.s32),
                       ..._stepBody(l10n),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              TextButton(
+              const SizedBox(height: ShioriSpace.s24),
+              ShioriButton.quiet(
                 onPressed: _adding ? null : _finish,
-                child: Text(_leaveLabel(l10n)),
+                label: _leaveLabel(l10n),
               ),
               // Typing a URL on a d-pad is miserable, so on a TV say
               // plainly that leaving now costs nothing.
               if (isTv && _step == _Step.repository && _added == null) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: ShioriSpace.s8),
                 Text(
                   l10n.onboarding_later,
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.hintColor,
-                  ),
+                  style: context.shiori.caption,
                 ),
               ],
             ],
@@ -670,14 +692,16 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   }
 
   String _title(AppLocalizations l10n) => switch (_step) {
+    _Step.language => l10n.onboarding_language_title,
     _Step.libraries => l10n.onboarding_title,
     _Step.navigation => l10n.onboarding_nav_title,
     _Step.repository => l10n.onboarding_repo_title,
   };
 
   String _body(AppLocalizations l10n) => switch (_step) {
+    _Step.language => l10n.onboarding_language_body,
     _Step.libraries => l10n.onboarding_libraries_body,
-    _Step.navigation => l10n.onboarding_nav_body,
+    _Step.navigation => l10n.onboarding_nav_grouped_body,
     _Step.repository => l10n.onboarding_body,
   };
 
@@ -688,6 +712,11 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
       : l10n.onboarding_skip;
 
   List<Widget> _stepBody(AppLocalizations l10n) => switch (_step) {
+    _Step.language => [
+      const _LanguageList(),
+      const SizedBox(height: ShioriSpace.s16),
+      ShioriButton(expand: true, onPressed: _next, label: l10n.onboarding_next),
+    ],
     _Step.libraries => [
       OnboardingChoiceRow<ItemType>(
         values: ItemType.values,
@@ -703,33 +732,34 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
           }
         }),
       ),
-      const SizedBox(height: 16),
-      FilledButton(onPressed: _next, child: Text(l10n.onboarding_next)),
-      const SizedBox(height: 12),
+      const SizedBox(height: ShioriSpace.s16),
+      ShioriButton(expand: true, onPressed: _next, label: l10n.onboarding_next),
+      const SizedBox(height: ShioriSpace.s12),
       // Given weight next to Next rather than tucked under it. For anyone
       // arriving from another app or a reinstall this is the whole job, and
       // burying it costs them a walk through three questions they have
       // already answered somewhere else.
-      OutlinedButton.icon(
+      ShioriButton.secondary(
+        expand: true,
         onPressed: _restore,
-        icon: const Icon(Icons.settings_backup_restore, size: 20),
-        label: Text(l10n.onboarding_restore),
+        icon: Symbols.settings_backup_restore_rounded,
+        label: l10n.onboarding_restore,
       ),
     ],
     _Step.navigation => [
       OnboardingChoiceRow<bool>(
         values: const [false, true],
         label: (merged) =>
-            merged ? l10n.onboarding_nav_merged : l10n.onboarding_nav_split,
+            merged ? l10n.onboarding_nav_grouped : l10n.onboarding_nav_split,
         isSelected: (merged) => merged == _mergeLibraries,
         onTap: (merged) => setState(() => _mergeLibraries = merged),
       ),
-      const SizedBox(height: 18),
+      const SizedBox(height: ShioriSpace.s16),
       // The words alone do not settle it. This is the bar the choice produces,
       // with the libraries they actually picked in it.
       OnboardingNavPreview(libraries: _chosen, merged: _mergeLibraries),
-      const SizedBox(height: 18),
-      FilledButton(onPressed: _next, child: Text(l10n.onboarding_next)),
+      const SizedBox(height: ShioriSpace.s16),
+      ShioriButton(expand: true, onPressed: _next, label: l10n.onboarding_next),
     ],
     _Step.repository => [
       if (_chosen.length > 1) ...[
@@ -739,7 +769,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
           isSelected: (type) => type == _repoType,
           onTap: _adding ? null : (type) => setState(() => _repoType = type),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: ShioriSpace.s16),
       ],
       TextField(
         controller: _controller,
@@ -752,46 +782,42 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
         onChanged: (_) => setState(() => _error = null),
         onSubmitted: (_) => _urlLooksValid && !_adding ? _addRepo() : null,
         decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          isDense: true,
           labelText: l10n.repo_url,
           errorText: _error,
           errorMaxLines: 3,
         ),
       ),
-      const SizedBox(height: 12),
-      FilledButton(
-        onPressed: _urlLooksValid && !_adding ? _addRepo : null,
-        child: _adding
-            ? const SizedBox(
-                height: 18,
-                width: 18,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : Text(l10n.onboarding_add),
-      ),
+      const SizedBox(height: ShioriSpace.s12),
+      if (_adding)
+        const Center(child: ShioriLoading.inline())
+      else
+        ShioriButton(
+          expand: true,
+          onPressed: _urlLooksValid ? _addRepo : null,
+          label: l10n.onboarding_add,
+        ),
       if (_added != null) ...[
-        const SizedBox(height: 14),
+        const SizedBox(height: ShioriSpace.s12),
         OnboardingAddedRepo(name: _added!.name ?? _added!.jsonUrl ?? ''),
       ],
-      const SizedBox(height: 20),
+      const SizedBox(height: ShioriSpace.s24),
       Text(
         l10n.onboarding_or_local,
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodySmall
-            ?.copyWith(color: Theme.of(context).hintColor),
+        style: context.shiori.caption,
       ),
-      const SizedBox(height: 8),
-      OutlinedButton.icon(
+      const SizedBox(height: ShioriSpace.s8),
+      ShioriButton.secondary(
+        expand: true,
         onPressed: _adding ? null : _addLocalFolder,
-        icon: const Icon(Icons.folder_open, size: 20),
-        label: Text(l10n.onboarding_local_folder),
+        icon: Symbols.folder_open_rounded,
+        label: l10n.onboarding_local_folder,
       ),
       // What is already set up, for anyone who restored a backup or had
       // folders from before. Without it the step looks like they have none
       // and invites them to add one they already have.
       if (_addedFolderPath == null && _existingFolders.isNotEmpty) ...[
-        const SizedBox(height: 12),
+        const SizedBox(height: ShioriSpace.s12),
         OnboardingFolderStatus(
           message: l10n.onboarding_local_existing('${_existingFolders.length}'),
           titles: _existingFolders
@@ -800,7 +826,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
               .toList(),
         ),
       ],
-      const SizedBox(height: 6),
+      const SizedBox(height: ShioriSpace.s8),
       // No type to choose here, unlike the repository above it. A folder is
       // not bound to one: the scanner reads each title's contents and files
       // it accordingly, so one folder can feed all three libraries. Saying so
@@ -808,11 +834,10 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
       Text(
         l10n.onboarding_local_any_type,
         textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodySmall
-            ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: context.shiori.caption,
       ),
       if (_addedLocalFolder) ...[
-        const SizedBox(height: 14),
+        const SizedBox(height: ShioriSpace.s12),
         if (_scanningFolder)
           OnboardingFolderStatus(
             message: l10n.onboarding_local_scanning,
@@ -837,10 +862,10 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
             warn: true,
           ),
         if (!_scanningFolder) ...[
-          const SizedBox(height: 4),
-          TextButton(
+          const SizedBox(height: ShioriSpace.s4),
+          ShioriButton.quiet(
             onPressed: _removeLocalFolder,
-            child: Text(l10n.onboarding_local_remove),
+            label: l10n.onboarding_local_remove,
           ),
         ],
       ],
@@ -852,4 +877,61 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
     ItemType.anime => l10n.anime,
     ItemType.novel => l10n.novel,
   };
+}
+
+/// Every language the app speaks, each under its own name so a reader finds
+/// theirs whatever the app is showing now. A tap applies it at once, so the
+/// rest of the flow is already in that language.
+class _LanguageList extends ConsumerWidget {
+  const _LanguageList();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tokens = context.shiori;
+    final c = tokens.color;
+    final current = ref.watch(l10nLocaleStateProvider);
+    final locales = [...AppLocalizations.supportedLocales]
+      ..sort(
+        (a, b) => languageName(context, a.toLanguageTag())
+            .toLowerCase()
+            .compareTo(languageName(context, b.toLanguageTag()).toLowerCase()),
+      );
+    bool isCurrent(Locale l) =>
+        l.languageCode == current.languageCode &&
+        (l.countryCode ?? '') == (current.countryCode ?? '');
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: isTv ? 360 : 300),
+      child: Material(
+        color: c.ink2,
+        borderRadius: BorderRadius.circular(ShioriShape.card),
+        clipBehavior: Clip.antiAlias,
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s4),
+          children: [
+            for (final locale in locales)
+              ListTile(
+                autofocus: isTv && isCurrent(locale),
+                selected: isCurrent(locale),
+                title: Text(
+                  languageName(context, locale.toLanguageTag()),
+                  style: tokens.text.row.copyWith(
+                    color: c.fg,
+                    fontWeight: isCurrent(locale)
+                        ? FontWeight.w700
+                        : FontWeight.w400,
+                  ),
+                ),
+                trailing: isCurrent(locale)
+                    ? Icon(Symbols.check_rounded, color: c.accentInk)
+                    : null,
+                onTap: () => ref
+                    .read(l10nLocaleStateProvider.notifier)
+                    .setLocale(locale),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 }

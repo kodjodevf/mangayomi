@@ -1,5 +1,7 @@
 import UIKit
 import Flutter
+import AVFoundation
+import MediaPlayer
 import Libmtorrentserver
 import UniformTypeIdentifiers
 
@@ -11,6 +13,20 @@ import UniformTypeIdentifiers
   private var localDirectoryPickerResult: FlutterResult?
   private weak var localDirectoryPickerController: UIDocumentPickerViewController?
   private var activeSecurityScopedUrls: [String: URL] = [:]
+  // The reader's volume-button page turns (VolumeKeys on the Dart side).
+  // iOS cannot take the buttons, so the volume is watched and set back to
+  // half after each press; it is given back as it was when they are let go.
+  private var volumeKeysChannel: FlutterMethodChannel?
+  private var volumeObservation: NSKeyValueObservation?
+  private var volumeView: MPVolumeView?
+  private var volumeBeforeReading: Float = 0.5
+  private var audioCategoryBeforeReading: AVAudioSession.Category?
+  private var audioModeBeforeReading: AVAudioSession.Mode = .default
+  private var audioOptionsBeforeReading: AVAudioSession.CategoryOptions = []
+  private var settingVolume = false
+  // The screen's brightness before a reader set its own, given back on
+  // "reset".
+  private var brightnessBeforeReading: CGFloat?
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -82,6 +98,54 @@ import UniformTypeIdentifiers
       }
     })
 
+    let volumeChannel = FlutterMethodChannel(
+      name: "com.kodjodevf.mangayomi.volume_keys",
+      binaryMessenger: messenger
+    )
+    volumeKeysChannel = volumeChannel
+    volumeChannel.setMethodCallHandler({
+      [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
+      switch call.method {
+      case "enable":
+        self?.enableVolumeKeys()
+        result(nil)
+      case "disable":
+        self?.disableVolumeKeys()
+        result(nil)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    })
+
+    let brightnessChannel = FlutterMethodChannel(
+      name: "com.kodjodevf.mangayomi.screen_brightness",
+      binaryMessenger: messenger
+    )
+    brightnessChannel.setMethodCallHandler({
+      [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
+      guard let self else { return result(nil) }
+      switch call.method {
+      case "set":
+        if let value = call.arguments as? Double {
+          if self.brightnessBeforeReading == nil {
+            self.brightnessBeforeReading = UIScreen.main.brightness
+          }
+          UIScreen.main.brightness = CGFloat(min(max(value, 0.01), 1))
+        }
+        result(nil)
+      case "get":
+        result(Double(UIScreen.main.brightness))
+      case "reset":
+        if let before = self.brightnessBeforeReading {
+          UIScreen.main.brightness = before
+          self.brightnessBeforeReading = nil
+        }
+        result(nil)
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    })
+
     let localDirectoryChannel = FlutterMethodChannel(
       name: "com.kodjodevf.mangayomi.local_directory_access",
       binaryMessenger: messenger
@@ -102,6 +166,77 @@ import UniformTypeIdentifiers
         result(FlutterMethodNotImplemented)
       }
     })
+  }
+
+  private func enableVolumeKeys() {
+    guard volumeObservation == nil else { return }
+    let session = AVAudioSession.sharedInstance()
+    // outputVolume only reports changes while the session is active. Ambient
+    // and mixing, so nothing another app is playing is interrupted; the
+    // session as it was is put back when the buttons are let go, so the
+    // video player keeps its own.
+    audioCategoryBeforeReading = session.category
+    audioModeBeforeReading = session.mode
+    audioOptionsBeforeReading = session.categoryOptions
+    try? session.setCategory(.ambient, options: [.mixWithOthers])
+    try? session.setActive(true)
+    volumeBeforeReading = session.outputVolume
+
+    // Off screen and nearly transparent: present, so the system shows no
+    // volume panel, and its slider is how the volume is set back.
+    let view = MPVolumeView(frame: CGRect(x: -2000, y: -2000, width: 1, height: 1))
+    view.alpha = 0.01
+    keyWindow()?.addSubview(view)
+    volumeView = view
+
+    // Half, so a press either way changes it.
+    setSystemVolume(0.5)
+    volumeObservation = session.observe(\.outputVolume, options: [.old, .new]) {
+      [weak self] _, change in
+      guard let self, !self.settingVolume,
+            let new = change.newValue, let old = change.oldValue, new != old else { return }
+      DispatchQueue.main.async {
+        self.volumeKeysChannel?.invokeMethod("press", arguments: new > old ? "up" : "down")
+        self.setSystemVolume(0.5)
+      }
+    }
+  }
+
+  private func disableVolumeKeys() {
+    guard volumeObservation != nil else { return }
+    volumeObservation?.invalidate()
+    volumeObservation = nil
+    setSystemVolume(volumeBeforeReading)
+    if let category = audioCategoryBeforeReading {
+      try? AVAudioSession.sharedInstance().setCategory(
+        category, mode: audioModeBeforeReading, options: audioOptionsBeforeReading)
+      audioCategoryBeforeReading = nil
+    }
+    // Let the slider apply the volume before the view goes.
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+      self?.volumeView?.removeFromSuperview()
+      self?.volumeView = nil
+    }
+  }
+
+  /// Sets the system volume through the hidden volume view's slider; the
+  /// change it causes is not taken for a press.
+  private func setSystemVolume(_ value: Float) {
+    guard let slider = volumeView?.subviews.compactMap({ $0 as? UISlider }).first else { return }
+    settingVolume = true
+    DispatchQueue.main.async {
+      slider.value = value
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+        self?.settingVolume = false
+      }
+    }
+  }
+
+  private func keyWindow() -> UIWindow? {
+    return UIApplication.shared.connectedScenes
+      .compactMap { $0 as? UIWindowScene }
+      .flatMap(\.windows)
+      .first(where: \.isKeyWindow)
   }
 
   private func pickLocalDirectory(result: @escaping FlutterResult) {

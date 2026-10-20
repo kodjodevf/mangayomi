@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/repositories/sync_preference_repository.dart';
-import 'package:mangayomi/modules/more/settings/appearance/appearance_screen.dart'
-    show SettingsSection;
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_connection_status_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_progress_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
@@ -13,11 +12,8 @@ import 'package:mangayomi/models/sync_preference.dart';
 import 'package:mangayomi/modules/more/settings/sync/widgets/sync_listile.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/sync_server.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/log/logger.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:mangayomi/modules/more/widgets/outlined_field_decoration.dart';
 
 class SyncScreen extends ConsumerWidget {
   static const serverUrl = "https://github.com/Schnitzel5/mangayomi-server";
@@ -40,6 +36,7 @@ class SyncScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.syncing)),
       body: SingleChildScrollView(
+        padding: tvPageInsets,
         child: StreamBuilder(
           stream: syncPreferenceRepository.watchAllWithSyncId(),
           builder: (context, snapshot) {
@@ -55,11 +52,15 @@ class SyncScreen extends ConsumerWidget {
             final progress = ref.watch(syncProgressProvider(syncId: 1));
             final enabled =
                 syncPreference.syncOn && connected && !progress.active;
+            final frequencyChoices = [
+              for (final e in autoSyncOptions.entries)
+                ShioriChoice(e.value, e.key),
+            ];
             return Column(
               children: [
                 // Account comes first: nothing else on this screen means
                 // anything before you're logged in to a server.
-                SettingsSection(
+                ShioriSettingsGroup(
                   title: l10n.services,
                   children: [
                     SyncListile(
@@ -72,13 +73,16 @@ class SyncScreen extends ConsumerWidget {
                       _connectionStatusTile(context, ref, connectionStatus),
                   ],
                 ),
-                SettingsSection(
+                ShioriSettingsGroup(
                   title: l10n.sync_section_general,
+                  footer: syncPreference.autoSyncFrequency > 0
+                      ? l10n.sync_auto_warning
+                      : null,
                   children: [
-                    SwitchListTile(
-                      secondary: const Icon(Icons.sync),
+                    ShioriSwitchRow(
+                      icon: Symbols.sync_rounded,
+                      title: l10n.sync_on,
                       value: syncPreference.syncOn,
-                      title: Text(l10n.sync_on),
                       onChanged: !isLogged
                           ? null
                           : (value) {
@@ -92,179 +96,98 @@ class SyncScreen extends ConsumerWidget {
                               }
                             },
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.schedule),
-                      enabled: syncPreference.syncOn,
-                      onTap: () => _showAutoSyncDialog(
-                        context,
-                        ref,
-                        syncPreference,
-                        autoSyncOptions,
-                      ),
-                      title: Text(l10n.sync_auto),
-                      subtitle: Text(
-                        autoSyncOptions.entries
-                            .where(
-                              (o) =>
-                                  o.value == syncPreference.autoSyncFrequency,
-                            )
-                            .first
-                            .key,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: context.secondaryColor,
-                        ),
-                      ),
+                    ShioriValueRow<int>(
+                      icon: Symbols.schedule_rounded,
+                      title: l10n.sync_auto,
+                      value: syncPreference.autoSyncFrequency,
+                      options: frequencyChoices,
+                      onChanged: !syncPreference.syncOn
+                          ? null
+                          : (v) => ref
+                                .read(synchingProvider(syncId: 1).notifier)
+                                .setAutoSyncFrequency(v),
                     ),
-                    if (syncPreference.autoSyncFrequency > 0)
-                      _hintTile(
-                        context,
-                        icon: Icons.warning_amber_outlined,
-                        text: l10n.sync_auto_warning,
-                      ),
                     if (syncPreference.lastSync != null)
-                      ListTile(
-                        leading: Icon(
-                          Icons.history_toggle_off,
-                          color: context.secondaryColor,
-                        ),
-                        title: Text(
-                          "${l10n.last_sync} ${dateFormat(syncPreference.lastSync!.toString(), ref: ref, context: context)} ${dateFormatHour(syncPreference.lastSync!.toString(), context)}",
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: context.secondaryColor,
-                          ),
-                        ),
+                      ShioriSettingRow(
+                        icon: Symbols.history_toggle_off_rounded,
+                        title: l10n.last_sync,
+                        subtitle:
+                            "${dateFormat(syncPreference.lastSync!.toString(), ref: ref, context: context)} ${dateFormatHour(syncPreference.lastSync!.toString(), context)}",
                       ),
+                    // The three ways to sync as rows of the group, like every
+                    // other action in the settings, rather than buttons of
+                    // three widths centred under it.
+                    ShioriSettingRow(
+                      icon: Symbols.sync_rounded,
+                      title: l10n.sync_button_sync,
+                      enabled: enabled,
+                      onTap: () => ref
+                          .read(syncServerProvider(syncId: 1).notifier)
+                          .startSync(l10n, false),
+                    ),
+                    ShioriSettingRow(
+                      icon: Symbols.file_upload_rounded,
+                      title: l10n.sync_button_upload,
+                      enabled: enabled,
+                      onTap: () => _confirmOneWay(context, ref, true),
+                    ),
+                    ShioriSettingRow(
+                      icon: Symbols.file_download_rounded,
+                      title: l10n.sync_button_download,
+                      enabled: enabled,
+                      onTap: () => _confirmOneWay(context, ref, false),
+                    ),
                   ],
-                ),
-                const SizedBox(height: 4),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    alignment: WrapAlignment.center,
-                    children: [
-                      FilledButton.tonalIcon(
-                        onPressed: !enabled
-                            ? null
-                            : () {
-                                ref
-                                    .read(
-                                      syncServerProvider(syncId: 1).notifier,
-                                    )
-                                    .startSync(l10n, false);
-                              },
-                        icon: const Icon(Icons.sync),
-                        label: Text(l10n.sync_button_sync),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: !enabled
-                            ? null
-                            : () => _showConfirmDialog(context, ref, true),
-                        icon: const Icon(Icons.file_upload_outlined),
-                        label: Text(l10n.sync_button_upload),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: !enabled
-                            ? null
-                            : () => _showConfirmDialog(context, ref, false),
-                        icon: const Icon(Icons.file_download_outlined),
-                        label: Text(l10n.sync_button_download),
-                      ),
-                    ],
-                  ),
                 ),
                 if (progress.active)
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 8,
+                      horizontal: ShioriSpace.s16,
+                      vertical: ShioriSpace.s8,
                     ),
                     child: Column(
+                      spacing: ShioriSpace.s8,
                       children: [
-                        LinearProgressIndicator(value: progress.fraction),
-                        const SizedBox(height: 6),
+                        ShioriProgressBar(value: progress.fraction),
                         Text(
                           progress.fraction != null
                               ? l10n.sync_progress_percent(
                                   (progress.fraction! * 100).round(),
                                 )
                               : l10n.sync_progress_indeterminate,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: context.secondaryColor,
-                          ),
+                          style: context.shiori.caption,
                         ),
                       ],
                     ),
                   ),
-                const SizedBox(height: 16),
-                SettingsSection(
+                const SizedBox(height: ShioriSpace.s16),
+                ShioriSettingsGroup(
                   title: l10n.about,
+                  footer: l10n.syncing_subtitle,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 15,
-                        right: 15,
-                        bottom: 10,
-                        top: 10,
-                      ),
-                      child: OutlinedButton.icon(
-                        onPressed: () async {
-                          if (!await launchUrl(
-                            Uri.parse(serverUrl),
-                            mode: LaunchMode.externalApplication,
-                          )) {
-                            AppLogger.log(
-                              'Could not launch $serverUrl',
-                              logLevel: LogLevel.error,
-                            );
-                            botToast(l10n.could_not_launch_url(serverUrl));
-                          }
-                        },
-                        label: Text(l10n.get_sync_server),
-                        icon: const Icon(Icons.download_outlined),
-                      ),
-                    ),
-                    _hintTile(
-                      context,
-                      icon: Icons.info_outline_rounded,
-                      text: l10n.syncing_subtitle,
+                    ShioriSettingRow(
+                      icon: Symbols.open_in_new_rounded,
+                      title: l10n.get_sync_server,
+                      subtitle: serverUrl,
+                      onTap: () async {
+                        if (!await launchUrl(
+                          Uri.parse(serverUrl),
+                          mode: LaunchMode.externalApplication,
+                        )) {
+                          AppLogger.log(
+                            'Could not launch $serverUrl',
+                            logLevel: LogLevel.error,
+                          );
+                          botToast(l10n.could_not_launch_url(serverUrl));
+                        }
+                      },
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: ShioriSpace.s24),
               ],
             );
           },
-        ),
-      ),
-    );
-  }
-
-  Widget _hintTile(
-    BuildContext context, {
-    required IconData icon,
-    required String text,
-  }) {
-    return ListTile(
-      title: Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: context.secondaryColor, size: 20),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                text,
-                softWrap: true,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -278,37 +201,38 @@ class SyncScreen extends ConsumerWidget {
     final l10n = l10nLocalizations(context)!;
     final (icon, color, label) = switch (status) {
       SyncConnectionStatus.notConfigured => (
-        Icons.link_off,
-        context.secondaryColor,
+        Symbols.link_off_rounded,
+        context.shiori.color.fgMuted,
         l10n.sync_status_not_configured,
       ),
       SyncConnectionStatus.checking => (
-        Icons.sync,
-        context.secondaryColor,
+        Symbols.sync_rounded,
+        context.shiori.color.fgMuted,
         l10n.sync_status_checking,
       ),
       SyncConnectionStatus.connected => (
-        Icons.check_circle,
-        Colors.green,
+        Symbols.check_circle_rounded,
+        context.shiori.color.completed.foreground,
         l10n.sync_status_connected,
       ),
       SyncConnectionStatus.unauthorized => (
-        Icons.error_outline,
-        Colors.red,
+        Symbols.error_rounded,
+        context.shiori.color.error.foreground,
         l10n.sync_status_unauthorized,
       ),
       SyncConnectionStatus.unreachable => (
-        Icons.error_outline,
-        Colors.red,
+        Symbols.error_rounded,
+        context.shiori.color.offline.foreground,
         l10n.sync_status_unreachable,
       ),
     };
     return ListTile(
       dense: true,
       leading: Icon(icon, color: color, size: 20),
-      title: Text(label, style: TextStyle(fontSize: 13, color: color)),
+      title: Text(label, style: context.shiori.text.row.copyWith(color: color)),
       trailing: IconButton(
-        icon: const Icon(Icons.refresh, size: 20),
+        tooltip: context.l10n.refresh,
+        icon: const Icon(Symbols.refresh_rounded, fill: 1, size: 20),
         onPressed: () {
           ref.read(syncConnectionStateProvider(syncId: 1).notifier).recheck();
         },
@@ -316,107 +240,26 @@ class SyncScreen extends ConsumerWidget {
     );
   }
 
-  void _showAutoSyncDialog(
-    BuildContext context,
-    WidgetRef ref,
-    SyncPreference syncPreference,
-    Map<String, int> autoSyncOptions,
-  ) {
-    final l10n = l10nLocalizations(context)!;
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(l10n.sync_auto),
-          content: SizedBox(
-            width: context.width(0.8),
-            child: RadioGroup(
-              groupValue: syncPreference.autoSyncFrequency,
-              onChanged: (value) {
-                ref
-                    .read(synchingProvider(syncId: 1).notifier)
-                    .setAutoSyncFrequency(value!);
-                Navigator.pop(context);
-              },
-              child: SuperListView.builder(
-                shrinkWrap: true,
-                itemCount: autoSyncOptions.length,
-                itemBuilder: (context, index) {
-                  final optionName = autoSyncOptions.keys.elementAt(index);
-                  final optionValue = autoSyncOptions.values.elementAt(index);
-                  return RadioListTile(
-                    dense: true,
-                    contentPadding: const EdgeInsets.all(0),
-                    value: optionValue,
-                    title: Text(optionName),
-                  );
-                },
-              ),
-            ),
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(
-                    l10n.cancel,
-                    style: TextStyle(color: context.primaryColor),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _showConfirmDialog(
+  /// Upload or download replaces one side with the other: asks first.
+  Future<void> _confirmOneWay(
     BuildContext context,
     WidgetRef ref,
     bool isUpload,
   ) async {
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          content: Text(
-            isUpload
-                ? context.l10n.sync_button_upload_info
-                : context.l10n.sync_button_download_info,
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(context.l10n.cancel),
-                ),
-                const SizedBox(width: 15),
-                ElevatedButton(
-                  onPressed: () {
-                    ref
-                        .read(syncServerProvider(syncId: 1).notifier)
-                        .startSync(
-                          context.l10n,
-                          false,
-                          upload: isUpload,
-                          download: !isUpload,
-                        );
-                    Navigator.pop(context);
-                  },
-                  child: Text(context.l10n.dialog_confirm),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
+    final l10n = context.l10n;
+    final confirmed = await showShioriConfirm(
+      context,
+      title: isUpload ? l10n.sync_button_upload : l10n.sync_button_download,
+      message: isUpload
+          ? l10n.sync_button_upload_info
+          : l10n.sync_button_download_info,
+      confirmLabel: l10n.dialog_confirm,
+      destructive: true,
     );
+    if (!confirmed) return;
+    ref
+        .read(syncServerProvider(syncId: 1).notifier)
+        .startSync(l10n, false, upload: isUpload, download: !isUpload);
   }
 
   // Only a server address is asked for here - there's no username/password
@@ -437,84 +280,56 @@ class SyncScreen extends ConsumerWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
-          return AlertDialog(
-            title: Text(
-              l10n.login_into("SyncServer"),
-              style: const TextStyle(fontSize: 30),
-            ),
-            content: SingleChildScrollView(
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: TextFormField(
-                        controller: serverController,
-                        autofocus: !isTv,
-                        onChanged: (value) => setState(() {
-                          server = value;
-                        }),
-                        decoration: outlinedFieldDecoration(
-                          hintText: l10n.sync_server,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      errorMessage,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: SizedBox(
-                        width: context.width(1),
-                        height: 50,
-                        child: ElevatedButton.icon(
-                          onPressed: isLoading || server.trim().isEmpty
-                              ? null
-                              : () async {
-                                  setState(() {
-                                    isLoading = true;
-                                    errorMessage = "";
-                                  });
-                                  final res = await ref
-                                      .read(
-                                        syncServerProvider(syncId: 1).notifier,
-                                      )
-                                      .login(l10n, server);
-                                  if (!res.$1) {
-                                    setState(() {
-                                      isLoading = false;
-                                      errorMessage = res.$2;
-                                    });
-                                  } else {
-                                    if (context.mounted) {
-                                      Navigator.pop(context);
-                                    }
-                                  }
-                                },
-                          icon: isLoading
-                              ? const SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Icon(Icons.open_in_browser),
-                          label: Text(l10n.sync_login_browser),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+          Future<void> login() async {
+            setState(() {
+              isLoading = true;
+              errorMessage = "";
+            });
+            final res = await ref
+                .read(syncServerProvider(syncId: 1).notifier)
+                .login(l10n, server);
+            if (!res.$1) {
+              setState(() {
+                isLoading = false;
+                errorMessage = res.$2;
+              });
+            } else if (context.mounted) {
+              Navigator.pop(context);
+            }
+          }
+
+          final canLogin = !isLoading && server.trim().isNotEmpty;
+          return ShioriDialog(
+            title: l10n.login_into("SyncServer"),
+            content: TextField(
+              controller: serverController,
+              autofocus: !isTv,
+              keyboardType: TextInputType.url,
+              onChanged: (value) => setState(() => server = value),
+              onSubmitted: (_) => canLogin ? login() : null,
+              decoration: InputDecoration(
+                labelText: l10n.sync_server,
+                errorText: errorMessage.isEmpty ? null : errorMessage,
+                errorMaxLines: 3,
               ),
             ),
+            actions: [
+              ShioriButton.quiet(
+                label: l10n.cancel,
+                onPressed: () => Navigator.pop(context),
+              ),
+              if (isLoading)
+                const Padding(
+                  padding: EdgeInsets.all(ShioriSpace.s8),
+                  child: ShioriLoading.inline(),
+                )
+              else
+                ShioriButton(
+                  icon: Symbols.open_in_browser_rounded,
+                  label: l10n.sync_login_browser,
+                  onPressed: canLogin ? login : null,
+                ),
+            ],
           );
         },
       ),
