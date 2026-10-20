@@ -1644,5 +1644,9 @@
   "copy_error": "Kopieren",
   "error_copied": "Fehler kopiert",
   "no_categories_yet": "Noch keine Kategorien",
-  "no_categories_yet_message": "Ordne deine Bibliothek in Kategorien, die du selbst benennst und sortierst."
+  "no_categories_yet_message": "Ordne deine Bibliothek in Kategorien, die du selbst benennst und sortierst.",
+  "settings_keyboard_shortcuts_summary": "Tasten des Lesers und des Players neu belegen",
+  "shortcut_reset_all": "Alle Tastenkürzel zurücksetzen",
+  "shortcut_press_key": "Drücke eine Taste…",
+  "shortcut_key_in_use": "Bereits belegt durch: {action}"
 }

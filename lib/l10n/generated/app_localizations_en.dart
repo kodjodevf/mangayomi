@@ -4370,4 +4370,19 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get no_categories_yet_message =>
       'Group your library into categories you name and order yourself.';
+
+  @override
+  String get settings_keyboard_shortcuts_summary =>
+      'Rebind the reader and player keys';
+
+  @override
+  String get shortcut_reset_all => 'Reset all shortcuts';
+
+  @override
+  String get shortcut_press_key => 'Press a key…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Already used by: $action';
+  }
 }

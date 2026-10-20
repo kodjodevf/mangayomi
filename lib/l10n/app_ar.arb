@@ -1673,5 +1673,9 @@
   "copy_error": "نسخ",
   "error_copied": "تم نسخ الخطأ",
   "no_categories_yet": "لا توجد فئات بعد",
-  "no_categories_yet_message": "نظّم مكتبتك في فئات تسمّيها وترتّبها بنفسك."
+  "no_categories_yet_message": "نظّم مكتبتك في فئات تسمّيها وترتّبها بنفسك.",
+  "settings_keyboard_shortcuts_summary": "أعد تعيين مفاتيح القارئ والمشغل",
+  "shortcut_reset_all": "إعادة تعيين كل الاختصارات",
+  "shortcut_press_key": "اضغط على مفتاح…",
+  "shortcut_key_in_use": "مستخدم بالفعل في: {action}"
 }

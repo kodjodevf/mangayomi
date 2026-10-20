@@ -1641,5 +1641,9 @@
   "copy_error": "Kopyala",
   "error_copied": "Hata kopyalandı",
   "no_categories_yet": "Henüz kategori yok",
-  "no_categories_yet_message": "Kütüphaneni kendi adlandırıp sıraladığın kategorilere ayır."
+  "no_categories_yet_message": "Kütüphaneni kendi adlandırıp sıraladığın kategorilere ayır.",
+  "settings_keyboard_shortcuts_summary": "Okuyucu ve oynatıcı tuşlarını yeniden ata",
+  "shortcut_reset_all": "Tüm kısayolları sıfırla",
+  "shortcut_press_key": "Bir tuşa basın…",
+  "shortcut_key_in_use": "Zaten kullanılıyor: {action}"
 }

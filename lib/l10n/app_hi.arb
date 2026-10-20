@@ -1671,5 +1671,9 @@
   "copy_error": "कॉपी करें",
   "error_copied": "त्रुटि कॉपी की गई",
   "no_categories_yet": "अभी कोई श्रेणी नहीं",
-  "no_categories_yet_message": "अपनी लाइब्रेरी को अपनी नाम दी और क्रमबद्ध की गई श्रेणियों में बाँटें।"
+  "no_categories_yet_message": "अपनी लाइब्रेरी को अपनी नाम दी और क्रमबद्ध की गई श्रेणियों में बाँटें।",
+  "settings_keyboard_shortcuts_summary": "रीडर और प्लेयर की कुंजियाँ बदलें",
+  "shortcut_reset_all": "सभी शॉर्टकट रीसेट करें",
+  "shortcut_press_key": "कोई कुंजी दबाएँ…",
+  "shortcut_key_in_use": "पहले से उपयोग में: {action}"
 }

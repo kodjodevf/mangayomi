@@ -7788,6 +7788,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Group your library into categories you name and order yourself.'**
   String get no_categories_yet_message;
+
+  /// No description provided for @settings_keyboard_shortcuts_summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Rebind the reader and player keys'**
+  String get settings_keyboard_shortcuts_summary;
+
+  /// No description provided for @shortcut_reset_all.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset all shortcuts'**
+  String get shortcut_reset_all;
+
+  /// No description provided for @shortcut_press_key.
+  ///
+  /// In en, this message translates to:
+  /// **'Press a key…'**
+  String get shortcut_press_key;
+
+  /// No description provided for @shortcut_key_in_use.
+  ///
+  /// In en, this message translates to:
+  /// **'Already used by: {action}'**
+  String shortcut_key_in_use(String action);
 }
 
 class _AppLocalizationsDelegate

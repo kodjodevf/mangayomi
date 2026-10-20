@@ -4378,4 +4378,19 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get no_categories_yet_message =>
       'Kütüphaneni kendi adlandırıp sıraladığın kategorilere ayır.';
+
+  @override
+  String get settings_keyboard_shortcuts_summary =>
+      'Okuyucu ve oynatıcı tuşlarını yeniden ata';
+
+  @override
+  String get shortcut_reset_all => 'Tüm kısayolları sıfırla';
+
+  @override
+  String get shortcut_press_key => 'Bir tuşa basın…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Zaten kullanılıyor: $action';
+  }
 }

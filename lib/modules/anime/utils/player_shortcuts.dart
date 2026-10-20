@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
 import 'package:mangayomi/modules/widgets/keyboard_shortcuts_dialog.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
@@ -31,31 +32,28 @@ const playerLongSeekSeconds = 10;
 
 /// The desktop player's shortcuts with their keys, in the order the list
 /// shows them. The Anime4K keys only do something with the mpv config on,
-/// so they are listed only then ([shaders]).
+/// so they are listed only then ([shaders]). The keys are the user's
+/// [bindings], but for the fixed ones.
 List<(PlayerShortcut, List<String>)> playerShortcutKeys({
   bool shaders = false,
+  KeyBindings bindings = defaultKeyBindings,
 }) => [
-  (PlayerShortcut.playPause, ['Space', 'K']),
-  (PlayerShortcut.seekBackShort, ['←']),
-  (PlayerShortcut.seekForwardShort, ['→']),
-  (PlayerShortcut.seekBackLong, ['J']),
-  (PlayerShortcut.seekForwardLong, ['L']),
-  (PlayerShortcut.skipIntro, ['S', 'Enter']),
-  (PlayerShortcut.previousFrame, [',']),
-  (PlayerShortcut.nextFrame, ['.']),
-  (PlayerShortcut.volumeUp, ['↑']),
-  (PlayerShortcut.volumeDown, ['↓']),
-  (PlayerShortcut.mute, ['M']),
-  (PlayerShortcut.previousEpisode, ['P']),
-  (PlayerShortcut.nextEpisode, ['N']),
-  (PlayerShortcut.fullScreen, ['F', 'F11']),
-  (PlayerShortcut.exitFullScreen, ['Esc']),
-  if (shaders) ...[
-    (PlayerShortcut.shaders, ['Ctrl 1–6']),
-    (PlayerShortcut.shadersOff, ['Ctrl 0']),
-  ],
-  (PlayerShortcut.showShortcuts, ['?', 'F1']),
+  for (final shortcut in PlayerShortcut.values)
+    if (_fixedKeys[shortcut] case final keys?) ...[
+      if (shaders || !_shaderShortcuts.contains(shortcut)) (shortcut, keys),
+    ] else
+      (shortcut, keyLabels(bindings[shortcut]!)),
 ];
+
+const _fixedKeys = {
+  PlayerShortcut.previousFrame: [','],
+  PlayerShortcut.nextFrame: ['.'],
+  PlayerShortcut.shaders: ['Ctrl 1–6'],
+  PlayerShortcut.shadersOff: ['Ctrl 0'],
+  PlayerShortcut.showShortcuts: ['?', 'F1'],
+};
+
+const _shaderShortcuts = {PlayerShortcut.shaders, PlayerShortcut.shadersOff};
 
 String playerShortcutLabel(
   PlayerShortcut shortcut,
@@ -93,10 +91,14 @@ Future<void> showPlayerShortcuts(
   BuildContext context, {
   required int skipIntroSeconds,
   bool shaders = false,
+  KeyBindings bindings = defaultKeyBindings,
 }) {
   final l10n = context.l10n;
   return showKeyboardShortcuts(context, [
-    for (final (shortcut, keys) in playerShortcutKeys(shaders: shaders))
+    for (final (shortcut, keys) in playerShortcutKeys(
+      shaders: shaders,
+      bindings: bindings,
+    ))
       (
         playerShortcutLabel(shortcut, l10n, skipIntroSeconds: skipIntroSeconds),
         keys,

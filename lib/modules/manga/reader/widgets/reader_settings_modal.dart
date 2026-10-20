@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_switches.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_gestures.dart';
@@ -312,7 +313,10 @@ class _GeneralTab extends ConsumerWidget {
                   icon: Symbols.keyboard_rounded,
                   title: l10n.keyboard_shortcuts,
                   trailing: const Icon(Symbols.chevron_forward_rounded),
-                  onTap: () => showReaderShortcuts(context),
+                  onTap: () => showReaderShortcuts(
+                    context,
+                    bindings: ref.read(keyBindingsStateProvider),
+                  ),
                 ),
             ],
           ),

@@ -657,6 +657,12 @@ final settingsIndex = <SettingsEntry>[
     route: '/playerOverview',
   ),
   SettingsEntry(
+    title: (l) => l.keyboard_shortcuts,
+    subtitle: (l) => l.settings_keyboard_shortcuts_summary,
+    section: (l) => l.keyboard_shortcuts,
+    route: '/keyboardShortcuts',
+  ),
+  SettingsEntry(
     title: (l) => l.tv_player_beta,
     subtitle: null,
     section: (l) => l.player,

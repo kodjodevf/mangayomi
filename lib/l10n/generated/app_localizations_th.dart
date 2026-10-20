@@ -4347,4 +4347,19 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get no_categories_yet_message =>
       'จัดคลังของคุณเป็นหมวดหมู่ที่คุณตั้งชื่อและเรียงลำดับเอง';
+
+  @override
+  String get settings_keyboard_shortcuts_summary =>
+      'เปลี่ยนปุ่มของตัวอ่านและเครื่องเล่น';
+
+  @override
+  String get shortcut_reset_all => 'รีเซ็ตแป้นพิมพ์ลัดทั้งหมด';
+
+  @override
+  String get shortcut_press_key => 'กดปุ่ม…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'ถูกใช้แล้วโดย: $action';
+  }
 }

@@ -4415,4 +4415,19 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get no_categories_yet_message =>
       'Raggruppa la libreria in categorie che nomini e ordini tu.';
+
+  @override
+  String get settings_keyboard_shortcuts_summary =>
+      'Riassegna i tasti del lettore e del player';
+
+  @override
+  String get shortcut_reset_all => 'Ripristina tutte le scorciatoie';
+
+  @override
+  String get shortcut_press_key => 'Premi un tasto…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Già usato da: $action';
+  }
 }

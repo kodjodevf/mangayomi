@@ -91,6 +91,14 @@ class SettingsScreen extends StatelessWidget {
                         icon: Symbols.play_circle_rounded,
                         onTap: () => context.push('/playerOverview'),
                       ),
+                    // Where a keyboard can be found, its keys.
+                    if (isDesktop)
+                      ListTileWidget(
+                        title: l10n.keyboard_shortcuts,
+                        subtitle: l10n.settings_keyboard_shortcuts_summary,
+                        icon: Symbols.keyboard_rounded,
+                        onTap: () => context.push('/keyboardShortcuts'),
+                      ),
                     ListTileWidget(
                       title: l10n.downloads,
                       subtitle: l10n.settings_downloads_summary,

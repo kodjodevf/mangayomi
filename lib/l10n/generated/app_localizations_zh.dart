@@ -4211,4 +4211,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get no_categories_yet_message => '用你自己命名和排序的分类来整理书库。';
+
+  @override
+  String get settings_keyboard_shortcuts_summary => '更改阅读器和播放器的按键';
+
+  @override
+  String get shortcut_reset_all => '重置所有快捷键';
+
+  @override
+  String get shortcut_press_key => '请按一个键…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return '已被占用：$action';
+  }
 }

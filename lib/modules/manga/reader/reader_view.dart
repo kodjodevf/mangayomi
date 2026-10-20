@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
@@ -779,7 +780,9 @@ class _MangaChapterPageGalleryState
       onShowShortcuts: () => showReaderShortcuts(
         context,
         isReverseHorizontal: _isReverseHorizontal,
+        bindings: ref.read(keyBindingsStateProvider),
       ),
+      bindings: ref.watch(keyBindingsStateProvider),
     ).wrapWithKeyboardListener(
       isReverseHorizontal: _isReverseHorizontal,
       focusNode: _keyboardFocusNode,

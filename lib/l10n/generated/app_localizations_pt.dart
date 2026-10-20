@@ -4408,6 +4408,21 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get no_categories_yet_message =>
       'Agrupe sua biblioteca em categorias que você mesmo nomeia e ordena.';
+
+  @override
+  String get settings_keyboard_shortcuts_summary =>
+      'Reatribuir as teclas do leitor e do reprodutor';
+
+  @override
+  String get shortcut_reset_all => 'Repor todos os atalhos';
+
+  @override
+  String get shortcut_press_key => 'Prima uma tecla…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Já usada por: $action';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -7853,4 +7868,19 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get chapter_swipe_disabled => 'Desativado';
+
+  @override
+  String get settings_keyboard_shortcuts_summary =>
+      'Reatribuir as teclas do leitor e do player';
+
+  @override
+  String get shortcut_reset_all => 'Redefinir todos os atalhos';
+
+  @override
+  String get shortcut_press_key => 'Pressione uma tecla…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Já usada por: $action';
+  }
 }

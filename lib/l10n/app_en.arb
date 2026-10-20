@@ -1704,5 +1704,16 @@
   "copy_error": "Copy",
   "error_copied": "Error copied",
   "no_categories_yet": "No categories yet",
-  "no_categories_yet_message": "Group your library into categories you name and order yourself."
+  "no_categories_yet_message": "Group your library into categories you name and order yourself.",
+  "settings_keyboard_shortcuts_summary": "Rebind the reader and player keys",
+  "shortcut_reset_all": "Reset all shortcuts",
+  "shortcut_press_key": "Press a key…",
+  "shortcut_key_in_use": "Already used by: {action}",
+  "@shortcut_key_in_use": {
+    "placeholders": {
+      "action": {
+        "type": "String"
+      }
+    }
+  }
 }
