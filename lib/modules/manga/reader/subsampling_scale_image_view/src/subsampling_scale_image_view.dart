@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:ffi';
-import 'dart:io';
 import 'dart:math';
 import 'dart:ui' as ui;
 
@@ -9,91 +7,17 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:crypto/crypto.dart';
-import 'package:mangayomi/utils/avif.dart';
-import 'package:mangayomi/utils/downloaded_page_file.dart';
 
 import 'coordinate_transformer.dart';
 import 'page_pan_forwarding.dart';
 import 'ffi_image_decoder.dart';
 import 'subsampling_image_painter.dart';
+import 'subsampling_image_resolver.dart';
+import 'subsampling_types.dart';
 import 'tiling_engine.dart';
 import '../../u_chap_data_preload.dart';
 
-// ─── Load State ───────────────────────────────────────────────────────────────
-
-/// Image loading state, identical to extended_image.
-enum LoadState {
-  /// The image is currently loading (downloading, resolving, etc.)
-  loading,
-
-  /// The image is fully loaded and ready to be displayed
-  completed,
-
-  /// Loading failed
-  failed,
-}
-
-/// Represents the current state of the widget, passed to the [loadStateChanged] callback.
-/// Identical interface to ExtendedImageState from extended_image.
-class SubsamplingImageState {
-  const SubsamplingImageState({
-    required this.loadState,
-    this.loadingProgress,
-    required this._reLoadCallback,
-  });
-
-  /// Current loading state.
-  final LoadState loadState;
-
-  /// Loading progress (available during [LoadState.loading]).
-  /// Contains the bytes received and the expected total size.
-  final ImageChunkEvent? loadingProgress;
-
-  final VoidCallback _reLoadCallback;
-
-  /// Reloads the image from the start (useful after a failure).
-  void reLoadImage() => _reLoadCallback();
-}
-
-// ─── Enums ────────────────────────────────────────────────────────────────────
-
-/// Mode for fitting the initial minimum scale of the image.
-enum ScaleType {
-  /// Fits the entire image to be visible (default behavior)
-  centerInside,
-
-  /// Fits to fill the view, cropping the edges
-  centerCrop,
-
-  /// Fits to the width of the view
-  fitWidth,
-
-  /// Fits to the height of the view
-  fitHeight,
-
-  /// Displays the image at its original size (1:1 pixels)
-  originalSize,
-
-  /// fitWidth if portrait, fitHeight if landscape
-  smartFit,
-
-  /// Uses the manually provided [SubsamplingScaleImageView.minScale] value
-  custom,
-}
-
-/// Mode for limiting pan to the edges of the image.
-enum PanLimit {
-  /// The image cannot go entirely off-screen (default behavior)
-  inside,
-
-  /// The image can go entirely off-screen
-  outside,
-
-  /// The center of the image cannot go off-screen
-  center,
-}
+export 'subsampling_types.dart';
 
 // ─── Controller ───────────────────────────────────────────────────────────────
 
@@ -595,39 +519,6 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     }
   }
 
-  String _md5Hash(String input) {
-    return md5.convert(utf8.encode(input)).toString();
-  }
-
-  Future<File?> _findCachedFile(String url, String? cacheFolderName) async {
-    try {
-      final hash = _md5Hash(url);
-      final foldersToCheck = [
-        ?cacheFolderName,
-        'cacheimagemanga',
-        'cacheimage',
-      ];
-
-      final dirs = <Directory>[];
-      try {
-        dirs.add(await getApplicationCacheDirectory());
-      } catch (_) {}
-      try {
-        dirs.add(await getTemporaryDirectory());
-      } catch (_) {}
-
-      for (final baseDir in dirs) {
-        for (final folder in foldersToCheck) {
-          final file = File('${baseDir.path}/$folder/$hash');
-          if (file.existsSync()) {
-            return file;
-          }
-        }
-      }
-    } catch (_) {}
-    return null;
-  }
-
   Future<void> _loadFromProvider({bool evictCache = false}) async {
     _cancelImageStream();
 
@@ -653,58 +544,12 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     }
 
     final provider = widget.image;
-
-    // 1. Fast path: FileImage
-    if (provider is FileImage) {
-      _resolvedFilePath = provider.file.path;
+    final (fastPath, networkUrl, cacheFolderName) =
+        await tryResolveFastPathProvider(provider);
+    if (fastPath != null) {
+      _resolvedFilePath = fastPath;
       await _initImage();
       return;
-    }
-
-    // Duck-typing for ExtendedFileImageProvider (or any provider exposing a File)
-    try {
-      final dynamic dynProvider = provider;
-      if (dynProvider.file is File) {
-        _resolvedFilePath = dynProvider.file.path;
-        await _initImage();
-        return;
-      }
-    } catch (_) {}
-
-    // 2. Fast path: Memory-based providers (MemoryImage, ExtendedMemoryImageProvider, etc.)
-    try {
-      final dynamic dynProvider = provider;
-      if (dynProvider.bytes is Uint8List) {
-        final Uint8List bytes = dynProvider.bytes;
-        final cacheKey = provider.hashCode.abs();
-        final tempFile = await cacheImageBytesToTempFile(
-          tempDir: await getTemporaryDirectory(),
-          baseName: 'ssiv_cache_$cacheKey',
-          extension: detectImageExtension(bytes),
-          bytesProvider: () => bytes,
-        );
-        _resolvedFilePath = tempFile.path;
-        await _initImage();
-        return;
-      }
-    } catch (_) {}
-
-    // 3. Fast path: Network/Cached-based providers (CustomExtendedNetworkImageProvider)
-    String? networkUrl;
-    String? cacheFolderName;
-    try {
-      final dynamic dynProvider = provider;
-      networkUrl = dynProvider.url;
-      cacheFolderName = dynProvider.imageCacheFolderName;
-    } catch (_) {}
-
-    if (networkUrl != null) {
-      final cachedFile = await _findCachedFile(networkUrl, cacheFolderName);
-      if (cachedFile != null) {
-        _resolvedFilePath = cachedFile.path;
-        await _initImage();
-        return;
-      }
     }
 
     // 4. General path: resolution via ImageStream
@@ -743,7 +588,10 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
       // If it was a network provider, it probably wrote the image to disk during loading.
       // We re-check the cache before doing the heavy re-encoding fallback.
       if (networkUrl != null) {
-        final cachedFile = await _findCachedFile(networkUrl, cacheFolderName);
+        final cachedFile = await findCachedImageFile(
+          networkUrl,
+          cacheFolderName,
+        );
         if (cachedFile != null) {
           _resolvedFilePath = cachedFile.path;
           await _initImage();
@@ -752,20 +600,10 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
       }
 
       // Fallback: Encode the image to PNG to save it to disk
-      final cacheKey = provider.hashCode.abs();
-      final tempFile = await cacheImageBytesToTempFile(
-        tempDir: await getTemporaryDirectory(),
-        baseName: 'ssiv_cache_$cacheKey',
-        extension: '.png', // we control the encode below, so this is exact
-        bytesProvider: () async {
-          final byteData = await loadedImage.toByteData(
-            format: ui.ImageByteFormat.png,
-          );
-          if (byteData == null) {
-            throw Exception('Failed to convert image to PNG bytes');
-          }
-          return byteData.buffer.asUint8List();
-        },
+      // (we control the encode, so the .png extension is exact)
+      final tempFile = await encodeLoadedUiImageToTempFile(
+        loadedImage,
+        provider.hashCode.abs(),
       );
 
       _resolvedFilePath = tempFile.path;
@@ -934,33 +772,6 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
 
   // ── Initialization ──────────────────────────────────────────────────────────
 
-  Future<String?> _legacyIosAvifPng(String path) async {
-    if (!Platform.isIOS) return null;
-
-    final source = File(path);
-    final reader = await source.open();
-    late final Uint8List header;
-    try {
-      header = await reader.read(256);
-    } finally {
-      await reader.close();
-    }
-    if (!isAvifImage(header)) return null;
-
-    final stat = await source.stat();
-    final key = _md5Hash(
-      '$path:${stat.size}:${stat.modified.millisecondsSinceEpoch}',
-    );
-    // Decoding is deferred into bytesProvider so it only runs on a cache miss
-    final target = await cacheImageBytesToTempFile(
-      tempDir: await getTemporaryDirectory(),
-      baseName: 'ssiv_avif_$key',
-      extension: '.png', // decodeAvifToPng always returns PNG bytes
-      bytesProvider: () async => decodeAvifToPng(await source.readAsBytes()),
-    );
-    return target.path;
-  }
-
   Future<void> _initImage() async {
     var path = _resolvedFilePath;
     if (path == null) return;
@@ -974,7 +785,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
 
     if (outSize == null || outSize[0] == 0 || outSize[1] == 0) {
       try {
-        final convertedPath = await _legacyIosAvifPng(path);
+        final convertedPath = await convertLegacyIosAvifToPng(path);
         if (!mounted || _resolvedFilePath != path) return;
         if (convertedPath != null) {
           path = convertedPath;
@@ -1061,49 +872,17 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
 
   // ── Scale and Type Calculations ────────────────────────────────────────────
 
-  ScaleType get _effectiveScaleType {
-    if (widget.fit != null) {
-      switch (widget.fit!) {
-        case BoxFit.contain:
-          return ScaleType.centerInside;
-        case BoxFit.cover:
-          return ScaleType.centerCrop;
-        case BoxFit.fitWidth:
-          return ScaleType.fitWidth;
-        case BoxFit.fitHeight:
-          return ScaleType.fitHeight;
-        case BoxFit.none:
-          return ScaleType.originalSize;
-        case BoxFit.fill:
-          return ScaleType.centerCrop;
-        case BoxFit.scaleDown:
-          return ScaleType.centerInside;
-      }
-    }
-    return widget.minimumScaleType;
-  }
+  ScaleType get _effectiveScaleType =>
+      resolveEffectiveScaleType(widget.fit, widget.minimumScaleType);
 
-  double _calcMinScaleForType(double effWidth, double effHeight) {
-    final double scaleX = _viewSize.width / effWidth;
-    final double scaleY = _viewSize.height / effHeight;
-
-    switch (_effectiveScaleType) {
-      case ScaleType.centerInside:
-        return min(scaleX, scaleY);
-      case ScaleType.centerCrop:
-        return max(scaleX, scaleY);
-      case ScaleType.fitWidth:
-        return scaleX;
-      case ScaleType.fitHeight:
-        return scaleY;
-      case ScaleType.originalSize:
-        return 1.0;
-      case ScaleType.smartFit:
-        return effHeight > effWidth ? scaleX : scaleY;
-      case ScaleType.custom:
-        return widget.minScale ?? min(scaleX, scaleY);
-    }
-  }
+  double _calcMinScaleForType(double effWidth, double effHeight) =>
+      calculateMinScaleForType(
+        effWidth: effWidth,
+        effHeight: effHeight,
+        viewSize: _viewSize,
+        effectiveScaleType: _effectiveScaleType,
+        customMinScale: widget.minScale,
+      );
 
   double _getMinScale() {
     final transformer = CoordinateTransformer(
@@ -1126,46 +905,16 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
 
   // ── Pan clamping ─────────────────────────────────────────────────────────────
 
-  ui.Offset _clampTranslate(ui.Offset translate, double scale) {
-    final transformer = CoordinateTransformer(
-      scale: scale,
-      vTranslate: translate,
-      rotation: widget.rotation,
-      sWidth: _sWidth,
-      sHeight: _sHeight,
-    );
-
-    final double imageWidth = transformer.effectiveSWidth * scale;
-    final double imageHeight = transformer.effectiveSHeight * scale;
-
-    double tx = translate.dx;
-    double ty = translate.dy;
-
-    switch (widget.panLimit) {
-      case PanLimit.inside:
-        if (imageWidth <= _viewSize.width) {
-          tx = (_viewSize.width - imageWidth) / 2;
-        } else {
-          tx = max(_viewSize.width - imageWidth, min(0.0, tx));
-        }
-        if (imageHeight <= _viewSize.height) {
-          ty = (_viewSize.height - imageHeight) / 2;
-        } else {
-          ty = max(_viewSize.height - imageHeight, min(0.0, ty));
-        }
-        break;
-      case PanLimit.outside:
-        break;
-      case PanLimit.center:
-        tx = max(tx, _viewSize.width / 2 - imageWidth);
-        ty = max(ty, _viewSize.height / 2 - imageHeight);
-        tx = min(tx, _viewSize.width / 2);
-        ty = min(ty, _viewSize.height / 2);
-        break;
-    }
-
-    return ui.Offset(tx, ty);
-  }
+  ui.Offset _clampTranslate(ui.Offset translate, double scale) =>
+      clampPanTranslation(
+        translate: translate,
+        scale: scale,
+        rotation: widget.rotation,
+        sWidth: _sWidth,
+        sHeight: _sHeight,
+        viewSize: _viewSize,
+        panLimit: widget.panLimit,
+      );
 
   // ── Tile loading ─────────────────────────────────────────────────────────────
 

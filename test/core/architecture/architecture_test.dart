@@ -208,8 +208,8 @@ void main() {
       );
     });
 
-    test('Phase 3: Reader and Player entry views remain decomposed (< 1800 lines) and no module file exceeds 1800 lines', () {
-      const maxLines = 1800;
+    test('Phase 3: Reader and Player entry views remain decomposed (< 1400 lines) and no module file exceeds 1400 lines', () {
+      const maxLines = 1400;
       final oversizedFiles = <String>[];
       for (final file in _dartFilesIn('lib/modules')) {
         final lineCount = file.readAsLinesSync().length;

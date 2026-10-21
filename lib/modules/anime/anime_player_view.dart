@@ -2,13 +2,11 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
-import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
 import 'package:mangayomi/services/discord_rpc.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -16,6 +14,7 @@ import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/mixins/anime_mpv_bridge_mixin.dart';
+import 'package:mangayomi/modules/anime/mixins/anime_player_controls_mixin.dart';
 import 'package:mangayomi/modules/anime/mixins/anime_player_settings_mixin.dart';
 import 'package:mangayomi/modules/anime/mixins/anime_track_selection_mixin.dart';
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
@@ -28,14 +27,10 @@ import 'package:mangayomi/modules/anime/widgets/anime_screenshot_sheet.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/gesture_hint_overlay.dart';
 import 'package:mangayomi/modules/anime/widgets/up_next_chip.dart';
-import 'package:mangayomi/modules/anime/widgets/tv_player_controls.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_settings_panel.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
-import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
-import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_audio_state_provider.dart';
@@ -43,7 +38,6 @@ import 'package:mangayomi/modules/more/settings/player/providers/player_decoder_
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/modules/manga/detail/providers/chapter_display.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/chapter_bar_title.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_app_bar.dart'
     show buildWebViewData;
@@ -59,12 +53,8 @@ import 'package:mangayomi/utils/system_ui.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit/generated/libmpv/bindings.dart' as generated;
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 import 'package:mangayomi/modules/anime/utils/always_on_top.dart';
 import 'package:mangayomi/modules/anime/utils/mpv_subtitle_options.dart';
-import 'package:mangayomi/modules/anime/utils/player_shortcuts.dart';
-import 'package:mangayomi/modules/anime/widgets/player_shortcut_pills.dart';
-import 'package:mangayomi/modules/anime/widgets/unified_settings_sheet.dart';
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final int episodeId;
@@ -256,7 +246,28 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         WidgetsBindingObserver,
         AnimeMpvBridgeMixin,
         AnimeTrackSelectionMixin,
-        AnimePlayerSettingsMixin {
+        AnimePlayerSettingsMixin,
+        AnimePlayerControlsMixin {
+  @override
+  VideoController get controlsVideoController => _controller;
+  @override
+  ValueNotifier<Duration?> get controlsTempPosition => _tempPosition;
+  @override
+  ValueNotifier<bool> get controlsIsLocked => _isLocked;
+  @override
+  ValueNotifier<int> get controlsReveal => _revealControls;
+  @override
+  FocusNode get controlsTvPanelFocus => _tvPanelFocus;
+  @override
+  VoidCallback get controlsGoBackToDetail => _goBackToDetail;
+  @override
+  VoidCallback get controlsChangeFitLabel => () => _changeFitLabel(ref);
+  @override
+  Future<void> Function(bool isFullscreen) get controlsToggleFullscreen =>
+      _toggleFullscreen;
+  @override
+  VoidCallback get controlsOpenTvSettingsPanel =>
+      () => setState(() => _tvSettingsOpen = true);
   @override
   Player get mpvBridgePlayer => _player;
   @override
@@ -907,337 +918,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     );
   }
 
-  Widget _seekToWidget({bool iconOnly = false}) {
-    final defaultSkipIntroLength = ref.watch(
-      defaultSkipIntroLengthStateProvider,
-    );
-    return ValueListenableBuilder(
-      valueListenable: _customButton,
-      builder: (context, value, child) {
-        if (!(value?.visible ?? true)) return const SizedBox.shrink();
-
-        final label = value?.currentTitle ?? "+$defaultSkipIntroLength";
-        void onPressed() {
-          if (value != null) {
-            value.onPress();
-          } else {
-            unawaited(_seekBy(defaultSkipIntroLength));
-          }
-        }
-
-        final onLongPress = value == null ? null : () => value.onLongPress();
-        if (iconOnly) {
-          return MobilePlayerCompactSeekControl(
-            key: const ValueKey('mobile-player-portrait-seek-button'),
-            tooltip:
-                value?.currentTitle ??
-                context.l10n.shortcut_seek_forward(defaultSkipIntroLength),
-            seconds: value == null ? defaultSkipIntroLength : null,
-            onPressed: onPressed,
-            onLongPress: onLongPress,
-          );
-        }
-
-        // One of the player's pills, so it reads over the video in either
-        // theme; a long press is the custom button's second action.
-        return PlayerPillButton(
-          icon: Symbols.fast_forward_rounded,
-          label: label,
-          tooltip:
-              value?.currentTitle ??
-              context.l10n.shortcut_seek_forward(defaultSkipIntroLength),
-          onTap: onPressed,
-          onLongPress: onLongPress,
-        );
-      },
-    );
-  }
-
-  Widget _chapterMarkWidget({bool iconOnly = false}) {
-    return ValueListenableBuilder(
-      valueListenable: _currentChapterMark,
-      builder: (context, value, child) {
-        // The marks of the previous video can be gone while the index stays.
-        final chapter = value == null
-            ? null
-            : _chapterMarks.value.elementAtOrNull(value);
-        if (chapter == null) return const SizedBox.shrink();
-        // A chapter with no title of its own is named by its start alone,
-        // not " - 00:00".
-        final start = Duration(milliseconds: chapter.$2).label();
-        final label = chapter.$1.trim().isEmpty
-            ? start
-            : "${chapter.$1} · $start";
-        void onPressed() =>
-            openPlayerSettings(context, initialIndex: chaptersSectionIndex);
-
-        // The chapter of the video now, as one of the player's pills; the
-        // label is left out where the row is short.
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
-          child: PlayerPillButton(
-            icon: Symbols.bookmark_rounded,
-            label: label,
-            showLabel: !iconOnly,
-            tooltip: label,
-            isCompact: iconOnly,
-            onTap: onPressed,
-          ),
-        );
-      },
-    );
-  }
-
-  /// The episode as the series' list names it: its title, or "Episode 3".
-  String _episodeLabel() {
-    final episode = widget.episode;
-    final manga = episode.manga.value;
-    if (manga == null) return episode.name ?? '';
-    return chapterDisplayName(
-      episode,
-      manga,
-      context.l10n,
-      byNumber: ref.watch(
-        chapterNumberDisplayProvider.select((ids) => ids.contains(manga.id)),
-      ),
-    );
-  }
-
-  Widget _tvControls() {
-    return TvPlayerControls(
-      player: _player,
-      revealControls: _revealControls,
-      title: widget.episode.manga.value?.name ?? '',
-      episodeLabel: _episodeLabel(),
-      // Direct pop, not maybePop: the on-screen back arrow always exits the
-      // player, bypassing the PopScope that makes the remote Back hide the
-      // panel first.
-      onBack: _goBackToDetail,
-      onRestart: () => _player.seek(Duration.zero),
-      onSettings: () {
-        // On TV the settings open as the docked side panel; phones/desktop keep
-        // the bottom-sheet menu.
-        if (isTv) {
-          setState(() => _tvSettingsOpen = true);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) _tvPanelFocus.requestFocus();
-          });
-        } else {
-          openPlayerSettings(context);
-        }
-      },
-      hasNext: hasNextEpisode,
-      onNext: hasNextEpisode
-          ? () => pushToNewEpisode(context, _streamController.getNextEpisode())
-          : null,
-      qualityListenable: _video,
-      buildQualityOptions: buildTvQualityOptions,
-      speedListenable: _playbackSpeed,
-      onSetSpeed: _setPlaybackSpeed,
-    );
-  }
-
-  bool _usesCompactPortraitControls(BuildContext context) {
-    return !isDesktop &&
-        !isTv &&
-        usesCompactPortraitPlayerControls(
-          orientation: MediaQuery.orientationOf(context),
-          width: MediaQuery.sizeOf(context).width,
-        );
-  }
-
-  Widget _mobileBottomButtonBar(BuildContext context) {
-    final compactPortrait = _usesCompactPortraitControls(context);
-    // The line under the timeline, laid out as desktop's: the chapter on
-    // the left; on the right the stream's and the playback's choices, each
-    // a pill with its value, then the settings and fullscreen. The lock and
-    // the skip sit above the panel (see [_mobileAbovePanel]); the episodes
-    // are in the middle of the picture and in the top bar.
-    return MobilePlayerBottomControlsLayout(
-      compactPortrait: compactPortrait,
-      lockButton: const SizedBox.shrink(),
-      seekButton: const SizedBox.shrink(),
-      chapterButton: compactPortrait
-          ? const SizedBox.shrink()
-          : _chapterMarkWidget(),
-      shortcutButtons: _buildSettingsButtons(
-        context,
-        iconOnly: compactPortrait,
-        pills: compactPortrait
-            ? const {
-                PlayerPill.subtitles,
-                PlayerPill.speed,
-                PlayerPill.settings,
-                PlayerPill.fullscreen,
-              }
-            : const {...PlayerPill.values},
-      ),
-    );
-  }
-
-  /// Above the panel, on the left as desktop's skip: the lock and the
-  /// skip (+85 s, or the source's own button).
-  Widget _mobileAbovePanel(BuildContext context) {
-    final compactPortrait = _usesCompactPortraitControls(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s8),
-      child: Row(
-        children: [
-          KeyedSubtree(
-            key: const ValueKey('mobile-player-lock-button'),
-            child: ShioriOverlayPill(
-              icon: Symbols.lock_open_rounded,
-              tooltip: context.l10n.lock,
-              onTap: () {
-                HapticFeedback.lightImpact();
-                _isLocked.value = true;
-              },
-            ),
-          ),
-          const SizedBox(width: ShioriSpace.s8),
-          _seekToWidget(iconOnly: compactPortrait),
-        ],
-      ),
-    );
-  }
-
-  Widget _desktopBottomButtonBar(BuildContext context) {
-    final skipDuration = ref.watch(defaultDoubleTapToSkipLengthStateProvider);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    if (_streamController.hasPreviousEpisode)
-                      ShioriOverlayIconButton(
-                        tooltip: context.l10n.previous_episode,
-                        size: 22,
-                        onPressed: () => pushToNewEpisode(
-                          context,
-                          _streamController.getPrevEpisode(),
-                        ),
-                        icon: const Icon(
-                          Symbols.skip_previous_rounded,
-                          fill: 1,
-                        ),
-                      ),
-                    CustomPlayOrPauseButton(controller: _controller),
-                    if (hasNextEpisode)
-                      ShioriOverlayIconButton(
-                        tooltip: context.l10n.next_episode,
-                        size: 22,
-                        onPressed: () => pushToNewEpisode(
-                          context,
-                          _streamController.getNextEpisode(),
-                        ),
-                        icon: const Icon(Symbols.skip_next_rounded, fill: 1),
-                      ),
-                    _desktopSeekButton(context, -skipDuration),
-                    _desktopSeekButton(context, skipDuration),
-                    CustomMaterialDesktopVolumeButton(controller: _controller),
-                    ValueListenableBuilder(
-                      valueListenable: _tempPosition,
-                      builder: (context, value, child) =>
-                          CustomMaterialDesktopPositionIndicator(
-                            delta: value,
-                            controller: _controller,
-                          ),
-                    ),
-                    _chapterMarkWidget(),
-                  ],
-                ),
-              ),
-            ),
-            Flexible(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                reverse: true,
-                child: _buildSettingsButtons(context),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  /// Seeks [seconds] back (negative) or on, the count drawn in the arrow.
-  Widget _desktopSeekButton(BuildContext context, int seconds) {
-    final back = seconds < 0;
-    final count = seconds.abs();
-    return SizedBox(
-      height: 50,
-      width: 50,
-      child: IconButton(
-        tooltip: back
-            ? context.l10n.shortcut_seek_back(count)
-            : context.l10n.shortcut_seek_forward(count),
-        onPressed: () => _seekBy(seconds),
-        icon: Stack(
-          children: [
-            Positioned.fill(
-              child: Icon(
-                back
-                    ? Symbols.rotate_left_rounded
-                    : Symbols.rotate_right_rounded,
-                color: Colors.white,
-                size: 30,
-              ),
-            ),
-            Positioned.fill(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Text(
-                    '$count',
-                    style: TextStyle(
-                      fontSize: context.shiori.text.badge.fontSize,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// helper method for _mobileBottomButtonBar() and _desktopBottomButtonBar()
-  Widget _buildSettingsButtons(
-    BuildContext context, {
-    bool iconOnly = false,
-    Set<PlayerPill> pills = const {...PlayerPill.values},
-  }) => PlayerShortcutPills(
-    pills: pills,
-    videos: widget.videos,
-    video: _video,
-    player: _player,
-    subtitleTrack: () => effectiveSubtitleTrack,
-    audioTrack: () => effectiveAudioTrack,
-    playbackSpeed: _playbackSpeed,
-    fit: _fit,
-    iconOnly: iconOnly,
-    onQuality: (context) =>
-        openPlayerSettings(context, initialIndex: qualitySectionIndex),
-    onSubtitles: (context) =>
-        openPlayerSettings(context, initialIndex: subtitleSectionIndex),
-    onAudio: (context) =>
-        openPlayerSettings(context, initialIndex: audioSectionIndex),
-    onSpeed: (context) =>
-        openPlayerSettings(context, initialIndex: speedSectionIndex),
-    onSettings: openPlayerSettings,
-    onChangeFit: () => _changeFitLabel(ref),
-    onToggleFullscreen: _toggleFullscreen,
-  );
-
   Future<void> _toggleFullscreen(bool isFullscreen) async {
     if (isDesktop) {
       final isFullScreen = await setFullScreen(value: !isFullscreen);
@@ -1248,100 +928,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       ref.read(fullscreenProvider.notifier).state = !isFullscreen;
       widget.desktopFullScreenPlayer.call(!isFullscreen);
     }
-  }
-
-  bool _playAfterOverlay = false;
-
-  /// Pauses while the episode list or the share sheet is open
-  /// ([closed] true once it has closed), and plays again only if it was playing.
-  void _pauseWhileOpen(bool closed) {
-    if (!closed) {
-      _playAfterOverlay = _player.state.playing;
-      _player.pause();
-    } else if (_playAfterOverlay) {
-      _playAfterOverlay = false;
-      _player.play();
-    }
-  }
-
-  Widget _topButtonBar(BuildContext context) {
-    final compactPortrait = _usesCompactPortraitControls(context);
-
-    Widget episodesButton() {
-      return btnToShowChapterListDialog(
-        context,
-        context.l10n.episodes,
-        widget.episode,
-        // Wider than tall, the list opens beside the video, which keeps
-        // playing; the sheet from the bottom covers it, so that pauses.
-        onChanged: (closed) {
-          final size = MediaQuery.sizeOf(context);
-          if (closed || size.width <= size.height) _pauseWhileOpen(closed);
-        },
-        iconColor: Colors.white,
-      );
-    }
-
-    // The series and the episode, as the readers' bars and the loading
-    // state name them.
-    final title = Padding(
-      padding: EdgeInsetsDirectional.only(
-        start: compactPortrait ? 0 : ShioriSpace.s8,
-        end: ShioriSpace.s8,
-      ),
-      child: ChapterBarTitle(chapter: widget.episode, onImage: true),
-    );
-
-    // The top keeps who and where: the way back, what is playing, and the
-    // settings. What is changed while watching is in the panel at the foot;
-    // autoplay and sharing are in the settings.
-    return MobilePlayerTopSafeArea(
-      isDesktop: isDesktop,
-      child: MobilePlayerTopControlsLayout(
-        compactPortrait: compactPortrait,
-        backButton: ShioriOverlayIconButton(
-          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-          size: 24,
-          onPressed: _goBackToDetail,
-          icon: const Icon(Symbols.arrow_back_rounded),
-        ),
-        title: title,
-        wideActions: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (supportsAlwaysOnTop)
-              IconButton(
-                tooltip: context.l10n.always_on_top,
-                icon: const Icon(
-                  fill: 1,
-                  Symbols.push_pin_rounded,
-                  color: Colors.white,
-                ),
-                onPressed: toggleAlwaysOnTop,
-              ),
-            episodesButton(),
-            // A phone shares from the settings. The settings themselves are
-            // in the panel at the foot, on every platform, not here too.
-            if (isDesktop)
-              btnToShowShareScreenshot(
-                widget.episode,
-                onChanged: _pauseWhileOpen,
-              ),
-          ],
-        ),
-        portraitActions: MobilePlayerPortraitActionTheme(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              KeyedSubtree(
-                key: const ValueKey('mobile-player-portrait-episodes'),
-                child: episodesButton(),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 
   /// How high above the bottom edge (past the system's inset) what floats
@@ -1388,19 +974,19 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
             fit: docked ? BoxFit.contain : fit,
             key: _key,
             controls: (state) => (isTv && ref.read(tvPlayerStyleProvider))
-                ? (_tvSettingsOpen ? const SizedBox.shrink() : _tvControls())
+                ? (_tvSettingsOpen ? const SizedBox.shrink() : tvControls())
                 : (isDesktop || isTv)
                 ? DesktopControllerWidget(
                     videoController: _controller,
-                    topButtonBarWidget: _topButtonBar(context),
+                    topButtonBarWidget: topButtonBar(context),
                     videoStatekey: _key,
-                    bottomButtonBarWidget: _desktopBottomButtonBar(context),
+                    bottomButtonBarWidget: desktopBottomButtonBar(context),
                     streamController: _streamController,
                     seekToWidget: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: ShioriSpace.s12,
                       ),
-                      child: Row(children: [_seekToWidget()]),
+                      child: Row(children: [seekToWidget()]),
                     ),
                     tempDuration: (value) {
                       _tempPosition.value = value;
@@ -1416,10 +1002,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   )
                 : MobileControllerWidget(
                     videoController: _controller,
-                    topButtonBarWidget: _topButtonBar(context),
+                    topButtonBarWidget: topButtonBar(context),
                     videoStatekey: _key,
-                    bottomButtonBarWidget: _mobileBottomButtonBar(context),
-                    abovePanelWidget: _mobileAbovePanel(context),
+                    bottomButtonBarWidget: mobileBottomButtonBar(context),
+                    abovePanelWidget: mobileAbovePanel(context),
                     streamController: _streamController,
                     revealControls: _revealControls,
                     chapterMarks: _chapterMarks,
@@ -1618,18 +1204,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     onChanged: onChanged,
   );
 
-  Widget btnToShowShareScreenshot(
-    Chapter episode, {
-    void Function(bool)? onChanged,
-  }) {
-    return IconButton(
-      tooltip: context.l10n.share,
-      onPressed: () =>
-          _showShareScreenshotActions(context, episode, onChanged: onChanged),
-      icon: Icon(Icons.adaptive.share, color: Colors.white),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final body = _videoPlayer(context);
@@ -1638,7 +1212,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     // so wrap the player so a physical keyboard or TV remote can drive
     // playback too. See #668 / #729.
     final content = Scaffold(
-      body: isDesktop ? body : _wrapWithPlayerShortcuts(body),
+      body: isDesktop ? body : wrapWithPlayerShortcuts(body),
     );
 
     if (isDesktop) return content;
@@ -1657,94 +1231,5 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         );
       },
     );
-  }
-
-  /// Maps keyboard and TV-remote keys to player actions for non-desktop
-  /// builds. Only dedicated media keys + the usual mpv-style keys are bound
-  /// (no D-pad arrows beyond seek), so it stays additive and doesn't fight
-  /// touch input. Reuses the existing player + episode-navigation methods.
-  Widget _wrapWithPlayerShortcuts(Widget child) {
-    void seekBy(int seconds) {
-      _player.seek(_player.state.position + Duration(seconds: seconds));
-    }
-
-    final bindings = ref.watch(keyBindingsStateProvider);
-    final actions = <PlayerShortcut, VoidCallback>{
-      PlayerShortcut.playPause: _player.playOrPause,
-      PlayerShortcut.seekBackLong: () => seekBy(-playerLongSeekSeconds),
-      PlayerShortcut.seekForwardLong: () => seekBy(playerLongSeekSeconds),
-    };
-    return CallbackShortcuts(
-      bindings: <ShortcutActivator, VoidCallback>{
-        for (final MapEntry(key: shortcut, value: action) in actions.entries)
-          for (final combo in bindings[shortcut]!) combo.activator: action,
-        const SingleActivator(LogicalKeyboardKey.mediaPlayPause): () {
-          _player.playOrPause();
-        },
-        const SingleActivator(LogicalKeyboardKey.mediaPlay): () {
-          _player.play();
-        },
-        const SingleActivator(LogicalKeyboardKey.mediaPause): () {
-          _player.pause();
-        },
-        // Seek via J/L (or the keys they were rebound to) and the dedicated
-        // media keys only. Arrow keys are left unbound so they keep driving
-        // d-pad focus traversal on Android TV (and arrow-key focus movement
-        // with a keyboard) instead of seeking.
-        const SingleActivator(LogicalKeyboardKey.mediaRewind): () =>
-            seekBy(-10),
-        const SingleActivator(LogicalKeyboardKey.mediaFastForward): () =>
-            seekBy(10),
-        const SingleActivator(LogicalKeyboardKey.mediaTrackNext): () {
-          if (hasNextEpisode && mounted) {
-            pushToNewEpisode(context, _streamController.getNextEpisode());
-          }
-        },
-        const SingleActivator(LogicalKeyboardKey.mediaTrackPrevious): () {
-          if (_streamController.hasPreviousEpisode && mounted) {
-            pushToNewEpisode(context, _streamController.getPrevEpisode());
-          }
-        },
-      },
-      child: MouseRegion(
-        // Desktop debugging: a mouse has no d-pad, so let hover and clicks
-        // reveal the auto-hiding controls (bumping the same notifier the remote
-        // does). No-op on a TV, which sends no pointer-hover events.
-        onEnter: (_) => _revealControls.value++,
-        onHover: (_) => _revealControls.value++,
-        child: Listener(
-          // Reveal on a mouse click (desktop), but NOT on touch. On a touch
-          // device the mobile controls handle tap-to-toggle themselves, so
-          // revealing here on finger-down makes the following tap immediately
-          // hide them again (controls flash and vanish in under a second).
-          onPointerDown: (event) {
-            if (event.kind == PointerDeviceKind.mouse) _revealControls.value++;
-          },
-          child: Focus(autofocus: true, onKeyEvent: _onPlayerKey, child: child),
-        ),
-      ),
-    );
-  }
-
-  // On a TV remote / keyboard, reveal the on-screen controls when the user
-  // presses the d-pad. The arrow keys stay unbound above (so they still drive
-  // focus traversal between the control buttons) — we just bump [_revealControls]
-  // so the controls become visible and the focus is on something the user can
-  // see. Returns ignored so traversal + the media shortcuts still run.
-  KeyEventResult _onPlayerKey(FocusNode node, KeyEvent event) {
-    if (event is KeyDownEvent || event is KeyRepeatEvent) {
-      final k = event.logicalKey;
-      final isNav =
-          k == LogicalKeyboardKey.arrowUp ||
-          k == LogicalKeyboardKey.arrowDown ||
-          k == LogicalKeyboardKey.arrowLeft ||
-          k == LogicalKeyboardKey.arrowRight ||
-          k == LogicalKeyboardKey.select ||
-          k == LogicalKeyboardKey.enter ||
-          k == LogicalKeyboardKey.numpadEnter ||
-          k == LogicalKeyboardKey.gameButtonA;
-      if (isNav) _revealControls.value++;
-    }
-    return KeyEventResult.ignored;
   }
 }

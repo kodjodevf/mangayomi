@@ -22,10 +22,10 @@ import 'package:mangayomi/modules/manga/reader/widgets/auto_scroll_button.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_app_bar.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
+import 'package:mangayomi/modules/novel/mixins/novel_pagination_tts_mixin.dart';
 import 'package:mangayomi/modules/novel/tts/novel_tts_service.dart';
 import 'package:mangayomi/modules/novel/tts/tts_player_bar.dart';
 import 'package:mangayomi/modules/novel/tts/tts_settings_tab.dart';
-import 'package:mangayomi/modules/novel/utils/novel_paginator.dart';
 import 'package:mangayomi/modules/novel/utils/novel_reader_fonts.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_bottom_bar.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_general_settings_tab.dart';
@@ -76,13 +76,14 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     with
         TickerProviderStateMixin,
         WidgetsBindingObserver,
-        ReaderAutoScroll {
+        ReaderAutoScroll,
+        NovelPaginationAndTtsMixin<NovelWebView> {
   @override
   ValueNotifier<bool> get autoScrollEnabled => _autoScroll;
   @override
   ValueNotifier<double> get autoScrollSpeed => _pageOffset;
   @override
-  ScrollController get autoScrollController => _scrollController;
+  ScrollController get autoScrollController => scrollController;
   @override
   bool get canAutoScroll => _isContinuousMode();
   /// Resolved in [initState], not lazily.
@@ -92,43 +93,34 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   /// build got that far, that was `dispose()`. Riverpod forbids `ref` there:
   /// it needs the BuildContext, and the element is already deactivated. See
   /// issue #949, reported from the novel reader on 0.8.9.
-  late final NovelReaderController _readerController;
-  final _scrollController = ScrollController(
+  @override
+  late final NovelReaderController readerController;
+  @override
+  final scrollController = ScrollController(
     initialScrollOffset: 0,
     keepScrollOffset: true,
   );
-  late PageMode _pageMode = _readerController.getPageMode();
-  PageMode? _lastEffectivePageMode;
-  late ReaderMode _readerMode = _readerController.getReaderMode();
-  ReaderMode? _lastReaderMode;
-  late final PageController _spreadController = PageController();
-  int _currentSpreadIndex = 0;
-  NovelPaginationResult? _cachedPagination;
-  String? _cachedPaginationHtml;
-  double? _cachedPaginationWidth;
-  double? _cachedPaginationHeight;
-  int? _cachedPaginationFontSize;
-  double? _cachedPaginationLineHeight;
-  int? _cachedPaginationPadding;
-  String? _cachedPaginationFontFamily;
-  bool? _cachedPaginationRemoveExtraSpacing;
-  TextAlign? _cachedPaginationTextAlign;
+  late PageMode _pageMode = readerController.getPageMode();
+  late ReaderMode _readerMode = readerController.getReaderMode();
 
+  @override
   bool scrolled = false;
-  bool _scrollRestoreScheduled = false;
+  @override
+  bool scrollRestoreScheduled = false;
+  @override
   double offset = 0;
+  @override
   double maxOffset = 0;
   int fontSize = 14;
-  bool get _ttsSupported => !Platform.isLinux;
 
   final Stopwatch _readingStopwatch = Stopwatch();
   int? _discordReaderSession;
 
   void onScroll() {
-    if (_scrollController.hasClients) {
-      offset = _scrollController.offset;
-      maxOffset = _scrollController.position.maxScrollExtent;
-      _rebuildDetail.add(offset);
+    if (scrollController.hasClients) {
+      offset = scrollController.offset;
+      maxOffset = scrollController.position.maxScrollExtent;
+      rebuildDetail.add(offset);
     }
   }
 
@@ -139,34 +131,21 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     VolumeKeys.disable();
     releaseReaderOrientation();
     applyReaderScreenBrightness(-1);
-    if (!_readerMode.isContinuous &&
-        _cachedPagination != null &&
-        _cachedPagination!.pageCount > 0) {
-      final progress = _lastEffectivePageMode == PageMode.doublePage
-          ? _cachedPagination!.progressForSpread(_currentSpreadIndex)
-          : _cachedPagination!.progressForPage(_currentSpreadIndex);
-      offset = progress * (maxOffset > 0 ? maxOffset : 100);
-      maxOffset = (maxOffset > 0 ? maxOffset : 100);
-    }
-    _readerController.setChapterOffset(offset, maxOffset, true);
-    _readerController.setHistoryUpdate(
+    updatePaginatedOffsetBeforeDispose(_readerMode);
+    readerController.setChapterOffset(offset, maxOffset, true);
+    readerController.setHistoryUpdate(
       elapsedSeconds: _readingStopwatch.elapsed.inSeconds,
     );
-    _scrollController.removeListener(onScroll);
-    _scrollController.dispose();
-    _spreadController.dispose();
-    _rebuildDetail.close();
+    scrollController.removeListener(onScroll);
+    scrollController.dispose();
+    rebuildDetail.close();
     disposeAutoScroll();
     _autoScroll.removeListener(onAutoScrollChanged);
     _autoScroll.value = false;
     _autoScroll.dispose();
     _autoScrollPage.dispose();
     _keyboardFocusNode.dispose();
-    _ttsIndexSub?.cancel();
-    _ttsStateSub?.cancel();
-    _ttsWordSub?.cancel();
-    _ttsProgress.dispose();
-    NovelTtsService.instance.stop();
+    disposePaginationAndTts();
     if (isDesktop) {
       setFullScreen(value: false);
     } else {
@@ -224,17 +203,20 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     }
   }
 
+  @override
   late Chapter chapter = widget.chapter;
+  @override
   EpubNovel? epubBook;
 
-  final StreamController<double> _rebuildDetail =
+  @override
+  final StreamController<double> rebuildDetail =
       StreamController<double>.broadcast();
   @override
   void initState() {
     super.initState();
     // Before anything that can fail, so the controller dispose() needs is
     // always there: this is the whole point of not leaving it lazy.
-    _readerController = ref.read(
+    readerController = ref.read(
       novelReaderControllerProvider(chapter: chapter).notifier,
     );
     WidgetsBinding.instance.addObserver(this);
@@ -249,7 +231,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
           ref.read(readerScreenBrightnessStateProvider),
         );
       }
-      _scrollController.addListener(onScroll);
+      scrollController.addListener(onScroll);
       final initFontSize = ref.read(novelFontSizeStateProvider);
       setState(() {
         fontSize = initFontSize;
@@ -262,53 +244,13 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     _discordReaderSession = discordRpc?.beginReaderSession();
     discordRpc?.showChapterDetails(ref, chapter);
 
-    _ttsIndexSub = NovelTtsService.instance.paragraphIndexStream.listen((i) {
-      _ttsProgress.value = (paragraph: i, wordStart: -1, wordEnd: -1);
-      _scrollToTtsParagraph(i);
-      if (_lastEffectivePageMode == PageMode.doublePage &&
-          _cachedPagination != null) {
-        final targetSpread = _cachedPagination!.spreadForBlock(i);
-        if (_spreadController.hasClients &&
-            targetSpread != _currentSpreadIndex) {
-          _currentSpreadIndex = targetSpread;
-          _spreadController.animateToPage(
-            targetSpread,
-            duration: ShioriMotion.enter,
-            curve: Curves.easeInOut,
-          );
-        }
-      }
-    });
-    _ttsStateSub = NovelTtsService.instance.stateStream.listen((s) {
-      if (s == TtsState.stopped) {
-        _ttsProgress.value = (paragraph: -1, wordStart: -1, wordEnd: -1);
-      }
-    });
-    _ttsWordSub = NovelTtsService.instance.wordProgressStream.listen((wp) {
-      _ttsProgress.value = (
-        paragraph: wp.paragraphIndex,
-        wordStart: wp.startOffset,
-        wordEnd: wp.endOffset,
-      );
-    });
+    initTtsSubscriptions();
   }
 
-  late bool _isBookmarked = _readerController.getChapterBookmarked();
+  late bool _isBookmarked = readerController.getChapterBookmarked();
 
   bool _isView = false;
   final _keyboardFocusNode = FocusNode();
-  bool _showTts = false;
-  String? _currentHtmlContent;
-
-  /// How long the current chapter takes to read, worked out once when its
-  /// text arrives, for the time left beside the progress slider.
-  double? _chapterMinutes;
-  final ValueNotifier<({int paragraph, int wordStart, int wordEnd})>
-  _ttsProgress = ValueNotifier((paragraph: -1, wordStart: -1, wordEnd: -1));
-  int _ttsTotalBlocks = 0;
-  StreamSubscription<int>? _ttsIndexSub;
-  StreamSubscription<TtsState>? _ttsStateSub;
-  StreamSubscription<TtsWordProgress>? _ttsWordSub;
 
   double get pixelRatio => View.of(context).devicePixelRatio;
 
@@ -326,27 +268,15 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   }
 
   late final _autoScroll = ValueNotifier(
-    _readerController.autoScrollValues().$1,
+    readerController.autoScrollValues().$1,
   );
   late final _pageOffset = ValueNotifier(
-    _readerController.autoScrollValues().$2,
+    readerController.autoScrollValues().$2,
   );
   late final _autoScrollPage = ValueNotifier(_autoScroll.value);
 
   bool _isContinuousMode() {
     return _readerMode.isContinuous;
-  }
-
-
-  void _scrollToTtsParagraph(int index) {
-    if (!_scrollController.hasClients || _ttsTotalBlocks <= 0) return;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final targetOffset = (index / _ttsTotalBlocks) * maxScroll;
-    _scrollController.animateTo(
-      targetOffset.clamp(0.0, maxScroll),
-      duration: ShioriMotion.enter,
-      curve: Curves.easeInOut,
-    );
   }
 
   /// Goes to either next or previous chapter
@@ -358,13 +288,13 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   /// If the reader is already at the first or last chapter (depending on
   /// the direction), the method returns without navigating.
   void _goToChapter(bool next) {
-    if (next && !_readerController.hasNextChapter) return;
-    if (!next && !_readerController.hasPreviousChapter) return;
+    if (next && !readerController.hasNextChapter) return;
+    if (!next && !readerController.hasPreviousChapter) return;
     pushReplacementMangaReaderView(
       context: context,
       chapter: next
-          ? _readerController.getNextChapter()
-          : _readerController.getPrevChapter(),
+          ? readerController.getNextChapter()
+          : readerController.getPrevChapter(),
     );
   }
 
@@ -396,54 +326,13 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
               : PageMode.onePage)
         : _pageMode;
 
-    final prevEffectiveMode = _lastEffectivePageMode ?? effectivePageMode;
-    final prevReaderMode = _lastReaderMode ?? _readerMode;
-    if (prevEffectiveMode != effectivePageMode || prevReaderMode != _readerMode) {
-      if (!_readerMode.isContinuous) {
-        _autoScroll.value = false;
-        stopAutoScroll();
-        final double progress;
-        if (prevReaderMode.isContinuous) {
-          progress = maxOffset > 0 ? (offset / maxOffset).clamp(0.0, 1.0) : 0.0;
-        } else if (_cachedPagination != null && _cachedPagination!.pageCount > 0) {
-          progress = prevEffectiveMode == PageMode.doublePage
-              ? _cachedPagination!.progressForSpread(_currentSpreadIndex)
-              : _cachedPagination!.progressForPage(_currentSpreadIndex);
-        } else {
-          progress = maxOffset > 0 ? (offset / maxOffset).clamp(0.0, 1.0) : 0.0;
-        }
-        _cachedPagination = null;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
-          if (_cachedPagination != null && _spreadController.hasClients) {
-            final targetSpread = effectivePageMode == PageMode.doublePage
-                ? _cachedPagination!.spreadForProgress(progress)
-                : _cachedPagination!.pageForProgress(progress);
-            _currentSpreadIndex = targetSpread;
-            _spreadController.jumpToPage(targetSpread);
-          }
-        });
-      } else {
-        final progress = _cachedPagination != null && _cachedPagination!.pageCount > 0
-            ? (prevEffectiveMode == PageMode.doublePage
-                ? _cachedPagination!.progressForSpread(_currentSpreadIndex)
-                : _cachedPagination!.progressForPage(_currentSpreadIndex))
-            : (maxOffset > 0 ? (offset / maxOffset).clamp(0.0, 1.0) : 0.0);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
-          if (_scrollController.hasClients) {
-            final targetOffset =
-                progress * _scrollController.position.maxScrollExtent;
-            _scrollController.jumpTo(targetOffset);
-            if (_autoScroll.value) {
-              startAutoScroll();
-            }
-          }
-        });
-      }
-      _lastEffectivePageMode = effectivePageMode;
-      _lastReaderMode = _readerMode;
-    }
+    syncPaginationModeTransition(
+      effectivePageMode: effectivePageMode,
+      readerMode: _readerMode,
+      autoScroll: _autoScroll,
+      stopAutoScroll: stopAutoScroll,
+      startAutoScroll: startAutoScroll,
+    );
 
     return ReaderKeyboardHandler(
       onEscape: () => _goBack(context),
@@ -492,8 +381,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                           child: Builder(
                             builder: (context) {
                               epubBook = data.$2;
-                              _currentHtmlContent = data.$1;
-                              _chapterMinutes = readingMinutes(data.$1);
+                              currentHtmlContent = data.$1;
+                              chapterMinutes = readingMinutes(data.$1);
 
                               final padding = ref.watch(
                                 novelReaderPaddingStateProvider,
@@ -520,18 +409,18 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                     ref.watch(novelFontFamilyStateProvider),
                                   );
 
-                              if (!_scrollRestoreScheduled &&
+                              if (!scrollRestoreScheduled &&
                                   _readerMode.isContinuous) {
-                                _scrollRestoreScheduled = true;
+                                scrollRestoreScheduled = true;
                                 Future.delayed(
                                   const Duration(milliseconds: 100),
                                   () {
                                     if (!scrolled &&
                                         mounted &&
-                                        _scrollController.hasClients) {
-                                      _scrollController
+                                        scrollController.hasClients) {
+                                      scrollController
                                           .animateTo(
-                                            _scrollController
+                                            scrollController
                                                     .position
                                                     .maxScrollExtent *
                                                 (double.tryParse(
@@ -567,10 +456,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                       int wordEnd,
                                     })
                                   >(
-                                    valueListenable: _ttsProgress,
+                                    valueListenable: ttsProgress,
                                     builder: (context, tts, _) {
                                       String htmlData = data.$1;
-                                      if (_showTts && tts.paragraph >= 0) {
+                                      if (showTts && tts.paragraph >= 0) {
                                         final result = NovelTtsService.instance
                                             .highlightHtml(
                                               data.$1,
@@ -579,7 +468,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                               wordEnd: tts.wordEnd,
                                             );
                                         htmlData = result.$1;
-                                        _ttsTotalBlocks = result.$2;
+                                        ttsTotalBlocks = result.$2;
                                       }
 
                                       final parsedTextColor = parseNovelColor(
@@ -596,267 +485,24 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                       );
 
                                       if (!_readerMode.isContinuous) {
-                                        return LayoutBuilder(
-                                          builder: (context, constraints) {
-                                            final isDouble =
-                                                effectivePageMode ==
-                                                PageMode.doublePage;
-                                            final singlePageWidth = isDouble
-                                                ? (constraints.maxWidth - 1.0) /
-                                                    2
-                                                : constraints.maxWidth;
-                                            final pageHeight =
-                                                constraints.maxHeight;
-
-                                            if (_cachedPagination == null ||
-                                                _cachedPaginationWidth !=
-                                                    singlePageWidth ||
-                                                _cachedPaginationHeight !=
-                                                    pageHeight ||
-                                                _cachedPaginationFontSize !=
-                                                    fontSize ||
-                                                _cachedPaginationLineHeight !=
-                                                    lineHeight ||
-                                                _cachedPaginationPadding !=
-                                                    padding ||
-                                                _cachedPaginationHtml !=
-                                                    htmlData ||
-                                                _cachedPaginationFontFamily !=
-                                                    fontFamily ||
-                                                _cachedPaginationRemoveExtraSpacing !=
-                                                    removeExtraSpacing ||
-                                                _cachedPaginationTextAlign !=
-                                                    textAlignEnum) {
-                                              _cachedPagination =
-                                                  NovelPaginator.paginate(
-                                                    htmlContent: htmlData,
-                                                    pageWidth: singlePageWidth,
-                                                    pageHeight: pageHeight,
-                                                    fontSize: fontSize
-                                                        .toDouble(),
-                                                    lineHeight: lineHeight,
-                                                    padding: padding.toDouble(),
-                                                    fontFamily: fontFamily,
-                                                    removeExtraSpacing:
-                                                        removeExtraSpacing,
-                                                    textAlign: textAlignEnum,
-                                                  );
-                                              _cachedPaginationWidth =
-                                                  singlePageWidth;
-                                              _cachedPaginationHeight =
-                                                  pageHeight;
-                                              _cachedPaginationFontSize =
-                                                  fontSize;
-                                              _cachedPaginationLineHeight =
-                                                  lineHeight;
-                                              _cachedPaginationPadding =
-                                                  padding;
-                                              _cachedPaginationHtml = htmlData;
-                                              _cachedPaginationFontFamily =
-                                                  fontFamily;
-                                              _cachedPaginationRemoveExtraSpacing =
-                                                  removeExtraSpacing;
-                                              _cachedPaginationTextAlign =
-                                                  textAlignEnum;
-                                            }
-
-                                            if (!_scrollRestoreScheduled) {
-                                              _scrollRestoreScheduled = true;
-                                              final progress =
-                                                  double.tryParse(
-                                                    chapter.lastPageRead ?? '',
-                                                  ) ??
-                                                  0.0;
-                                              final targetIndex = isDouble
-                                                  ? _cachedPagination!
-                                                      .spreadForProgress(
-                                                        progress,
-                                                      )
-                                                  : _cachedPagination!
-                                                      .pageForProgress(
-                                                        progress,
-                                                      );
-                                              _currentSpreadIndex =
-                                                  targetIndex;
-                                              WidgetsBinding.instance
-                                                  .addPostFrameCallback((_) {
-                                                    if (!mounted) return;
-                                                    if (_spreadController
-                                                        .hasClients) {
-                                                      _spreadController
-                                                          .jumpToPage(
-                                                            targetIndex,
-                                                          );
-                                                      scrolled = true;
-                                                    }
-                                                  });
-                                            }
-
-                                            final pagination =
-                                                _cachedPagination!;
-                                            final totalCount = isDouble
-                                                ? pagination.spreadCount
-                                                : pagination.pageCount;
-
-                                            return Container(
-                                              color: parsedBackgroundColor,
-                                              child: PageView.builder(
-                                                controller: _spreadController,
-                                                itemCount: totalCount,
-                                                onPageChanged: (pageIndex) {
-                                                  _currentSpreadIndex = pageIndex;
-                                                  final progress = isDouble
-                                                      ? pagination
-                                                          .progressForSpread(
-                                                            pageIndex,
-                                                          )
-                                                      : pagination
-                                                          .progressForPage(
-                                                            pageIndex,
-                                                          );
-                                                  offset =
-                                                      progress *
-                                                      (maxOffset > 0
-                                                          ? maxOffset
-                                                          : 100);
-                                                  maxOffset = (maxOffset > 0
-                                                      ? maxOffset
-                                                      : 100);
-                                                  _readerController
-                                                      .setChapterOffset(
-                                                        offset,
-                                                        maxOffset,
-                                                        true,
-                                                      );
-                                                  _rebuildDetail.add(offset);
-                                                },
-                                                itemBuilder: (context, index) {
-                                                  if (isDouble) {
-                                                    final leftHtml = pagination
-                                                        .leftPageForSpread(
-                                                          index,
-                                                        );
-                                                    final rightHtml = pagination
-                                                        .rightPageForSpread(
-                                                          index,
-                                                        );
-
-                                                    return Row(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .stretch,
-                                                      children: [
-                                                        Expanded(
-                                                          child: ClipRect(
-                                                            child: SingleChildScrollView(
-                                                              physics:
-                                                                  const NeverScrollableScrollPhysics(),
-                                                              child: NovelHtmlContent(
-                                                                htmlData: leftHtml,
-                                                                fontFamily:
-                                                                    fontFamily,
-                                                                fontSize: fontSize,
-                                                                lineHeight:
-                                                                    lineHeight,
-                                                                padding: padding,
-                                                                textAlign:
-                                                                    textAlignEnum,
-                                                                removeExtraSpacing:
-                                                                    removeExtraSpacing,
-                                                                textColor:
-                                                                    parsedTextColor,
-                                                                backgroundColor:
-                                                                    parsedBackgroundColor,
-                                                                showTts: _showTts,
-                                                                tts: tts,
-                                                                epubBook: epubBook,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        VerticalDivider(
-                                                          width: 1,
-                                                          thickness: 0.5,
-                                                          color: context
-                                                              .shiori
-                                                              .color
-                                                              .hairline,
-                                                        ),
-                                                        Expanded(
-                                                          child: rightHtml != null
-                                                              ? ClipRect(
-                                                                  child: SingleChildScrollView(
-                                                                    physics:
-                                                                        const NeverScrollableScrollPhysics(),
-                                                                    child: NovelHtmlContent(
-                                                                      htmlData:
-                                                                          rightHtml,
-                                                                      fontFamily:
-                                                                          fontFamily,
-                                                                      fontSize:
-                                                                          fontSize,
-                                                                      lineHeight:
-                                                                          lineHeight,
-                                                                      padding:
-                                                                          padding,
-                                                                      textAlign:
-                                                                          textAlignEnum,
-                                                                      removeExtraSpacing:
-                                                                          removeExtraSpacing,
-                                                                      textColor:
-                                                                          parsedTextColor,
-                                                                      backgroundColor:
-                                                                          parsedBackgroundColor,
-                                                                      showTts:
-                                                                          _showTts,
-                                                                      tts: tts,
-                                                                      epubBook:
-                                                                          epubBook,
-                                                                    ),
-                                                                  ),
-                                                                )
-                                                              : Container(
-                                                                  color:
-                                                                      parsedBackgroundColor,
-                                                                ),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  } else {
-                                                    final pageHtml = pagination
-                                                        .pageForIndex(index);
-                                                    return ClipRect(
-                                                      child: SingleChildScrollView(
-                                                        physics:
-                                                            const NeverScrollableScrollPhysics(),
-                                                        child: NovelHtmlContent(
-                                                          htmlData: pageHtml,
-                                                          fontFamily: fontFamily,
-                                                          fontSize: fontSize,
-                                                          lineHeight: lineHeight,
-                                                          padding: padding,
-                                                          textAlign: textAlignEnum,
-                                                          removeExtraSpacing:
-                                                              removeExtraSpacing,
-                                                          textColor: parsedTextColor,
-                                                          backgroundColor:
-                                                              parsedBackgroundColor,
-                                                          showTts: _showTts,
-                                                          tts: tts,
-                                                          epubBook: epubBook,
-                                                        ),
-                                                      ),
-                                                    );
-                                                  }
-                                                },
-                                              ),
-                                            );
-                                          },
+                                        return buildPaginatedSpreadView(
+                                          effectivePageMode: effectivePageMode,
+                                          htmlData: htmlData,
+                                          fontSize: fontSize,
+                                          lineHeight: lineHeight,
+                                          padding: padding,
+                                          fontFamily: fontFamily,
+                                          removeExtraSpacing: removeExtraSpacing,
+                                          textAlignEnum: textAlignEnum,
+                                          parsedTextColor: parsedTextColor,
+                                          parsedBackgroundColor:
+                                              parsedBackgroundColor,
+                                          tts: tts,
                                         );
                                       }
 
                                       return Scrollbar(
-                                        controller: _scrollController,
+                                        controller: scrollController,
                                         interactive: true,
                                         child: GestureDetector(
                                           behavior: HitTestBehavior.translucent,
@@ -864,7 +510,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                             _isViewFunction();
                                           },
                                           child: CustomScrollView(
-                                            controller: _scrollController,
+                                            controller: scrollController,
                                             physics:
                                                 const BouncingScrollPhysics(),
                                             slivers: [
@@ -881,7 +527,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                   textColor: parsedTextColor,
                                                   backgroundColor:
                                                       parsedBackgroundColor,
-                                                  showTts: _showTts,
+                                                  showTts: showTts,
                                                   tts: tts,
                                                   epubBook: epubBook,
                                                 ),
@@ -899,11 +545,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                         ),
                         if (ref.watch(novelShowScrollPercentageStateProvider))
                           NovelScrollProgressBanner(
-                            rebuildStream: _rebuildDetail.stream,
+                            rebuildStream: rebuildDetail.stream,
                             isContinuous: _readerMode.isContinuous,
-                            cachedPagination: () => _cachedPagination,
+                            cachedPagination: () => cachedPagination,
                             effectivePageMode: effectivePageMode,
-                            currentSpreadIndex: () => _currentSpreadIndex,
+                            currentSpreadIndex: () => currentSpreadIndex,
                             offset: () => offset,
                             maxOffset: () => maxOffset,
                           ),
@@ -926,19 +572,19 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                         _autoScroll.value = !_autoScroll.value;
                       },
                     ),
-                    if (_ttsSupported &&
-                        _showTts &&
-                        _currentHtmlContent != null)
+                    if (ttsSupported &&
+                        showTts &&
+                        currentHtmlContent != null)
                       Positioned(
                         // Just above the panel while it is shown.
                         bottom: _isView ? novelBottomBarHeightAbove(context) : 0,
                         left: 0,
                         right: 0,
                         child: TtsPlayerBar(
-                          htmlContent: _currentHtmlContent!,
+                          htmlContent: currentHtmlContent!,
                           onClose: () {
                             if (mounted) {
-                              setState(() => _showTts = false);
+                              setState(() => showTts = false);
                             }
                           },
                         ),
@@ -1004,14 +650,14 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
 
   void _onBtnTapped(double value) {
     if (!_readerMode.isContinuous) {
-      if (_spreadController.hasClients) {
+      if (spreadController.hasClients) {
         if (value > 0) {
-          _spreadController.nextPage(
+          spreadController.nextPage(
             duration: ShioriMotion.standard,
             curve: Curves.easeOut,
           );
         } else {
-          _spreadController.previousPage(
+          spreadController.previousPage(
             duration: ShioriMotion.standard,
             curve: Curves.easeOut,
           );
@@ -1019,12 +665,12 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       }
       return;
     }
-    if (_scrollController.hasClients) {
-      final currentOffset = _scrollController.offset;
-      final maxScroll = _scrollController.position.maxScrollExtent;
+    if (scrollController.hasClients) {
+      final currentOffset = scrollController.offset;
+      final maxScroll = scrollController.position.maxScrollExtent;
 
       final newOffset = currentOffset + value;
-      _scrollController.animateTo(
+      scrollController.animateTo(
         min(newOffset, maxScroll),
         duration: ShioriMotion.fast,
         curve: Curves.linear,
@@ -1035,8 +681,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   Widget _appBar() {
     return ReaderAppBar(
       chapter: chapter,
-      mangaName: _readerController.getMangaName(),
-      chapterTitle: _readerController.getChapterTitle(),
+      mangaName: readerController.getMangaName(),
+      chapterTitle: readerController.getChapterTitle(),
       isVisible: _isView,
       isBookmarked: _isBookmarked,
       backgroundColor: _backgroundColor,
@@ -1044,7 +690,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       showChapterList: false,
       onBackPressed: () => Navigator.pop(context),
       onBookmarkPressed: () {
-        _readerController.setChapterBookmarked();
+        readerController.setChapterBookmarked();
         setState(() => _isBookmarked = !_isBookmarked);
       },
       onWebViewPressed: (chapter.manga.value!.isLocalArchive ?? false)
@@ -1088,21 +734,21 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   ) {
     return NovelBottomBar(
       chapter: chapter,
-      readerController: _readerController,
+      readerController: readerController,
       isVisible: _isView,
       backgroundColor: _backgroundColor,
-      rebuildStream: _rebuildDetail.stream,
+      rebuildStream: rebuildDetail.stream,
       readerMode: _readerMode,
       effectivePageMode: effectivePageMode,
-      cachedPagination: () => _cachedPagination,
-      currentSpreadIndex: () => _currentSpreadIndex,
-      spreadController: _spreadController,
-      scrollController: _scrollController,
+      cachedPagination: () => cachedPagination,
+      currentSpreadIndex: () => currentSpreadIndex,
+      spreadController: spreadController,
+      scrollController: scrollController,
       offset: () => offset,
       maxOffset: () => maxOffset,
-      chapterMinutes: () => _chapterMinutes,
-      ttsSupported: _ttsSupported,
-      showTts: _showTts,
+      chapterMinutes: () => chapterMinutes,
+      ttsSupported: ttsSupported,
+      showTts: showTts,
       onFontSizeChanged: (size) => setState(() => fontSize = size),
       onLayoutModeCycled: (mode, pageMode) {
         setState(() {
@@ -1112,7 +758,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       },
       onToggleTts: () {
         setState(() {
-          _showTts = !_showTts;
+          showTts = !showTts;
         });
       },
       onOpenSettings: () async {
@@ -1124,11 +770,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
           tabs: [
             Tab(text: context.l10n.reader),
             Tab(text: context.l10n.general),
-            if (_ttsSupported) Tab(text: context.l10n.tts),
+            if (ttsSupported) Tab(text: context.l10n.tts),
           ],
           children: [
             ReaderSettingsTab(
-              readerController: _readerController,
+              readerController: readerController,
               currentReaderMode: _readerMode,
               onReaderModeChanged: (newMode) {
                 setState(() {
@@ -1145,10 +791,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
             GeneralSettingsTab(
               autoScrollPage: _autoScrollPage,
               autoScroll: _autoScroll,
-              readerController: _readerController,
+              readerController: readerController,
               pageOffset: _pageOffset,
             ),
-            if (_ttsSupported) const TtsSettingsTab(),
+            if (ttsSupported) const TtsSettingsTab(),
           ],
           context: context,
           vsync: this,
