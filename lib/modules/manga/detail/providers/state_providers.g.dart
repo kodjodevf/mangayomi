@@ -114,58 +114,6 @@ abstract class _$IsLongPressedState extends $Notifier<bool> {
   }
 }
 
-@ProviderFor(IsExtendedState)
-final isExtendedStateProvider = IsExtendedStateProvider._();
-
-final class IsExtendedStateProvider
-    extends $NotifierProvider<IsExtendedState, bool> {
-  IsExtendedStateProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'isExtendedStateProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$isExtendedStateHash();
-
-  @$internal
-  @override
-  IsExtendedState create() => IsExtendedState();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
-}
-
-String _$isExtendedStateHash() => r'e386098118bdebf67d489a4a2f49b017e02b27bf';
-
-abstract class _$IsExtendedState extends $Notifier<bool> {
-  bool build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<bool, bool>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<bool, bool>,
-              bool,
-              Object?,
-              Object?
-            >;
-    element.handleCreate(ref, build);
-  }
-}
-
 @ProviderFor(SortChapterState)
 final sortChapterStateProvider = SortChapterStateFamily._();
 

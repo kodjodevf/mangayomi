@@ -49,8 +49,6 @@ PODS:
     - Flutter
   - rust_lib_mangayomi (0.0.1):
     - Flutter
-  - screen_brightness_ios (2.1.3):
-    - Flutter
   - share_plus (0.0.1):
     - Flutter
   - swift-collections (1.1.1):
@@ -71,7 +69,7 @@ PODS:
     - InternalCollectionsUtilities (= 1.1.1)
   - url_launcher_ios (0.0.1):
     - Flutter
-  - volume_controller (0.0.1):
+  - volume_controller (3.7.0):
     - Flutter
   - wakelock_plus (0.0.1):
     - Flutter
@@ -98,7 +96,6 @@ DEPENDENCIES:
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - rust_lib_mangayomi (from `.symlinks/plugins/rust_lib_mangayomi/ios`)
-  - screen_brightness_ios (from `.symlinks/plugins/screen_brightness_ios/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - volume_controller (from `.symlinks/plugins/volume_controller/ios`)
@@ -152,8 +149,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   rust_lib_mangayomi:
     :path: ".symlinks/plugins/rust_lib_mangayomi/ios"
-  screen_brightness_ios:
-    :path: ".symlinks/plugins/screen_brightness_ios/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   url_launcher_ios:
@@ -173,7 +168,7 @@ SPEC CHECKSUMS:
   flutter_avif_ios: 2553d2aafda56339cf924e943da89ad3f40af2dd
   flutter_discord_rpc_fork: 970cf2beca17870caf8645556de01ae2b8587bb6
   flutter_inappwebview_ios: 9cde7869829d54b4110df350f3eedd192c5a4aea
-  flutter_qjs: 1d5918f42171154e88dd545dd45f126c0291976f
+  flutter_qjs: 24afb6e1b95cb2e5ffd8b9053eb7618459c42837
   flutter_secure_storage_darwin: 46e401699982ee74142909676535e0f6a7321e58
   flutter_tts: 35ac3c7d42412733e795ea96ad2d7e05d0a75113
   flutter_web_auth_2: 3464a7c16dc6480b6194fc89913bae6e82f28405
@@ -186,12 +181,11 @@ SPEC CHECKSUMS:
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   permission_handler_apple: 92d754bbaa7361d436db2d6c3c1c2a0fdcec462e
   rust_lib_mangayomi: 360a904274b47351a0f7c26d3ce5aa6392bb8db3
-  screen_brightness_ios: 212d950bb99c915eee971c884f4a6c87c92cd13d
-  share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
+  share_plus: eccd7beb7cea61271aeed1800e8ccb2b952c0c7f
   swift-collections: ba248ecaf44ef500b27d5cf94d304218c89892ff
   url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
-  volume_controller: 3657a1f65bedb98fa41ff7dc5793537919f31b12
-  wakelock_plus: e29112ab3ef0b318e58cfa5c32326458be66b556
+  volume_controller: b2f529b1dc3496fe900df1baef358aadce59a827
+  wakelock_plus: d4ca1e4e4bc9de42cb55d57b5bdc158af318e3c6
 
 PODFILE CHECKSUM: c6004dd61ab6b724c93a40f3706bf6adbdd5d4a0
 

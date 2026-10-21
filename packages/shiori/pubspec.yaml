@@ -1,0 +1,26 @@
+name: shiori
+description: Shiori, Mangayomi's design system. Tokens, theme and components.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.5
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flex_color_scheme: ^8.3.1
+  material_symbols_icons: ^4.2960.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  fonts:
+    # The interface face. One variable file covers every weight the type
+    # scale uses (400 to 800). Referenced as packages/shiori/Figtree.
+    - family: Figtree
+      fonts:
+        - asset: assets/fonts/Figtree/Figtree-Variable.ttf

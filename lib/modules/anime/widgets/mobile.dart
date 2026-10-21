@@ -8,15 +8,19 @@ import 'package:mangayomi/modules/anime/providers/anime_player_controller_provid
 import 'package:mangayomi/modules/anime/utils/temporary_playback_speed.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
+import 'package:mangayomi/modules/anime/widgets/player_overlay_surface.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:volume_controller/volume_controller.dart';
-import 'package:screen_brightness/screen_brightness.dart';
+import 'package:mangayomi/services/screen_brightness.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 import 'package:mangayomi/modules/anime/widgets/temporary_playback_speed_selector.dart';
@@ -29,6 +33,13 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
   final GlobalKey<VideoState> videoStatekey;
   final Widget bottomButtonBarWidget;
   final ValueNotifier<List<(String, int)>> chapterMarks;
+
+  /// The opening and the ending AniSkip knows, marked on the timeline.
+  final ValueListenable<List<(int, int)>>? skipRanges;
+
+  /// A row just above the panel, on the left: the lock and the skip, as
+  /// desktop's skip sits above its bar.
+  final Widget? abovePanelWidget;
   // Bumped by the player on each d-pad key so the controls reveal on a TV remote.
   final ValueNotifier<int> revealControls;
   final ValueNotifier<bool>? isLocked;
@@ -42,6 +53,8 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
     required this.chapterMarks,
     required this.revealControls,
     this.isLocked,
+    this.skipRanges,
+    this.abovePanelWidget,
   });
 
   @override
@@ -63,16 +76,16 @@ class _MobileControllerWidgetState
   // The center play/pause — focused first on reveal so the d-pad lands on the
   // main control rather than the top-bar back button.
   final FocusNode _playPauseFocus = FocusNode(debugLabel: 'playerPlayPause');
-  Duration controlsTransitionDuration = const Duration(milliseconds: 300);
-  Color backdropColor = const Color(0x66000000);
+  Duration controlsTransitionDuration = ShioriMotion.enter;
+  Color backdropColor = ShioriScrim.shadow;
   Timer? _timer;
   late final skipDuration = ref.watch(
     defaultDoubleTapToSkipLengthStateProvider,
   );
   final ValueNotifier<double> _brightnessValue = ValueNotifier(0.0);
   final ValueNotifier<bool> _brightnessIndicator = ValueNotifier(false);
-  StreamSubscription<double>? _brightnessSubscription;
   Timer? _brightnessTimer;
+  bool _brightnessChanged = false;
 
   final ValueNotifier<double> _volumeValue = ValueNotifier(0.0);
   final ValueNotifier<bool> _volumeIndicator = ValueNotifier(false);
@@ -96,7 +109,10 @@ class _MobileControllerWidgetState
   bool _hideSeekBackwardButton = false;
   bool _hideSeekForwardButton = false;
   double buttonBarHeight = 100;
-  final bottomButtonBarMargin = const EdgeInsets.only(left: 16.0, right: 8.0);
+  final bottomButtonBarMargin = const EdgeInsets.only(
+    left: ShioriSpace.s16,
+    right: ShioriSpace.s8,
+  );
 
   Duration? _seekBarDeltaValueNotifier;
 
@@ -207,15 +223,11 @@ class _MobileControllerWidgetState
     _volumeIndicator.dispose();
     _brightnessValue.dispose();
     _brightnessIndicator.dispose();
-    _brightnessSubscription?.cancel();
     _volumeController.removeListener();
 
-    // package:screen_brightness
-    Future.microtask(() async {
-      try {
-        await ScreenBrightness.instance.resetApplicationScreenBrightness();
-      } catch (_) {}
-    });
+    // Only if the brightness gesture set one; a reader's own brightness
+    // is never left on.
+    if (_brightnessChanged) unawaited(ScreenBrightness.reset());
     super.dispose();
   }
 
@@ -355,17 +367,8 @@ class _MobileControllerWidgetState
     });
 
     Future.microtask(() async {
-      try {
-        _brightnessValue.value = await ScreenBrightness.instance.application;
-        _brightnessSubscription = ScreenBrightness
-            .instance
-            .onApplicationScreenBrightnessChanged
-            .listen((value) {
-              if (mounted) {
-                _brightnessValue.value = value;
-              }
-            });
-      } catch (_) {}
+      final current = await ScreenBrightness.current();
+      if (mounted && current != null) _brightnessValue.value = current;
     });
   }
 
@@ -386,10 +389,9 @@ class _MobileControllerWidgetState
   }
 
   Future<void> setBrightness(double value) async {
-    // package:screen_brightness
-    try {
-      await ScreenBrightness.instance.setApplicationScreenBrightness(value);
-    } catch (_) {}
+    _brightnessChanged = true;
+    _brightnessValue.value = value;
+    unawaited(ScreenBrightness.set(value));
     _brightnessIndicator.value = true;
     _brightnessTimer?.cancel();
     _brightnessTimer = Timer(const Duration(milliseconds: 200), () {
@@ -531,30 +533,6 @@ class _MobileControllerWidgetState
                                   ),
                                 ),
                               ),
-                              Positioned(
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                height: 180,
-                                child: IgnorePointer(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.bottomCenter,
-                                        end: Alignment.topCenter,
-                                        colors: [
-                                          Theme.of(context).colorScheme.scrim
-                                              .withValues(alpha: 0.85),
-                                          Theme.of(context).colorScheme.scrim
-                                              .withValues(alpha: 0.40),
-                                          Colors.transparent,
-                                        ],
-                                        stops: const [0.0, 0.70, 1.0],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
                             ],
                             Positioned.fill(
                               child: Listener(
@@ -634,7 +612,7 @@ class _MobileControllerWidgetState
                           // after Flutter has accepted the long press.
                           behavior: HitTestBehavior.translucent,
                           onPointerCancel: (_) => _restorePlaybackSpeed(),
-                          child: Container(color: const Color(0x00000000)),
+                          child: Container(color: Colors.transparent),
                         ),
                       ),
                     ),
@@ -686,36 +664,57 @@ class _MobileControllerWidgetState
                               ),
                             ),
                           ),
-                          bottomControls: Stack(
-                            alignment: Alignment.bottomCenter,
+                          // The timeline and the settings in one panel
+                          // floating over the foot of the picture, as the
+                          // manga reader's: its own ground, so no gradient.
+                          bottomControls: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              ?widget.abovePanelWidget,
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: CustomSeekBar(
-                                  onSeekStart: (value) {
-                                    setState(() {
-                                      swipeDuration = value.inSeconds;
-                                      showSwipeDuration = true;
-                                    });
-                                    _timer?.cancel();
-                                  },
-                                  onSeekEnd: (value) {
-                                    _timer = Timer(controlsHoverDuration, () {
-                                      if (mounted) {
-                                        setState(() {
-                                          visible = false;
-                                        });
-                                      }
-                                    });
-                                    setState(() {
-                                      showSwipeDuration = false;
-                                    });
-                                  },
-                                  player: widget.videoController.player,
-                                  chapterMarks: widget.chapterMarks,
+                                padding: const EdgeInsets.fromLTRB(
+                                  ShioriSpace.s8,
+                                  0,
+                                  ShioriSpace.s8,
+                                  ShioriSpace.s8,
+                                ),
+                                child: ShioriOverlayPanel(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      CustomSeekBar(
+                                        onSeekStart: (value) {
+                                          setState(() {
+                                            swipeDuration = value.inSeconds;
+                                            showSwipeDuration = true;
+                                          });
+                                          _timer?.cancel();
+                                        },
+                                        onSeekEnd: (value) {
+                                          _timer = Timer(
+                                            controlsHoverDuration,
+                                            () {
+                                              if (mounted) {
+                                                setState(() {
+                                                  visible = false;
+                                                });
+                                              }
+                                            },
+                                          );
+                                          setState(() {
+                                            showSwipeDuration = false;
+                                          });
+                                        },
+                                        player: widget.videoController.player,
+                                        chapterMarks: widget.chapterMarks,
+                                        skipRanges: widget.skipRanges,
+                                      ),
+                                      widget.bottomButtonBarWidget,
+                                    ],
+                                  ),
                                 ),
                               ),
-                              widget.bottomButtonBarWidget,
                             ],
                           ),
                         ),
@@ -736,18 +735,27 @@ class _MobileControllerWidgetState
                     child: Column(
                       children: [
                         const Spacer(),
-                        Stack(
-                          alignment: Alignment.bottomCenter,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 10),
-                              child: CustomSeekBar(
-                                delta: _seekBarDeltaValueNotifier,
-                                player: widget.videoController.player,
-                                chapterMarks: widget.chapterMarks,
-                              ),
+                        // The timeline alone while a double tap or a swipe
+                        // seeks, in the same panel as with the controls.
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            ShioriSpace.s8,
+                            0,
+                            ShioriSpace.s8,
+                            ShioriSpace.s8,
+                          ),
+                          child: ShioriOverlayPanel(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: ShioriSpace.s12,
+                              vertical: ShioriSpace.s8,
                             ),
-                          ],
+                            child: CustomSeekBar(
+                              delta: _seekBarDeltaValueNotifier,
+                              player: widget.videoController.player,
+                              chapterMarks: widget.chapterMarks,
+                              skipRanges: widget.skipRanges,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -791,9 +799,7 @@ class _MobileControllerWidgetState
                               }
                               return const SizedBox.shrink();
                             },
-                            child: const CircularProgressIndicator(
-                              color: Color(0xFFFFFFFF),
-                            ),
+                            child: const PlayerBuffering(),
                           ),
                         ),
                       ),
@@ -865,7 +871,7 @@ class _MobileControllerWidgetState
                                     begin: 0.0,
                                     end: _hideSeekBackwardButton ? 0.0 : 1.0,
                                   ),
-                                  duration: const Duration(milliseconds: 200),
+                                  duration: ShioriMotion.standard,
                                   builder: (context, value, child) =>
                                       Opacity(opacity: value, child: child),
                                   onEnd: () {
@@ -915,7 +921,7 @@ class _MobileControllerWidgetState
                                     begin: 0.0,
                                     end: _hideSeekForwardButton ? 0.0 : 1.0,
                                   ),
-                                  duration: const Duration(milliseconds: 200),
+                                  duration: ShioriMotion.standard,
                                   builder: (context, value, child) =>
                                       Opacity(opacity: value, child: child),
                                   onEnd: () {
@@ -967,6 +973,9 @@ class _MobileControllerWidgetState
   }
 }
 
+/// The controls in the middle of the picture: the previous and the next
+/// episode, and play in the accent between them, the one control the eye
+/// goes to. A jump within the episode is a double tap on either side.
 List<Widget> mobilePrimaryButtonBar(
   BuildContext context,
   GlobalKey<VideoState> key,
@@ -974,46 +983,38 @@ List<Widget> mobilePrimaryButtonBar(
   VideoController controller, {
   FocusNode? playPauseFocus,
 }) {
-  bool hasPrevEpisode =
+  final hasPrevEpisode =
       streamController.getEpisodeIndex().$1 + 1 !=
       streamController.getEpisodesLength(streamController.getEpisodeIndex().$2);
-  bool hasNextEpisode = streamController.getEpisodeIndex().$1 != 0;
+  final hasNextEpisode = streamController.getEpisodeIndex().$1 != 0;
   final isFullScreen = isFullscreen(context);
+  final l10n = context.l10n;
+  void open(Chapter episode) {
+    if (isFullScreen) key.currentState?.exitFullscreen();
+    pushReplacementMangaReaderView(context: context, chapter: episode);
+  }
+
   return [
-    const Spacer(flex: 3),
-    IconButton(
-      style: mobilePlayerEpisodeNavigationButtonStyle(),
+    const Spacer(flex: 2),
+    ShioriOverlayIconButton(
       onPressed: hasPrevEpisode
-          ? () {
-              if (isFullScreen) {
-                key.currentState?.exitFullscreen();
-              }
-              pushReplacementMangaReaderView(
-                context: context,
-                chapter: streamController.getPrevEpisode(),
-              );
-            }
+          ? () => open(streamController.getPrevEpisode())
           : null,
-      icon: const Icon(Icons.skip_previous, size: 28),
+      tooltip: l10n.previous_episode,
+      size: 30,
+      icon: const Icon(Symbols.skip_previous_rounded, fill: 1),
     ),
     const Spacer(),
     CustomPlayOrPauseButton(controller: controller, focusNode: playPauseFocus),
     const Spacer(),
-    IconButton(
-      style: mobilePlayerEpisodeNavigationButtonStyle(),
+    ShioriOverlayIconButton(
       onPressed: hasNextEpisode
-          ? () {
-              if (isFullScreen) {
-                key.currentState?.exitFullscreen();
-              }
-              pushReplacementMangaReaderView(
-                context: context,
-                chapter: streamController.getNextEpisode(),
-              );
-            }
+          ? () => open(streamController.getNextEpisode())
           : null,
-      icon: const Icon(Icons.skip_next, size: 28),
+      tooltip: l10n.next_episode,
+      size: 30,
+      icon: const Icon(Symbols.skip_next_rounded, fill: 1),
     ),
-    const Spacer(flex: 3),
+    const Spacer(flex: 2),
   ];
 }

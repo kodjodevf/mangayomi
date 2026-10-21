@@ -19,9 +19,15 @@ class AnimeStreamController extends _$AnimeStreamController
     with ChapterControllerMixin {
   @override
   KeepAliveLink build({required Chapter episode}) {
+    _sessionEpisode = chapterRepository.resolveForReading(episode);
+    ref.onDispose(chapterRepository.retainForReading(this.episode));
     _keepAliveLink = ref.keepAlive();
     return _keepAliveLink!;
   }
+
+  Chapter? _sessionEpisode;
+  @override
+  Chapter get episode => _sessionEpisode ?? super.episode;
 
   KeepAliveLink? _keepAliveLink;
   KeepAliveLink? get keepAliveLink => _keepAliveLink;

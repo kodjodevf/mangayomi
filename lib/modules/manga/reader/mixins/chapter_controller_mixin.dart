@@ -3,6 +3,7 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
@@ -101,33 +102,39 @@ mixin ChapterControllerMixin {
   /// field (the caller is responsible for tracking wall-clock deltas).
   Future<void> setHistoryUpdate({int elapsedSeconds = 0}) async {
     if (incognitoMode) return;
-    final manga = getManga();
+    // Final history saving may outlive provider disposal (it awaits two writes).
+    final release = chapterRepository.retainForReading(chapter);
+    try {
+      final manga = getManga();
 
-    final m = chapter.manga.value!;
-    m.lastRead = DateTime.now().millisecondsSinceEpoch;
-    await mangaRepository.save(m);
+      final m = chapter.manga.value!;
+      m.lastRead = DateTime.now().millisecondsSinceEpoch;
+      await mangaRepository.save(m);
 
-    final isEmpty = historyRepository.isEmptyForManga(manga.id);
+      final isEmpty = historyRepository.isEmptyForManga(manga.id);
 
-    final History history;
-    if (isEmpty) {
-      history = History(
-        mangaId: manga.id,
-        date: DateTime.now().millisecondsSinceEpoch.toString(),
-        itemType: manga.itemType,
-        chapterId: chapter.id,
-      )..chapter.value = chapter;
-    } else {
-      history = historyRepository.findFirstByMangaId(manga.id)!
-        ..chapterId = chapter.id
-        ..chapter.value = chapter
-        ..date = DateTime.now().millisecondsSinceEpoch.toString();
+      final History history;
+      if (isEmpty) {
+        history = History(
+          mangaId: manga.id,
+          date: DateTime.now().millisecondsSinceEpoch.toString(),
+          itemType: manga.itemType,
+          chapterId: chapter.id,
+        )..chapter.value = chapter;
+      } else {
+        history = historyRepository.findFirstByMangaId(manga.id)!
+          ..chapterId = chapter.id
+          ..chapter.value = chapter
+          ..date = DateTime.now().millisecondsSinceEpoch.toString();
+      }
+
+      if (elapsedSeconds > 0) {
+        history.readingTimeSeconds =
+            (history.readingTimeSeconds ?? 0) + elapsedSeconds;
+      }
+      await historyRepository.save(history);
+    } finally {
+      release();
     }
-
-    if (elapsedSeconds > 0) {
-      history.readingTimeSeconds =
-          (history.readingTimeSeconds ?? 0) + elapsedSeconds;
-    }
-    await historyRepository.save(history);
   }
 }

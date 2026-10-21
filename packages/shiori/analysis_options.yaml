@@ -1,0 +1,10 @@
+analyzer:
+  exclude:
+    - build/**
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    cancel_subscriptions: true
+    close_sinks: true
+    avoid_empty_else: true

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
@@ -40,16 +41,20 @@ class DownloadedChapter {
 /// 0.8.6 and 0.8.7 sent downloads to a local folder instead, so anything the
 /// user downloaded on those builds is under `<local folder>/<manga>/` and stays
 /// there. The location was restored upstream but the files were not moved.
-Future<List<Directory>> downloadedMangaDirectories(Chapter chapter) async {
+Future<List<Directory>> downloadedMangaDirectories(
+  Chapter chapter, {
+  Settings? settings,
+}) async {
   final directories = <Directory>[];
   final defaultDirectory = await StorageProvider().getMangaMainDirectory(
     chapter,
+    settings: settings,
   );
   if (defaultDirectory != null) directories.add(defaultDirectory);
 
   final mangaName = chapter.manga.value?.name;
   if (mangaName == null) return directories;
-  for (final folder in await getAllLocalFolders()) {
+  for (final folder in await getAllLocalFolders(settings: settings)) {
     final folderPath = folder.path;
     if (folderPath == null || folderPath.isEmpty) continue;
     directories.add(

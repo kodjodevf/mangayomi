@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 /// True for the remote / keyboard "select / OK" keys used across the TV UI.
 bool tvIsSelectKey(LogicalKeyboardKey k) =>
@@ -13,7 +13,7 @@ bool tvIsSelectKey(LogicalKeyboardKey k) =>
 /// A focusable TV pill (chip) with the accent focused / selected / idle states
 /// shared by the TV home category filter and the Browse tab switcher.
 ///
-/// Focused = accent fill + white text + a slight scale; selected (not focused) =
+/// Focused = accent fill + text read on it + a slight scale; selected (not focused) =
 /// accent tint + accent text; idle = muted. Handles remote OK (tap) and held-OK
 /// (long-press), an optional Menu action while focused, and scrolls itself into
 /// view on focus.
@@ -57,17 +57,19 @@ class _TvPillState extends State<TvPill> {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.primaryColor;
+    final accent = context.shiori.color.accentInk;
     final bg = _focused
         ? accent
         : widget.selected
         ? accent.withValues(alpha: 0.22)
-        : Theme.of(context).hintColor.withValues(alpha: 0.14);
+        : context.shiori.color.fgMuted.withValues(alpha: 0.14);
+    // Read on the accent once focused (ShioriColors.onFill): white sat on
+    // the light accent ink of the dark theme.
     final fg = _focused
-        ? Colors.white
+        ? ShioriColors.onFill(accent)
         : widget.selected
         ? accent
-        : Theme.of(context).colorScheme.onSurface;
+        : context.shiori.color.fg;
     return Focus(
       focusNode: widget.focusNode,
       autofocus: widget.autofocus,
@@ -77,7 +79,7 @@ class _TvPillState extends State<TvPill> {
           Scrollable.ensureVisible(
             context,
             alignment: 0.5,
-            duration: const Duration(milliseconds: 200),
+            duration: ShioriMotion.standard,
             curve: Curves.easeOut,
           );
         }
@@ -123,7 +125,7 @@ class _TvPillState extends State<TvPill> {
         onTap: widget.onTap,
         onLongPress: widget.onLongPress,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 130),
+          duration: ShioriMotion.fast,
           curve: Curves.easeOut,
           transform: Matrix4.identity()
             ..scaleByDouble(
@@ -135,7 +137,7 @@ class _TvPillState extends State<TvPill> {
           transformAlignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(ShioriShape.card),
             color: bg,
           ),
           child: Row(
@@ -150,7 +152,7 @@ class _TvPillState extends State<TvPill> {
                 style: TextStyle(
                   color: fg,
                   fontWeight: FontWeight.w600,
-                  fontSize: 12,
+                  fontSize: ShioriType.reference.meta.fontSize,
                 ),
               ),
             ],

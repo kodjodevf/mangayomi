@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:shiori/shiori.dart';
 
 class BottomTextWidget extends StatelessWidget {
   final bool isLoading;
@@ -22,94 +22,70 @@ class BottomTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isComfortableGrid
-        ? Padding(
-            padding: const EdgeInsets.only(left: 5, bottom: 5),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    text,
-                    style: TextStyle(
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.w600,
-                      color: textColor ?? context.textColor,
-                    ),
-                    maxLines: isTorrent! ? 8 : maxLines,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.start,
-                  ),
+    final tokens = context.shiori;
+    final lines = isTorrent! ? 8 : maxLines;
+    if (isComfortableGrid) {
+      // Under the cover, on the page's own ground.
+      return Padding(
+        padding: const EdgeInsetsDirectional.only(
+          start: ShioriSpace.s4,
+          bottom: ShioriSpace.s4,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                text,
+                style: tokens.text.card.copyWith(
+                  fontSize: fontSize,
+                  color: textColor ?? tokens.color.fg,
                 ),
-              ],
+                maxLines: lines,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
+              ),
             ),
-          )
-        : Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: isLoading
-                ? Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 5, bottom: 5),
-                        child: Text(
-                          text,
-                          style: TextStyle(
-                            fontSize: 13.0,
-                            color: textColor ?? Colors.white,
-                            shadows: const <Shadow>[
-                              Shadow(offset: Offset(0.5, 0.9), blurRadius: 3.0),
-                            ],
-                          ),
-                          maxLines: isTorrent! ? 8 : maxLines,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.start,
-                        ),
-                      ),
-                    ],
-                  )
-                : Container(
-                    height: isTorrent! ? 200 : 70,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withValues(alpha: 0.6),
-                        ],
-                        stops: const [0, 1],
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 5, bottom: 5),
-                          child: Text(
-                            text,
-                            style: TextStyle(
-                              fontSize: 13.0,
-                              color: textColor ?? Colors.white,
-                              shadows: const <Shadow>[
-                                Shadow(
-                                  offset: Offset(0.5, 0.9),
-                                  blurRadius: 3.0,
-                                ),
-                              ],
-                            ),
-                            maxLines: isTorrent! ? 8 : maxLines,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.start,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-          );
+          ],
+        ),
+      );
+    }
+    // Over the cover: the image is the ground, so the text is white on a
+    // scrim, whatever the theme.
+    final label = Padding(
+      padding: const EdgeInsetsDirectional.only(
+        start: ShioriSpace.s4,
+        end: ShioriSpace.s4,
+        bottom: ShioriSpace.s4,
+      ),
+      child: Text(
+        text,
+        style: tokens.text.card.copyWith(
+          color: textColor ?? Colors.white,
+          shadows: const [Shadow(color: ShioriScrim.shadow, blurRadius: 3)],
+        ),
+        maxLines: lines,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.start,
+      ),
+    );
+    return Positioned(
+      bottom: 0,
+      left: 0,
+      right: 0,
+      child: isLoading
+          ? label
+          : Container(
+              height: isTorrent! ? 200 : 70,
+              alignment: AlignmentDirectional.bottomStart,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, ShioriScrim.underText],
+                ),
+              ),
+              child: label,
+            ),
+    );
   }
 }

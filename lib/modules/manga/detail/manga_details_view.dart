@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/detail_header_action.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
-import 'package:mangayomi/modules/manga/detail/widgets/custom_floating_action_btn.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/mass_migration/services/mass_migration_service.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/repositories/category_repository.dart';
-import 'package:mangayomi/repositories/history_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/services/get_detail.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_view.dart';
-import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
-import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
-import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 
 enum _DuplicateLibraryAction { addAnyway, migrate }
 
@@ -96,23 +92,23 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
     final l10n = l10nLocalizations(context)!;
     return showDialog<_DuplicateLibraryAction>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(model.name ?? ''),
+      builder: (ctx) => ShioriDialog(
+        title: model.name ?? '',
         content: Text(l10n.already_in_library(oldSourceName, model.name ?? '')),
         actions: [
-          TextButton(
+          ShioriButton.quiet(
+            label: l10n.cancel,
             onPressed: () => Navigator.pop(ctx),
-            child: Text(l10n.cancel),
           ),
-          TextButton(
+          ShioriButton.secondary(
+            label: l10n.add_anyway,
             onPressed: () =>
                 Navigator.pop(ctx, _DuplicateLibraryAction.addAnyway),
-            child: Text(l10n.add_anyway),
           ),
-          TextButton(
+          ShioriButton(
+            label: l10n.migrate,
             onPressed: () =>
                 Navigator.pop(ctx, _DuplicateLibraryAction.migrate),
-            child: Text(l10n.migrate),
           ),
         ],
       ),
@@ -174,155 +170,85 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
     final l10n = l10nLocalizations(context)!;
     bool? isLocalArchive = widget.manga.isLocalArchive ?? false;
     return Scaffold(
-      floatingActionButton: Consumer(
-        builder: (context, ref, child) {
-          final chaptersList = ref.watch(chaptersListttStateProvider);
-          final isExtended = ref.watch(isExtendedStateProvider);
-          return ref.watch(isLongPressedStateProvider)
-              ? Container()
-              : chaptersList.isNotEmpty &&
-                    chaptersList
-                        .where((element) => !element.isRead!)
-                        .toList()
-                        .isNotEmpty
-              ? StreamBuilder(
-                  stream: historyRepository.watchByItemType(
-                    widget.manga.itemType,
-                  ),
-                  builder: (context, snapshot) {
-                    String buttonLabel = widget.manga.itemType != ItemType.anime
-                        ? l10n.read
-                        : l10n.watch;
-                    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                      final incognitoMode = ref.watch(
-                        incognitoModeStateProvider,
-                      );
-                      final entries = snapshot.data!
-                          .where(
-                            (element) => element.mangaId == widget.manga.id,
-                          )
-                          .toList();
-
-                      if (entries.isNotEmpty && !incognitoMode) {
-                        final chap = entries.last.chapter.value!;
-                        return CustomFloatingActionBtn(
-                          isExtended: !isExtended,
-                          label: l10n.resume,
-                          onPressed: () {
-                            chap.pushToReaderView(context);
-                          },
-                        );
-                      }
-                    }
-                    return CustomFloatingActionBtn(
-                      isExtended: !isExtended,
-                      label: buttonLabel,
-                      onPressed: () {
-                        widget.manga.chapters.toList().first.pushToReaderView(
-                          context,
-                        );
-                      },
-                    );
-                  },
-                )
-              : Container();
-        },
-      ),
       body: MangaDetailView(
-        titleDescription: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Icon(Icons.person_outline, size: 14),
-                const SizedBox(width: 4),
-                Text(
-                  (widget.manga.author?.isEmpty ?? false)
-                      ? l10n.unknown
-                      : widget.manga.author!,
-                  style: const TextStyle(fontWeight: FontWeight.w500),
-                ),
-              ],
-            ),
-            Wrap(
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Icon(getMangaStatusIcon(widget.manga.status), size: 14),
-                const SizedBox(width: 4),
-                Text(getMangaStatusName(widget.manga.status, context)),
-                if (!isLocalArchive) const Text(' • '),
-                if (!isLocalArchive) Text(widget.manga.source!),
-                if (!isLocalArchive)
-                  Text(' (${widget.manga.lang!.toUpperCase()})'),
-                if (!isLocalArchive && !widget.sourceExist)
-                  const Padding(
-                    padding: EdgeInsets.all(3),
-                    child: Icon(
-                      Icons.warning_amber,
-                      color: Colors.deepOrangeAccent,
-                      size: 14,
-                    ),
-                  ),
-              ],
-            ),
-          ],
-        ),
-        action: widget.manga.favorite!
-            ? SizedBox(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    elevation: 0,
-                  ),
-                  onPressed: () async {
-                    final model = widget.manga;
-                    model.favorite = false;
-                    model.dateAdded = 0;
-                    await mangaRepository.save(model);
-                  },
-                  child: Column(
+        titleDescription: Builder(
+          builder: (context) {
+            final tokens = context.shiori;
+            final meta = tokens.text.meta.copyWith(color: tokens.color.fgMuted);
+            final iconSize = tokens.scaled(14);
+            return Padding(
+              padding: const EdgeInsets.only(top: ShioriSpace.s4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 2,
+                children: [
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: ShioriSpace.s4,
                     children: [
-                      const Icon(Icons.favorite, size: 20),
-                      const SizedBox(height: 4),
+                      Icon(
+                        Symbols.person_rounded,
+                        size: iconSize,
+                        color: tokens.color.fgMuted,
+                      ),
                       Text(
-                        l10n.in_library,
-                        style: const TextStyle(fontSize: 11),
-                        textAlign: TextAlign.center,
+                        (widget.manga.author?.isEmpty ?? false)
+                            ? l10n.unknown
+                            : widget.manga.author!,
+                        style: tokens.text.row.copyWith(color: tokens.color.fg),
                       ),
                     ],
                   ),
-                ),
-              )
-            : ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  elevation: 0,
-                ),
-                onPressed: () => _onAddToLibraryPressed(context),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.favorite_border_rounded,
-                      size: 20,
-                      color: context.secondaryColor,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      l10n.add_to_library,
-                      style: TextStyle(
-                        color: context.secondaryColor,
-                        fontSize: 11,
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: ShioriSpace.s4,
+                    children: [
+                      Icon(
+                        getMangaStatusIcon(widget.manga.status),
+                        size: iconSize,
+                        color: tokens.color.fgMuted,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+                      Text(
+                        [
+                          getMangaStatusName(widget.manga.status, context),
+                          if (!isLocalArchive)
+                            '${widget.manga.source!} '
+                                '(${widget.manga.lang!.toUpperCase()})',
+                        ].join(' · '),
+                        style: meta,
+                      ),
+                      // The source is no longer installed.
+                      if (!isLocalArchive && !widget.sourceExist)
+                        Icon(
+                          Symbols.warning_rounded,
+                          color: tokens.color.offline.foreground,
+                          size: iconSize,
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        action: widget.manga.favorite!
+            ? DetailHeaderAction(
+                icon: Symbols.favorite_rounded,
+                label: l10n.in_library,
+                active: true,
+                onPressed: () async {
+                  final model = widget.manga;
+                  model.favorite = false;
+                  model.dateAdded = 0;
+                  await mangaRepository.save(model);
+                },
+              )
+            : DetailHeaderAction(
+                icon: Symbols.favorite_rounded,
+                label: l10n.add_to_library,
+                onPressed: () => _onAddToLibraryPressed(context),
               ),
         manga: widget.manga,
-        isExtended: (value) {
-          ref.read(isExtendedStateProvider.notifier).update(value);
-        },
         sourceExist: widget.sourceExist,
         checkForUpdate: widget.checkForUpdate,
         itemType: widget.manga.itemType,

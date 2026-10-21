@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/memory_probe_provider.dart';
@@ -13,12 +13,8 @@ import 'package:mangayomi/services/http/doh/doh_custom_store.dart';
 import 'package:mangayomi/services/http/cf_proxy_store.dart';
 import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/services/http/doh/doh_providers.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
-import 'package:mangayomi/modules/widgets/tv_escapable_slider.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/modules/onboarding/providers/onboarding_state_provider.dart';
-import 'package:mangayomi/modules/more/widgets/outlined_field_decoration.dart';
 
 class GeneralScreen extends ConsumerStatefulWidget {
   const GeneralScreen({super.key});
@@ -45,7 +41,7 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = l10nLocalizations(context);
+    final l10n = context.l10n;
     final customDns = ref.watch(customDnsStateProvider);
     final userAgent = ref.watch(userAgentStateProvider);
     final enableDiscordRpc = ref.watch(enableDiscordRpcStateProvider);
@@ -68,502 +64,220 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
     );
     final doHState = ref.watch(doHProviderStateProvider);
     final availableProviders = ref.watch(availableDoHProvidersProvider);
+    final weights = [
+      (l10n.recommendations_weights_genre, _genre, (int v) => _genre = v),
+      (l10n.recommendations_weights_setting, _setting, (int v) => _setting = v),
+      (
+        l10n.recommendations_weights_synopsis,
+        _synopsis,
+        (int v) => _synopsis = v,
+      ),
+      (l10n.recommendations_weights_theme, _theme, (int v) => _theme = v),
+    ];
     return Scaffold(
-      appBar: AppBar(title: Text(l10n!.general)),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ListTile(
-              onTap: () => _showAutoLibraryUpdateDialog(
-                context,
-                ref,
-                autoUpdateInterval,
-              ),
-              title: Text(l10n.auto_library_update),
-              subtitle: Text(
+      appBar: AppBar(title: Text(l10n.general)),
+      body: ListView(
+        padding: tvPageInsets,
+        children: [
+          ShioriSettingsGroup(
+            title: l10n.library,
+            children: [
+              ShioriValueRow<int>(
+                autofocus: isTv,
+                title: l10n.auto_library_update,
+                value: autoUpdateInterval,
                 // When it's off, say what the setting does; the word "Never"
                 // on its own doesn't explain what would otherwise happen.
-                autoUpdateInterval == 0
+                description: autoUpdateInterval == 0
                     ? l10n.auto_library_update_subtitle
-                    : _autoLibraryUpdateLabel(context, autoUpdateInterval),
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
-              ),
-            ),
-            if (autoUpdateInterval > 0)
-              SwitchListTile(
-                value: autoUpdateWifiOnly,
-                title: Text(l10n.auto_library_update_wifi_only),
-                subtitle: Text(
-                  l10n.auto_library_update_wifi_only_subtitle,
-                  style: TextStyle(fontSize: 11, color: context.secondaryColor),
-                ),
-                onChanged: (value) => ref
-                    .read(autoLibraryUpdateWifiOnlyStateProvider.notifier)
-                    .set(value),
-              ),
-            ExpansionTile(
-              title: Text(l10n.dns_over_https),
-              initiallyExpanded: doHState.enabled,
-              trailing: IgnorePointer(
-                child: Switch(value: doHState.enabled, onChanged: (_) {}),
-              ),
-              onExpansionChanged: (value) => ref
-                  .read(doHProviderStateProvider.notifier)
-                  .setDoHEnabled(value),
-              children: [
-                ListTile(
-                  title: Text(l10n.dns_provider),
-                  subtitle: Text(
-                    doHState.providerId == DoHProviders.customId
-                        ? (DohCustomStore.url.trim().isEmpty
-                              ? 'Custom'
-                              : 'Custom · ${DohCustomStore.url.trim()}')
-                        : (DoHProviders.byId[doHState.providerId ?? 0]?.name ??
-                              DoHProviders.cloudflare.name),
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: context.secondaryColor,
+                    : null,
+                options: [
+                  for (final hours in libraryUpdateIntervals)
+                    ShioriChoice(
+                      hours,
+                      _autoLibraryUpdateLabel(context, hours),
                     ),
+                ],
+                onChanged: (v) => ref
+                    .read(autoLibraryUpdateIntervalStateProvider.notifier)
+                    .set(v),
+              ),
+              if (autoUpdateInterval > 0)
+                ShioriSwitchRow(
+                  title: l10n.auto_library_update_wifi_only,
+                  subtitle: l10n.auto_library_update_wifi_only_subtitle,
+                  value: autoUpdateWifiOnly,
+                  onChanged: (v) => ref
+                      .read(autoLibraryUpdateWifiOnlyStateProvider.notifier)
+                      .set(v),
+                ),
+            ],
+          ),
+          ShioriSettingsGroup(
+            title: l10n.group_network,
+            children: [
+              ShioriSwitchRow(
+                title: l10n.dns_over_https,
+                value: doHState.enabled,
+                onChanged: (v) => ref
+                    .read(doHProviderStateProvider.notifier)
+                    .setDoHEnabled(v),
+              ),
+              if (doHState.enabled)
+                ShioriSettingRow(
+                  title: l10n.dns_provider,
+                  subtitle: doHState.providerId == DoHProviders.customId
+                      ? (DohCustomStore.url.trim().isEmpty
+                            ? l10n.custom
+                            : '${l10n.custom} · ${DohCustomStore.url.trim()}')
+                      : (DoHProviders.byId[doHState.providerId ?? 0]?.name ??
+                            DoHProviders.cloudflare.name),
+                  onTap: () => _pickDohProvider(
+                    // Cloudflare (id 0) when unset, to match the subtitle.
+                    doHState.providerId ?? 0,
+                    availableProviders,
                   ),
-                  onTap: () {
-                    // Default to Cloudflare (id 0) to match the subtitle, so the
-                    // dialog doesn't preselect a different provider than shown.
-                    final providerId = doHState.providerId ?? 0;
-                    final rootContext = context;
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text(l10n.dns_provider),
-                          content: SizedBox(
-                            width: context.width(0.8),
-                            child: RadioGroup(
-                              groupValue: providerId,
-                              onChanged: (value) {
-                                Navigator.pop(context);
-                                if (value == DoHProviders.customId) {
-                                  _showCustomDohDialog(
-                                    rootContext,
-                                    ref,
-                                    DohCustomStore.url,
-                                  );
-                                } else {
-                                  ref
-                                      .read(doHProviderStateProvider.notifier)
-                                      .setDoHProvider(value!);
-                                }
-                              },
-                              child: SuperListView.builder(
-                                shrinkWrap: true,
-                                itemCount: availableProviders.length + 1,
-                                itemBuilder: (context, index) {
-                                  // Last row: the user-supplied custom endpoint.
-                                  if (index == availableProviders.length) {
-                                    return RadioListTile(
-                                      dense: true,
-                                      contentPadding: const EdgeInsets.all(0),
-                                      value: DoHProviders.customId,
-                                      title: Text(context.l10n.custom),
-                                    );
-                                  }
-                                  final provider = availableProviders[index];
-                                  return RadioListTile(
-                                    dense: true,
-                                    contentPadding: const EdgeInsets.all(0),
-                                    value: provider.id,
-                                    title: Text(provider.name),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          actions: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    l10n.cancel,
-                                    style: TextStyle(
-                                      color: context.primaryColor,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
+                )
+              else
+                ShioriSettingRow(
+                  title: l10n.custom_dns_title,
+                  // Blank uses the system's, as the title used to explain.
+                  subtitle: customDns.isEmpty
+                      ? l10n.custom_dns_system
+                      : customDns,
+                  onTap: () => _editCustomDns(customDns),
+                ),
+              ShioriSettingRow(
+                title: l10n.default_user_agent,
+                subtitle: userAgent,
+                onTap: () => _editUserAgent(userAgent),
+              ),
+              ShioriSettingRow(
+                title: l10n.cloudflare_bypass_proxy,
+                subtitle: CfProxyStore.url.isEmpty
+                    ? l10n.cloudflare_bypass_proxy_hint
+                    : CfProxyStore.url,
+                onTap: _editCfProxy,
+              ),
+            ],
+          ),
+          ShioriSettingsGroup(
+            title: l10n.recommendations_weights,
+            children: [
+              for (final (title, value, assign) in weights)
+                ShioriSliderRow(
+                  title: title,
+                  value: value.toDouble(),
+                  min: 0,
+                  max: 100,
+                  divisions: 100,
+                  valueLabel: (v) => (v / 100).toStringAsFixed(2),
+                  onChanged: (v) => setState(() => assign(v.round())),
+                  onChangeEnd: (_) => ref
+                      .read(algorithmWeightsStateProvider.notifier)
+                      .setWeights(
+                        genre: _genre,
+                        setting: _setting,
+                        synopsis: _synopsis,
+                        theme: _theme,
+                      ),
+                ),
+              ShioriSettingRow(
+                icon: Symbols.restore_rounded,
+                title: l10n.reset,
+                onTap: () {
+                  final defaultWeights = AlgorithmWeights();
+                  setState(() {
+                    _genre = defaultWeights.genre!;
+                    _setting = defaultWeights.setting!;
+                    _synopsis = defaultWeights.synopsis!;
+                    _theme = defaultWeights.theme!;
+                  });
+                  ref
+                      .read(algorithmWeightsStateProvider.notifier)
+                      .set(defaultWeights);
+                },
+              ),
+            ],
+          ),
+          ShioriSettingsGroup(
+            title: l10n.group_discord,
+            children: [
+              ShioriSwitchRow(
+                title: l10n.enable_discord_rpc,
+                value: enableDiscordRpc,
+                onChanged: (value) {
+                  ref.read(enableDiscordRpcStateProvider.notifier).set(value);
+                  if (value) {
+                    discordRpc?.connect(ref);
+                  } else {
+                    discordRpc?.disconnect();
+                  }
+                },
+              ),
+              if (enableDiscordRpc) ...[
+                ShioriSwitchRow(
+                  title: l10n.hide_discord_rpc_incognito,
+                  value: hideDiscordRpcInIncognito,
+                  onChanged: (v) => ref
+                      .read(hideDiscordRpcInIncognitoStateProvider.notifier)
+                      .set(v),
+                ),
+                ShioriSwitchRow(
+                  title: l10n.rpc_show_reading_watching_progress,
+                  value: rpcShowReadingWatchingProgress,
+                  onChanged: (v) => ref
+                      .read(
+                        rpcShowReadingWatchingProgressStateProvider.notifier,
+                      )
+                      .set(v),
+                ),
+                ShioriSwitchRow(
+                  title: l10n.rpc_show_title,
+                  value: rpcShowTitleState,
+                  onChanged: (v) =>
+                      ref.read(rpcShowTitleStateProvider.notifier).set(v),
+                ),
+                ShioriSwitchRow(
+                  title: l10n.rpc_show_cover_image,
+                  value: rpcShowCoverImage,
+                  onChanged: (v) =>
+                      ref.read(rpcShowCoverImageStateProvider.notifier).set(v),
                 ),
               ],
-            ),
-            if (!doHState.enabled)
-              ListTile(
-                onTap: () => _showCustomDnsDialog(context, ref, customDns),
-                title: Text(l10n.custom_dns),
-                subtitle: Text(
-                  customDns,
-                  style: TextStyle(fontSize: 11, color: context.secondaryColor),
-                ),
+            ],
+          ),
+          ShioriSettingsGroup(
+            title: l10n.other,
+            children: [
+              ShioriSwitchRow(
+                title: l10n.show_nav_double_tap_tooltip,
+                subtitle: l10n.show_nav_double_tap_tooltip_subtitle,
+                value: showNavDoubleTapTooltip,
+                onChanged: (v) => ref
+                    .read(showNavDoubleTapTooltipStateProvider.notifier)
+                    .set(v),
               ),
-            ListTile(
-              onTap: () => _showDefaultUserAgentDialog(context, ref, userAgent),
-              title: Text(context.l10n.default_user_agent),
-              subtitle: Text(
-                userAgent,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ShioriSwitchRow(
+                title: l10n.memory_overlay,
+                subtitle: l10n.memory_overlay_subtitle,
+                value: ref.watch(memoryOverlayVisibleProvider),
+                onChanged: (v) =>
+                    ref.read(memoryOverlayVisibleProvider.notifier).set(v),
               ),
-            ),
-            // A way back to the first-run screen. It is the only way to see it
-            // once it has been dismissed, and on a debug build, where a fresh
-            // install skips it, the only way to see it at all.
-            ListTile(
-              onTap: () => ref
-                  .read(onboardingCompletedStateProvider.notifier)
-                  .showAgain(),
-              title: Text(context.l10n.onboarding_replay),
-              subtitle: Text(
-                context.l10n.onboarding_replay_subtitle,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              // A way back to the first-run screen. It is the only way to see
+              // it once it has been dismissed, and on a debug build, where a
+              // fresh install skips it, the only way to see it at all.
+              ShioriSettingRow(
+                title: l10n.onboarding_replay,
+                subtitle: l10n.onboarding_replay_subtitle,
+                onTap: () => ref
+                    .read(onboardingCompletedStateProvider.notifier)
+                    .showAgain(),
               ),
-            ),
-            ListTile(
-              onTap: () => _showCfProxyDialog(context),
-              title: Text(context.l10n.cloudflare_bypass_proxy),
-              subtitle: Text(
-                CfProxyStore.url.isEmpty
-                    ? 'Optional FlareSolverr / Byparr URL'
-                    : CfProxyStore.url,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.all(20.0),
-              padding: const EdgeInsets.all(10.0),
-              decoration: BoxDecoration(
-                border: Border.all(width: 3.0, color: context.primaryColor),
-                borderRadius: BorderRadius.all(Radius.circular(5.0)),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        context.l10n.recommendations_weights,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(width: 20),
-                      OutlinedButton.icon(
-                        onPressed: () {
-                          final defaultWeights = AlgorithmWeights();
-                          setState(() {
-                            _genre = defaultWeights.genre!;
-                            _setting = defaultWeights.setting!;
-                            _synopsis = defaultWeights.synopsis!;
-                            _theme = defaultWeights.theme!;
-                          });
-                          ref
-                              .read(algorithmWeightsStateProvider.notifier)
-                              .set(defaultWeights);
-                        },
-                        label: Text(context.l10n.reset),
-                        icon: const Icon(Icons.restore),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(context.l10n.recommendations_weights_genre),
-                        Text(
-                          (_genre / 100).toStringAsFixed(2),
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: context.secondaryColor,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        TvEscapableSlider(
-                          enabled: isTv,
-                          onDecrease: () {
-                            setState(() => _genre = (_genre - 1).clamp(0, 100));
-                            ref
-                                .read(algorithmWeightsStateProvider.notifier)
-                                .setWeights(genre: _genre);
-                          },
-                          onIncrease: () {
-                            setState(() => _genre = (_genre + 1).clamp(0, 100));
-                            ref
-                                .read(algorithmWeightsStateProvider.notifier)
-                                .setWeights(genre: _genre);
-                          },
-                          child: SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              overlayShape: const RoundSliderOverlayShape(
-                                overlayRadius: 5.0,
-                              ),
-                            ),
-                            child: Slider.adaptive(
-                              min: 0,
-                              max: 100,
-                              value: _genre.toDouble(),
-                              onChanged: (value) {
-                                HapticFeedback.vibrate();
-                                setState(() {
-                                  _genre = value.toInt();
-                                });
-                              },
-                              onChangeEnd: (value) => ref
-                                  .read(algorithmWeightsStateProvider.notifier)
-                                  .setWeights(genre: _genre),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(context.l10n.recommendations_weights_setting),
-                        Text(
-                          (_setting / 100).toStringAsFixed(2),
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: context.secondaryColor,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        TvEscapableSlider(
-                          enabled: isTv,
-                          onDecrease: () {
-                            setState(
-                              () => _setting = (_setting - 1).clamp(0, 100),
-                            );
-                            ref
-                                .read(algorithmWeightsStateProvider.notifier)
-                                .setWeights(setting: _setting);
-                          },
-                          onIncrease: () {
-                            setState(
-                              () => _setting = (_setting + 1).clamp(0, 100),
-                            );
-                            ref
-                                .read(algorithmWeightsStateProvider.notifier)
-                                .setWeights(setting: _setting);
-                          },
-                          child: SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              overlayShape: const RoundSliderOverlayShape(
-                                overlayRadius: 5.0,
-                              ),
-                            ),
-                            child: Slider.adaptive(
-                              min: 0,
-                              max: 100,
-                              value: _setting.toDouble(),
-                              onChanged: (value) {
-                                HapticFeedback.vibrate();
-                                setState(() {
-                                  _setting = value.toInt();
-                                });
-                              },
-                              onChangeEnd: (value) => ref
-                                  .read(algorithmWeightsStateProvider.notifier)
-                                  .setWeights(setting: _setting),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(context.l10n.recommendations_weights_synopsis),
-                        Text(
-                          (_synopsis / 100).toStringAsFixed(2),
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: context.secondaryColor,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        TvEscapableSlider(
-                          enabled: isTv,
-                          onDecrease: () {
-                            setState(
-                              () => _synopsis = (_synopsis - 1).clamp(0, 100),
-                            );
-                            ref
-                                .read(algorithmWeightsStateProvider.notifier)
-                                .setWeights(synopsis: _synopsis);
-                          },
-                          onIncrease: () {
-                            setState(
-                              () => _synopsis = (_synopsis + 1).clamp(0, 100),
-                            );
-                            ref
-                                .read(algorithmWeightsStateProvider.notifier)
-                                .setWeights(synopsis: _synopsis);
-                          },
-                          child: SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              overlayShape: const RoundSliderOverlayShape(
-                                overlayRadius: 5.0,
-                              ),
-                            ),
-                            child: Slider.adaptive(
-                              min: 0,
-                              max: 100,
-                              value: _synopsis.toDouble(),
-                              onChanged: (value) {
-                                HapticFeedback.vibrate();
-                                setState(() {
-                                  _synopsis = value.toInt();
-                                });
-                              },
-                              onChangeEnd: (value) => ref
-                                  .read(algorithmWeightsStateProvider.notifier)
-                                  .setWeights(synopsis: _synopsis),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(context.l10n.recommendations_weights_theme),
-                        Text(
-                          (_theme / 100).toStringAsFixed(2),
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: context.secondaryColor,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        TvEscapableSlider(
-                          enabled: isTv,
-                          onDecrease: () {
-                            setState(() => _theme = (_theme - 1).clamp(0, 100));
-                            ref
-                                .read(algorithmWeightsStateProvider.notifier)
-                                .setWeights(theme: _theme);
-                          },
-                          onIncrease: () {
-                            setState(() => _theme = (_theme + 1).clamp(0, 100));
-                            ref
-                                .read(algorithmWeightsStateProvider.notifier)
-                                .setWeights(theme: _theme);
-                          },
-                          child: SliderTheme(
-                            data: SliderTheme.of(context).copyWith(
-                              overlayShape: const RoundSliderOverlayShape(
-                                overlayRadius: 5.0,
-                              ),
-                            ),
-                            child: Slider.adaptive(
-                              min: 0,
-                              max: 100,
-                              value: _theme.toDouble(),
-                              onChanged: (value) {
-                                HapticFeedback.vibrate();
-                                setState(() {
-                                  _theme = value.toInt();
-                                });
-                              },
-                              onChangeEnd: (value) => ref
-                                  .read(algorithmWeightsStateProvider.notifier)
-                                  .setWeights(theme: _theme),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SwitchListTile(
-              value: ref.watch(memoryOverlayVisibleProvider),
-              title: Text(l10n.memory_overlay),
-              subtitle: Text(l10n.memory_overlay_subtitle),
-              onChanged: (value) =>
-                  ref.read(memoryOverlayVisibleProvider.notifier).set(value),
-            ),
-            SwitchListTile(
-              value: showNavDoubleTapTooltip,
-              title: Text(l10n.show_nav_double_tap_tooltip),
-              subtitle: Text(l10n.show_nav_double_tap_tooltip_subtitle),
-              onChanged: (value) => ref
-                  .read(showNavDoubleTapTooltipStateProvider.notifier)
-                  .set(value),
-            ),
-            SwitchListTile(
-              value: enableDiscordRpc,
-              title: Text(l10n.enable_discord_rpc),
-              onChanged: (value) {
-                ref.read(enableDiscordRpcStateProvider.notifier).set(value);
-                if (value) {
-                  discordRpc?.connect(ref);
-                } else {
-                  discordRpc?.disconnect();
-                }
-              },
-            ),
-            SwitchListTile(
-              value: hideDiscordRpcInIncognito,
-              title: Text(l10n.hide_discord_rpc_incognito),
-              onChanged: (value) {
-                ref
-                    .read(hideDiscordRpcInIncognitoStateProvider.notifier)
-                    .set(value);
-              },
-            ),
-            SwitchListTile(
-              value: rpcShowReadingWatchingProgress,
-              title: Text(l10n.rpc_show_reading_watching_progress),
-              onChanged: (value) {
-                ref
-                    .read(rpcShowReadingWatchingProgressStateProvider.notifier)
-                    .set(value);
-              },
-            ),
-            SwitchListTile(
-              value: rpcShowTitleState,
-              title: Text(l10n.rpc_show_title),
-              onChanged: (value) {
-                ref.read(rpcShowTitleStateProvider.notifier).set(value);
-              },
-            ),
-            SwitchListTile(
-              value: rpcShowCoverImage,
-              title: Text(l10n.rpc_show_cover_image),
-              onChanged: (value) {
-                ref.read(rpcShowCoverImageStateProvider.notifier).set(value);
-              },
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -580,291 +294,90 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
     };
   }
 
-  void _showAutoLibraryUpdateDialog(
-    BuildContext context,
-    WidgetRef ref,
+  /// The resolvers, then a custom endpoint, which asks for its URL.
+  Future<void> _pickDohProvider(
     int current,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(context.l10n.auto_library_update),
-        content: SizedBox(
-          width: context.width(0.8),
-          child: RadioGroup(
-            groupValue: current,
-            onChanged: (value) {
-              Navigator.pop(context);
-              if (value == null) return;
-              ref
-                  .read(autoLibraryUpdateIntervalStateProvider.notifier)
-                  .set(value);
-            },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (final hours in libraryUpdateIntervals)
-                  RadioListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    value: hours,
-                    title: Text(_autoLibraryUpdateLabel(context, hours)),
-                  ),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(context.l10n.cancel),
-          ),
-        ],
-      ),
+    List<DoHProvider> providers,
+  ) async {
+    final picked = await showShioriChoice<int>(
+      context,
+      title: context.l10n.dns_provider,
+      selected: current,
+      options: [
+        for (final provider in providers)
+          ShioriChoice(provider.id, provider.name),
+        ShioriChoice(DoHProviders.customId, context.l10n.custom),
+      ],
     );
-  }
-
-  void _showCustomDohDialog(
-    BuildContext context,
-    WidgetRef ref,
-    String customDohUrl,
-  ) {
-    final controller = TextEditingController(text: customDohUrl);
-    String url = customDohUrl;
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          final parsed = Uri.tryParse(url.trim());
-          final isValid =
-              parsed != null &&
-              parsed.scheme == 'https' &&
-              parsed.host.isNotEmpty;
-          return AlertDialog(
-            title: Text(
-              context.l10n.custom_doh_url,
-              style: const TextStyle(fontSize: 24),
-            ),
-            content: SizedBox(
-              width: context.width(0.8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: TextFormField(
-                      controller: controller,
-                      autofocus: true,
-                      keyboardType: TextInputType.url,
-                      onChanged: (value) => setState(() => url = value),
-                      decoration: outlinedFieldDecoration(
-                        hintText: 'https://example.com/dns-query',
-                        helperText: context.l10n.custom_doh_url_helper,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: context.width(1),
-                    child: ElevatedButton(
-                      onPressed: isValid
-                          ? () {
-                              ref
-                                  .read(doHProviderStateProvider.notifier)
-                                  .setCustomDoH(url.trim());
-                              Navigator.pop(context);
-                            }
-                          : null,
-                      child: Text(context.l10n.dialog_confirm),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
+    if (picked == null || !mounted) return;
+    if (picked == DoHProviders.customId) {
+      final url = await showShioriPrompt(
+        context,
+        title: context.l10n.custom_doh_url,
+        message: context.l10n.custom_doh_url_helper,
+        confirmLabel: context.l10n.dialog_confirm,
+        initialValue: DohCustomStore.url,
+        hint: 'https://example.com/dns-query',
+        keyboardType: TextInputType.url,
+        validator: (text) {
+          final parsed = Uri.tryParse(text.trim());
+          return parsed != null &&
+                  parsed.scheme == 'https' &&
+                  parsed.host.isNotEmpty
+              ? null
+              : context.l10n.invalid_url('https://');
         },
-      ),
-    );
+      );
+      if (url == null) return;
+      ref.read(doHProviderStateProvider.notifier).setCustomDoH(url.trim());
+    } else {
+      ref.read(doHProviderStateProvider.notifier).setDoHProvider(picked);
+    }
   }
 
-  void _showCfProxyDialog(BuildContext context) {
-    final controller = TextEditingController(text: CfProxyStore.url);
-    String url = CfProxyStore.url;
-    showDialog(
-      context: context,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (dialogContext, setLocalState) {
-          final trimmed = url.trim();
-          final isValid =
-              trimmed.isEmpty ||
-              trimmed.startsWith('http://') ||
-              trimmed.startsWith('https://');
-          return AlertDialog(
-            title: const Text(
-              'Cloudflare bypass proxy',
-              style: TextStyle(fontSize: 24),
-            ),
-            content: SizedBox(
-              width: context.width(0.8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: TextFormField(
-                      controller: controller,
-                      autofocus: true,
-                      keyboardType: TextInputType.url,
-                      onChanged: (value) => setLocalState(() => url = value),
-                      decoration: outlinedFieldDecoration(
-                        hintText: 'http://localhost:8191/v1',
-                        helperText:
-                            'FlareSolverr / Byparr endpoint. Leave empty to '
-                            'disable.',
-                        helperMaxLines: 2,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: context.width(1),
-                    child: ElevatedButton(
-                      onPressed: isValid
-                          ? () {
-                              CfProxyStore.setUrl(trimmed);
-                              Navigator.pop(dialogContext);
-                              if (mounted) setState(() {});
-                            }
-                          : null,
-                      child: Text(context.l10n.dialog_confirm),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  void _showCustomDnsDialog(
-    BuildContext context,
-    WidgetRef ref,
-    String customDns,
-  ) {
-    final dnsController = TextEditingController(text: customDns);
-    String dns = customDns;
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: Text(
-              context.l10n.custom_dns,
-              style: const TextStyle(fontSize: 30),
-            ),
-            content: SizedBox(
-              width: context.width(0.8),
-              height: context.height(0.3),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: TextFormField(
-                      controller: dnsController,
-                      autofocus: true,
-                      onChanged: (value) => setState(() {
-                        dns = value;
-                      }),
-                      decoration: outlinedFieldDecoration(hintText: "8.8.8.8"),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: SizedBox(
-                      width: context.width(1),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          ref.read(customDnsStateProvider.notifier).set(dns);
-                          Navigator.pop(context);
-                        },
-                        child: Text(context.l10n.dialog_confirm),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-void _showDefaultUserAgentDialog(
-  BuildContext context,
-  WidgetRef ref,
-  String ua,
-) {
-  final uaController = TextEditingController(text: ua);
-  showDialog(
-    context: context,
-    builder: (context) => StatefulBuilder(
-      builder: (context, setState) {
-        return AlertDialog(
-          title: Text(
-            context.l10n.default_user_agent,
-            style: const TextStyle(fontSize: 30),
-          ),
-          content: SizedBox(
-            width: context.width(0.8),
-            height: context.height(0.3),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: TextFormField(
-                    controller: uaController,
-                    autofocus: true,
-
-                    decoration: outlinedFieldDecoration(
-                      hintText: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...",
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: SizedBox(
-                    width: context.width(1),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        ref
-                            .watch(userAgentStateProvider.notifier)
-                            .set(uaController.text);
-                        if (!context.mounted) return;
-                        Navigator.pop(context);
-                      },
-                      child: Text(context.l10n.dialog_confirm),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+  Future<void> _editCfProxy() async {
+    final url = await showShioriPrompt(
+      context,
+      title: context.l10n.cloudflare_bypass_proxy,
+      message: context.l10n.cloudflare_bypass_proxy_message,
+      confirmLabel: context.l10n.dialog_confirm,
+      initialValue: CfProxyStore.url,
+      hint: 'http://localhost:8191/v1',
+      keyboardType: TextInputType.url,
+      allowEmpty: true,
+      validator: (text) {
+        final t = text.trim();
+        return t.isEmpty || t.startsWith('http://') || t.startsWith('https://')
+            ? null
+            : context.l10n.invalid_url('http(s)://');
       },
-    ),
-  );
+    );
+    if (url == null) return;
+    CfProxyStore.setUrl(url.trim());
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _editCustomDns(String current) async {
+    final dns = await showShioriPrompt(
+      context,
+      title: context.l10n.custom_dns_title,
+      confirmLabel: context.l10n.dialog_confirm,
+      initialValue: current,
+      hint: '8.8.8.8',
+      allowEmpty: true,
+    );
+    if (dns != null) ref.read(customDnsStateProvider.notifier).set(dns);
+  }
+
+  Future<void> _editUserAgent(String current) async {
+    final ua = await showShioriPrompt(
+      context,
+      title: context.l10n.default_user_agent,
+      confirmLabel: context.l10n.dialog_confirm,
+      initialValue: current,
+      hint: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)...',
+      maxLines: 3,
+    );
+    if (ua != null) ref.read(userAgentStateProvider.notifier).set(ua);
+  }
 }

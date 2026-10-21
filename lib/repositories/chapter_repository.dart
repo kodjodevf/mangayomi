@@ -5,6 +5,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
+import 'package:mangayomi/repositories/chapter_consolidation.dart';
 
 class ChapterRepository {
   Chapter getById(int id) => isar.chapters.getSync(id)!;
@@ -141,7 +142,25 @@ class ChapterRepository {
 
   void putAllSync(List<Chapter> chapters) => isar.chapters.putAllSync(chapters);
 
-  void clearSync() => isar.chapters.clearSync();
+  void clearSync() {
+    clearChapterAliases(isar);
+    isar.chapters.clearSync();
+  }
+
+  Chapter resolveForReading(Chapter chapter) {
+    final current = isar.chapters.getSync(
+      resolveChapterAlias(isar, chapter.id!),
+    );
+    return current != null && current.mangaId == chapter.mangaId
+        ? current
+        : chapter;
+  }
+
+  void Function() retainForReading(Chapter chapter) =>
+      retainReadingChapter(isar, chapter.id!);
+
+  void publishAliases(Map<int, Chapter> canonical) =>
+      publishChapterAliases(isar, canonical);
 
   Future<int> putAsync(Chapter chapter) => isar.chapters.put(chapter);
 
@@ -151,6 +170,20 @@ class ChapterRepository {
       isar.chapters.putAll(chapters);
 
   Future<void> deleteAllAsync(List<int> ids) => isar.chapters.deleteAll(ids);
+
+  // Part of the caller's existing catalog transaction; never opens another one.
+  Future<ChapterConsolidation> consolidateDuplicatesAsync(
+    List<Chapter> chapters, {
+    required String mangaName,
+    required int now,
+    required bool Function(int) isScheduled,
+  }) => consolidateChapterDuplicates(
+    isar,
+    chapters,
+    mangaName: mangaName,
+    now: now,
+    isScheduled: isScheduled,
+  );
 
   // Escape hatch for chapter-rooted transactions too specific to name
   // (linking a fresh batch to their manga, page-index + sibling-chapter

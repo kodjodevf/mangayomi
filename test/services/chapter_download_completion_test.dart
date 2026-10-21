@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
+import 'package:bot_toast/bot_toast.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -42,37 +44,72 @@ void main() {
     await Isar.initializeIsarCore(download: true);
   });
 
-  test(
+  testWidgets(
     'a cold download does not wait for a stalled optional cover',
-    () => _checkDownload(0, stalledCover: true),
+    (tester) => _runDownloadTest(tester, 0, stalledCover: true),
   );
-  test(
+  testWidgets(
     'partial resume packs cached and newly fetched pages',
-    () => _checkDownload(1),
+    (tester) => _runDownloadTest(tester, 1),
   );
-  test(
+  testWidgets(
     'an entirely cached chapter packs every page without image HTTP',
-    () => _checkDownload(2),
+    (tester) => _runDownloadTest(tester, 2),
   );
-  test(
+  testWidgets(
     'the download stays active until asynchronous packing finishes',
-    () => _checkDownload(0, holdPacking: true),
+    (tester) => _runDownloadTest(tester, 0, holdPacking: true),
   );
+  testWidgets(
+    'a failed page leaves cached files and reading progress intact',
+    (tester) => _runDownloadTest(tester, 1, failPages: true),
+  );
+}
+
+Future<void> _runDownloadTest(
+  WidgetTester tester,
+  int cachedPages, {
+  bool stalledCover = false,
+  bool holdPacking = false,
+  bool failPages = false,
+}) async {
+  await tester.pumpWidget(
+    MaterialApp(builder: BotToastInit(), home: const SizedBox()),
+  );
+  try {
+    // Real loopback HTTP, isolates and filesystem I/O need real async time.
+    await tester.runAsync(
+      () => _checkDownload(
+        cachedPages,
+        stalledCover: stalledCover,
+        holdPacking: holdPacking,
+        failPages: failPages,
+      ),
+    );
+  } finally {
+    BotToast.cleanAll();
+    await tester.pumpAndSettle();
+  }
 }
 
 Future<void> _checkDownload(
   int cachedPages, {
   bool stalledCover = false,
   bool holdPacking = false,
+  bool failPages = false,
 }) async {
   final directory = await Directory.systemTemp.createTemp('chapter-download-');
+  addTearDown(() => directory.delete(recursive: true));
   final previousPaths = PathProviderPlatform.instance;
   PathProviderPlatform.instance = _Paths(directory.path);
+  addTearDown(() => PathProviderPlatform.instance = previousPaths);
   ChapterCache().customCacheDir = Directory(p.join(directory.path, 'cache'));
+  addTearDown(() => ChapterCache().customCacheDir = null);
   final messenger =
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
   const connectivity = MethodChannel('dev.fluttercommunity.plus/connectivity');
   messenger.setMockMethodCallHandler(connectivity, (_) async => ['wifi']);
+  addTearDown(() => messenger.setMockMethodCallHandler(connectivity, null));
   final db = await Isar.open(
     [
       MangaSchema,
@@ -86,7 +123,9 @@ Future<void> _checkDownload(
     name: 'chapter_download',
   );
   app.isar = db;
+  addTearDown(() => db.close(deleteFromDisk: true));
   final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+  addTearDown(() => server.close(force: true));
   final releaseCover = Completer<void>();
   final releasePacking = Completer<void>();
   final packingStarted = Completer<void>();
@@ -101,6 +140,11 @@ Future<void> _checkDownload(
       await releaseCover.future;
     } else {
       imageRequests++;
+      if (failPages) {
+        request.response.statusCode = HttpStatus.internalServerError;
+        await request.response.close();
+        return;
+      }
     }
     request.response.headers.contentType = ContentType('image', 'png');
     request.response.add(image);
@@ -166,6 +210,8 @@ Future<void> _checkDownload(
         .writeAsBytes(image);
   }
   final cbz = File(p.join(mangaDirectory.path, 'Chapter 1.cbz'));
+  DownloadIsolatePool.configureForTesting();
+  addTearDown(() => DownloadIsolatePool.instance.dispose());
   final container = ProviderContainer(
     overrides: [
       headersProvider.overrideWith((ref, args) => {}),
@@ -191,63 +237,61 @@ Future<void> _checkDownload(
         }),
     ],
   );
+  addTearDown(container.dispose);
   final download = container.read(
     downloadChapterProvider(chapter: chapter).future,
   );
-  try {
-    if (holdPacking) {
-      await packingStarted.future.timeout(const Duration(seconds: 10));
-      final state = await Future.any([
-        download.then((_) => 'finished'),
-        Future.delayed(const Duration(milliseconds: 150), () => 'packing'),
-      ]);
-      expect(state, 'packing');
-      expect(db.downloads.getSync(1)?.isDownload, isNot(true));
-      releasePacking.complete();
-    }
-    await download.timeout(const Duration(seconds: 10));
-    // Completion must include packing and persistence; no post-download polling.
-    expect(db.downloads.getSync(1)?.isDownload, true);
-    expect(coverRequests, 0);
-    expect(imageRequests, 2 - cachedPages);
-    if (!holdPacking) {
-      final archive = ZipDecoder().decodeBytes(
-        await cbz.readAsBytes(),
-        verify: true,
-      );
-      final pages = archive.files
-          .where((f) => f.name.endsWith('.png'))
-          .toList();
-      expect(pages, hasLength(2));
-      for (final page in pages) {
-        expect(page.content, image);
-      }
-      expect(
-        await File(p.join(mangaDirectory.path, 'cover.png')).readAsBytes(),
-        image,
-      );
-    }
-    expect(db.chapters.getSync(1)!.lastPageRead, '7');
-    expect(db.chapters.getSync(1)!.isBookmarked, true);
-    expect(db.settings.getSync(227)!.chapterPageIndexList!.single.index, 6);
-  } finally {
+  // Register cleanup before assertions: one failed test must not leave an open
+  // Isar instance that turns the following cases into unrelated failures.
+  addTearDown(() async {
     if (!releaseCover.isCompleted) releaseCover.complete();
     if (!releasePacking.isCompleted) releasePacking.complete();
-    await download.timeout(const Duration(seconds: 10), onTimeout: () {});
-    // Also settle the old implementation's unawaited progress writer in RED runs.
-    final deadline = DateTime.now().add(const Duration(seconds: 3));
-    while (db.downloads.getSync(1)?.isDownload != true &&
-        DateTime.now().isBefore(deadline)) {
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-    }
+    await download
+        .timeout(const Duration(seconds: 10))
+        .catchError((Object _) {});
     await dbWriteQueue.run(() {});
-    container.dispose();
-    DownloadIsolatePool.instance.dispose();
-    await server.close(force: true);
-    messenger.setMockMethodCallHandler(connectivity, null);
-    PathProviderPlatform.instance = previousPaths;
-    ChapterCache().customCacheDir = null;
-    await db.close(deleteFromDisk: true);
-    await directory.delete(recursive: true);
+  });
+  if (holdPacking) {
+    await packingStarted.future.timeout(const Duration(seconds: 10));
+    final state = await Future.any([
+      download.then((_) => 'finished'),
+      Future.delayed(const Duration(milliseconds: 150), () => 'packing'),
+    ]);
+    expect(state, 'packing');
+    expect(db.downloads.getSync(1)?.isDownload, isNot(true));
+    releasePacking.complete();
   }
+  await download.timeout(const Duration(seconds: 10));
+  // Completion must include packing and persistence; no post-download polling.
+  expect(db.downloads.getSync(1)?.isDownload, !failPages);
+  expect(coverRequests, 0);
+  if (failPages) {
+    expect(imageRequests, greaterThan(0));
+    expect(await cbz.exists(), false);
+    expect(
+      await File(p.join(pagesDirectory.path, '${padIndex(0)}.png'))
+          .readAsBytes(),
+      image,
+    );
+  } else {
+    expect(imageRequests, 2 - cachedPages);
+  }
+  if (!holdPacking && !failPages) {
+    final archive = ZipDecoder().decodeBytes(
+      await cbz.readAsBytes(),
+      verify: true,
+    );
+    final pages = archive.files.where((f) => f.name.endsWith('.png')).toList();
+    expect(pages, hasLength(2));
+    for (final page in pages) {
+      expect(page.content, image);
+    }
+    expect(
+      await File(p.join(mangaDirectory.path, 'cover.png')).readAsBytes(),
+      image,
+    );
+  }
+  expect(db.chapters.getSync(1)!.lastPageRead, '7');
+  expect(db.chapters.getSync(1)!.isBookmarked, true);
+  expect(db.settings.getSync(227)!.chapterPageIndexList!.single.index, 6);
 }

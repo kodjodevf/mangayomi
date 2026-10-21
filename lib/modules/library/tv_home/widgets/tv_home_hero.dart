@@ -1,12 +1,13 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/modules/library/tv_home/tv_home_layout.dart';
 
@@ -78,7 +79,7 @@ class _TvHomeHeroState extends State<TvHomeHero>
       child: Stack(
         children: [
           AnimatedSwitcher(
-            duration: const Duration(milliseconds: 500),
+            duration: ShioriMotion.exitSlow,
             child: _HeroContent(key: ValueKey(manga.id), manga: manga),
           ),
           if (widget.items.length > 1)
@@ -111,7 +112,7 @@ class _RotationDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.primaryColor;
+    final accent = context.shiori.color.accentInk;
     final muted = Colors.white.withValues(alpha: 0.28);
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -126,7 +127,7 @@ class _RotationDots extends StatelessWidget {
                   child: AnimatedBuilder(
                     animation: controller,
                     builder: (context, _) => ClipRRect(
-                      borderRadius: BorderRadius.circular(2),
+                      borderRadius: BorderRadius.circular(ShioriShape.badge),
                       child: LinearProgressIndicator(
                         value: controller.value,
                         minHeight: 4,
@@ -141,7 +142,7 @@ class _RotationDots extends StatelessWidget {
                   height: 4,
                   decoration: BoxDecoration(
                     color: muted,
-                    borderRadius: BorderRadius.circular(2),
+                    borderRadius: BorderRadius.circular(ShioriShape.badge),
                   ),
                 ),
         );
@@ -212,6 +213,7 @@ class _HeroContent extends ConsumerWidget {
                       gradient: LinearGradient(
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
+                        // shiori: the hero's scrim under text on artwork, its two stops tuned for legibility on a television
                         colors: [Color(0xDB000000), Color(0x40000000)],
                       ),
                     ),
@@ -225,7 +227,7 @@ class _HeroContent extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(ShioriShape.cover),
                     child: AspectRatio(
                       aspectRatio: 0.68,
                       child: Image(image: image, fit: BoxFit.cover),
@@ -242,9 +244,9 @@ class _HeroContent extends ConsumerWidget {
                           manga.name ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
-                            fontSize: 30,
+                            fontSize: ShioriType.reference.screenTitle.fontSize,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -256,7 +258,7 @@ class _HeroContent extends ConsumerWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.78),
-                              fontSize: 14,
+                              fontSize: ShioriType.reference.row.fontSize,
                             ),
                           ),
                         ],
@@ -268,7 +270,7 @@ class _HeroContent extends ConsumerWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.55),
-                              fontSize: 12,
+                              fontSize: ShioriType.reference.meta.fontSize,
                             ),
                           ),
                         ],
@@ -278,13 +280,17 @@ class _HeroContent extends ConsumerWidget {
                             children: [
                               Expanded(
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(3),
+                                  borderRadius: BorderRadius.circular(
+                                    ShioriShape.badge,
+                                  ),
                                   child: LinearProgressIndicator(
                                     value: progress,
                                     minHeight: 5,
-                                    backgroundColor: Colors.white24,
+                                    backgroundColor: Colors.white.withValues(
+                                      alpha: Alphas.hairline,
+                                    ),
                                     valueColor: AlwaysStoppedAnimation<Color>(
-                                      context.primaryColor,
+                                      context.shiori.color.accentInk,
                                     ),
                                   ),
                                 ),
@@ -292,9 +298,11 @@ class _HeroContent extends ConsumerWidget {
                               const SizedBox(width: 10),
                               Text(
                                 '$read / $total',
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 12,
+                                style: TextStyle(
+                                  color: Colors.white.withValues(
+                                    alpha: Alphas.secondary,
+                                  ),
+                                  fontSize: ShioriType.reference.meta.fontSize,
                                 ),
                               ),
                             ],
@@ -308,7 +316,7 @@ class _HeroContent extends ConsumerWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.72),
-                              fontSize: 13,
+                              fontSize: ShioriType.reference.row.fontSize,
                               height: 1.35,
                             ),
                           ),
@@ -350,7 +358,7 @@ class _HeroContinueButtonState extends State<_HeroContinueButton> {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.primaryColor;
+    final accent = context.shiori.color.accentInk;
     return Focus(
       // Entry focus lives on the "All" pill; the hero must not steal it when
       // switching back to All from a category view.
@@ -363,7 +371,7 @@ class _HeroContinueButtonState extends State<_HeroContinueButton> {
         if (f) {
           Scrollable.maybeOf(context)?.position.animateTo(
             0,
-            duration: const Duration(milliseconds: 260),
+            duration: ShioriMotion.standard,
             curve: Curves.easeOut,
           );
         }
@@ -378,7 +386,7 @@ class _HeroContinueButtonState extends State<_HeroContinueButton> {
       child: GestureDetector(
         onTap: _resume,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 130),
+          duration: ShioriMotion.fast,
           curve: Curves.easeOut,
           transform: Matrix4.identity()
             ..scaleByDouble(
@@ -390,24 +398,28 @@ class _HeroContinueButtonState extends State<_HeroContinueButton> {
           transformAlignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(ShioriShape.cover),
             color: _focused ? accent : Colors.white.withValues(alpha: 0.14),
             border: Border.all(
               color: _focused ? accent : Colors.white.withValues(alpha: 0.28),
               width: 2,
             ),
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.play_arrow, color: Colors.white),
-              SizedBox(width: 8),
+              Icon(
+                Symbols.play_arrow_rounded,
+                fill: 1,
+                color: _focused ? ShioriColors.onFill(accent) : Colors.white,
+              ),
+              const SizedBox(width: 8),
               Text(
-                'Continue',
+                context.l10n.continue_reading,
                 style: TextStyle(
-                  color: Colors.white,
+                  color: _focused ? ShioriColors.onFill(accent) : Colors.white,
                   fontWeight: FontWeight.w600,
-                  fontSize: 15,
+                  fontSize: ShioriType.reference.body.fontSize,
                 ),
               ),
             ],

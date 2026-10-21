@@ -382,8 +382,15 @@ class MangaRepository {
 
   // Async variant, for bodies that need to await other async isar calls
   // inside the same transaction.
-  Future<T> writeTransactionAsync<T>(Future<T> Function() body) =>
-      dbWriteQueue.run(() => isar.writeTxn(body));
+  Future<T> writeTransactionAsync<T>(
+    Future<T> Function() body, {
+    void Function()? afterCommit,
+  }) => dbWriteQueue.run(() async {
+    final result = await isar.writeTxn(body);
+    // Publish ID redirects before another queued write can enqueue a stale ID.
+    afterCommit?.call();
+    return result;
+  });
 
   // Queued, transacted wipeManga for callers with a batch of mangas and no
   // other work to fold into the same transaction.

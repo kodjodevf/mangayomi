@@ -225,6 +225,7 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
         controller.animateScaleAndCenter(
           targetScale,
           targetPoint,
+          // shiori: the double-tap zoom, tuned to feel physical rather than to the motion scale
           duration: const Duration(milliseconds: 800),
         );
       }

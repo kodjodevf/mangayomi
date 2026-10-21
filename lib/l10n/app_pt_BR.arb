@@ -619,7 +619,7 @@
     }
   },
   "mass_migration_select_destination_source": "Selecionar fonte de destino",
-  "mass_migration_finding_matches": "Buscando correspondências em {source} • {language}",
+  "mass_migration_finding_matches": "Buscando correspondências em {source} · {language}",
   "@mass_migration_finding_matches": {
     "placeholders": {
       "source": {},
@@ -1069,10 +1069,7 @@
   "onboarding_title": "Bem-vindo ao Mangayomi",
   "onboarding_libraries_body": "Escolha o que pretende ler e assistir.",
   "onboarding_nav_title": "As suas bibliotecas",
-  "onboarding_nav_body": "Um separador para cada ou agrupadas num único separador Biblioteca.",
   "onboarding_nav_split": "Separadores individuais",
-  "onboarding_nav_merged": "Um separador Biblioteca",
-  "onboarding_nav_inside": "Tocar em Biblioteca alterna os separadores",
   "onboarding_next": "Seguinte",
   "onboarding_restore": "Restaurar cópia de segurança",
   "onboarding_or_local": "Ou utilize ficheiros existentes",
@@ -1368,5 +1365,9 @@
   "chapter_swipe_toggle_bookmark": "Alternar marcador",
   "chapter_swipe_toggle_read": "Alternar lido",
   "chapter_swipe_download": "Baixar",
-  "chapter_swipe_disabled": "Desativado"
+  "chapter_swipe_disabled": "Desativado",
+  "settings_keyboard_shortcuts_summary": "Reatribuir as teclas do leitor e do player",
+  "shortcut_reset_all": "Redefinir todos os atalhos",
+  "shortcut_press_key": "Pressione uma tecla…",
+  "shortcut_key_in_use": "Já usada por: {action}"
 }

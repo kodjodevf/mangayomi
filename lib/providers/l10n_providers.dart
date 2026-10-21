@@ -18,6 +18,27 @@ class L10nLocaleState extends _$L10nLocaleState {
         L10nLocale(languageCode: "en", countryCode: "");
   }
 
+  /// On a new install, whose language was never chosen, takes the device's
+  /// language when the app speaks it. A new install otherwise opened in
+  /// English whatever the device was set to.
+  void adoptDeviceLocaleIfUnset() {
+    if (settingsRepository.current.locale != null) return;
+    final device = WidgetsBinding.instance.platformDispatcher.locale;
+    const supported = AppLocalizations.supportedLocales;
+    final match =
+        supported
+            .where(
+              (l) =>
+                  l.languageCode == device.languageCode &&
+                  (l.countryCode ?? '') == (device.countryCode ?? ''),
+            )
+            .firstOrNull ??
+        supported
+            .where((l) => l.languageCode == device.languageCode)
+            .firstOrNull;
+    if (match != null) setLocale(match);
+  }
+
   void setLocale(Locale locale) async {
     settingsRepository.update(
       (s) => s.locale = L10nLocale(

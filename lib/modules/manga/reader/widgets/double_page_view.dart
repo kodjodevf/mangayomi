@@ -8,11 +8,10 @@ import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/transition_view_paged.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/transition_view_vertical.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/reader_page_states.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/reader_interactive_region.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:photo_view/photo_view.dart';
 
@@ -333,7 +332,7 @@ class _DoublePageViewState extends State<DoublePageView>
     return Container(
       color: getBackgroundColor(widget.backgroundColor),
       height: context.height(0.8),
-      child: CircularProgressIndicatorAnimateRotate(progress: progress),
+      child: ReaderPageLoading(progress: progress),
     );
   }
 
@@ -348,39 +347,11 @@ class _DoublePageViewState extends State<DoublePageView>
     return Container(
       color: getBackgroundColor(widget.backgroundColor),
       height: context.height(0.8),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            l10n.image_loading_error,
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.7)),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: _buildRetryButton(state, l10n),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRetryButton(SubsamplingImageState state, dynamic l10n) {
-    return ReaderInteractiveRegion(
-      child: ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: context.primaryColor,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-        ),
-        onPressed: () {
+      child: ReaderPageError(
+        onRetry: () {
           state.reLoadImage();
           widget.onFailedToLoadImage?.call(false);
         },
-        icon: const Icon(Icons.refresh, size: 18),
-        label: Text(l10n.retry),
       ),
     );
   }

@@ -2,12 +2,12 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/manga_cover_actions.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/widgets/image_actions_sheet.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/downloaded_page_file.dart';
@@ -44,9 +44,8 @@ class ImageActionsDialog {
       '_',
     );
 
-    showModalBottomSheet(
-      context: context,
-      constraints: BoxConstraints(maxWidth: context.width(1)),
+    showShioriSheet<void>(
+      context,
       builder: (context) => _ImageActionsSheet(
         imageBytes: imageBytes,
         manga: manga,

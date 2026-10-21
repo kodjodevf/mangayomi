@@ -127,6 +127,13 @@ class CustomExtendedNetworkImageProvider
   /// Deduplication map for in-flight image downloads to prevent multiple concurrent HTTP GET requests for the same URL
   static final Map<String, Future<Uint8List?>> _inFlightRequests = {};
 
+  /// When each recently failed bounded image may be asked for again. A
+  /// failed image is dropped from the image cache, so every rebuild of a
+  /// tile showing it would otherwise start another round of attempts at a
+  /// host that does not answer, the tile empty all the while.
+  static final Map<String, DateTime> _failedUntil = {};
+  static const Duration _failureMemo = Duration(minutes: 2);
+
   /// Decode Base64 or URL-encoded data URI (e.g. data:image/gif;base64,...)
   static Uint8List? tryDecodeDataUri(String url) {
     if (!url.startsWith('data:')) return null;
@@ -177,7 +184,8 @@ class CustomExtendedNetworkImageProvider
   @override
   final bool cacheRawData;
 
-  /// The time limit to request image
+  /// How long one attempt may wait for the server's answer; unbounded when
+  /// null.
   @override
   final Duration? timeLimit;
 
@@ -321,6 +329,15 @@ class CustomExtendedNetworkImageProvider
     }
 
     final String md5Key = cacheKey ?? keyToMd5(key.url);
+    final failedUntil = _failedUntil[md5Key];
+    if (failedUntil != null) {
+      if (DateTime.now().isBefore(failedUntil)) {
+        return Future<ui.Codec>.error(
+          StateError('Failed to load $url recently; not retried yet.'),
+        );
+      }
+      _failedUntil.remove(md5Key);
+    }
     ui.Codec? result;
     // Kept so the final error, if any, says why instead of just "failed" —
     // both attempts below were previously swallowing the real exception.
@@ -339,7 +356,12 @@ class CustomExtendedNetworkImageProvider
       }
     }
 
-    if (result == null) {
+    // Without a cache file the cache path has already asked the network,
+    // and a failed download comes back as null rather than an error: asking
+    // again would only make a dead host take twice as long to give up. The
+    // network is tried here when there is no cache, or when the cache path
+    // itself failed (an unreadable file, a corrupt image).
+    if (result == null && (!cache || lastError != null)) {
       try {
         final Uint8List? data = await _loadNetworkWithDeduplication(
           key,
@@ -359,6 +381,9 @@ class CustomExtendedNetworkImageProvider
 
     //Failed to load
     if (result == null) {
+      if (timeLimit != null) {
+        _failedUntil[md5Key] = DateTime.now().add(_failureMemo);
+      }
       //result = await ui.instantiateImageCodec(kTransparentImage);
       return Future<ui.Codec>.error(
         StateError(
@@ -548,9 +573,13 @@ class CustomExtendedNetworkImageProvider
     int attempt = 0;
     while (attempt < retries) {
       try {
+        // Bounded when a limit is set: a host that never answers otherwise
+        // holds the image in its loading state for as long as the system's
+        // own connection timeout, once per attempt.
+        final response = _getResponse(resolved);
         return await CancellationTokenSource.register(
           cancelToken,
-          _getResponse(resolved),
+          timeLimit == null ? response : response.timeout(timeLimit!),
         );
       } catch (e) {
         attempt++;

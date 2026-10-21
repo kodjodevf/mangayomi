@@ -7,6 +7,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
+import 'package:mangayomi/modules/novel/utils/reading_time.dart';
+import 'package:shiori/shiori.dart';
+import 'package:mangayomi/services/volume_keys.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
+import 'package:mangayomi/modules/manga/reader/utils/reader_orientation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -35,7 +41,6 @@ import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/system_ui.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
@@ -43,6 +48,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:mangayomi/modules/manga/reader/mixins/reader_auto_scroll.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 
 typedef DoubleClickAnimationListener = void Function();
 
@@ -134,6 +140,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   void dispose() {
     _readingStopwatch.stop();
     WidgetsBinding.instance.removeObserver(this);
+    VolumeKeys.disable();
+    releaseReaderOrientation();
+    applyReaderScreenBrightness(-1);
     if (!_readerMode.isContinuous &&
         _cachedPagination != null &&
         _cachedPagination!.pageCount > 0) {
@@ -184,12 +193,32 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       if (keepOn) {
         WakelockPlus.disable();
       }
+      // The volume buttons are the system's again while away.
+      VolumeKeys.disable();
+      applyReaderScreenBrightness(-1);
     } else if (state == AppLifecycleState.resumed) {
       _readingStopwatch.start();
       if (keepOn) {
         WakelockPlus.enable();
       }
+      _setVolumeKeys(ref.read(volumeKeysPagingStateProvider));
+      applyReaderScreenBrightness(ref.read(readerScreenBrightnessStateProvider));
     }
+  }
+
+  /// Takes the volume buttons for page turns while [on], as the manga
+  /// reader does: volume down turns forward, volume up back, unless
+  /// inverted.
+  void _setVolumeKeys(bool on) {
+    if (!on) {
+      VolumeKeys.disable();
+      return;
+    }
+    VolumeKeys.enable((up) {
+      if (!mounted) return;
+      final inverted = ref.read(volumeKeysInvertedStateProvider);
+      _onBtnTapped((inverted ? up : !up) ? 100 : -100);
+    });
   }
 
   void _initWakelock() {
@@ -217,6 +246,13 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     _autoScroll.addListener(onAutoScrollChanged);
     _initWakelock();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _setVolumeKeys(ref.read(volumeKeysPagingStateProvider));
+        applyReaderOrientation(ref.read(readerOrientationStateProvider));
+        applyReaderScreenBrightness(
+          ref.read(readerScreenBrightnessStateProvider),
+        );
+      }
       _scrollController.addListener(onScroll);
       final initFontSize = ref.read(novelFontSizeStateProvider);
       setState(() {
@@ -241,7 +277,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
           _currentSpreadIndex = targetSpread;
           _spreadController.animateToPage(
             targetSpread,
-            duration: const Duration(milliseconds: 300),
+            duration: ShioriMotion.enter,
             curve: Curves.easeInOut,
           );
         }
@@ -267,6 +303,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   final _keyboardFocusNode = FocusNode();
   bool _showTts = false;
   String? _currentHtmlContent;
+
+  /// How long the current chapter takes to read, worked out once when its
+  /// text arrives, for the time left beside the progress slider.
+  double? _chapterMinutes;
   final ValueNotifier<({int paragraph, int wordStart, int wordEnd})>
   _ttsProgress = ValueNotifier((paragraph: -1, wordStart: -1, wordEnd: -1));
   int _ttsTotalBlocks = 0;
@@ -279,7 +319,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   Size get size => View.of(context).physicalSize / pixelRatio;
 
   Color _backgroundColor(BuildContext context) =>
-      Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.9);
+      context.shiori.color.ink1.withValues(alpha: Alphas.chrome);
 
   void _setFullScreen({bool? value}) async {
     if (isDesktop) {
@@ -308,7 +348,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     final targetOffset = (index / _ttsTotalBlocks) * maxScroll;
     _scrollController.animateTo(
       targetOffset.clamp(0.0, maxScroll),
-      duration: const Duration(milliseconds: 400),
+      duration: ShioriMotion.enter,
       curve: Curves.easeInOut,
     );
   }
@@ -334,6 +374,15 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<bool>(volumeKeysPagingStateProvider, (_, on) {
+      _setVolumeKeys(on);
+    });
+    ref.listen<int>(readerOrientationStateProvider, (_, value) {
+      applyReaderOrientation(value);
+    });
+    ref.listen<int>(readerScreenBrightnessStateProvider, (_, value) {
+      applyReaderScreenBrightness(value);
+    });
     ref.listen(keepScreenOnReaderStateProvider, (_, next) {
       if (next) {
         WakelockPlus.enable();
@@ -407,6 +456,13 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       onPreviousChapter: () => _goToChapter(false),
       onNextPage: () => _onBtnTapped(100),
       onPreviousPage: () => _onBtnTapped(-100),
+      onToggleUI: _isViewFunction,
+      onShowShortcuts: () => showReaderShortcuts(
+        context,
+        zoom: false,
+        bindings: ref.read(keyBindingsStateProvider),
+      ),
+      bindings: ref.watch(keyBindingsStateProvider),
     ).wrapWithKeyboardListener(
       child: NotificationListener<ScrollNotification>(
         onNotification: (notification) {
@@ -441,6 +497,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                             builder: (context) {
                               epubBook = data.$2;
                               _currentHtmlContent = data.$1;
+                              _chapterMinutes = readingMinutes(data.$1);
 
                               final padding = ref.watch(
                                 novelReaderPaddingStateProvider,
@@ -460,9 +517,17 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                               final customTextColor = ref.watch(
                                 novelReaderTextColorStateProvider,
                               );
-                              final fontFamily = resolveNovelFontFamily(
-                                ref.watch(novelFontFamilyStateProvider),
-                              );
+                              // "Default" is the font the user picked in
+                              // Appearance: the interface itself is always
+                              // set in Shiori's face, so reading is where
+                              // that choice applies now.
+                              final fontFamily =
+                                  resolveNovelFontFamily(
+                                    ref.watch(novelFontFamilyStateProvider),
+                                  ) ??
+                                  ref.watch(
+                                    appFontFamilyProvider.select((t) => t.$2),
+                                  );
 
                               if (!_scrollRestoreScheduled &&
                                   _readerMode.isContinuous) {
@@ -532,6 +597,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                       );
                                       final parsedBackgroundColor = _parseColor(
                                         customBackgroundColor,
+                                        // shiori: the book's own styles, set against whatever page colour the reader chose
                                         fallback: const Color(0xFF292832),
                                       );
                                       final textAlignEnum = _getTextAlign(
@@ -724,10 +790,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                         VerticalDivider(
                                                           width: 1,
                                                           thickness: 0.5,
-                                                          color: Colors.grey
-                                                              .withValues(
-                                                                alpha: 0.2,
-                                                              ),
+                                                          color: context
+                                                              .shiori
+                                                              .color
+                                                              .hairline,
                                                         ),
                                                         Expanded(
                                                           child: rightHtml != null
@@ -891,7 +957,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                           child: Center(
                                             child: Padding(
                                               padding: const EdgeInsets.all(
-                                                4.0,
+                                                ShioriSpace.s4,
                                               ),
                                               child: Text(
                                                 displayLabel,
@@ -902,7 +968,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                       radix: 16,
                                                     ),
                                                   ),
-                                                  fontSize: 14,
+                                                  fontSize: context.shiori.text.row.fontSize,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -935,7 +1001,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                         _showTts &&
                         _currentHtmlContent != null)
                       Positioned(
-                        bottom: _isView ? 145 : 0,
+                        // Just above the panel while it is shown.
+                        bottom: _isView ? _panelHeightAbove(context) : 0,
                         left: 0,
                         right: 0,
                         child: TtsPlayerBar(
@@ -952,13 +1019,13 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
               },
               loading: () => scaffoldWith(
                 context,
-                Center(child: CircularProgressIndicator()),
+                const ShioriLoading(),
               ),
               error: (err, stack) {
                 if (widget.result.isRefreshing || widget.result.isReloading) {
                   return scaffoldWith(
                     context,
-                    Center(child: CircularProgressIndicator()),
+                    const ShioriLoading(),
                   );
                 }
                 return scaffoldWith(
@@ -985,7 +1052,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     bool restoreUi = false,
   }) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: context.shiori.color.ink0,
       appBar: AppBar(
         title: const Text(''),
         leading: BackButton(
@@ -1011,12 +1078,12 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       if (_spreadController.hasClients) {
         if (value > 0) {
           _spreadController.nextPage(
-            duration: const Duration(milliseconds: 250),
+            duration: ShioriMotion.standard,
             curve: Curves.easeOut,
           );
         } else {
           _spreadController.previousPage(
-            duration: const Duration(milliseconds: 250),
+            duration: ShioriMotion.standard,
             curve: Curves.easeOut,
           );
         }
@@ -1030,7 +1097,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       final newOffset = currentOffset + value;
       _scrollController.animateTo(
         min(newOffset, maxScroll),
-        duration: const Duration(milliseconds: 100),
+        duration: ShioriMotion.fast,
         curve: Curves.linear,
       );
     }
@@ -1115,6 +1182,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       isVisible: _isView,
       isBookmarked: _isBookmarked,
       backgroundColor: _backgroundColor,
+      // In the bottom panel, within reach.
+      showChapterList: false,
       onBackPressed: () => Navigator.pop(context),
       onBookmarkPressed: () {
         _readerController.setChapterBookmarked();
@@ -1156,270 +1225,182 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   }
 
   void _showFontSizeBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) {
-        return Consumer(
-          builder: (context, ref, _) {
-            final currentFontSize = ref.watch(novelFontSizeStateProvider);
-            final primaryColor = Theme.of(context).primaryColor;
-            return Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(20),
+    showShioriSheet<void>(
+      context,
+      builder: (context) => Consumer(
+        builder: (context, ref, _) {
+          final currentFontSize = ref.watch(novelFontSizeStateProvider);
+          void setSize(int size) {
+            ref.read(novelFontSizeStateProvider.notifier).set(size);
+            setState(() => fontSize = size);
+          }
+
+          return SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ShioriSliderRow(
+                  icon: Symbols.format_size_rounded,
+                  title: context.l10n.font_size,
+                  value: currentFontSize.toDouble().clamp(8, 40),
+                  min: 8,
+                  max: 40,
+                  divisions: 32,
+                  valueLabel: (v) => '${v.round()} px',
+                  stepTooltips: (context.l10n.decrease, context.l10n.increase),
+                  defaultValue: 14,
+                  onReset: () => setSize(14),
+                  resetTooltip: context.l10n.reset,
+                  onChanged: (v) => setSize(v.round()),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.25),
-                    blurRadius: 16,
-                    offset: const Offset(0, -4),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    ShioriSpace.s16,
+                    0,
+                    ShioriSpace.s16,
+                    ShioriSpace.s16,
                   ),
-                ],
-              ),
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 18),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 36,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withValues(alpha: 0.35),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Wrap(
+                    spacing: ShioriSpace.s8,
+                    runSpacing: ShioriSpace.s8,
+                    alignment: WrapAlignment.center,
                     children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.format_size_rounded,
-                            color: primaryColor,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            context.l10n.font_size,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
+                      for (final size in [12, 14, 16, 18, 20, 24, 28])
+                        ChoiceChip(
+                          label: Text('$size'),
+                          selected: currentFontSize == size,
+                          onSelected: (_) => setSize(size),
                         ),
-                        decoration: BoxDecoration(
-                          color: primaryColor.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          '$currentFontSize px',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: primaryColor,
-                          ),
-                        ),
-                      ),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      IconButton.filledTonal(
-                        visualDensity: VisualDensity.compact,
-                        constraints: const BoxConstraints(
-                          minWidth: 34,
-                          minHeight: 34,
-                        ),
-                        onPressed: currentFontSize > 8
-                            ? () {
-                                final newSize = currentFontSize - 1;
-                                ref
-                                    .read(novelFontSizeStateProvider.notifier)
-                                    .set(newSize);
-                                setState(() => fontSize = newSize);
-                              }
-                            : null,
-                        icon: const Icon(Icons.remove_rounded, size: 18),
-                        tooltip: context.l10n.decrease,
-                      ),
-                      Expanded(
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            trackHeight: 3,
-                            thumbShape: const RoundSliderThumbShape(
-                              enabledThumbRadius: 6,
-                            ),
-                            overlayShape: const RoundSliderOverlayShape(
-                              overlayRadius: 12,
-                            ),
-                            activeTrackColor: primaryColor,
-                            inactiveTrackColor: primaryColor.withValues(
-                              alpha: 0.2,
-                            ),
-                            thumbColor: primaryColor,
-                            overlayColor: primaryColor.withValues(alpha: 0.2),
-                          ),
-                          child: Slider(
-                            value: currentFontSize.toDouble().clamp(8.0, 40.0),
-                            min: 8,
-                            max: 40,
-                            divisions: 32,
-                            onChanged: (val) {
-                              final newSize = val.toInt();
-                              ref
-                                  .read(novelFontSizeStateProvider.notifier)
-                                  .set(newSize);
-                              setState(() => fontSize = newSize);
-                            },
-                          ),
-                        ),
-                      ),
-                      IconButton.filledTonal(
-                        visualDensity: VisualDensity.compact,
-                        constraints: const BoxConstraints(
-                          minWidth: 34,
-                          minHeight: 34,
-                        ),
-                        onPressed: currentFontSize < 40
-                            ? () {
-                                final newSize = currentFontSize + 1;
-                                ref
-                                    .read(novelFontSizeStateProvider.notifier)
-                                    .set(newSize);
-                                setState(() => fontSize = newSize);
-                              }
-                            : null,
-                        icon: const Icon(Icons.add_rounded, size: 18),
-                        tooltip: context.l10n.increase,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [12, 14, 16, 18, 20, 24, 28].map((size) {
-                        final isSelected = currentFontSize == size;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 3),
-                          child: ChoiceChip(
-                            visualDensity: VisualDensity.compact,
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            labelStyle: const TextStyle(fontSize: 11),
-                            label: Text('$size'),
-                            selected: isSelected,
-                            onSelected: (_) {
-                              ref
-                                  .read(novelFontSizeStateProvider.notifier)
-                                  .set(size);
-                              setState(() => fontSize = size);
-                            },
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
+  }
+
+  /// A chapter button beside the slider, as in the manga reader: on the
+  /// panel, dimmed when there is no chapter that way.
+  Widget _chapterButton({
+    required IconData icon,
+    required String tooltip,
+    required VoidCallback? onPressed,
+  }) {
+    final c = context.shiori.color;
+    return IconButton(
+      tooltip: tooltip,
+      onPressed: onPressed,
+      iconSize: context.shiori.scaled(22),
+      style: IconButton.styleFrom(
+        foregroundColor: c.fg,
+        disabledForegroundColor: c.fg.withValues(alpha: Alphas.disabled),
+        fixedSize: const Size.square(40),
+        minimumSize: const Size.square(40),
+      ),
+      icon: Icon(icon, fill: 1),
+    );
+  }
+
+  /// The page or progress figures either side of the slider, tabular so the
+  /// slider does not shift as they change width; the end one muted.
+  TextStyle _pageLabelStyle(BuildContext context, {bool muted = false}) =>
+      context.shiori.text.meta.copyWith(
+        color: muted ? context.shiori.color.fgMuted : context.shiori.color.fg,
+        fontWeight: FontWeight.w700,
+        fontFeatures: const [FontFeature.tabularFigures()],
+      );
+
+  /// How far above the bottom edge the panel's top sits, plus a margin:
+  /// where the speech bar rests while the panel is shown.
+  double _panelHeightAbove(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final bottomInset = max(
+      mediaQuery.viewPadding.bottom,
+      mediaQuery.systemGestureInsets.bottom,
+    );
+    // The slider row (38 and its padding), the rule, the actions.
+    return bottomInset +
+        ShioriSpace.s8 +
+        38 +
+        ShioriSpace.s8 +
+        1 +
+        context.shiori.density.rowHeight +
+        ShioriSpace.s8;
   }
 
   Widget _bottomBar(
     BackgroundColor backgroundColor,
     PageMode effectivePageMode,
   ) {
-    if (!_isView && Platform.isIOS) {
-      return const SizedBox.shrink();
-    }
     bool hasPrevChapter = _readerController.hasPreviousChapter;
     bool hasNextChapter = _readerController.hasNextChapter;
-    final bodyLargeColor = Theme.of(context).textTheme.bodyLarge!.color;
+    final mediaQuery = MediaQuery.of(context);
+    final bottomInset = max(
+      mediaQuery.viewPadding.bottom,
+      mediaQuery.systemGestureInsets.bottom,
+    );
+    final duration = ShioriMotion.of(context, ShioriMotion.enter);
+    final curve = _isView ? ShioriMotion.enterCurve : ShioriMotion.exitCurve;
+    // The manga reader's panel: one floating card that slides up, the
+    // slider between the chapters, what is changed while reading under it.
     return Positioned(
+      left: 0,
+      right: 0,
       bottom: 0,
-      child: AnimatedContainer(
-        curve: Curves.ease,
-        duration: const Duration(milliseconds: 300),
-        width: context.width(1),
-        height: (_isView ? 116 : 0),
-        // The Column's natural content height briefly exceeds this box
-        // mid-animation (it's animating between 0 and 116), which is a
-        // transient overflow, not a real layout bug - clip it during the
-        // transition instead of restructuring content that fits fine once
-        child: ClipRect(
-          child: OverflowBox(
-            alignment: Alignment.topCenter,
-            minHeight: 0,
-            maxHeight: 116,
-            child: SizedBox(
-              height: 116,
-              child: Column(
-                children: [
-                  if (_isView)
-                    Padding(
+      child: ReaderChromeGate(
+        shown: _isView,
+        child: AnimatedSlide(
+          offset: _isView ? Offset.zero : const Offset(0, 1),
+          duration: duration,
+          curve: curve,
+          child: AnimatedOpacity(
+            opacity: _isView ? 1 : 0,
+            duration: duration,
+            curve: curve,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                ShioriSpace.s8,
+                0,
+                ShioriSpace.s8,
+                bottomInset + ShioriSpace.s8,
+              ),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 720),
+                  child: Material(
+                    color: _backgroundColor(context),
+                    borderRadius: BorderRadius.circular(ShioriShape.sheet),
+                    clipBehavior: Clip.antiAlias,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8.0,
-                        vertical: 2.0,
+                        horizontal: ShioriSpace.s4,
+                        vertical: ShioriSpace.s4,
                       ),
                       child: Row(
                         children: [
-                          CircleAvatar(
-                            radius: 20,
-                            backgroundColor: _backgroundColor(context),
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(
-                                minWidth: 36,
-                                minHeight: 36,
-                              ),
-                              onPressed: hasPrevChapter
-                                  ? () {
-                                      pushReplacementMangaReaderView(
-                                        context: context,
-                                        chapter: _readerController
-                                            .getPrevChapter(),
-                                      );
-                                    }
-                                  : null,
-                              icon: Icon(
-                                Icons.skip_previous_rounded,
-                                size: 22,
-                                color: hasPrevChapter
-                                    ? bodyLargeColor
-                                    : bodyLargeColor!.withValues(alpha: 0.35),
-                              ),
-                            ),
+                          _chapterButton(
+                            icon: Symbols.skip_previous_rounded,
+                            tooltip: context.l10n.previous_chapter,
+                            onPressed: hasPrevChapter
+                                ? () {
+                                    pushReplacementMangaReaderView(
+                                      context: context,
+                                      chapter: _readerController.getPrevChapter(),
+                                    );
+                                  }
+                                : null,
                           ),
-                          const SizedBox(width: 6),
+                          const SizedBox(width: ShioriSpace.s8),
                           Expanded(
-                            child: Container(
+                            child: SizedBox(
                               height: 38,
-                              decoration: BoxDecoration(
-                                color: _backgroundColor(context),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
                               child: StreamBuilder(
                                 stream: _rebuildDetail.stream,
                                 builder: (context, asyncSnapshot) {
@@ -1452,14 +1433,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
 
                                         return Row(
                                           children: [
-                                            const SizedBox(width: 12),
+                                            const SizedBox(width: ShioriSpace.s12),
                                             Text(
                                               currentLabel,
-                                              style: TextStyle(
-                                                color: bodyLargeColor,
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                              style: _pageLabelStyle(context),
                                             ),
                                             Expanded(
                                               child: SliderTheme(
@@ -1475,14 +1452,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                           const RoundSliderOverlayShape(
                                                             overlayRadius: 12.0,
                                                           ),
-                                                      activeTrackColor:
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .primary,
-                                                      thumbColor:
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .primary,
                                                     ),
                                                 child: Slider(
                                                   onChanged: (value) {
@@ -1508,14 +1477,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                             ),
                                             Text(
                                               totalLabel,
-                                              style: TextStyle(
-                                                color: bodyLargeColor
-                                                    ?.withValues(alpha: 0.6),
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                              style: _pageLabelStyle(context, muted: true),
                                             ),
-                                            const SizedBox(width: 12),
+                                            const SizedBox(width: ShioriSpace.s12),
                                           ],
                                         );
                                       }
@@ -1527,14 +1491,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                           : 0;
                                       return Row(
                                         children: [
-                                          const SizedBox(width: 12),
+                                          const SizedBox(width: ShioriSpace.s12),
                                           Text(
                                             '$scrollPercentage%',
-                                            style: TextStyle(
-                                              color: bodyLargeColor,
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                            style: _pageLabelStyle(context),
                                           ),
                                           Expanded(
                                             child: SliderTheme(
@@ -1550,13 +1510,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                         const RoundSliderOverlayShape(
                                                           overlayRadius: 12.0,
                                                         ),
-                                                    activeTrackColor: Theme.of(
-                                                      context,
-                                                    ).colorScheme.primary,
-                                                    thumbColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .primary,
                                                   ),
                                               child: Slider(
                                                 onChanged: (value) {
@@ -1577,17 +1530,23 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                               ),
                                             ),
                                           ),
+                                          // Time left in the chapter rather
+                                          // than a fixed "100%".
                                           Text(
-                                            '100%',
-                                            style: TextStyle(
-                                              color: bodyLargeColor?.withValues(
-                                                alpha: 0.6,
-                                              ),
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.bold,
+                                            _chapterMinutes == null
+                                                ? '100%'
+                                                : context.l10n.minutes_left(
+                                                    minutesLeft(
+                                                      _chapterMinutes!,
+                                                      scrollPercentage / 100,
+                                                    ),
+                                                  ),
+                                            style: _pageLabelStyle(
+                                              context,
+                                              muted: true,
                                             ),
                                           ),
-                                          const SizedBox(width: 12),
+                                          const SizedBox(width: ShioriSpace.s12),
                                         ],
                                       );
                                     },
@@ -1596,56 +1555,60 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                               ),
                             ),
                           ),
-                          const SizedBox(width: 6),
-                          CircleAvatar(
-                            radius: 20,
-                            backgroundColor: _backgroundColor(context),
-                            child: IconButton(
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(
-                                minWidth: 36,
-                                minHeight: 36,
-                              ),
-                              onPressed: hasNextChapter
-                                  ? () {
-                                      pushReplacementMangaReaderView(
-                                        context: context,
-                                        chapter: _readerController
-                                            .getNextChapter(),
-                                      );
-                                    }
-                                  : null,
-                              icon: Icon(
-                                Icons.skip_next_rounded,
-                                size: 22,
-                                color: hasNextChapter
-                                    ? bodyLargeColor
-                                    : bodyLargeColor!.withValues(alpha: 0.35),
-                              ),
-                            ),
+                          const SizedBox(width: ShioriSpace.s8),
+                          _chapterButton(
+                            icon: Symbols.skip_next_rounded,
+                            tooltip: context.l10n.next_chapter,
+                            onPressed: hasNextChapter
+                                ? () {
+                                    pushReplacementMangaReaderView(
+                                      context: context,
+                                      chapter: _readerController.getNextChapter(),
+                                    );
+                                  }
+                                : null,
                           ),
                         ],
                       ),
                     ),
-                  if (_isView)
-                    Expanded(
-                      child: Container(
-                        color: _backgroundColor(context),
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        const Divider(height: 1),
+                        Container(
+                        height: context.shiori.density.rowHeight,
+                        padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s12),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
+                            // The chapter list, here within reach as in the
+                            // manga reader's panel.
                             IconButton(
                               visualDensity: VisualDensity.compact,
                               padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(
-                                minWidth: 40,
-                                minHeight: 40,
+                              constraints: BoxConstraints(
+                                minWidth: context.shiori.density.minTarget,
+                                minHeight: context.shiori.density.minTarget,
+                              ),
+                              onPressed: () => showChapterListPanel(
+                                context,
+                                title: context.l10n.chapters,
+                                chapter: chapter,
+                              ),
+                              icon: const Icon(
+                                Symbols.format_list_numbered_rounded,
+                                size: 22,
+                              ),
+                              tooltip: context.l10n.chapters,
+                            ),
+                            IconButton(
+                              visualDensity: VisualDensity.compact,
+                              padding: EdgeInsets.zero,
+                              constraints: BoxConstraints(
+                                minWidth: context.shiori.density.minTarget,
+                                minHeight: context.shiori.density.minTarget,
                               ),
                               onPressed: () =>
                                   _showFontSizeBottomSheet(context),
                               icon: const Icon(
-                                Icons.format_size_rounded,
+                                Symbols.format_size_rounded,
                                 size: 22,
                               ),
                               tooltip: context.l10n.font_size,
@@ -1653,9 +1616,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                             IconButton(
                               visualDensity: VisualDensity.compact,
                               padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(
-                                minWidth: 40,
-                                minHeight: 40,
+                              constraints: BoxConstraints(
+                                minWidth: context.shiori.density.minTarget,
+                                minHeight: context.shiori.density.minTarget,
                               ),
                               onPressed: () {
                                 if (_readerMode.isContinuous) {
@@ -1695,13 +1658,13 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                               },
                               icon: Icon(
                                 _readerMode.isContinuous
-                                    ? Icons.swap_vert_rounded
+                                    ? Symbols.swap_vert_rounded
                                     : (effectivePageMode == PageMode.doublePage
-                                          ? Icons.auto_stories
-                                          : Icons.article_outlined),
+                                          ? Symbols.auto_stories_rounded
+                                          : Symbols.article_rounded),
                                 size: 22,
                                 color: !_readerMode.isContinuous
-                                    ? Theme.of(context).colorScheme.primary
+                                    ? context.shiori.color.accentInk
                                     : null,
                               ),
                               tooltip: _readerMode.isContinuous
@@ -1716,9 +1679,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                               IconButton(
                                 visualDensity: VisualDensity.compact,
                                 padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(
-                                  minWidth: 40,
-                                  minHeight: 40,
+                                constraints: BoxConstraints(
+                                  minWidth: context.shiori.density.minTarget,
+                                  minHeight: context.shiori.density.minTarget,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -1726,12 +1689,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                   });
                                 },
                                 icon: Icon(
-                                  _showTts
-                                      ? Icons.record_voice_over_rounded
-                                      : Icons.record_voice_over_outlined,
+                                  Symbols.record_voice_over_rounded,
+                                  fill: _showTts ? 1 : 0,
                                   size: 22,
                                   color: _showTts
-                                      ? Theme.of(context).colorScheme.primary
+                                      ? context.shiori.color.accentInk
                                       : null,
                                 ),
                                 tooltip: context.l10n.tts,
@@ -1739,9 +1701,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                             IconButton(
                               visualDensity: VisualDensity.compact,
                               padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(
-                                minWidth: 40,
-                                minHeight: 40,
+                              constraints: BoxConstraints(
+                                minWidth: context.shiori.density.minTarget,
+                                minHeight: context.shiori.density.minTarget,
                               ),
                               onPressed: () async {
                                 bool autoScrollAlreadyFalse =
@@ -1791,14 +1753,16 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                   }
                                 }
                               },
-                              icon: const Icon(Icons.tune_rounded),
+                              icon: const Icon(Symbols.tune_rounded),
                               tooltip: context.l10n.settings,
                             ),
                           ],
                         ),
                       ),
+                      ],
                     ),
-                ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -1832,6 +1796,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         return Color(int.parse(hexColor, radix: 16));
       }
     } catch (_) {}
+    // shiori: the book's own styles, set against whatever page colour the reader chose
     return fallback ?? Colors.grey;
   }
 
@@ -1902,29 +1867,35 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
           textAlign: textAlign,
         ),
         "a": Style(
+          // shiori: the book's own styles, set against whatever page colour the reader chose
           color: Colors.blue,
           textDecoration: TextDecoration.underline,
         ),
         "img": Style(width: Width(100, Unit.percent), height: Height.auto()),
         "table": Style(
+          // shiori: the book's own styles, set against whatever page colour the reader chose
           border: Border.all(color: Colors.grey, width: 1),
           margin: Margins.symmetric(vertical: 10),
         ),
         "td, th": Style(
+          // shiori: the book's own styles, set against whatever page colour the reader chose
           border: Border.all(color: Colors.grey, width: 0.5),
           padding: HtmlPaddings.all(8),
         ),
         "th": Style(
           fontWeight: FontWeight.bold,
+          // shiori: the book's own styles, set against whatever page colour the reader chose
           backgroundColor: Colors.grey.withValues(alpha: 0.2),
         ),
         "blockquote": Style(
+          // shiori: the book's own styles, set against whatever page colour the reader chose
           border: Border(left: BorderSide(color: Colors.grey, width: 4)),
           padding: HtmlPaddings.only(left: 15),
           margin: Margins.symmetric(vertical: 10),
           fontStyle: FontStyle.italic,
         ),
         "pre, code": Style(
+          // shiori: the book's own styles, set against whatever page colour the reader chose
           backgroundColor: Colors.grey.withValues(alpha: 0.2),
           padding: HtmlPaddings.all(8),
           fontFamily: 'monospace',
@@ -1932,11 +1903,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         "hr": Style(margin: Margins.symmetric(vertical: 20)),
         if (showTts && tts.paragraph >= 0)
           "[data-tts-active]": Style(
-            backgroundColor: Theme.of(context).colorScheme.primary
+            backgroundColor: context.shiori.color.accentInk
                 .withValues(alpha: 0.10),
             border: Border(
               left: BorderSide(
-                color: Theme.of(context).colorScheme.primary,
+                color: context.shiori.color.accentInk,
                 width: 3,
               ),
             ),
@@ -1944,10 +1915,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
           ),
         if (showTts && tts.paragraph >= 0)
           "[data-tts-word]": Style(
-            backgroundColor: Theme.of(context).colorScheme.primary
+            backgroundColor: context.shiori.color.accentInk
                 .withValues(alpha: 0.35),
             textDecoration: TextDecoration.underline,
-            textDecorationColor: Theme.of(context).colorScheme.primary,
+            textDecorationColor: context.shiori.color.accentInk,
           ),
       },
       extensions: [
@@ -1987,20 +1958,25 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
 
       if (image != null) {
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
           child: widgets.Image(
             errorBuilder: (context, error, stackTrace) => Container(
-              padding: const EdgeInsets.all(8),
-              color: Colors.red.withValues(alpha: 0.1),
+              padding: const EdgeInsets.all(ShioriSpace.s8),
+              color: context.shiori.color.error.background,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.broken_image, color: Colors.red),
-                  const SizedBox(width: 8),
+                  Icon(
+                    Symbols.broken_image_rounded,
+                    color: context.shiori.color.error.foreground,
+                  ),
+                  const SizedBox(width: ShioriSpace.s8),
                   Flexible(
                     child: Text(
                       'Image not loaded: $fileName',
-                      style: const TextStyle(color: Colors.red),
+                      style: TextStyle(
+                        color: context.shiori.color.error.foreground,
+                      ),
                     ),
                   ),
                 ],
