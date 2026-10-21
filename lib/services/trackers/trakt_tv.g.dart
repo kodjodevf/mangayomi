@@ -58,7 +58,7 @@ final class TraktTvProvider extends $NotifierProvider<TraktTv, void> {
   }
 }
 
-String _$traktTvHash() => r'402db7848d08e60b7d491b2c44ba710baa921c6f';
+String _$traktTvHash() => r'baccf08657293253d40f3dd40868756185e1ebad';
 
 final class TraktTvFamily extends $Family
     with
@@ -105,7 +105,7 @@ abstract class _$TraktTv extends $Notifier<void> {
   });
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -115,7 +115,7 @@ abstract class _$TraktTv extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(
+    return element.handleCreate(
       ref,
       () => build(
         syncId: _$args.syncId,

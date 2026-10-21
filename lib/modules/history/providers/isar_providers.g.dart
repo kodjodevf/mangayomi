@@ -138,7 +138,7 @@ abstract class _$ActiveHistoryItemTypeState extends $Notifier<ItemType> {
   ItemType build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<ItemType, ItemType>;
     final element =
         ref.element
@@ -148,7 +148,7 @@ abstract class _$ActiveHistoryItemTypeState extends $Notifier<ItemType> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 

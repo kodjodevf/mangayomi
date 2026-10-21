@@ -85,7 +85,7 @@ abstract class _$HwdecModeState extends $Notifier<String> {
   String build({bool rawValue = false});
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -95,7 +95,7 @@ abstract class _$HwdecModeState extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(rawValue: _$args));
+    return element.handleCreate(ref, () => build(rawValue: _$args));
   }
 }
 
@@ -138,7 +138,7 @@ abstract class _$EnableHardwareAccelState extends $Notifier<bool> {
   bool build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -148,7 +148,7 @@ abstract class _$EnableHardwareAccelState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -190,7 +190,7 @@ abstract class _$DebandingState extends $Notifier<DebandingType> {
   DebandingType build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<DebandingType, DebandingType>;
     final element =
         ref.element
@@ -200,7 +200,7 @@ abstract class _$DebandingState extends $Notifier<DebandingType> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -242,7 +242,7 @@ abstract class _$UseGpuNextState extends $Notifier<bool> {
   bool build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -252,7 +252,7 @@ abstract class _$UseGpuNextState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -294,7 +294,7 @@ abstract class _$UseYUV420PState extends $Notifier<bool> {
   bool build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -304,6 +304,6 @@ abstract class _$UseYUV420PState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

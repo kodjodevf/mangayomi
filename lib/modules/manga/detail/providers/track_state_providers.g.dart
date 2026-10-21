@@ -58,7 +58,7 @@ final class TrackStateProvider extends $NotifierProvider<TrackState, Track> {
   }
 }
 
-String _$trackStateHash() => r'c3e386652db112f64ce5605afeb5e7a49afbc397';
+String _$trackStateHash() => r'6ccbb16e1e167c37a44883ed4944313401dddac4';
 
 final class TrackStateFamily extends $Family
     with
@@ -105,7 +105,7 @@ abstract class _$TrackState extends $Notifier<Track> {
   });
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<Track, Track>;
     final element =
         ref.element
@@ -115,7 +115,7 @@ abstract class _$TrackState extends $Notifier<Track> {
               Object?,
               Object?
             >;
-    element.handleCreate(
+    return element.handleCreate(
       ref,
       () => build(
         track: _$args.track,
@@ -167,7 +167,7 @@ abstract class _$LastTrackerLibraryLocationState
   (int, bool) build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<(int, bool), (int, bool)>;
     final element =
         ref.element
@@ -177,6 +177,6 @@ abstract class _$LastTrackerLibraryLocationState
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

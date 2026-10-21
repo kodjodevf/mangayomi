@@ -92,7 +92,7 @@ abstract class _$SyncProgress extends $Notifier<SyncProgressState> {
   SyncProgressState build({required int syncId});
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<SyncProgressState, SyncProgressState>;
     final element =
         ref.element
@@ -102,6 +102,6 @@ abstract class _$SyncProgress extends $Notifier<SyncProgressState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(syncId: _$args));
+    return element.handleCreate(ref, () => build(syncId: _$args));
   }
 }

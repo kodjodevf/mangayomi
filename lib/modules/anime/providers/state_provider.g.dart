@@ -49,7 +49,7 @@ abstract class _$SubtitleSettingsState
   PlayerSubtitleSettings build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref =
         this.ref as $Ref<PlayerSubtitleSettings, PlayerSubtitleSettings>;
     final element =
@@ -60,6 +60,6 @@ abstract class _$SubtitleSettingsState
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

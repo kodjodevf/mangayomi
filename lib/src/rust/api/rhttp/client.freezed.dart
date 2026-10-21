@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'client.dart';
@@ -9,6 +9,7 @@ part of 'client.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$ProxySettings {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProxySettings);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProxySettings);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'ProxySettings()';
+    return 'ProxySettings()';
 }
 
 
@@ -185,7 +186,7 @@ class ProxySettings_NoProxy extends ProxySettings {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProxySettings_NoProxy);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProxySettings_NoProxy);
 }
 
 
@@ -194,7 +195,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'ProxySettings.noProxy()';
+    return 'ProxySettings.noProxy()';
 }
 
 
@@ -228,16 +229,18 @@ $ProxySettings_CustomProxyListCopyWith<ProxySettings_CustomProxyList> get copyWi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProxySettings_CustomProxyList&&const DeepCollectionEquality().equals(other._field0, _field0));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProxySettings_CustomProxyList&&const DeepCollectionEquality().equals(other.field0, _field0));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_field0));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_field0));
+}
 
 @override
 String toString() {
-  return 'ProxySettings.customProxyList(field0: $field0)';
+    return 'ProxySettings.customProxyList(field0: $field0)';
 }
 
 
@@ -284,7 +287,7 @@ mixin _$RedirectSettings {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RedirectSettings);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is RedirectSettings);
 }
 
 
@@ -293,7 +296,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'RedirectSettings()';
+    return 'RedirectSettings()';
 }
 
 
@@ -449,7 +452,7 @@ class RedirectSettings_NoRedirect extends RedirectSettings {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RedirectSettings_NoRedirect);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is RedirectSettings_NoRedirect);
 }
 
 
@@ -458,7 +461,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'RedirectSettings.noRedirect()';
+    return 'RedirectSettings.noRedirect()';
 }
 
 
@@ -486,16 +489,18 @@ $RedirectSettings_LimitedRedirectsCopyWith<RedirectSettings_LimitedRedirects> ge
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RedirectSettings_LimitedRedirects&&(identical(other.field0, field0) || other.field0 == field0));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is RedirectSettings_LimitedRedirects&&(identical(other.field0, field0) || other.field0 == field0));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,field0);
+int get hashCode {
+    return Object.hash(runtimeType,field0);
+}
 
 @override
 String toString() {
-  return 'RedirectSettings.limitedRedirects(field0: $field0)';
+    return 'RedirectSettings.limitedRedirects(field0: $field0)';
 }
 
 

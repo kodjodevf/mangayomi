@@ -7,7 +7,7 @@ part of 'source_preference.dart';
 // **************************************************************************
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types, experimental_member_use
 
 extension GetSourcePreferenceCollection on Isar {
   IsarCollection<SourcePreference> get sourcePreferences => this.collection();
@@ -74,7 +74,7 @@ const SourcePreferenceSchema = CollectionSchema(
   getId: _sourcePreferenceGetId,
   getLinks: _sourcePreferenceGetLinks,
   attach: _sourcePreferenceAttach,
-  version: '3.3.2',
+  version: '3.4.1',
 );
 
 int _sourcePreferenceEstimateSize(
@@ -241,43 +241,38 @@ P _sourcePreferenceDeserializeProp<P>(
   switch (propertyId) {
     case 0:
       return (reader.readObjectOrNull<CheckBoxPreference>(
-            offset,
-            CheckBoxPreferenceSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        CheckBoxPreferenceSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 1:
       return (reader.readObjectOrNull<EditTextPreference>(
-            offset,
-            EditTextPreferenceSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        EditTextPreferenceSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 2:
       return (reader.readStringOrNull(offset)) as P;
     case 3:
       return (reader.readObjectOrNull<ListPreference>(
-            offset,
-            ListPreferenceSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        ListPreferenceSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 4:
       return (reader.readObjectOrNull<MultiSelectListPreference>(
-            offset,
-            MultiSelectListPreferenceSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        MultiSelectListPreferenceSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 5:
       return (reader.readLongOrNull(offset)) as P;
     case 6:
       return (reader.readObjectOrNull<SwitchPreferenceCompat>(
-            offset,
-            SwitchPreferenceCompatSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        SwitchPreferenceCompatSchema.deserialize,
+        allOffsets,
+      )) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -965,7 +960,7 @@ extension SourcePreferenceQueryProperty
 }
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types, experimental_member_use
 
 extension GetSourcePreferenceStringValueCollection on Isar {
   IsarCollection<SourcePreferenceStringValue>
@@ -993,7 +988,7 @@ const SourcePreferenceStringValueSchema = CollectionSchema(
   getId: _sourcePreferenceStringValueGetId,
   getLinks: _sourcePreferenceStringValueGetLinks,
   attach: _sourcePreferenceStringValueAttach,
-  version: '3.3.2',
+  version: '3.4.1',
 );
 
 int _sourcePreferenceStringValueEstimateSize(
@@ -2051,7 +2046,7 @@ extension SourcePreferenceStringValueQueryProperty
 // **************************************************************************
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types, experimental_member_use
 
 const CheckBoxPreferenceSchema = Schema(
   name: r'CheckBoxPreference',
@@ -2484,7 +2479,7 @@ extension CheckBoxPreferenceQueryObject
     on QueryBuilder<CheckBoxPreference, CheckBoxPreference, QFilterCondition> {}
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types, experimental_member_use
 
 const SwitchPreferenceCompatSchema = Schema(
   name: r'SwitchPreferenceCompat',
@@ -3035,7 +3030,7 @@ extension SwitchPreferenceCompatQueryObject
         > {}
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types, experimental_member_use
 
 const ListPreferenceSchema = Schema(
   name: r'ListPreference',
@@ -3984,7 +3979,7 @@ extension ListPreferenceQueryObject
     on QueryBuilder<ListPreference, ListPreference, QFilterCondition> {}
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types, experimental_member_use
 
 const MultiSelectListPreferenceSchema = Schema(
   name: r'MultiSelectListPreference',
@@ -5406,7 +5401,7 @@ extension MultiSelectListPreferenceQueryObject
         > {}
 
 // coverage:ignore-file
-// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types, experimental_member_use
 
 const EditTextPreferenceSchema = Schema(
   name: r'EditTextPreference',

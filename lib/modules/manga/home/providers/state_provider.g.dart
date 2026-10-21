@@ -48,7 +48,7 @@ abstract class _$MangaHomeDisplayTypeState extends $Notifier<DisplayType> {
   DisplayType build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<DisplayType, DisplayType>;
     final element =
         ref.element
@@ -58,6 +58,6 @@ abstract class _$MangaHomeDisplayTypeState extends $Notifier<DisplayType> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

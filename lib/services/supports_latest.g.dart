@@ -65,7 +65,7 @@ final class SupportsLatestProvider extends $FunctionalProvider<bool, bool, bool>
   }
 }
 
-String _$supportsLatestHash() => r'633e0253b28d96bbc58b7a78f4bf612ad9cbd98e';
+String _$supportsLatestHash() => r'8124d7f02c46a44deeeac507b1e0723247588202';
 
 final class SupportsLatestFamily extends $Family
     with $FunctionalFamilyOverride<bool, Source> {

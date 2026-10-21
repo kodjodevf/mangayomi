@@ -48,7 +48,7 @@ abstract class _$AlgorithmWeightsState extends $Notifier<AlgorithmWeights> {
   AlgorithmWeights build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AlgorithmWeights, AlgorithmWeights>;
     final element =
         ref.element
@@ -58,6 +58,6 @@ abstract class _$AlgorithmWeightsState extends $Notifier<AlgorithmWeights> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
