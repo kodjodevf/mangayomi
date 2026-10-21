@@ -445,7 +445,6 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                 Tab(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    spacing: ShioriSpace.s8,
                     children: [
                       Text(l10n.extensions),
                       ExtensionUpdateNumbersBadge(itemType: currentTab.type),
@@ -527,9 +526,13 @@ class ExtensionUpdateNumbersBadge extends ConsumerWidget {
     return countAsync.when(
       data: (count) {
         if (count == 0) return const SizedBox.shrink();
-        return EntryBadgeChip(
-          label: count.toString(),
-          tone: context.shiori.color.unread,
+        // The gap lives here so a tab with no badge keeps no trailing space.
+        return Padding(
+          padding: const EdgeInsetsDirectional.only(start: ShioriSpace.s8),
+          child: EntryBadgeChip(
+            label: count.toString(),
+            tone: context.shiori.color.unread,
+          ),
         );
       },
       error: (error, stackTrace) => const SizedBox.shrink(),

@@ -493,11 +493,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Tab(text: l10n.default0),
-              if (showNumbersOfItems) ...[
-                const SizedBox(width: ShioriSpace.s4),
-                // Default category doesn't have a single ID — use inline count
+              // Default category doesn't have a single ID — use inline count
+              if (showNumbersOfItems)
                 _DefaultCategoryBadge(itemType: widget.itemType),
-              ],
             ],
           ),
         for (var i = 0; i < entr.length; i++)
@@ -505,10 +503,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Tab(text: entr[i].name),
-              if (showNumbersOfItems) ...[
-                const SizedBox(width: ShioriSpace.s4),
-                badgeForCategory(entr[i].id!),
-              ],
+              if (showNumbersOfItems) badgeForCategory(entr[i].id!),
             ],
           ),
       ],
@@ -710,7 +705,11 @@ class _DefaultCategoryBadge extends ConsumerWidget {
         final count = data
             .where((m) => m.categories == null || m.categories!.isEmpty)
             .length;
-        return EntryBadgeChip(label: count.toString());
+        // The gap lives here so a tab with no badge keeps no trailing space.
+        return Padding(
+          padding: const EdgeInsetsDirectional.only(start: ShioriSpace.s4),
+          child: EntryBadgeChip(label: count.toString()),
+        );
       },
       error: (_, _) => const SizedBox.shrink(),
       loading: () => const SizedBox.shrink(),

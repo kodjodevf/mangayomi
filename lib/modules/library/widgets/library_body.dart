@@ -277,7 +277,11 @@ class CategoryBadge extends ConsumerWidget {
             settings: settings,
           ),
         );
-        return EntryBadgeChip(label: filtered.length.toString());
+        // The gap lives here so a tab with no badge keeps no trailing space.
+        return Padding(
+          padding: const EdgeInsetsDirectional.only(start: ShioriSpace.s4),
+          child: EntryBadgeChip(label: filtered.length.toString()),
+        );
       },
       error: (error, _) => const SizedBox.shrink(),
       loading: () => const SizedBox.shrink(),
