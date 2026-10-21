@@ -86,12 +86,19 @@ class DownloadLocalFolderNameState extends _$DownloadLocalFolderNameState {
 /// ```
 @riverpod
 Future<void> scanLocalLibrary(Ref ref) async {
-  // Get /local directory
-  final defaultFolder = await getDefaultLocalFolder();
-  final customFolders = ref.read(localFoldersStateProvider);
-  final localFolders = [?defaultFolder, ...customFolders];
-  for (final folder in localFolders) {
-    await _scanDirectory(ref, folder, localFolders);
+  // Callers often await/ignore .future without listening, which would dispose
+  // this auto-dispose provider mid-scan and break every ref use below.
+  final keepAlive = ref.keepAlive();
+  try {
+    // Get /local directory
+    final defaultFolder = await getDefaultLocalFolder();
+    final customFolders = ref.read(localFoldersStateProvider);
+    final localFolders = [?defaultFolder, ...customFolders];
+    for (final folder in localFolders) {
+      await _scanDirectory(ref, folder, localFolders);
+    }
+  } finally {
+    keepAlive.close();
   }
 }
 

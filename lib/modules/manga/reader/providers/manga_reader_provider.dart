@@ -18,7 +18,12 @@ Future<ChapterWithPages> mangaReader(Ref ref, int chapterId) async {
     throw Exception('Chapter #$chapterId not found');
   }
 
-  final pages = await ref.read(getChapterPagesProvider(chapter: chap).future);
+  if (!ref.mounted) throw Exception('Reader provider disposed');
+
+  final pagesProvider = getChapterPagesProvider(chapter: chap);
+  // Keeps the auto-dispose sub-provider alive while we await it.
+  ref.listen(pagesProvider, (_, _) {}, onError: (_, _) {});
+  final pages = await ref.read(pagesProvider.future);
 
   return ChapterWithPages(chapter: chap, pages: pages);
 }
