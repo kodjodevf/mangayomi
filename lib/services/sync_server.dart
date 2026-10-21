@@ -32,6 +32,7 @@ import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/tint_surfaces_state_provider.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 part 'sync_server.g.dart';
 
 /// Matches the server's SYNC.maxRowsPerEntity. A changed-row batch larger
@@ -121,7 +122,8 @@ class SyncServer extends _$SyncServer {
           .login(server, username, accessToken);
       botToast(l10n.sync_logged);
       return (true, "");
-    } catch (e) {
+    } catch (e, stackTrace) {
+      recordError(e, stack: stackTrace, source: 'sync_server');
       return (false, e.toString());
     }
   }

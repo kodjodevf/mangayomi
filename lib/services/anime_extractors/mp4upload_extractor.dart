@@ -4,6 +4,7 @@ import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 class Mp4uploadExtractor {
   static final RegExp qualityRegex = RegExp(r'\WHEIGHT=(\d+)');
@@ -53,7 +54,8 @@ class Mp4uploadExtractor {
       final quality = '$prefix Mp4Upload - ${resolution}p $suffix';
 
       return [Video(videoUrl, quality, videoUrl, headers: newHeaders)];
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'mp4upload_extractor');
       return [];
     }
   }

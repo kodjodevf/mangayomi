@@ -10,6 +10,7 @@ import 'package:mangayomi/services/discovery/trakt_discovery.dart';
 import 'package:mangayomi/services/discovery/western_watch_order.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 const _sequelData =
     "&types%5B%5D=1&types%5B%5D=3&types%5B%5D=2&types%5B%5D=4&types%5B%5D=9&score=0&date_from=false&date_to=false&include_ptw=1&exclude_h=1&exclude_planned=1&exclude_dropped=0&exclude_not_aired=0&exclude_short=1&exclude_short_value=3";
@@ -40,7 +41,8 @@ Future<List<SequelItem>> fetchSequels(
             ?.map((e) => SequelItem.fromJson(e))
             .toList() ??
         [];
-  } catch (_) {
+  } catch (error, stackTrace) {
+    recordError(error, stack: stackTrace, source: 'fetch_watch_order');
     return [];
   }
 }

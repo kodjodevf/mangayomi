@@ -16,6 +16,7 @@ import 'base_tracker.dart';
 import 'tracker_account.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 part 'simkl.g.dart';
 
 /// Which Simkl library a mangayomi library maps to.
@@ -78,7 +79,8 @@ class Simkl extends _$Simkl implements BaseTracker {
       _saveOAuth(username, oAuth);
 
       return true;
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'simkl');
       return false;
     }
   }

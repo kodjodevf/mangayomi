@@ -6,6 +6,7 @@ import 'package:mangayomi/services/discovery/kitsu_discovery.dart';
 import 'package:mangayomi/services/discovery/service_availability.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 /// AniList public GraphQL discovery client. No login required for browsing, so
 /// this is separate from the AniList *tracker* (which is OAuth'd).
@@ -125,7 +126,8 @@ Map<String, dynamic>? _decodeOrNull(String body) {
   try {
     final decoded = jsonDecode(body);
     return decoded is Map<String, dynamic> ? decoded : null;
-  } catch (_) {
+  } catch (error, stackTrace) {
+    recordError(error, stack: stackTrace, source: 'anilist_discovery');
     return null;
   }
 }

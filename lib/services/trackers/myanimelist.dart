@@ -19,6 +19,7 @@ import 'expiring_oauth_tracker.dart';
 import 'tracker_account.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 part 'myanimelist.g.dart';
 
 @riverpod
@@ -65,7 +66,8 @@ class MyAnimeList extends _$MyAnimeList
       _saveOAuth(username, oAuth);
 
       return true;
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'myanimelist');
       return false;
     }
   }

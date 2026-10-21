@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 part 'aniskip.g.dart';
 
 // credits: https://github.com/aniyomiorg/aniyomi/blob/master/app/src/main/java/eu/kanade/tachiyomi/util/AniSkipApi.kt
@@ -31,7 +32,8 @@ class AniSkip extends _$AniSkip {
       final res = AniSkipResponse.fromJson(json.decode(response.body));
 
       return (res.found ?? false) ? res.results : null;
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'aniskip');
       return null;
     }
   }

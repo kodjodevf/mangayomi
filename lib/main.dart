@@ -61,6 +61,7 @@ import 'package:mangayomi/modules/more/settings/general/providers/memory_probe_p
 import 'package:mangayomi/modules/widgets/memory_overlay.dart';
 import 'package:mangayomi/modules/widgets/app_ui_scale.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_ui_scale_state_provider.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 late Isar isar;
 DiscordRPC? discordRpc;
@@ -224,7 +225,9 @@ Future<void> _deleteLegacyHiveCache() async {
       final file = File(p.join(dir, name));
       if (await file.exists()) await file.delete();
     }
-  } catch (_) {}
+  } catch (error, stackTrace) {
+    recordError(error, stack: stackTrace, source: 'main');
+  }
 }
 
 Future<void> _postLaunchInit(StorageProvider storage) async {
@@ -728,7 +731,8 @@ class _MyAppState extends ConsumerState<MyApp>
         if (sourceList.firstOrNull?.name == null) {
           return false;
         }
-      } catch (err) {
+      } catch (err, stackTrace) {
+        recordError(err, stack: stackTrace, source: 'main');
         return false;
       }
     }

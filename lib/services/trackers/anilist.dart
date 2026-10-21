@@ -21,6 +21,7 @@ import 'base_tracker.dart';
 import 'tracker_account.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 part 'anilist.g.dart';
 
 @riverpod
@@ -88,7 +89,8 @@ class Anilist extends _$Anilist implements BaseTracker {
           );
 
       return true;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      recordError(e, stack: stackTrace, source: 'anilist');
       return false;
     }
   }

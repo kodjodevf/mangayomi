@@ -7,6 +7,7 @@ import 'package:mangayomi/models/video.dart';
 import 'package:html/parser.dart' as parser;
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 class GogoCdnExtractor {
   final InterceptedClient client = MClient.init(
@@ -123,7 +124,8 @@ class GogoCdnExtractor {
         }
       }
       return videoList + autoList;
-    } catch (e) {
+    } catch (e, stackTrace) {
+      recordError(e, stack: stackTrace, source: 'gogocdn_extractor');
       return [];
     }
   }

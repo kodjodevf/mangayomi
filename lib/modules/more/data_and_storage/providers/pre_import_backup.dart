@@ -5,6 +5,7 @@ import 'package:mangayomi/modules/more/data_and_storage/providers/backup.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:path/path.dart' as p;
+import 'package:mangayomi/utils/error_toast.dart';
 part 'pre_import_backup.g.dart';
 
 Future<String> createLibrarySafetyBackup() async {
@@ -77,7 +78,8 @@ Future<List<LibrarySafetySnapshot>> _readSnapshots(File file) async {
         .cast<Map<String, dynamic>>()
         .map(LibrarySafetySnapshot.fromJson)
         .toList();
-  } catch (_) {
+  } catch (error, stackTrace) {
+    recordError(error, stack: stackTrace, source: 'pre_import_backup');
     return const [];
   }
 }

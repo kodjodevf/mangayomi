@@ -16,6 +16,7 @@ import 'base_tracker.dart';
 import 'tracker_account.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 part 'kitsu.g.dart';
 
 @riverpod
@@ -83,7 +84,8 @@ class Kitsu extends _$Kitsu implements BaseTracker {
           );
 
       return (true, "");
-    } catch (e) {
+    } catch (e, stackTrace) {
+      recordError(e, stack: stackTrace, source: 'kitsu');
       return (false, e.toString());
     }
   }

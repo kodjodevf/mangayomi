@@ -5,6 +5,7 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 class StreamWishExtractor {
   final InterceptedClient client = MClient.init(
@@ -66,7 +67,8 @@ class StreamWishExtractor {
       });
 
       return videoList;
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'streamwish_extractor');
       return [];
     }
   }

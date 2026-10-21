@@ -4,6 +4,7 @@ import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 class SettingsRepository {
   Settings get current => isar.settings.getSync(227)!;
@@ -11,7 +12,8 @@ class SettingsRepository {
   Settings? get currentOrNull {
     try {
       return isar.settings.getSync(227);
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'settings_repository');
       return null;
     }
   }

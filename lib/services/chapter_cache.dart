@@ -6,6 +6,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 /// Service managing the disk cache for chapter page lists
 ///
@@ -128,7 +129,9 @@ class ChapterCache {
       if (await file.exists()) {
         await file.delete();
       }
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'chapter_cache');
+    }
   }
 
   /// Trims the cache directory using an LRU policy (deleting least-recently modified files)
@@ -152,7 +155,9 @@ class ChapterCache {
           final stat = file.statSync();
           currentSize += stat.size;
           fileStats.add((file: file, size: stat.size, modified: stat.modified));
-        } catch (_) {}
+        } catch (error, stackTrace) {
+          recordError(error, stack: stackTrace, source: 'chapter_cache');
+        }
       }
 
       if (currentSize <= maxBytes) return;
@@ -165,7 +170,9 @@ class ChapterCache {
         try {
           await item.file.delete();
           currentSize -= item.size;
-        } catch (_) {}
+        } catch (error, stackTrace) {
+          recordError(error, stack: stackTrace, source: 'chapter_cache');
+        }
       }
     } catch (e) {
       if (kDebugMode) {
