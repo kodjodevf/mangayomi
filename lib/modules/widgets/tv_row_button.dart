@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 /// Tracks which [TvListRow] currently holds focus, so every other row can fade
 /// back while one is active. Provide it above a list of rows. Rows with no
@@ -85,7 +85,7 @@ class _TvListRowState extends State<TvListRow> {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.primaryColor;
+    final accent = context.shiori.color.accentInk;
     final active = TvRowFocusScope.activeRow(context);
     final fadedBack = active != null && active != _id;
 
@@ -94,15 +94,15 @@ class _TvListRowState extends State<TvListRow> {
       skipTraversal: true,
       onFocusChange: _onFocusChange,
       child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 160),
+        duration: ShioriMotion.fast,
         curve: Curves.easeOut,
         opacity: fadedBack ? 0.7 : 1.0,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
+          duration: ShioriMotion.fast,
           curve: Curves.easeOut,
           margin: const EdgeInsets.symmetric(vertical: 3),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(ShioriShape.card),
             // Lightened toward white so the band reads as lit rather than as a
             // flat wash of accent behind the text.
             color: _focused
@@ -156,7 +156,7 @@ class _TvRowButtonState extends State<TvRowButton> {
 
   @override
   Widget build(BuildContext context) {
-    final accent = context.primaryColor;
+    final accent = context.shiori.color.accentInk;
     return Focus(
       focusNode: widget.focusNode,
       autofocus: widget.autofocus,
@@ -166,7 +166,7 @@ class _TvRowButtonState extends State<TvRowButton> {
           Scrollable.ensureVisible(
             context,
             alignment: 0.5,
-            duration: const Duration(milliseconds: 200),
+            duration: ShioriMotion.standard,
             curve: Curves.easeOut,
           );
         }
@@ -205,10 +205,10 @@ class _TvRowButtonState extends State<TvRowButton> {
         onTap: widget.onTap,
         onLongPress: widget.onLongPress,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 130),
+          duration: ShioriMotion.fast,
           curve: Curves.easeOut,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(ShioriShape.card),
             // Sits on top of the row's band, so it has to stay clearly the
             // brightest thing in the row.
             color: _focused

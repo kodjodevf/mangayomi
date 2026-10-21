@@ -48,7 +48,7 @@ Future<Map<String, dynamic>?> _get(
         "answered HTTP ${res.statusCode}",
       );
     }
-    final decoded = jsonDecode(res.body);
+    final decoded = jsonDecode(utf8.decode(res.bodyBytes));
     if (decoded is! Map<String, dynamic>) return null;
     ServiceAvailability.markUp(DiscoveryService.kitsu);
     return decoded;

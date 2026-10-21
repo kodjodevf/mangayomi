@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
+import 'package:html/parser.dart' show parseFragment;
 
 extension StringExtensions on String {
   String substringAfter(String pattern) {
@@ -61,6 +62,16 @@ extension StringExtensions on String {
     } catch (_) {
       return this;
     }
+  }
+
+  String htmlToPlainText() {
+    if (trim().isEmpty) return '';
+    final withBreaks = replaceAll(
+      RegExp(r'<br\s*/?>', caseSensitive: false),
+      ' ',
+    );
+    final text = parseFragment(withBreaks).text ?? '';
+    return text.replaceAll(RegExp(r'\s+'), ' ').trim();
   }
 
   bool isMediaVideo() {

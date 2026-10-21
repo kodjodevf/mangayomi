@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 
@@ -21,14 +22,14 @@ class TrackerAccountAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final url = preference.avatarUrl;
     final name = preference.accountLabel;
-    final background = Theme.of(context).colorScheme.surfaceContainerHighest;
+    final background = context.shiori.color.ink3;
 
     if (url == null || url.isEmpty) {
       return CircleAvatar(
         radius: radius,
         backgroundColor: background,
         child: name == null
-            ? Icon(Icons.person_rounded, size: radius)
+            ? Icon(Symbols.person_rounded, fill: 1, size: radius)
             : Text(
                 name.characters.first.toUpperCase(),
                 style: TextStyle(fontSize: radius, fontWeight: FontWeight.bold),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
+import 'package:mangayomi/modules/widgets/entry_badge_chip.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -8,7 +10,6 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/related_titles.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -16,10 +17,6 @@ import 'package:mangayomi/utils/platform_utils.dart';
 /// kind of list rather than two.
 const double _coverWidth = 96;
 const double _coverHeight = 144;
-
-const double _alphaTint = 0.08;
-const double _alphaFocus = 0.14;
-const double _alphaSecondary = 0.70;
 
 /// What the open title is related to.
 ///
@@ -89,7 +86,11 @@ class _RelatedScreenState extends State<RelatedScreen> {
               },
             )
           : (data == null || data!.isEmpty)
-          ? Center(child: Text(l10n.related_none))
+          ? ShioriEmptyState(
+              icon: Symbols.account_tree_rounded,
+              title: l10n.related_none,
+              compact: true,
+            )
           // One column, like the watch order this sits beside. The list is
           // short, and an adaptation is meant to be read down the page rather
           // than scanned across it.
@@ -98,11 +99,12 @@ class _RelatedScreenState extends State<RelatedScreen> {
               // rather than a ListTile, so without this the covers run flush
               // to the window edge.
               padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 8,
+                horizontal: ShioriSpace.s12,
+                vertical: ShioriSpace.s8,
               ).add(tvPageInsets),
               itemCount: data!.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 4),
+              separatorBuilder: (_, _) =>
+                  const SizedBox(height: ShioriSpace.s4),
               itemBuilder: (context, index) =>
                   _card(context, data![index], index),
             ),
@@ -119,24 +121,24 @@ class _RelatedScreenState extends State<RelatedScreen> {
 
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(ShioriShape.cover),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         // Nothing is focusable on entry otherwise, so a remote does nothing
         // until the user guesses a direction.
         autofocus: isTv && index == 0,
-        focusColor: context.primaryColor.withValues(alpha: _alphaFocus),
+        focusColor: context.shiori.color.accent.withValues(alpha: Alphas.focus),
         onTap: () => context.push(
           '/globalSearch',
           extra: (related.title, related.itemType),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(6),
+          padding: const EdgeInsets.all(ShioriSpace.s8),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(6),
+                borderRadius: BorderRadius.circular(ShioriShape.cover),
                 child: Image(
                   // toImgUrl stands a blank in for an entry with no poster, so
                   // a missing cover leaves a gap of the right shape instead of
@@ -147,7 +149,7 @@ class _RelatedScreenState extends State<RelatedScreen> {
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: ShioriSpace.s12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,12 +161,12 @@ class _RelatedScreenState extends State<RelatedScreen> {
                       related.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 14,
+                      style: TextStyle(
+                        fontSize: context.shiori.text.row.fontSize,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 7),
+                    const SizedBox(height: ShioriSpace.s8),
                     Wrap(
                       spacing: 5,
                       runSpacing: 4,
@@ -208,31 +210,10 @@ class _RelatedScreenState extends State<RelatedScreen> {
     bool filled = false,
     bool bold = false,
   }) {
-    final accent = context.primaryColor;
-    // Computed against the accent rather than the theme, so it stays readable
-    // whichever hue the user picked and in either brightness.
-    final onAccent = accent.computeLuminance() > 0.5
-        ? Colors.black
-        : Colors.white;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(
-        color: filled
-            ? accent
-            : context.textColor.withValues(alpha: _alphaTint),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: bold ? FontWeight.w800 : FontWeight.w400,
-          color: filled
-              ? onAccent
-              : context.textColor.withValues(alpha: _alphaSecondary),
-        ),
-      ),
+    return EntryBadgeChip(
+      label: label,
+      tone: filled ? EntryBadgeChip.accent(context) : null,
+      strong: bold,
     );
   }
 }

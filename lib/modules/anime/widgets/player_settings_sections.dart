@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/anime/utils/temporary_playback_speed.dart';
 import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/modules/anime/providers/state_provider.dart';
 import 'package:mangayomi/modules/anime/utils/video_prefs.dart';
@@ -34,7 +36,7 @@ class VideoQualitySectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
       child: Column(
         children: videoQuality.map((quality) {
           final selected =
@@ -78,7 +80,7 @@ class ChaptersSectionWidget extends StatelessWidget {
     return ValueListenableBuilder<int?>(
       valueListenable: currentChapterMark,
       builder: (context, current, _) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
         child: Column(
           children: chapterMarks.asMap().entries.map((entry) {
             final index = entry.key;
@@ -117,13 +119,13 @@ class SpeedSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
       child: Column(
         children: speeds.map((speed) {
           return ValueListenableBuilder<double>(
             valueListenable: playbackSpeed,
             builder: (context, current, _) => SettingsOptionRow(
-              label: '${speed}x',
+              label: temporaryPlaybackSpeedLabel(speed),
               selected: current == speed,
               onTap: () {
                 onSelect(speed);
@@ -165,7 +167,7 @@ class FitSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
       child: Column(
         children: fits.map((f) {
           return ValueListenableBuilder<BoxFit>(
@@ -223,7 +225,7 @@ class ShadersSectionWidget extends StatelessWidget {
     return ValueListenableBuilder<String>(
       valueListenable: selectedShader,
       builder: (context, selected, _) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
         child: Column(
           children: shaderModes.map((mode) {
             return SettingsOptionRow(
@@ -266,7 +268,7 @@ class StatsSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
       child: Column(
         children: statsModes.map((mode) {
           return SettingsOptionRow(
@@ -302,7 +304,7 @@ class CustomButtonsSectionWidget extends StatelessWidget {
     return ValueListenableBuilder<List<CustomButton>?>(
       valueListenable: customButtons,
       builder: (context, buttons, _) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
         child: Column(
           children: (buttons ?? []).map((btn) {
             return SettingsOptionRow(
@@ -347,32 +349,24 @@ class AppearanceSectionWidget extends ConsumerWidget {
             Consumer(
               builder: (context, ref, _) {
                 final overrideAss = ref.watch(overrideAssSubtitlesStateProvider);
-                return SwitchListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                  value: overrideAss,
-                  title: Text(
-                    context.l10n.override_ass_subtitles,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: ShioriSpace.s16,
                   ),
-                  subtitle: Text(
-                    context.l10n.override_ass_subtitles_info,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.white.withValues(alpha: 0.6),
-                    ),
+                  child: ShioriSwitchRow(
+                    value: overrideAss,
+                    title: context.l10n.override_ass_subtitles,
+                    subtitle: context.l10n.override_ass_subtitles_info,
+                    onChanged: (val) {
+                      ref
+                          .read(subtitleSettingsStateProvider.notifier)
+                          .setOverrideAss(val);
+                    },
                   ),
-                  onChanged: (val) {
-                    ref
-                        .read(subtitleSettingsStateProvider.notifier)
-                        .setOverrideAss(val);
-                  },
                 );
               },
             ),
-            const Divider(height: 1, color: Color(0x14FFFFFF)),
+            Divider(height: 1, color: Colors.white.withValues(alpha: Alphas.tint)),
           ],
           SubtitleAppearanceWidget(hasSubtitleTrack: hasSubtitleTrack),
         ],

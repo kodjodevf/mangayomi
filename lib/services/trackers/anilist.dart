@@ -485,7 +485,7 @@ class Anilist extends _$Anilist implements BaseTracker {
     if (DateTime.now().isAfter(expiresIn)) {
       widgetRef.read(tracksProvider(syncId: syncId).notifier).logout();
       botToast(
-        localizedMessage((l10n) => l10n.tracker_token_expired("Anilist")),
+        localizedMessage((l10n) => l10n.tracker_token_expired("AniList")),
       );
       throw Exception("Token expired");
     }

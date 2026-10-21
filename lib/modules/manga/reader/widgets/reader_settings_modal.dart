@@ -1,12 +1,16 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
+import 'package:mangayomi/modules/more/settings/reader/reader_switches.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mangayomi/modules/manga/reader/mixins/reader_gestures.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/reader_mode_picker.dart';
+import 'package:shiori/shiori.dart';
+import 'package:mangayomi/modules/manga/reader/utils/reader_orientation.dart';
+import 'package:mangayomi/services/volume_keys.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/reader/providers/color_filter_provider.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/color_filter_widget.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/custom_popup_menu_button.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
@@ -55,6 +59,7 @@ class ReaderSettingsModal {
     required void Function(bool enabled, double offset) onAutoScrollSave,
     required VoidCallback onFullScreenToggle,
     required VoidCallback onAutoPageScroll,
+    String seriesName = '',
   }) async {
     // Pause auto-scroll while settings are open
     final autoScrollWasRunning = autoScroll.value;
@@ -63,6 +68,9 @@ class ReaderSettingsModal {
     }
 
     final l10n = l10nLocalizations(context)!;
+    // On while the custom filter is, so the sheet lets the page show through
+    // on that tab and the filter can be set by eye.
+    final filterOn = ValueNotifier(false);
 
     await customDraggableTabBar(
       tabs: [
@@ -73,6 +81,7 @@ class ReaderSettingsModal {
       children: [
         // Reading Mode Tab
         _ReadingModeTab(
+          seriesName: seriesName,
           currentReaderModeProvider: currentReaderModeProvider,
           autoScrollPage: autoScrollPage,
           pageOffset: pageOffset,
@@ -87,11 +96,15 @@ class ReaderSettingsModal {
         _GeneralTab(onFullScreenToggle: onFullScreenToggle),
 
         // Custom Filter Tab
-        const _CustomFilterTab(),
+        _CustomFilterTab(filterOn: filterOn),
       ],
       context: context,
       vsync: vsync,
       fullWidth: true,
+      // The page stays in sight: every setting here changes it.
+      dimBehind: false,
+      seeThroughTab: 2,
+      seeThrough: filterOn,
     );
 
     // Resume auto-scroll if it was running
@@ -112,8 +125,10 @@ class _ReadingModeTab extends ConsumerWidget {
   final void Function(ReaderMode mode, WidgetRef ref) onReaderModeChanged;
   final void Function(bool enabled, double offset) onAutoScrollSave;
   final void Function(bool val) onAutoScroll;
+  final String seriesName;
 
   const _ReadingModeTab({
+    required this.seriesName,
     required this.currentReaderModeProvider,
     required this.autoScrollPage,
     required this.pageOffset,
@@ -124,394 +139,134 @@ class _ReadingModeTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = l10nLocalizations(context)!;
+    final l10n = context.l10n;
     final readerMode = ref.watch(currentReaderModeProvider);
-    final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
-    final cropBorders = ref.watch(cropBordersStateProvider);
     final splitWidePages = ref.watch(splitWidePagesStateProvider);
-    final keepScreenOn = ref.watch(keepScreenOnReaderStateProvider);
-    final showPageGaps = ref.watch(showPageGapsStateProvider);
     final webtoonSidePadding = ref.watch(webtoonSidePaddingStateProvider);
-    final dualPageInvert = ref.watch(dualPageInvertStateProvider);
     final dualPageRotateToFit = ref.watch(dualPageRotateToFitStateProvider);
-    final dualPageRotateToFitInvert = ref.watch(
-      dualPageRotateToFitInvertStateProvider,
-    );
-    final doublePageSingleFirstPage = ref.watch(
-      doublePageSingleFirstPageStateProvider,
-    );
-    final doublePageAuto = ref.watch(doublePageAutoStateProvider);
     final landscapeZoom = ref.watch(landscapeZoomStateProvider);
     final zoomStartPosition = ref.watch(zoomStartPositionStateProvider);
-    final webtoonDisableZoomOut = ref.watch(webtoonDisableZoomOutStateProvider);
-    final webtoonDoubleTapZoomEnabled = ref.watch(
-      webtoonDoubleTapZoomEnabledStateProvider,
-    );
-    final navigateToPan = ref.watch(navigateToPanStateProvider);
+    final continuous = readerMode!.isContinuous;
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          children: [
-            // Reader Mode
-            CustomPopupMenuButton<ReaderMode>(
-              label: l10n.reading_mode,
-              title: getReaderModeName(readerMode!, context),
-              onSelected: (value) {
-                onReaderModeChanged(value, ref);
-              },
-              value: readerMode,
-              list: ReaderMode.values,
-              itemText: (mode) => getReaderModeName(mode, context),
-            ),
-
-            // Crop Borders
-            SwitchListTile(
-              value: cropBorders,
-              title: Text(
-                l10n.crop_borders,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              onChanged: (value) {
-                ref.read(cropBordersStateProvider.notifier).set(value);
-              },
-            ),
-
-            if (readerMode.isContinuous) ...[
-              SwitchListTile(
-                value: webtoonDisableZoomOut,
-                title: Text(
-                  l10n.webtoon_disable_zoom_out,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge!.color!
-                        .withValues(alpha: 0.9),
-                    fontSize: 14,
-                  ),
-                ),
-                onChanged: (value) {
-                  ref
-                      .read(webtoonDisableZoomOutStateProvider.notifier)
-                      .set(value);
-                },
-              ),
-              SwitchListTile(
-                value: webtoonDoubleTapZoomEnabled,
-                title: Text(
-                  l10n.webtoon_double_tap_zoom_enabled,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge!.color!
-                        .withValues(alpha: 0.9),
-                    fontSize: 14,
-                  ),
-                ),
-                onChanged: (value) {
-                  ref
-                      .read(webtoonDoubleTapZoomEnabledStateProvider.notifier)
-                      .set(value);
-                },
-              ),
+    // The sheet scrolls; a tab is a column, not a list of its own.
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ReaderModePicker(
+            mode: readerMode,
+            defaultMode: ref.watch(defaultReadingModeStateProvider),
+            seriesName: seriesName,
+            onChanged: (value) => onReaderModeChanged(value, ref),
+            onSetDefault: () => ref
+                .read(defaultReadingModeStateProvider.notifier)
+                .set(readerMode),
+          ),
+          const SizedBox(height: ShioriSpace.s8),
+          // Grouped as in Settings › Reader, so a switch is found in the
+          // same place in both.
+          ShioriSettingsGroup(
+            title: l10n.group_reading,
+            children: [
+              const ReaderSwitchRow(ReaderSwitch.cropBorders),
+              if (!continuous)
+                const ReaderSwitchRow(ReaderSwitch.navigateToPan),
+              const ReaderSwitchRow(ReaderSwitch.usePageTapZones),
+              const ReaderSwitchRow(ReaderSwitch.keepScreenOn),
             ],
-
-            if (!readerMode.isContinuous)
-              SwitchListTile(
-                value: navigateToPan,
-                title: Text(
-                  l10n.navigate_to_pan,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge!.color!
-                        .withValues(alpha: 0.9),
-                    fontSize: 14,
-                  ),
-                ),
-                subtitle: Text(
-                  l10n.navigate_to_pan_subtitle,
-                  style: const TextStyle(fontSize: 11),
-                ),
-                onChanged: (value) {
-                  ref.read(navigateToPanStateProvider.notifier).set(value);
-                },
-              ),
-
-            SwitchListTile(
-              value: splitWidePages,
-              title: Text(
-                l10n.split_wide_pages,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              onChanged: (value) {
-                ref.read(splitWidePagesStateProvider.notifier).set(value);
-              },
-            ),
-
-            if (splitWidePages)
-              SwitchListTile(
-                value: dualPageInvert,
-                title: Text(
-                  l10n.dual_page_invert,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge!.color!
-                        .withValues(alpha: 0.9),
-                    fontSize: 14,
-                  ),
-                ),
-                onChanged: (value) {
-                  ref.read(dualPageInvertStateProvider.notifier).set(value);
-                },
-              ),
-
-            SwitchListTile(
-              value: dualPageRotateToFit,
-              title: Text(
-                l10n.dual_page_rotate_to_fit,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              onChanged: (value) {
-                ref.read(dualPageRotateToFitStateProvider.notifier).set(value);
-              },
-            ),
-
-            if (dualPageRotateToFit)
-              SwitchListTile(
-                value: dualPageRotateToFitInvert,
-                title: Text(
-                  l10n.dual_page_rotate_to_fit_invert,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge!.color!
-                        .withValues(alpha: 0.9),
-                    fontSize: 14,
-                  ),
-                ),
-                onChanged: (value) {
-                  ref
-                      .read(dualPageRotateToFitInvertStateProvider.notifier)
-                      .set(value);
-                },
-              ),
-
-            SwitchListTile(
-              value: doublePageSingleFirstPage,
-              title: Text(
-                l10n.double_page_single_first_page,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              subtitle: Text(
-                l10n.double_page_single_first_page_subtitle,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodySmall!.color!
-                      .withValues(alpha: 0.7),
-                  fontSize: 12,
-                ),
-              ),
-              onChanged: (value) {
-                ref
-                    .read(doublePageSingleFirstPageStateProvider.notifier)
-                    .set(value);
-              },
-            ),
-
-            SwitchListTile(
-              value: doublePageAuto,
-              title: Text(
-                l10n.double_page_auto,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              subtitle: Text(
-                l10n.double_page_auto_subtitle,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodySmall!.color!
-                      .withValues(alpha: 0.7),
-                  fontSize: 12,
-                ),
-              ),
-              onChanged: (value) {
-                ref.read(doublePageAutoStateProvider.notifier).set(value);
-              },
-            ),
-
-            if (!readerMode.isContinuous)
-              SwitchListTile(
-                value: landscapeZoom,
-                title: Text(
-                  l10n.landscape_zoom,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge!.color!
-                        .withValues(alpha: 0.9),
-                    fontSize: 14,
-                  ),
-                ),
-                onChanged: (value) {
-                  ref.read(landscapeZoomStateProvider.notifier).set(value);
-                },
-              ),
-
-            if (!readerMode.isContinuous && landscapeZoom)
-              CustomPopupMenuButton<int>(
-                label: l10n.zoom_start_position,
-                title: switch (zoomStartPosition) {
-                  0 => l10n.zoom_start_left,
-                  1 => l10n.zoom_start_right,
-                  _ => l10n.zoom_start_center,
-                },
-                onSelected: (value) {
-                  ref.read(zoomStartPositionStateProvider.notifier).set(value);
-                },
-                value: zoomStartPosition,
-                list: const [0, 1, 2],
-                itemText: (pos) => switch (pos) {
-                  0 => l10n.zoom_start_left,
-                  1 => l10n.zoom_start_right,
-                  _ => l10n.zoom_start_center,
-                },
-              ),
-
-            // Page Tap Zones
-            SwitchListTile(
-              value: usePageTapZones,
-              title: Text(
-                l10n.use_page_tap_zones,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              onChanged: (value) {
-                ref.read(usePageTapZonesStateProvider.notifier).set(value);
-              },
-            ),
-
-            // Keep Screen On
-            SwitchListTile(
-              value: keepScreenOn,
-              title: Text(
-                l10n.keep_screen_on,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              onChanged: (value) {
-                ref.read(keepScreenOnReaderStateProvider.notifier).set(value);
-              },
-            ),
-
-            // Show Page Gaps (only for continuous modes)
-            if (readerMode.isContinuous)
-              SwitchListTile(
-                value: showPageGaps,
-                title: Text(
-                  l10n.show_page_gaps,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge!.color!
-                        .withValues(alpha: 0.9),
-                    fontSize: 14,
-                  ),
-                ),
-                onChanged: (value) {
-                  ref.read(showPageGapsStateProvider.notifier).set(value);
-                },
-              ),
-
-            // Webtoon Side Padding (only for continuous modes)
-            if (readerMode.isContinuous)
-              ListTile(
-                title: Text(
-                  '${l10n.webtoon_side_padding}: $webtoonSidePadding%',
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge!.color!
-                        .withValues(alpha: 0.9),
-                    fontSize: 14,
-                  ),
-                ),
-                subtitle: Slider(
+          ),
+          if (continuous)
+            ShioriSettingsGroup(
+              title: l10n.reading_mode_webtoon,
+              children: [
+                const ReaderSwitchRow(ReaderSwitch.webtoonDisableZoomOut),
+                const ReaderSwitchRow(ReaderSwitch.webtoonDoubleTapZoom),
+                const ReaderSwitchRow(ReaderSwitch.showPageGaps),
+                ShioriSliderRow(
+                  title: l10n.webtoon_side_padding,
+                  value: webtoonSidePadding.toDouble(),
                   min: 0,
                   max: 50,
                   divisions: 50,
-                  value: webtoonSidePadding.toDouble(),
-                  onChanged: (value) {
-                    ref
-                        .read(webtoonSidePaddingStateProvider.notifier)
-                        .set(value.toInt());
-                  },
+                  valueLabel: (v) => '${v.round()} %',
+                  defaultValue: 0,
+                  onReset: () =>
+                      ref.read(webtoonSidePaddingStateProvider.notifier).set(0),
+                  resetTooltip: l10n.reset,
+                  onChanged: (v) => ref
+                      .read(webtoonSidePaddingStateProvider.notifier)
+                      .set(v.round()),
                 ),
-              ),
-
-            // Auto-scroll (only for continuous modes)
-            if (readerMode.isContinuous)
-              ValueListenableBuilder(
-                valueListenable: autoScrollPage,
-                builder: (context, valueT, child) {
-                  return Column(
+                ValueListenableBuilder(
+                  valueListenable: autoScrollPage,
+                  builder: (context, enabled, _) => Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      SwitchListTile(
-                        secondary: Icon(
-                          valueT ? Icons.timer : Icons.timer_outlined,
-                        ),
-                        value: valueT,
-                        title: Text(
-                          context.l10n.auto_scroll,
-                          style: TextStyle(
-                            color: Theme.of(context).textTheme.bodyLarge!.color!
-                                .withValues(alpha: 0.9),
-                            fontSize: 14,
-                          ),
-                        ),
+                      ShioriSwitchRow(
+                        icon: Symbols.timer_rounded,
+                        title: l10n.auto_scroll,
+                        value: enabled,
                         onChanged: (val) {
                           onAutoScrollSave(val, pageOffset.value);
                           autoScrollPage.value = val;
                           onAutoScroll(val);
                         },
                       ),
-                      if (valueT)
+                      if (enabled)
                         ValueListenableBuilder(
                           valueListenable: pageOffset,
-                          builder: (context, value, child) => Slider(
-                            min: 2.0,
-                            max: 30.0,
-                            divisions: max(28, 3),
-                            value: value,
-                            onChanged: (val) {
-                              pageOffset.value = val;
-                            },
-                            onChangeEnd: (val) {
-                              onAutoScrollSave(valueT, val);
-                            },
+                          builder: (context, speed, _) => ShioriSliderRow(
+                            title: l10n.speed,
+                            value: speed,
+                            min: 2,
+                            max: 30,
+                            divisions: 28,
+                            onChanged: (val) => pageOffset.value = val,
+                            onChangeEnd: (val) =>
+                                onAutoScrollSave(enabled, val),
                           ),
                         ),
                     ],
-                  );
-                },
-              ),
-          ],
-        ),
+                  ),
+                ),
+              ],
+            ),
+          ShioriSettingsGroup(
+            title: l10n.page_layout,
+            children: [
+              const ReaderSwitchRow(ReaderSwitch.splitWidePages),
+              if (splitWidePages)
+                const ReaderSwitchRow(ReaderSwitch.dualPageInvert),
+              const ReaderSwitchRow(ReaderSwitch.dualPageRotateToFit),
+              if (dualPageRotateToFit)
+                const ReaderSwitchRow(ReaderSwitch.dualPageRotateToFitInvert),
+              const ReaderSwitchRow(ReaderSwitch.doublePageSingleFirstPage),
+              const ReaderSwitchRow(ReaderSwitch.doublePageAuto),
+              if (!continuous)
+                const ReaderSwitchRow(ReaderSwitch.landscapeZoom),
+              if (!continuous && landscapeZoom)
+                ShioriValueRow<int>(
+                  title: l10n.zoom_start_position,
+                  value: zoomStartPosition,
+                  options: [
+                    ShioriChoice(0, l10n.zoom_start_left),
+                    ShioriChoice(1, l10n.zoom_start_right),
+                    ShioriChoice(2, l10n.zoom_start_center),
+                  ],
+                  onChanged: (v) =>
+                      ref.read(zoomStartPositionStateProvider.notifier).set(v),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }
 }
 
-/// General Tab with Consumer for reactive updates.
+/// What is changed while reading; the rest lives in Settings.
 class _GeneralTab extends ConsumerWidget {
   final VoidCallback onFullScreenToggle;
 
@@ -519,425 +274,206 @@ class _GeneralTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = l10nLocalizations(context)!;
-    final showPagesNumber = ref.watch(showPagesNumberStateProvider);
-    final animatePageTransitions = ref.watch(
-      animatePageTransitionsStateProvider,
-    );
+    final l10n = context.l10n;
     final scaleType = ref.watch(scaleTypeStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final navigationLayout = ref.watch(readerNavigationLayoutStateProvider);
-
     final tappingInversion = ref.watch(tappingInversionStateProvider);
     final flashOnPageChange = ref.watch(flashOnPageChangeStateProvider);
     final flashColor = ref.watch(flashColorStateProvider);
     final flashInterval = ref.watch(flashIntervalStateProvider);
     final flashDuration = ref.watch(flashDurationStateProvider);
-    final showNavigationOverlayOnStart = ref.watch(
-      showNavigationOverlayOnStartStateProvider,
-    );
     final readerHideThreshold = ref.watch(readerHideThresholdStateProvider);
+    final scaleNames = getScaleTypeNames(context);
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Background Color
-            CustomPopupMenuButton<BackgroundColor>(
-              label: l10n.background_color,
-              title: getBackgroundColorName(backgroundColor, context),
-              onSelected: (value) {
-                ref.read(backgroundColorStateProvider.notifier).set(value);
-              },
-              value: backgroundColor,
-              list: BackgroundColor.values,
-              itemText: (color) => getBackgroundColorName(color, context),
-            ),
-
-            // Scale Type
-            CustomPopupMenuButton<ScaleType>(
-              label: l10n.scale_type,
-              title: getScaleTypeNames(context)[scaleType.index],
-              onSelected: (value) {
-                ref
-                    .read(scaleTypeStateProvider.notifier)
-                    .set(ScaleType.values[value.index]);
-              },
-              value: scaleType,
-              list: ScaleType.values.where((scale) {
-                try {
-                  return getScaleTypeNames(context)
-                      .contains(getScaleTypeNames(context)[scale.index]);
-                } catch (_) {
-                  return false;
-                }
-              }).toList(),
-              itemText: (scale) => getScaleTypeNames(context)[scale.index],
-            ),
-
-            // Navigation Layout
-            ListTile(
-              title: Text(
-                l10n.navigation_layout,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
+    // The sheet scrolls; a tab is a column, not a list of its own.
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: ShioriSpace.s8,
+        bottom: ShioriSpace.s16,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // This sheet holds what is changed while reading; the rest lives in
+          // Settings, one tap away rather than out of sight.
+          ShioriSettingsGroup(
+            children: [
+              ShioriSettingRow(
+                icon: Symbols.tune_rounded,
+                title: l10n.all_reader_settings,
+                trailing: const Icon(Symbols.chevron_forward_rounded),
+                onTap: () => context.push('/readerMode'),
               ),
-              subtitle: Text(_navLayoutName(navigationLayout, context)),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) {
-                    return SimpleDialog(
-                      title: Text(l10n.navigation_layout),
-                      children: [
-                        RadioGroup<int>(
-                          groupValue: navigationLayout,
-                          onChanged: (val) {
-                            ref
-                                .read(
-                                  readerNavigationLayoutStateProvider.notifier,
-                                )
-                                .set(val!);
-                            Navigator.pop(ctx);
-                          },
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: List.generate(6, (i) {
-                              return RadioListTile<int>(
-                                value: i,
-                                title: Text(_navLayoutName(i, context)),
-                              );
-                            }),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-
-            // Tapping Inversion
-            ListTile(
-              title: Text(
-                l10n.tapping_inversion,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              subtitle: Text(switch (tappingInversion) {
-                1 => l10n.tapping_inversion_horizontal,
-                2 => l10n.tapping_inversion_vertical,
-                3 => l10n.tapping_inversion_both,
-                _ => l10n.tapping_inversion_none,
-              }),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) {
-                    return SimpleDialog(
-                      title: Text(l10n.tapping_inversion),
-                      children: [
-                        RadioGroup<int>(
-                          groupValue: tappingInversion,
-                          onChanged: (val) {
-                            ref
-                                .read(tappingInversionStateProvider.notifier)
-                                .set(val!);
-                            Navigator.pop(ctx);
-                          },
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              RadioListTile<int>(
-                                value: 0,
-                                title: Text(l10n.tapping_inversion_none),
-                              ),
-                              RadioListTile<int>(
-                                value: 1,
-                                title: Text(l10n.tapping_inversion_horizontal),
-                              ),
-                              RadioListTile<int>(
-                                value: 2,
-                                title: Text(l10n.tapping_inversion_vertical),
-                              ),
-                              RadioListTile<int>(
-                                value: 3,
-                                title: Text(l10n.tapping_inversion_both),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-
-            // Flash on Page Change
-            SwitchListTile(
-              value: flashOnPageChange,
-              title: Text(
-                l10n.flash_on_page_change,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              subtitle: Text(
-                l10n.flash_on_page_change_subtitle,
-                style: const TextStyle(fontSize: 11),
-              ),
-              onChanged: (value) {
-                ref.read(flashOnPageChangeStateProvider.notifier).set(value);
-              },
-            ),
-            if (flashOnPageChange) ...[
-              ListTile(
-                title: Text(
-                  l10n.flash_color,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge!.color!
-                        .withValues(alpha: 0.9),
-                    fontSize: 14,
+              // Where a keyboard can be found, what it does here.
+              if (isDesktop)
+                ShioriSettingRow(
+                  icon: Symbols.keyboard_rounded,
+                  title: l10n.keyboard_shortcuts,
+                  trailing: const Icon(Symbols.chevron_forward_rounded),
+                  onTap: () => showReaderShortcuts(
+                    context,
+                    bindings: ref.read(keyBindingsStateProvider),
                   ),
                 ),
-                subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Row(
-                    children: [
-                      ChoiceChip(
-                        label: Text(l10n.flash_color_black),
-                        selected: flashColor == 0,
-                        onSelected: (val) {
-                          if (val) {
-                            ref.read(flashColorStateProvider.notifier).set(0);
-                          }
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      ChoiceChip(
-                        label: Text(l10n.flash_color_white),
-                        selected: flashColor == 1,
-                        onSelected: (val) {
-                          if (val) {
-                            ref.read(flashColorStateProvider.notifier).set(1);
-                          }
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      ChoiceChip(
-                        label: Text(l10n.flash_color_white_black),
-                        selected: flashColor == 2,
-                        onSelected: (val) {
-                          if (val) {
-                            ref.read(flashColorStateProvider.notifier).set(2);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                ),
+            ],
+          ),
+          ShioriSettingsGroup(
+            title: l10n.display,
+            children: [
+              ShioriValueRow<BackgroundColor>(
+                title: l10n.background_color,
+                value: backgroundColor,
+                options: [
+                  for (final color in BackgroundColor.values)
+                    ShioriChoice(color, getBackgroundColorName(color, context)),
+                ],
+                onChanged: (v) =>
+                    ref.read(backgroundColorStateProvider.notifier).set(v),
               ),
-              ListTile(
-                title: Text(
-                  l10n.flash_interval(flashInterval.toString()),
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge!.color!
-                        .withValues(alpha: 0.9),
-                    fontSize: 14,
-                  ),
+              ShioriValueRow<ScaleType>(
+                title: l10n.scale_type,
+                value: scaleType,
+                options: [
+                  for (final (i, name) in scaleNames.indexed)
+                    ShioriChoice(ScaleType.values[i], name),
+                ],
+                onChanged: (v) =>
+                    ref.read(scaleTypeStateProvider.notifier).set(v),
+              ),
+              if (!isMobile)
+                ShioriSwitchRow(
+                  title: l10n.fullscreen,
+                  value: fullScreenReader,
+                  onChanged: (_) => onFullScreenToggle(),
                 ),
-                subtitle: Slider(
+              const ReaderOrientationRow(),
+              const ReaderScreenBrightnessRow(),
+              const ReaderSwitchRow(ReaderSwitch.showPageNumber),
+              const ReaderSwitchRow(ReaderSwitch.animatePageTransitions),
+            ],
+          ),
+          ShioriSettingsGroup(
+            title: ReaderSettingsSection.navigation.title(context),
+            children: [
+              ShioriValueRow<int>(
+                title: l10n.navigation_layout,
+                value: navigationLayout,
+                options: [
+                  for (var i = 0; i < 6; i++)
+                    ShioriChoice(i, _navLayoutName(i, context)),
+                ],
+                onChanged: (v) => ref
+                    .read(readerNavigationLayoutStateProvider.notifier)
+                    .set(v),
+              ),
+              ShioriValueRow<int>(
+                title: l10n.tapping_inversion,
+                value: tappingInversion,
+                options: [
+                  ShioriChoice(0, l10n.tapping_inversion_none),
+                  ShioriChoice(1, l10n.tapping_inversion_horizontal),
+                  ShioriChoice(2, l10n.tapping_inversion_vertical),
+                  ShioriChoice(3, l10n.tapping_inversion_both),
+                ],
+                onChanged: (v) =>
+                    ref.read(tappingInversionStateProvider.notifier).set(v),
+              ),
+              ShioriValueRow<int>(
+                title: l10n.reader_hide_threshold,
+                value: readerHideThreshold,
+                options: [
+                  ShioriChoice(0, l10n.reader_hide_threshold_highest),
+                  ShioriChoice(1, l10n.reader_hide_threshold_high),
+                  ShioriChoice(2, l10n.reader_hide_threshold_low),
+                  ShioriChoice(3, l10n.reader_hide_threshold_lowest),
+                ],
+                onChanged: (v) =>
+                    ref.read(readerHideThresholdStateProvider.notifier).set(v),
+              ),
+              const ReaderSwitchRow(ReaderSwitch.showNavigationOverlayOnStart),
+              // The volume buttons as page turns, where a phone has them.
+              if (VolumeKeys.isSupported) ...[
+                const ReaderSwitchRow(ReaderSwitch.volumeKeysPaging),
+                if (ref.watch(volumeKeysPagingStateProvider))
+                  const ReaderSwitchRow(ReaderSwitch.volumeKeysInverted),
+              ],
+            ],
+          ),
+          ShioriSettingsGroup(
+            title: l10n.flash_on_page_change,
+            children: [
+              const ReaderSwitchRow(ReaderSwitch.flashOnPageChange),
+              if (flashOnPageChange) ...[
+                ShioriValueRow<int>(
+                  title: l10n.flash_color,
+                  value: flashColor,
+                  options: [
+                    ShioriChoice(0, l10n.flash_color_black),
+                    ShioriChoice(1, l10n.flash_color_white),
+                    ShioriChoice(2, l10n.flash_color_white_black),
+                  ],
+                  onChanged: (v) =>
+                      ref.read(flashColorStateProvider.notifier).set(v),
+                ),
+                ShioriSliderRow(
+                  title: l10n.flash_interval(flashInterval.toString()),
+                  value: flashInterval.toDouble(),
                   min: 1,
                   max: 10,
                   divisions: 9,
-                  value: flashInterval.toDouble(),
-                  onChanged: (val) {
-                    ref
-                        .read(flashIntervalStateProvider.notifier)
-                        .set(val.toInt());
-                  },
+                  valueLabel: (_) => '',
+                  defaultValue: 1,
+                  onReset: () =>
+                      ref.read(flashIntervalStateProvider.notifier).set(1),
+                  resetTooltip: l10n.reset,
+                  onChanged: (v) => ref
+                      .read(flashIntervalStateProvider.notifier)
+                      .set(v.round()),
                 ),
-              ),
-              ListTile(
-                title: Text(
-                  l10n.flash_duration(flashDuration.toString()),
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge!.color!
-                        .withValues(alpha: 0.9),
-                    fontSize: 14,
-                  ),
-                ),
-                subtitle: Slider(
+                ShioriSliderRow(
+                  title: l10n.flash_duration(flashDuration.toString()),
+                  value: flashDuration.toDouble(),
                   min: 50,
                   max: 500,
                   divisions: 9,
-                  value: flashDuration.toDouble(),
-                  onChanged: (val) {
-                    ref
-                        .read(flashDurationStateProvider.notifier)
-                        .set(val.toInt());
-                  },
+                  valueLabel: (_) => '',
+                  defaultValue: 100,
+                  onReset: () =>
+                      ref.read(flashDurationStateProvider.notifier).set(100),
+                  resetTooltip: l10n.reset,
+                  onChanged: (v) => ref
+                      .read(flashDurationStateProvider.notifier)
+                      .set(v.round()),
                 ),
-              ),
+              ],
             ],
-
-            // Show Navigation Overlay
-            SwitchListTile(
-              value: showNavigationOverlayOnStart,
-              title: Text(
-                l10n.show_navigation_overlay_on_start,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              onChanged: (value) {
-                ref
-                    .read(showNavigationOverlayOnStartStateProvider.notifier)
-                    .set(value);
-              },
-            ),
-
-            // Reader Hide Threshold
-            ListTile(
-              title: Text(
-                l10n.reader_hide_threshold,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              subtitle: Text(switch (readerHideThreshold) {
-                0 => l10n.reader_hide_threshold_highest,
-                1 => l10n.reader_hide_threshold_high,
-                2 => l10n.reader_hide_threshold_low,
-                _ => l10n.reader_hide_threshold_lowest,
-              }),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) {
-                    return SimpleDialog(
-                      title: Text(l10n.reader_hide_threshold),
-                      children: [
-                        RadioGroup<int>(
-                          groupValue: readerHideThreshold,
-                          onChanged: (val) {
-                            ref
-                                .read(readerHideThresholdStateProvider.notifier)
-                                .set(val!);
-                            Navigator.pop(ctx);
-                          },
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              RadioListTile<int>(
-                                value: 0,
-                                title: Text(l10n.reader_hide_threshold_highest),
-                              ),
-                              RadioListTile<int>(
-                                value: 1,
-                                title: Text(l10n.reader_hide_threshold_high),
-                              ),
-                              RadioListTile<int>(
-                                value: 2,
-                                title: Text(l10n.reader_hide_threshold_low),
-                              ),
-                              RadioListTile<int>(
-                                value: 3,
-                                title: Text(l10n.reader_hide_threshold_lowest),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-            if (!isMobile)
-              // Fullscreen
-              SwitchListTile(
-                value: fullScreenReader,
-                title: Text(
-                  l10n.fullscreen,
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodyLarge!.color!
-                        .withValues(alpha: 0.9),
-                    fontSize: 14,
-                  ),
-                ),
-                onChanged: (value) {
-                  onFullScreenToggle();
-                },
-              ),
-
-            // Show Page Numbers
-            SwitchListTile(
-              value: showPagesNumber,
-              title: Text(
-                l10n.show_page_number,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              onChanged: (value) {
-                ref.read(showPagesNumberStateProvider.notifier).set(value);
-              },
-            ),
-
-            // Animate Page Transitions
-            SwitchListTile(
-              value: animatePageTransitions,
-              title: Text(
-                l10n.animate_page_transitions,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              onChanged: (value) {
-                ref
-                    .read(animatePageTransitionsStateProvider.notifier)
-                    .set(value);
-              },
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
-/// Custom Filter Tab with Consumer for reactive updates.
+/// The page's colours: quick enhancements, then a custom RGBA filter.
 class _CustomFilterTab extends ConsumerWidget {
-  const _CustomFilterTab();
+  const _CustomFilterTab({required this.filterOn});
+
+  final ValueNotifier<bool> filterOn;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = l10nLocalizations(context)!;
+    final l10n = context.l10n;
     final customColorFilter = ref.watch(customColorFilterStateProvider);
     final enableCustomColorFilter = ref.watch(
       enableCustomColorFilterStateProvider,
     );
+    // Told after the frame, as the sheet around this tab listens to it.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.mounted) filterOn.value = enableCustomColorFilter;
+    });
     final colorFilterBlendMode = ref.watch(colorFilterBlendModeStateProvider);
     final invertColors = ref.watch(invertColorsStateProvider);
     final grayscale = ref.watch(grayscaleStateProvider);
@@ -949,206 +485,194 @@ class _CustomFilterTab extends ConsumerWidget {
     int g = customColorFilter?.g ?? 0;
     int b = customColorFilter?.b ?? 0;
     int a = customColorFilter?.a ?? 0;
+    final filter = ref.read(customColorFilterStateProvider.notifier);
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Color Enhancements ──
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(
-                l10n.color_enhancements,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+    ShioriSliderRow enhancement(
+      String label,
+      double value,
+      double min,
+      double max,
+      double defaultValue,
+      ValueChanged<double> set,
+    ) => ShioriSliderRow(
+      title: label,
+      value: value,
+      min: min,
+      max: max,
+      valueLabel: (v) => v.toStringAsFixed(1),
+      defaultValue: defaultValue,
+      onReset: () => set(defaultValue),
+      resetTooltip: l10n.reset,
+      onChanged: set,
+    );
+
+    // The sheet scrolls; a tab is a column, not a list of its own.
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ShioriSettingsGroup(
+            title: l10n.color_enhancements,
+            children: [
+              ShioriSwitchRow(
+                title: l10n.invert_colors,
+                value: invertColors,
+                onChanged: (v) =>
+                    ref.read(invertColorsStateProvider.notifier).set(v),
               ),
-            ),
-
-            // Invert Colors
-            SwitchListTile(
-              value: invertColors,
-              title: Text(
-                l10n.invert_colors,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
+              ShioriSwitchRow(
+                title: l10n.grayscale,
+                value: grayscale,
+                onChanged: (v) =>
+                    ref.read(grayscaleStateProvider.notifier).set(v),
               ),
-              onChanged: (value) {
-                ref.read(invertColorsStateProvider.notifier).set(value);
-              },
-            ),
-
-            // Grayscale
-            SwitchListTile(
-              value: grayscale,
-              title: Text(
-                l10n.grayscale,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
+              enhancement(
+                l10n.brightness,
+                brightness,
+                -1,
+                1,
+                0,
+                (v) => ref.read(readerBrightnessStateProvider.notifier).set(v),
               ),
-              onChanged: (value) {
-                ref.read(grayscaleStateProvider.notifier).set(value);
-              },
-            ),
-
-            // Brightness Slider
-            _enhancementSlider(
-              label: l10n.brightness,
-              value: brightness,
-              min: -1.0,
-              max: 1.0,
-              defaultValue: 0.0,
-              onChanged: (v) =>
-                  ref.read(readerBrightnessStateProvider.notifier).set(v),
-              context: context,
-            ),
-
-            // Contrast Slider
-            _enhancementSlider(
-              label: l10n.contrast,
-              value: contrast,
-              min: 0.0,
-              max: 2.0,
-              defaultValue: 1.0,
-              onChanged: (v) =>
-                  ref.read(readerContrastStateProvider.notifier).set(v),
-              context: context,
-            ),
-
-            // Saturation Slider
-            _enhancementSlider(
-              label: l10n.saturation,
-              value: saturation,
-              min: 0.0,
-              max: 2.0,
-              defaultValue: 1.0,
-              onChanged: (v) =>
-                  ref.read(readerSaturationStateProvider.notifier).set(v),
-              context: context,
-            ),
-
-            const Divider(height: 24),
-
-            // ── Custom RGBA Color Filter ──
-
-            // Enable Custom Color Filter
-            SwitchListTile(
-              value: enableCustomColorFilter,
-              title: Text(
-                l10n.custom_color_filter,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
+              enhancement(
+                l10n.contrast,
+                contrast,
+                0,
+                2,
+                1,
+                (v) => ref.read(readerContrastStateProvider.notifier).set(v),
               ),
-              onChanged: (value) {
-                ref
-                    .read(enableCustomColorFilterStateProvider.notifier)
-                    .set(value);
-              },
-            ),
-
-            if (enableCustomColorFilter) ...[
-              // RGBA Sliders
-              rgbaFilterWidget(a, r, g, b, (val) {
-                final notifier = ref.read(
-                  customColorFilterStateProvider.notifier,
-                );
-                if (val.$3 == "r") {
-                  notifier.set(a, val.$1.toInt(), g, b, val.$2);
-                } else if (val.$3 == "g") {
-                  notifier.set(a, r, val.$1.toInt(), b, val.$2);
-                } else if (val.$3 == "b") {
-                  notifier.set(a, r, g, val.$1.toInt(), val.$2);
-                } else {
-                  notifier.set(val.$1.toInt(), r, g, b, val.$2);
-                }
-              }, context),
-
-              // Blend Mode
-              CustomPopupMenuButton<ColorFilterBlendMode>(
-                label: l10n.color_filter_blend_mode,
-                title: getColorFilterBlendModeName(
-                  colorFilterBlendMode,
-                  context,
-                ),
-                onSelected: (value) {
-                  ref
-                      .read(colorFilterBlendModeStateProvider.notifier)
-                      .set(value);
-                },
-                value: colorFilterBlendMode,
-                list: ColorFilterBlendMode.values,
-                itemText: (mode) => getColorFilterBlendModeName(mode, context),
+              enhancement(
+                l10n.saturation,
+                saturation,
+                0,
+                2,
+                1,
+                (v) => ref.read(readerSaturationStateProvider.notifier).set(v),
               ),
             ],
-          ],
-        ),
+          ),
+          ShioriSettingsGroup(
+            children: [
+              ShioriSwitchRow(
+                title: l10n.custom_color_filter,
+                value: enableCustomColorFilter,
+                onChanged: (v) => ref
+                    .read(enableCustomColorFilterStateProvider.notifier)
+                    .set(v),
+              ),
+              if (enableCustomColorFilter) ...[
+                // The colour the filter lays over the page, then its four
+                // channels as the app's other sliders: named, with their
+                // value, saved when let go.
+                _FilterSwatch(a: a, r: r, g: g, b: b),
+                for (final (label, value, apply)
+                    in <(String, int, void Function(int, bool))>[
+                      (
+                        l10n.color_red,
+                        r,
+                        (v, end) => filter.set(a, v, g, b, end),
+                      ),
+                      (
+                        l10n.color_green,
+                        g,
+                        (v, end) => filter.set(a, r, v, b, end),
+                      ),
+                      (
+                        l10n.color_blue,
+                        b,
+                        (v, end) => filter.set(a, r, g, v, end),
+                      ),
+                    ])
+                  ShioriSliderRow(
+                    title: label,
+                    value: value.toDouble(),
+                    min: 0,
+                    max: 255,
+                    divisions: 255,
+                    valueLabel: (v) => '${v.round()}',
+                    onChanged: (v) => apply(v.round(), false),
+                    onChangeEnd: (v) => apply(v.round(), true),
+                  ),
+                ShioriSliderRow(
+                  title: l10n.color_opacity,
+                  value: a.toDouble(),
+                  min: 0,
+                  max: 255,
+                  divisions: 255,
+                  valueLabel: (v) => '${(v / 255 * 100).round()} %',
+                  onChanged: (v) => filter.set(v.round(), r, g, b, false),
+                  onChangeEnd: (v) => filter.set(v.round(), r, g, b, true),
+                ),
+                ShioriValueRow<ColorFilterBlendMode>(
+                  title: l10n.color_filter_blend_mode,
+                  value: colorFilterBlendMode,
+                  options: [
+                    for (final mode in ColorFilterBlendMode.values)
+                      ShioriChoice(
+                        mode,
+                        getColorFilterBlendModeName(mode, context),
+                      ),
+                  ],
+                  onChanged: (v) => ref
+                      .read(colorFilterBlendModeStateProvider.notifier)
+                      .set(v),
+                ),
+              ],
+            ],
+          ),
+        ],
       ),
     );
   }
+}
 
-  Widget _enhancementSlider({
-    required String label,
-    required double value,
-    required double min,
-    required double max,
-    required double defaultValue,
-    required ValueChanged<double> onChanged,
-    required BuildContext context,
-  }) {
-    final isDefault = (value - defaultValue).abs() < 0.01;
+/// The custom filter's colour as it will lie over the page, with its code.
+class _FilterSwatch extends StatelessWidget {
+  const _FilterSwatch({
+    required this.a,
+    required this.r,
+    required this.g,
+    required this.b,
+  });
+
+  final int a, r, g, b;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.shiori;
+    String hex(int v) => v.toRadixString(16).padLeft(2, '0').toUpperCase();
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(
+        horizontal: ShioriSpace.s16,
+        vertical: ShioriSpace.s8,
+      ),
       child: Row(
+        spacing: ShioriSpace.s12,
         children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              label,
-              style: TextStyle(
-                color: Theme.of(context).textTheme.bodyLarge!.color!
-                    .withValues(alpha: 0.9),
-                fontSize: 14,
-              ),
+          // On a light ground, so a faint filter still shows.
+          Container(
+            width: tokens.scaled(40),
+            height: tokens.scaled(40),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(ShioriShape.card),
+              border: Border.all(color: tokens.color.hairline),
+            ),
+            foregroundDecoration: BoxDecoration(
+              color: Color.fromARGB(a, r, g, b),
+              borderRadius: BorderRadius.circular(ShioriShape.card),
             ),
           ),
-          Expanded(
-            child: Slider(
-              min: min,
-              max: max,
-              value: value.clamp(min, max),
-              onChanged: onChanged,
+          Text(
+            '#${hex(a)}${hex(r)}${hex(g)}${hex(b)}',
+            style: tokens.text.row.copyWith(
+              color: tokens.color.fg,
+              fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
-          SizedBox(
-            width: 40,
-            child: Text(
-              value.toStringAsFixed(1),
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12),
-            ),
-          ),
-          if (!isDefault)
-            IconButton(
-              icon: const Icon(Icons.replay, size: 18),
-              onPressed: () => onChanged(defaultValue),
-              tooltip: l10nLocalizations(context)!.reset,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-            )
-          else
-            const SizedBox(width: 32),
         ],
       ),
     );

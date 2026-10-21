@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
@@ -9,6 +10,8 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/onboarding/onboarding_screen.dart';
+import 'package:mangayomi/modules/main_view/nav_groups.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -22,6 +25,9 @@ void main() {
     Brightness? brightness,
     bool disableAnimations = false,
     double textScale = 1,
+    // The flow opens on the language; most tests start past it, on the
+    // libraries.
+    bool pastLanguage = true,
   }) async {
     // Phone width, because the arrange step is skipped at 600dp and wider,
     // and tall, because the TV layout overflows the default 600 and puts the
@@ -48,6 +54,8 @@ void main() {
           localFoldersStateProvider.overrideWith(_StubLocalFolders.new),
           hideItemsStateProvider.overrideWith(_StubHideItems.new),
           mergeLibraryNavMobileStateProvider.overrideWith(_StubMergeNav.new),
+          l10nLocaleStateProvider.overrideWith(_StubLocale.new),
+          navGroupingProvider.overrideWith(_StubNavGrouping.new),
         ],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -67,17 +75,23 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    if (pastLanguage) {
+      await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
+      await tester.pumpAndSettle();
+    }
   }
 
-  ButtonStyleButton addButton(WidgetTester tester) =>
-      tester.widget<FilledButton>(find.byType(FilledButton));
+  ShioriButton addButton(WidgetTester tester) =>
+      tester.widget<ShioriButton>(
+        find.widgetWithText(ShioriButton, 'Add repository'),
+      );
 
   /// Walks past the library and navigation steps to the repository step.
   Future<void> toRepoStep(WidgetTester tester) async {
-    await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+    await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
     await tester.pumpAndSettle();
-    if (find.widgetWithText(FilledButton, 'Next').evaluate().isNotEmpty) {
-      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+    if (find.widgetWithText(ShioriButton, 'Next').evaluate().isNotEmpty) {
+      await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
       await tester.pumpAndSettle();
     }
   }
@@ -86,7 +100,7 @@ void main() {
     await pump(tester);
     // A first-run screen that can only be left by supplying a repository would
     // trap anyone who does not have one to hand.
-    expect(find.widgetWithText(TextButton, 'Skip for now'), findsOneWidget);
+    expect(find.widgetWithText(ShioriButton, 'Skip for now'), findsOneWidget);
   });
 
   testWidgets('cannot add an empty repository', (tester) async {
@@ -114,6 +128,32 @@ void main() {
     expect(addButton(tester).onPressed, isNotNull);
   });
 
+  group('the language', () {
+    testWidgets('comes first, each language under its own name', (
+      tester,
+    ) async {
+      await pump(tester, pastLanguage: false);
+      expect(find.text('Choose your language'), findsOneWidget);
+      expect(find.text('Français'), findsOneWidget);
+      expect(find.text('Deutsch'), findsOneWidget);
+    });
+
+    testWidgets('a tap makes it the app\'s language', (tester) async {
+      await pump(tester, pastLanguage: false);
+      await tester.tap(find.text('Français'));
+      await tester.pumpAndSettle();
+      // The test's app has a fixed locale; the row the provider now holds is
+      // the one ticked.
+      expect(
+        find.descendant(
+          of: find.widgetWithText(ListTile, 'Français'),
+          matching: find.byIcon(Symbols.check_rounded),
+        ),
+        findsOneWidget,
+      );
+    });
+  });
+
   group('the steps', () {
     testWidgets('opens by asking which libraries the user reads', (
       tester,
@@ -129,47 +169,42 @@ void main() {
       tester,
     ) async {
       await pump(tester);
-      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
       await tester.pumpAndSettle();
       expect(find.text('Your libraries'), findsOneWidget);
       expect(find.widgetWithText(FilterChip, 'A tab each'), findsOneWidget);
-      expect(
-        find.widgetWithText(FilterChip, 'One Library tab'),
-        findsOneWidget,
-      );
-      // A tab each, so the preview bar names every chosen library.
-      expect(find.text('Library'), findsNothing);
+      expect(find.widgetWithText(FilterChip, 'Grouped tabs'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(FilterChip, 'One Library tab'));
+      // A tab each: the preview bar names every library and Updates and
+      // History apart.
+      await tester.tap(find.widgetWithText(FilterChip, 'A tab each'));
       await tester.pumpAndSettle();
-      // Merged, so they collapse into one entry in the preview, and the bar
-      // that tapping it swaps in is drawn underneath.
-      expect(find.text('Library'), findsOneWidget);
-      // By its label, not its icon: the step's own back button is an
-      // arrow_back too and would match either way.
-      expect(find.text('Go back'), findsOneWidget);
-      for (final label in ['Manga', 'Anime', 'Novel']) {
-        expect(find.text(label), findsWidgets);
-      }
+      expect(find.text('Library'), findsNothing);
+      expect(find.text('Updates'), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      // Grouped, as the app starts: Library and Activity, and the switcher
+      // at the top of Library drawn under the bar.
+      await tester.tap(find.widgetWithText(FilterChip, 'Grouped tabs'));
+      await tester.pumpAndSettle();
+      expect(find.text('Library'), findsOneWidget);
+      expect(find.text('Activity'), findsOneWidget);
+      expect(find.byType(ShioriSegmentedControl<ItemType>), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
       await tester.pumpAndSettle();
       expect(find.text('Add a source'), findsOneWidget);
       expect(find.byType(TextField), findsOneWidget);
     });
 
-    testWidgets('skips arranging on a wide screen, where it is ignored', (
+    testWidgets('asks on a wide screen too, where the grouping applies', (
       tester,
     ) async {
-      // The merge setting is read as mergeLibraryNavMobile && !isTablet, so on
-      // anything 600dp or wider the answer would be stored and then ignored.
       await pump(tester);
       tester.view.physicalSize = const Size(900, 2400);
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
       await tester.pumpAndSettle();
-      expect(find.text('Your libraries'), findsNothing);
-      expect(find.text('Add a source'), findsOneWidget);
+      expect(find.text('Your libraries'), findsOneWidget);
     });
 
     testWidgets('skips arranging a bar that holds one library', (tester) async {
@@ -180,7 +215,7 @@ void main() {
       await tester.pump();
       await tester.tap(find.widgetWithText(FilterChip, 'Novel'));
       await tester.pump();
-      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
       await tester.pumpAndSettle();
       expect(find.text('Your libraries'), findsNothing);
       expect(find.text('Add a source'), findsOneWidget);
@@ -232,7 +267,7 @@ void main() {
       await toRepoStep(tester);
       await tester.enterText(find.byType(TextField), _goodUrl);
       await tester.pump();
-      await tester.tap(find.widgetWithText(FilledButton, 'Add repository'));
+      await tester.tap(find.widgetWithText(ShioriButton, 'Add repository'));
       await tester.pumpAndSettle();
       // Filed under Manga. Moving the picker afterwards must not redirect the
       // landing to a library with nothing in it.
@@ -241,7 +276,7 @@ void main() {
       debugPrint(
         'PROBE: ${tester.widgetList<Text>(find.byType(Text)).map((t) => t.data).toList()}',
       );
-      expect(find.widgetWithText(TextButton, 'Continue'), findsOneWidget);
+      expect(find.widgetWithText(ShioriButton, 'Continue'), findsOneWidget);
     });
 
     testWidgets('a failed repo says what to do, not what threw', (
@@ -251,7 +286,7 @@ void main() {
       await toRepoStep(tester);
       await tester.enterText(find.byType(TextField), 'https://example.invalid');
       await tester.pump();
-      await tester.tap(find.widgetWithText(FilledButton, 'Add repository'));
+      await tester.tap(find.widgetWithText(ShioriButton, 'Add repository'));
       await tester.pumpAndSettle();
       expect(find.textContaining('Exception'), findsNothing);
       expect(
@@ -274,7 +309,7 @@ void main() {
       await pump(tester);
       await toRepoStep(tester);
       expect(
-        find.widgetWithText(OutlinedButton, 'Add a folder'),
+        find.widgetWithText(ShioriButton, 'Add a folder'),
         findsOneWidget,
       );
       expect(find.text('Or use files you already have'), findsOneWidget);
@@ -282,7 +317,7 @@ void main() {
 
     testWidgets('are not offered before the source step', (tester) async {
       await pump(tester);
-      expect(find.widgetWithText(OutlinedButton, 'Add a folder'), findsNothing);
+      expect(find.widgetWithText(ShioriButton, 'Add a folder'), findsNothing);
     });
   });
 
@@ -295,13 +330,13 @@ void main() {
       // it.
       await pump(tester);
       expect(
-        find.widgetWithText(OutlinedButton, 'Restore a backup'),
+        find.widgetWithText(ShioriButton, 'Restore a backup'),
         findsOneWidget,
       );
-      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
       await tester.pumpAndSettle();
       expect(
-        find.widgetWithText(OutlinedButton, 'Restore a backup'),
+        find.widgetWithText(ShioriButton, 'Restore a backup'),
         findsNothing,
       );
     });
@@ -313,7 +348,7 @@ void main() {
       required bool disableAnimations,
     }) async {
       await pump(tester, disableAnimations: disableAnimations);
-      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
       final frames = await tester.pumpAndSettle();
       expect(find.text('Your libraries'), findsOneWidget);
       return frames;
@@ -346,9 +381,9 @@ void main() {
       // Navigator, so it has no Overlay unless one is given to it. Without
       // that the first hover over this button throws.
       await pump(tester);
-      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
       await tester.pumpAndSettle();
-      final back = find.widgetWithIcon(IconButton, Icons.arrow_back);
+      final back = find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded);
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       await gesture.addPointer(location: tester.getCenter(back));
       addTearDown(gesture.removePointer);
@@ -361,28 +396,32 @@ void main() {
 
   group('going back', () {
     testWidgets('the first step has nothing to go back to', (tester) async {
-      await pump(tester);
-      expect(find.widgetWithIcon(IconButton, Icons.arrow_back), findsNothing);
+      await pump(tester, pastLanguage: false);
+      expect(find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded), findsNothing);
     });
 
     testWidgets('walks back through the steps it walked forward', (
       tester,
     ) async {
       await pump(tester);
-      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
       await tester.pumpAndSettle();
       expect(find.text('Add a source'), findsOneWidget);
 
-      await tester.tap(find.widgetWithIcon(IconButton, Icons.arrow_back));
+      await tester.tap(find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded));
       await tester.pumpAndSettle();
       expect(find.text('Your libraries'), findsOneWidget);
 
-      await tester.tap(find.widgetWithIcon(IconButton, Icons.arrow_back));
+      await tester.tap(find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded));
       await tester.pumpAndSettle();
       expect(find.text('Welcome to Mangayomi'), findsOneWidget);
-      expect(find.widgetWithIcon(IconButton, Icons.arrow_back), findsNothing);
+
+      await tester.tap(find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded));
+      await tester.pumpAndSettle();
+      expect(find.text('Choose your language'), findsOneWidget);
+      expect(find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded), findsNothing);
     });
 
     testWidgets('skips the arrange step on the way back too', (tester) async {
@@ -393,11 +432,11 @@ void main() {
       await tester.pump();
       await tester.tap(find.widgetWithText(FilterChip, 'Novel'));
       await tester.pump();
-      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
       await tester.pumpAndSettle();
       expect(find.text('Add a source'), findsOneWidget);
 
-      await tester.tap(find.widgetWithIcon(IconButton, Icons.arrow_back));
+      await tester.tap(find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded));
       await tester.pumpAndSettle();
       expect(find.text('Your libraries'), findsNothing);
       expect(find.text('Welcome to Mangayomi'), findsOneWidget);
@@ -413,7 +452,7 @@ void main() {
       tester,
     ) async {
       await pump(tester);
-      expect(dotWidths(tester).length, 3);
+      expect(dotWidths(tester).length, 4);
     });
 
     testWidgets('drops to two when the arrange step will be skipped', (
@@ -426,16 +465,16 @@ void main() {
       await tester.pump();
       await tester.tap(find.widgetWithText(FilterChip, 'Novel'));
       await tester.pumpAndSettle();
-      expect(dotWidths(tester).length, 2);
+      expect(dotWidths(tester).length, 3);
     });
 
     testWidgets('marks the step you are on, and moves with you', (
       tester,
     ) async {
-      await pump(tester);
+      await pump(tester, pastLanguage: false);
       expect(dotWidths(tester).first, greaterThan(dotWidths(tester).last));
 
-      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
       await tester.pumpAndSettle();
       final widths = dotWidths(tester).toList();
       expect(widths[1], greaterThan(widths[0]));
@@ -447,7 +486,7 @@ void main() {
       // Wrap and a scroll view should cope, but nobody had tried it.
       await pump(tester, textScale: 2);
       expect(tester.takeException(), isNull);
-      expect(find.widgetWithText(FilledButton, 'Next'), findsOneWidget);
+      expect(find.widgetWithText(ShioriButton, 'Next'), findsOneWidget);
     });
 
     testWidgets('and so does the source step, which carries the most', (
@@ -484,7 +523,9 @@ void main() {
         tester,
       ) async {
         await pump(tester, brightness: brightness);
-        await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+        await tester.tap(find.widgetWithText(ShioriButton, 'Next'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(FilterChip, 'A tab each'));
         await tester.pumpAndSettle();
         final scheme = ThemeData(brightness: brightness).colorScheme;
         // Bare primary is a pale blue on the light schemes and came out
@@ -576,7 +617,7 @@ void main() {
         find.text('You can add one later in Settings, under Browse.'),
         findsOneWidget,
       );
-      expect(find.widgetWithText(TextButton, 'Skip for now'), findsOneWidget);
+      expect(find.widgetWithText(ShioriButton, 'Skip for now'), findsOneWidget);
     });
 
     testWidgets('the phone layout keeps chips and loses the hint', (
@@ -632,6 +673,25 @@ class _StubHideItems extends HideItemsState {
 class _StubMergeNav extends MergeLibraryNavMobileState {
   @override
   bool build() => false;
+
+  @override
+  void set(bool value) => state = value;
+}
+
+class _StubLocale extends L10nLocaleState {
+  @override
+  Locale build() => const Locale('en');
+
+  @override
+  void setLocale(Locale locale) => state = locale;
+
+  @override
+  void adoptDeviceLocaleIfUnset() {}
+}
+
+class _StubNavGrouping extends NavGroupingState {
+  @override
+  bool build() => true;
 
   @override
   void set(bool value) => state = value;

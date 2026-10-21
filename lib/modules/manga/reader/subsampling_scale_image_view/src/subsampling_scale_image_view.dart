@@ -8,6 +8,7 @@ import 'dart:ui' as ui;
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:crypto/crypto.dart';
 import 'package:mangayomi/utils/avif.dart';
@@ -162,7 +163,7 @@ class SubsamplingScaleImageViewController extends ChangeNotifier {
   void animateScaleAndCenter(
     double targetScale,
     ui.Offset sCenter, {
-    Duration duration = const Duration(milliseconds: 300),
+    Duration duration = ShioriMotion.enter,
   }) {
     _state?._animateScaleAndCenter(targetScale, sCenter, duration);
   }
@@ -171,7 +172,7 @@ class SubsamplingScaleImageViewController extends ChangeNotifier {
   void animateScaleAndTranslation(
     double targetScale,
     ui.Offset targetTranslate, {
-    Duration duration = const Duration(milliseconds: 300),
+    Duration duration = ShioriMotion.enter,
   }) {
     _state?._animateScaleAndTranslation(targetScale, targetTranslate, duration);
   }
@@ -211,7 +212,7 @@ class SubsamplingScaleImageViewController extends ChangeNotifier {
     animateScaleAndCenter(
       s._scale,
       targetCenter,
-      duration: const Duration(milliseconds: 250),
+      duration: ShioriMotion.standard,
     );
   }
 
@@ -226,7 +227,7 @@ class SubsamplingScaleImageViewController extends ChangeNotifier {
     animateScaleAndCenter(
       s._scale,
       targetCenter,
-      duration: const Duration(milliseconds: 250),
+      duration: ShioriMotion.standard,
     );
   }
 
@@ -302,7 +303,7 @@ class SubsamplingScaleImageView extends StatefulWidget {
   ///   if (state.loadState == LoadState.failed) {
   ///     return GestureDetector(
   ///       onTap: state.reLoadImage,
-  ///       child: const Icon(Icons.error),
+  ///       child: const Icon(Symbols.error_rounded, fill: 1),
   ///     );
   ///   }
   ///   if (state.loadState == LoadState.loading) {
@@ -416,7 +417,7 @@ class SubsamplingScaleImageView extends StatefulWidget {
     this.maxScale,
     this.minScale,
     this.doubleTapZoomScale,
-    this.doubleTapZoomDuration = const Duration(milliseconds: 300),
+    this.doubleTapZoomDuration = ShioriMotion.enter,
     this.color,
     this.colorBlendMode,
     this.filterQuality = FilterQuality.medium,
@@ -490,7 +491,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     _tilingEngine = TilingEngine();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 300),
+      duration: ShioriMotion.enter,
     );
     _animationController.addListener(() {
       if (_scaleAnimation != null && _translateAnimation != null) {
@@ -1436,7 +1437,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
       );
       widget.pageController!.animateToPage(
         targetPage,
-        duration: const Duration(milliseconds: 250),
+        duration: ShioriMotion.standard,
         curve: Curves.easeOutCubic,
       );
     }
@@ -1557,9 +1558,9 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
             LoadState.failed => Center(
               child: GestureDetector(
                 onTap: () => _loadFromProvider(evictCache: true),
-                child: const Icon(
-                  Icons.broken_image_outlined,
-                  color: Colors.grey,
+                child: Icon(
+                  Symbols.broken_image_rounded,
+                  color: context.shiori.color.fgMuted,
                   size: 48,
                 ),
               ),

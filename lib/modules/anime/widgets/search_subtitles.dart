@@ -1,24 +1,20 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
-import 'package:mangayomi/modules/widgets/error_text.dart';
-import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/fetch_subtitles.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
-import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/log/logger.dart';
-import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:path/path.dart' as path;
-import 'package:super_sliver_list/super_sliver_list.dart';
 
 class SubtitlesWidgetSearch extends ConsumerStatefulWidget {
   final Chapter chapter;
@@ -35,35 +31,65 @@ class SubtitlesWidgetSearch extends ConsumerStatefulWidget {
 }
 
 class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
-  late final _controller = TextEditingController(text: query);
+  late final _controller = TextEditingController(
+    text: widget.chapter.manga.value?.name?.trim() ?? "",
+  );
   List<ImdbTitle> titles = [];
   List<ImdbEpisode>? episodes;
   List<ImdbSubtitle>? subtitles;
-  late String query = widget.chapter.manga.value?.name?.trim() ?? "";
-  bool hide = false;
   bool _isLoading = true;
   String? _errorMsg;
 
   @override
   initState() {
     super.initState();
-    _init();
+    // After the first frame, so the sheet is up before the network is.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _search());
   }
 
-  Future<void> _init() async {
-    // Yield to microtask queue so initState completes before async work
-    await Future(() {});
+  /// Runs [load] behind the loading state, and shows its failure if any.
+  Future<void> _run(Future<void> Function() load) async {
+    setState(() {
+      _isLoading = true;
+      _errorMsg = null;
+    });
     try {
-      titles = await fetchImdbTitles(query);
+      await load();
     } catch (e) {
       _errorMsg = e.toString();
     }
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+    if (mounted) setState(() => _isLoading = false);
   }
+
+  /// Searches the titles again, from the field.
+  Future<void> _search() => _run(() async {
+    subtitles = null;
+    episodes = null;
+    titles = await fetchImdbTitles(_controller.text.trim());
+  });
+
+  /// Goes down a level: a title's episodes (or its subtitles when it has
+  /// none), an episode's subtitles.
+  Future<void> _open(int index) => _run(() async {
+    if (episodes != null) {
+      subtitles = await fetchImdbSubtitles(episodes![index].id);
+    } else {
+      episodes = await fetchImdbEpisodes(titles[index].id);
+      if (episodes == null || episodes!.isEmpty) {
+        subtitles = await fetchImdbSubtitles(titles[index].id);
+      }
+    }
+  });
+
+  /// Back up a level, to the episodes or the titles.
+  void _back() => setState(() {
+    _errorMsg = null;
+    if (subtitles != null) {
+      subtitles = null;
+    } else {
+      episodes = null;
+    }
+  });
 
   @override
   void dispose() {
@@ -73,294 +99,191 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(20),
-        topRight: Radius.circular(20),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: SafeArea(
-        top: false,
-        child: _isLoading
-            ? SizedBox(
-                height: context.height(0.3),
-                child: const Padding(
-                  padding: EdgeInsets.all(20),
-                  child: ProgressCenter(),
+    final l10n = context.l10n;
+    final media = MediaQuery.of(context);
+    final count = subtitles?.length ?? episodes?.length ?? titles.length;
+    final Widget body;
+    if (_isLoading) {
+      body = const ShioriLoading();
+    } else if (_errorMsg != null) {
+      body = ErrorState(detail: _errorMsg, onRetry: _search);
+    } else if (count == 0) {
+      body = ShioriEmptyState(
+        icon: Symbols.search_off_rounded,
+        title: l10n.no_result,
+        compact: true,
+      );
+    } else {
+      body = ListView.builder(
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(bottom: ShioriSpace.s16),
+        itemCount: count,
+        itemBuilder: (context, index) => subtitles != null
+            ? _subtitleRow(context, subtitles![index], index)
+            : episodes != null
+            ? _episodeRow(context, episodes![index], index)
+            : _titleRow(context, titles[index], index),
+      );
+    }
+    return Padding(
+      // The keyboard covers the sheet's foot; the results stay above it.
+      padding: EdgeInsets.only(bottom: media.viewInsets.bottom),
+      // As tall as the results, up to three quarters of the screen; the
+      // loading, empty and failed states keep a modest height of their own.
+      child: AnimatedSize(
+        duration: ShioriMotion.of(context, ShioriMotion.standard),
+        curve: ShioriMotion.standardCurve,
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: media.size.height * 0.75),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  ShioriSpace.s8,
+                  0,
+                  ShioriSpace.s16,
+                  ShioriSpace.s8,
                 ),
-              )
-            : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: SizedBox(
-                  height: context.height(0.85),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      Container(
-                        width: 34,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: context.primaryColor.withValues(alpha: 0.35),
-                          borderRadius: BorderRadius.circular(99),
-                        ),
-                      ),
-                      // Pinned at the top, like any other search field —
-                      // it used to sit below the results, forcing a scroll
-                      // back down every time the user wanted to search again.
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
-                          children: [
-                            if (subtitles != null || episodes != null)
-                              IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    if (subtitles != null) {
-                                      subtitles = null;
-                                    } else if (episodes != null) {
-                                      episodes = null;
-                                    }
-                                  });
-                                },
-                                icon: const Icon(Icons.keyboard_arrow_left),
-                              ),
-                            Expanded(
-                              child: TextFormField(
-                                onTap: () {
-                                  if (isMobile) {
-                                    setState(() {
-                                      hide = true;
-                                    });
-                                  }
-                                },
-                                controller: _controller,
-                                keyboardType: TextInputType.text,
-                                onChanged: (d) {
-                                  setState(() {
-                                    query = d;
-                                  });
-                                },
-                                onFieldSubmitted: (d) async {
-                                  setState(() {
-                                    _isLoading = true;
-                                    _errorMsg = null;
-                                    subtitles = null;
-                                    episodes = null;
-                                  });
-                                  try {
-                                    titles = await fetchImdbTitles(query);
-                                  } catch (e) {
-                                    _errorMsg = e.toString();
-                                    hide = false;
-                                  }
-
-                                  if (mounted) {
-                                    setState(() {
-                                      _isLoading = false;
-                                      hide = false;
-                                    });
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                  isDense: true,
-                                  filled: true,
-                                  fillColor: Colors.transparent,
-                                  prefixIcon: const Icon(Icons.search),
-                                  suffixIcon: query.isEmpty
-                                      ? null
-                                      : IconButton(
-                                          onPressed: () {
-                                            _controller.clear();
-                                          },
-                                          icon: const Icon(Icons.clear),
-                                        ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: context.primaryColor,
-                                    ),
+                child: Row(
+                  spacing: ShioriSpace.s4,
+                  children: [
+                    if (subtitles != null || episodes != null)
+                      IconButton(
+                        tooltip: l10n.back_to_results,
+                        onPressed: _back,
+                        icon: const Icon(Symbols.arrow_back_rounded),
+                      )
+                    else
+                      const SizedBox(width: ShioriSpace.s8),
+                    Expanded(
+                      child: ListenableBuilder(
+                        listenable: _controller,
+                        builder: (context, _) => TextField(
+                          controller: _controller,
+                          textInputAction: TextInputAction.search,
+                          decoration: InputDecoration(
+                            hintText: l10n.search,
+                            prefixIcon: const Icon(Symbols.search_rounded),
+                            suffixIcon: _controller.text.isEmpty
+                                ? null
+                                : IconButton(
+                                    tooltip: MaterialLocalizations.of(context)
+                                        .clearButtonTooltip,
+                                    onPressed: _controller.clear,
+                                    icon: const Icon(Symbols.close_rounded),
                                   ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: context.primaryColor,
-                                    ),
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: context.primaryColor,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              onPressed: () => Navigator.pop(context),
-                              icon: const Icon(Icons.close),
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (_errorMsg != null)
-                        Expanded(
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(30),
-                              child: ErrorText(_errorMsg!),
-                            ),
                           ),
+                          onSubmitted: (_) => _search(),
                         ),
-                      if (_errorMsg == null && !hide)
-                        Flexible(child: _showImdbList(context)),
-                    ],
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              Flexible(
+                child: body is ListView
+                    ? body
+                    : SizedBox(height: context.shiori.scaled(240), child: body),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _showImdbList(BuildContext context) {
-    return SuperListView.separated(
-      padding: const EdgeInsets.only(top: 20),
-      itemCount: subtitles?.length ?? episodes?.length ?? titles.length,
-      itemBuilder: (context, index) {
-        final isSubtitles = subtitles != null;
-        final isEpisodes = episodes != null;
-        return Padding(
-          padding: const EdgeInsets.only(top: 5),
-          child: InkWell(
-            onTap: () async {
-              if (isSubtitles) {
-                Navigator.pop(context, subtitles![index]);
-              } else {
-                setState(() {
-                  _isLoading = true;
-                  _errorMsg = null;
-                });
-                try {
-                  if (isEpisodes) {
-                    subtitles = await fetchImdbSubtitles(episodes![index].id);
-                  } else {
-                    episodes = await fetchImdbEpisodes(titles[index].id);
-                    if (episodes == null || episodes!.isEmpty) {
-                      subtitles = await fetchImdbSubtitles(titles[index].id);
-                    }
-                  }
-                } catch (e) {
-                  _errorMsg = e.toString();
-                }
-                if (mounted) {
-                  setState(() {
-                    _isLoading = false;
-                  });
-                }
-              }
-            },
-            child: Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (!isSubtitles && !isEpisodes)
-                      Material(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.transparent,
-                        clipBehavior: Clip.antiAlias,
-                        child: Ink.image(
-                          height: 120,
-                          width: 80,
-                          fit: BoxFit.cover,
-                          image: titles[index].primaryImage != null
-                              ? CustomExtendedNetworkImageProvider(
-                                  titles[index].primaryImage!,
-                                )
-                              : const AssetImage(transparentAsset),
-                        ),
+  /// A title: its poster, its name, its rating and its years.
+  Widget _titleRow(BuildContext context, ImdbTitle title, int index) {
+    final tokens = context.shiori;
+    final years = [title.startYear, title.endYear].whereType<int>().join(' – ');
+    final meta = [
+      if (title.aggregateRating != null)
+        '★ ${title.aggregateRating!.toStringAsFixed(1)}'
+            '${title.voteCount == null ? '' : ' (${title.voteCount})'}',
+      if (years.isNotEmpty) years,
+    ].join(' · ');
+    return InkWell(
+      onTap: () => _open(index),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: ShioriSpace.s16,
+          vertical: ShioriSpace.s8,
+        ),
+        child: Row(
+          spacing: ShioriSpace.s12,
+          children: [
+            ShioriThumbnail(
+              height: tokens.scaled(72),
+              child: title.primaryImage == null
+                  ? Icon(Symbols.movie_rounded, color: tokens.color.fgMuted)
+                  : Image(
+                      image: CustomExtendedNetworkImageProvider(
+                        title.primaryImage!,
                       ),
-                    const SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          width: context.width(0.6),
-                          child: Text(
-                            isSubtitles
-                                ? "${subtitles![index].name} (${subtitles![index].displayLang}) - ${subtitles![index].format?.toUpperCase() ?? "Unknown"} - ${subtitles![index].encoding ?? "Unknown"}"
-                                : isEpisodes
-                                ? "S${episodes![index].season}E${episodes![index].episode}: ${episodes![index].title}"
-                                : titles[index].primaryTitle,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        if (!isSubtitles && !isEpisodes)
-                          Row(
-                            children: [
-                              const Text(
-                                "Rating : ",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                titles[index].aggregateRating?.toStringAsFixed(
-                                      2,
-                                    ) ??
-                                    "?",
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        if (!isSubtitles && !isEpisodes)
-                          Row(
-                            children: [
-                              const Text(
-                                "Votes : ",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                titles[index].voteCount?.toString() ?? "?",
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        if (!isSubtitles && !isEpisodes)
-                          Row(
-                            children: [
-                              const Text(
-                                "Date : ",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              Text(
-                                "${titles[index].startYear?.toString() ?? "?"} - ${titles[index].endYear?.toString() ?? "?"}",
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                      ],
+                      fit: BoxFit.cover,
                     ),
-                    if (isSubtitles && widget.isLocal)
-                      OutlinedButton.icon(
-                        onPressed: () async => _downloadSubtitle(index),
-                        label: Text(context.l10n.download),
-                        icon: Icon(Icons.download_outlined),
-                      ),
-                  ],
-                ),
-              ],
             ),
-          ),
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return const Divider();
-      },
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 2,
+                children: [
+                  Text(
+                    title.primaryTitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: tokens.text.row.copyWith(
+                      color: tokens.color.fg,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (meta.isNotEmpty) Text(meta, style: tokens.caption),
+                ],
+              ),
+            ),
+            Icon(Symbols.chevron_forward_rounded, color: tokens.color.fgMuted),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// An episode: "S1E2", then its title.
+  Widget _episodeRow(BuildContext context, ImdbEpisode episode, int index) {
+    return ShioriListRow(
+      title: episode.title,
+      subtitle: 'S${episode.season}E${episode.episode}',
+      trailing: Icon(
+        Symbols.chevron_forward_rounded,
+        color: context.shiori.color.fgMuted,
+      ),
+      onTap: () => _open(index),
+    );
+  }
+
+  /// A subtitle file: its name, its language, format and encoding, and a
+  /// download for a local episode.
+  Widget _subtitleRow(BuildContext context, ImdbSubtitle subtitle, int index) {
+    final meta = [
+      subtitle.displayLang,
+      subtitle.format?.toUpperCase(),
+      subtitle.encoding,
+    ].whereType<String>().where((s) => s.isNotEmpty).join(' · ');
+    return ShioriListRow(
+      title: subtitle.name ?? subtitle.displayLang ?? '',
+      titleMaxLines: 2,
+      subtitle: meta.isEmpty ? null : meta,
+      trailing: widget.isLocal
+          ? IconButton(
+              tooltip: context.l10n.download,
+              onPressed: () => _downloadSubtitle(index),
+              icon: const Icon(Symbols.download_rounded),
+            )
+          : null,
+      onTap: () => Navigator.pop(context, subtitle),
     );
   }
 
@@ -435,16 +358,16 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
   }
 }
 
-Future<dynamic> subtitlesSearchraggableMenu(
+/// Opens the subtitle search for [chapter]; resolves to the subtitle
+/// picked, or null.
+Future<ImdbSubtitle?> subtitlesSearchraggableMenu(
   BuildContext context, {
   required Chapter chapter,
   required bool isLocal,
-}) async {
-  return await showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) =>
-        SubtitlesWidgetSearch(chapter: chapter, isLocal: isLocal),
+}) {
+  return showShioriSheet<ImdbSubtitle>(
+    context,
+    title: context.l10n.group_subtitles,
+    builder: (_) => SubtitlesWidgetSearch(chapter: chapter, isLocal: isLocal),
   );
 }

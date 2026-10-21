@@ -9,6 +9,8 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/onboarding/onboarding_screen.dart';
+import 'package:mangayomi/modules/main_view/nav_groups.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 /// Mounted the way main.dart mounts it: from the builder of a routed app, so
 /// there is a real Router and a real back button dispatcher above it. A plain
@@ -29,6 +31,8 @@ void main() {
           localFoldersStateProvider.overrideWith(_StubLocalFolders.new),
           hideItemsStateProvider.overrideWith(_StubHideItems.new),
           mergeLibraryNavMobileStateProvider.overrideWith(_StubMergeNav.new),
+          l10nLocaleStateProvider.overrideWith(_StubLocale.new),
+          navGroupingProvider.overrideWith(_StubNavGrouping.new),
         ],
         child: MaterialApp.router(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -54,12 +58,13 @@ void main() {
     tester,
   ) async {
     await pump(tester);
-    await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+    // Past the language, onto the libraries.
+    await tester.tap(find.text('Next'));
     await tester.pumpAndSettle();
-    expect(find.text('Your libraries'), findsOneWidget);
+    expect(find.text('Welcome to Mangayomi'), findsOneWidget);
 
     await systemBack(tester);
-    expect(find.text('Welcome to Mangayomi'), findsOneWidget);
+    expect(find.text('Choose your language'), findsOneWidget);
   });
 
   testWidgets('does nothing on the first step, where Skip is the way out', (
@@ -69,7 +74,7 @@ void main() {
     await systemBack(tester);
     // Still here, and the app has not been left from behind an unfinished
     // first run.
-    expect(find.text('Welcome to Mangayomi'), findsOneWidget);
+    expect(find.text('Choose your language'), findsOneWidget);
   });
 }
 
@@ -100,6 +105,25 @@ class _StubHideItems extends HideItemsState {
 class _StubMergeNav extends MergeLibraryNavMobileState {
   @override
   bool build() => false;
+
+  @override
+  void set(bool value) => state = value;
+}
+
+class _StubLocale extends L10nLocaleState {
+  @override
+  Locale build() => const Locale('en');
+
+  @override
+  void setLocale(Locale locale) => state = locale;
+
+  @override
+  void adoptDeviceLocaleIfUnset() {}
+}
+
+class _StubNavGrouping extends NavGroupingState {
+  @override
+  bool build() => true;
 
   @override
   void set(bool value) => state = value;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/widgets/floating_nav_bar.dart';
@@ -35,10 +36,15 @@ class MainMobileBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final height = _getBottomNavigationHeight(isLongPressed, location);
+    if (height == 0) {
+      return const SizedBox.shrink();
+    }
+
     if (useFloatingNav) {
       return SizedBox(
         width: context.width(1),
-        height: _getBottomNavigationHeight(isLongPressed, location),
+        height: height,
         child: FloatingNavBar(
           destinations: buildNavigationWidgetsMobile(
             ref,
@@ -54,21 +60,20 @@ class MainMobileBottomNavigation extends StatelessWidget {
       );
     }
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 0),
+    return SizedBox(
       width: context.width(1),
-      height: _getBottomNavigationHeight(isLongPressed, location),
+      height: height,
       child: NavigationBarTheme(
         data: NavigationBarThemeData(
           labelTextStyle: const WidgetStatePropertyAll(
             TextStyle(overflow: TextOverflow.ellipsis),
           ),
           indicatorShape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(ShioriShape.sheet),
           ),
         ),
         child: NavigationBar(
-          animationDuration: const Duration(milliseconds: 500),
+          animationDuration: ShioriMotion.exitSlow,
           selectedIndex: currentIndex,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: buildNavigationWidgetsMobile(ref, dest, context),

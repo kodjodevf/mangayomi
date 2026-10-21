@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 class MangasCardSelector extends StatelessWidget {
@@ -24,7 +24,10 @@ class MangasCardSelector extends StatelessWidget {
     // keeps the source page consistent with the rest of the TV UI.
     if (isTv) {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        padding: const EdgeInsets.symmetric(
+          horizontal: ShioriSpace.s4,
+          vertical: ShioriSpace.s8,
+        ),
         child: TvPill(
           label: text,
           icon: icon,
@@ -34,40 +37,17 @@ class MangasCardSelector extends StatelessWidget {
       );
     }
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.all(0),
-          side: BorderSide(width: 0.6, color: context.primaryColor),
-          backgroundColor: selected ? context.primaryColor : null,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-        ),
-        onPressed: onPressed,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 13),
-          child: Row(
-            children: [
-              Icon(
-                icon,
-                size: 15,
-                color: selected
-                    ? Theme.of(context).scaffoldBackgroundColor
-                    : Theme.of(context).textTheme.bodyLarge!.color,
-              ),
-              const SizedBox(width: 5),
-              Text(
-                text,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: selected
-                      ? Theme.of(context).scaffoldBackgroundColor
-                      : Theme.of(context).textTheme.bodyLarge!.color,
-                ),
-              ),
-            ],
-          ),
-        ),
+      padding: const EdgeInsetsDirectional.only(
+        start: ShioriSpace.s8,
+        top: ShioriSpace.s4,
+        bottom: ShioriSpace.s4,
+      ),
+      child: ChoiceChip(
+        selected: selected,
+        showCheckmark: false,
+        avatar: Icon(icon, fill: selected ? 1 : 0),
+        label: Text(text),
+        onSelected: (_) => onPressed(),
       ),
     );
   }

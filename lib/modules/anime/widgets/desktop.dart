@@ -1,14 +1,22 @@
 import 'dart:async';
 
+import 'package:bot_toast/bot_toast.dart';
+
 import 'package:flutter/gestures.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/anime/widgets/seek_indicator_text.dart';
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/utils/player_focus.dart';
+import 'package:mangayomi/modules/anime/utils/player_shortcuts.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
+import 'package:mangayomi/modules/anime/widgets/player_overlay_surface.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
@@ -26,6 +34,9 @@ class DesktopControllerWidget extends ConsumerStatefulWidget {
   final GlobalKey<VideoState> videoStatekey;
   final Widget bottomButtonBarWidget;
   final Widget seekToWidget;
+
+  /// The opening and the ending, in milliseconds, marked on the timeline.
+  final ValueListenable<List<(int, int)>>? skipRanges;
   final int defaultSkipIntroLength;
   final void Function(bool) desktopFullScreenPlayer;
   final ValueNotifier<List<(String, int)>> chapterMarks;
@@ -40,6 +51,7 @@ class DesktopControllerWidget extends ConsumerStatefulWidget {
     required this.streamController,
     required this.videoStatekey,
     required this.seekToWidget,
+    this.skipRanges,
     required this.tempDuration,
     required this.doubleSpeed,
     required this.defaultSkipIntroLength,
@@ -58,8 +70,7 @@ class _DesktopControllerWidgetState
   bool mount = true;
   bool visible = true;
   bool cursorVisible = true;
-  Duration controlsTransitionDuration = const Duration(milliseconds: 300);
-  // Color backdropColor = const Color(0x66000000);
+  Duration controlsTransitionDuration = ShioriMotion.enter;
   Timer? _timer;
 
   int swipeDuration = 0; // Duration to seek in video
@@ -69,7 +80,10 @@ class _DesktopControllerWidgetState
   late bool buffering = widget.videoController.player.state.buffering;
   final controlsHoverDuration = const Duration(seconds: 3);
   double buttonBarHeight = 100;
-  final bottomButtonBarMargin = const EdgeInsets.only(left: 16.0, right: 8.0);
+  final bottomButtonBarMargin = const EdgeInsets.only(
+    left: ShioriSpace.s16,
+    right: ShioriSpace.s8,
+  );
   final FocusNode _playerFocusNode = FocusNode(
     debugLabel: 'desktopPlayerShortcuts',
   );
@@ -122,6 +136,51 @@ class _DesktopControllerWidgetState
       widget.videoController.player.setVolume(restore);
       _showVolumeIndicator(restore);
     }
+  }
+
+  // Presses close together add up in one label ("+15 s"), as on YouTube.
+  int _keySeekTotal = 0;
+  Timer? _keySeekTimer;
+
+  /// Seeks [seconds] from the keyboard, and says so over the video: the
+  /// controls stay hidden, so the label is the only sign of it.
+  void _seekByKey(int seconds) {
+    final player = widget.videoController.player;
+    final duration = player.state.duration;
+    var target = player.state.position + Duration(seconds: seconds);
+    if (target < Duration.zero) target = Duration.zero;
+    if (duration > Duration.zero && target > duration) target = duration;
+    player.seek(target);
+
+    _keySeekTotal += seconds;
+    _keySeekTimer?.cancel();
+    _keySeekTimer = Timer(const Duration(seconds: 1), () => _keySeekTotal = 0);
+    final total = _keySeekTotal;
+    final label =
+        '${total < 0 ? '−' : '+'}${context.l10n.seconds_short(total.abs())}'
+        '  ·  ${target.label(reference: duration)}';
+    BotToast.showCustomText(
+      onlyOne: true,
+      align: const Alignment(0, 0.6),
+      duration: const Duration(seconds: 1),
+      toastBuilder: (_) => ShioriOverlayLabel(label),
+    );
+  }
+
+  /// One frame on or back; mpv pauses on it.
+  void _frameStep({required bool forward}) {
+    final platform = widget.videoController.player.platform;
+    if (platform is! NativePlayer) return;
+    platform.command([forward ? 'frame-step' : 'frame-back-step']);
+  }
+
+  void _showShortcuts() {
+    showPlayerShortcuts(
+      context,
+      skipIntroSeconds: widget.defaultSkipIntroLength,
+      shaders: ref.read(useMpvConfigStateProvider),
+      bindings: ref.read(keyBindingsStateProvider),
+    );
   }
 
   void _showVolumeIndicator(double volume) {
@@ -189,6 +248,7 @@ class _DesktopControllerWidgetState
     _volumeTimer?.cancel();
     _volumeValue.dispose();
     _volumeIndicator.dispose();
+    _keySeekTimer?.cancel();
     super.dispose();
   }
 
@@ -261,98 +321,64 @@ class _DesktopControllerWidgetState
 
   @override
   Widget build(BuildContext context) {
+    final player = widget.videoController.player;
+    void nextEpisode() {
+      if (widget.streamController.hasNextEpisode) {
+        pushReplacementMangaReaderView(
+          context: context,
+          chapter: widget.streamController.getNextEpisode(),
+        );
+      }
+    }
+
+    void previousEpisode() {
+      if (widget.streamController.hasPreviousEpisode) {
+        pushReplacementMangaReaderView(
+          context: context,
+          chapter: widget.streamController.getPrevEpisode(),
+        );
+      }
+    }
+
+    // The keyboard keys are the user's bindings; the media keys, the frame
+    // steps, the list of shortcuts and the shader keys stay fixed.
+    final actions = <PlayerShortcut, VoidCallback>{
+      PlayerShortcut.playPause: player.playOrPause,
+      PlayerShortcut.seekBackShort: () => _seekByKey(-playerShortSeekSeconds),
+      PlayerShortcut.seekForwardShort: () => _seekByKey(playerShortSeekSeconds),
+      PlayerShortcut.seekBackLong: () => _seekByKey(-playerLongSeekSeconds),
+      PlayerShortcut.seekForwardLong: () => _seekByKey(playerLongSeekSeconds),
+      PlayerShortcut.skipIntro: () => _seekByKey(widget.defaultSkipIntroLength),
+      PlayerShortcut.volumeUp: () => _changeVolume(5.0),
+      PlayerShortcut.volumeDown: () => _changeVolume(-5.0),
+      PlayerShortcut.mute: _toggleMute,
+      PlayerShortcut.previousEpisode: previousEpisode,
+      PlayerShortcut.nextEpisode: nextEpisode,
+      PlayerShortcut.fullScreen: () =>
+          _changeFullScreen(ref, widget.desktopFullScreenPlayer),
+      PlayerShortcut.exitFullScreen: () =>
+          _changeFullScreen(ref, widget.desktopFullScreenPlayer, value: false),
+    };
+    final bindings = ref.watch(keyBindingsStateProvider);
     return CallbackShortcuts(
       bindings: {
         // Default key-board shortcuts.
         // https://support.google.com/youtube/answer/7631406
-        const SingleActivator(LogicalKeyboardKey.mediaPlay): () =>
-            widget.videoController.player.play(),
-        const SingleActivator(LogicalKeyboardKey.mediaPause): () =>
-            widget.videoController.player.pause(),
-        const SingleActivator(LogicalKeyboardKey.mediaPlayPause): () =>
-            widget.videoController.player.playOrPause(),
-        const SingleActivator(LogicalKeyboardKey.mediaTrackNext): () {
-          if (widget.streamController.hasNextEpisode) {
-            pushReplacementMangaReaderView(
-              context: context,
-              chapter: widget.streamController.getNextEpisode(),
-            );
-          }
-        },
-        const SingleActivator(LogicalKeyboardKey.keyN): () {
-          if (widget.streamController.hasNextEpisode) {
-            pushReplacementMangaReaderView(
-              context: context,
-              chapter: widget.streamController.getNextEpisode(),
-            );
-          }
-        },
-        const SingleActivator(LogicalKeyboardKey.mediaTrackPrevious): () {
-          if (widget.streamController.hasPreviousEpisode) {
-            pushReplacementMangaReaderView(
-              context: context,
-              chapter: widget.streamController.getPrevEpisode(),
-            );
-          }
-        },
-        const SingleActivator(LogicalKeyboardKey.keyP): () {
-          if (widget.streamController.hasPreviousEpisode) {
-            pushReplacementMangaReaderView(
-              context: context,
-              chapter: widget.streamController.getPrevEpisode(),
-            );
-          }
-        },
-        const SingleActivator(LogicalKeyboardKey.keyM): () => _toggleMute(),
-        const SingleActivator(LogicalKeyboardKey.space): () =>
-            widget.videoController.player.playOrPause(),
-        const SingleActivator(LogicalKeyboardKey.keyJ): () {
-          final rate =
-              widget.videoController.player.state.position -
-              const Duration(seconds: 10);
-          widget.videoController.player.seek(rate);
-        },
-        const SingleActivator(LogicalKeyboardKey.keyL): () {
-          final rate =
-              widget.videoController.player.state.position +
-              const Duration(seconds: 10);
-          widget.videoController.player.seek(rate);
-        },
-        const SingleActivator(LogicalKeyboardKey.enter): () {
-          final rate =
-              widget.videoController.player.state.position +
-              Duration(seconds: widget.defaultSkipIntroLength);
-          widget.videoController.player.seek(rate);
-        },
-        const SingleActivator(LogicalKeyboardKey.keyS): () {
-          final rate =
-              widget.videoController.player.state.position +
-              Duration(seconds: widget.defaultSkipIntroLength);
-          widget.videoController.player.seek(rate);
-        },
-        const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
-          final rate =
-              widget.videoController.player.state.position -
-              const Duration(seconds: 5);
-          widget.videoController.player.seek(rate);
-        },
-        const SingleActivator(LogicalKeyboardKey.arrowRight): () {
-          final rate =
-              widget.videoController.player.state.position +
-              const Duration(seconds: 5);
-          widget.videoController.player.seek(rate);
-        },
-        const SingleActivator(LogicalKeyboardKey.arrowUp): () =>
-            _changeVolume(5.0),
-        const SingleActivator(LogicalKeyboardKey.arrowDown): () =>
-            _changeVolume(-5.0),
-        const SingleActivator(LogicalKeyboardKey.keyF): () async {
-          await _changeFullScreen(ref, widget.desktopFullScreenPlayer);
-        },
-        const SingleActivator(LogicalKeyboardKey.escape): () async {
-          final desktopFullScreenPlayer = widget.desktopFullScreenPlayer;
-          await _changeFullScreen(ref, desktopFullScreenPlayer, value: false);
-        },
+        const SingleActivator(LogicalKeyboardKey.mediaPlay): player.play,
+        const SingleActivator(LogicalKeyboardKey.mediaPause): player.pause,
+        const SingleActivator(LogicalKeyboardKey.mediaPlayPause):
+            player.playOrPause,
+        const SingleActivator(LogicalKeyboardKey.mediaTrackNext): nextEpisode,
+        const SingleActivator(LogicalKeyboardKey.mediaTrackPrevious):
+            previousEpisode,
+        for (final MapEntry(key: shortcut, value: action) in actions.entries)
+          for (final combo in bindings[shortcut]!) combo.activator: action,
+        // By character rather than by key, so they hold on any layout (the
+        // question mark is Shift+, on AZERTY).
+        const CharacterActivator(','): () => _frameStep(forward: false),
+        const CharacterActivator('.'): () => _frameStep(forward: true),
+        const CharacterActivator('?'): _showShortcuts,
+        const SingleActivator(LogicalKeyboardKey.f1): _showShortcuts,
         const SingleActivator(LogicalKeyboardKey.digit0, control: true): () {
           (widget.videoController.player.platform as NativePlayer).command([
             "script-message",
@@ -500,28 +526,6 @@ class _DesktopControllerWidgetState
                                 ),
                               ),
                             ),
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              height: 180,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.bottomCenter,
-                                    end: Alignment.topCenter,
-                                    colors: [
-                                      Theme.of(context).colorScheme.scrim
-                                          .withValues(alpha: 0.85),
-                                      Theme.of(context).colorScheme.scrim
-                                          .withValues(alpha: 0.40),
-                                      Colors.transparent,
-                                    ],
-                                    stops: const [0.0, 0.70, 1.0],
-                                  ),
-                                ),
-                              ),
-                            ),
                             if (mount)
                               Padding(
                                 padding:
@@ -559,52 +563,71 @@ class _DesktopControllerWidgetState
                                       ),
                                     ),
                                     widget.seekToWidget,
-                                    Transform.translate(
-                                      offset: Offset.zero,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 5,
+                                    // The timeline and the bar in one panel
+                                    // floating over the foot, as on a phone.
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                        ShioriSpace.s12,
+                                        0,
+                                        ShioriSpace.s12,
+                                        ShioriSpace.s12,
+                                      ),
+                                      child: ShioriOverlayPanel(
+                                        padding: const EdgeInsets.fromLTRB(
+                                          ShioriSpace.s8,
+                                          ShioriSpace.s8,
+                                          ShioriSpace.s8,
+                                          ShioriSpace.s4,
                                         ),
-                                        child: CustomSeekBar(
-                                          onSeekStart: (value) {
-                                            setState(() {
-                                              swipeDuration = value.inSeconds;
-                                              showSwipeDuration = true;
-                                              widget.tempDuration(
-                                                widget
-                                                        .videoController
-                                                        .player
-                                                        .state
-                                                        .position +
-                                                    value,
-                                              );
-                                            });
-                                            _timer?.cancel();
-                                          },
-                                          onSeekEnd: (value) {
-                                            _timer = Timer(
-                                              controlsHoverDuration,
-                                              () {
-                                                if (mounted) {
-                                                  setState(() {
-                                                    visible = false;
-                                                  });
-                                                }
+                                        maxWidth: double.infinity,
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            CustomSeekBar(
+                                              onSeekStart: (value) {
+                                                setState(() {
+                                                  swipeDuration =
+                                                      value.inSeconds;
+                                                  showSwipeDuration = true;
+                                                  widget.tempDuration(
+                                                    widget
+                                                            .videoController
+                                                            .player
+                                                            .state
+                                                            .position +
+                                                        value,
+                                                  );
+                                                });
+                                                _timer?.cancel();
                                               },
-                                            );
-                                            setState(() {
-                                              showSwipeDuration = false;
-                                            });
-                                            widget.tempDuration(null);
-                                          },
-                                          player: widget.videoController.player,
-                                          chapterMarks: widget.chapterMarks,
-                                          onHoverChanged:
-                                              _onSeekbarHoverChanged,
+                                              onSeekEnd: (value) {
+                                                _timer = Timer(
+                                                  controlsHoverDuration,
+                                                  () {
+                                                    if (mounted) {
+                                                      setState(() {
+                                                        visible = false;
+                                                      });
+                                                    }
+                                                  },
+                                                );
+                                                setState(() {
+                                                  showSwipeDuration = false;
+                                                });
+                                                widget.tempDuration(null);
+                                              },
+                                              player:
+                                                  widget.videoController.player,
+                                              chapterMarks: widget.chapterMarks,
+                                              onHoverChanged:
+                                                  _onSeekbarHoverChanged,
+                                              skipRanges: widget.skipRanges,
+                                            ),
+                                            widget.bottomButtonBarWidget,
+                                          ],
                                         ),
                                       ),
                                     ),
-                                    widget.bottomButtonBarWidget,
                                   ],
                                 ),
                               ),
@@ -646,9 +669,7 @@ class _DesktopControllerWidgetState
                                         }
                                         return const SizedBox.shrink();
                                       },
-                                      child: const CircularProgressIndicator(
-                                        color: Color(0xFFFFFFFF),
-                                      ),
+                                      child: const PlayerBuffering(),
                                     ),
                                   ),
                                 ),
@@ -779,19 +800,19 @@ class CustomMaterialDesktopVolumeButtonState
         },
         child: Row(
           children: [
-            const SizedBox(width: 4.0),
+            const SizedBox(width: ShioriSpace.s4),
             AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
+              duration: ShioriMotion.fast,
               width: 34,
               height: 34,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: hover
-                    ? Theme.of(context).colorScheme.surfaceContainerHighest
-                          .withValues(alpha: 0.75)
+                    ? Colors.white.withValues(alpha: Alphas.hairline)
                     : Colors.transparent,
               ),
               child: IconButton(
+                tooltip: mute ? context.l10n.unmute : context.l10n.mute,
                 onPressed: () async {
                   if (mute) {
                     await widget.controller.player.setVolume(_volume);
@@ -812,44 +833,52 @@ class CustomMaterialDesktopVolumeButtonState
                 },
                 iconSize: 18,
                 padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(minWidth: 34, minHeight: 34),
+                constraints: BoxConstraints(
+                  minWidth: context.shiori.density.minTarget,
+                  minHeight: context.shiori.density.minTarget,
+                ),
                 color: Colors.white,
                 icon: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 150),
+                  duration: ShioriMotion.fast,
                   child: volume == 0.0
                       ? const Icon(
-                          Icons.volume_off,
-                          key: ValueKey(Icons.volume_off),
+                          Symbols.volume_off_rounded,
+                          fill: 1,
+                          key: ValueKey(Symbols.volume_off_rounded),
                         )
                       : volume < 50.0
                       ? const Icon(
-                          Icons.volume_down,
-                          key: ValueKey(Icons.volume_down),
+                          Symbols.volume_down_rounded,
+                          fill: 1,
+                          key: ValueKey(Symbols.volume_down_rounded),
                         )
                       : const Icon(
-                          Icons.volume_up,
-                          key: ValueKey(Icons.volume_up),
+                          Symbols.volume_up_rounded,
+                          fill: 1,
+                          key: ValueKey(Symbols.volume_up_rounded),
                         ),
                 ),
               ),
             ),
             AnimatedOpacity(
               opacity: hover ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 150),
+              duration: ShioriMotion.fast,
               child: AnimatedContainer(
                 width: hover ? (12.0 + 52.0 + 18.0) : 12.0,
-                duration: const Duration(milliseconds: 150),
+                duration: ShioriMotion.fast,
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      const SizedBox(width: 12.0),
+                      const SizedBox(width: ShioriSpace.s12),
                       SizedBox(
                         width: 52.0,
                         child: SliderTheme(
                           data: SliderThemeData(
                             trackHeight: 1.2,
-                            inactiveTrackColor: const Color(0x3DFFFFFF),
+                            inactiveTrackColor: Colors.white.withValues(
+                              alpha: Alphas.hairline,
+                            ),
                             activeTrackColor: Colors.white,
                             thumbColor: Colors.white,
                             thumbShape: const RoundSliderThumbShape(
@@ -858,7 +887,7 @@ class CustomMaterialDesktopVolumeButtonState
                               pressedElevation: 0.0,
                             ),
                             trackShape: _CustomTrackShape(),
-                            overlayColor: const Color(0x00000000),
+                            overlayColor: Colors.transparent,
                           ),
                           child: Slider(
                             value: volume.clamp(0.0, 100.0),
@@ -872,7 +901,7 @@ class CustomMaterialDesktopVolumeButtonState
                           ),
                         ),
                       ),
-                      const SizedBox(width: 18.0),
+                      const SizedBox(width: ShioriSpace.s16),
                     ],
                   ),
                 ),
@@ -1004,23 +1033,28 @@ class _CustomMaterialDesktopFullscreenButtonState
       onEnter: (_) => setState(() => _hover = true),
       onExit: (_) => setState(() => _hover = false),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
+        duration: ShioriMotion.fast,
         width: 34,
         height: 34,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: _hover
-              ? Theme.of(context).colorScheme.surfaceContainerHighest
-                    .withValues(alpha: 0.75)
+              ? Colors.white.withValues(alpha: Alphas.hairline)
               : Colors.transparent,
         ),
         child: IconButton(
+          tooltip: isFullScreen
+              ? context.l10n.exit_fullscreen
+              : context.l10n.fullscreen,
           icon: isFullScreen
-              ? const Icon(Icons.fullscreen_exit)
-              : const Icon(Icons.fullscreen),
+              ? const Icon(Symbols.fullscreen_exit_rounded)
+              : const Icon(Symbols.fullscreen_rounded),
           iconSize: 18,
           padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(minWidth: 34, minHeight: 34),
+          constraints: BoxConstraints(
+            minWidth: context.shiori.density.minTarget,
+            minHeight: context.shiori.density.minTarget,
+          ),
           color: Colors.white,
           onPressed: () async {
             await _changeFullScreen(ref, widget.desktopFullScreenPlayer);
