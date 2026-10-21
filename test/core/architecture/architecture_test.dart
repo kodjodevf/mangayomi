@@ -208,6 +208,24 @@ void main() {
       );
     });
 
+    test('Shared UI kit (lib/modules/widgets) never imports feature modules', () {
+      final featureDirs = Directory('lib/modules')
+          .listSync()
+          .whereType<Directory>()
+          .map((d) => p.basename(d.path))
+          .where((name) => name != 'widgets')
+          .map((name) => 'package:mangayomi/modules/$name/')
+          .toList();
+      final violations = _findImportViolations('lib/modules/widgets', featureDirs);
+      expect(
+        violations,
+        isEmpty,
+        reason:
+            'lib/modules/widgets/ is the shared, feature-agnostic UI kit. Move feature-specific widgets into their owning module:\n'
+            '${violations.join('\n')}',
+      );
+    });
+
     test('Phase 3: Reader and Player entry views remain decomposed (< 1400 lines) and no module file exceeds 1400 lines', () {
       const maxLines = 1400;
       final oversizedFiles = <String>[];

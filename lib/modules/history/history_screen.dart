@@ -7,7 +7,7 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
-import 'package:mangayomi/modules/widgets/base_library_tab_screen.dart';
+import 'package:mangayomi/modules/library/widgets/base_library_tab_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 
 import 'package:mangayomi/repositories/chapter_repository.dart';

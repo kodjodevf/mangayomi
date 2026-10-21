@@ -4,7 +4,7 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/widgets/base_library_tab_screen.dart';
+import 'package:mangayomi/modules/library/widgets/base_library_tab_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
