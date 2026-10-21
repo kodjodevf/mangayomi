@@ -6,6 +6,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
+import 'package:mangayomi/repositories/chapter_consolidation.dart';
 
 class DownloadRepository {
   Future<List<int>> getAllIds() =>
@@ -19,10 +20,8 @@ class DownloadRepository {
 
   Download? getById(int id) => isar.downloads.getSync(id);
 
-  Stream<List<Download>> watchByChapterId(int? chapterId) => isar.downloads
-      .filter()
-      .idEqualTo(chapterId)
-      .watch(fireImmediately: true);
+  Stream<List<Download>> watchByChapterId(int? chapterId) =>
+      isar.downloads.filter().idEqualTo(chapterId).watch(fireImmediately: true);
 
   List<int> getDownloadedIdsAmong(List<int> chapterIds) => isar.downloads
       .where()
@@ -43,8 +42,10 @@ class DownloadRepository {
       .isDownloadEqualTo(true)
       .count();
 
-  Stream<List<Download>> watchDownloaded() =>
-      isar.downloads.where().isDownloadEqualTo(true).watch(fireImmediately: true);
+  Stream<List<Download>> watchDownloaded() => isar.downloads
+      .where()
+      .isDownloadEqualTo(true)
+      .watch(fireImmediately: true);
 
   Stream<List<Download>> watchPendingStarted() => isar.downloads
       .filter()
@@ -69,11 +70,16 @@ class DownloadRepository {
   // No updatedAt stamping - Download has no such field.
   /// Atomically appends a chapter to the queue. Repeated requests preserve
   /// completed and active entries, while failed entries become retryable.
-  Future<void> enqueue(Chapter chapter) => dbWriteQueue.run(() {
-    isar.writeTxnSync(() {
+  Future<Chapter?> enqueue(Chapter chapter) => dbWriteQueue.run(() {
+    return isar.writeTxnSync(() {
+      final current =
+          isar.chapters.getSync(chapter.id!) ??
+          isar.chapters.getSync(resolveChapterAlias(isar, chapter.id!));
+      if (current == null || current.mangaId != chapter.mangaId) return null;
+      chapter = current;
       final existing = isar.downloads.getSync(chapter.id!);
       if (existing?.isDownload == true || existing?.isStartDownload == true) {
-        return;
+        return chapter;
       }
       final download =
           existing ??
@@ -94,6 +100,7 @@ class DownloadRepository {
         ..chapter.value = chapter;
       isar.downloads.putSync(download);
       download.chapter.saveSync();
+      return chapter;
     });
   });
 

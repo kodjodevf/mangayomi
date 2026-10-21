@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io'; // For I/O-operations
 import 'dart:ui' as ui;
+
 import 'package:flutter/foundation.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
@@ -657,8 +658,9 @@ Future<LocalFolder?> getDefaultLocalFolder() async {
 
 Future<List<LocalFolder>> getAllLocalFolders({
   bool includeDefault = true,
+  Settings? settings,
 }) async {
-  final settings = settingsRepository.current;
+  settings ??= settingsRepository.current;
   final folders = _normalizeLocalFolders(
     settings.namedLocalFolders ??
         settings.localFolders
@@ -788,7 +790,6 @@ String? _resolveDownloadFolderName(String? name, List<LocalFolder> folders) {
   return folders.firstOrNull?.name;
 }
 
-
 List<LocalFolder> _replaceLocalFolder(
   List<LocalFolder> folders,
   String originalPath,
@@ -813,4 +814,3 @@ String _debugLocalFolder(LocalFolder folder) {
   return 'name=${name?.isNotEmpty == true ? name : '<empty>'}, '
       'path=${path?.isNotEmpty == true ? path : '<empty>'}';
 }
-

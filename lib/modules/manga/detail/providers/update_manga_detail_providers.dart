@@ -12,6 +12,7 @@ import 'package:mangayomi/utils/fetch_interval.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/utils/error_toast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:mangayomi/modules/manga/download/providers/download_gate.dart';
 part 'update_manga_detail_providers.g.dart';
 
 @riverpod
@@ -22,8 +23,9 @@ Future<dynamic> updateMangaDetail(
   bool showToast = true,
 }) async {
   try {
-    final manga = mangaRepository.findById(mangaId!);
-    if (manga == null) return;
+    final initialManga = mangaRepository.findById(mangaId!);
+    if (initialManga == null) return;
+    var manga = initialManga;
 
     manga.chapters.loadSync();
 
@@ -38,6 +40,11 @@ Future<dynamic> updateMangaDetail(
       installedOnly: true,
     );
     if (source == null) return;
+    final requestedLink = manga.link;
+    final requestedSourceId = manga.sourceId;
+    final requestedSource = manga.source;
+    final requestedLang = manga.lang;
+    final requestedItemType = manga.itemType;
 
     final getManga = await ref.read(
       getDetailProvider(url: manga.link!, source: source).future,
@@ -78,12 +85,52 @@ Future<dynamic> updateMangaDetail(
 
     final chaps = getManga.chapters;
 
+    final metadata = manga;
+    final aliases = <int, Chapter>{};
     await mangaRepository.writeTransactionAsync(() async {
+      // Reading, another refresh, or source migration may have changed the
+      // stored objects while the network request was in flight.
+      final current = await mangaRepository.findByIdAsync(mangaId);
+      if (current == null ||
+          current.link != requestedLink ||
+          current.sourceId != requestedSourceId ||
+          current.source != requestedSource ||
+          current.lang != requestedLang ||
+          current.itemType != requestedItemType) {
+        return;
+      }
+      final originalChapters = await chapterRepository.getAllByMangaIds([
+        mangaId,
+      ]);
+      final consolidated = await chapterRepository.consolidateDuplicatesAsync(
+        originalChapters,
+        mangaName: current.name ?? '',
+        now: now,
+        isScheduled: isDownloadScheduled,
+      );
+      aliases.addAll(consolidated.canonicalById);
+      current
+        ..imageUrl = metadata.imageUrl
+        // Storage paths include the work/chapter labels. Metadata changes must
+        // not strand completed archives or partial download folders.
+        ..name = consolidated.storageIds.isNotEmpty
+            ? current.name
+            : metadata.name
+        ..genre = metadata.genre
+        ..author = metadata.author
+        ..artist = metadata.artist
+        ..status = metadata.status
+        ..description = metadata.description
+        ..link = metadata.link
+        ..itemType = metadata.itemType
+        ..lastUpdate = now
+        ..updatedAt = now;
+      manga = current;
       final savedMangaId = await mangaRepository.putAsync(manga);
 
       if (chaps == null || chaps.isEmpty) return;
 
-      final existingChapters = manga.chapters.toList();
+      final existingChapters = consolidated.chapters;
       final recognition = ChapterRecognition();
 
       // Season and episode together, never the episode alone. The episode
@@ -104,8 +151,8 @@ Future<dynamic> updateMangaDetail(
 
       final existingByUrl = <String, Chapter>{};
       final existingByComposite = <String, Chapter>{};
-      final duplicateIds = <int>{};
-      for (final c in existingChapters) {
+      for (final c in originalChapters) {
+        final candidate = consolidated.canonicalById[c.id] ?? c;
         final u = c.url?.trim();
         final urlKey = (u == null || u.isEmpty) ? null : u.getUrlWithoutDomain;
         final compositeKey = identityOf(c);
@@ -114,16 +161,16 @@ Future<dynamic> updateMangaDetail(
             (urlKey != null ? existingByUrl[urlKey] : null) ??
             (compositeKey != null ? existingByComposite[compositeKey] : null);
         if (prior == null) {
-          if (urlKey != null) existingByUrl[urlKey] = c;
-          if (compositeKey != null) existingByComposite[compositeKey] = c;
+          if (urlKey != null) existingByUrl[urlKey] = candidate;
+          if (compositeKey != null) {
+            existingByComposite[compositeKey] = candidate;
+          }
         } else {
           final priorHasState =
               (prior.isRead ?? false) || (prior.lastPageRead ?? '').isNotEmpty;
-          final keep = priorHasState ? prior : c;
-          final drop = identical(keep, prior) ? c : prior;
+          final keep = priorHasState ? prior : candidate;
           if (urlKey != null) existingByUrl[urlKey] = keep;
           if (compositeKey != null) existingByComposite[compositeKey] = keep;
-          if (drop.id != null) duplicateIds.add(drop.id!);
         }
       }
 
@@ -200,13 +247,18 @@ Future<dynamic> updateMangaDetail(
 
           newChapters.add(newChapter);
         } else {
-          if (existing.url != url) {
+          final active =
+              consolidated.activeIds.contains(existing.id) ||
+              isDownloadScheduled(existing.id);
+          final stored =
+              consolidated.storageIds.contains(existing.id) || active;
+          if (!active && existing.url != url) {
             ChapterCache().remove(existing);
           }
           existing
-            ..name = chap.name
-            ..url = url
-            ..scanlator = chap.scanlator
+            ..name = stored ? existing.name : chap.name
+            ..url = active ? existing.url : url
+            ..scanlator = stored ? existing.scanlator : chap.scanlator
             ..updatedAt = now
             ..isFiller = chap.isFiller
             ..thumbnailUrl = chap.thumbnailUrl
@@ -219,6 +271,12 @@ Future<dynamic> updateMangaDetail(
 
       if (chaptersToUpdate.isNotEmpty) {
         await chapterRepository.putAllAsync(chaptersToUpdate);
+      }
+      if (consolidated.updates.isNotEmpty) {
+        for (final update in consolidated.updates) {
+          update.chapterName = update.chapter.value?.name;
+        }
+        await updateRepository.putAllAsync(consolidated.updates);
       }
 
       if (newChapters.isNotEmpty) {
@@ -257,18 +315,9 @@ Future<dynamic> updateMangaDetail(
         }
       }
 
-      if (duplicateIds.isNotEmpty) {
-        await chapterRepository.deleteAllAsync(duplicateIds.toList());
-      }
-
-      final dedupedExisting = duplicateIds.isEmpty
-          ? existingChapters
-          : existingChapters
-                .where((c) => c.id == null || !duplicateIds.contains(c.id))
-                .toList();
       final allChapters = newChapters.isEmpty
-          ? dedupedExisting
-          : [...dedupedExisting, ...newChapters];
+          ? existingChapters
+          : [...existingChapters, ...newChapters];
       if (allChapters.isNotEmpty) {
         final interval = FetchInterval.calculateInterval(allChapters);
         manga
@@ -276,7 +325,7 @@ Future<dynamic> updateMangaDetail(
           ..smartUpdateDays = interval;
         await mangaRepository.putAsync(manga);
       }
-    });
+    }, afterCommit: () => chapterRepository.publishAliases(aliases));
   } catch (e, s) {
     if (showToast) {
       toastError(e, stack: s, source: 'updateMangaDetail');
