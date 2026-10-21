@@ -38,8 +38,9 @@ const _subThemes = FlexSubThemesData(
 /// With it on, the palette colours the surfaces too, at [blendLevel], as the
 /// app did before Shiori.
 ///
-/// Either way the theme is set in [shioriFontFamily] and carries
-/// [ShioriTokens], so `context.shiori` always works.
+/// Either way the theme carries [ShioriTokens], so `context.shiori` always
+/// works. The font is set to [fontFamily] if provided, otherwise
+/// [shioriFontFamily].
 ThemeData buildShioriTheme({
   required Brightness brightness,
   required FlexSchemeColor colors,
@@ -47,7 +48,9 @@ ThemeData buildShioriTheme({
   required int blendLevel,
   required ShioriDensity density,
   bool pureBlack = false,
+  String? fontFamily,
 }) {
+  final resolvedFontFamily = fontFamily ?? shioriFontFamily;
   final light = brightness == Brightness.light;
   final pure = !light && pureBlack;
 
@@ -62,7 +65,7 @@ ThemeData buildShioriTheme({
             useMaterial3ErrorColors: true,
             visualDensity: FlexColorScheme.comfortablePlatformDensity,
             useMaterial3: true,
-            fontFamily: shioriFontFamily,
+            fontFamily: resolvedFontFamily,
           )
         : FlexThemeData.dark(
             colors: colors,
@@ -78,7 +81,7 @@ ThemeData buildShioriTheme({
             useMaterial3ErrorColors: true,
             visualDensity: FlexColorScheme.comfortablePlatformDensity,
             useMaterial3: true,
-            fontFamily: shioriFontFamily,
+            fontFamily: resolvedFontFamily,
           );
     return _withTokens(theme, density);
   }
@@ -110,7 +113,7 @@ ThemeData buildShioriTheme({
           useMaterial3ErrorColors: true,
           visualDensity: FlexColorScheme.comfortablePlatformDensity,
           useMaterial3: true,
-          fontFamily: shioriFontFamily,
+          fontFamily: resolvedFontFamily,
         )
       : FlexThemeData.dark(
           colorScheme: scheme,
@@ -121,7 +124,7 @@ ThemeData buildShioriTheme({
           useMaterial3ErrorColors: true,
           visualDensity: FlexColorScheme.comfortablePlatformDensity,
           useMaterial3: true,
-          fontFamily: shioriFontFamily,
+          fontFamily: resolvedFontFamily,
         );
   return _withTokens(theme, density);
 }

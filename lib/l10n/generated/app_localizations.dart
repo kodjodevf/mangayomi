@@ -1072,13 +1072,13 @@ abstract class AppLocalizations {
   /// No description provided for @novel_reader_font.
   ///
   /// In en, this message translates to:
-  /// **'Novel reader font'**
+  /// **'App font'**
   String get novel_reader_font;
 
   /// No description provided for @novel_reader_font_subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Used by the novel reader\'s Default font. The rest of the app uses Figtree.'**
+  /// **'Font used throughout the app interface and novel reader.'**
   String get novel_reader_font_subtitle;
 
   /// No description provided for @timestamp.
