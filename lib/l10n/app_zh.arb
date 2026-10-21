@@ -1674,5 +1674,9 @@
   "copy_error": "复制",
   "error_copied": "已复制错误",
   "no_categories_yet": "还没有分类",
-  "no_categories_yet_message": "用你自己命名和排序的分类来整理书库。"
+  "no_categories_yet_message": "用你自己命名和排序的分类来整理书库。",
+  "settings_keyboard_shortcuts_summary": "更改阅读器和播放器的按键",
+  "shortcut_reset_all": "重置所有快捷键",
+  "shortcut_press_key": "请按一个键…",
+  "shortcut_key_in_use": "已被占用：{action}"
 }

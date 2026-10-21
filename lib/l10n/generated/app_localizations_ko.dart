@@ -4277,4 +4277,18 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get no_categories_yet_message => '직접 이름과 순서를 정한 카테고리로 라이브러리를 정리하세요.';
+
+  @override
+  String get settings_keyboard_shortcuts_summary => '리더와 플레이어의 키 변경';
+
+  @override
+  String get shortcut_reset_all => '모든 단축키 초기화';
+
+  @override
+  String get shortcut_press_key => '키를 누르세요…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return '이미 사용 중: $action';
+  }
 }

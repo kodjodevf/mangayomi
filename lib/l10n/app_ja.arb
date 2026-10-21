@@ -1738,5 +1738,9 @@
   "copy_error": "コピー",
   "error_copied": "エラーをコピーしました",
   "no_categories_yet": "カテゴリはまだありません",
-  "no_categories_yet_message": "ライブラリを、自分で名前と順番を決めたカテゴリに分けましょう。"
+  "no_categories_yet_message": "ライブラリを、自分で名前と順番を決めたカテゴリに分けましょう。",
+  "settings_keyboard_shortcuts_summary": "リーダーとプレーヤーのキーを変更",
+  "shortcut_reset_all": "すべてのショートカットをリセット",
+  "shortcut_press_key": "キーを押してください…",
+  "shortcut_key_in_use": "すでに使用中: {action}"
 }

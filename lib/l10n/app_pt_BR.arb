@@ -1365,5 +1365,9 @@
   "chapter_swipe_toggle_bookmark": "Alternar marcador",
   "chapter_swipe_toggle_read": "Alternar lido",
   "chapter_swipe_download": "Baixar",
-  "chapter_swipe_disabled": "Desativado"
+  "chapter_swipe_disabled": "Desativado",
+  "settings_keyboard_shortcuts_summary": "Reatribuir as teclas do leitor e do player",
+  "shortcut_reset_all": "Redefinir todos os atalhos",
+  "shortcut_press_key": "Pressione uma tecla…",
+  "shortcut_key_in_use": "Já usada por: {action}"
 }

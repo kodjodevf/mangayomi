@@ -1671,5 +1671,9 @@
   "copy_error": "Копировать",
   "error_copied": "Ошибка скопирована",
   "no_categories_yet": "Категорий пока нет",
-  "no_categories_yet_message": "Разложите библиотеку по категориям, которые вы сами называете и упорядочиваете."
+  "no_categories_yet_message": "Разложите библиотеку по категориям, которые вы сами называете и упорядочиваете.",
+  "settings_keyboard_shortcuts_summary": "Переназначить клавиши читалки и плеера",
+  "shortcut_reset_all": "Сбросить все сочетания",
+  "shortcut_press_key": "Нажмите клавишу…",
+  "shortcut_key_in_use": "Уже используется: {action}"
 }

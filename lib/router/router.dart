@@ -1,3 +1,4 @@
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/keyboard_shortcuts_screen.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
@@ -270,6 +271,10 @@ class RouterNotifier extends ChangeNotifier {
     ),
     _genericRoute(name: "playerOverview", child: const PlayerOverviewScreen()),
     _genericRoute(name: "playerMode", child: const PlayerScreen()),
+    _genericRoute(
+      name: "keyboardShortcuts",
+      child: const KeyboardShortcutsScreen(),
+    ),
     _genericRoute<int>(
       name: "codeEditor",
       builder: (sourceId) => CodeEditorPage(sourceId: sourceId),

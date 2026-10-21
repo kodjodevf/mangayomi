@@ -4358,4 +4358,19 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get no_categories_yet_message =>
       'نظّم مكتبتك في فئات تسمّيها وترتّبها بنفسك.';
+
+  @override
+  String get settings_keyboard_shortcuts_summary =>
+      'أعد تعيين مفاتيح القارئ والمشغل';
+
+  @override
+  String get shortcut_reset_all => 'إعادة تعيين كل الاختصارات';
+
+  @override
+  String get shortcut_press_key => 'اضغط على مفتاح…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'مستخدم بالفعل في: $action';
+  }
 }

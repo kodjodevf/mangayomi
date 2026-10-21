@@ -4418,4 +4418,19 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get no_categories_yet_message =>
       'Разложите библиотеку по категориям, которые вы сами называете и упорядочиваете.';
+
+  @override
+  String get settings_keyboard_shortcuts_summary =>
+      'Переназначить клавиши читалки и плеера';
+
+  @override
+  String get shortcut_reset_all => 'Сбросить все сочетания';
+
+  @override
+  String get shortcut_press_key => 'Нажмите клавишу…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Уже используется: $action';
+  }
 }

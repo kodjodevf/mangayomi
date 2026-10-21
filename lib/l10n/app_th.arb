@@ -1644,5 +1644,9 @@
   "copy_error": "คัดลอก",
   "error_copied": "คัดลอกข้อผิดพลาดแล้ว",
   "no_categories_yet": "ยังไม่มีหมวดหมู่",
-  "no_categories_yet_message": "จัดคลังของคุณเป็นหมวดหมู่ที่คุณตั้งชื่อและเรียงลำดับเอง"
+  "no_categories_yet_message": "จัดคลังของคุณเป็นหมวดหมู่ที่คุณตั้งชื่อและเรียงลำดับเอง",
+  "settings_keyboard_shortcuts_summary": "เปลี่ยนปุ่มของตัวอ่านและเครื่องเล่น",
+  "shortcut_reset_all": "รีเซ็ตแป้นพิมพ์ลัดทั้งหมด",
+  "shortcut_press_key": "กดปุ่ม…",
+  "shortcut_key_in_use": "ถูกใช้แล้วโดย: {action}"
 }

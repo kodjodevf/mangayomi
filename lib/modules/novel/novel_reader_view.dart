@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
 import 'package:mangayomi/modules/novel/utils/reading_time.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/services/volume_keys.dart';
@@ -456,7 +457,12 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       onNextPage: () => _onBtnTapped(100),
       onPreviousPage: () => _onBtnTapped(-100),
       onToggleUI: _isViewFunction,
-      onShowShortcuts: () => showReaderShortcuts(context, zoom: false),
+      onShowShortcuts: () => showReaderShortcuts(
+        context,
+        zoom: false,
+        bindings: ref.read(keyBindingsStateProvider),
+      ),
+      bindings: ref.watch(keyBindingsStateProvider),
     ).wrapWithKeyboardListener(
       child: NotificationListener<ScrollNotification>(
         onNotification: (notification) {

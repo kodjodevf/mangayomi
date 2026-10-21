@@ -4266,4 +4266,18 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get no_categories_yet_message => 'ライブラリを、自分で名前と順番を決めたカテゴリに分けましょう。';
+
+  @override
+  String get settings_keyboard_shortcuts_summary => 'リーダーとプレーヤーのキーを変更';
+
+  @override
+  String get shortcut_reset_all => 'すべてのショートカットをリセット';
+
+  @override
+  String get shortcut_press_key => 'キーを押してください…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'すでに使用中: $action';
+  }
 }

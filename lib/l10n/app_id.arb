@@ -1641,5 +1641,9 @@
   "copy_error": "Salin",
   "error_copied": "Galat disalin",
   "no_categories_yet": "Belum ada kategori",
-  "no_categories_yet_message": "Kelompokkan pustakamu ke dalam kategori yang kamu beri nama dan urutkan sendiri."
+  "no_categories_yet_message": "Kelompokkan pustakamu ke dalam kategori yang kamu beri nama dan urutkan sendiri.",
+  "settings_keyboard_shortcuts_summary": "Ubah tombol pembaca dan pemutar",
+  "shortcut_reset_all": "Atur ulang semua pintasan",
+  "shortcut_press_key": "Tekan sebuah tombol…",
+  "shortcut_key_in_use": "Sudah dipakai oleh: {action}"
 }

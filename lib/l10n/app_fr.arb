@@ -1671,5 +1671,9 @@
   "copy_error": "Copier",
   "error_copied": "Erreur copiée",
   "no_categories_yet": "Aucune catégorie pour l'instant",
-  "no_categories_yet_message": "Rangez votre bibliothèque dans des catégories que vous nommez et ordonnez vous-même."
+  "no_categories_yet_message": "Rangez votre bibliothèque dans des catégories que vous nommez et ordonnez vous-même.",
+  "settings_keyboard_shortcuts_summary": "Réattribuer les touches du lecteur et du player",
+  "shortcut_reset_all": "Réinitialiser tous les raccourcis",
+  "shortcut_press_key": "Appuyez sur une touche…",
+  "shortcut_key_in_use": "Déjà utilisée par : {action}"
 }

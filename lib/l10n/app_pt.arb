@@ -1671,5 +1671,9 @@
   "copy_error": "Copiar",
   "error_copied": "Erro copiado",
   "no_categories_yet": "Ainda não há categorias",
-  "no_categories_yet_message": "Agrupe sua biblioteca em categorias que você mesmo nomeia e ordena."
+  "no_categories_yet_message": "Agrupe sua biblioteca em categorias que você mesmo nomeia e ordena.",
+  "settings_keyboard_shortcuts_summary": "Reatribuir as teclas do leitor e do reprodutor",
+  "shortcut_reset_all": "Repor todos os atalhos",
+  "shortcut_press_key": "Prima uma tecla…",
+  "shortcut_key_in_use": "Já usada por: {action}"
 }

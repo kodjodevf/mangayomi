@@ -4378,4 +4378,19 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get no_categories_yet_message =>
       'Kelompokkan pustakamu ke dalam kategori yang kamu beri nama dan urutkan sendiri.';
+
+  @override
+  String get settings_keyboard_shortcuts_summary =>
+      'Ubah tombol pembaca dan pemutar';
+
+  @override
+  String get shortcut_reset_all => 'Atur ulang semua pintasan';
+
+  @override
+  String get shortcut_press_key => 'Tekan sebuah tombol…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'Sudah dipakai oleh: $action';
+  }
 }

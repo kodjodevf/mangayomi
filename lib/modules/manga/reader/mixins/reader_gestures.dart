@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
 import 'package:mangayomi/modules/widgets/keyboard_shortcuts_dialog.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
@@ -22,28 +23,37 @@ enum ReaderShortcut {
 /// The keys of each shortcut, as shown to the reader, in the order the
 /// list of shortcuts shows them. [isReverseHorizontal] swaps the arrows
 /// that turn the page, as the pages themselves are swapped; without
-/// [zoom] (the novel reader) the zoom keys are left out.
+/// [zoom] (the novel reader) the zoom keys are left out. The keys are the
+/// user's [bindings].
 List<(ReaderShortcut, List<String>)> readerShortcutKeys({
   bool isReverseHorizontal = false,
   bool zoom = true,
-}) => [
-  (
-    ReaderShortcut.previousPage,
-    [isReverseHorizontal ? '→' : '←', '↑', '⇧ Space'],
-  ),
-  (ReaderShortcut.nextPage, [isReverseHorizontal ? '←' : '→', '↓', 'Space']),
-  (ReaderShortcut.previousChapter, ['P', 'Page ↑']),
-  (ReaderShortcut.nextChapter, ['N', 'Page ↓']),
-  (ReaderShortcut.toggleBars, ['M']),
-  (ReaderShortcut.fullScreen, ['F', 'F11']),
-  if (zoom) ...[
-    (ReaderShortcut.zoomIn, ['+']),
-    (ReaderShortcut.zoomOut, ['−']),
-    (ReaderShortcut.zoomReset, ['0']),
-  ],
-  (ReaderShortcut.leave, ['Esc', '⌫']),
-  (ReaderShortcut.showShortcuts, ['?', 'F1']),
-];
+  KeyBindings bindings = defaultKeyBindings,
+}) {
+  List<String> keys(ReaderShortcut shortcut) => [
+    for (final label in keyLabels(bindings[shortcut]!))
+      isReverseHorizontal ? _swapArrows(label) : label,
+  ];
+  return [
+    for (final shortcut in ReaderShortcut.values)
+      if (shortcut == ReaderShortcut.showShortcuts)
+        (shortcut, ['?', 'F1'])
+      else if (zoom || !_zoomShortcuts.contains(shortcut))
+        (shortcut, keys(shortcut)),
+  ];
+}
+
+const _zoomShortcuts = {
+  ReaderShortcut.zoomIn,
+  ReaderShortcut.zoomOut,
+  ReaderShortcut.zoomReset,
+};
+
+String _swapArrows(String label) => switch (label) {
+  '←' => '→',
+  '→' => '←',
+  _ => label,
+};
 
 /// What [shortcut] does, in the reader's language.
 String readerShortcutLabel(ReaderShortcut shortcut, AppLocalizations l10n) =>
@@ -67,6 +77,7 @@ String readerShortcutLabel(ReaderShortcut shortcut, AppLocalizations l10n) =>
 /// before another key, left the chapter; chapters are N, P and the page
 /// keys now. Space turns the page, M shows the bars, F goes full screen,
 /// +, − and 0 zoom, and ? or F1 lists them all ([readerShortcutKeys]).
+/// Every key but ? and F1 comes from the user's [bindings].
 class ReaderKeyboardHandler {
   final VoidCallback? onEscape;
   final VoidCallback? onFullScreen;
@@ -79,6 +90,7 @@ class ReaderKeyboardHandler {
   final VoidCallback? onZoomOut;
   final VoidCallback? onZoomReset;
   final VoidCallback? onShowShortcuts;
+  final KeyBindings bindings;
 
   const ReaderKeyboardHandler({
     this.onEscape,
@@ -92,6 +104,7 @@ class ReaderKeyboardHandler {
     this.onZoomOut,
     this.onZoomReset,
     this.onShowShortcuts,
+    this.bindings = defaultKeyBindings,
   });
 
   /// Runs [action] when it is set; the key counts as handled only then.
@@ -104,51 +117,42 @@ class ReaderKeyboardHandler {
   /// Handles a key event and returns true if it was handled.
   bool handleKeyEvent(KeyEvent event, {bool isReverseHorizontal = false}) {
     if (event is! KeyDownEvent) return false;
-    final key = event.logicalKey;
-    final shift = HardwareKeyboard.instance.isShiftPressed;
-    if (key == LogicalKeyboardKey.f11 || key == LogicalKeyboardKey.keyF) {
-      return _run(onFullScreen);
-    }
-    if (key == LogicalKeyboardKey.escape ||
-        key == LogicalKeyboardKey.backspace) {
-      return _run(onEscape);
-    }
-    if (key == LogicalKeyboardKey.arrowUp) return _run(onPreviousPage);
-    if (key == LogicalKeyboardKey.arrowDown) return _run(onNextPage);
-    if (key == LogicalKeyboardKey.arrowLeft) {
-      return _run(isReverseHorizontal ? onNextPage : onPreviousPage);
-    }
-    if (key == LogicalKeyboardKey.arrowRight) {
-      return _run(isReverseHorizontal ? onPreviousPage : onNextPage);
-    }
-    if (key == LogicalKeyboardKey.space) {
-      return _run(shift ? onPreviousPage : onNextPage);
-    }
-    if (key == LogicalKeyboardKey.keyN || key == LogicalKeyboardKey.pageDown) {
-      return _run(onNextChapter);
-    }
-    if (key == LogicalKeyboardKey.keyP || key == LogicalKeyboardKey.pageUp) {
-      return _run(onPreviousChapter);
-    }
-    if (key == LogicalKeyboardKey.keyM) return _run(onToggleUI);
-    if (key == LogicalKeyboardKey.equal ||
-        key == LogicalKeyboardKey.add ||
-        key == LogicalKeyboardKey.numpadAdd) {
-      return _run(onZoomIn);
-    }
-    if (key == LogicalKeyboardKey.minus ||
-        key == LogicalKeyboardKey.numpadSubtract) {
-      return _run(onZoomOut);
-    }
-    if (key == LogicalKeyboardKey.digit0 || key == LogicalKeyboardKey.numpad0) {
-      return _run(onZoomReset);
-    }
+    var key = event.logicalKey;
     if (key == LogicalKeyboardKey.question ||
         key == LogicalKeyboardKey.slash ||
         key == LogicalKeyboardKey.f1) {
       return _run(onShowShortcuts);
     }
-    return false;
+    // Right to left, the horizontal arrows turn the other way.
+    if (isReverseHorizontal) {
+      key = switch (key) {
+        LogicalKeyboardKey.arrowLeft => LogicalKeyboardKey.arrowRight,
+        LogicalKeyboardKey.arrowRight => LogicalKeyboardKey.arrowLeft,
+        _ => key,
+      };
+    }
+    // The keys exactly as held first (⇧ Space turns back), then the key on
+    // its own, so a stray modifier (⇧ + on most layouts) still works.
+    final shortcut =
+        shortcutFor(
+          bindings,
+          KeyCombo.pressed(key),
+          sameKindAs: ReaderShortcut.leave,
+        ) ??
+        shortcutFor(bindings, KeyCombo(key), sameKindAs: ReaderShortcut.leave);
+    return _run(switch (shortcut) {
+      ReaderShortcut.previousPage => onPreviousPage,
+      ReaderShortcut.nextPage => onNextPage,
+      ReaderShortcut.previousChapter => onPreviousChapter,
+      ReaderShortcut.nextChapter => onNextChapter,
+      ReaderShortcut.toggleBars => onToggleUI,
+      ReaderShortcut.fullScreen => onFullScreen,
+      ReaderShortcut.zoomIn => onZoomIn,
+      ReaderShortcut.zoomOut => onZoomOut,
+      ReaderShortcut.zoomReset => onZoomReset,
+      ReaderShortcut.leave => onEscape,
+      _ => null,
+    });
   }
 
   /// Creates a KeyboardListener widget with this handler.
@@ -172,12 +176,14 @@ Future<void> showReaderShortcuts(
   BuildContext context, {
   bool isReverseHorizontal = false,
   bool zoom = true,
+  KeyBindings bindings = defaultKeyBindings,
 }) {
   final l10n = context.l10n;
   return showKeyboardShortcuts(context, [
     for (final (shortcut, keys) in readerShortcutKeys(
       isReverseHorizontal: isReverseHorizontal,
       zoom: zoom,
+      bindings: bindings,
     ))
       (readerShortcutLabel(shortcut, l10n), keys),
   ]);

@@ -5,6 +5,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
@@ -178,6 +179,7 @@ class _DesktopControllerWidgetState
       context,
       skipIntroSeconds: widget.defaultSkipIntroLength,
       shaders: ref.read(useMpvConfigStateProvider),
+      bindings: ref.read(keyBindingsStateProvider),
     );
   }
 
@@ -319,85 +321,64 @@ class _DesktopControllerWidgetState
 
   @override
   Widget build(BuildContext context) {
+    final player = widget.videoController.player;
+    void nextEpisode() {
+      if (widget.streamController.hasNextEpisode) {
+        pushReplacementMangaReaderView(
+          context: context,
+          chapter: widget.streamController.getNextEpisode(),
+        );
+      }
+    }
+
+    void previousEpisode() {
+      if (widget.streamController.hasPreviousEpisode) {
+        pushReplacementMangaReaderView(
+          context: context,
+          chapter: widget.streamController.getPrevEpisode(),
+        );
+      }
+    }
+
+    // The keyboard keys are the user's bindings; the media keys, the frame
+    // steps, the list of shortcuts and the shader keys stay fixed.
+    final actions = <PlayerShortcut, VoidCallback>{
+      PlayerShortcut.playPause: player.playOrPause,
+      PlayerShortcut.seekBackShort: () => _seekByKey(-playerShortSeekSeconds),
+      PlayerShortcut.seekForwardShort: () => _seekByKey(playerShortSeekSeconds),
+      PlayerShortcut.seekBackLong: () => _seekByKey(-playerLongSeekSeconds),
+      PlayerShortcut.seekForwardLong: () => _seekByKey(playerLongSeekSeconds),
+      PlayerShortcut.skipIntro: () => _seekByKey(widget.defaultSkipIntroLength),
+      PlayerShortcut.volumeUp: () => _changeVolume(5.0),
+      PlayerShortcut.volumeDown: () => _changeVolume(-5.0),
+      PlayerShortcut.mute: _toggleMute,
+      PlayerShortcut.previousEpisode: previousEpisode,
+      PlayerShortcut.nextEpisode: nextEpisode,
+      PlayerShortcut.fullScreen: () =>
+          _changeFullScreen(ref, widget.desktopFullScreenPlayer),
+      PlayerShortcut.exitFullScreen: () =>
+          _changeFullScreen(ref, widget.desktopFullScreenPlayer, value: false),
+    };
+    final bindings = ref.watch(keyBindingsStateProvider);
     return CallbackShortcuts(
       bindings: {
         // Default key-board shortcuts.
         // https://support.google.com/youtube/answer/7631406
-        const SingleActivator(LogicalKeyboardKey.mediaPlay): () =>
-            widget.videoController.player.play(),
-        const SingleActivator(LogicalKeyboardKey.mediaPause): () =>
-            widget.videoController.player.pause(),
-        const SingleActivator(LogicalKeyboardKey.mediaPlayPause): () =>
-            widget.videoController.player.playOrPause(),
-        const SingleActivator(LogicalKeyboardKey.mediaTrackNext): () {
-          if (widget.streamController.hasNextEpisode) {
-            pushReplacementMangaReaderView(
-              context: context,
-              chapter: widget.streamController.getNextEpisode(),
-            );
-          }
-        },
-        const SingleActivator(LogicalKeyboardKey.keyN): () {
-          if (widget.streamController.hasNextEpisode) {
-            pushReplacementMangaReaderView(
-              context: context,
-              chapter: widget.streamController.getNextEpisode(),
-            );
-          }
-        },
-        const SingleActivator(LogicalKeyboardKey.mediaTrackPrevious): () {
-          if (widget.streamController.hasPreviousEpisode) {
-            pushReplacementMangaReaderView(
-              context: context,
-              chapter: widget.streamController.getPrevEpisode(),
-            );
-          }
-        },
-        const SingleActivator(LogicalKeyboardKey.keyP): () {
-          if (widget.streamController.hasPreviousEpisode) {
-            pushReplacementMangaReaderView(
-              context: context,
-              chapter: widget.streamController.getPrevEpisode(),
-            );
-          }
-        },
-        const SingleActivator(LogicalKeyboardKey.keyM): () => _toggleMute(),
-        const SingleActivator(LogicalKeyboardKey.space): () =>
-            widget.videoController.player.playOrPause(),
-        const SingleActivator(LogicalKeyboardKey.keyK): () =>
-            widget.videoController.player.playOrPause(),
+        const SingleActivator(LogicalKeyboardKey.mediaPlay): player.play,
+        const SingleActivator(LogicalKeyboardKey.mediaPause): player.pause,
+        const SingleActivator(LogicalKeyboardKey.mediaPlayPause):
+            player.playOrPause,
+        const SingleActivator(LogicalKeyboardKey.mediaTrackNext): nextEpisode,
+        const SingleActivator(LogicalKeyboardKey.mediaTrackPrevious):
+            previousEpisode,
+        for (final MapEntry(key: shortcut, value: action) in actions.entries)
+          for (final combo in bindings[shortcut]!) combo.activator: action,
         // By character rather than by key, so they hold on any layout (the
         // question mark is Shift+, on AZERTY).
         const CharacterActivator(','): () => _frameStep(forward: false),
         const CharacterActivator('.'): () => _frameStep(forward: true),
         const CharacterActivator('?'): _showShortcuts,
         const SingleActivator(LogicalKeyboardKey.f1): _showShortcuts,
-        const SingleActivator(LogicalKeyboardKey.keyJ): () =>
-            _seekByKey(-playerLongSeekSeconds),
-        const SingleActivator(LogicalKeyboardKey.keyL): () =>
-            _seekByKey(playerLongSeekSeconds),
-        const SingleActivator(LogicalKeyboardKey.enter): () =>
-            _seekByKey(widget.defaultSkipIntroLength),
-        const SingleActivator(LogicalKeyboardKey.keyS): () =>
-            _seekByKey(widget.defaultSkipIntroLength),
-        const SingleActivator(LogicalKeyboardKey.arrowLeft): () =>
-            _seekByKey(-playerShortSeekSeconds),
-        const SingleActivator(LogicalKeyboardKey.arrowRight): () =>
-            _seekByKey(playerShortSeekSeconds),
-        const SingleActivator(LogicalKeyboardKey.arrowUp): () =>
-            _changeVolume(5.0),
-        const SingleActivator(LogicalKeyboardKey.arrowDown): () =>
-            _changeVolume(-5.0),
-        const SingleActivator(LogicalKeyboardKey.keyF): () async {
-          await _changeFullScreen(ref, widget.desktopFullScreenPlayer);
-        },
-        const SingleActivator(LogicalKeyboardKey.f11): () async {
-          await _changeFullScreen(ref, widget.desktopFullScreenPlayer);
-        },
-        const SingleActivator(LogicalKeyboardKey.escape): () async {
-          final desktopFullScreenPlayer = widget.desktopFullScreenPlayer;
-          await _changeFullScreen(ref, desktopFullScreenPlayer, value: false);
-        },
         const SingleActivator(LogicalKeyboardKey.digit0, control: true): () {
           (widget.videoController.player.platform as NativePlayer).command([
             "script-message",

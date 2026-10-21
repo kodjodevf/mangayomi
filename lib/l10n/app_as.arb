@@ -1641,5 +1641,9 @@
   "copy_error": "কপি কৰক",
   "error_copied": "ত্ৰুটি কপি কৰা হ'ল",
   "no_categories_yet": "এতিয়ালৈকে কোনো শ্ৰেণী নাই",
-  "no_categories_yet_message": "আপুনি নিজে নাম দিয়া আৰু সজোৱা শ্ৰেণীত আপোনাৰ লাইব্ৰেৰী ভাগ কৰক।"
+  "no_categories_yet_message": "আপুনি নিজে নাম দিয়া আৰু সজোৱা শ্ৰেণীত আপোনাৰ লাইব্ৰেৰী ভাগ কৰক।",
+  "settings_keyboard_shortcuts_summary": "পঢ়োতা আৰু প্লেয়াৰৰ কী সলনি কৰক",
+  "shortcut_reset_all": "সকলো শ্বৰ্টকাট ৰিছেট কৰক",
+  "shortcut_press_key": "এটা কী টিপক…",
+  "shortcut_key_in_use": "ইতিমধ্যে ব্যৱহৃত: {action}"
 }

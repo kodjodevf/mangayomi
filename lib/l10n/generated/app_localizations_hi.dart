@@ -4366,4 +4366,19 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get no_categories_yet_message =>
       'अपनी लाइब्रेरी को अपनी नाम दी और क्रमबद्ध की गई श्रेणियों में बाँटें।';
+
+  @override
+  String get settings_keyboard_shortcuts_summary =>
+      'रीडर और प्लेयर की कुंजियाँ बदलें';
+
+  @override
+  String get shortcut_reset_all => 'सभी शॉर्टकट रीसेट करें';
+
+  @override
+  String get shortcut_press_key => 'कोई कुंजी दबाएँ…';
+
+  @override
+  String shortcut_key_in_use(String action) {
+    return 'पहले से उपयोग में: $action';
+  }
 }

@@ -1671,5 +1671,9 @@
   "copy_error": "Copiar",
   "error_copied": "Error copiado",
   "no_categories_yet": "Aún no hay categorías",
-  "no_categories_yet_message": "Agrupa tu biblioteca en categorías que tú mismo nombras y ordenas."
+  "no_categories_yet_message": "Agrupa tu biblioteca en categorías que tú mismo nombras y ordenas.",
+  "settings_keyboard_shortcuts_summary": "Cambia las teclas del lector y del reproductor",
+  "shortcut_reset_all": "Restablecer todos los atajos",
+  "shortcut_press_key": "Presiona una tecla…",
+  "shortcut_key_in_use": "Ya la usa: {action}"
 }
