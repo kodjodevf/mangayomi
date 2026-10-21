@@ -1,7 +1,7 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
-import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
+import 'package:mangayomi/services/http/custom_extended_image_provider.dart';
 
 /// Default upper bound on the encoded byte size of a thumbnail-sized cover
 /// after `ExtendedResizeImage` resamples. 200 KB roughly maps to a 400x600

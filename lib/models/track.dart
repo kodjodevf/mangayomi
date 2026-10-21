@@ -117,3 +117,16 @@ enum TrackStatus {
   planToWatch,
   reWatching,
 }
+
+enum TrackerProviders {
+  myAnimeList(syncId: 1, name: "MAL"),
+  anilist(syncId: 2, name: "AL"),
+  kitsu(syncId: 3, name: "Kitsu"),
+  simkl(syncId: 4, name: "Simkl"),
+  trakt(syncId: 5, name: "Trakt");
+
+  const TrackerProviders({required this.syncId, required this.name});
+
+  final int syncId;
+  final String name;
+}

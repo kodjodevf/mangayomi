@@ -183,6 +183,10 @@ class TrackRepository {
 
   Future<bool> deleteAsync(int id) => isar.tracks.delete(id);
 
+  int putSync(Track track) => isar.tracks.putSync(track);
+
+  void deleteSync(int id) => isar.tracks.deleteSync(id);
+
   void putAllSync(List<Track> tracks) => isar.tracks.putAllSync(tracks);
 
   void clearSync() => isar.tracks.clearSync();

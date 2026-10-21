@@ -4,9 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
+
+extension Uint8ListExtensions on Uint8List {
+  Uint8List? get getCoverImage {
+    final length = lengthInBytes / (1024 * 1024);
+    if (length < 5) {
+      return this;
+    }
+    botToast(
+      "Cover image is larger than 5MB (${length.toStringAsFixed(2)}MB). Skipping cover image.",
+    );
+    return null;
+  }
+}
 
 /// Shows the "use this as cover" confirmation.
 /// Returns whether the user confirmed.

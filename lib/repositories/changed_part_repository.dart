@@ -1,8 +1,14 @@
 import 'dart:convert';
 
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/repositories/db.dart';
+import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/changed.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/history.dart';
+import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/track.dart';
+import 'package:mangayomi/models/update.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 import 'package:mangayomi/repositories/sync_preference_repository.dart';
 
@@ -142,6 +148,47 @@ class ChangedPartRepository {
     } else {
       isar.changedParts.clearSync();
     }
+  }
+
+  Future<void> backfillMissingClientIds(int Function() generateId) async {
+    final categories = isar.categorys.filter().clientIdIsNull().findAllSync();
+    final mangas = isar.mangas.filter().clientIdIsNull().findAllSync();
+    final chapters = isar.chapters.filter().clientIdIsNull().findAllSync();
+    final tracks = isar.tracks.filter().clientIdIsNull().findAllSync();
+    final histories = isar.historys.filter().clientIdIsNull().findAllSync();
+    final updates = isar.updates.filter().clientIdIsNull().findAllSync();
+
+    if (categories.isEmpty &&
+        mangas.isEmpty &&
+        chapters.isEmpty &&
+        tracks.isEmpty &&
+        histories.isEmpty &&
+        updates.isEmpty) {
+      return;
+    }
+
+    await dbWriteQueue.run(() {
+      isar.writeTxnSync(() {
+        for (final row in categories) {
+          isar.categorys.putSync(row..clientId = generateId());
+        }
+        for (final row in mangas) {
+          isar.mangas.putSync(row..clientId = generateId());
+        }
+        for (final row in chapters) {
+          isar.chapters.putSync(row..clientId = generateId());
+        }
+        for (final row in tracks) {
+          isar.tracks.putSync(row..clientId = generateId());
+        }
+        for (final row in histories) {
+          isar.historys.putSync(row..clientId = generateId());
+        }
+        for (final row in updates) {
+          isar.updates.putSync(row..clientId = generateId());
+        }
+      });
+    });
   }
 }
 

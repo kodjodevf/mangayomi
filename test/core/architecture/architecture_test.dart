@@ -78,6 +78,26 @@ void main() {
       );
     });
 
+    test('Layer 1B (lib/utils & lib/core) never imports lib/modules/, lib/router/router.dart, or lib/main.dart', () {
+      final utilsViolations = _findImportViolations('lib/utils', const [
+        'package:mangayomi/modules/',
+        'package:mangayomi/router/router.dart',
+        'package:mangayomi/main.dart',
+      ]);
+      final coreViolations = _findImportViolations('lib/core', const [
+        'package:mangayomi/modules/',
+        'package:mangayomi/router/router.dart',
+        'package:mangayomi/main.dart',
+      ]);
+      expect(
+        [...utilsViolations, ...coreViolations],
+        isEmpty,
+        reason:
+            'lib/utils/ and lib/core/ must never import feature UI modules (lib/modules/), router.dart, or lib/main.dart:\n'
+            '${[...utilsViolations, ...coreViolations].join('\n')}',
+      );
+    });
+
     test('Layer 2A (lib/repositories) is 100% decoupled from UI, Riverpod, Services, and main.dart', () {
       final importViolations = _findImportViolations('lib/repositories', const [
         'package:mangayomi/modules/',
@@ -147,6 +167,43 @@ void main() {
         isEmpty,
         reason:
             'Shared application providers (lib/providers/) must never import feature UI modules (lib/modules/) or lib/main.dart:\n'
+            '${violations.join('\n')}',
+      );
+    });
+
+    test('Layer 4 (lib/modules & lib/router) never imports lib/main.dart or direct Isar singleton (lib/repositories/db.dart)', () {
+      final moduleViolations = _findImportViolations('lib/modules', const [
+        'package:mangayomi/main.dart',
+        'package:mangayomi/repositories/db.dart',
+      ]);
+      final routerViolations = _findImportViolations('lib/router', const [
+        'package:mangayomi/main.dart',
+        'package:mangayomi/repositories/db.dart',
+      ]);
+      expect(
+        [...moduleViolations, ...routerViolations],
+        isEmpty,
+        reason:
+            'Feature modules and router must never import main.dart or access Isar directly via db.dart (use repositories instead):\n'
+            '${[...moduleViolations, ...routerViolations].join('\n')}',
+      );
+    });
+
+    test('Direct Isar singleton (lib/repositories/db.dart) is strictly confined to lib/repositories/ and bootstrap', () {
+      final violations = [
+        ..._findImportViolations('lib/models', const ['package:mangayomi/repositories/db.dart']),
+        ..._findImportViolations('lib/utils', const ['package:mangayomi/repositories/db.dart']),
+        ..._findImportViolations('lib/core', const ['package:mangayomi/repositories/db.dart']),
+        ..._findImportViolations('lib/providers', const ['package:mangayomi/repositories/db.dart']),
+        ..._findImportViolations('lib/eval', const ['package:mangayomi/repositories/db.dart']),
+        ..._findImportViolations('lib/services', const ['package:mangayomi/repositories/db.dart'])
+            .where((v) => !v.startsWith('lib/services/isolate_service.dart ->')),
+      ];
+      expect(
+        violations,
+        isEmpty,
+        reason:
+            'Only lib/repositories/ (plus main.dart and isolate_service.dart bootstrap) may import lib/repositories/db.dart:\n'
             '${violations.join('\n')}',
       );
     });

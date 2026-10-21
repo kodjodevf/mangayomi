@@ -14,7 +14,7 @@ import 'package:mangayomi/services/volume_keys.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/manga/reader/utils/reader_orientation.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/services/discord_rpc.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';

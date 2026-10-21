@@ -22,19 +22,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
-
-enum TrackerProviders {
-  myAnimeList(syncId: 1, name: "MAL"),
-  anilist(syncId: 2, name: "AL"),
-  kitsu(syncId: 3, name: "Kitsu"),
-  simkl(syncId: 4, name: "Simkl"),
-  trakt(syncId: 5, name: "Trakt");
-
-  const TrackerProviders({required this.syncId, required this.name});
-
-  final int syncId;
-  final String name;
-}
+export 'package:mangayomi/models/track.dart' show TrackerProviders;
 
 class TrackerLibraryScreen extends ConsumerStatefulWidget {
   final String? presetInput;

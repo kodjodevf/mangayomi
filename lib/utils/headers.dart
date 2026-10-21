@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:mangayomi/eval/http_response_extensions.dart';
 import 'package:mangayomi/eval/lib.dart';
-import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
+import 'package:mangayomi/providers/general_state_provider.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/services/source_code_errors.dart';
 import 'package:mangayomi/utils/utils.dart';

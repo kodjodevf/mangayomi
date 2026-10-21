@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/manga/detail/providers/chapter_display.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/services/discord_rpc.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';

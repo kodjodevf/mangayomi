@@ -1,0 +1,260 @@
+import 'package:flutter_discord_rpc_fork/flutter_discord_rpc.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/providers/general_state_provider.dart';
+import 'package:mangayomi/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
+
+DiscordRPC? discordRpc;
+
+class DiscordRPC {
+  /// Id of the Discord Application
+  final String applicationId;
+
+  /// Whether it should reconnect to the discord client
+  final bool autoRetry;
+
+  /// Seconds between each attempt to reconnect
+  final int retryDelayInSeconds;
+
+  /// Start timestamp in millis
+  final int startAt = DateTime.timestamp().millisecondsSinceEpoch;
+
+  /// Temp var
+  bool rpcShowReadingWatchingProgress = false;
+
+  int _nextReaderSession = 0;
+  int? _activeReaderSession;
+
+  /// Instance of the current RPC activity
+  final RpcActivity activity = RpcActivity(
+    assets: const RPCAssets(largeImage: "app-icon", largeText: "Mangayomi"),
+    buttons: [
+      const RPCButton(
+        label: "Get Mangayomi",
+        url: "https://github.com/kodjodevf/mangayomi",
+      ),
+      const RPCButton(
+        label: "Join us",
+        url: "https://discord.com/invite/EjfBuYahsP",
+      ),
+    ],
+    details: "Idle",
+    state: "-----",
+    timestamps: RPCTimestamps(
+      start: DateTime.timestamp().millisecondsSinceEpoch,
+    ),
+    activityType: ActivityType.watching,
+  );
+
+  DiscordRPC({
+    required this.applicationId,
+    this.autoRetry = true,
+    this.retryDelayInSeconds = 10,
+  });
+
+  Future<void> initialize() async {
+    await FlutterDiscordRPC.initialize(applicationId);
+  }
+
+  Future<void> connect([dynamic ref]) async {
+    final enableDiscordRpc = ref != null
+        ? ref.read(enableDiscordRpcStateProvider) as bool
+        : (settingsRepository.current.enableDiscordRpc ?? true);
+    final incognitoMode = ref != null
+        ? ref.read(incognitoModeStateProvider) as bool
+        : (settingsRepository.current.incognitoMode ?? false);
+    final hideDiscordRpcInIncognito = ref != null
+        ? ref.read(hideDiscordRpcInIncognitoStateProvider) as bool
+        : (settingsRepository.current.hideDiscordRpcInIncognito ?? true);
+    rpcShowReadingWatchingProgress = ref != null
+        ? ref.read(rpcShowReadingWatchingProgressStateProvider) as bool
+        : (settingsRepository.current.rpcShowReadingWatchingProgress ?? true);
+    if (enableDiscordRpc && (!hideDiscordRpcInIncognito || !incognitoMode)) {
+      await FlutterDiscordRPC.instance.connect(
+        autoRetry: autoRetry,
+        retryDelay: Duration(seconds: retryDelayInSeconds),
+      );
+      await Future.delayed(Duration(seconds: 3));
+      showIdleText();
+    }
+  }
+
+  Future<void> showIdleText() async {
+    await updateActivity(
+      details: "Idle",
+      state: "-----",
+      assets: const RPCAssets(largeImage: "app-icon", largeText: "Mangayomi"),
+    );
+  }
+
+  /// Marks a reader as the current owner of chapter presence updates.
+  int beginReaderSession() {
+    final session = ++_nextReaderSession;
+    _activeReaderSession = session;
+    return session;
+  }
+
+  /// Returns to idle only if no newer reader has replaced this one.
+  Future<void> endReaderSession(int session) async {
+    if (_activeReaderSession != session) return;
+    _activeReaderSession = null;
+    await showIdleText();
+  }
+
+  Future<void> showChapterDetails(dynamic ref, Chapter chapter) async {
+    final status = chapter.manga.value!.itemType == ItemType.anime
+        ? "Watching"
+        : "Reading";
+    final title = chapter.manga.value!.name;
+    final chapterTitle = chapter.name;
+    final imageUrl = chapter.manga.value!.imageUrl;
+    final rpcShowTitle = ref != null
+        ? ref.read(rpcShowTitleStateProvider) as bool
+        : (settingsRepository.current.rpcShowTitle ?? true);
+    final rpcShowCoverImage = ref != null
+        ? ref.read(rpcShowCoverImageStateProvider) as bool
+        : (settingsRepository.current.rpcShowCoverImage ?? true);
+    await updateActivity(
+      details: rpcShowTitle ? "$status $title" : "Idle",
+      state: rpcShowTitle && rpcShowReadingWatchingProgress
+          ? chapterTitle
+          : "-----",
+      assets:
+          rpcShowCoverImage && imageUrl != null && imageUrl.startsWith("http")
+          ? RPCAssets(
+              largeImage: imageUrl,
+              largeText: rpcShowTitle ? chapter.manga.value!.name : "-----",
+              smallImage: "app-icon",
+              smallText: "Mangayomi",
+            )
+          : const RPCAssets(largeImage: "app-icon", largeText: "Mangayomi"),
+    );
+  }
+
+  Future<void> showLargeImage() async {
+    await updateActivity(
+      assets: const RPCAssets(largeImage: "app-icon", largeText: "Mangayomi"),
+    );
+  }
+
+  Future<void> showSmallImage(String largeImage, String largeText) async {
+    await updateActivity(
+      assets: RPCAssets(
+        largeImage: largeImage,
+        largeText: largeText,
+        smallImage: "app-icon",
+        smallText: "Mangayomi",
+      ),
+    );
+  }
+
+  Future<void> showOriginalTimestamp() async {
+    await updateActivity(timestamps: RPCTimestamps(start: startAt));
+  }
+
+  Future<void> updateChapterTimestamp(
+    Duration position,
+    Duration duration,
+  ) async {
+    if (!rpcShowReadingWatchingProgress) {
+      return;
+    }
+    await updateActivity(
+      timestamps: RPCTimestamps(
+        start: DateTime.timestamp().subtract(position).millisecondsSinceEpoch,
+        end: DateTime.timestamp()
+            .subtract(position)
+            .add(duration)
+            .millisecondsSinceEpoch,
+      ),
+    );
+  }
+
+  Future<void> updateActivity({
+    String? state,
+    String? details,
+    RPCTimestamps? timestamps,
+    RPCParty? party,
+    RPCAssets? assets,
+    RPCSecrets? secrets,
+    List<RPCButton>? buttons,
+    ActivityType? activityType,
+  }) async {
+    if (!FlutterDiscordRPC.instance.isConnected) {
+      return;
+    }
+    if (state != null) {
+      activity.state = state;
+    }
+    if (details != null) {
+      activity.details = details;
+    }
+    if (timestamps != null) {
+      activity.timestamps = timestamps;
+    }
+    if (party != null) {
+      activity.party = party;
+    }
+    if (assets != null) {
+      activity.assets = assets;
+    }
+    if (secrets != null) {
+      activity.secrets = secrets;
+    }
+    if (buttons != null) {
+      activity.buttons = buttons;
+    }
+    if (activityType != null) {
+      activity.activityType = activityType;
+    }
+    await FlutterDiscordRPC.instance.setActivity(
+      activity: activity.toRPCActivity(),
+    );
+  }
+
+  Future<void> disconnect() async {
+    if (!FlutterDiscordRPC.instance.isConnected) return;
+    await FlutterDiscordRPC.instance.disconnect();
+  }
+
+  Future<void> destroy() async {
+    await FlutterDiscordRPC.instance.disconnect();
+    await FlutterDiscordRPC.instance.dispose();
+  }
+}
+
+class RpcActivity {
+  String? state;
+  String? details;
+  RPCTimestamps? timestamps;
+  RPCParty? party;
+  RPCAssets? assets;
+  RPCSecrets? secrets;
+  List<RPCButton>? buttons;
+  ActivityType? activityType;
+
+  RpcActivity({
+    this.state,
+    this.details,
+    this.timestamps,
+    this.party,
+    this.assets,
+    this.secrets,
+    this.buttons,
+    this.activityType,
+  });
+
+  RPCActivity toRPCActivity() {
+    return RPCActivity(
+      state: state,
+      details: details,
+      timestamps: timestamps,
+      party: party,
+      assets: assets,
+      secrets: secrets,
+      buttons: buttons,
+      activityType: activityType,
+    );
+  }
+}

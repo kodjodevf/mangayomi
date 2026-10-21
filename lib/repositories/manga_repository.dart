@@ -360,6 +360,8 @@ class MangaRepository {
   // opened by transaction()/writeTransaction() — it doesn't queue on its own.
   int putSync(Manga manga) => isar.mangas.putSync(manga);
 
+  void deleteSync(int id) => isar.mangas.deleteSync(id);
+
   void putAllSync(List<Manga> mangas) => isar.mangas.putAllSync(mangas);
 
   void clearSync() => isar.mangas.clearSync();

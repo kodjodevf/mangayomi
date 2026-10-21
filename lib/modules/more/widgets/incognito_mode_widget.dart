@@ -1,7 +1,7 @@
 import 'package:shiori/shiori.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/services/discord_rpc.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';

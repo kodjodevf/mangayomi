@@ -123,6 +123,8 @@ class UpdateRepository {
 
   void putSync(Update update) => isar.updates.putSync(update);
 
+  void deleteSync(int id) => isar.updates.deleteSync(id);
+
   void putAllSync(List<Update> updates) => isar.updates.putAllSync(updates);
 
   void clearSync() => isar.updates.clearSync();

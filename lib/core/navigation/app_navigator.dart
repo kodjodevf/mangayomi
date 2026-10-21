@@ -1,5 +1,7 @@
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/router/router.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// The one seam non-widget code (providers, services, utils) is allowed to
 /// use to reach the widget tree for navigation.

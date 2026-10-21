@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/services/discord_rpc.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/memory_probe_provider.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';

@@ -65,8 +65,8 @@ import 'package:mangayomi/modules/widgets/memory_overlay.dart';
 import 'package:mangayomi/modules/widgets/app_ui_scale.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_ui_scale_state_provider.dart';
 import 'package:mangayomi/utils/error_toast.dart';
+export 'package:mangayomi/services/discord_rpc.dart' show discordRpc;
 
-DiscordRPC? discordRpc;
 void main(List<String> args) async {
   // Zone-level catch-all for anything that slips through both layers
   runZonedGuarded(

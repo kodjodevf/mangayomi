@@ -124,7 +124,7 @@ To modernize the codebase safely without regressions, refactoring is organized i
 | Phase | Scope | Objective | Status |
 | :--- | :--- | :--- | :--- |
 | **Phase 1** | **Dependency Inversion & Boundary Guard-Rails** | Eliminate all imports of `lib/main.dart` and `lib/modules/` from `lib/repositories/`, `lib/services/`, `lib/eval/`, and `lib/utils/`. Remove `WidgetRef` from repositories and services. Enforce via `architecture_test.dart`. | **Completed** |
-| **Phase 2** | **Model Anemic Refactoring & Direct Isar Cleanup** | Remove remaining direct `isar.*` queries from `lib/models/` (`Manga`, `Chapter`, `History`) and `lib/modules/` UI widgets, routing 100% of persistence through `lib/repositories/`. | Planned |
+| **Phase 2** | **Purify `lib/utils/` & Confine Direct Isar Access** | Eliminate all `lib/modules/` and `router.dart` imports from `lib/utils/` and `lib/core/`. Confine `lib/repositories/db.dart` strictly to `lib/repositories/` (and isolate bootstrap), and eliminate all `lib/main.dart` imports across `lib/modules/`. | **Completed** |
 | **Phase 3** | **Reader & Player Decomposition** | Split `MangaReaderView` (~2,700 LOC), `AnimePlayerView` (~2,000 LOC), and `NovelReaderView` (~1,100 LOC) into isolated Session Controllers, Input Handlers, and HUD Widgets. | Planned |
 | **Phase 4** | **Cross-Feature UI Consolidation** | Extract duplicated details/settings sheets across Manga, Anime, and Novel into shared media-agnostic components under `lib/modules/widgets/`. | Planned |
 
