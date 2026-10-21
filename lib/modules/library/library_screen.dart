@@ -490,6 +490,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       tabs: [
         if (withoutCategory.isNotEmpty)
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Tab(text: l10n.default0),
               if (showNumbersOfItems) ...[
@@ -501,6 +502,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           ),
         for (var i = 0; i < entr.length; i++)
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Tab(text: entr[i].name),
               if (showNumbersOfItems) ...[

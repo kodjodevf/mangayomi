@@ -53,6 +53,9 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
   @override
   Widget buildTabLabel(ItemType type, String label) {
     return Row(
+      // Shrink to the label: filling the tab would stretch the indicator
+      // pill across its whole width.
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Tab(text: label),

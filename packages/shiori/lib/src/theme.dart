@@ -177,13 +177,17 @@ ThemeData _withTokens(ThemeData theme, ShioriDensity density) {
       unselectedLabelStyle: text.row.copyWith(fontWeight: FontWeight.w500),
       indicatorSize: TabBarIndicatorSize.label,
       dividerColor: Colors.transparent,
-      // A press, a hover or a focus (a remote's) shows as a faint pill.
+      // A press, a hover or a focus (a remote's) shows as a faint neutral
+      // pill on the tabs that are not current. The current tab already wears
+      // the accent pill, and a second accent wash over it, wider than the
+      // pill, read as two similar colours overlapping.
       overlayColor: WidgetStateProperty.resolveWith(
         (states) =>
-            states.contains(WidgetState.pressed) ||
-                states.contains(WidgetState.hovered) ||
-                states.contains(WidgetState.focused)
-            ? colors.accent.withValues(alpha: Alphas.tint)
+            !states.contains(WidgetState.selected) &&
+                (states.contains(WidgetState.pressed) ||
+                    states.contains(WidgetState.hovered) ||
+                    states.contains(WidgetState.focused))
+            ? colors.fg.withValues(alpha: Alphas.tint)
             : Colors.transparent,
       ),
       splashBorderRadius: BorderRadius.circular(ShioriShape.pill),
