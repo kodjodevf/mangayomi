@@ -15,6 +15,7 @@ import 'package:mangayomi/modules/updates/widgets/update_chapter_list_tile_widge
 import 'package:mangayomi/modules/updates/update_errors_screen.dart';
 import 'package:mangayomi/services/update_errors_provider.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
+import 'package:mangayomi/modules/library/widgets/library_update_runner.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/utils/date.dart';
@@ -142,7 +143,7 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
       getCurrentItemType(),
     );
     if (idsToDelete.isEmpty) return;
-    await updateRepository.deleteAll(ref, idsToDelete);
+    await updateRepository.deleteAll(idsToDelete);
   }
 }
 

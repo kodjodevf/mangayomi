@@ -14,8 +14,8 @@ import 'package:mangayomi/modules/library/widgets/library_listview_widget.dart';
 import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
 import 'package:mangayomi/modules/widgets/cover_grid_skeleton.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
+import 'package:mangayomi/modules/library/widgets/library_update_runner.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:shiori/shiori.dart';
 

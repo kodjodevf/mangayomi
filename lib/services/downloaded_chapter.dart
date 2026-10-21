@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/modules/library/providers/file_scanner.dart';
+import 'package:mangayomi/services/local_folders.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';

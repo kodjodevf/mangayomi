@@ -1,6 +1,6 @@
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/providers/browse_state_provider.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/services/isolate_service.dart';
 import 'package:mangayomi/services/local_source_page.dart';

@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
-import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
+import 'package:mangayomi/models/oauth.dart';
+import 'package:mangayomi/providers/track_providers.dart';
 import 'package:mangayomi/utils/localized_message.dart';
 
 /// Access token handling for trackers whose OAuth tokens expire and are

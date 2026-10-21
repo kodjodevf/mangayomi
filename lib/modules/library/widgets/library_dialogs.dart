@@ -71,7 +71,6 @@ void showDeleteMangaDialog({
                             if (deleteFromLib) {
                               for (var manga in mangasList) {
                                 await mangaRepository.removeFromLibrary(
-                                  ref,
                                   manga,
                                 );
                               }
@@ -89,7 +88,6 @@ void showDeleteMangaDialog({
                                     mangaDirectory,
                                   );
                                   await mangaRepository.removeFromLibrary(
-                                    ref,
                                     manga,
                                   );
                                 } else {

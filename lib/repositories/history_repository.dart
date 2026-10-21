@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/changed_part_repository.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 
 class HistoryRepository {
@@ -126,17 +125,11 @@ class HistoryRepository {
   Future<void> deleteAll(List<int> ids) =>
       dbWriteQueue.run(() => isar.writeTxn(() => isar.historys.deleteAll(ids)));
 
-  Future<void> delete(WidgetRef ref, int id) =>
-      deleteRecorded(ref.read(synchingProvider(syncId: 1).notifier), id);
-
-  /// [delete] with the sync notifier already in hand, for a caller that may
-  /// no longer hold a ref when the deletion is written (a deferred removal
-  /// committed as its screen goes away).
-  Future<void> deleteRecorded(Synching sync, int id) => dbWriteQueue.run(() {
+  Future<void> delete(int id) => dbWriteQueue.run(() {
     isar.writeTxnSync(() {
       final clientId = isar.historys.getSync(id)?.clientId;
       isar.historys.deleteSync(id);
-      sync.addChangedPart(
+      changedPartRepository.recordIfSyncOn(
         ActionType.removeHistory,
         id,
         "{}",

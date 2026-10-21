@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/changed_part_repository.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
@@ -11,7 +11,6 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/update.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
@@ -319,11 +318,11 @@ class MangaRepository {
   }
 
   // Local archives get fully wiped (via wipeManga); everything else just unfavorites.
-  Future<void> removeFromLibrary(WidgetRef ref, Manga manga) =>
+  Future<void> removeFromLibrary(Manga manga) =>
       dbWriteQueue.run(() {
         isar.writeTxnSync(() {
           if (manga.isLocalArchive ?? false) {
-            wipeManga(ref, manga);
+            wipeManga(manga);
           } else {
             manga.favorite = false;
             manga.updatedAt = DateTime.now().millisecondsSinceEpoch;
@@ -394,27 +393,26 @@ class MangaRepository {
 
   // Queued, transacted wipeManga for callers with a batch of mangas and no
   // other work to fold into the same transaction.
-  Future<void> wipeMangas(WidgetRef ref, List<Manga> mangas) =>
+  Future<void> wipeMangas(List<Manga> mangas) =>
       dbWriteQueue.run(() {
         isar.writeTxnSync(() {
           for (final manga in mangas) {
-            wipeManga(ref, manga);
+            wipeManga(manga);
           }
         });
       });
 
   // Deletes every Isar record tied to a manga: history, updates, downloads,
-  // chapters, and the manga itself. Notifies the sync provider so the removal
+  // chapters, and the manga itself. Notifies the sync outbox so the removal
   // propagates. Must run inside an already-open write transaction.
-  void wipeManga(WidgetRef ref, Manga manga) {
-    final provider = ref.read(synchingProvider(syncId: 1).notifier);
+  void wipeManga(Manga manga) {
     final histories = isar.historys
         .where()
         .mangaIdEqualTo(manga.id)
         .findAllSync();
     for (var history in histories) {
       isar.historys.deleteSync(history.id!);
-      provider.addChangedPart(
+      changedPartRepository.recordIfSyncOn(
         ActionType.removeHistory,
         history.id,
         "{}",
@@ -426,7 +424,7 @@ class MangaRepository {
     final updates = isar.updates.where().mangaIdEqualTo(manga.id).findAllSync();
     for (var update in updates) {
       isar.updates.deleteSync(update.id!);
-      provider.addChangedPart(
+      changedPartRepository.recordIfSyncOn(
         ActionType.removeUpdate,
         update.id,
         "{}",
@@ -438,7 +436,7 @@ class MangaRepository {
     for (var chapter in manga.chapters) {
       isar.downloads.deleteSync(chapter.id!);
       isar.chapters.deleteSync(chapter.id!);
-      provider.addChangedPart(
+      changedPartRepository.recordIfSyncOn(
         ActionType.removeChapter,
         chapter.id,
         "{}",
@@ -447,7 +445,7 @@ class MangaRepository {
       );
     }
     isar.mangas.deleteSync(manga.id!);
-    provider.addChangedPart(
+    changedPartRepository.recordIfSyncOn(
       ActionType.removeItem,
       manga.id,
       "{}",

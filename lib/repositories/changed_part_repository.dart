@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
+import 'package:mangayomi/repositories/sync_preference_repository.dart';
 
 // The sync engine's local outbox: one row per pending change to push on the
 // next sync. [writeTxn] on the write methods below mirrors the original
@@ -24,6 +25,18 @@ class ChangedPartRepository {
       query = query.or().actionTypeEqualTo(at);
     }
     return query.findAllSync();
+  }
+
+  void recordIfSyncOn(
+    ActionType action,
+    int? isarId,
+    Object data,
+    bool writeTxn, {
+    int? clientId,
+    int syncId = 1,
+  }) {
+    if (!(syncPreferenceRepository.getById(syncId)?.syncOn ?? false)) return;
+    add(action, isarId, data, writeTxn, clientId: clientId);
   }
 
   void add(

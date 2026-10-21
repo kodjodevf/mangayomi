@@ -6,7 +6,6 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart'
     as flutter_inappwebview;
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:http/http.dart' as http;
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/src/rust/aidoku_wasm/host_js.dart' as rust_js;
 

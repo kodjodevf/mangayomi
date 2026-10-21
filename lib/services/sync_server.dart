@@ -8,19 +8,18 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/floating_navigation_bar_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_progress_provider.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
+import 'package:mangayomi/providers/blend_level_state_provider.dart';
+import 'package:mangayomi/providers/flex_scheme_color_state_provider.dart';
+import 'package:mangayomi/providers/floating_navigation_bar_state_provider.dart';
+import 'package:mangayomi/providers/pure_black_dark_mode_state_provider.dart';
+import 'package:mangayomi/providers/theme_mode_state_provider.dart';
+import 'package:mangayomi/providers/browse_state_provider.dart';
+import 'package:mangayomi/providers/security_state_provider.dart';
+import 'package:mangayomi/providers/sync_progress_provider.dart';
+import 'package:mangayomi/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/sync/sync_api_client.dart';
@@ -31,7 +30,7 @@ import 'package:mangayomi/utils/platform_utils.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/tint_surfaces_state_provider.dart';
+import 'package:mangayomi/providers/tint_surfaces_state_provider.dart';
 import 'package:mangayomi/utils/error_toast.dart';
 part 'sync_server.g.dart';
 
@@ -386,7 +385,7 @@ class SyncServer extends _$SyncServer {
 
 /// Triggers auto sync if sync is enabled, user is logged in, autoSyncFrequency > 0,
 /// and enough time has elapsed since lastSync.
-Future<void> autoSyncIfDue(WidgetRef ref, {int syncId = 1}) async {
+Future<void> autoSyncIfDue(dynamic ref, {int syncId = 1}) async {
   if (!ref.read(appUnlockedStateProvider)) return;
 
   final syncPrefs = ref.read(synchingProvider(syncId: syncId));

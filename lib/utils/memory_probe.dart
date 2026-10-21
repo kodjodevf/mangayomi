@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
-import 'package:mangayomi/modules/manga/reader/utils/decoded_image_budget.dart';
+import 'package:mangayomi/services/reader/decoded_image_budget.dart';
 
 /// One reading of what the app is holding.
 @immutable

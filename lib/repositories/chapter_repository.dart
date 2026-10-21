@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 import 'package:mangayomi/repositories/chapter_consolidation.dart';
 
@@ -177,12 +179,15 @@ class ChapterRepository {
     required String mangaName,
     required int now,
     required bool Function(int) isScheduled,
+    Future<List<Directory>> Function(Chapter, {Settings? settings})?
+    resolveDirectories,
   }) => consolidateChapterDuplicates(
     isar,
     chapters,
     mangaName: mangaName,
     now: now,
     isScheduled: isScheduled,
+    resolveDirectories: resolveDirectories,
   );
 
   // Escape hatch for chapter-rooted transactions too specific to name

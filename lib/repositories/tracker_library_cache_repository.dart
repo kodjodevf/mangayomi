@@ -1,5 +1,5 @@
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/models/tracker_library_cache.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';

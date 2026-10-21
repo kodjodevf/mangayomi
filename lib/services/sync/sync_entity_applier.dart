@@ -9,7 +9,7 @@
 // can arrive even when the local copy is already newer) and leaves it to
 // the caller - which already deals in Riverpod state - to decide what to
 // invalidate.
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';

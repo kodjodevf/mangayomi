@@ -5,9 +5,9 @@ import 'package:mangayomi/repositories/download_repository.dart';
 
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart';
-import 'package:mangayomi/modules/library/providers/file_scanner.dart';
-import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
+import 'package:mangayomi/services/local_folders.dart';
+import 'package:mangayomi/providers/browse_state_provider.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/downloaded_chapter.dart';
 import 'package:mangayomi/services/http/m_client.dart';
@@ -36,7 +36,7 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
     // Otherwise a fresh install with no all-files access would hit a permission
     // error just for streaming an episode — the dir was being created on every
     // play even though useMpvConfig defaults to false. See #740.
-    final useMpvConfig = ref.read(useMpvConfigStateProvider);
+    final useMpvConfig = settingsRepository.currentOrNull?.useMpvConfig ?? false;
     final mpvDirectory = useMpvConfig
         ? await storageProvider.getMpvDirectory()
         : null;

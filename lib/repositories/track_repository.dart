@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/changed_part_repository.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 
 class TrackRepository {
@@ -164,18 +163,16 @@ class TrackRepository {
     });
   });
 
-  Future<void> delete(Ref ref, Track track) => dbWriteQueue.run(() {
+  Future<void> delete(Track track) => dbWriteQueue.run(() {
     isar.writeTxnSync(() {
       isar.tracks.deleteSync(track.id!);
-      ref
-          .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(
-            ActionType.removeTrack,
-            track.id,
-            "{}",
-            false,
-            clientId: track.clientId,
-          );
+      changedPartRepository.recordIfSyncOn(
+        ActionType.removeTrack,
+        track.id,
+        "{}",
+        false,
+        clientId: track.clientId,
+      );
     });
   });
 

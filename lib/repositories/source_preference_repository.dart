@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 import 'package:mangayomi/utils/error_toast.dart';

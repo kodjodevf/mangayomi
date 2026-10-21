@@ -143,7 +143,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                       destructive: true,
                     );
                     if (!confirmed || !context.mounted) return;
-                    sourceRepository.uninstall(ref, source);
+                    sourceRepository.uninstall(source);
                     Navigator.pop(context);
                   },
                 ),
