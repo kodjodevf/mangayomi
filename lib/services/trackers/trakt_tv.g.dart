@@ -58,7 +58,7 @@ final class TraktTvProvider extends $NotifierProvider<TraktTv, void> {
   }
 }
 
-String _$traktTvHash() => r'baccf08657293253d40f3dd40868756185e1ebad';
+String _$traktTvHash() => r'f33612b5a16234af0d317be1979ddd0bd0cefc58';
 
 final class TraktTvFamily extends $Family
     with

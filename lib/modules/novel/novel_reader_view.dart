@@ -48,7 +48,6 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:flutter/widgets.dart' as widgets;
 import 'package:mangayomi/modules/manga/reader/mixins/reader_auto_scroll.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 
 typedef DoubleClickAnimationListener = void Function();
 
@@ -517,16 +516,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                               final customTextColor = ref.watch(
                                 novelReaderTextColorStateProvider,
                               );
-                              // "Default" is the font the user picked in
-                              // Appearance: the interface itself is always
-                              // set in Shiori's face, so reading is where
-                              // that choice applies now.
+                              // "Default" returns null, which causes the
+                              // render to use the system default font.
                               final fontFamily =
                                   resolveNovelFontFamily(
                                     ref.watch(novelFontFamilyStateProvider),
-                                  ) ??
-                                  ref.watch(
-                                    appFontFamilyProvider.select((t) => t.$2),
                                   );
 
                               if (!_scrollRestoreScheduled &&

@@ -906,7 +906,7 @@ final class ChaptersListttStateProvider
 }
 
 String _$chaptersListttStateHash() =>
-    r'55c0093bb370d4d103129eeca67e652a0241f2c0';
+    r'fe080a63ed17eb2926023c5fd9a881540f28d944';
 
 abstract class _$ChaptersListttState extends $Notifier<List<Chapter>> {
   List<Chapter> build();

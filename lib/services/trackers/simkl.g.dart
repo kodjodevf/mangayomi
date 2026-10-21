@@ -58,7 +58,7 @@ final class SimklProvider extends $NotifierProvider<Simkl, void> {
   }
 }
 
-String _$simklHash() => r'e1c4532bceebbbb861b585bdf965a29a6839962c';
+String _$simklHash() => r'16ffd5e25d7de26f156b3d40a67ed469548a2db8';
 
 final class SimklFamily extends $Family
     with

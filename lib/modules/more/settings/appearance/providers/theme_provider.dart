@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'app_font_family.dart';
 import 'blend_level_state_provider.dart';
 import 'flex_scheme_color_state_provider.dart';
 import 'pure_black_dark_mode_state_provider.dart';
@@ -51,12 +50,11 @@ ShioriDensity get _density => isTv
     : ShioriDensity.phone;
 
 /// Provides the light theme for the app, recomputed only when the palette,
-/// the blend level, the surface tint or the app font change.
+/// the blend level, or the surface tint change.
 final lightThemeProvider = Provider<ThemeData>((ref) {
   final schemeIndex = ref.watch(
     flexSchemeColorStateProvider.select((theme) => theme.$2),
   );
-  final fontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$2));
   return _tvFocus(
     buildShioriTheme(
       brightness: Brightness.light,
@@ -64,18 +62,16 @@ final lightThemeProvider = Provider<ThemeData>((ref) {
       tintSurfaces: ref.watch(tintSurfacesStateProvider),
       blendLevel: ref.watch(blendLevelStateProvider).toInt(),
       density: _density,
-      fontFamily: fontFamily,
     ),
   );
 });
 
 /// Provides the dark theme for the app, recomputed only when the palette,
-/// the blend level, the surface tint, the pure-black toggle or the app font change.
+/// the blend level, the surface tint, or the pure-black toggle change.
 final darkThemeProvider = Provider<ThemeData>((ref) {
   final schemeIndex = ref.watch(
     flexSchemeColorStateProvider.select((theme) => theme.$2),
   );
-  final fontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$2));
   return _tvFocus(
     buildShioriTheme(
       brightness: Brightness.dark,
@@ -84,7 +80,6 @@ final darkThemeProvider = Provider<ThemeData>((ref) {
       blendLevel: ref.watch(blendLevelStateProvider).toInt(),
       density: _density,
       pureBlack: ref.watch(pureBlackDarkModeStateProvider),
-      fontFamily: fontFamily,
     ),
   );
 });

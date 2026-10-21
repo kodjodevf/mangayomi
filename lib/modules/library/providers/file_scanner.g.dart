@@ -199,4 +199,4 @@ final class ScanLocalLibraryProvider
   }
 }
 
-String _$scanLocalLibraryHash() => r'8461d8213bdd030b601a9665dd1a4d752ecd6243';
+String _$scanLocalLibraryHash() => r'0b3286de36dd1c635f8e0960a714a83823fb7dfb';

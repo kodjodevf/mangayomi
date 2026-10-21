@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
@@ -929,6 +928,5 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 }
 
-// Resolved once — GoogleFonts lookups in build run font resolution on every
-// rebuild of these always-mounted bars.
-final String? barFontFamily = GoogleFonts.aBeeZee().fontFamily;
+// Use the default system font for mode bar labels (previously ABeeZee).
+final String? barFontFamily = null;
