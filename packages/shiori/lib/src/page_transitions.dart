@@ -101,26 +101,21 @@ class ShioriPageTransition extends StatelessWidget {
   }
 }
 
-/// Switching between top-level destinations: Material's fade through, as
-/// Mihon switches its tabs. The tab being left fades out over the first 35 %
-/// of [duration], then the tab being opened fades in, with no scale.
+/// Switching between top-level destinations: the tab being opened fades in
+/// over the tab being left, which stays fully drawn until it is covered.
+///
+/// A fade through (the old tab out, then the new one in) leaves a moment with
+/// neither on screen, which read as a dark flash between two dark pages.
 abstract final class ShioriFadeThrough {
-  static const Duration duration = Duration(milliseconds: 200);
-
-  static const _share = ShioriPageTransition._outgoingShare;
+  static const Duration duration = Duration(milliseconds: 180);
 
   /// The opacity of the tab being opened at [t], 0 to 1 over the switch.
-  static double incoming(double t) =>
-      _linearOutSlowIn.transform(((t - _share) / (1 - _share)).clamp(0.0, 1.0));
-
-  /// The opacity of the tab being left at [t].
-  static double outgoing(double t) =>
-      1 - _fastOutLinearIn.transform((t / _share).clamp(0.0, 1.0));
+  static double incoming(double t) => _linearOutSlowIn.transform(t);
 }
 
 /// Children kept mounted as an [IndexedStack] keeps them, switched with
-/// [ShioriFadeThrough]: the child being left fades out, then the child being
-/// opened fades in. Every child sits in the same wrapper whether shown or
+/// [ShioriFadeThrough]: the child being opened fades in over the child being
+/// left. Every child sits in the same wrapper whether shown or
 /// not, so switching never remounts one or loses its scroll; a hidden child
 /// is offstage, with its tickers off.
 ///
@@ -188,25 +183,34 @@ class _ShioriFadeThroughStackState extends State<ShioriFadeThroughStack>
       animation: _controller,
       builder: (context, _) {
         final t = _controller.value;
+        // The child being opened is painted last, so it covers the one being
+        // left; keys keep every child's state through the reordering.
+        final order = [
+          for (var i = 0; i < widget.children.length; i++)
+            if (i != widget.index && i != _previous) i,
+          ?_previous,
+          widget.index,
+        ];
         return Stack(
           fit: StackFit.expand,
           children: [
-            for (final (i, child) in widget.children.indexed)
-              Offstage(
-                offstage: i != widget.index && i != _previous,
-                child: TickerMode(
-                  enabled: i == widget.index,
-                  child: Opacity(
-                    opacity: i == widget.index
-                        ? ShioriFadeThrough.incoming(t)
-                        : i == _previous
-                        ? ShioriFadeThrough.outgoing(t)
-                        : 1,
-                    child: IgnorePointer(
-                      ignoring: i != widget.index,
-                      child: widget.lazy && !_visited.contains(i)
-                          ? const SizedBox.shrink()
-                          : child,
+            for (final i in order)
+              KeyedSubtree(
+                key: ValueKey(i),
+                child: Offstage(
+                  offstage: i != widget.index && i != _previous,
+                  child: TickerMode(
+                    enabled: i == widget.index,
+                    child: Opacity(
+                      opacity: i == widget.index
+                          ? ShioriFadeThrough.incoming(t)
+                          : 1,
+                      child: IgnorePointer(
+                        ignoring: i != widget.index,
+                        child: widget.lazy && !_visited.contains(i)
+                            ? const SizedBox.shrink()
+                            : widget.children[i],
+                      ),
                     ),
                   ),
                 ),

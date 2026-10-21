@@ -948,16 +948,16 @@ void main() {
       await tester.pumpWidget(stack(0));
       await tester.pumpAndSettle();
       // Each was created once; going back did not remount the first.
-      expect(_Counted.inits, ['a', 'b']);
+      expect(_Counted.inits, unorderedEquals(['a', 'b']));
       expect(find.text('a', skipOffstage: false), findsOneWidget);
     });
 
-    testWidgets('fades the old child out before the new one in', (
+    testWidgets('fades the new child in over the old one, which stays drawn', (
       tester,
     ) async {
       await tester.pumpWidget(stack(0));
       await tester.pumpWidget(stack(1));
-      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pump(const Duration(milliseconds: 20));
       double opacityOf(String label) => tester
           .widget<Opacity>(
             find
@@ -968,9 +968,9 @@ void main() {
                 .first,
           )
           .opacity;
-      // A quarter in: the old one still fading, the new one not yet in.
-      expect(opacityOf('a'), greaterThan(0));
-      expect(opacityOf('b'), 0);
+      // Never a moment with neither on screen.
+      expect(opacityOf('a'), 1);
+      expect(opacityOf('b'), inExclusiveRange(0, 1));
       await tester.pumpAndSettle();
       expect(opacityOf('b'), 1);
     });
