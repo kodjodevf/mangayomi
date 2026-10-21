@@ -4,14 +4,12 @@ import 'dart:math';
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
 import 'package:mangayomi/modules/novel/utils/reading_time.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/services/volume_keys.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/manga/reader/utils/reader_orientation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/services/discord_rpc.dart';
@@ -29,14 +27,16 @@ import 'package:mangayomi/modules/novel/tts/tts_player_bar.dart';
 import 'package:mangayomi/modules/novel/tts/tts_settings_tab.dart';
 import 'package:mangayomi/modules/novel/utils/novel_paginator.dart';
 import 'package:mangayomi/modules/novel/utils/novel_reader_fonts.dart';
+import 'package:mangayomi/modules/novel/widgets/novel_bottom_bar.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_general_settings_tab.dart';
+import 'package:mangayomi/modules/novel/widgets/novel_html_content.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_reader_settings_sheet.dart';
+import 'package:mangayomi/modules/novel/widgets/novel_tap_zones.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_html_content.dart';
 import 'package:mangayomi/src/rust/api/epub.dart';
-import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/system_ui.dart';
 import 'package:mangayomi/utils/utils.dart';
@@ -44,9 +44,6 @@ import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:flutter_html/flutter_html.dart';
-import 'package:html/dom.dart' as dom;
-import 'package:flutter/widgets.dart' as widgets;
 import 'package:mangayomi/modules/manga/reader/mixins/reader_auto_scroll.dart';
 
 typedef DoubleClickAnimationListener = void Function();
@@ -585,16 +582,16 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                         _ttsTotalBlocks = result.$2;
                                       }
 
-                                      final parsedTextColor = _parseColor(
+                                      final parsedTextColor = parseNovelColor(
                                         customTextColor,
                                         fallback: Colors.white,
                                       );
-                                      final parsedBackgroundColor = _parseColor(
+                                      final parsedBackgroundColor = parseNovelColor(
                                         customBackgroundColor,
                                         // shiori: the book's own styles, set against whatever page colour the reader chose
                                         fallback: const Color(0xFF292832),
                                       );
-                                      final textAlignEnum = _getTextAlign(
+                                      final textAlignEnum = getNovelTextAlign(
                                         textAlign,
                                       );
 
@@ -707,10 +704,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                 controller: _spreadController,
                                                 itemCount: totalCount,
                                                 onPageChanged: (pageIndex) {
-                                                  // Keep the page swipe isolated
-                                                  // from the expensive reader
-                                                  // tree. The bottom bar already
-                                                  // listens to this stream.
                                                   _currentSpreadIndex = pageIndex;
                                                   final progress = isDouble
                                                       ? pagination
@@ -758,8 +751,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                             child: SingleChildScrollView(
                                                               physics:
                                                                   const NeverScrollableScrollPhysics(),
-                                                              child: _buildNovelHtmlWidget(
-                                                                context: context,
+                                                              child: NovelHtmlContent(
                                                                 htmlData: leftHtml,
                                                                 fontFamily:
                                                                     fontFamily,
@@ -777,6 +769,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                                     parsedBackgroundColor,
                                                                 showTts: _showTts,
                                                                 tts: tts,
+                                                                epubBook: epubBook,
                                                               ),
                                                             ),
                                                           ),
@@ -795,9 +788,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                                   child: SingleChildScrollView(
                                                                     physics:
                                                                         const NeverScrollableScrollPhysics(),
-                                                                    child: _buildNovelHtmlWidget(
-                                                                      context:
-                                                                          context,
+                                                                    child: NovelHtmlContent(
                                                                       htmlData:
                                                                           rightHtml,
                                                                       fontFamily:
@@ -819,6 +810,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                                       showTts:
                                                                           _showTts,
                                                                       tts: tts,
+                                                                      epubBook:
+                                                                          epubBook,
                                                                     ),
                                                                   ),
                                                                 )
@@ -836,8 +829,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                       child: SingleChildScrollView(
                                                         physics:
                                                             const NeverScrollableScrollPhysics(),
-                                                        child: _buildNovelHtmlWidget(
-                                                          context: context,
+                                                        child: NovelHtmlContent(
                                                           htmlData: pageHtml,
                                                           fontFamily: fontFamily,
                                                           fontSize: fontSize,
@@ -851,6 +843,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                               parsedBackgroundColor,
                                                           showTts: _showTts,
                                                           tts: tts,
+                                                          epubBook: epubBook,
                                                         ),
                                                       ),
                                                     );
@@ -876,8 +869,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                 const BouncingScrollPhysics(),
                                             slivers: [
                                               SliverToBoxAdapter(
-                                                child: _buildNovelHtmlWidget(
-                                                  context: context,
+                                                child: NovelHtmlContent(
                                                   htmlData: htmlData,
                                                   fontFamily: fontFamily,
                                                   fontSize: fontSize,
@@ -891,6 +883,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                       parsedBackgroundColor,
                                                   showTts: _showTts,
                                                   tts: tts,
+                                                  epubBook: epubBook,
                                                 ),
                                               ),
                                             ],
@@ -905,81 +898,23 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                           ),
                         ),
                         if (ref.watch(novelShowScrollPercentageStateProvider))
-                          StreamBuilder(
-                            stream: _rebuildDetail.stream,
-                            builder: (context, asyncSnapshot) {
-                              return Consumer(
-                                builder: (context, ref, child) {
-                                  final customBackgroundColor = ref.watch(
-                                    novelReaderThemeStateProvider,
-                                  );
-                                  final customTextColor = ref.watch(
-                                    novelReaderTextColorStateProvider,
-                                  );
-                                  final String displayLabel;
-                                  if (!_readerMode.isContinuous &&
-                                      _cachedPagination != null &&
-                                      _cachedPagination!.pageCount > 0) {
-                                    displayLabel = effectivePageMode ==
-                                            PageMode.doublePage
-                                        ? _cachedPagination!
-                                            .pageLabelForSpread(
-                                              _currentSpreadIndex,
-                                            )
-                                        : _cachedPagination!
-                                            .pageLabelForIndex(
-                                              _currentSpreadIndex,
-                                            );
-                                  } else {
-                                    final scrollPercentage = maxOffset > 0
-                                        ? ((offset / maxOffset) * 100)
-                                              .clamp(0, 100)
-                                              .toInt()
-                                        : 0;
-                                    displayLabel = '$scrollPercentage %';
-                                  }
-                                  return Row(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          color: Color(
-                                            int.parse(
-                                              'FF${customBackgroundColor.replaceAll('#', '')}',
-                                              radix: 16,
-                                            ),
-                                          ),
-                                          child: Center(
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(
-                                                ShioriSpace.s4,
-                                              ),
-                                              child: Text(
-                                                displayLabel,
-                                                style: TextStyle(
-                                                  color: Color(
-                                                    int.parse(
-                                                      'FF${customTextColor.replaceAll('#', '')}',
-                                                      radix: 16,
-                                                    ),
-                                                  ),
-                                                  fontSize: context.shiori.text.row.fontSize,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
+                          NovelScrollProgressBanner(
+                            rebuildStream: _rebuildDetail.stream,
+                            isContinuous: _readerMode.isContinuous,
+                            cachedPagination: () => _cachedPagination,
+                            effectivePageMode: effectivePageMode,
+                            currentSpreadIndex: () => _currentSpreadIndex,
+                            offset: () => offset,
+                            maxOffset: () => maxOffset,
                           ),
                       ],
                     ),
-                    _gestureRightLeft(ref.watch(novelTapToScrollStateProvider)),
-                    _gestureTopBottom(ref.watch(novelTapToScrollStateProvider)),
+                    NovelTapZones(
+                      usePageTapZones: ref.watch(novelTapToScrollStateProvider),
+                      isContinuousMode: _readerMode.isContinuous,
+                      onPageStep: _onBtnTapped,
+                      onToggleUi: _isViewFunction,
+                    ),
                     _appBar(),
                     _bottomBar(backgroundColor, effectivePageMode),
                     ReaderAutoScrollButton(
@@ -996,7 +931,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                         _currentHtmlContent != null)
                       Positioned(
                         // Just above the panel while it is shown.
-                        bottom: _isView ? _panelHeightAbove(context) : 0,
+                        bottom: _isView ? novelBottomBarHeightAbove(context) : 0,
                         left: 0,
                         right: 0,
                         child: TtsPlayerBar(
@@ -1097,77 +1032,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     }
   }
 
-  Widget _gestureRightLeft(bool usePageTapZones) {
-    final enableTapPaging = usePageTapZones || !_readerMode.isContinuous;
-    return Row(
-      children: [
-        /// left region
-        Expanded(
-          flex: 2,
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              enableTapPaging ? _onBtnTapped(-100) : _isViewFunction();
-            },
-          ),
-        ),
-
-        /// center region
-        Expanded(
-          flex: 2,
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              _isViewFunction();
-            },
-          ),
-        ),
-
-        /// right region
-        Expanded(
-          flex: 2,
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              enableTapPaging ? _onBtnTapped(100) : _isViewFunction();
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _gestureTopBottom(bool usePageTapZones) {
-    return Column(
-      children: [
-        /// top region
-        Expanded(
-          flex: 2,
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              usePageTapZones ? _onBtnTapped(-100) : _isViewFunction();
-            },
-          ),
-        ),
-
-        /// center region
-        const Expanded(flex: 5, child: SizedBox.shrink()),
-
-        /// bottom region
-        Expanded(
-          flex: 2,
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: () {
-              usePageTapZones ? _onBtnTapped(100) : _isViewFunction();
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _appBar() {
     return ReaderAppBar(
       chapter: chapter,
@@ -1218,550 +1082,83 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     );
   }
 
-  void _showFontSizeBottomSheet(BuildContext context) {
-    showShioriSheet<void>(
-      context,
-      builder: (context) => Consumer(
-        builder: (context, ref, _) {
-          final currentFontSize = ref.watch(novelFontSizeStateProvider);
-          void setSize(int size) {
-            ref.read(novelFontSizeStateProvider.notifier).set(size);
-            setState(() => fontSize = size);
-          }
-
-          return SafeArea(
-            top: false,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ShioriSliderRow(
-                  icon: Symbols.format_size_rounded,
-                  title: context.l10n.font_size,
-                  value: currentFontSize.toDouble().clamp(8, 40),
-                  min: 8,
-                  max: 40,
-                  divisions: 32,
-                  valueLabel: (v) => '${v.round()} px',
-                  stepTooltips: (context.l10n.decrease, context.l10n.increase),
-                  defaultValue: 14,
-                  onReset: () => setSize(14),
-                  resetTooltip: context.l10n.reset,
-                  onChanged: (v) => setSize(v.round()),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    ShioriSpace.s16,
-                    0,
-                    ShioriSpace.s16,
-                    ShioriSpace.s16,
-                  ),
-                  child: Wrap(
-                    spacing: ShioriSpace.s8,
-                    runSpacing: ShioriSpace.s8,
-                    alignment: WrapAlignment.center,
-                    children: [
-                      for (final size in [12, 14, 16, 18, 20, 24, 28])
-                        ChoiceChip(
-                          label: Text('$size'),
-                          selected: currentFontSize == size,
-                          onSelected: (_) => setSize(size),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  /// A chapter button beside the slider, as in the manga reader: on the
-  /// panel, dimmed when there is no chapter that way.
-  Widget _chapterButton({
-    required IconData icon,
-    required String tooltip,
-    required VoidCallback? onPressed,
-  }) {
-    final c = context.shiori.color;
-    return IconButton(
-      tooltip: tooltip,
-      onPressed: onPressed,
-      iconSize: context.shiori.scaled(22),
-      style: IconButton.styleFrom(
-        foregroundColor: c.fg,
-        disabledForegroundColor: c.fg.withValues(alpha: Alphas.disabled),
-        fixedSize: const Size.square(40),
-        minimumSize: const Size.square(40),
-      ),
-      icon: Icon(icon, fill: 1),
-    );
-  }
-
-  /// The page or progress figures either side of the slider, tabular so the
-  /// slider does not shift as they change width; the end one muted.
-  TextStyle _pageLabelStyle(BuildContext context, {bool muted = false}) =>
-      context.shiori.text.meta.copyWith(
-        color: muted ? context.shiori.color.fgMuted : context.shiori.color.fg,
-        fontWeight: FontWeight.w700,
-        fontFeatures: const [FontFeature.tabularFigures()],
-      );
-
-  /// How far above the bottom edge the panel's top sits, plus a margin:
-  /// where the speech bar rests while the panel is shown.
-  double _panelHeightAbove(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final bottomInset = max(
-      mediaQuery.viewPadding.bottom,
-      mediaQuery.systemGestureInsets.bottom,
-    );
-    // The slider row (38 and its padding), the rule, the actions.
-    return bottomInset +
-        ShioriSpace.s8 +
-        38 +
-        ShioriSpace.s8 +
-        1 +
-        context.shiori.density.rowHeight +
-        ShioriSpace.s8;
-  }
-
   Widget _bottomBar(
     BackgroundColor backgroundColor,
     PageMode effectivePageMode,
   ) {
-    bool hasPrevChapter = _readerController.hasPreviousChapter;
-    bool hasNextChapter = _readerController.hasNextChapter;
-    final mediaQuery = MediaQuery.of(context);
-    final bottomInset = max(
-      mediaQuery.viewPadding.bottom,
-      mediaQuery.systemGestureInsets.bottom,
-    );
-    final duration = ShioriMotion.of(context, ShioriMotion.enter);
-    final curve = _isView ? ShioriMotion.enterCurve : ShioriMotion.exitCurve;
-    // The manga reader's panel: one floating card that slides up, the
-    // slider between the chapters, what is changed while reading under it.
-    return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: ReaderChromeGate(
-        shown: _isView,
-        child: AnimatedSlide(
-          offset: _isView ? Offset.zero : const Offset(0, 1),
-          duration: duration,
-          curve: curve,
-          child: AnimatedOpacity(
-            opacity: _isView ? 1 : 0,
-            duration: duration,
-            curve: curve,
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                ShioriSpace.s8,
-                0,
-                ShioriSpace.s8,
-                bottomInset + ShioriSpace.s8,
-              ),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 720),
-                  child: Material(
-                    color: _backgroundColor(context),
-                    borderRadius: BorderRadius.circular(ShioriShape.sheet),
-                    clipBehavior: Clip.antiAlias,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: ShioriSpace.s4,
-                        vertical: ShioriSpace.s4,
-                      ),
-                      child: Row(
-                        children: [
-                          _chapterButton(
-                            icon: Symbols.skip_previous_rounded,
-                            tooltip: context.l10n.previous_chapter,
-                            onPressed: hasPrevChapter
-                                ? () {
-                                    pushReplacementMangaReaderView(
-                                      context: context,
-                                      chapter: _readerController.getPrevChapter(),
-                                    );
-                                  }
-                                : null,
-                          ),
-                          const SizedBox(width: ShioriSpace.s8),
-                          Expanded(
-                            child: SizedBox(
-                              height: 38,
-                              child: StreamBuilder(
-                                stream: _rebuildDetail.stream,
-                                builder: (context, asyncSnapshot) {
-                                  return Consumer(
-                                    builder: (context, ref, child) {
-                                      if (!_readerMode.isContinuous) {
-                                        final pagination = _cachedPagination;
-                                        final isDouble = effectivePageMode ==
-                                            PageMode.doublePage;
-                                        final totalItems = isDouble
-                                            ? (pagination?.spreadCount ?? 1)
-                                            : (pagination?.pageCount ?? 1);
-                                        final currentIndex =
-                                            _currentSpreadIndex.clamp(
-                                              0,
-                                              max(0, totalItems - 1),
-                                            ).toInt();
-                                        final currentLabel = isDouble
-                                            ? (pagination?.spreadLabelForSpread(
-                                                    currentIndex,
-                                                  ) ??
-                                                  '${currentIndex + 1}')
-                                            : '${currentIndex + 1}';
-                                        final totalLabel =
-                                            '${pagination?.pageCount ?? totalItems}';
-                                        final sliderValue = totalItems > 1
-                                            ? (currentIndex / (totalItems - 1))
-                                                  .clamp(0.0, 1.0)
-                                            : 0.0;
-
-                                        return Row(
-                                          children: [
-                                            const SizedBox(width: ShioriSpace.s12),
-                                            Text(
-                                              currentLabel,
-                                              style: _pageLabelStyle(context),
-                                            ),
-                                            Expanded(
-                                              child: SliderTheme(
-                                                data: SliderTheme.of(context)
-                                                    .copyWith(
-                                                      trackHeight: 2.5,
-                                                      thumbShape:
-                                                          const RoundSliderThumbShape(
-                                                            enabledThumbRadius:
-                                                                6.0,
-                                                          ),
-                                                      overlayShape:
-                                                          const RoundSliderOverlayShape(
-                                                            overlayRadius: 12.0,
-                                                          ),
-                                                    ),
-                                                child: Slider(
-                                                  onChanged: (value) {
-                                                    if (totalItems > 1 &&
-                                                        _spreadController
-                                                            .hasClients) {
-                                                      final targetIndex =
-                                                          (value *
-                                                                  (totalItems -
-                                                                      1))
-                                                              .round();
-                                                      _spreadController
-                                                          .jumpToPage(
-                                                            targetIndex,
-                                                          );
-                                                    }
-                                                  },
-                                                  value: sliderValue,
-                                                  min: 0,
-                                                  max: 1,
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              totalLabel,
-                                              style: _pageLabelStyle(context, muted: true),
-                                            ),
-                                            const SizedBox(width: ShioriSpace.s12),
-                                          ],
-                                        );
-                                      }
-
-                                      final scrollPercentage = maxOffset > 0
-                                          ? ((offset / maxOffset) * 100)
-                                                .clamp(0, 100)
-                                                .toInt()
-                                          : 0;
-                                      return Row(
-                                        children: [
-                                          const SizedBox(width: ShioriSpace.s12),
-                                          Text(
-                                            '$scrollPercentage%',
-                                            style: _pageLabelStyle(context),
-                                          ),
-                                          Expanded(
-                                            child: SliderTheme(
-                                              data: SliderTheme.of(context)
-                                                  .copyWith(
-                                                    trackHeight: 2.5,
-                                                    thumbShape:
-                                                        const RoundSliderThumbShape(
-                                                          enabledThumbRadius:
-                                                              6.0,
-                                                        ),
-                                                    overlayShape:
-                                                        const RoundSliderOverlayShape(
-                                                          overlayRadius: 12.0,
-                                                        ),
-                                                  ),
-                                              child: Slider(
-                                                onChanged: (value) {
-                                                  if (_scrollController
-                                                      .hasClients) {
-                                                    _scrollController.jumpTo(
-                                                      _scrollController
-                                                              .position
-                                                              .maxScrollExtent *
-                                                          value,
-                                                    );
-                                                  }
-                                                },
-                                                value: (scrollPercentage / 100)
-                                                    .clamp(0.0, 1.0),
-                                                min: 0,
-                                                max: 1,
-                                              ),
-                                            ),
-                                          ),
-                                          // Time left in the chapter rather
-                                          // than a fixed "100%".
-                                          Text(
-                                            _chapterMinutes == null
-                                                ? '100%'
-                                                : context.l10n.minutes_left(
-                                                    minutesLeft(
-                                                      _chapterMinutes!,
-                                                      scrollPercentage / 100,
-                                                    ),
-                                                  ),
-                                            style: _pageLabelStyle(
-                                              context,
-                                              muted: true,
-                                            ),
-                                          ),
-                                          const SizedBox(width: ShioriSpace.s12),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: ShioriSpace.s8),
-                          _chapterButton(
-                            icon: Symbols.skip_next_rounded,
-                            tooltip: context.l10n.next_chapter,
-                            onPressed: hasNextChapter
-                                ? () {
-                                    pushReplacementMangaReaderView(
-                                      context: context,
-                                      chapter: _readerController.getNextChapter(),
-                                    );
-                                  }
-                                : null,
-                          ),
-                        ],
-                      ),
-                    ),
-                        const Divider(height: 1),
-                        Container(
-                        height: context.shiori.density.rowHeight,
-                        padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            // The chapter list, here within reach as in the
-                            // manga reader's panel.
-                            IconButton(
-                              visualDensity: VisualDensity.compact,
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(
-                                minWidth: context.shiori.density.minTarget,
-                                minHeight: context.shiori.density.minTarget,
-                              ),
-                              onPressed: () => showChapterListPanel(
-                                context,
-                                title: context.l10n.chapters,
-                                chapter: chapter,
-                              ),
-                              icon: const Icon(
-                                Symbols.format_list_numbered_rounded,
-                                size: 22,
-                              ),
-                              tooltip: context.l10n.chapters,
-                            ),
-                            IconButton(
-                              visualDensity: VisualDensity.compact,
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(
-                                minWidth: context.shiori.density.minTarget,
-                                minHeight: context.shiori.density.minTarget,
-                              ),
-                              onPressed: () =>
-                                  _showFontSizeBottomSheet(context),
-                              icon: const Icon(
-                                Symbols.format_size_rounded,
-                                size: 22,
-                              ),
-                              tooltip: context.l10n.font_size,
-                            ),
-                            IconButton(
-                              visualDensity: VisualDensity.compact,
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(
-                                minWidth: context.shiori.density.minTarget,
-                                minHeight: context.shiori.density.minTarget,
-                              ),
-                              onPressed: () {
-                                if (_readerMode.isContinuous) {
-                                  _readerController.setReaderMode(
-                                    ReaderMode.ltr,
-                                  );
-                                  _readerController.setPageMode(
-                                    PageMode.onePage,
-                                  );
-                                  ref
-                                      .read(doublePageAutoStateProvider.notifier)
-                                      .set(false);
-                                  setState(() {
-                                    _readerMode = ReaderMode.ltr;
-                                    _pageMode = PageMode.onePage;
-                                  });
-                                } else if (effectivePageMode ==
-                                    PageMode.onePage) {
-                                  _readerController.setPageMode(
-                                    PageMode.doublePage,
-                                  );
-                                  ref
-                                      .read(doublePageAutoStateProvider.notifier)
-                                      .set(false);
-                                  setState(() {
-                                    _pageMode = PageMode.doublePage;
-                                  });
-                                } else {
-                                  _readerController.setReaderMode(
-                                    ReaderMode.verticalContinuous,
-                                  );
-                                  setState(() {
-                                    _readerMode =
-                                        ReaderMode.verticalContinuous;
-                                  });
-                                }
-                              },
-                              icon: Icon(
-                                _readerMode.isContinuous
-                                    ? Symbols.swap_vert_rounded
-                                    : (effectivePageMode == PageMode.doublePage
-                                          ? Symbols.auto_stories_rounded
-                                          : Symbols.article_rounded),
-                                size: 22,
-                                color: !_readerMode.isContinuous
-                                    ? context.shiori.color.accentInk
-                                    : null,
-                              ),
-                              tooltip: _readerMode.isContinuous
-                                  ? context
-                                      .l10n
-                                      .reading_mode_vertical_continuous
-                                  : (effectivePageMode == PageMode.doublePage
-                                        ? context.l10n.double_page
-                                        : context.l10n.single_page),
-                            ),
-                            if (_ttsSupported)
-                              IconButton(
-                                visualDensity: VisualDensity.compact,
-                                padding: EdgeInsets.zero,
-                                constraints: BoxConstraints(
-                                  minWidth: context.shiori.density.minTarget,
-                                  minHeight: context.shiori.density.minTarget,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _showTts = !_showTts;
-                                  });
-                                },
-                                icon: Icon(
-                                  Symbols.record_voice_over_rounded,
-                                  fill: _showTts ? 1 : 0,
-                                  size: 22,
-                                  color: _showTts
-                                      ? context.shiori.color.accentInk
-                                      : null,
-                                ),
-                                tooltip: context.l10n.tts,
-                              ),
-                            IconButton(
-                              visualDensity: VisualDensity.compact,
-                              padding: EdgeInsets.zero,
-                              constraints: BoxConstraints(
-                                minWidth: context.shiori.density.minTarget,
-                                minHeight: context.shiori.density.minTarget,
-                              ),
-                              onPressed: () async {
-                                bool autoScrollAlreadyFalse =
-                                    _autoScroll.value == false;
-                                if (!autoScrollAlreadyFalse) {
-                                  _autoScroll.value = false;
-                                }
-                                await customDraggableTabBar(
-                                  tabs: [
-                                    Tab(text: context.l10n.reader),
-                                    Tab(text: context.l10n.general),
-                                    if (_ttsSupported)
-                                      Tab(text: context.l10n.tts),
-                                  ],
-                                  children: [
-                                    ReaderSettingsTab(
-                                      readerController: _readerController,
-                                      currentReaderMode: _readerMode,
-                                      onReaderModeChanged: (newMode) {
-                                        setState(() {
-                                          _readerMode = newMode;
-                                        });
-                                      },
-                                      currentPageMode: effectivePageMode,
-                                      onPageModeChanged: (newMode) {
-                                        setState(() {
-                                          _pageMode = newMode;
-                                        });
-                                      },
-                                    ),
-                                    GeneralSettingsTab(
-                                      autoScrollPage: _autoScrollPage,
-                                      autoScroll: _autoScroll,
-                                      readerController: _readerController,
-                                      pageOffset: _pageOffset,
-                                    ),
-                                    if (_ttsSupported) const TtsSettingsTab(),
-                                  ],
-                                  context: context,
-                                  vsync: this,
-                                );
-                                if (!autoScrollAlreadyFalse ||
-                                    _autoScroll.value) {
-                                  if (_autoScrollPage.value &&
-                                      _isContinuousMode()) {
-                                    _autoScroll.value = true;
-                                  }
-                                }
-                              },
-                              icon: const Icon(Symbols.tune_rounded),
-                              tooltip: context.l10n.settings,
-                            ),
-                          ],
-                        ),
-                      ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+    return NovelBottomBar(
+      chapter: chapter,
+      readerController: _readerController,
+      isVisible: _isView,
+      backgroundColor: _backgroundColor,
+      rebuildStream: _rebuildDetail.stream,
+      readerMode: _readerMode,
+      effectivePageMode: effectivePageMode,
+      cachedPagination: () => _cachedPagination,
+      currentSpreadIndex: () => _currentSpreadIndex,
+      spreadController: _spreadController,
+      scrollController: _scrollController,
+      offset: () => offset,
+      maxOffset: () => maxOffset,
+      chapterMinutes: () => _chapterMinutes,
+      ttsSupported: _ttsSupported,
+      showTts: _showTts,
+      onFontSizeChanged: (size) => setState(() => fontSize = size),
+      onLayoutModeCycled: (mode, pageMode) {
+        setState(() {
+          _readerMode = mode;
+          _pageMode = pageMode;
+        });
+      },
+      onToggleTts: () {
+        setState(() {
+          _showTts = !_showTts;
+        });
+      },
+      onOpenSettings: () async {
+        bool autoScrollAlreadyFalse = _autoScroll.value == false;
+        if (!autoScrollAlreadyFalse) {
+          _autoScroll.value = false;
+        }
+        await customDraggableTabBar(
+          tabs: [
+            Tab(text: context.l10n.reader),
+            Tab(text: context.l10n.general),
+            if (_ttsSupported) Tab(text: context.l10n.tts),
+          ],
+          children: [
+            ReaderSettingsTab(
+              readerController: _readerController,
+              currentReaderMode: _readerMode,
+              onReaderModeChanged: (newMode) {
+                setState(() {
+                  _readerMode = newMode;
+                });
+              },
+              currentPageMode: effectivePageMode,
+              onPageModeChanged: (newMode) {
+                setState(() {
+                  _pageMode = newMode;
+                });
+              },
             ),
-          ),
-        ),
-      ),
+            GeneralSettingsTab(
+              autoScrollPage: _autoScrollPage,
+              autoScroll: _autoScroll,
+              readerController: _readerController,
+              pageOffset: _pageOffset,
+            ),
+            if (_ttsSupported) const TtsSettingsTab(),
+          ],
+          context: context,
+          vsync: this,
+        );
+        if (!autoScrollAlreadyFalse || _autoScroll.value) {
+          if (_autoScrollPage.value && _isContinuousMode()) {
+            _autoScroll.value = true;
+          }
+        }
+      },
     );
   }
 
@@ -1779,210 +1176,5 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
       }
     }
-  }
-
-  Color _parseColor(String hex, {Color? fallback}) {
-    try {
-      String hexColor = hex.trim().replaceAll('#', '');
-      if (hexColor.length == 6) {
-        return Color(int.parse('FF$hexColor', radix: 16));
-      } else if (hexColor.length == 8) {
-        return Color(int.parse(hexColor, radix: 16));
-      }
-    } catch (_) {}
-    // shiori: the book's own styles, set against whatever page colour the reader chose
-    return fallback ?? Colors.grey;
-  }
-
-  TextAlign _getTextAlign(NovelTextAlign textAlign) {
-    switch (textAlign) {
-      case NovelTextAlign.left:
-        return TextAlign.left;
-      case NovelTextAlign.center:
-        return TextAlign.center;
-      case NovelTextAlign.right:
-        return TextAlign.right;
-      case NovelTextAlign.block:
-        return TextAlign.justify;
-    }
-  }
-
-  Widget _buildNovelHtmlWidget({
-    required BuildContext context,
-    required String htmlData,
-    required String? fontFamily,
-    required int fontSize,
-    required double lineHeight,
-    required int padding,
-    required TextAlign textAlign,
-    required bool removeExtraSpacing,
-    required Color textColor,
-    required Color backgroundColor,
-    required bool showTts,
-    required ({int paragraph, int wordStart, int wordEnd}) tts,
-  }) {
-    return Html(
-      data: htmlData,
-      style: {
-        "body": Style(
-          fontFamily: fontFamily,
-          fontSize: FontSize(fontSize.toDouble()),
-          color: textColor,
-          backgroundColor: backgroundColor,
-          margin: Margins.zero,
-          padding: HtmlPaddings.all(padding.toDouble()),
-          lineHeight: LineHeight(lineHeight),
-          textAlign: textAlign,
-        ),
-        "p": Style(
-          fontFamily: fontFamily,
-          margin: removeExtraSpacing
-              ? Margins.only(bottom: 4)
-              : Margins.only(bottom: 8),
-          fontSize: FontSize(fontSize.toDouble()),
-          lineHeight: LineHeight(lineHeight),
-          textAlign: textAlign,
-        ),
-        "div": Style(
-          fontFamily: fontFamily,
-          fontSize: FontSize(fontSize.toDouble()),
-          lineHeight: LineHeight(lineHeight),
-          textAlign: textAlign,
-        ),
-        "span": Style(
-          fontFamily: fontFamily,
-          fontSize: FontSize(fontSize.toDouble()),
-          lineHeight: LineHeight(lineHeight),
-        ),
-        "h1, h2, h3, h4, h5, h6": Style(
-          fontFamily: fontFamily,
-          color: textColor,
-          lineHeight: LineHeight(lineHeight),
-          textAlign: textAlign,
-        ),
-        "a": Style(
-          // shiori: the book's own styles, set against whatever page colour the reader chose
-          color: Colors.blue,
-          textDecoration: TextDecoration.underline,
-        ),
-        "img": Style(width: Width(100, Unit.percent), height: Height.auto()),
-        "table": Style(
-          // shiori: the book's own styles, set against whatever page colour the reader chose
-          border: Border.all(color: Colors.grey, width: 1),
-          margin: Margins.symmetric(vertical: 10),
-        ),
-        "td, th": Style(
-          // shiori: the book's own styles, set against whatever page colour the reader chose
-          border: Border.all(color: Colors.grey, width: 0.5),
-          padding: HtmlPaddings.all(8),
-        ),
-        "th": Style(
-          fontWeight: FontWeight.bold,
-          // shiori: the book's own styles, set against whatever page colour the reader chose
-          backgroundColor: Colors.grey.withValues(alpha: 0.2),
-        ),
-        "blockquote": Style(
-          // shiori: the book's own styles, set against whatever page colour the reader chose
-          border: Border(left: BorderSide(color: Colors.grey, width: 4)),
-          padding: HtmlPaddings.only(left: 15),
-          margin: Margins.symmetric(vertical: 10),
-          fontStyle: FontStyle.italic,
-        ),
-        "pre, code": Style(
-          // shiori: the book's own styles, set against whatever page colour the reader chose
-          backgroundColor: Colors.grey.withValues(alpha: 0.2),
-          padding: HtmlPaddings.all(8),
-          fontFamily: 'monospace',
-        ),
-        "hr": Style(margin: Margins.symmetric(vertical: 20)),
-        if (showTts && tts.paragraph >= 0)
-          "[data-tts-active]": Style(
-            backgroundColor: context.shiori.color.accentInk
-                .withValues(alpha: 0.10),
-            border: Border(
-              left: BorderSide(
-                color: context.shiori.color.accentInk,
-                width: 3,
-              ),
-            ),
-            padding: HtmlPaddings.only(left: 8),
-          ),
-        if (showTts && tts.paragraph >= 0)
-          "[data-tts-word]": Style(
-            backgroundColor: context.shiori.color.accentInk
-                .withValues(alpha: 0.35),
-            textDecoration: TextDecoration.underline,
-            textDecorationColor: context.shiori.color.accentInk,
-          ),
-      },
-      extensions: [
-        TagExtension(
-          tagsToExtend: {"img", "source"},
-          builder: (extensionContext) {
-            final element = extensionContext.node as dom.Element;
-            final customWidget = _buildCustomWidgets(element);
-            if (customWidget != null) {
-              return customWidget;
-            }
-            return const SizedBox.shrink();
-          },
-        ),
-      ],
-      onLinkTap: (url, attributes, element) {
-        if (url != null) {
-          context.push("/mangawebview", extra: {'url': url, 'title': url});
-        }
-      },
-    );
-  }
-
-  Widget? _buildCustomWidgets(dom.Element element) {
-    if (epubBook == null) return null;
-
-    if (element.localName == "img" && element.getSrc != null) {
-      final src = element.getSrc!;
-      final fileName = src.split("/").last;
-      final image = epubBook!.images
-          .firstWhereOrNull(
-            (img) =>
-                img.name.endsWith(fileName) ||
-                img.name.contains(fileName.replaceAll('%20', ' ')),
-          )
-          ?.content;
-
-      if (image != null) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s8),
-          child: widgets.Image(
-            errorBuilder: (context, error, stackTrace) => Container(
-              padding: const EdgeInsets.all(ShioriSpace.s8),
-              color: context.shiori.color.error.background,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Symbols.broken_image_rounded,
-                    color: context.shiori.color.error.foreground,
-                  ),
-                  const SizedBox(width: ShioriSpace.s8),
-                  Flexible(
-                    child: Text(
-                      'Image not loaded: $fileName',
-                      style: TextStyle(
-                        color: context.shiori.color.error.foreground,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            fit: BoxFit.contain,
-            image: MemoryImage(image) as ImageProvider,
-          ),
-        );
-      }
-    }
-
-    return null;
   }
 }

@@ -207,5 +207,23 @@ void main() {
             '${violations.join('\n')}',
       );
     });
+
+    test('Phase 3: Reader and Player entry views remain decomposed (< 1800 lines) and no module file exceeds 1800 lines', () {
+      const maxLines = 1800;
+      final oversizedFiles = <String>[];
+      for (final file in _dartFilesIn('lib/modules')) {
+        final lineCount = file.readAsLinesSync().length;
+        if (lineCount > maxLines) {
+          oversizedFiles.add('${p.normalize(file.path)} ($lineCount lines > $maxLines)');
+        }
+      }
+      expect(
+        oversizedFiles,
+        isEmpty,
+        reason:
+            'No UI module file in lib/modules/ should exceed $maxLines lines. Extract sub-widgets or mixins:\n'
+            '${oversizedFiles.join('\n')}',
+      );
+    });
   });
 }
