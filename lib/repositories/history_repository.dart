@@ -13,14 +13,17 @@ class HistoryRepository {
   History? findByMangaId(int mangaId) =>
       isar.historys.where().mangaIdEqualTo(mangaId).findFirstSync();
 
-  bool isEmptyForManga(int? mangaId) =>
-      isar.historys.filter().mangaIdEqualTo(mangaId).isEmptySync();
+  bool isEmptyForManga(int? mangaId) => mangaId == null
+      ? true
+      : isar.historys.where().mangaIdEqualTo(mangaId).isEmptySync();
 
-  History? findFirstByMangaId(int? mangaId) =>
-      isar.historys.filter().mangaIdEqualTo(mangaId).findFirstSync();
+  History? findFirstByMangaId(int? mangaId) => mangaId == null
+      ? null
+      : isar.historys.where().mangaIdEqualTo(mangaId).findFirstSync();
 
-  History? findByChapterId(int? chapterId) =>
-      isar.historys.filter().chapterIdEqualTo(chapterId).findFirstSync();
+  History? findByChapterId(int? chapterId) => chapterId == null
+      ? null
+      : isar.historys.where().chapterIdEqualTo(chapterId).findFirstSync();
 
   History? getLatestHistory([ItemType? itemType]) {
     if (itemType == null) {
@@ -100,8 +103,9 @@ class HistoryRepository {
       .readingTimeSecondsProperty()
       .findAll();
 
-  List<History> getAllByMangaId(int? mangaId) =>
-      isar.historys.filter().mangaIdEqualTo(mangaId).findAllSync();
+  List<History> getAllByMangaId(int? mangaId) => mangaId == null
+      ? const []
+      : isar.historys.where().mangaIdEqualTo(mangaId).findAllSync();
 
   int countByMangaIds(List<int> mangaIds) => isar.historys
       .filter()

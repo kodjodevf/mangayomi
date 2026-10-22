@@ -5,6 +5,7 @@ import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
+import 'package:mangayomi/providers/track_state_providers.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:shiori/shiori.dart';
 

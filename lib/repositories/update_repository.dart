@@ -36,8 +36,9 @@ class UpdateRepository {
   Future<List<Update>> getAllAsync() =>
       isar.updates.filter().idIsNotNull().findAll();
 
-  List<Update> getAllByMangaId(int? mangaId) =>
-      isar.updates.filter().mangaIdEqualTo(mangaId).findAllSync();
+  List<Update> getAllByMangaId(int? mangaId) => mangaId == null
+      ? const []
+      : isar.updates.where().mangaIdEqualTo(mangaId).findAllSync();
 
   /// The updates of [itemType] whose chapter is still unread: what the tab's
   /// count shows, as the navigation badge counts across every type.

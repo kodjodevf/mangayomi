@@ -198,24 +198,21 @@ class MangaRepository {
       .findAll();
 
   List<Manga> getFavorites() =>
-      isar.mangas.filter().favoriteEqualTo(true).findAllSync();
+      isar.mangas.where().favoriteEqualToAnyItemType(true).findAllSync();
 
   int countFavorites() =>
-      isar.mangas.filter().favoriteEqualTo(true).countSync();
+      isar.mangas.where().favoriteEqualToAnyItemType(true).countSync();
 
   List<Manga> getByItemType(ItemType itemType) =>
       isar.mangas.filter().itemTypeEqualTo(itemType).findAllSync();
 
-  Future<int> countFavoritesByItemType(ItemType itemType) => isar.mangas
-      .filter()
-      .favoriteEqualTo(true)
-      .itemTypeEqualTo(itemType)
-      .count();
+  Future<int> countFavoritesByItemType(ItemType itemType) =>
+      isar.mangas.where().favoriteItemTypeEqualTo(true, itemType).count();
 
   Future<List<int>> getCompletedFavoriteIds(ItemType itemType) => isar.mangas
+      .where()
+      .favoriteItemTypeEqualTo(true, itemType)
       .filter()
-      .favoriteEqualTo(true)
-      .itemTypeEqualTo(itemType)
       .statusEqualTo(Status.completed)
       .idProperty()
       .findAll();
@@ -223,33 +220,24 @@ class MangaRepository {
   Future<List<Manga>> getFavoritesNonLocalArchiveByItemType(
     ItemType itemType,
   ) => isar.mangas
+      .where()
+      .favoriteItemTypeEqualTo(true, itemType)
       .filter()
-      .idIsNotNull()
-      .favoriteEqualTo(true)
-      .itemTypeEqualTo(itemType)
       .isLocalArchiveEqualTo(false)
       .findAll();
 
   List<Manga> getFavoritesNonLocalArchive() => isar.mangas
+      .where()
+      .favoriteEqualToAnyItemType(true)
       .filter()
-      .idIsNotNull()
-      .favoriteEqualTo(true)
       .isLocalArchiveEqualTo(false)
       .findAllSync();
 
-  List<Manga> getFavoritesByItemTypeIdNotNull(ItemType itemType) => isar.mangas
-      .filter()
-      .idIsNotNull()
-      .favoriteEqualTo(true)
-      .and()
-      .itemTypeEqualTo(itemType)
-      .findAllSync();
+  List<Manga> getFavoritesByItemTypeIdNotNull(ItemType itemType) =>
+      getFavoritesByItemType(itemType);
 
-  List<Manga> getFavoritesByItemType(ItemType itemType) => isar.mangas
-      .filter()
-      .favoriteEqualTo(true)
-      .itemTypeEqualTo(itemType)
-      .findAllSync();
+  List<Manga> getFavoritesByItemType(ItemType itemType) =>
+      isar.mangas.where().favoriteItemTypeEqualTo(true, itemType).findAllSync();
 
   Stream<List<Manga>> watchCalendarFavorites(ItemType itemType) => isar.mangas
       .where()

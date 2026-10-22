@@ -93,14 +93,15 @@ class TrackRepository {
       .syncIdEqualTo(syncId)
       .findFirstSync();
 
-  List<Track> getAllByMangaId(int? mangaId) =>
-      isar.tracks.filter().mangaIdEqualTo(mangaId).findAllSync();
+  List<Track> getAllByMangaId(int? mangaId) => mangaId == null
+      ? const []
+      : isar.tracks.where().mangaIdEqualToAnyItemType(mangaId).findAllSync();
 
   List<Track> getAll() => isar.tracks.filter().idIsNotNull().findAllSync();
 
   /// How many entries are tracked on the tracker [syncId].
   int countBySyncId(int syncId) =>
-      isar.tracks.filter().syncIdEqualTo(syncId).countSync();
+      isar.tracks.where().syncIdEqualTo(syncId).countSync();
 
   List<Track> getChangedSince(int since) => isar.tracks
       .filter()

@@ -63,8 +63,9 @@ class ChapterRepository {
 
   List<Chapter?> getAllByIds(List<int> ids) => isar.chapters.getAllSync(ids);
 
-  List<Chapter> getAllByMangaId(int? mangaId) =>
-      isar.chapters.filter().mangaIdEqualTo(mangaId).findAllSync();
+  List<Chapter> getAllByMangaId(int? mangaId) => mangaId == null
+      ? const []
+      : isar.chapters.where().mangaIdEqualToAnyIsRead(mangaId).findAllSync();
 
   Chapter? findLatestByMangaId(int? mangaId) => isar.chapters
       .filter()
@@ -72,17 +73,17 @@ class ChapterRepository {
       .sortByDateUploadDesc()
       .findFirstSync();
 
-  int countByMangaId(int? mangaId) =>
-      isar.chapters.filter().mangaIdEqualTo(mangaId).countSync();
+  int countByMangaId(int? mangaId) => mangaId == null
+      ? 0
+      : isar.chapters.where().mangaIdEqualToAnyIsRead(mangaId).countSync();
 
-  Future<int> countByMangaIdAsync(int? mangaId) =>
-      isar.chapters.filter().mangaIdEqualTo(mangaId).count();
+  Future<int> countByMangaIdAsync(int? mangaId) => mangaId == null
+      ? Future.value(0)
+      : isar.chapters.where().mangaIdEqualToAnyIsRead(mangaId).count();
 
-  Future<int> countUnreadByMangaId(int? mangaId) => isar.chapters
-      .filter()
-      .mangaIdEqualTo(mangaId)
-      .isReadEqualTo(false)
-      .count();
+  Future<int> countUnreadByMangaId(int? mangaId) => mangaId == null
+      ? Future.value(0)
+      : isar.chapters.where().mangaIdIsReadEqualTo(mangaId, false).count();
 
   Future<int> countByFavoriteItemType(ItemType itemType) => isar.chapters
       .filter()
