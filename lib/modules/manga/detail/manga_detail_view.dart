@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_quick_filters.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/reader_common/providers/chapter_display.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -14,19 +13,17 @@ import 'package:mangayomi/modules/manga/detail/detail_overflow_actions.dart';
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/tv/tv_anime_detail_view.dart';
-import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_sort_bottom_sheet.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/detail_app_bar.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/detail_banner.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/manga_info_header.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/split_chapters_dialog.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_list_tile_widget.dart';
-import 'package:mangayomi/modules/manga/detail/widgets/chapter_sort_list_tile_widget.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
-import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
@@ -674,247 +671,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   }
 
   void _showDraggableMenu() {
-    final scanlators = ref.read(scanlatorsFilterStateProvider(widget.manga!));
-    final l10n = l10nLocalizations(context)!;
-    customDraggableTabBar(
-      tabs: [
-        Tab(text: l10n.filter),
-        Tab(text: l10n.sort),
-        Tab(text: l10n.display),
-      ],
-      children: [
-        Consumer(
-          builder: (context, ref, child) {
-            return Column(
-              children: [
-                if (!isLocalArchive)
-                  ListTileChapterFilter(
-                    label: l10n.downloaded,
-                    type: ref.watch(
-                      chapterFilterDownloadedStateProvider(
-                        mangaId: widget.manga!.id!,
-                      ),
-                    ),
-                    onTap: () {
-                      ref
-                          .read(
-                            chapterFilterDownloadedStateProvider(
-                              mangaId: widget.manga!.id!,
-                            ).notifier,
-                          )
-                          .update();
-                    },
-                  ),
-                ListTileChapterFilter(
-                  label: widget.itemType != ItemType.anime
-                      ? l10n.unread
-                      : l10n.unwatched,
-                  type: ref.watch(
-                    chapterFilterUnreadStateProvider(
-                      mangaId: widget.manga!.id!,
-                    ),
-                  ),
-                  onTap: () {
-                    ref
-                        .read(
-                          chapterFilterUnreadStateProvider(
-                            mangaId: widget.manga!.id!,
-                          ).notifier,
-                        )
-                        .update();
-                  },
-                ),
-                ListTileChapterFilter(
-                  label: l10n.bookmarked,
-                  type: ref.watch(
-                    chapterFilterBookmarkedStateProvider(
-                      mangaId: widget.manga!.id!,
-                    ),
-                  ),
-                  onTap: () {
-                    ref
-                        .read(
-                          chapterFilterBookmarkedStateProvider(
-                            mangaId: widget.manga!.id!,
-                          ).notifier,
-                        )
-                        .update();
-                  },
-                ),
-                if (scanlators.$1.isNotEmpty)
-                  ShioriSettingRow(
-                    icon: Symbols.group_rounded,
-                    title: l10n.filter_scanlator_groups,
-                    subtitle: scanlators.$2.isEmpty
-                        ? null
-                        : '${scanlators.$1.length - scanlators.$2.length} / ${scanlators.$1.length}',
-                    onTap: () async {
-                      // Ticked is shown; what is stored is what is left out.
-                      final shown = await showShioriMultiChoice<String>(
-                        context,
-                        title: l10n.filter_scanlator_groups,
-                        confirmLabel: l10n.filter,
-                        selected: {
-                          for (final g in scanlators.$1)
-                            if (!scanlators.$2.contains(g)) g,
-                        },
-                        options: [
-                          for (final g in scanlators.$1) ShioriChoice(g, g),
-                        ],
-                      );
-                      if (shown == null) return;
-                      ref
-                          .read(
-                            scanlatorsFilterStateProvider(widget.manga!)
-                                .notifier,
-                          )
-                          .set([
-                            for (final g in scanlators.$1)
-                              if (!shown.contains(g)) g,
-                          ]);
-                    },
-                  ),
-              ],
-            );
-          },
-        ),
-        Consumer(
-          builder: (context, ref, chil) {
-            final reverse = ref
-                .read(
-                  sortChapterStateProvider(mangaId: widget.manga!.id!).notifier,
-                )
-                .isReverse();
-            final scanlators = ref.watch(
-              scanlatorsFilterStateProvider(widget.manga!),
-            );
-            final reverseChapter = ref.watch(
-              sortChapterStateProvider(mangaId: widget.manga!.id!),
-            );
-            return Column(
-              children: [
-                if (scanlators.$1.isNotEmpty)
-                  ListTileChapterSort(
-                    label: _getSortNameByIndex(0, context),
-                    reverse: reverse,
-                    onTap: () {
-                      ref
-                          .read(
-                            sortChapterStateProvider(mangaId: widget.manga!.id!)
-                                .notifier,
-                          )
-                          .set(0);
-                    },
-                    showLeading: reverseChapter.index == 0,
-                  ),
-                for (var i = 1; i < 4; i++)
-                  ListTileChapterSort(
-                    label: _getSortNameByIndex(i, context),
-                    reverse: reverse,
-                    onTap: () {
-                      ref
-                          .read(
-                            sortChapterStateProvider(mangaId: widget.manga!.id!)
-                                .notifier,
-                          )
-                          .set(i);
-                    },
-                    showLeading: reverseChapter.index == i,
-                  ),
-              ],
-            );
-          },
-        ),
-        // How each chapter is named in the list: as the source titles it,
-        // or by its number.
-        Consumer(
-          builder: (context, ref, _) {
-            final byNumber = ref.watch(
-              chapterNumberDisplayProvider.select(
-                (ids) => ids.contains(widget.manga!.id),
-              ),
-            );
-            void set(bool value) => ref
-                .read(chapterNumberDisplayProvider.notifier)
-                .set(widget.manga!.id!, byNumber: value);
-            return Column(
-              children: [
-                _DisplayChoiceRow(
-                  label: l10n.source_title,
-                  selected: !byNumber,
-                  onTap: () => set(false),
-                ),
-                _DisplayChoiceRow(
-                  label: widget.itemType != ItemType.anime
-                      ? l10n.chapter_number
-                      : l10n.episode_number,
-                  selected: byNumber,
-                  onTap: () => set(true),
-                ),
-              ],
-            );
-          },
-        ),
-      ],
+    showChapterFilterSortBottomSheet(
       context: context,
+      ref: ref,
+      manga: widget.manga!,
+      itemType: widget.itemType,
+      isLocalArchive: isLocalArchive,
       vsync: this,
-    );
-  }
-
-  String _getSortNameByIndex(int index, BuildContext context) {
-    final l10n = l10nLocalizations(context)!;
-    if (index == 0) {
-      return l10n.by_scanlator;
-    } else if (index == 1) {
-      return widget.itemType != ItemType.anime
-          ? l10n.by_chapter_number
-          : l10n.by_episode_number;
-    } else if (index == 2) {
-      return l10n.by_upload_date;
-    }
-    return l10n.by_name;
-  }
-}
-
-/// One choice of the Display tab, laid out as the Filter tab's rows: the
-/// same inset, height and icon size, with a radio mark for the checkbox.
-/// Material's radio tiles sat further in than the rows beside them.
-class _DisplayChoiceRow extends StatelessWidget {
-  const _DisplayChoiceRow({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.shiori;
-    final c = tokens.color;
-    return MergeSemantics(
-      child: Semantics(
-        checked: selected,
-        inMutuallyExclusiveGroup: true,
-        child: Material(
-          type: MaterialType.transparency,
-          child: ListTile(
-            dense: true,
-            minTileHeight: tokens.density.minTarget,
-            leading: Icon(
-              selected
-                  ? Symbols.radio_button_checked_rounded
-                  : Symbols.radio_button_unchecked_rounded,
-              color: selected ? c.accentInk : c.fgMuted,
-              size: tokens.scaled(24),
-            ),
-            title: Text(label, style: tokens.text.row.copyWith(color: c.fg)),
-            onTap: onTap,
-          ),
-        ),
-      ),
     );
   }
 }

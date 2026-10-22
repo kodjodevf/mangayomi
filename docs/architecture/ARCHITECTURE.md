@@ -126,7 +126,7 @@ To modernize the codebase safely without regressions, refactoring is organized i
 | **Phase 1** | **Dependency Inversion & Boundary Guard-Rails** | Eliminate all imports of `lib/main.dart` and `lib/modules/` from `lib/repositories/`, `lib/services/`, `lib/eval/`, and `lib/utils/`. Remove `WidgetRef` from repositories and services. Enforce via `architecture_test.dart`. | **Completed** |
 | **Phase 2** | **Purify `lib/utils/` & Confine Direct Isar Access** | Eliminate all `lib/modules/` and `router.dart` imports from `lib/utils/` and `lib/core/`. Confine `lib/repositories/db.dart` strictly to `lib/repositories/` (and isolate bootstrap), and eliminate all `lib/main.dart` imports across `lib/modules/`. | **Completed** |
 | **Phase 3** | **Reader & Player Decomposition** | Decompose `MangaReaderView`, `AnimePlayerView`, and `NovelReaderView` by extracting cohesive Mixins (zoom, prefetch, mpv bridge, track selection, player settings) and HUD/Overlay Widgets (auto-scroll sheet, slider preview, HTML renderer, tap zones, bottom bars, screenshot actions), enforcing a `< 1,800` line ceiling across all `lib/modules/` files. | **Completed** |
-| **Phase 4** | **Cross-Feature UI Consolidation** | Extract duplicated details/settings sheets across Manga, Anime, and Novel into shared media-agnostic components under `lib/modules/widgets/`. | Planned |
+| **Phase 4** | **Cross-Feature UI Consolidation & Monolithic View Decomposition** | Extract generic settings components (`SettingsOptionRow`, `SettingsActionRow`, `SettingsSectionLabel`, `SettingsStepperRow`, `PlayerPillButton`, `SettingsDrilldown`) under `lib/modules/widgets/settings/`, decompose unified anime settings sheet down to ~200 lines, extract desktop anime controls, decompose TV anime detail view (`TvDetailTopBar`, `TvDetailLeftInfo`, `TvDetailEpisodesPanel`), decompose manga detail view by extracting `ChapterFilterSortBottomSheet`, and decouple mobile anime player controls. | **Completed** |
 
 ---
 
@@ -142,3 +142,7 @@ This test suite statically inspects all `.dart` files under `lib/` and fails imm
 1. Any file in `lib/repositories/` imports `lib/modules/`, `lib/services/`, `lib/providers/`, `lib/main.dart`, or `flutter_riverpod`.
 2. Any file in `lib/services/`, `lib/models/`, `lib/eval/`, or `lib/utils/` imports `lib/modules/` or `lib/main.dart`.
 3. Any file in `lib/repositories/` or `lib/services/` declares a dependency on `WidgetRef`.
+4. Any file in `lib/modules/widgets/` imports feature-specific modules (`lib/modules/manga`, `anime`, `novel`, etc.).
+5. Any file in `lib/modules/reader_common/` imports a concrete reader implementation.
+6. Sibling media modules (`manga`, `anime`, `novel`) import each other directly.
+7. Any module file exceeds the 1,400-line ceiling.

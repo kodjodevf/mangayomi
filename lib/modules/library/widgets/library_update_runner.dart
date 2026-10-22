@@ -27,7 +27,7 @@ Future<void> updateLibrary({
   ref.read(libraryUpdateProvider.notifier).begin();
   botToast(
     context.l10n.updating_library("0", "0", "0"),
-    fontSize: 13,
+    fontSize: 13, // shiori: compact toast typography for library update HUD
     second: 30,
     alignY: !context.isTablet ? 0.85 : 1,
   );
@@ -40,7 +40,7 @@ Future<void> updateLibrary({
           if (!context.mounted) return;
           botToast(
             context.l10n.updating_library(done, failed, total),
-            fontSize: 13,
+            fontSize: 13, // shiori: compact toast typography for library update HUD
             second: 10,
             alignY: !context.isTablet ? 0.85 : 1,
             animationDuration: 0,
