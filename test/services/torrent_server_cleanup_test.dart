@@ -36,8 +36,10 @@ void main() {
     test('extracts infohash from magnet URI with urn:btih', () {
       const magnetUrl =
           'magnet:?xt=urn:btih:4c811ca573a16a00f742512f58900609b2de4190&dn=Test';
-      final match =
-          RegExp(r'urn:btih:([a-zA-Z0-9]+)', caseSensitive: false).firstMatch(magnetUrl);
+      final match = RegExp(
+        r'urn:btih:([a-zA-Z0-9]+)',
+        caseSensitive: false,
+      ).firstMatch(magnetUrl);
       expect(match, isNotNull);
       final hash = MTorrentServer.normalizeInfoHash(match!.group(1)!);
       expect(hash, '4c811ca573a16a00f742512f58900609b2de4190');

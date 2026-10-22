@@ -1,28 +1,27 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:archive/archive.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/modules/more/settings/browse/extension_server/android_proxy_server_dialog.dart';
 import 'package:mangayomi/modules/more/settings/browse/extension_server/extension_server_release.dart';
+import 'package:mangayomi/modules/more/settings/browse/extension_server/extension_server_release_service.dart';
 import 'package:mangayomi/modules/more/settings/browse/extension_server/extension_server_utils.dart';
+import 'package:mangayomi/modules/more/settings/browse/extension_server/widgets/android_proxy_group.dart';
+import 'package:mangayomi/modules/more/settings/browse/extension_server/widgets/extension_server_actions_group.dart';
+import 'package:mangayomi/modules/more/settings/browse/extension_server/widgets/extension_server_status_group.dart';
+import 'package:mangayomi/modules/more/settings/browse/extension_server/widgets/ios_runtime_group.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/m_extension_server.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:path/path.dart' as path;
-import 'package:url_launcher/url_launcher.dart';
-
-import '../../../../providers/storage_provider.dart';
+import 'package:shiori/shiori.dart';
 
 class ExtensionServerScreen extends ConsumerStatefulWidget {
   const ExtensionServerScreen({super.key});
@@ -85,13 +84,9 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final androidProxyServer = ref.watch(androidProxyServerStateProvider);
-    final autoStartServer = ref.watch(
-      autoStartExtensionServerOnLaunchStateProvider,
-    );
     final actionLabel = !_isInstalled
         ? l10n.download
         : (_hasUpdateAvailable ? l10n.update_files : l10n.up_to_date);
-    final tokens = context.shiori;
     final actionIcon = _isInstalled && _hasUpdateAvailable
         ? Symbols.system_update_alt_rounded
         : (_isInstalled
@@ -105,6 +100,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
       if (_latestVersion.isNotEmpty && _latestVersion != _installedVersion)
         '→ $_latestVersion',
     ].join(' ');
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -122,134 +118,48 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
                   ? l10n.extension_server_intro_with_jre
                   : l10n.extension_server_intro_ios,
             ),
-            // Where it stands, and the one thing to do about it.
-            ShioriSettingsGroup(
-              title: l10n.mihon_proxy_server,
-              children: [
-                ShioriSettingRow(
-                  icon: _isChecking
-                      ? Symbols.sync_rounded
-                      : (_isInstalled
-                            ? Symbols.check_circle_rounded
-                            : Symbols.error_rounded),
-                  title: statusLabel,
-                  subtitle: versions.isEmpty ? null : versions,
-                  onTap: _isDownloading ? null : _refreshStatus,
-                  trailing: ShioriButton(
-                    onPressed: _canDownloadOrUpdate ? _downloadOrUpdate : null,
-                    icon: actionIcon,
-                    label: actionLabel,
-                  ),
-                ),
-                if (_isDownloading)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      ShioriSpace.s16,
-                      ShioriSpace.s4,
-                      ShioriSpace.s16,
-                      ShioriSpace.s12,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      spacing: ShioriSpace.s8,
-                      children: [
-                        ShioriProgressBar(
-                          value: _totalBytes > 0
-                              ? _receivedBytes / _totalBytes
-                              : null,
-                        ),
-                        Text(
-                          _totalBytes > 0
-                              ? '${(_receivedBytes / 1048576).toStringAsFixed(2)}/${(_totalBytes / 1048576).toStringAsFixed(2)} MB'
-                              : l10n.preparing_download,
-                          style: tokens.caption,
-                        ),
-                      ],
-                    ),
-                  ),
-                ShioriSettingRow(
-                  icon: Symbols.folder_open_rounded,
-                  title: Platform.isIOS
-                      ? l10n.app_install_location
-                      : l10n.install_location,
-                  subtitle: _selectedInstallDirectory.isEmpty
-                      ? l10n.not_configured
-                      : _selectedInstallDirectory,
-                  onTap: _requiresJre && !_isDownloading
-                      ? _chooseInstallDirectory
-                      : null,
-                ),
-                ShioriSettingRow(
-                  icon: Symbols.link_rounded,
-                  title: Platform.isIOS
-                      ? l10n.import_existing_jar
-                      : l10n.detect_files_in_selected_folder,
-                  enabled: !_isDownloading && _canDetectFilesInSelectedFolder,
-                  onTap: _useExistingLocation,
-                ),
-              ],
+            ExtensionServerActionsGroup(
+              isChecking: _isChecking,
+              isInstalled: _isInstalled,
+              statusLabel: statusLabel,
+              versions: versions,
+              isDownloading: _isDownloading,
+              onRefreshStatus: _refreshStatus,
+              canDownloadOrUpdate: _canDownloadOrUpdate,
+              onDownloadOrUpdate: _downloadOrUpdate,
+              actionIcon: actionIcon,
+              actionLabel: actionLabel,
+              totalBytes: _totalBytes,
+              receivedBytes: _receivedBytes,
+              selectedInstallDirectory: _selectedInstallDirectory,
+              requiresJre: _requiresJre,
+              onChooseInstallDirectory: _chooseInstallDirectory,
+              canDetectFilesInSelectedFolder: _canDetectFilesInSelectedFolder,
+              onUseExistingLocation: _useExistingLocation,
             ),
-            // What is on disk, file by file.
-            ShioriSettingsGroup(
-              title: l10n.status,
-              footer: _releaseCheckMessage.isEmpty
-                  ? null
-                  : _releaseCheckMessage,
-              children: [
-                if (_requiresJre)
-                  _fileRow(l10n.jre_executable, _jrePath, _jreExists),
-                _fileRow(
-                  l10n.extension_server_jar,
-                  _extensionServerPath,
-                  _serverExists,
-                ),
-                ShioriSettingRow(
-                  title: l10n.installed_version,
-                  subtitle: _installedVersion.isEmpty
-                      ? l10n.unknown
-                      : _installedVersion,
-                ),
-                ShioriSettingRow(
-                  title: l10n.latest_version,
-                  subtitle: _latestVersion.isEmpty
-                      ? l10n.unknown
-                      : _latestVersion,
-                ),
-              ],
+            ExtensionServerStatusGroup(
+              requiresJre: _requiresJre,
+              jrePath: _jrePath,
+              jreExists: _jreExists,
+              extensionServerPath: _extensionServerPath,
+              serverExists: _serverExists,
+              installedVersion: _installedVersion,
+              latestVersion: _latestVersion,
+              releaseCheckMessage: _releaseCheckMessage,
             ),
           ],
           if (_showAndroidProxySectionOrAdvanced)
-            _androidProxyGroup(
-              androidProxyServer,
+            AndroidProxyGroup(
               title: _showAndroidProxyServerSection
                   ? l10n.android_proxy_server
                   : l10n.advanced,
+              androidProxyServer: androidProxyServer,
             ),
           if (_showAndroidProxyServerSection && Platform.isIOS)
-            ShioriSettingsGroup(
-              title: l10n.zero_interpreter,
-              footer: l10n.zero_interpreter_description,
-              children: [
-                ShioriSwitchRow(
-                  title: l10n.start_server_on_launch,
-                  value: autoStartServer,
-                  onChanged: ref
-                      .read(
-                        autoStartExtensionServerOnLaunchStateProvider.notifier,
-                      )
-                      .set,
-                ),
-                ShioriSettingRow(
-                  icon: _runtimeRunning
-                      ? Symbols.stop_circle_rounded
-                      : Symbols.play_circle_rounded,
-                  title: _runtimeRunning ? l10n.stop : l10n.start,
-                  subtitle:
-                      '${l10n.runtime_status} · ${_runtimeRunning ? l10n.running : l10n.stopped}',
-                  enabled: !_runtimeBusy,
-                  onTap: _toggleRuntime,
-                ),
-              ],
+            IosRuntimeGroup(
+              runtimeRunning: _runtimeRunning,
+              runtimeBusy: _runtimeBusy,
+              onToggleRuntime: _toggleRuntime,
             ),
         ],
       ),
@@ -260,7 +170,6 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
       _showAndroidProxyServerSection ||
       _showDesktopAdvancedMExtensionServerSection;
 
-  /// A line of explanation over the groups.
   Widget _intro(String text) => Padding(
     padding: const EdgeInsets.fromLTRB(
       ShioriSpace.s16,
@@ -270,63 +179,6 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     ),
     child: Text(text, style: context.shiori.caption),
   );
-
-  /// A file the server needs: where it is, and whether it is there.
-  Widget _fileRow(String label, String value, bool exists) {
-    final c = context.shiori.color;
-    return ShioriSettingRow(
-      title: label,
-      subtitle: value.isEmpty ? context.l10n.not_configured : value,
-      trailing: Icon(
-        exists ? Symbols.check_circle_rounded : Symbols.error_rounded,
-        fill: 1,
-        color: exists ? c.completed.foreground : c.offline.foreground,
-      ),
-    );
-  }
-
-  /// The Android proxy's address and where to get it: a group of its own on
-  /// mobile, the Advanced group on desktop.
-  Widget _androidProxyGroup(
-    String androidProxyServer, {
-    required String title,
-  }) {
-    final l10n = context.l10n;
-    final c = context.shiori.color;
-    return ShioriSettingsGroup(
-      title: title,
-      footer: l10n.m_extension_server_description,
-      children: [
-        ShioriSettingRow(
-          icon: Symbols.edit_rounded,
-          title: l10n.set_proxy_address,
-          subtitle: androidProxyServer.isEmpty
-              ? l10n.not_configured
-              : androidProxyServer,
-          trailing: Icon(
-            androidProxyServer.isNotEmpty
-                ? Symbols.check_circle_rounded
-                : Symbols.error_rounded,
-            fill: 1,
-            color: androidProxyServer.isNotEmpty
-                ? c.completed.foreground
-                : c.offline.foreground,
-          ),
-          onTap: () => showAndroidProxyServerDialog(
-            context,
-            proxyServer: androidProxyServer,
-            onConfirm: (server) =>
-                ref.read(androidProxyServerStateProvider.notifier).set(server),
-          ),
-        ),
-        ShioriSettingRow(
-          icon: Symbols.open_in_new_rounded,
-          title: l10n.get_m_extension_server,
-          onTap: _openMExtensionServerRelease,
-        ),
-      ],
-    );
-  }
 
   Future<void> _refreshStatus() async {
     if (!_showExtensionServerSection) {
@@ -352,8 +204,6 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     } on FileSystemException {
       _applyStatusFailure(l10n.could_not_check_proxy_server_updates);
     } catch (error, stack) {
-      // Expected storage failures are handled above. Anything else is still a
-      // genuine app failure and should remain actionable in the reporter.
       CrashReports.record(
         source: 'ExtensionServerStatus',
         error: error,
@@ -377,7 +227,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     try {
       running = await MExtensionServerPlatform(ref).checkLocalServer();
     } catch (_) {
-      // A missing local runtime is a stopped server, not a global app crash.
+      // A missing local runtime is a stopped server.
     }
     if (mounted) setState(() => _runtimeRunning = running);
   }
@@ -408,7 +258,17 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     final bundleZip = File(path.join(tempDir.path, release.assetName));
     final wasInstalled = _isInstalled;
     try {
-      await _downloadReleaseBundle(release, bundleZip, l10n);
+      await ExtensionServerReleaseService.downloadBundle(
+        release: release,
+        destinationZip: bundleZip,
+        onProgress: (received, total) {
+          if (!mounted) return;
+          setState(() {
+            _receivedBytes = received;
+            _totalBytes = total;
+          });
+        },
+      );
       final installDir = await _resolveInstallDirectory();
       await MExtensionServerPlatform(ref).stopServer();
       await _installDownloadedBundle(bundleZip, installDir, l10n);
@@ -422,7 +282,9 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
       }
       botToast(e.toString(), second: 5);
     } finally {
-      await _cleanupTempDirectory(tempDir);
+      if (await tempDir.exists()) {
+        await tempDir.delete(recursive: true);
+      }
       _setDownloadState(isDownloading: false);
     }
   }
@@ -496,25 +358,6 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     botToast(l10n.extension_server_jar_imported);
   }
 
-  Future<void> _extractArchive(File archiveFile, Directory installDir) async {
-    final bytes = await archiveFile.readAsBytes();
-    final archive = ZipDecoder().decodeBytes(bytes);
-    for (final file in archive.files) {
-      final outputPath = path.normalize(path.join(installDir.path, file.name));
-      if (!path.isWithin(installDir.path, outputPath) &&
-          outputPath != installDir.path) {
-        continue;
-      }
-      if (file.isFile) {
-        final extractedFile = File(outputPath);
-        await extractedFile.parent.create(recursive: true);
-        await extractedFile.writeAsBytes(file.content as List<int>);
-      } else {
-        await Directory(outputPath).create(recursive: true);
-      }
-    }
-  }
-
   Future<void> _saveResolvedPaths({
     required String? jrePath,
     required String extensionServerPath,
@@ -547,29 +390,6 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   Future<Directory> _defaultInstallDirectory() async {
     final provider = StorageProvider();
     return provider.getExtensionServerDirectory();
-  }
-
-  Future<ExtensionServerRelease?> _fetchLatestRelease() async {
-    final assetName = extensionServerAssetNameForCurrentPlatform();
-    if (assetName == null) return null;
-    final client = http.Client();
-    try {
-      final response = await _fetchReleaseResponse(client);
-      final releases = jsonDecode(response.body) as List;
-      return _matchReleaseForAsset(releases, assetName);
-    } finally {
-      client.close();
-    }
-  }
-
-  Future<void> _openMExtensionServerRelease() async {
-    final l10n = l10nLocalizations(context)!;
-    if (!await launchUrl(
-      Uri.parse(mExtensionServerReleaseUrl),
-      mode: LaunchMode.externalApplication,
-    )) {
-      botToast(l10n.could_not_launch_apk_bridge_page);
-    }
   }
 
   void _setCheckingState(bool value) {
@@ -626,7 +446,8 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     _ResolvedFileState fileState,
   ) async {
     try {
-      final latestRelease = await _fetchLatestRelease();
+      final latestRelease =
+          await ExtensionServerReleaseService.fetchLatestRelease();
       return _LatestReleaseState(
         latestRelease: latestRelease,
         latestVersion: latestRelease?.version ?? '',
@@ -701,64 +522,13 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     return release;
   }
 
-  Future<void> _downloadReleaseBundle(
-    ExtensionServerRelease release,
-    File bundleZip,
-    dynamic l10n,
-  ) async {
-    final client = http.Client();
-    try {
-      final request = http.Request('GET', Uri.parse(release.downloadUrl));
-      final response = await client.send(request);
-      _throwIfDownloadFailed(response, l10n);
-      _updateTotalBytes(response.contentLength ?? 0);
-      await _writeBundleToFile(response, bundleZip);
-    } finally {
-      client.close();
-    }
-  }
-
-  void _throwIfDownloadFailed(http.StreamedResponse response, dynamic l10n) {
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return;
-    }
-    throw HttpException(l10n.failed_to_download_bundle(response.statusCode));
-  }
-
-  void _updateTotalBytes(int totalBytes) {
-    _totalBytes = totalBytes;
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  Future<void> _writeBundleToFile(
-    http.StreamedResponse response,
-    File bundleZip,
-  ) async {
-    final sink = bundleZip.openWrite();
-    await for (final chunk in response.stream) {
-      sink.add(chunk);
-      _incrementReceivedBytes(chunk.length);
-    }
-    await sink.flush();
-    await sink.close();
-  }
-
-  void _incrementReceivedBytes(int chunkLength) {
-    if (!mounted) return;
-    setState(() {
-      _receivedBytes += chunkLength;
-    });
-  }
-
   Future<void> _installDownloadedBundle(
     File bundleZip,
     Directory installDir,
     dynamic l10n,
   ) async {
     await _prepareInstallDirectory(installDir);
-    await _extractArchive(bundleZip, installDir);
+    await ExtensionServerReleaseService.extractArchive(bundleZip, installDir);
     final resolvedPaths = await _resolvePathsInDirectory(installDir);
     if (!_hasResolvedPaths(resolvedPaths)) {
       throw Exception(l10n.downloaded_bundle_missing_expected_files);
@@ -768,7 +538,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
 
   Future<void> _prepareInstallDirectory(Directory installDir) async {
     if (await installDir.exists()) {
-      await _deleteDirectoryWithRetry(installDir);
+      await ExtensionServerReleaseService.deleteDirectoryWithRetry(installDir);
     }
     await installDir.create(recursive: true);
   }
@@ -809,27 +579,6 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     await _refreshStatus();
   }
 
-  Future<void> _deleteDirectoryWithRetry(Directory directory) async {
-    const retryCount = 5;
-    for (var attempt = 0; attempt < retryCount; attempt++) {
-      try {
-        await directory.delete(recursive: true);
-        break;
-      } catch (e) {
-        if (!Platform.isWindows || attempt == retryCount - 1) {
-          rethrow;
-        }
-        await Future.delayed(Duration(milliseconds: 500 * (attempt + 1)));
-      }
-    }
-  }
-
-  Future<void> _cleanupTempDirectory(Directory tempDir) async {
-    if (await tempDir.exists()) {
-      await tempDir.delete(recursive: true);
-    }
-  }
-
   Future<Directory?> _selectedInstallDirectoryOrNull() async {
     if (_selectedInstallDirectory.isEmpty) {
       return null;
@@ -848,59 +597,6 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
       return null;
     }
     return File(filePath);
-  }
-
-  Future<http.Response> _fetchReleaseResponse(http.Client client) async {
-    final response = await client.get(
-      Uri.parse(extensionServerReleaseApiUrl),
-      headers: const {'Accept': 'application/vnd.github+json'},
-    );
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return response;
-    }
-    throw HttpException(
-      'Failed to check extension server releases (${response.statusCode}).',
-    );
-  }
-
-  ExtensionServerRelease? _matchReleaseForAsset(
-    List releases,
-    String assetName,
-  ) {
-    for (final item in releases) {
-      final release = item as Map<String, dynamic>;
-      if (_isDraftOrPrerelease(release)) {
-        continue;
-      }
-      final matchedRelease = _releaseForAsset(release, assetName);
-      if (matchedRelease != null) {
-        return matchedRelease;
-      }
-    }
-    return null;
-  }
-
-  bool _isDraftOrPrerelease(Map<String, dynamic> release) {
-    return (release['draft'] as bool? ?? false) ||
-        (release['prerelease'] as bool? ?? false);
-  }
-
-  ExtensionServerRelease? _releaseForAsset(
-    Map<String, dynamic> release,
-    String assetName,
-  ) {
-    final assets = (release['assets'] as List?) ?? const [];
-    for (final assetItem in assets) {
-      final asset = assetItem as Map<String, dynamic>;
-      if (asset['name'] == assetName) {
-        return ExtensionServerRelease(
-          version: resolveExtensionServerReleaseVersion(release),
-          assetName: assetName,
-          downloadUrl: asset['browser_download_url'].toString(),
-        );
-      }
-    }
-    return null;
   }
 }
 

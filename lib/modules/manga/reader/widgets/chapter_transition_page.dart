@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/reader_common/reader_chapter_navigation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/manga/detail/providers/chapter_display.dart';
-import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
-import 'package:mangayomi/modules/manga/reader/reader_view.dart';
+import 'package:mangayomi/modules/reader_common/providers/chapter_display.dart';
+import 'package:mangayomi/router/push_router.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_interactive_region.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:shiori/shiori.dart';
@@ -275,7 +275,7 @@ class ChapterTransitionPage extends ConsumerWidget {
 
   /// Opens the next chapter, as reaching the end of this page would.
   void _openNext(BuildContext context) {
-    MangaChapterPageGalleryState.setNavigatingToChapter();
+    ReaderChapterNavigation.markNavigatingToChapter();
     pushReplacementMangaReaderView(context: context, chapter: nextChapter!);
   }
 

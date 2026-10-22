@@ -691,11 +691,7 @@ void main() {
         return p;
       }
 
-      UChapDataPreload makeTransition(
-        Chapter cur,
-        Chapter next,
-        int pageIdx,
-      ) {
+      UChapDataPreload makeTransition(Chapter cur, Chapter next, int pageIdx) {
         return UChapDataPreload.transition(
           currentChapter: cur,
           nextChapter: next,
@@ -704,36 +700,33 @@ void main() {
         );
       }
 
-      test(
-        'Odd-length chapter endpoint does NOT pair with transition page (Issue #1008 Point 3)',
-        () {
-          // Chapter 1: 3 pages (indices 0, 1, 2)
-          // Transition: 1 page (index 3)
-          // Chapter 2: 2 pages (indices 4, 5)
-          final pages = [
-            makePage(ch1, 0, 0),
-            makePage(ch1, 1, 1),
-            makePage(ch1, 2, 2),
-            makeTransition(ch1, ch2, 3),
-            makePage(ch2, 4, 0),
-            makePage(ch2, 5, 1),
-          ];
+      test('Odd-length chapter endpoint does NOT pair with transition page (Issue #1008 Point 3)', () {
+        // Chapter 1: 3 pages (indices 0, 1, 2)
+        // Transition: 1 page (index 3)
+        // Chapter 2: 2 pages (indices 4, 5)
+        final pages = [
+          makePage(ch1, 0, 0),
+          makePage(ch1, 1, 1),
+          makePage(ch1, 2, 2),
+          makeTransition(ch1, ch2, 3),
+          makePage(ch2, 4, 0),
+          makePage(ch2, 5, 1),
+        ];
 
-          final spreads = ReaderPageIndexMath.buildSpreads(pages);
-          expect(spreads.length, 4);
+        final spreads = ReaderPageIndexMath.buildSpreads(pages);
+        expect(spreads.length, 4);
 
-          // Chapter 1 first spread: pages 0 and 1
-          expect(spreads[0], const DoublePageSpread(0, 1));
-          // Chapter 1 last page: page 2 alone (NOT paired with transition!)
-          expect(spreads[1], const DoublePageSpread(2));
-          expect(spreads[1].isSingle, isTrue);
-          // Transition page: index 3 stands alone
-          expect(spreads[2], const DoublePageSpread(3));
-          expect(spreads[2].isSingle, isTrue);
-          // Chapter 2 spread: pages 4 and 5
-          expect(spreads[3], const DoublePageSpread(4, 5));
-        },
-      );
+        // Chapter 1 first spread: pages 0 and 1
+        expect(spreads[0], const DoublePageSpread(0, 1));
+        // Chapter 1 last page: page 2 alone (NOT paired with transition!)
+        expect(spreads[1], const DoublePageSpread(2));
+        expect(spreads[1].isSingle, isTrue);
+        // Transition page: index 3 stands alone
+        expect(spreads[2], const DoublePageSpread(3));
+        expect(spreads[2].isSingle, isTrue);
+        // Chapter 2 spread: pages 4 and 5
+        expect(spreads[3], const DoublePageSpread(4, 5));
+      });
 
       test('Chapter-aware spreads with singleFirst = true', () {
         // Chapter 1: 3 pages (0, 1, 2)
@@ -763,19 +756,16 @@ void main() {
         expect(spreads[4], const DoublePageSpread(5));
       });
 
-      test(
-        'Adjacent chapters without transition page never pair across chapter boundary',
-        () {
-          // Chapter 1: 1 page (0)
-          // Chapter 2: 1 page (1)
-          final pages = [makePage(ch1, 0, 0), makePage(ch2, 1, 0)];
+      test('Adjacent chapters without transition page never pair across chapter boundary', () {
+        // Chapter 1: 1 page (0)
+        // Chapter 2: 1 page (1)
+        final pages = [makePage(ch1, 0, 0), makePage(ch2, 1, 0)];
 
-          final spreads = ReaderPageIndexMath.buildSpreads(pages);
-          expect(spreads.length, 2);
-          expect(spreads[0], const DoublePageSpread(0));
-          expect(spreads[1], const DoublePageSpread(1));
-        },
-      );
+        final spreads = ReaderPageIndexMath.buildSpreads(pages);
+        expect(spreads.length, 2);
+        expect(spreads[0], const DoublePageSpread(0));
+        expect(spreads[1], const DoublePageSpread(1));
+      });
 
       test(
         'ReaderPageIndexMath round-trip indexing with chapter transitions',
@@ -902,60 +892,71 @@ void main() {
         expect(spreads[2], const DoublePageSpread(2));
       });
 
-      test('Continuous chapter mode toggle preserves active page in chapter 2', () {
-        // Ch1: pages 0, 1, 2, 3 (pageIndex in pages: 0, 1, 2, 3; ch-local index: 0, 1, 2, 3)
-        // Transition page: index in pages: 4
-        // Ch2: pages 0, 1, 2, 3 (pageIndex in pages: 5, 6, 7, 8; ch-local index: 0, 1, 2, 3)
-        final pages = [
-          makePage(ch1, 0, 0),
-          makePage(ch1, 1, 1),
-          makePage(ch1, 2, 2),
-          makePage(ch1, 3, 3),
-          makeTransition(ch1, ch2, 4),
-          makePage(ch2, 5, 0),
-          makePage(ch2, 6, 1),
-          makePage(ch2, 7, 2),
-          makePage(ch2, 8, 3),
-        ];
+      test(
+        'Continuous chapter mode toggle preserves active page in chapter 2',
+        () {
+          // Ch1: pages 0, 1, 2, 3 (pageIndex in pages: 0, 1, 2, 3; ch-local index: 0, 1, 2, 3)
+          // Transition page: index in pages: 4
+          // Ch2: pages 0, 1, 2, 3 (pageIndex in pages: 5, 6, 7, 8; ch-local index: 0, 1, 2, 3)
+          final pages = [
+            makePage(ch1, 0, 0),
+            makePage(ch1, 1, 1),
+            makePage(ch1, 2, 2),
+            makePage(ch1, 3, 3),
+            makeTransition(ch1, ch2, 4),
+            makePage(ch2, 5, 0),
+            makePage(ch2, 6, 1),
+            makePage(ch2, 7, 2),
+            makePage(ch2, 8, 3),
+          ];
 
-        // Spreads:
-        // spread 0: pages 0, 1 (Ch1)
-        // spread 1: pages 2, 3 (Ch1)
-        // spread 2: page 4 (Transition)
-        // spread 3: pages 5, 6 (Ch2)
-        // spread 4: pages 7, 8 (Ch2)
-        final mathDouble = ReaderPageIndexMath(
-          isDoublePageActive: true,
-          singleFirst: false,
-          pageCount: pages.length,
-          pages: pages,
-        );
+          // Spreads:
+          // spread 0: pages 0, 1 (Ch1)
+          // spread 1: pages 2, 3 (Ch1)
+          // spread 2: page 4 (Transition)
+          // spread 3: pages 5, 6 (Ch2)
+          // spread 4: pages 7, 8 (Ch2)
+          final mathDouble = ReaderPageIndexMath(
+            isDoublePageActive: true,
+            singleFirst: false,
+            pageCount: pages.length,
+            pages: pages,
+          );
 
-        // User is reading Chapter 2, page 1 (actualIndex in pages: 6, but chapter-local index: 1)
-        const int actualCh2Index = 6;
-        final ch2Page = pages[actualCh2Index];
-        expect(ch2Page.chapter?.id, ch2.id);
-        expect(ch2Page.index, 1); // Chapter-local display index is 1
+          // User is reading Chapter 2, page 1 (actualIndex in pages: 6, but chapter-local index: 1)
+          const int actualCh2Index = 6;
+          final ch2Page = pages[actualCh2Index];
+          expect(ch2Page.chapter?.id, ch2.id);
+          expect(ch2Page.index, 1); // Chapter-local display index is 1
 
-        // 1. Single Page -> Double Page toggle:
-        // Using actualIndex (6) correctly maps to spread 3 (Ch2 pages 5 & 6)
-        final targetSpread = mathDouble.actualToPageViewIndex(actualCh2Index);
-        expect(targetSpread, 3);
-        expect(mathDouble.spreads[targetSpread].firstIndex, 5);
-        expect(mathDouble.spreads[targetSpread].secondIndex, 6);
+          // 1. Single Page -> Double Page toggle:
+          // Using actualIndex (6) correctly maps to spread 3 (Ch2 pages 5 & 6)
+          final targetSpread = mathDouble.actualToPageViewIndex(actualCh2Index);
+          expect(targetSpread, 3);
+          expect(mathDouble.spreads[targetSpread].firstIndex, 5);
+          expect(mathDouble.spreads[targetSpread].secondIndex, 6);
 
-        // 2. Double Page -> Single Page toggle:
-        // From spread 3, converting back to actual index in pages gives 5 (or 6), staying in Ch2
-        final actualFromSpread = mathDouble.pageViewToActualIndex(targetSpread);
-        expect(actualFromSpread, 5);
-        expect(pages[actualFromSpread].chapter?.id, ch2.id);
+          // 2. Double Page -> Single Page toggle:
+          // From spread 3, converting back to actual index in pages gives 5 (or 6), staying in Ch2
+          final actualFromSpread = mathDouble.pageViewToActualIndex(
+            targetSpread,
+          );
+          expect(actualFromSpread, 5);
+          expect(pages[actualFromSpread].chapter?.id, ch2.id);
 
-        // 3. Contrast with buggy behavior (if chapter-local index 1 was passed):
-        // It would have mapped to spread 0 (pages 0 & 1 of Chapter 1!)
-        final buggySpread = mathDouble.actualToPageViewIndex(ch2Page.index!);
-        expect(buggySpread, 0); // Demonstrates the bug jumping back to Chapter 1
-        expect(pages[mathDouble.spreads[buggySpread].firstIndex].chapter?.id, ch1.id);
-      });
+          // 3. Contrast with buggy behavior (if chapter-local index 1 was passed):
+          // It would have mapped to spread 0 (pages 0 & 1 of Chapter 1!)
+          final buggySpread = mathDouble.actualToPageViewIndex(ch2Page.index!);
+          expect(
+            buggySpread,
+            0,
+          ); // Demonstrates the bug jumping back to Chapter 1
+          expect(
+            pages[mathDouble.spreads[buggySpread].firstIndex].chapter?.id,
+            ch1.id,
+          );
+        },
+      );
     },
   );
 }

@@ -10,11 +10,9 @@ import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
 import 'package:mangayomi/modules/anime/widgets/player_overlay_surface.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
+import 'package:mangayomi/modules/anime/widgets/mobile_primary_button_bar.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
-import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
-import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
-import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:mangayomi/services/screen_brightness.dart';
@@ -971,50 +969,4 @@ class _MobileControllerWidgetState
       ],
     );
   }
-}
-
-/// The controls in the middle of the picture: the previous and the next
-/// episode, and play in the accent between them, the one control the eye
-/// goes to. A jump within the episode is a double tap on either side.
-List<Widget> mobilePrimaryButtonBar(
-  BuildContext context,
-  GlobalKey<VideoState> key,
-  AnimeStreamController streamController,
-  VideoController controller, {
-  FocusNode? playPauseFocus,
-}) {
-  final hasPrevEpisode =
-      streamController.getEpisodeIndex().$1 + 1 !=
-      streamController.getEpisodesLength(streamController.getEpisodeIndex().$2);
-  final hasNextEpisode = streamController.getEpisodeIndex().$1 != 0;
-  final isFullScreen = isFullscreen(context);
-  final l10n = context.l10n;
-  void open(Chapter episode) {
-    if (isFullScreen) key.currentState?.exitFullscreen();
-    pushReplacementMangaReaderView(context: context, chapter: episode);
-  }
-
-  return [
-    const Spacer(flex: 2),
-    ShioriOverlayIconButton(
-      onPressed: hasPrevEpisode
-          ? () => open(streamController.getPrevEpisode())
-          : null,
-      tooltip: l10n.previous_episode,
-      size: 30,
-      icon: const Icon(Symbols.skip_previous_rounded, fill: 1),
-    ),
-    const Spacer(),
-    CustomPlayOrPauseButton(controller: controller, focusNode: playPauseFocus),
-    const Spacer(),
-    ShioriOverlayIconButton(
-      onPressed: hasNextEpisode
-          ? () => open(streamController.getNextEpisode())
-          : null,
-      tooltip: l10n.next_episode,
-      size: 30,
-      icon: const Icon(Symbols.skip_next_rounded, fill: 1),
-    ),
-    const Spacer(flex: 2),
-  ];
 }

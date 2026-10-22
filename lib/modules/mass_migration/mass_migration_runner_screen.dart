@@ -1,16 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/mass_migration/models/mass_migration_models.dart';
 import 'package:mangayomi/modules/mass_migration/services/mass_migration_service.dart';
+import 'package:mangayomi/modules/mass_migration/widgets/mass_migration_applying_phase.dart';
+import 'package:mangayomi/modules/mass_migration/widgets/mass_migration_matching_phase.dart';
+import 'package:mangayomi/modules/mass_migration/widgets/mass_migration_resolved_item_card.dart';
+import 'package:mangayomi/modules/mass_migration/widgets/mass_migration_summary_phase.dart';
 import 'package:mangayomi/modules/mass_migration/widgets/mass_migration_widgets.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_detail.dart';
-import 'package:mangayomi/utils/language.dart';
+import 'package:shiori/shiori.dart';
 
 enum _MassMigrationPhase { matching, review, applying, summary }
 
@@ -52,107 +55,33 @@ class _MassMigrationRunnerScreenState
     return Scaffold(
       appBar: AppBar(title: Text(l10n.mass_migration_title)),
       body: switch (_phase) {
-        _MassMigrationPhase.matching => _buildMatchingPhase(context),
+        _MassMigrationPhase.matching => MassMigrationMatchingPhase(
+          sourceGroup: widget.sourceGroup,
+          destinationSource: widget.destinationSource,
+          currentIndex: _currentIndex,
+          resolvedItems: _resolvedItems,
+          isWaitingForNextItem: _isWaitingForNextItem,
+        ),
         _MassMigrationPhase.review => _buildReviewPhase(context),
-        _MassMigrationPhase.applying => _buildApplyingPhase(context),
-        _MassMigrationPhase.summary => _buildSummaryPhase(context),
+        _MassMigrationPhase.applying => MassMigrationApplyingPhase(
+          destinationSource: widget.destinationSource,
+          sourceGroup: widget.sourceGroup,
+          selectedItems: _resolvedItems
+              .where((item) => item.shouldMigrate)
+              .toList(),
+          currentIndex: _currentIndex,
+          isWaitingForNextItem: _isWaitingForNextItem,
+        ),
+        _MassMigrationPhase.summary => MassMigrationSummaryPhase(
+          sourceGroup: widget.sourceGroup,
+          destinationSource: widget.destinationSource,
+          resolvedItems: _resolvedItems,
+          migratedCount: _migratedCount,
+          skippedCount: _skippedCount,
+          failedItems: _failedItems,
+          onExit: _exitMassMigrationFlow,
+        ),
       },
-    );
-  }
-
-  Widget _buildMatchingPhase(BuildContext context) {
-    final l10n = context.l10n;
-    final total = widget.sourceGroup.items.length;
-    final currentItem = widget.sourceGroup.items[_currentIndex];
-    return Padding(
-      padding: const EdgeInsets.all(ShioriSpace.s16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              MassMigrationSourceIcon(source: widget.destinationSource),
-              const SizedBox(width: ShioriSpace.s12),
-              Expanded(
-                child: Text(
-                  l10n.mass_migration_finding_matches(
-                    widget.destinationSource.name ?? '',
-                    languageName(context, widget.destinationSource.lang ?? ''),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: ShioriSpace.s16),
-          ShioriProgressBar(value: (_currentIndex + 1) / total),
-          const SizedBox(height: ShioriSpace.s8),
-          Text(
-            l10n.mass_migration_processing_item(_currentIndex + 1, total),
-            style: context.shiori.caption,
-          ),
-          const SizedBox(height: ShioriSpace.s16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(ShioriSpace.s16),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MassMigrationCover(
-                    libraryItem: currentItem,
-                    source: widget.sourceGroup.source,
-                  ),
-                  const SizedBox(width: ShioriSpace.s12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          currentItem.name ?? l10n.mass_migration_unknown_title,
-                          style: context.shiori.text.section.copyWith(
-                            color: context.shiori.color.fg,
-                          ),
-                        ),
-                        const SizedBox(height: ShioriSpace.s8),
-                        Text(
-                          [
-                            widget.sourceGroup.sourceName,
-                            l10n.mass_migration_chapter_count(
-                              currentItem.chapters.length,
-                            ),
-                          ].join(' · '),
-                          style: context.shiori.caption,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          if (_isWaitingForNextItem) ...[
-            const SizedBox(height: ShioriSpace.s12),
-            Text(
-              l10n.mass_migration_waiting_next_item,
-              style: context.shiori.caption,
-            ),
-          ],
-          if (_resolvedItems.isNotEmpty) ...[
-            const SizedBox(height: ShioriSpace.s16),
-            Text(
-              l10n.mass_migration_matched_so_far(
-                _resolvedItems.where((item) => item.hasMatch).length,
-              ),
-              style: context.shiori.caption,
-            ),
-            Text(
-              l10n.mass_migration_no_match_count(
-                _resolvedItems.where((item) => !item.hasMatch).length,
-              ),
-              style: context.shiori.caption,
-            ),
-          ],
-        ],
-      ),
     );
   }
 
@@ -219,7 +148,15 @@ class _MassMigrationRunnerScreenState
                   horizontal: ShioriSpace.s16,
                   vertical: ShioriSpace.s8,
                 ),
-                child: _buildResolvedItemCard(context, item, index),
+                child: MassMigrationResolvedItemCard(
+                  item: item,
+                  index: index,
+                  sourceGroup: widget.sourceGroup,
+                  destinationSource: widget.destinationSource,
+                  isLoadingCandidate: _loadingCandidateIndexes.contains(index),
+                  onShouldMigrateChanged: (v) => _updateShouldMigrate(index, v),
+                  onPickAnotherCandidate: () => _pickAnotherCandidate(index),
+                ),
               );
             },
           ),
@@ -243,382 +180,6 @@ class _MassMigrationRunnerScreenState
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildApplyingPhase(BuildContext context) {
-    final l10n = context.l10n;
-    final selectedItems = _resolvedItems
-        .where((item) => item.shouldMigrate)
-        .toList();
-    final total = selectedItems.isEmpty ? 1 : selectedItems.length;
-    final currentItem = selectedItems.isEmpty
-        ? null
-        : selectedItems[_currentIndex.clamp(0, selectedItems.length - 1)];
-
-    return Padding(
-      padding: const EdgeInsets.all(ShioriSpace.s16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            l10n.mass_migration_migrating_selected(
-              widget.destinationSource.name ?? '',
-            ),
-            style: context.shiori.text.section.copyWith(
-              color: context.shiori.color.fg,
-            ),
-          ),
-          const SizedBox(height: ShioriSpace.s16),
-          ShioriProgressBar(
-            value: selectedItems.isEmpty ? 1 : (_currentIndex + 1) / total,
-          ),
-          const SizedBox(height: ShioriSpace.s8),
-          Text(
-            selectedItems.isEmpty
-                ? l10n.mass_migration_no_items_selected
-                : l10n.mass_migration_migrating_item(_currentIndex + 1, total),
-            style: context.shiori.caption,
-          ),
-          const SizedBox(height: ShioriSpace.s16),
-          if (currentItem != null)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(ShioriSpace.s16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    MassMigrationCover(
-                      libraryItem: currentItem.sourceItem,
-                      source: widget.sourceGroup.source,
-                    ),
-                    const SizedBox(width: ShioriSpace.s12),
-                    const Icon(Symbols.arrow_forward_rounded, fill: 1),
-                    const SizedBox(width: ShioriSpace.s12),
-                    MassMigrationCover(
-                      remoteItem: currentItem.selectedCandidate,
-                      source: widget.destinationSource,
-                    ),
-                    const SizedBox(width: ShioriSpace.s12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            currentItem.sourceItem.name ??
-                                l10n.mass_migration_unknown_title,
-                            style: context.shiori.text.section.copyWith(
-                              color: context.shiori.color.fg,
-                            ),
-                          ),
-                          const SizedBox(height: ShioriSpace.s8),
-                          Text(
-                            currentItem.selectedCandidate?.name ??
-                                l10n.mass_migration_unknown_match,
-                            style: context.shiori.caption,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          if (_isWaitingForNextItem) ...[
-            const SizedBox(height: ShioriSpace.s12),
-            Text(
-              l10n.mass_migration_waiting_next_migration,
-              style: context.shiori.caption,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSummaryPhase(BuildContext context) {
-    final l10n = context.l10n;
-    final total = widget.sourceGroup.items.length;
-    final matchedCount = _resolvedItems.where((item) => item.hasMatch).length;
-    final tone = _failedItems.isEmpty
-        ? context.shiori.color.completed
-        : context.shiori.color.offline;
-    final successTone = tone.foreground;
-
-    return Container(
-      decoration: BoxDecoration(color: context.shiori.color.ink0),
-      child: ListView(
-        padding: const EdgeInsets.all(ShioriSpace.s16),
-        children: [
-          Container(
-            padding: const EdgeInsets.all(ShioriSpace.s24),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(ShioriShape.card),
-              color: context.shiori.color.ink1,
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: tone.background,
-                    borderRadius: BorderRadius.circular(ShioriShape.card),
-                  ),
-                  child: Icon(
-                    _failedItems.isEmpty
-                        ? Symbols.task_alt_rounded
-                        : Symbols.done_all_rounded,
-                    color: successTone,
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(width: ShioriSpace.s16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.mass_migration_complete,
-                        style: context.shiori.text.seriesTitle.copyWith(
-                          color: context.shiori.color.fg,
-                        ),
-                      ),
-                      const SizedBox(height: ShioriSpace.s8),
-                      Text(
-                        _failedItems.isEmpty
-                            ? l10n.mass_migration_complete_success_message
-                            : l10n.mass_migration_complete_partial_message,
-                        style: context.shiori.text.body.copyWith(
-                          color: context.shiori.color.fg,
-                        ),
-                      ),
-                      const SizedBox(height: ShioriSpace.s12),
-                      Text(
-                        l10n.mass_migration_route_summary(
-                          widget.sourceGroup.sourceName,
-                          widget.destinationSource.name ?? '',
-                        ),
-                        style: context.shiori.caption,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: ShioriSpace.s16),
-          Wrap(
-            spacing: ShioriSpace.s12,
-            runSpacing: ShioriSpace.s12,
-            children: [
-              _SummaryStatCard(
-                label: l10n.mass_migration_processed,
-                value: '$total',
-              ),
-              _SummaryStatCard(
-                label: l10n.mass_migration_matched,
-                value: '$matchedCount',
-              ),
-              _SummaryStatCard(
-                label: l10n.mass_migration_migrated,
-                value: '$_migratedCount',
-              ),
-              _SummaryStatCard(
-                label: l10n.mass_migration_skipped,
-                value: '$_skippedCount',
-              ),
-              _SummaryStatCard(
-                label: l10n.mass_migration_failed,
-                value: '${_failedItems.length}',
-              ),
-            ],
-          ),
-          if (_failedItems.isNotEmpty) ...[
-            const SizedBox(height: ShioriSpace.s24),
-            Container(
-              padding: const EdgeInsets.all(ShioriSpace.s16),
-              decoration: BoxDecoration(
-                color: context.shiori.color.ink1,
-                borderRadius: BorderRadius.circular(ShioriShape.card),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.mass_migration_failed_items,
-                    style: context.shiori.text.section.copyWith(
-                      color: context.shiori.color.fg,
-                    ),
-                  ),
-                  const SizedBox(height: ShioriSpace.s12),
-                  for (final item in _failedItems)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: ShioriSpace.s8),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Symbols.error_outline_rounded,
-                            fill: 1,
-                            size: 18,
-                            color: context.shiori.color.offline.foreground,
-                          ),
-                          const SizedBox(width: ShioriSpace.s8),
-                          Expanded(child: Text(item)),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-          const SizedBox(height: ShioriSpace.s24),
-          ShioriButton(
-            onPressed: _exitMassMigrationFlow,
-            icon: Symbols.exit_to_app_rounded,
-            label: l10n.mass_migration_exit,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildResolvedItemCard(
-    BuildContext context,
-    MassMigrationResolvedItem item,
-    int index,
-  ) {
-    final l10n = context.l10n;
-    final destinationChapterNames =
-        item.destinationPreview?.chapters
-            ?.map(
-              (chapter) => chapter.name ?? l10n.mass_migration_unknown_chapter,
-            )
-            .toList() ??
-        const <String>[];
-    final sourceChapterNames = item.sourceItem.chapters
-        .map((chapter) => chapter.name ?? l10n.mass_migration_unknown_chapter)
-        .toList();
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(ShioriSpace.s16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MassMigrationCover(
-                  libraryItem: item.sourceItem,
-                  source: widget.sourceGroup.source,
-                ),
-                const SizedBox(width: ShioriSpace.s12),
-                const Icon(Symbols.arrow_forward_rounded, fill: 1),
-                const SizedBox(width: ShioriSpace.s12),
-                MassMigrationCover(
-                  remoteItem: item.selectedCandidate,
-                  source: widget.destinationSource,
-                ),
-                const SizedBox(width: ShioriSpace.s12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.sourceItem.name ??
-                            l10n.mass_migration_unknown_title,
-                        style: context.shiori.text.section.copyWith(
-                          color: context.shiori.color.fg,
-                        ),
-                      ),
-                      const SizedBox(height: ShioriSpace.s8),
-                      Text(
-                        item.hasMatch
-                            ? (item.selectedCandidate?.name ??
-                                  l10n.mass_migration_unknown_match)
-                            : l10n.mass_migration_no_destination_match,
-                        style: context.shiori.text.row.copyWith(
-                          color: item.hasMatch
-                              ? context.shiori.color.fg
-                              : context.shiori.color.fgMuted,
-                        ),
-                      ),
-                      const SizedBox(height: ShioriSpace.s8),
-                      Text(
-                        [
-                          l10n.mass_migration_source_chapter_count(
-                            item.sourceItem.chapters.length,
-                          ),
-                          l10n.mass_migration_destination_chapter_count(
-                            destinationChapterNames.length,
-                          ),
-                          if ((item.searchResult.usedQuery ?? '').isNotEmpty)
-                            l10n.mass_migration_query(
-                              item.searchResult.usedQuery!,
-                            ),
-                        ].join(' · '),
-                        style: context.shiori.caption,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            if ((item.errorMessage ?? '').isNotEmpty) ...[
-              const SizedBox(height: ShioriSpace.s8),
-              Text(
-                item.errorMessage!,
-                style: context.shiori.text.meta.copyWith(
-                  color: context.shiori.color.error.foreground,
-                ),
-              ),
-            ],
-            const SizedBox(height: ShioriSpace.s12),
-            Row(
-              children: [
-                if (item.canMigrate)
-                  Flexible(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 260),
-                      child: ShioriSegmentedControl<bool>(
-                        segments: [
-                          ShioriSegment(
-                            value: false,
-                            label: l10n.mass_migration_skip,
-                          ),
-                          ShioriSegment(value: true, label: l10n.migrate),
-                        ],
-                        selected: item.shouldMigrate,
-                        onSelected: (v) => _updateShouldMigrate(index, v),
-                      ),
-                    ),
-                  ),
-                const Spacer(),
-                if (item.searchResult.candidates.length > 1)
-                  ShioriButton.quiet(
-                    onPressed: _loadingCandidateIndexes.contains(index)
-                        ? null
-                        : () => _pickAnotherCandidate(index),
-                    label: _loadingCandidateIndexes.contains(index)
-                        ? l10n.mass_migration_loading
-                        : l10n.mass_migration_choose_another_result,
-                  ),
-              ],
-            ),
-            const SizedBox(height: ShioriSpace.s8),
-            MassMigrationChapterSection(
-              title: l10n.mass_migration_source_chapters,
-              chapters: sourceChapterNames,
-            ),
-            MassMigrationChapterSection(
-              title: l10n.mass_migration_destination_chapters,
-              chapters: destinationChapterNames,
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -790,41 +351,5 @@ class _MassMigrationRunnerScreenState
       navigator.pop();
       pops++;
     }
-  }
-}
-
-/// One figure of the summary: the number large and tabular, its label
-/// under it, as on the statistics screen.
-class _SummaryStatCard extends StatelessWidget {
-  const _SummaryStatCard({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final tokens = context.shiori;
-    return Container(
-      width: 156,
-      padding: const EdgeInsets.all(ShioriSpace.s16),
-      decoration: BoxDecoration(
-        color: tokens.color.ink1,
-        borderRadius: BorderRadius.circular(ShioriShape.card),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: ShioriSpace.s4,
-        children: [
-          Text(
-            value,
-            style: tokens.text.seriesTitle.copyWith(
-              color: tokens.color.fg,
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
-          ),
-          Text(label, style: tokens.caption),
-        ],
-      ),
-    );
   }
 }

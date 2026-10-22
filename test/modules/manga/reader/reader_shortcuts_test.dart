@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
-import 'package:mangayomi/modules/manga/reader/mixins/reader_gestures.dart';
+import 'package:mangayomi/modules/reader_common/mixins/reader_gestures.dart';
 import 'package:shiori/shiori.dart';
 
 void main() {

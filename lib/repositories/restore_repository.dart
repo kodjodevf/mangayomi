@@ -1,4 +1,4 @@
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 
 // Restore's transactions are large, restore-specific bulk operations (clear +

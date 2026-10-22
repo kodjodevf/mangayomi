@@ -129,12 +129,14 @@ void main() {
       service.dispose();
     });
 
-    test('storage full API supports delete, clearAll, and getAllKeys', () async {
-      final source = Source()
-        ..id = 999
-        ..name = 'StorageSource'
-        ..sourceCodeLanguage = SourceCodeLanguage.lnreader
-        ..sourceCode = '''
+    test(
+      'storage full API supports delete, clearAll, and getAllKeys',
+      () async {
+        final source = Source()
+          ..id = 999
+          ..name = 'StorageSource'
+          ..sourceCodeLanguage = SourceCodeLanguage.lnreader
+          ..sourceCode = '''
           const storageLib = require("@libs/storage");
           const storage = storageLib.storage;
           storage.set("k1", "val1");
@@ -154,14 +156,17 @@ void main() {
           };
         ''';
 
-      final service = LNReaderExtensionService(source);
-      service.getHeaders(); // triggers _init
-      final res = service.runtime.evaluate('JSON.stringify(extension)').stringResult;
-      expect(res, contains('val1'));
-      expect(res, contains('"afterClear":[]'));
+        final service = LNReaderExtensionService(source);
+        service.getHeaders(); // triggers _init
+        final res = service.runtime
+            .evaluate('JSON.stringify(extension)')
+            .stringResult;
+        expect(res, contains('val1'));
+        expect(res, contains('"afterClear":[]'));
 
-      service.dispose();
-    });
+        service.dispose();
+      },
+    );
 
     test('@libs/fetch exports fetchText and fetchApi', () async {
       final source = Source()
@@ -178,7 +183,9 @@ void main() {
 
       final service = LNReaderExtensionService(source);
       service.getHeaders();
-      final res = service.runtime.evaluate('JSON.stringify(extension)').stringResult;
+      final res = service.runtime
+          .evaluate('JSON.stringify(extension)')
+          .stringResult;
       expect(res, contains('"hasFetchApi":true'));
       expect(res, contains('"hasFetchText":true'));
 
@@ -201,7 +208,9 @@ void main() {
 
       final service = LNReaderExtensionService(source);
       service.getHeaders();
-      final res = service.runtime.evaluate('JSON.stringify(extension)').stringResult;
+      final res = service.runtime
+          .evaluate('JSON.stringify(extension)')
+          .stringResult;
       expect(res, contains('"stub":"STUB"'));
       expect(res, contains('"inactive":"Inactive"'));
       expect(res, contains('"finished":"Publishing Finished"'));
@@ -255,12 +264,14 @@ void main() {
       service.dispose();
     });
 
-    test('getSourcePreferences maps LNReader pluginSettings correctly', () async {
-      final source = Source()
-        ..id = 444
-        ..name = 'SettingsNovelSource'
-        ..sourceCodeLanguage = SourceCodeLanguage.lnreader
-        ..sourceCode = '''
+    test(
+      'getSourcePreferences maps LNReader pluginSettings correctly',
+      () async {
+        final source = Source()
+          ..id = 444
+          ..name = 'SettingsNovelSource'
+          ..sourceCodeLanguage = SourceCodeLanguage.lnreader
+          ..sourceCode = '''
           exports.default = {
             pluginSettings: {
               enableRomance: {
@@ -295,43 +306,55 @@ void main() {
           };
         ''';
 
-      final service = LNReaderExtensionService(source);
-      final prefs = service.getSourcePreferences();
+        final service = LNReaderExtensionService(source);
+        final prefs = service.getSourcePreferences();
 
-      expect(prefs.length, 4);
+        expect(prefs.length, 4);
 
-      final switchPref = prefs.firstWhere((p) => p.key == 'enableRomance');
-      expect(switchPref.switchPreferenceCompat, isNotNull);
-      expect(switchPref.switchPreferenceCompat!.title, 'Enable Romance Filter');
-      expect(switchPref.switchPreferenceCompat!.value, true);
+        final switchPref = prefs.firstWhere((p) => p.key == 'enableRomance');
+        expect(switchPref.switchPreferenceCompat, isNotNull);
+        expect(
+          switchPref.switchPreferenceCompat!.title,
+          'Enable Romance Filter',
+        );
+        expect(switchPref.switchPreferenceCompat!.value, true);
 
-      final selectPref = prefs.firstWhere((p) => p.key == 'theme');
-      expect(selectPref.listPreference, isNotNull);
-      expect(selectPref.listPreference!.title, 'Reader Theme');
-      expect(selectPref.listPreference!.entries, ['Light Theme', 'Dark Theme']);
-      expect(selectPref.listPreference!.entryValues, ['light', 'dark']);
-      expect(selectPref.listPreference!.valueIndex, 1);
+        final selectPref = prefs.firstWhere((p) => p.key == 'theme');
+        expect(selectPref.listPreference, isNotNull);
+        expect(selectPref.listPreference!.title, 'Reader Theme');
+        expect(selectPref.listPreference!.entries, [
+          'Light Theme',
+          'Dark Theme',
+        ]);
+        expect(selectPref.listPreference!.entryValues, ['light', 'dark']);
+        expect(selectPref.listPreference!.valueIndex, 1);
 
-      final checkPref = prefs.firstWhere((p) => p.key == 'tags');
-      expect(checkPref.multiSelectListPreference, isNotNull);
-      expect(checkPref.multiSelectListPreference!.title, 'Select Tags');
-      expect(checkPref.multiSelectListPreference!.entries, ['Isekai', 'Fantasy']);
-      expect(checkPref.multiSelectListPreference!.values, ['isekai']);
+        final checkPref = prefs.firstWhere((p) => p.key == 'tags');
+        expect(checkPref.multiSelectListPreference, isNotNull);
+        expect(checkPref.multiSelectListPreference!.title, 'Select Tags');
+        expect(checkPref.multiSelectListPreference!.entries, [
+          'Isekai',
+          'Fantasy',
+        ]);
+        expect(checkPref.multiSelectListPreference!.values, ['isekai']);
 
-      final textPref = prefs.firstWhere((p) => p.key == 'apiKey');
-      expect(textPref.editTextPreference, isNotNull);
-      expect(textPref.editTextPreference!.title, 'Custom API Key');
-      expect(textPref.editTextPreference!.value, 'abc-123');
+        final textPref = prefs.firstWhere((p) => p.key == 'apiKey');
+        expect(textPref.editTextPreference, isNotNull);
+        expect(textPref.editTextPreference!.title, 'Custom API Key');
+        expect(textPref.editTextPreference!.value, 'abc-123');
 
-      service.dispose();
-    });
+        service.dispose();
+      },
+    );
 
-    test('storage.get falls back to pluginSettings default if not overridden', () async {
-      final source = Source()
-        ..id = 333
-        ..name = 'FallbackSource'
-        ..sourceCodeLanguage = SourceCodeLanguage.lnreader
-        ..sourceCode = '''
+    test(
+      'storage.get falls back to pluginSettings default if not overridden',
+      () async {
+        final source = Source()
+          ..id = 333
+          ..name = 'FallbackSource'
+          ..sourceCodeLanguage = SourceCodeLanguage.lnreader
+          ..sourceCode = '''
           const storage = require("@libs/storage").storage;
           exports.default = {
             pluginSettings: {
@@ -345,13 +368,16 @@ void main() {
           };
         ''';
 
-      final service = LNReaderExtensionService(source);
-      service.getHeaders(); // triggers _init
-      final res = service.runtime.evaluate('extension.getServerUrl()').stringResult;
-      expect(res, 'https://fallback.domain.com');
+        final service = LNReaderExtensionService(source);
+        service.getHeaders(); // triggers _init
+        final res = service.runtime
+            .evaluate('extension.getServerUrl()')
+            .stringResult;
+        expect(res, 'https://fallback.domain.com');
 
-      service.dispose();
-    });
+        service.dispose();
+      },
+    );
   });
 }
 

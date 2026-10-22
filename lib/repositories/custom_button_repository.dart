@@ -1,5 +1,5 @@
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 

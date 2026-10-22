@@ -7,9 +7,9 @@ import 'package:shiori/shiori.dart';
 
 void main() {
   test('the Anime4K keys are listed only with the mpv config on', () {
-    bool listsShaders(bool shaders) => playerShortcutKeys(
-      shaders: shaders,
-    ).any((entry) => entry.$1 == PlayerShortcut.shaders);
+    bool listsShaders(bool shaders) =>
+        playerShortcutKeys(shaders: shaders)
+            .any((entry) => entry.$1 == PlayerShortcut.shaders);
     expect(listsShaders(false), isFalse);
     expect(listsShaders(true), isTrue);
   });

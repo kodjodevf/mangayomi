@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/mass_migration/services/mass_migration_service.dart';
-import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
+import 'package:mangayomi/modules/library/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/repositories/category_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
@@ -212,8 +212,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                         [
                           getMangaStatusName(widget.manga.status, context),
                           if (!isLocalArchive)
-                            '${widget.manga.source!} '
-                                '(${widget.manga.lang!.toUpperCase()})',
+                            '${widget.manga.source!} (${widget.manga.lang!.toUpperCase()})',
                         ].join(' · '),
                         style: meta,
                       ),

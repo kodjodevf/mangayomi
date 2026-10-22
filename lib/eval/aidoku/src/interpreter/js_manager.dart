@@ -6,7 +6,6 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart'
     as flutter_inappwebview;
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:http/http.dart' as http;
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/src/rust/aidoku_wasm/host_js.dart' as rust_js;
 
@@ -186,10 +185,7 @@ class AidokuJsManager {
             request.contextId,
             () => _AidokuWebviewContext(),
           );
-          await webview.loadHtml(
-            request.script,
-            baseUrlData: request.extra,
-          );
+          await webview.loadHtml(request.script, baseUrlData: request.extra);
           return const rust_js.AidokuJsResponse(
             success: true,
             result: null,
@@ -437,8 +433,7 @@ class _AidokuWebviewContext {
         final cookies = await cookieManager.getCookies(
           url: flutter_inappwebview.WebUri(url!),
         );
-        final cookieStr =
-            cookies.map((c) => '${c.name}=${c.value}').join('; ');
+        final cookieStr = cookies.map((c) => '${c.name}=${c.value}').join('; ');
         return cookieStr;
       } catch (_) {}
     }

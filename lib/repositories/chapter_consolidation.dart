@@ -9,7 +9,6 @@ import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
-import 'package:mangayomi/services/downloaded_chapter.dart';
 import 'package:path/path.dart' as p;
 
 // Published only after commit, while the shared write queue is still held.
@@ -85,6 +84,8 @@ Future<ChapterConsolidation> consolidateChapterDuplicates(
   required String mangaName,
   required int now,
   required bool Function(int) isScheduled,
+  Future<List<Directory>> Function(Chapter, {Settings? settings})?
+  resolveDirectories,
 }) async {
   final byId = {for (final c in chapters) c.id!: c};
   final downloads = {
@@ -115,10 +116,10 @@ Future<ChapterConsolidation> consolidateChapterDuplicates(
       final first = chapters.first;
       await first.manga.load();
       final entries = <String>{};
-      for (final dir in await downloadedMangaDirectories(
-        first,
-        settings: settings ?? Settings(),
-      )) {
+      final dirs = resolveDirectories != null
+          ? await resolveDirectories(first, settings: settings ?? Settings())
+          : const <Directory>[];
+      for (final dir in dirs) {
         try {
           entries.addAll(
             dir

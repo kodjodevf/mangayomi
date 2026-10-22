@@ -3,7 +3,6 @@
 // local rows -> wire, instead of wire -> local rows.
 import 'dart:math';
 
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -13,7 +12,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/sync_preference.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/update.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
+import 'package:mangayomi/providers/sync_providers.dart';
 import 'package:mangayomi/repositories/category_repository.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
@@ -254,7 +253,7 @@ Map<String, dynamic>? _mangaToWire(Manga m, {int? forcedUpdatedAt}) {
     'customCoverFromTracker': m.customCoverFromTracker,
     'smartUpdateDays': m.smartUpdateDays,
     'categoryClientIds': (m.categories ?? [])
-        .map((id) => isar.categorys.getSync(id)?.clientId)
+        .map((id) => categoryRepository.findById(id)?.clientId)
         .nonNulls
         .toList(),
     'updatedAt': forcedUpdatedAt ?? m.updatedAt ?? 0,

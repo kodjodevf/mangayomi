@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 import 'package:mangayomi/utils/error_toast.dart';

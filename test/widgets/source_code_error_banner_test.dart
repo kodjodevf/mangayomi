@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
-import 'package:mangayomi/modules/widgets/source_code_error_banner.dart';
+import 'package:mangayomi/modules/browse/widgets/source_code_error_banner.dart';
 import 'package:mangayomi/services/get_filter_list.dart';
 import 'package:mangayomi/services/source_code_errors.dart';
 import 'package:shiori/shiori.dart';

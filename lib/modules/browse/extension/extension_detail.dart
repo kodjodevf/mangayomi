@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/widgets/source_code_error_banner.dart';
+import 'package:mangayomi/modules/browse/widgets/source_code_error_banner.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +13,7 @@ import 'package:mangayomi/modules/browse/extension/providers/extension_preferenc
 import 'package:mangayomi/modules/browse/extension/widgets/source_preference_widget.dart';
 import 'package:mangayomi/modules/browse/sources/widgets/source_list_tile.dart';
 import 'package:mangayomi/modules/widgets/entry_badge_chip.dart';
-import 'package:mangayomi/modules/widgets/extension_server_warning_banner.dart';
+import 'package:mangayomi/modules/browse/widgets/extension_server_warning_banner.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_source_preference.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
@@ -143,7 +143,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                       destructive: true,
                     );
                     if (!confirmed || !context.mounted) return;
-                    sourceRepository.uninstall(ref, source);
+                    sourceRepository.uninstall(source);
                     Navigator.pop(context);
                   },
                 ),

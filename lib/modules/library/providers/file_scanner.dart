@@ -5,9 +5,10 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
-import 'package:mangayomi/modules/library/providers/local_directory_resolver.dart';
+import 'package:mangayomi/services/local_directory_resolver.dart';
+import 'package:mangayomi/services/local_folders.dart';
 import 'package:mangayomi/modules/library/providers/local_file_classifier.dart';
-import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
+import 'package:mangayomi/services/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/localized_message.dart';
@@ -15,12 +16,12 @@ import 'package:path/path.dart' as p; // For manipulating file system paths
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart'; // Has Manga model and ItemType enum
 import 'package:mangayomi/models/chapter.dart'; // Has Chapter model with archivePath
-import 'package:mangayomi/providers/storage_provider.dart'; // Provides storage directory selection
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:shiori/shiori.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart'; // Annotations for code generation
+export 'package:mangayomi/services/local_folders.dart';
 part 'file_scanner.g.dart';
 
 @riverpod
@@ -28,7 +29,7 @@ class LocalFoldersState extends _$LocalFoldersState {
   @override
   List<LocalFolder> build() {
     final settings = settingsRepository.current;
-    return _normalizeLocalFolders(
+    return normalizeLocalFolders(
       settings.namedLocalFolders ??
           settings.localFolders
               ?.map((e) => LocalFolder.fromPath(path: e))
@@ -40,8 +41,8 @@ class LocalFoldersState extends _$LocalFoldersState {
   void set(List<LocalFolder> value) {
     final currentDownloadFolderName =
         settingsRepository.current.downloadLocalFolderName;
-    state = _normalizeLocalFolders(value);
-    final downloadFolderName = _resolveDownloadFolderName(
+    state = normalizeLocalFolders(value);
+    final downloadFolderName = resolveDownloadFolderName(
       currentDownloadFolderName,
       [LocalFolder(name: 'local'), ...state],
     );
@@ -142,7 +143,7 @@ Future<void> _scanDirectory(
     );
   }
   localFolder = LocalFolder(name: localFolder.name, path: resolvedDirPath);
-  localFolders = _replaceLocalFolder(localFolders, dirPath, localFolder);
+  localFolders = replaceLocalFolder(localFolders, dirPath, localFolder);
   // Don't do anything if /local doesn't exist
   if (!resolvedDirectory.probe.exists) {
     debugPrint(
@@ -319,7 +320,11 @@ Future<void> _scanDirectory(
           coverBytes = await _readMangaFolderCover(ref, subDirs, files);
         }
       } catch (e) {
-        botToast(localizedMessage((l10n) => l10n.error_reading_cover_image(e)), tone: ShioriToastTone.error, second: 4);
+        botToast(
+          localizedMessage((l10n) => l10n.error_reading_cover_image(e)),
+          tone: ShioriToastTone.error,
+          second: 4,
+        );
       }
     } else if (itemType == ItemType.manga && manga.customCoverImage == null) {
       coverBytes = await _readMangaFolderCover(ref, subDirs, files);
@@ -353,7 +358,11 @@ Future<void> _scanDirectory(
             : Status.unknown;
         manga.lastUpdate = dateNow;
       } catch (e) {
-        botToast(localizedMessage((l10n) => l10n.error_reading_metadata(e)), tone: ShioriToastTone.error, second: 4);
+        botToast(
+          localizedMessage((l10n) => l10n.error_reading_metadata(e)),
+          tone: ShioriToastTone.error,
+          second: 4,
+        );
       }
     }
 
@@ -398,7 +407,11 @@ Future<void> _scanDirectory(
     // Save all new and changed items to the library
     await mangaRepository.putAll(changedMangas);
   } catch (e) {
-    botToast("Database write error. Manga/Anime couldn't be saved: $e", tone: ShioriToastTone.error, second: 4);
+    botToast(
+      "Database write error. Manga/Anime couldn't be saved: $e",
+      tone: ShioriToastTone.error,
+      second: 4,
+    );
   }
 
   // If new Mangas have been added (no Id to save Chapters)
@@ -500,9 +513,13 @@ Future<void> _scanDirectory(
       await mangaRepository.putAll(processedMangas);
     }
   } catch (e) {
-    botToast(localizedMessage(
+    botToast(
+      localizedMessage(
         (l10n) => l10n.error_saving_chapter_episode_to_library(e),
-      ), tone: ShioriToastTone.error, second: 4);
+      ),
+      tone: ShioriToastTone.error,
+      second: 4,
+    );
   }
   try {
     if (chaptersToSave.isNotEmpty) {
@@ -524,7 +541,11 @@ Future<void> _scanDirectory(
       });
     }
   } catch (e) {
-    botToast("Database write error. Manga/Anime couldn't be saved: $e", tone: ShioriToastTone.error, second: 4);
+    botToast(
+      "Database write error. Manga/Anime couldn't be saved: $e",
+      tone: ShioriToastTone.error,
+      second: 4,
+    );
   }
 }
 
@@ -556,9 +577,11 @@ Future<Uint8List?> _readMangaFolderCover(
     try {
       return await imageFile.readAsBytes();
     } catch (e) {
-      botToast(localizedMessage(
-          (l10n) => l10n.error_reading_chapter_cover_image(e),
-        ), tone: ShioriToastTone.error, second: 4);
+      botToast(
+        localizedMessage((l10n) => l10n.error_reading_chapter_cover_image(e)),
+        tone: ShioriToastTone.error,
+        second: 4,
+      );
     }
   }
 
@@ -571,9 +594,11 @@ Future<Uint8List?> _readMangaFolderCover(
       );
       return data.$3;
     } catch (e) {
-      botToast(localizedMessage(
-          (l10n) => l10n.error_reading_archive_cover_image(e),
-        ), tone: ShioriToastTone.error, second: 4);
+      botToast(
+        localizedMessage((l10n) => l10n.error_reading_archive_cover_image(e)),
+        tone: ShioriToastTone.error,
+        second: 4,
+      );
     }
   }
   return null;
@@ -644,175 +669,6 @@ Future<bool> _isMostlyBlankWhiteImage(Uint8List bytes) async {
   } catch (_) {
     return false;
   }
-}
-
-/// Returns the `/local` directory inside the app's default storage.
-Future<Directory?> getLocalLibrary() async {
-  try {
-    final dir = await StorageProvider().getDefaultDirectory();
-    return dir == null ? null : Directory(p.join(dir.path, 'local'));
-  } catch (e) {
-    botToast(localizedMessage((l10n) => l10n.error_getting_local_library(e)), tone: ShioriToastTone.error, second: 4);
-    return null;
-  }
-}
-
-Future<LocalFolder?> getDefaultLocalFolder() async {
-  final dir = await getLocalLibrary();
-  if (dir == null) return null;
-  return LocalFolder(name: 'local', path: dir.path);
-}
-
-Future<List<LocalFolder>> getAllLocalFolders({
-  bool includeDefault = true,
-  Settings? settings,
-}) async {
-  settings ??= settingsRepository.current;
-  final folders = _normalizeLocalFolders(
-    settings.namedLocalFolders ??
-        settings.localFolders
-            ?.map((e) => LocalFolder.fromPath(path: e))
-            .toList() ??
-        [],
-  );
-  if (!includeDefault) return folders;
-  final defaultFolder = await getDefaultLocalFolder();
-  return [?defaultFolder, ...folders];
-}
-
-Future<LocalFolder?> getDownloadLocalFolder() async {
-  final folders = await getAllLocalFolders();
-  if (folders.isEmpty) return null;
-  final settings = settingsRepository.current;
-  final name = _resolveDownloadFolderName(
-    settings.downloadLocalFolderName,
-    folders,
-  );
-  return folders.firstWhere((folder) => folder.name == name);
-}
-
-void setDownloadLocalFolderName(String? name) {
-  settingsRepository.update((s) => s.downloadLocalFolderName = name);
-}
-
-String getLocalVirtualPath(LocalFolder folder, String entityPath) {
-  final folderName = folder.name?.trim();
-  final folderPath = folder.path;
-  if (folderName == null ||
-      folderName.isEmpty ||
-      folderPath == null ||
-      folderPath.isEmpty) {
-    return normalizePath(entityPath);
-  }
-  final relative = p.relative(entityPath, from: folderPath);
-  if (relative == '.') return folderName;
-  return p.posix.join(folderName, normalizePath(relative));
-}
-
-String localVirtualPathFromStoredPath(
-  String? storedPath,
-  List<LocalFolder> folders,
-) {
-  if (storedPath == null || storedPath.trim().isEmpty) return '';
-  final normalized = normalizePath(storedPath);
-  final firstSegment = normalized.split('/').firstOrNull;
-  if (firstSegment != null &&
-      folders.any((folder) => folder.name == firstSegment)) {
-    return normalized;
-  }
-
-  for (final folder in folders) {
-    final folderPath = folder.path;
-    if (folderPath == null || folderPath.isEmpty) continue;
-    final normalizedFolderPath = normalizePath(folderPath);
-    if (normalized == normalizedFolderPath ||
-        normalized.startsWith('$normalizedFolderPath/')) {
-      return getLocalVirtualPath(folder, storedPath);
-    }
-  }
-
-  const legacyLocalPath = 'Mangayomi/local';
-  final legacyIndex = normalized.indexOf(legacyLocalPath);
-  if (legacyIndex != -1) {
-    final relative = normalized
-        .substring(legacyIndex + legacyLocalPath.length)
-        .replaceFirst(RegExp('^/+'), '');
-    return p.posix.join('local', relative);
-  }
-
-  return normalized;
-}
-
-Future<String> resolveLocalArchivePath(String archivePath) async {
-  final folders = await getAllLocalFolders();
-  final normalized = normalizePath(archivePath);
-  final parts = normalized.split('/');
-  if (parts.length < 2) return archivePath;
-
-  final folder = folders.firstWhere(
-    (folder) => folder.name == parts.first,
-    orElse: () => LocalFolder(),
-  );
-  if (folder.path == null || folder.path!.isEmpty) return archivePath;
-  final resolvedFolder = await resolveLocalDirectoryPath(
-    folder.path!,
-    logContext: 'resolveLocalArchivePath',
-  );
-  return p.joinAll([resolvedFolder.path, ...parts.skip(1)]);
-}
-
-List<LocalFolder> _normalizeLocalFolders(List<LocalFolder> folders) {
-  final usedNames = <String>{'local'};
-  return folders
-      .where((folder) => (folder.path?.trim().isNotEmpty ?? false))
-      .map((folder) {
-        final name = _uniqueLocalFolderName(
-          folder.name?.trim().isNotEmpty ?? false
-              ? folder.name!.trim()
-              : LocalFolder.fromPath(path: folder.path!).name ?? 'Local',
-          usedNames,
-        );
-        usedNames.add(name);
-        return LocalFolder(name: name, path: folder.path!.trim());
-      })
-      .toList();
-}
-
-String _uniqueLocalFolderName(String value, Set<String> usedNames) {
-  final normalized = value.replaceAll('/', '_').replaceAll('\\', '_').trim();
-  final base = normalized.isEmpty ? 'Local' : normalized;
-  var name = base == 'local' ? 'Local' : base;
-  var index = 2;
-  while (usedNames.contains(name)) {
-    name = '$base $index';
-    index++;
-  }
-  return name;
-}
-
-String? _resolveDownloadFolderName(String? name, List<LocalFolder> folders) {
-  if (name != null && folders.any((folder) => folder.name == name)) {
-    return name;
-  }
-  return folders.firstOrNull?.name;
-}
-
-List<LocalFolder> _replaceLocalFolder(
-  List<LocalFolder> folders,
-  String originalPath,
-  LocalFolder replacement,
-) {
-  var replaced = false;
-  final updated = folders.map((folder) {
-    if (!replaced &&
-        folder.name == replacement.name &&
-        folder.path?.trim() == originalPath) {
-      replaced = true;
-      return replacement;
-    }
-    return folder;
-  }).toList();
-  return replaced ? updated : [replacement, ...updated];
 }
 
 String _debugLocalFolder(LocalFolder folder) {

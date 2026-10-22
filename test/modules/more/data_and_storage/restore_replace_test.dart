@@ -185,9 +185,8 @@ void main() {
         ],
       );
       final path = '${directory.path}/mihon_test.tachibk';
-      File(
-        path,
-      ).writeAsBytesSync(GZipEncoder().encodeBytes(backup.writeToBuffer()));
+      File(path)
+          .writeAsBytesSync(GZipEncoder().encodeBytes(backup.writeToBuffer()));
 
       await ref.read(
         doRestoreProvider(path: path, context: ctx, merge: false).future,

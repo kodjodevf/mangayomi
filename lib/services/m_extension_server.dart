@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:m_extension_server/m_extension_server.dart';
-import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/providers/browse_state_provider.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -12,8 +11,8 @@ class MExtensionServerPlatform {
   static Future<void>? _iosStartOperation;
   static String? _iosActiveBaseUrl;
 
-  WidgetRef ref;
-  MExtensionServerPlatform(this.ref);
+  final dynamic ref;
+  MExtensionServerPlatform([this.ref]);
 
   Future<bool> check() => _check(_baseUrl);
 
@@ -92,7 +91,11 @@ class MExtensionServerPlatform {
         }
         if (localBaseUrl == null) return;
         if (Platform.isIOS) _iosActiveBaseUrl = localBaseUrl;
-        ref.read(androidProxyServerStateProvider.notifier).set(localBaseUrl);
+        if (ref != null) {
+          ref.read(androidProxyServerStateProvider.notifier).set(localBaseUrl);
+        } else {
+          settingsRepository.update((s) => s.androidProxyServer = localBaseUrl);
+        }
       }
     } catch (e) {
       if (kDebugMode) {
@@ -131,5 +134,8 @@ class MExtensionServerPlatform {
   Future<bool> checkLocalServer() async =>
       _iosActiveBaseUrl != null && await _check(_iosActiveBaseUrl!);
 
-  String get _baseUrl => ref.watch(androidProxyServerStateProvider);
+  String get _baseUrl => ref != null
+      ? ref.read(androidProxyServerStateProvider) as String
+      : (settingsRepository.currentOrNull?.androidProxyServer ??
+            "http://127.0.0.1:8080");
 }

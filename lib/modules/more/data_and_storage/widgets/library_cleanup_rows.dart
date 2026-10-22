@@ -83,6 +83,6 @@ Future<void> _wipe(
     destructive: true,
   );
   if (!confirmed) return;
-  mangaRepository.wipeMangas(ref, mangas);
+  mangaRepository.wipeMangas(mangas);
   botToast(l10n.cleaned_database(mangas.length));
 }

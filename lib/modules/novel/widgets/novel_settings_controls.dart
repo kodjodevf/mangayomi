@@ -367,7 +367,10 @@ class NovelColorPicker extends StatelessWidget {
         onTap: () => _showColorPickerDialog(context),
         borderRadius: BorderRadius.circular(ShioriShape.card),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s12, vertical: ShioriSpace.s8),
+          padding: const EdgeInsets.symmetric(
+            horizontal: ShioriSpace.s12,
+            vertical: ShioriSpace.s8,
+          ),
           decoration: BoxDecoration(
             border: Border.all(color: context.shiori.color.hairline, width: 1),
             borderRadius: BorderRadius.circular(ShioriShape.card),
@@ -413,7 +416,9 @@ class NovelColorPicker extends StatelessWidget {
               ),
               Icon(
                 Symbols.palette_rounded,
-                color: context.shiori.color.accent.withValues(alpha: Alphas.accentTint),
+                color: context.shiori.color.accent.withValues(
+                  alpha: Alphas.accentTint,
+                ),
                 size: 16,
               ),
             ],
@@ -448,7 +453,9 @@ class NovelAlignButton extends StatelessWidget {
           height: 36,
           decoration: BoxDecoration(
             color: isSelected
-                ? context.shiori.color.accent.withValues(alpha: Alphas.accentTint)
+                ? context.shiori.color.accent.withValues(
+                    alpha: Alphas.accentTint,
+                  )
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(ShioriShape.cover),
             border: Border.all(
@@ -495,7 +502,10 @@ class NovelModeChipButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(ShioriShape.card),
         child: AnimatedContainer(
           duration: ShioriMotion.standard,
-          padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s8, vertical: ShioriSpace.s8),
+          padding: const EdgeInsets.symmetric(
+            horizontal: ShioriSpace.s8,
+            vertical: ShioriSpace.s8,
+          ),
           decoration: BoxDecoration(
             color: isSelected
                 ? primaryColor.withValues(alpha: Alphas.accentTint)
@@ -513,9 +523,7 @@ class NovelModeChipButton extends StatelessWidget {
               Icon(
                 icon,
                 size: 17,
-                color: isSelected
-                    ? primaryColor
-                    : context.shiori.color.fg,
+                color: isSelected ? primaryColor : context.shiori.color.fg,
               ),
               const SizedBox(width: ShioriSpace.s8),
               Flexible(
@@ -528,9 +536,7 @@ class NovelModeChipButton extends StatelessWidget {
                     fontWeight: isSelected
                         ? FontWeight.bold
                         : FontWeight.normal,
-                    color: isSelected
-                        ? primaryColor
-                        : context.shiori.color.fg,
+                    color: isSelected ? primaryColor : context.shiori.color.fg,
                   ),
                 ),
               ),

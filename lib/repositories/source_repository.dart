@@ -1,14 +1,13 @@
 import 'dart:async';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/changed_part_repository.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 
 class SourceRepository {
@@ -140,8 +139,10 @@ class SourceRepository {
   List<Source> getByItemType(ItemType itemType) =>
       isar.sources.filter().itemTypeEqualTo(itemType).findAllSync();
 
-  Stream<List<Source>> watchByItemType(ItemType itemType) =>
-      isar.sources.filter().itemTypeEqualTo(itemType).watch(fireImmediately: true);
+  Stream<List<Source>> watchByItemType(ItemType itemType) => isar.sources
+      .filter()
+      .itemTypeEqualTo(itemType)
+      .watch(fireImmediately: true);
 
   Stream<List<Source>> watchActiveByItemType(ItemType itemType) => isar.sources
       .where()
@@ -190,19 +191,21 @@ class SourceRepository {
   // Marks source as the last one tapped into within itemType, so it sorts
   // first next time; every other source of that itemType loses the flag.
   Future<void> markLastUsed(ItemType itemType, int? sourceId) =>
-      dbWriteQueue.run(() => isar.writeTxn(() async {
-        final sources = await isar.sources
-            .filter()
-            .idIsNotNull()
-            .itemTypeEqualTo(itemType)
-            .findAll();
-        final updated = sources.map((src) {
-          return src
-            ..lastUsed = src.id == sourceId
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch;
-        }).toList();
-        await isar.sources.putAll(updated);
-      }));
+      dbWriteQueue.run(
+        () => isar.writeTxn(() async {
+          final sources = await isar.sources
+              .filter()
+              .idIsNotNull()
+              .itemTypeEqualTo(itemType)
+              .findAll();
+          final updated = sources.map((src) {
+            return src
+              ..lastUsed = src.id == sourceId
+              ..updatedAt = DateTime.now().millisecondsSinceEpoch;
+          }).toList();
+          await isar.sources.putAll(updated);
+        }),
+      );
 
   Future<void> putAll(List<Source> sources) => dbWriteQueue.run(
     () => isar.writeTxnSync(() => isar.sources.putAllSync(sources)),
@@ -216,7 +219,7 @@ class SourceRepository {
   // back to "not installed" without losing its browse-list entry. Either way
   // its preferences (both value tables) are wiped, since they're meaningless
   // once the source is gone or has no code to read them.
-  Future<void> uninstall(WidgetRef ref, Source source) => dbWriteQueue.run(() {
+  Future<void> uninstall(Source source) => dbWriteQueue.run(() {
     final sourcePrefsIds = isar.sourcePreferences
         .filter()
         .sourceIdEqualTo(source.id!)
@@ -230,9 +233,12 @@ class SourceRepository {
     isar.writeTxnSync(() {
       if ((source.isObsolete ?? false) || (source.isLocal ?? false)) {
         isar.sources.deleteSync(source.id!);
-        ref
-            .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(ActionType.removeExtension, source.id, "{}", false);
+        changedPartRepository.recordIfSyncOn(
+          ActionType.removeExtension,
+          source.id,
+          "{}",
+          false,
+        );
       } else {
         isar.sources.putSync(
           source

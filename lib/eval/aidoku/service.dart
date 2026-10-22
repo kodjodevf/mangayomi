@@ -216,8 +216,8 @@ class AidokuExtensionService implements ExtensionService {
     final key = _aidokuSource?.key;
     final activeUrl = key != null
         ? (aidoku.SettingsStore.shared.object('$key.url') ??
-                aidoku.SettingsStore.shared.object('url'))
-            ?.toString()
+                  aidoku.SettingsStore.shared.object('url'))
+              ?.toString()
         : aidoku.SettingsStore.shared.object('url')?.toString();
     final baseUrl = (activeUrl != null && activeUrl.isNotEmpty)
         ? activeUrl
@@ -233,8 +233,7 @@ class AidokuExtensionService implements ExtensionService {
       } catch (_) {}
     }
 
-    headers['User-Agent'] =
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+    headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
     headers['Accept'] =
         'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8';
 

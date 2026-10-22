@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/archive_reader/models/models.dart';
@@ -9,7 +8,10 @@ import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/src/rust/api/epub.dart';
+import 'package:mangayomi/utils/manga_cover_actions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+export 'package:mangayomi/utils/manga_cover_actions.dart'
+    show Uint8ListExtensions;
 part 'local_archive.g.dart';
 
 @riverpod
@@ -144,17 +146,4 @@ String _getName(String path) {
         RegExp(r'\.(mp4|mov|avi|flv|wmv|mpeg|mkv|cbz|zip|cbt|tar|epub)'),
         '',
       );
-}
-
-extension Uint8ListExtensions on Uint8List {
-  Uint8List? get getCoverImage {
-    final length = lengthInBytes / (1024 * 1024);
-    if (length < 5) {
-      return this;
-    }
-    botToast(
-      "Cover image is larger than 5MB (${length.toStringAsFixed(2)}MB). Skipping cover image.",
-    );
-    return null;
-  }
 }

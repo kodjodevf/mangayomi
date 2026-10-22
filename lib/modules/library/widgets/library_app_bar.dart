@@ -16,10 +16,11 @@ import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/modules/library/widgets/library_update_runner.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
-import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
+import 'package:mangayomi/modules/manga/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/modules/widgets/tv_menu.dart';
 import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
 import 'package:shiori/shiori.dart';
@@ -173,7 +174,7 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ),
       actions: [
         // Stop a running library update. Only shown while one is in progress.
-        if (ref.watch(libraryUpdateProvider).running)
+        if (ref.watch(libraryUpdateProvider.select((s) => s.running)))
           IconButton(
             splashRadius: 20,
             tooltip: l10n.cancel,

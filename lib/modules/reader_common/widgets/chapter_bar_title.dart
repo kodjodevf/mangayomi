@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/modules/manga/detail/providers/chapter_display.dart';
+import 'package:mangayomi/modules/reader_common/providers/chapter_display.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:shiori/shiori.dart';
 

@@ -34,7 +34,8 @@ class CustomTrackShape extends SliderTrackShape {
     bool? isEnabled,
     bool? isDiscrete,
   }) {
-    final double thumbWidth = sliderTheme.thumbShape
+    final double thumbWidth =
+        sliderTheme.thumbShape
             ?.getPreferredSize(isEnabled ?? true, isDiscrete ?? false)
             .width ??
         12.0;
@@ -70,8 +71,12 @@ class CustomTrackShape extends SliderTrackShape {
       isDiscrete: isDiscrete,
     );
 
-    final double activeFraction = maxValue > 0 ? (currentPosition / maxValue).clamp(0.0, 1.0) : 0.0;
-    final double bufferFraction = maxValue > 0 ? (bufferPosition / maxValue).clamp(0.0, 1.0) : 0.0;
+    final double activeFraction = maxValue > 0
+        ? (currentPosition / maxValue).clamp(0.0, 1.0)
+        : 0.0;
+    final double bufferFraction = maxValue > 0
+        ? (bufferPosition / maxValue).clamp(0.0, 1.0)
+        : 0.0;
 
     final double currentPositionWidth = trackWidth * activeFraction;
     final double bufferPositionWidth = trackWidth * bufferFraction;
@@ -81,7 +86,8 @@ class CustomTrackShape extends SliderTrackShape {
 
     // 1. Inactive full track (M3 base)
     final inactivePaint = Paint()
-      ..color = sliderTheme.inactiveTrackColor ??
+      ..color =
+          sliderTheme.inactiveTrackColor ??
           Colors.white.withValues(alpha: Alphas.hairline)
       ..style = PaintingStyle.fill;
     canvas.drawRRect(
@@ -94,12 +100,16 @@ class CustomTrackShape extends SliderTrackShape {
       final bufferRect = Rect.fromLTRB(
         trackRect.left,
         trackRect.top,
-        (trackRect.left + bufferPositionWidth).clamp(trackRect.left, trackRect.right),
+        (trackRect.left + bufferPositionWidth).clamp(
+          trackRect.left,
+          trackRect.right,
+        ),
         trackRect.bottom,
       );
       final bufferPaint = Paint()
-        ..color = sliderTheme.secondaryActiveTrackColor ??
-          Colors.white.withValues(alpha: Alphas.disabled)
+        ..color =
+            sliderTheme.secondaryActiveTrackColor ??
+            Colors.white.withValues(alpha: Alphas.disabled)
         ..style = PaintingStyle.fill;
       canvas.drawRRect(
         RRect.fromRectAndRadius(bufferRect, trackRadius),
@@ -112,7 +122,10 @@ class CustomTrackShape extends SliderTrackShape {
       final activeRect = Rect.fromLTRB(
         trackRect.left,
         trackRect.top,
-        (trackRect.left + currentPositionWidth).clamp(trackRect.left, trackRect.right),
+        (trackRect.left + currentPositionWidth).clamp(
+          trackRect.left,
+          trackRect.right,
+        ),
         trackRect.bottom,
       );
       final activePaint = Paint()

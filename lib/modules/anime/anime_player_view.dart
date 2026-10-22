@@ -1,92 +1,60 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:bot_toast/bot_toast.dart';
-import 'package:ffi/ffi.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
-import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
-import 'package:mangayomi/modules/anime/utils/temporary_playback_speed.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/services/discord_rpc.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
-import 'package:mangayomi/repositories/custom_button_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart' as vid;
+import 'package:mangayomi/modules/anime/mixins/anime_mpv_bridge_mixin.dart';
+import 'package:mangayomi/modules/anime/mixins/anime_player_controls_mixin.dart';
+import 'package:mangayomi/modules/anime/mixins/anime_player_settings_mixin.dart';
+import 'package:mangayomi/modules/anime/mixins/anime_track_selection_mixin.dart';
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
-import 'package:mangayomi/modules/anime/utils/audio_track_fallback.dart';
-import 'package:mangayomi/modules/anime/utils/audio_track_label.dart';
 import 'package:mangayomi/modules/anime/utils/playback_media.dart';
 import 'package:mangayomi/modules/anime/utils/video_prefs.dart';
 import 'package:mangayomi/modules/anime/providers/state_provider.dart';
 import 'package:mangayomi/modules/anime/utils/player_lifecycle.dart';
-import 'package:mangayomi/modules/anime/utils/player_shortcuts.dart';
+import 'package:mangayomi/modules/anime/widgets/anime_screenshot_sheet.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/gesture_hint_overlay.dart';
 import 'package:mangayomi/modules/anime/widgets/up_next_chip.dart';
-import 'package:mangayomi/modules/anime/widgets/tv_player_controls.dart';
-import 'package:mangayomi/modules/anime/widgets/tv_player_pills.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_settings_panel.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
-import 'package:mangayomi/modules/anime/utils/track_list_builder.dart';
-import 'package:mangayomi/modules/anime/widgets/audio_section_widget.dart';
-import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
-import 'package:mangayomi/modules/anime/widgets/player_settings_sections.dart';
-import 'package:mangayomi/modules/anime/widgets/subtitle_section_widget.dart';
-import 'package:mangayomi/utils/manga_cover_actions.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
-import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
-import 'package:mangayomi/modules/anime/widgets/unified_settings_sheet.dart';
-import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/router/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_audio_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_decoder_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/modules/manga/detail/providers/chapter_display.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/chapter_bar_title.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/reader_app_bar.dart'
+import 'package:mangayomi/modules/reader_common/widgets/chapter_bar_title.dart';
+import 'package:mangayomi/modules/reader_common/widgets/reader_app_bar.dart'
     show buildWebViewData;
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
-import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
-import 'package:mangayomi/utils/share.dart';
 import 'package:mangayomi/utils/system_ui.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit/generated/libmpv/bindings.dart' as generated;
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
-import 'package:numberpicker/numberpicker.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:mangayomi/modules/anime/utils/always_on_top.dart';
 import 'package:mangayomi/modules/anime/utils/mpv_subtitle_options.dart';
-import 'package:mangayomi/modules/anime/utils/player_labels.dart';
-import 'package:mangayomi/modules/anime/widgets/player_shortcut_pills.dart';
-import 'package:mangayomi/modules/widgets/image_actions_sheet.dart';
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final int episodeId;
@@ -275,7 +243,99 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     with
         AlwaysOnTopStateMixin,
         TickerProviderStateMixin,
-        WidgetsBindingObserver {
+        WidgetsBindingObserver,
+        AnimeMpvBridgeMixin,
+        AnimeTrackSelectionMixin,
+        AnimePlayerSettingsMixin,
+        AnimePlayerControlsMixin {
+  @override
+  VideoController get controlsVideoController => _controller;
+  @override
+  ValueNotifier<Duration?> get controlsTempPosition => _tempPosition;
+  @override
+  ValueNotifier<bool> get controlsIsLocked => _isLocked;
+  @override
+  ValueNotifier<int> get controlsReveal => _revealControls;
+  @override
+  FocusNode get controlsTvPanelFocus => _tvPanelFocus;
+  @override
+  VoidCallback get controlsGoBackToDetail => _goBackToDetail;
+  @override
+  VoidCallback get controlsChangeFitLabel =>
+      () => _changeFitLabel(ref);
+  @override
+  Future<void> Function(bool isFullscreen) get controlsToggleFullscreen =>
+      _toggleFullscreen;
+  @override
+  VoidCallback get controlsOpenTvSettingsPanel =>
+      () => setState(() => _tvSettingsOpen = true);
+  @override
+  Player get mpvBridgePlayer => _player;
+  @override
+  bool get mpvUseLibass => useLibass;
+  @override
+  bool get mpvUseMpvConfig => useMpvConfig;
+  @override
+  AnimeStreamController get mpvStreamController => _streamController;
+  @override
+  ValueNotifier<ActiveCustomButton?> get mpvCustomButton => _customButton;
+  @override
+  ValueNotifier<List<CustomButton>?> get mpvCustomButtons => _customButtons;
+  @override
+  ValueNotifier<List<(String, int)>> get mpvChapterMarks => _chapterMarks;
+  @override
+  ValueNotifier<int?> get mpvCurrentChapterMark => _currentChapterMark;
+  @override
+  ValueNotifier<String> get mpvSelectedShader => _selectedShader;
+  @override
+  TextEditingController get mpvSubDelayController => _subDelayController;
+  @override
+  TextEditingController get mpvSubSpeedController => _subSpeedController;
+  @override
+  Future<void> mpvSeekTo(int absoluteSeconds) => _seekTo(absoluteSeconds);
+  @override
+  Future<void> mpvSeekBy(int deltaSeconds) => _seekBy(deltaSeconds);
+  @override
+  Future<void> mpvPushToNewEpisode(BuildContext context, Chapter episode) =>
+      pushToNewEpisode(context, episode);
+
+  @override
+  Player get trackPlayer => _player;
+  @override
+  List<vid.Video> get trackVideos => widget.videos;
+  @override
+  vid.Video get firstVideoForTracks => _firstVid;
+  @override
+  bool get isLocalForTracks => widget.isLocal;
+  @override
+  String get defaultSubtitleLanguage => widget.defaultSubtitle;
+  @override
+  String get preferredAudioLanguagesCsv => audioPreferredLang;
+  @override
+  ValueNotifier<VideoPrefs?> get selectedVideoPrefs => _video;
+  @override
+  Future<void> openMediaFromTrackSelection(VideoPrefs prefs) =>
+      _openMedia(prefs);
+
+  @override
+  Chapter get settingsEpisode => widget.episode;
+  @override
+  GlobalKey<VideoState> get settingsVideoStateKey => _key;
+  @override
+  ValueNotifier<double> get settingsPlaybackSpeed => _playbackSpeed;
+  @override
+  ValueNotifier<BoxFit> get settingsFit => _fit;
+  @override
+  ValueNotifier<bool> get settingsAutoplayNext => _autoplayNext;
+  @override
+  Future<void> settingsSetPlaybackSpeed(double speed) =>
+      _setPlaybackSpeed(speed);
+  @override
+  Future<void> settingsShareScreenshot(
+    BuildContext sheetContext,
+    Chapter episode,
+  ) => _showShareScreenshotActions(sheetContext, episode);
+
   bool _routeExitInProgress = false;
   bool _videoTextureVisible = true;
 
@@ -293,16 +353,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     enableAudioPitchCorrectionStateProvider,
   );
   riv.ProviderSubscription<PlayerSubtitleSettings>? _subSettingsSub;
-
-  void _applySubtitleSettingsToMpv(PlayerSubtitleSettings settings) {
-    if (!useLibass) return;
-    try {
-      final nativePlayer = _player.platform as NativePlayer;
-      for (final MapEntry(:key, :value) in mpvSubtitleStyle(settings).entries) {
-        nativePlayer.setProperty(key, value);
-      }
-    } catch (_) {}
-  }
 
   late final audioChannel = ref.read(audioChannelStateProvider);
   late final volumeBoostCap = ref.read(volumeBoostCapStateProvider);
@@ -354,7 +404,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         "user-data/mangayomi/selected_shader":
             generated.mpv_format.MPV_FORMAT_NODE,
       },
-      eventHandler: _handleMpvEvents,
+      eventHandler: handleMpvEvents,
     ),
   );
   late final hwdecMode = ref.read(hwdecModeStateProvider());
@@ -405,12 +455,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   final ValueNotifier<List<(int, int)>> _skipRanges = ValueNotifier(const []);
   bool _hasOpeningSkip = false;
   bool _hasEndingSkip = false;
-  bool _initSubtitleAndAudio = true;
-  // Whatever subtitle/audio track is actually active right now, whether
-  // picked by the user or applied as the default - so a quality change can
-  // restore it instead of always falling back to the default track.
-  SubtitleTrack? _activeSubtitleTrack;
-  AudioTrack? _activeAudioTrack;
   bool _includeSubtitles = false;
   final _subDelayController = TextEditingController(text: "0");
   final _subSpeedController = TextEditingController(text: "1.00");
@@ -420,11 +464,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   late final StreamSubscription<String> _playerErrorSub;
   StreamSubscription<Tracks>? _tracksSub;
   StreamSubscription<Track>? _trackSub;
-  final Set<String> _failedAudioTrackKeys = {};
-  final Set<String> _failedAudioCodecs = {};
-  String? _requestedAudioLanguage;
-  bool _audioFallbackInProgress = false;
-  bool _audioFallbackErrorQueued = false;
 
   late final StreamSubscription<Duration> _currentTotalDurationSub = _player
       .stream
@@ -478,40 +517,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     }
   }
 
-  Future<void> _handleMpvEvents(Pointer<generated.mpv_event> event) async {
-    try {
-      if (event.ref.event_id ==
-          generated.mpv_event_id.MPV_EVENT_PROPERTY_CHANGE) {
-        final prop = event.ref.data.cast<generated.mpv_event_property>();
-        final propName = prop.ref.name.cast<Utf8>().toDartString();
-        if (kDebugMode) {
-          if (propName.startsWith("user-data/")) {
-            print("DEBUG 00: $propName - ${prop.ref.format}");
-          }
-        }
-        if (propName.startsWith("user-data/") &&
-            prop.ref.format == generated.mpv_format.MPV_FORMAT_NODE) {
-          final value = prop.ref.data.cast<generated.mpv_node>();
-          _handleMpvNodeEvents(propName, value);
-        } else if (propName.startsWith("user-data/") &&
-            prop.ref.format == generated.mpv_format.MPV_FORMAT_INT64) {
-          final value = prop.ref.data.cast<Int64>().value;
-          _handleMpvNumberEvents(propName, value);
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint(e.toString());
-      }
-    }
-  }
-
-  String? _readMpvString(Pointer<generated.mpv_node> value) {
-    if (value.ref.format != generated.mpv_format.MPV_FORMAT_STRING) return null;
-    final text = value.ref.u.string.cast<Utf8>().toDartString();
-    return text.isEmpty ? null : text;
-  }
-
   Future<void> _seekTo(int absoluteSeconds) async {
     _tempPosition.value = Duration(seconds: absoluteSeconds);
     await _player.seek(Duration(seconds: absoluteSeconds));
@@ -521,309 +526,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   Future<void> _seekBy(int deltaSeconds) async {
     final pos = _currentPosition.value.inSeconds + deltaSeconds;
     await _seekTo(pos);
-  }
-
-  Future<void> _handleMpvNodeEvents(
-    String propName,
-    Pointer<generated.mpv_node> value,
-  ) async {
-    final nativePlayer = _player.platform as NativePlayer;
-    switch (propName.substring(10)) {
-      case "aniyomi/show_text":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        botToast(
-          text,
-          alignY: -0.99,
-          second: 2,
-          dismissDirections: const [
-            DismissDirection.vertical,
-            DismissDirection.horizontal,
-          ],
-          showIcon: false,
-        );
-        nativePlayer.setProperty("user-data/aniyomi/show_text", "");
-        break;
-      case "aniyomi/toggle_ui":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        switch (text) {
-          // WIP
-          case "show":
-            break;
-          case "hide":
-            break;
-          case "toggle":
-            break;
-        }
-        nativePlayer.setProperty("user-data/aniyomi/toggle_ui", "");
-        break;
-      case "aniyomi/show_panel":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        switch (text) {
-          // WIP
-          case "subtitle_settings":
-            break;
-          case "subtitle_delay":
-            break;
-          case "audio_delay":
-            break;
-          case "video_filters":
-            break;
-        }
-        nativePlayer.setProperty("user-data/aniyomi/show_panel", "");
-        break;
-      case "aniyomi/software_keyboard":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        switch (text) {
-          // WIP
-          case "show":
-            break;
-          case "hide":
-            break;
-          case "toggle":
-            break;
-        }
-        nativePlayer.setProperty("user-data/aniyomi/software_keyboard", "");
-        break;
-      case "aniyomi/set_button_title":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        final temp = _customButton.value;
-        if (temp == null) break;
-        _customButton.value = temp..currentTitle = text;
-        nativePlayer.setProperty("user-data/aniyomi/set_button_title", "");
-        break;
-      case "aniyomi/reset_button_title":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        final temp = _customButton.value;
-        if (temp == null) break;
-        _customButton.value = temp..currentTitle = temp.button.title ?? "";
-        nativePlayer.setProperty("user-data/aniyomi/reset_button_title", "");
-        break;
-      case "aniyomi/toggle_button":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        final temp = _customButton.value;
-        if (temp == null) break;
-        switch (text) {
-          case "show":
-            _customButton.value = temp..visible = true;
-            break;
-          case "hide":
-            _customButton.value = temp..visible = false;
-            break;
-          case "toggle":
-            _customButton.value = temp..visible = !temp.visible;
-            break;
-        }
-        nativePlayer.setProperty("user-data/aniyomi/toggle_button", "");
-        break;
-      case "aniyomi/switch_episode":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        switch (text) {
-          case "n":
-            pushToNewEpisode(context, _streamController.getNextEpisode());
-            break;
-          case "p":
-            pushToNewEpisode(context, _streamController.getPrevEpisode());
-            break;
-        }
-        nativePlayer.setProperty("user-data/aniyomi/switch_episode", "");
-        break;
-      case "aniyomi/pause":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        switch (text) {
-          case "pause":
-            await _player.pause();
-            break;
-          case "unpause":
-            await _player.play();
-            break;
-          case "pauseunpause":
-            await _player.playOrPause();
-            break;
-        }
-        nativePlayer.setProperty("user-data/aniyomi/pause", "");
-        break;
-      case "aniyomi/seek_by":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        final data = int.parse(text.replaceAll("\"", ""));
-        await _seekBy(data);
-        nativePlayer.setProperty("user-data/aniyomi/seek_by", "");
-        break;
-      case "aniyomi/seek_to":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        final data = int.parse(text.replaceAll("\"", ""));
-        await _seekTo(data);
-        nativePlayer.setProperty("user-data/aniyomi/seek_to", "");
-        break;
-      case "aniyomi/seek_by_with_text":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        final data = text.split("|");
-        await _seekBy(int.parse(data[0].replaceAll("\"", "")));
-        (_player.platform as NativePlayer).command(["show-text", data[1]]);
-        nativePlayer.setProperty("user-data/aniyomi/seek_by_with_text", "");
-        break;
-      case "aniyomi/seek_to_with_text":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        final data = text.split("|");
-        await _seekTo(int.parse(data[0].replaceAll("\"", "")));
-        (_player.platform as NativePlayer).command(["show-text", data[1]]);
-        nativePlayer.setProperty("user-data/aniyomi/seek_to_with_text", "");
-        break;
-      case "aniyomi/launch_int_picker":
-        final text = _readMpvString(value);
-        if (text == null) break;
-        final data = text.split("|");
-        final start = int.parse(data[2]);
-        final stop = int.parse(data[3]);
-        final step = int.parse(data[4]);
-        int currentValue = start;
-        await showDialog(
-          context: context,
-          builder: (context) {
-            return ShioriDialog(
-              title: data[0],
-              content: StatefulBuilder(
-                // The picker's own height, not a fixed one around it.
-                builder: (context, setState) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    NumberPicker(
-                      value: currentValue,
-                      minValue: start,
-                      maxValue: stop,
-                      step: step,
-                      haptics: true,
-                      textMapper: (numberText) =>
-                          data[1].replaceAll("%d", numberText),
-                      onChanged: (value) =>
-                          setState(() => currentValue = value),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                ShioriButton.quiet(
-                  label: context.l10n.cancel,
-                  onPressed: () => Navigator.pop(context),
-                ),
-                ShioriButton(
-                  label: context.l10n.ok,
-                  onPressed: () async {
-                    final namePtr = data[5].toNativeUtf8();
-                    final valuePtr = calloc<Int64>(1)..value = currentValue;
-                    nativePlayer.mpv.mpv_set_property(
-                      nativePlayer.ctx,
-                      namePtr.cast(),
-                      generated.mpv_format.MPV_FORMAT_INT64,
-                      valuePtr.cast(),
-                    );
-                    malloc.free(namePtr);
-                    malloc.free(valuePtr);
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            );
-          },
-        );
-        nativePlayer.setProperty("user-data/aniyomi/launch_int_picker", "");
-        break;
-      case "mangayomi/chapter_titles":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          final data = jsonDecode(text) as List<dynamic>;
-          _chapterMarks.value = data
-              .map(
-                (e) => (
-                  e["title"] as String,
-                  e["timestamp"] is double
-                      ? (e["timestamp"] as double).toInt() * 1000
-                      : (e["timestamp"] as int) * 1000,
-                ),
-              )
-              .toList();
-        }
-        break;
-      case "mangayomi/selected_shader":
-        final text = _readMpvString(value);
-        _selectedShader.value = text ?? '';
-        break;
-    }
-  }
-
-  Future<void> _handleMpvNumberEvents(String propName, int value) async {
-    switch (propName.substring(10)) {
-      case "mangayomi/current_chapter":
-        _currentChapterMark.value = max(value, 0);
-        break;
-    }
-  }
-
-  Future<void> _initCustomButton() async {
-    if (!useMpvConfig) return;
-    final customButtons = customButtonRepository.getAllSortedByPos();
-    if (customButtons.isEmpty) return;
-    final primaryButton =
-        customButtons.firstWhereOrNull((e) => e.isFavourite ?? false) ??
-        customButtons.first;
-    final provider = StorageProvider();
-    if (!(await provider.requestPermission())) {
-      return;
-    }
-    final dir = await provider.getMpvDirectory();
-    String scriptsDir = path.join(dir!.path, 'scripts');
-    final mpvFile = File('$scriptsDir/init_custom_buttons.lua');
-    final content = StringBuffer();
-    content.writeln("""local lua_modules = mp.find_config_file('scripts')
-if lua_modules then
-  package.path = package.path .. ';' .. lua_modules .. '/?.lua;' .. lua_modules .. '/?/init.lua;' .. '\${scriptsDir()!!.filePath}' .. '/?.lua'
-end
-local aniyomi = require 'init_aniyomi_functions'""");
-    for (final button in customButtons) {
-      content.writeln(
-        """
-${button.getButtonStartup(primaryButton.id!).trim()}
-function button${button.id}()
-  ${button.getButtonPress(primaryButton.id!).trim()}
-end
-mp.register_script_message('call_button_${button.id}', button${button.id})
-function button${button.id}long()
-  ${button.getButtonLongPress(primaryButton.id!).trim()}
-end
-mp.register_script_message('call_button_${button.id}_long', button${button.id}long)""",
-      );
-    }
-    await mpvFile.writeAsString(content.toString());
-    await (_player.platform as NativePlayer).command([
-      "load-script",
-      mpvFile.path,
-    ]);
-    _customButton.value = ActiveCustomButton(
-      currentTitle: primaryButton.title!,
-      visible: true,
-      button: primaryButton,
-      onPress: () => (_player.platform as NativePlayer).command([
-        "script-message",
-        "call_button_${primaryButton.id}",
-      ]),
-      onLongPress: () => (_player.platform as NativePlayer).command([
-        "script-message",
-        "call_button_${primaryButton.id}_long",
-      ]),
-    );
-    _customButtons.value = customButtons;
   }
 
   Future<void> pushToNewEpisode(BuildContext context, Chapter episode) async {
@@ -877,56 +579,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     final totalSecs = _player.state.duration.inSeconds;
     _isCompleted.value = (totalSecs - secs) <= 10;
     _currentPosition.value = position;
-    if (_initSubtitleAndAudio) {
-      _initSubtitleAndAudio = false;
-      if (_activeSubtitleTrack != null) {
-        try {
-          unawaited(_setSubtitleTrack(_activeSubtitleTrack!));
-        } catch (_) {}
-      } else if (_firstVid.subtitles?.isNotEmpty ?? false) {
-        try {
-          final preferredSource = _findPreferredSourceSubtitleTrack(
-            _firstVid.subtitles!,
-          );
-          final defaultTrack =
-              preferredSource ??
-              _firstVid.subtitles!.firstWhere(
-                (sub) => sub.label == widget.defaultSubtitle,
-                orElse: () => _firstVid.subtitles!.first,
-              );
-          final file = defaultTrack.file ?? "";
-          final label = defaultTrack.label;
-          final track = (file.startsWith("http") || file.startsWith("file"))
-              ? SubtitleTrack.uri(file, title: label, language: label)
-              : SubtitleTrack.data(file, title: label, language: label);
-          unawaited(_setSubtitleTrack(track));
-        } catch (_) {}
-      } else {
-        unawaited(_syncActiveSubtitleTrackFromMpv());
-      }
-
-      if (_activeAudioTrack != null) {
-        try {
-          unawaited(_setAudioTrack(_activeAudioTrack!));
-        } catch (_) {}
-      } else if (_firstVid.audios?.isNotEmpty ?? false) {
-        try {
-          final preferredSource = _findPreferredSourceAudioTrack(
-            _firstVid.audios!,
-          );
-          final at = preferredSource ?? _firstVid.audios!.first;
-          final track = AudioTrack.uri(
-            at.file ?? "",
-            title: at.label,
-            language: at.label,
-          );
-          _activeAudioTrack = track;
-          unawaited(_setAudioTrack(track));
-        } catch (_) {}
-      } else {
-        unawaited(_syncActiveAudioTrackFromMpv());
-      }
-    }
+    initializeDefaultSubtitleAndAudioTracks();
   }
 
   void _setSkipPhase(int secs) {
@@ -955,45 +608,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         );
       }
       lastRpcTimestampUpdate = now;
-    }
-  }
-
-  void _onSubDelayChanged() {
-    final nativePlayer = (_player.platform as NativePlayer);
-    final delayMs = int.tryParse(_subDelayController.text);
-    if (delayMs != null) {
-      final namePtr = "sub-delay".toNativeUtf8();
-      final valuePtr = calloc<Double>(1)..value = delayMs / 1000;
-      nativePlayer.mpv.mpv_set_property(
-        nativePlayer.ctx,
-        namePtr.cast(),
-        generated.mpv_format.MPV_FORMAT_DOUBLE,
-        valuePtr.cast(),
-      );
-      malloc.free(namePtr);
-      malloc.free(valuePtr);
-    }
-  }
-
-  void _onSubSpeedChanged() {
-    final nativePlayer = (_player.platform as NativePlayer);
-    final speed = double.tryParse(_subSpeedController.text);
-    if (speed != null) {
-      final namePtr = "sub-speed".toNativeUtf8();
-      final valuePtr = calloc<Double>(1)
-        ..value = speed < 0.1
-            ? 0.1
-            : speed > 10
-            ? 10
-            : speed;
-      nativePlayer.mpv.mpv_set_property(
-        nativePlayer.ctx,
-        namePtr.cast(),
-        generated.mpv_format.MPV_FORMAT_DOUBLE,
-        valuePtr.cast(),
-      );
-      malloc.free(namePtr);
-      malloc.free(valuePtr);
     }
   }
 
@@ -1073,30 +687,20 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _currentPositionSub = _player.stream.position.listen(
       _unifiedPositionHandler,
     );
-    _playerErrorSub = _player.stream.error.listen(_reportPlaybackError);
+    _playerErrorSub = _player.stream.error.listen(reportPlaybackError);
     _tracksSub = _player.stream.tracks.listen((_) {
-      _syncActiveAudioTrackFromMpv();
-      _syncActiveSubtitleTrackFromMpv();
+      syncActiveAudioTrackFromMpv();
+      syncActiveSubtitleTrackFromMpv();
     });
     _trackSub = _player.stream.track.listen((_) {
-      _syncActiveAudioTrackFromMpv();
-      _syncActiveSubtitleTrackFromMpv();
+      syncActiveAudioTrackFromMpv();
+      syncActiveSubtitleTrackFromMpv();
     });
-    // Referencing these `late final` subscriptions forces them to
-    // initialize now (and start listening) rather than lazily on first use,
-    // which could otherwise be their own `.cancel()` in dispose() - creating
-    // a subscription just to immediately cancel it, or worse, after the
-    // player it subscribes to is already gone.
     // ignore: unnecessary_statements
     _completed;
     // ignore: unnecessary_statements
     _currentTotalDurationSub;
-    _loadAndroidFont().then((_) {
-      // Loading the subtitle font writes a file, so this callback can arrive
-      // after the reader has already left. Everything below it touches the
-      // player, and media_kit asserts "[Player] has been disposed" the moment
-      // it is used after dispose. That is #925. The torrent branch further
-      // down already checked for this; the path everyone takes did not.
+    loadAndroidFont().then((_) {
       if (!mounted) return;
       _openMedia(_video.value!, _streamController.getCurrentPosition());
       if (widget.isTorrent) {
@@ -1109,17 +713,17 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
       if (ref.read(enableAniSkipStateProvider)) _initAniSkip();
     });
-    _initCustomButton();
+    initCustomButton();
     discordRpc?.showChapterDetails(ref, widget.episode);
     _currentPosition.addListener(_updateRpcTimestamp);
-    _subDelayController.addListener(_onSubDelayChanged);
-    _subSpeedController.addListener(_onSubSpeedChanged);
+    _subDelayController.addListener(onSubDelayChanged);
+    _subSpeedController.addListener(onSubSpeedChanged);
     if (useLibass) {
       _subSettingsSub = ref.listenManual(subtitleSettingsStateProvider, (
         previous,
         next,
       ) {
-        _applySubtitleSettingsToMpv(next);
+        applySubtitleSettingsToMpv(next);
       });
     }
     WidgetsBinding.instance.addObserver(this);
@@ -1138,7 +742,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   Future<void> _openMedia(VideoPrefs prefs, [Duration? position]) async {
     final start = position ?? _currentPosition.value;
-    _resetAudioFallbackState(resetRequestedLanguage: true);
+    resetAudioFallbackState(resetRequestedLanguage: true);
     await _player.open(
       playbackMedia(
         prefs.videoTrack!.id,
@@ -1148,437 +752,16 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       ),
     );
     if (start > Duration.zero) {
-      // media_kit's Media(start:) is unreliable for some sources — playback can
-      // begin at 0 even though the resume position was passed. Seek explicitly
-      // once the media reports a duration (i.e. it has loaded). Fire-and-forget
-      // so open() isn't delayed; the timeout guards a source that never reports
-      // one, and a redundant seek (when start: did work) is harmless.
       unawaited(
         _player.stream.duration
             .firstWhere((d) => d > Duration.zero)
             .timeout(const Duration(seconds: 8))
-            // Up to eight seconds after the media opened, which is long
-            // enough for the reader to have gone. Seeking a disposed player
-            // reaches native state that has already been torn down.
             .then((_) => mounted ? _player.seek(start) : null)
             .catchError((_) {}),
       );
     }
-    unawaited(_syncActiveAudioTrackFromMpv());
-    unawaited(_syncActiveSubtitleTrackFromMpv());
-  }
-
-  SubtitleTrack? get _effectiveSubtitleTrack {
-    if (_activeSubtitleTrack != null && _activeSubtitleTrack!.id == 'no') {
-      return _activeSubtitleTrack;
-    }
-    final playerSubtitle = _player.state.track.subtitle;
-    if (playerSubtitle.id == 'no') {
-      return playerSubtitle;
-    }
-    if (_activeSubtitleTrack != null && _activeSubtitleTrack!.id != 'auto') {
-      return _activeSubtitleTrack;
-    }
-    if (playerSubtitle.id != 'auto') {
-      return playerSubtitle;
-    }
-    final tracks = _player.state.tracks.subtitle
-        .where((t) => t.id != 'auto' && t.id != 'no')
-        .toList();
-    if (tracks.isNotEmpty) {
-      final preferred = _findPreferredSubtitleTrack(tracks);
-      if (preferred != null) return preferred;
-    }
-    final extSubs = _firstVid.subtitles;
-    if (extSubs != null && extSubs.isNotEmpty) {
-      final preferredExt = _findPreferredSourceSubtitleTrack(extSubs);
-      final st = preferredExt ?? extSubs.first;
-      final file = st.file ?? '';
-      return (file.startsWith('http') || file.startsWith('file'))
-          ? SubtitleTrack.uri(file, title: st.label, language: st.label)
-          : SubtitleTrack.data(file, title: st.label, language: st.label);
-    }
-    return _activeSubtitleTrack ?? playerSubtitle;
-  }
-
-  SubtitleTrack? _findPreferredSubtitleTrack(List<SubtitleTrack> tracks) {
-    if (tracks.isEmpty) return null;
-    final pref = widget.defaultSubtitle.trim().toLowerCase();
-    if (pref.isNotEmpty && pref != 'auto') {
-      for (final track in tracks) {
-        if (track.id == 'no' || track.id == 'auto') continue;
-        if (audioTrackLanguagesMatch(track.language, pref) ||
-            audioTrackLanguagesMatch(track.title, pref)) {
-          return track;
-        }
-      }
-    }
-    return tracks.firstWhere(
-      (t) => t.id != 'no' && t.id != 'auto',
-      orElse: () => tracks.first,
-    );
-  }
-
-  vid.Track? _findPreferredSourceSubtitleTrack(List<vid.Track> tracks) {
-    if (tracks.isEmpty) return null;
-    final pref = widget.defaultSubtitle.trim().toLowerCase();
-    if (pref.isNotEmpty && pref != 'auto') {
-      for (final track in tracks) {
-        if (audioTrackLanguagesMatch(track.label, pref)) {
-          return track;
-        }
-      }
-    }
-    return null;
-  }
-
-  bool _isSubtitleTrackSelected(
-    SubtitleTrack? candidate,
-    SubtitleTrack? effective,
-  ) {
-    if (candidate == null || effective == null) return false;
-    if (candidate.id == 'auto' || candidate.id == 'no') return false;
-    if (effective.id == 'auto' || effective.id == 'no') return false;
-    if (candidate.id == effective.id) return true;
-    if (candidate.title != null &&
-        candidate.title!.isNotEmpty &&
-        candidate.title == effective.title) {
-      return true;
-    }
-    return false;
-  }
-
-  Future<void> _syncActiveSubtitleTrackFromMpv() async {
-    if (!mounted) return;
-    try {
-      final active = await _activeSubtitleTrackFn();
-      if (!mounted) return;
-      if (active.id != 'auto') {
-        if (_activeSubtitleTrack?.id != active.id ||
-            _activeSubtitleTrack?.title != active.title ||
-            _activeSubtitleTrack?.language != active.language) {
-          if (mounted) {
-            setState(() {
-              _activeSubtitleTrack = active;
-            });
-          }
-        }
-      }
-    } catch (_) {}
-  }
-
-  Future<void> _setSubtitleTrack(SubtitleTrack track) async {
-    _activeSubtitleTrack = track;
-    await _player.setSubtitleTrack(track);
-  }
-
-  Future<SubtitleTrack> _activeSubtitleTrackFn() async {
-    final selectedSub = _player.state.track.subtitle;
-    if (selectedSub.id != 'auto' && selectedSub.id != 'no') {
-      return selectedSub;
-    }
-
-    final platform = _player.platform;
-    if (platform is! NativePlayer) return selectedSub;
-    final sid = await _nativeAudioProperty(platform, 'sid');
-    final explicitlySelected = _subtitleTrackForNativeId(sid);
-    if (explicitlySelected != null) return explicitlySelected;
-    final activeId = await _nativeAudioProperty(
-      platform,
-      'current-tracks/sub/id',
-    );
-    return _subtitleTrackForNativeId(activeId) ?? selectedSub;
-  }
-
-  SubtitleTrack? _subtitleTrackForNativeId(String? id) {
-    if (id == null || id == 'auto' || id == '-1') return null;
-    if (id == 'no') return SubtitleTrack.no();
-    for (final track in _player.state.tracks.subtitle) {
-      if (track.id == id) return track;
-    }
-    return SubtitleTrack(id, null, null);
-  }
-
-  AudioTrack? get _effectiveAudioTrack {
-    if (_activeAudioTrack != null && _activeAudioTrack!.id == 'no') {
-      return _activeAudioTrack;
-    }
-    final playerAudio = _player.state.track.audio;
-    if (playerAudio.id == 'no') {
-      return playerAudio;
-    }
-    if (_activeAudioTrack != null && _activeAudioTrack!.id != 'auto') {
-      return _activeAudioTrack;
-    }
-    if (playerAudio.id != 'auto') {
-      return playerAudio;
-    }
-    final tracks = _player.state.tracks.audio
-        .where((t) => t.id != 'auto' && t.id != 'no')
-        .toList();
-    if (tracks.isNotEmpty) {
-      final preferred = _findPreferredAudioTrack(tracks);
-      if (preferred != null) return preferred;
-    }
-    final extAudios = _firstVid.audios;
-    if (extAudios != null && extAudios.isNotEmpty) {
-      final preferredExt = _findPreferredSourceAudioTrack(extAudios);
-      final at = preferredExt ?? extAudios.first;
-      return AudioTrack.uri(at.file ?? '', title: at.label, language: at.label);
-    }
-    return _activeAudioTrack ?? playerAudio;
-  }
-
-  AudioTrack? _findPreferredAudioTrack(List<AudioTrack> tracks) {
-    if (tracks.isEmpty) return null;
-    final preferredList = audioPreferredLang
-        .split(',')
-        .map((l) => l.trim().toLowerCase())
-        .where((l) => l.isNotEmpty && l != 'auto')
-        .toList();
-    for (final pref in preferredList) {
-      for (final track in tracks) {
-        if (track.id == 'no' || track.id == 'auto') continue;
-        if (audioTrackLanguagesMatch(track.language, pref) ||
-            audioTrackLanguagesMatch(track.title, pref)) {
-          return track;
-        }
-      }
-    }
-    return tracks.firstWhere(
-      (t) => t.id != 'no' && t.id != 'auto',
-      orElse: () => tracks.first,
-    );
-  }
-
-  vid.Track? _findPreferredSourceAudioTrack(List<vid.Track> tracks) {
-    if (tracks.isEmpty) return null;
-    final preferredList = audioPreferredLang
-        .split(',')
-        .map((l) => l.trim().toLowerCase())
-        .where((l) => l.isNotEmpty && l != 'auto')
-        .toList();
-    for (final pref in preferredList) {
-      for (final track in tracks) {
-        if (audioTrackLanguagesMatch(track.label, pref)) {
-          return track;
-        }
-      }
-    }
-    return null;
-  }
-
-  bool _isAudioTrackSelected(AudioTrack? candidate, AudioTrack? effective) {
-    if (candidate == null || effective == null) return false;
-    if (candidate.id == 'auto' || candidate.id == 'no') return false;
-    if (effective.id == 'auto' || effective.id == 'no') return false;
-    if (candidate.id == effective.id) return true;
-    if (candidate.title != null &&
-        candidate.title!.isNotEmpty &&
-        candidate.title == effective.title) {
-      return true;
-    }
-    return false;
-  }
-
-  Future<void> _syncActiveAudioTrackFromMpv() async {
-    if (!mounted) return;
-    try {
-      final active = await _activeAudioTrackFn();
-      if (!mounted) return;
-      if (active.id != 'auto') {
-        if (_activeAudioTrack?.id != active.id ||
-            _activeAudioTrack?.title != active.title ||
-            _activeAudioTrack?.language != active.language) {
-          if (mounted) {
-            setState(() {
-              _activeAudioTrack = active;
-            });
-          }
-        }
-      }
-    } catch (_) {}
-  }
-
-  Future<void> _setAudioTrack(AudioTrack track) async {
-    _resetAudioFallbackState();
-    _requestedAudioLanguage = track.language ?? _preferredAudioLanguage();
-    _activeAudioTrack = track;
-    await _player.setAudioTrack(track);
-  }
-
-  String? _preferredAudioLanguage() {
-    for (final language in audioPreferredLang.split(',')) {
-      final value = language.trim();
-      if (value.isNotEmpty) return value;
-    }
-    return null;
-  }
-
-  List<AudioTrack> _audioTracksForFallback() {
-    final tracks = _player.state.tracks.audio.toList();
-    for (final sourceTrack in _firstVid.audios ?? const <vid.Track>[]) {
-      final file = sourceTrack.file;
-      if (file == null || file.isEmpty) continue;
-      tracks.add(
-        AudioTrack.uri(
-          file,
-          title: sourceTrack.label,
-          language: sourceTrack.label,
-        ),
-      );
-    }
-    return tracks;
-  }
-
-  void _resetAudioFallbackState({bool resetRequestedLanguage = false}) {
-    _failedAudioTrackKeys.clear();
-    _failedAudioCodecs.clear();
-    _audioFallbackErrorQueued = false;
-    if (resetRequestedLanguage) _requestedAudioLanguage = null;
-  }
-
-  Future<AudioTrack> _activeAudioTrackFn() async {
-    final selectedAudio = _player.state.track.audio;
-    if (selectedAudio.id != 'auto' && selectedAudio.id != 'no') {
-      return selectedAudio;
-    }
-
-    final platform = _player.platform;
-    if (platform is! NativePlayer) return selectedAudio;
-    final aid = await _nativeAudioProperty(platform, 'aid');
-    final explicitlySelected = _audioTrackForNativeId(aid);
-    if (explicitlySelected != null) return explicitlySelected;
-    final activeId = await _nativeAudioProperty(
-      platform,
-      'current-tracks/audio/id',
-    );
-    return _audioTrackForNativeId(activeId) ?? selectedAudio;
-  }
-
-  Future<String?> _nativeAudioProperty(
-    NativePlayer platform,
-    String property,
-  ) async {
-    try {
-      final value = (await platform.getProperty(property)).trim();
-      return value.isEmpty ? null : value;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  Future<String?> _nativePreferredAudioLanguage() async {
-    final platform = _player.platform;
-    if (platform is! NativePlayer) return null;
-    final alang = await _nativeAudioProperty(platform, 'alang');
-    for (final language in alang?.split(',') ?? const <String>[]) {
-      final value = language.trim();
-      if (value.isNotEmpty && value != 'auto') return value;
-    }
-    return null;
-  }
-
-  AudioTrack? _audioTrackForNativeId(String? id) {
-    if (id == null || id == 'auto' || id == 'no' || id == '-1') return null;
-    for (final track in _player.state.tracks.audio) {
-      if (track.id == id) return track;
-    }
-    return AudioTrack(id, null, null);
-  }
-
-  bool _isVideoDecoderError(String? codec, AudioTrack activeAudio) {
-    final normalized = codec?.trim().toLowerCase();
-    if (normalized == null || normalized.isEmpty) return false;
-    if (activeAudio.codec?.trim().toLowerCase() == normalized) return false;
-    final hasAudioCodec = _player.state.tracks.audio.any(
-      (track) => track.codec?.trim().toLowerCase() == normalized,
-    );
-    final hasVideoCodec = _player.state.tracks.video.any(
-      (track) => track.codec?.trim().toLowerCase() == normalized,
-    );
-    return hasVideoCodec && !hasAudioCodec;
-  }
-
-  void _reportPlaybackError(String error) {
-    final message = error.trim();
-    if (message.isEmpty || !isAudioDecoderInitializationError(message)) return;
-    if (_audioFallbackInProgress) {
-      _audioFallbackErrorQueued = true;
-      return;
-    }
-    unawaited(_recoverFromAudioDecoderError(message));
-  }
-
-  Future<void> _recoverFromAudioDecoderError(String message) async {
-    _audioFallbackInProgress = true;
-    try {
-      final failedTrack = await _activeAudioTrackFn();
-      final failedCodec = audioDecoderCodecFromError(message);
-      if (_isVideoDecoderError(failedCodec, failedTrack)) return;
-
-      _failedAudioTrackKeys.add(audioTrackFallbackKey(failedTrack));
-      if (failedCodec != null) {
-        _failedAudioCodecs.add(failedCodec.toLowerCase());
-      }
-      final requestedLanguage =
-          failedTrack.language ??
-          _requestedAudioLanguage ??
-          _preferredAudioLanguage() ??
-          await _nativePreferredAudioLanguage();
-      final candidates = audioTrackFallbackCandidates(
-        failedTrack: failedTrack,
-        availableTracks: _audioTracksForFallback(),
-        requestedLanguage: requestedLanguage,
-        failedTrackKeys: _failedAudioTrackKeys,
-        failedCodecs: _failedAudioCodecs,
-      );
-      if (candidates.isEmpty) return;
-
-      final fallback = candidates.first;
-      _requestedAudioLanguage = requestedLanguage;
-      AppLogger.log(
-        'Audio decoder failed for ${audioTrackLabel(failedTrack)}; '
-        'trying ${audioTrackLabel(fallback)}.',
-        logLevel: LogLevel.warning,
-      );
-      await _player.setAudioTrack(fallback);
-    } catch (error, stackTrace) {
-      AppLogger.log(
-        'Audio track fallback failed: $error\n$stackTrace',
-        logLevel: LogLevel.error,
-      );
-    } finally {
-      _audioFallbackInProgress = false;
-      if (_audioFallbackErrorQueued) {
-        _audioFallbackErrorQueued = false;
-        unawaited(_recoverFromAudioDecoderError(message));
-      }
-    }
-  }
-
-  Future<void> _loadAndroidFont() async {
-    if (Platform.isAndroid && useLibass) {
-      try {
-        final subDir = await getApplicationDocumentsDirectory();
-        final fontPath = path.join(subDir.path, 'subfont.ttf');
-        final data = await rootBundle.load('assets/fonts/subfont.ttf');
-        final bytes = data.buffer.asInt8List(
-          data.offsetInBytes,
-          data.lengthInBytes,
-        );
-        final fontFile = await File(fontPath).create(recursive: true);
-        await fontFile.writeAsBytes(bytes);
-        await (_player.platform as NativePlayer).setProperty(
-          'sub-fonts-dir',
-          subDir.path,
-        );
-        await (_player.platform as NativePlayer).setProperty(
-          'sub-font',
-          'Droid Sans Fallback',
-        );
-      } catch (_) {}
-    }
+    unawaited(syncActiveAudioTrackFromMpv());
+    unawaited(syncActiveSubtitleTrackFromMpv());
   }
 
   Future<void> _initAniSkip() async {
@@ -1628,8 +811,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _tvPanelFocus.dispose();
     _watchStopwatch.stop();
     _currentPosition.removeListener(_updateRpcTimestamp);
-    _subDelayController.removeListener(_onSubDelayChanged);
-    _subSpeedController.removeListener(_onSubSpeedChanged);
+    _subDelayController.removeListener(onSubDelayChanged);
+    _subSpeedController.removeListener(onSubSpeedChanged);
     _subSettingsSub?.close();
     WidgetsBinding.instance.removeObserver(this);
     _setCurrentPosition(true, saveWatchTime: true);
@@ -1703,500 +886,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     }
   }
 
-  Widget _videoQualityWidget(BuildContext context) {
-    return VideoQualitySectionWidget(
-      videoQuality: buildVideoQualityOptions(
-        player: _player,
-        videos: widget.videos,
-        isLocal: widget.isLocal,
-      ),
-      isLocal: widget.isLocal,
-      localQualityLabel: _firstVid.quality,
-      currentVideo: _video.value,
-      onSelect: (quality) {
-        _video.value = quality;
-        _player.stop();
-        if (quality.isLocal) {
-          if (widget.isLocal) {
-            _player.setVideoTrack(quality.videoTrack!);
-          } else {
-            _openMedia(quality);
-          }
-        } else {
-          _openMedia(quality);
-        }
-        _initSubtitleAndAudio = true;
-      },
-      onDone: () => _popSettings(context),
-    );
-  }
-
-  // When opened inside a SettingsDrilldown (mobile bottom sheet or desktop
-  // popup), an option selection navigates back to the settings home list so the
-  // user can see the new choice inline and adjust other options without having
-  // to reopen the menu from scratch. If opened directly via a shortcut, it
-  // closes the settings instead.
-  void _popSettings(BuildContext context) {
-    final scope = SettingsDrilldownScope.of(context);
-    if (scope != null && !scope.isDirectShortcut) {
-      scope.goHome();
-    } else if (scope != null) {
-      scope.close();
-    } else {
-      Navigator.pop(context);
-    }
-  }
-
-  // The settings home list — YouTube's pattern instead of the segmented tabs
-  // this used to be: each entry shows its current value inline, and tapping
-  // one drills into that section's content, reusing the exact same widgets
-  // the old tabs used. Computed fresh on every open, so the current-value
-  // previews always reflect the latest player state.
-  List<SettingsEntry> _buildSettingsEntries(BuildContext context) {
-    final hasSubtitleTrack = _computeHasSubtitleTrack();
-    return [
-      SettingsEntry(
-        label: context.l10n.video_quality,
-        icon: Symbols.hd_rounded,
-        featured: true,
-        valueBuilder: (context) => ValueListenableBuilder<VideoPrefs?>(
-          valueListenable: _video,
-          builder: (context, v, _) => Text(
-            widget.isLocal ? _firstVid.quality : (v?.videoTrack?.title ?? ''),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        contentBuilder: (context) => _videoQualityWidget(context),
-      ),
-      SettingsEntry(
-        label: context.l10n.video_audio,
-        icon: Symbols.graphic_eq_rounded,
-        featured: true,
-        valueBuilder: (context) => StreamBuilder<Track>(
-          stream: _player.stream.track,
-          initialData: _player.state.track,
-          builder: (context, snapshot) {
-            final effective = _effectiveAudioTrack;
-            if (effective == null || effective.id == 'no') {
-              return Text(
-                context.l10n.off,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              );
-            }
-            final rawLabel = audioTrackLabel(effective);
-            final label = (rawLabel.isNotEmpty && rawLabel != 'None')
-                ? rawLabel
-                : (effective.title ??
-                      effective.language ??
-                      effective.channels ??
-                      '');
-            return Text(
-              label.isEmpty ? context.l10n.off : label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            );
-          },
-        ),
-        contentBuilder: (context) => _videoAudios(context),
-      ),
-      SettingsEntry(
-        label: context.l10n.video_subtitle,
-        icon: Symbols.closed_caption_rounded,
-        featured: true,
-        valueBuilder: (context) => StreamBuilder<Track>(
-          stream: _player.stream.track,
-          initialData: _player.state.track,
-          builder: (context, snapshot) {
-            final effective = _effectiveSubtitleTrack;
-            final rawLabel = subtitleTrackLabel(effective);
-            final label = (rawLabel.isNotEmpty && rawLabel != 'None')
-                ? rawLabel
-                : (effective?.title ??
-                      effective?.language ??
-                      effective?.channels ??
-                      '');
-            return Text(
-              (label.isEmpty || effective?.id == 'no')
-                  ? context.l10n.off
-                  : label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            );
-          },
-        ),
-        contentBuilder: (context) => _videoSubtitle(context),
-      ),
-      SettingsEntry(
-        label: context.l10n.appearance,
-        icon: Symbols.text_fields_rounded,
-        group: context.l10n.group_subtitles,
-        contentBuilder: (context) =>
-            _appearanceSectionWidget(context, hasSubtitleTrack),
-      ),
-      if (_chapterMarks.value.isNotEmpty)
-        SettingsEntry(
-          label: context.l10n.chapters,
-          icon: Symbols.bookmarks_rounded,
-          group: context.l10n.group_playback,
-          valueBuilder: (context) => ValueListenableBuilder<int?>(
-            valueListenable: _currentChapterMark,
-            builder: (context, i, _) => Text(
-              i != null ? _chapterMarks.value.elementAtOrNull(i)?.$1 ?? '' : '',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          contentBuilder: (context) => _chaptersSectionWidget(context),
-        ),
-      SettingsEntry(
-        label: context.l10n.playback_speed,
-        icon: Symbols.slow_motion_video_rounded,
-        featured: true,
-        valueBuilder: (context) => ValueListenableBuilder<double>(
-          valueListenable: _playbackSpeed,
-          builder: (context, v, _) => Text(temporaryPlaybackSpeedLabel(v)),
-        ),
-        contentBuilder: (context) => _speedSectionWidget(context),
-      ),
-      SettingsEntry(
-        label: context.l10n.video_fit,
-        icon: Symbols.aspect_ratio_rounded,
-        group: context.l10n.group_playback,
-        valueBuilder: (context) => ValueListenableBuilder<BoxFit>(
-          valueListenable: _fit,
-          builder: (context, fit, _) => Text(fitShortLabel(fit)),
-        ),
-        contentBuilder: (context) => _fitSectionWidget(context),
-      ),
-      // Off the top bar: a choice made once, not while watching.
-      SettingsEntry(
-        label: context.l10n.autoplay_next,
-        icon: Symbols.autoplay_rounded,
-        group: context.l10n.group_playback,
-        toggle: _autoplayNext..value = ref.read(autoPlayNextEpisodeProvider),
-        onToggle: (on) {
-          if (on != ref.read(autoPlayNextEpisodeProvider)) {
-            ref.read(autoPlayNextEpisodeProvider.notifier).toggle();
-          }
-          _autoplayNext.value = on;
-        },
-      ),
-      // Each its own entry rather than grouped under one "Advanced" umbrella
-      // — shaders, stats and custom buttons are unrelated to each other, and
-      // burying three unrelated lists behind a shared label just adds a
-      // pointless extra tap to reach any one of them.
-      if (useMpvConfig)
-        SettingsEntry(
-          label: context.l10n.shaders,
-          icon: Symbols.auto_fix_high_rounded,
-          group: context.l10n.advanced,
-          valueBuilder: (context) => ValueListenableBuilder<String>(
-            valueListenable: _selectedShader,
-            builder: (context, shader, _) => Text(
-              shader.isEmpty ? context.l10n.off : shader,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          contentBuilder: (context) => _shadersSectionWidget(context),
-        ),
-      if (useMpvConfig)
-        SettingsEntry(
-          label: context.l10n.statistics,
-          icon: Symbols.monitoring_rounded,
-          group: context.l10n.advanced,
-          contentBuilder: (context) => _statsSectionWidget(context),
-        ),
-      if (useMpvConfig && (_customButtons.value?.isNotEmpty ?? false))
-        SettingsEntry(
-          label: context.l10n.custom_buttons,
-          icon: Symbols.smart_button_rounded,
-          group: context.l10n.advanced,
-          contentBuilder: (context) => _customButtonsSectionWidget(context),
-        ),
-      if (isDesktop)
-        SettingsEntry(
-          label: context.l10n.keyboard_shortcuts,
-          icon: Symbols.keyboard_rounded,
-          group: context.l10n.advanced,
-          onTap: (sheetContext) {
-            Navigator.pop(sheetContext);
-            // The menu's own context is gone once it closes.
-            if (!mounted) return;
-            showPlayerShortcuts(
-              this.context,
-              skipIntroSeconds: ref.read(defaultSkipIntroLengthStateProvider),
-              shaders: useMpvConfig,
-              bindings: ref.read(keyBindingsStateProvider),
-            );
-          },
-        ),
-      // Moved off the top bar, which keeps what is changed while watching.
-      if (!isDesktop)
-        SettingsEntry(
-          label: context.l10n.share,
-          icon: Icons.adaptive.share,
-          group: context.l10n.group_playback,
-          onTap: (sheetContext) {
-            unawaited(
-              _showShareScreenshotActions(sheetContext, widget.episode),
-            );
-          },
-        ),
-    ];
-  }
-
-  // Every player setting lives behind this one entry point instead of the
-  // old two-level stack (a draggable tab bar for quality/subtitle/audio,
-  // opening a *second* nested tab bar for font/color, plus separate
-  // PopupMenuButtons elsewhere for speed/chapters/shaders/stats).
-  // `initialIndex` lets a caller (the speed pill, the chapter label) jump
-  // straight into a section; -1 (the default, from the gear icon) opens the
-  // home list first, same as YouTube's gear menu.
-  //
-  // Desktop opens a small popup anchored to `context` — the widget the
-  // caller itself is built from (a Builder around the gear icon, the pill...)
-  // — matching YouTube's own settings gear there, and it doesn't pause
-  // playback for the same reason YouTube doesn't. Mobile keeps the modal
-  // bottom sheet, where a phone's screen has no room to spare, and does
-  // pause — a full-screen sheet already blocks watching anyway.
-  void _openPlayerSettings(
-    BuildContext context, {
-    int initialIndex = -1,
-  }) async {
-    await _syncActiveAudioTrackFromMpv();
-    await _syncActiveSubtitleTrackFromMpv();
-    if (!context.mounted) return;
-    final entries = _buildSettingsEntries(context);
-    if (isDesktop) {
-      // The popup leaves the video playing, or paused, as it was.
-      await showDesktopPlayerSettingsMenu(
-        context,
-        title: context.l10n.settings,
-        entries: entries,
-        initialIndex: initialIndex,
-      );
-      if (mounted) setState(() {});
-      return;
-    }
-    // The sheet covers the video, so it pauses it, and plays it again only
-    // if it was playing: a paused video stays paused. Beside the video, in
-    // landscape, it keeps playing, as the episode list does there.
-    final beside = playerSettingsOpenBeside(context);
-    final wasPlaying = !beside && _player.state.playing;
-    if (!beside) _player.pause();
-    await showUnifiedPlayerSettings(
-      context,
-      title: context.l10n.settings,
-      entries: entries,
-      initialIndex: initialIndex,
-    );
-    if (!mounted) return;
-    setState(() {});
-    if (wasPlaying) _player.play();
-  }
-
-  bool _computeHasSubtitleTrack() {
-    final realPlayerTracks = _player.state.tracks.subtitle.where(
-      (e) =>
-          e.id != 'auto' &&
-          e.id != 'no' &&
-          (e.title ?? e.language ?? e.channels ?? '').isNotEmpty,
-    );
-    final hasSourceTracks = widget.videos.any(
-      (v) => (v.subtitles?.isNotEmpty ?? false),
-    );
-    return realPlayerTracks.isNotEmpty || hasSourceTracks;
-  }
-
-  Widget _appearanceSectionWidget(BuildContext context, bool hasSubtitleTrack) {
-    return AppearanceSectionWidget(
-      useLibass: useLibass,
-      hasSubtitleTrack: hasSubtitleTrack,
-    );
-  }
-
-  Widget _chaptersSectionWidget(BuildContext context) {
-    return ChaptersSectionWidget(
-      chapterMarks: _chapterMarks.value,
-      currentChapterMark: _currentChapterMark,
-      onSeek: (ms) => _player.seek(Duration(milliseconds: ms)),
-      onDone: () => _popSettings(context),
-    );
-  }
-
-  Widget _speedSectionWidget(BuildContext context) {
-    return SpeedSectionWidget(
-      playbackSpeed: _playbackSpeed,
-      onSelect: _setPlaybackSpeed,
-      onDone: () => _popSettings(context),
-    );
-  }
-
-  Widget _fitSectionWidget(BuildContext context) {
-    return FitSectionWidget(
-      fit: _fit,
-      fitLabel: fitShortLabel,
-      onSelect: (fit) {
-        _fit.value = fit;
-        _key.currentState?.update(fit: fit);
-      },
-      onDone: () => _popSettings(context),
-    );
-  }
-
-  Widget _shadersSectionWidget(BuildContext context) {
-    return ShadersSectionWidget(
-      selectedShader: _selectedShader,
-      onSelect: (arg) =>
-          (_player.platform as NativePlayer).command(["script-message", arg]),
-      onDone: () => _popSettings(context),
-    );
-  }
-
-  Widget _statsSectionWidget(BuildContext context) {
-    return StatsSectionWidget(
-      onSelect: (arg) =>
-          (_player.platform as NativePlayer).command(["script-binding", arg]),
-      onDone: () => _popSettings(context),
-    );
-  }
-
-  Widget _customButtonsSectionWidget(BuildContext context) {
-    return CustomButtonsSectionWidget(
-      customButtons: _customButtons,
-      onSelect: (btn) => (_player.platform as NativePlayer).command([
-        "script-message",
-        "call_button_${btn.id}",
-      ]),
-      onDone: () => _popSettings(context),
-    );
-  }
-
-  Widget _videoSubtitle(BuildContext context) {
-    return SubtitleSectionWidget(
-      player: _player,
-      videos: widget.videos,
-      isLocal: widget.isLocal,
-      episode: widget.episode,
-      effectiveSubtitleTrack: _effectiveSubtitleTrack,
-      isTrackSelected: _isSubtitleTrackSelected,
-      onSetSubtitleTrack: _setSubtitleTrack,
-      subDelayController: _subDelayController,
-      subSpeedController: _subSpeedController,
-      onDone: () => _popSettings(context),
-    );
-  }
-
-  Widget _videoAudios(BuildContext context) {
-    return AudioSectionWidget(
-      audioOptions: buildUniqueAudioOptions(
-        player: _player,
-        videos: widget.videos,
-        isLocal: widget.isLocal,
-      ),
-      effectiveAudioTrack: _effectiveAudioTrack,
-      isTrackSelected: _isAudioTrackSelected,
-      onSelect: (track) {
-        _activeAudioTrack = track;
-        unawaited(_setAudioTrack(track));
-      },
-      onDone: () => _popSettings(context),
-    );
-  }
-
-  // d-pad-focusable option data for the TV settings panel — the same track
-  // switching the bottom-sheet widgets do, minus the Navigator.pop (the panel
-  // is not a route). Records: (label, selected, onTap).
-  List<({String label, bool selected, VoidCallback onTap})>
-  _tvQualityOptions() {
-    final videoQuality = buildVideoQualityOptions(
-      player: _player,
-      videos: widget.videos,
-      isLocal: widget.isLocal,
-    );
-    return videoQuality.map((quality) {
-      final selected =
-          _video.value!.videoTrack!.title == quality.videoTrack!.title ||
-          widget.isLocal;
-      return (
-        label: widget.isLocal ? _firstVid.quality : quality.videoTrack!.title!,
-        selected: selected,
-        onTap: () {
-          if (_video.value?.videoTrack?.id == quality.videoTrack?.id) return;
-          _video.value = quality;
-          _player.stop();
-          if (quality.isLocal) {
-            if (widget.isLocal) {
-              _player.setVideoTrack(quality.videoTrack!);
-            } else {
-              _openMedia(quality);
-            }
-          } else {
-            _openMedia(quality);
-          }
-          _initSubtitleAndAudio = true;
-        },
-      );
-    }).toList();
-  }
-
-  List<({String label, bool selected, VoidCallback onTap})>
-  _tvSubtitleOptions() {
-    final uniqueSubtitle = buildUniqueSubtitleOptions(
-      player: _player,
-      videos: widget.videos,
-      isLocal: widget.isLocal,
-    );
-    final effective = _effectiveSubtitleTrack;
-    return uniqueSubtitle.map((sub) {
-      final isNone = sub.subtitle?.id == 'no';
-      final title = isNone
-          ? 'Off'
-          : (sub.title ?? subtitleTrackLabel(sub.subtitle));
-      final selected = isNone
-          ? (effective == null || effective.id == 'no')
-          : _isSubtitleTrackSelected(sub.subtitle, effective);
-      return (
-        label: title,
-        selected: selected,
-        onTap: () {
-          try {
-            unawaited(_setSubtitleTrack(sub.subtitle!));
-          } catch (_) {}
-        },
-      );
-    }).toList();
-  }
-
-  List<({String label, bool selected, VoidCallback onTap})> _tvAudioOptions() {
-    final uniqueAudio = buildUniqueAudioOptions(
-      player: _player,
-      videos: widget.videos,
-      isLocal: widget.isLocal,
-    );
-    final effective = _effectiveAudioTrack;
-    return uniqueAudio.map((aud) {
-      final isNone = aud.audio?.id == "no";
-      final title = isNone ? "Off" : (aud.title ?? audioTrackLabel(aud.audio));
-      final selected = isNone
-          ? (effective == null || effective.id == "no")
-          : _isAudioTrackSelected(aud.audio, effective);
-      return (
-        label: title,
-        selected: selected,
-        onTap: () {
-          try {
-            _activeAudioTrack = aud.audio!;
-            unawaited(_setAudioTrack(aud.audio!));
-          } catch (_) {}
-        },
-      );
-    }).toList();
-  }
-
   Future<void> _setPlaybackSpeed(double speed) async {
     await _player.setRate(speed);
     _playbackSpeed.value = speed;
@@ -2230,372 +919,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
-  Widget _seekToWidget({bool iconOnly = false}) {
-    final defaultSkipIntroLength = ref.watch(
-      defaultSkipIntroLengthStateProvider,
-    );
-    return ValueListenableBuilder(
-      valueListenable: _customButton,
-      builder: (context, value, child) {
-        if (!(value?.visible ?? true)) return const SizedBox.shrink();
-
-        final label = value?.currentTitle ?? "+$defaultSkipIntroLength";
-        void onPressed() {
-          if (value != null) {
-            value.onPress();
-          } else {
-            unawaited(_seekBy(defaultSkipIntroLength));
-          }
-        }
-
-        final onLongPress = value == null ? null : () => value.onLongPress();
-        if (iconOnly) {
-          return MobilePlayerCompactSeekControl(
-            key: const ValueKey('mobile-player-portrait-seek-button'),
-            tooltip:
-                value?.currentTitle ??
-                context.l10n.shortcut_seek_forward(defaultSkipIntroLength),
-            seconds: value == null ? defaultSkipIntroLength : null,
-            onPressed: onPressed,
-            onLongPress: onLongPress,
-          );
-        }
-
-        // One of the player's pills, so it reads over the video in either
-        // theme; a long press is the custom button's second action.
-        return PlayerPillButton(
-          icon: Symbols.fast_forward_rounded,
-          label: label,
-          tooltip:
-              value?.currentTitle ??
-              context.l10n.shortcut_seek_forward(defaultSkipIntroLength),
-          onTap: onPressed,
-          onLongPress: onLongPress,
-        );
-      },
-    );
-  }
-
-  // Sections in the unified sheet: quality(0), audio(1), subtitles(2), appearance(3),
-  // then chapters(4) when present, then speed, then fit.
-  int get _qualitySectionIndex => 0;
-  int get _audioSectionIndex => 1;
-  int get _subtitleSectionIndex => 2;
-  int get _chaptersSectionIndex => 4;
-  int get _speedSectionIndex => _chapterMarks.value.isNotEmpty ? 5 : 4;
-
-  Widget _chapterMarkWidget({bool iconOnly = false}) {
-    return ValueListenableBuilder(
-      valueListenable: _currentChapterMark,
-      builder: (context, value, child) {
-        // The marks of the previous video can be gone while the index stays.
-        final chapter = value == null
-            ? null
-            : _chapterMarks.value.elementAtOrNull(value);
-        if (chapter == null) return const SizedBox.shrink();
-        // A chapter with no title of its own is named by its start alone,
-        // not " - 00:00".
-        final start = Duration(milliseconds: chapter.$2).label();
-        final label = chapter.$1.trim().isEmpty
-            ? start
-            : "${chapter.$1} · $start";
-        void onPressed() =>
-            _openPlayerSettings(context, initialIndex: _chaptersSectionIndex);
-
-        // The chapter of the video now, as one of the player's pills; the
-        // label is left out where the row is short.
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s4),
-          child: PlayerPillButton(
-            icon: Symbols.bookmark_rounded,
-            label: label,
-            showLabel: !iconOnly,
-            tooltip: label,
-            isCompact: iconOnly,
-            onTap: onPressed,
-          ),
-        );
-      },
-    );
-  }
-
-  /// The episode as the series' list names it: its title, or "Episode 3".
-  String _episodeLabel() {
-    final episode = widget.episode;
-    final manga = episode.manga.value;
-    if (manga == null) return episode.name ?? '';
-    return chapterDisplayName(
-      episode,
-      manga,
-      context.l10n,
-      byNumber: ref.watch(
-        chapterNumberDisplayProvider.select((ids) => ids.contains(manga.id)),
-      ),
-    );
-  }
-
-  Widget _tvControls() {
-    return TvPlayerControls(
-      player: _player,
-      revealControls: _revealControls,
-      title: widget.episode.manga.value?.name ?? '',
-      episodeLabel: _episodeLabel(),
-      // Direct pop, not maybePop: the on-screen back arrow always exits the
-      // player, bypassing the PopScope that makes the remote Back hide the
-      // panel first.
-      onBack: _goBackToDetail,
-      onRestart: () => _player.seek(Duration.zero),
-      onSettings: () {
-        // On TV the settings open as the docked side panel; phones/desktop keep
-        // the bottom-sheet menu.
-        if (isTv) {
-          setState(() => _tvSettingsOpen = true);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) _tvPanelFocus.requestFocus();
-          });
-        } else {
-          _openPlayerSettings(context);
-        }
-      },
-      hasNext: hasNextEpisode,
-      onNext: hasNextEpisode
-          ? () => pushToNewEpisode(context, _streamController.getNextEpisode())
-          : null,
-      qualityListenable: _video,
-      buildQualityOptions: _buildTvQualityOptions,
-      speedListenable: _playbackSpeed,
-      onSetSpeed: _setPlaybackSpeed,
-    );
-  }
-
-  // The source video list is the real dub/sub control (entries like "1080p Sub"
-  // / "1080p Dub"); switching re-opens the stream at that source. Mirrors
-  // _videoQualityWidget's selection logic for the TV pill bar.
-  List<TvTrackOption> _buildTvQualityOptions() {
-    if (widget.isLocal || widget.videos.isEmpty) return const <TvTrackOption>[];
-    final currentTitle = _video.value?.videoTrack?.title;
-    return [
-      for (final video in widget.videos)
-        TvTrackOption(
-          label: shortQualityLabel(video.quality),
-          selected: currentTitle == video.quality,
-          onSelect: () {
-            if (_video.value?.videoTrack?.title == video.quality) return;
-            final prefs = VideoPrefs(
-              videoTrack: VideoTrack(video.url, video.quality, video.quality),
-              headers: video.headers,
-              isLocal: false,
-            );
-            _video.value = prefs;
-            _player.stop();
-            _openMedia(prefs);
-            _initSubtitleAndAudio = true;
-          },
-        ),
-    ];
-  }
-
-  bool _usesCompactPortraitControls(BuildContext context) {
-    return !isDesktop &&
-        !isTv &&
-        usesCompactPortraitPlayerControls(
-          orientation: MediaQuery.orientationOf(context),
-          width: MediaQuery.sizeOf(context).width,
-        );
-  }
-
-  Widget _mobileBottomButtonBar(BuildContext context) {
-    final compactPortrait = _usesCompactPortraitControls(context);
-    // The line under the timeline, laid out as desktop's: the chapter on
-    // the left; on the right the stream's and the playback's choices, each
-    // a pill with its value, then the settings and fullscreen. The lock and
-    // the skip sit above the panel (see [_mobileAbovePanel]); the episodes
-    // are in the middle of the picture and in the top bar.
-    return MobilePlayerBottomControlsLayout(
-      compactPortrait: compactPortrait,
-      lockButton: const SizedBox.shrink(),
-      seekButton: const SizedBox.shrink(),
-      chapterButton: compactPortrait
-          ? const SizedBox.shrink()
-          : _chapterMarkWidget(),
-      shortcutButtons: _buildSettingsButtons(
-        context,
-        iconOnly: compactPortrait,
-        pills: compactPortrait
-            ? const {
-                PlayerPill.subtitles,
-                PlayerPill.speed,
-                PlayerPill.settings,
-                PlayerPill.fullscreen,
-              }
-            : const {...PlayerPill.values},
-      ),
-    );
-  }
-
-  /// Above the panel, on the left as desktop's skip: the lock and the
-  /// skip (+85 s, or the source's own button).
-  Widget _mobileAbovePanel(BuildContext context) {
-    final compactPortrait = _usesCompactPortraitControls(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s8),
-      child: Row(
-        children: [
-          KeyedSubtree(
-            key: const ValueKey('mobile-player-lock-button'),
-            child: ShioriOverlayPill(
-              icon: Symbols.lock_open_rounded,
-              tooltip: context.l10n.lock,
-              onTap: () {
-                HapticFeedback.lightImpact();
-                _isLocked.value = true;
-              },
-            ),
-          ),
-          const SizedBox(width: ShioriSpace.s8),
-          _seekToWidget(iconOnly: compactPortrait),
-        ],
-      ),
-    );
-  }
-
-  Widget _desktopBottomButtonBar(BuildContext context) {
-    final skipDuration = ref.watch(defaultDoubleTapToSkipLengthStateProvider);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    if (_streamController.hasPreviousEpisode)
-                      ShioriOverlayIconButton(
-                        tooltip: context.l10n.previous_episode,
-                        size: 22,
-                        onPressed: () => pushToNewEpisode(
-                          context,
-                          _streamController.getPrevEpisode(),
-                        ),
-                        icon: const Icon(
-                          Symbols.skip_previous_rounded,
-                          fill: 1,
-                        ),
-                      ),
-                    CustomPlayOrPauseButton(controller: _controller),
-                    if (hasNextEpisode)
-                      ShioriOverlayIconButton(
-                        tooltip: context.l10n.next_episode,
-                        size: 22,
-                        onPressed: () => pushToNewEpisode(
-                          context,
-                          _streamController.getNextEpisode(),
-                        ),
-                        icon: const Icon(Symbols.skip_next_rounded, fill: 1),
-                      ),
-                    _desktopSeekButton(context, -skipDuration),
-                    _desktopSeekButton(context, skipDuration),
-                    CustomMaterialDesktopVolumeButton(controller: _controller),
-                    ValueListenableBuilder(
-                      valueListenable: _tempPosition,
-                      builder: (context, value, child) =>
-                          CustomMaterialDesktopPositionIndicator(
-                            delta: value,
-                            controller: _controller,
-                          ),
-                    ),
-                    _chapterMarkWidget(),
-                  ],
-                ),
-              ),
-            ),
-            Flexible(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                reverse: true,
-                child: _buildSettingsButtons(context),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  /// Seeks [seconds] back (negative) or on, the count drawn in the arrow.
-  Widget _desktopSeekButton(BuildContext context, int seconds) {
-    final back = seconds < 0;
-    final count = seconds.abs();
-    return SizedBox(
-      height: 50,
-      width: 50,
-      child: IconButton(
-        tooltip: back
-            ? context.l10n.shortcut_seek_back(count)
-            : context.l10n.shortcut_seek_forward(count),
-        onPressed: () => _seekBy(seconds),
-        icon: Stack(
-          children: [
-            Positioned.fill(
-              child: Icon(
-                back
-                    ? Symbols.rotate_left_rounded
-                    : Symbols.rotate_right_rounded,
-                color: Colors.white,
-                size: 30,
-              ),
-            ),
-            Positioned.fill(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Text(
-                    '$count',
-                    style: TextStyle(
-                      fontSize: context.shiori.text.badge.fontSize,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// helper method for _mobileBottomButtonBar() and _desktopBottomButtonBar()
-  Widget _buildSettingsButtons(
-    BuildContext context, {
-    bool iconOnly = false,
-    Set<PlayerPill> pills = const {...PlayerPill.values},
-  }) => PlayerShortcutPills(
-    pills: pills,
-    videos: widget.videos,
-    video: _video,
-    player: _player,
-    subtitleTrack: () => _effectiveSubtitleTrack,
-    audioTrack: () => _effectiveAudioTrack,
-    playbackSpeed: _playbackSpeed,
-    fit: _fit,
-    iconOnly: iconOnly,
-    onQuality: (context) =>
-        _openPlayerSettings(context, initialIndex: _qualitySectionIndex),
-    onSubtitles: (context) =>
-        _openPlayerSettings(context, initialIndex: _subtitleSectionIndex),
-    onAudio: (context) =>
-        _openPlayerSettings(context, initialIndex: _audioSectionIndex),
-    onSpeed: (context) =>
-        _openPlayerSettings(context, initialIndex: _speedSectionIndex),
-    onSettings: _openPlayerSettings,
-    onChangeFit: () => _changeFitLabel(ref),
-    onToggleFullscreen: _toggleFullscreen,
-  );
-
   Future<void> _toggleFullscreen(bool isFullscreen) async {
     if (isDesktop) {
       final isFullScreen = await setFullScreen(value: !isFullscreen);
@@ -2608,107 +931,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     }
   }
 
-  bool _playAfterOverlay = false;
-
-  /// Pauses while the episode list or the share sheet is open
-  /// ([closed] true once it has closed), and plays again only if it was playing.
-  void _pauseWhileOpen(bool closed) {
-    if (!closed) {
-      _playAfterOverlay = _player.state.playing;
-      _player.pause();
-    } else if (_playAfterOverlay) {
-      _playAfterOverlay = false;
-      _player.play();
-    }
-  }
-
-  Widget _topButtonBar(BuildContext context) {
-    final compactPortrait = _usesCompactPortraitControls(context);
-
-    Widget episodesButton() {
-      return btnToShowChapterListDialog(
-        context,
-        context.l10n.episodes,
-        widget.episode,
-        // Wider than tall, the list opens beside the video, which keeps
-        // playing; the sheet from the bottom covers it, so that pauses.
-        onChanged: (closed) {
-          final size = MediaQuery.sizeOf(context);
-          if (closed || size.width <= size.height) _pauseWhileOpen(closed);
-        },
-        iconColor: Colors.white,
-      );
-    }
-
-    // The series and the episode, as the readers' bars and the loading
-    // state name them.
-    final title = Padding(
-      padding: EdgeInsetsDirectional.only(
-        start: compactPortrait ? 0 : ShioriSpace.s8,
-        end: ShioriSpace.s8,
-      ),
-      child: ChapterBarTitle(chapter: widget.episode, onImage: true),
-    );
-
-    // The top keeps who and where: the way back, what is playing, and the
-    // settings. What is changed while watching is in the panel at the foot;
-    // autoplay and sharing are in the settings.
-    return MobilePlayerTopSafeArea(
-      isDesktop: isDesktop,
-      child: MobilePlayerTopControlsLayout(
-        compactPortrait: compactPortrait,
-        backButton: ShioriOverlayIconButton(
-          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-          size: 24,
-          onPressed: _goBackToDetail,
-          icon: const Icon(Symbols.arrow_back_rounded),
-        ),
-        title: title,
-        wideActions: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (supportsAlwaysOnTop)
-              IconButton(
-                tooltip: context.l10n.always_on_top,
-                icon: const Icon(
-                  fill: 1,
-                  Symbols.push_pin_rounded,
-                  color: Colors.white,
-                ),
-                onPressed: toggleAlwaysOnTop,
-              ),
-            episodesButton(),
-            // A phone shares from the settings. The settings themselves are
-            // in the panel at the foot, on every platform, not here too.
-            if (isDesktop)
-              btnToShowShareScreenshot(
-                widget.episode,
-                onChanged: _pauseWhileOpen,
-              ),
-          ],
-        ),
-        portraitActions: MobilePlayerPortraitActionTheme(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              KeyedSubtree(
-                key: const ValueKey('mobile-player-portrait-episodes'),
-                child: episodesButton(),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   /// How high above the bottom edge (past the system's inset) what floats
   /// over the video sits so the controls panel never covers it: the
   /// timeline, a row of pills and the panel's margins.
   static const double _aboveControlsPanel = 128;
 
   BoxFit? _lastFit;
-  void _resize(BoxFit fit) async {
+  Future<void> _resize(BoxFit fit) async {
     if (fit == _lastFit) return;
     _lastFit = fit;
     // Wait for the widget tree to settle before updating fit
@@ -2746,19 +975,19 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             fit: docked ? BoxFit.contain : fit,
             key: _key,
             controls: (state) => (isTv && ref.read(tvPlayerStyleProvider))
-                ? (_tvSettingsOpen ? const SizedBox.shrink() : _tvControls())
+                ? (_tvSettingsOpen ? const SizedBox.shrink() : tvControls())
                 : (isDesktop || isTv)
                 ? DesktopControllerWidget(
                     videoController: _controller,
-                    topButtonBarWidget: _topButtonBar(context),
+                    topButtonBarWidget: topButtonBar(context),
                     videoStatekey: _key,
-                    bottomButtonBarWidget: _desktopBottomButtonBar(context),
+                    bottomButtonBarWidget: desktopBottomButtonBar(context),
                     streamController: _streamController,
                     seekToWidget: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: ShioriSpace.s12,
                       ),
-                      child: Row(children: [_seekToWidget()]),
+                      child: Row(children: [seekToWidget()]),
                     ),
                     tempDuration: (value) {
                       _tempPosition.value = value;
@@ -2774,10 +1003,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   )
                 : MobileControllerWidget(
                     videoController: _controller,
-                    topButtonBarWidget: _topButtonBar(context),
+                    topButtonBarWidget: topButtonBar(context),
                     videoStatekey: _key,
-                    bottomButtonBarWidget: _mobileBottomButtonBar(context),
-                    abovePanelWidget: _mobileAbovePanel(context),
+                    bottomButtonBarWidget: mobileBottomButtonBar(context),
+                    abovePanelWidget: mobileAbovePanel(context),
                     streamController: _streamController,
                     revealControls: _revealControls,
                     chapterMarks: _chapterMarks,
@@ -2948,9 +1177,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             speedListenable: _playbackSpeed,
             onSetSpeed: _setPlaybackSpeed,
             selectedShaderListenable: _selectedShader,
-            qualityOptions: _tvQualityOptions,
-            subtitleOptions: _tvSubtitleOptions,
-            audioOptions: _tvAudioOptions,
+            qualityOptions: tvQualityOptions,
+            subtitleOptions: tvSubtitleOptions,
+            audioOptions: tvAudioOptions,
             headerFocusNode: _tvPanelFocus,
             onExitLeft: () => _tvVideoFocus.requestFocus(),
             onClose: () => setState(() => _tvSettingsOpen = false),
@@ -2964,82 +1193,17 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     BuildContext sheetContext,
     Chapter episode, {
     void Function(bool)? onChanged,
-  }) async {
-    Future<Uint8List?> screenshot() => _player.screenshot(
-      format: "image/png",
-      includeLibassSubtitles: _includeSubtitles,
-    );
-    onChanged?.call(false);
-    final name =
-        "${episode.manga.value!.name} ${episode.name} - ${_currentPosition.value.toString()}"
-            .replaceAll(RegExp(r'[^a-zA-Z0-9 .()\-\s]'), '_');
-    await showShioriSheet<void>(
-      sheetContext,
-      builder: (context) => ImageActionsSheet(
-        onSetCover: (context) async {
-          final imageBytes = await screenshot();
-          if (!context.mounted) return;
-          final confirmed = await confirmUseAsMangaCover(context);
-          if (!confirmed || !context.mounted) return;
-          await applyMangaCover(context, episode.manga.value!, imageBytes);
-          if (context.mounted) Navigator.pop(context);
-        },
-        onShare: (context) async {
-          final imageBytes = await screenshot();
-          if (context.mounted) {
-            final box = context.findRenderObject() as RenderBox?;
-            await shareOrCopy(
-              ShareParams(
-                files: [
-                  XFile.fromData(
-                    imageBytes!,
-                    name: name,
-                    mimeType: 'image/png',
-                  ),
-                ],
-                sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
-              ),
-              fallbackName: name,
-            );
-          }
-        },
-        onSave: (context) async {
-          final imageBytes = await screenshot();
-          final dir = await StorageProvider().getGalleryDirectory();
-          final file = File(path.join(dir!.path, "$name.png"));
-          file.writeAsBytesSync(imageBytes!);
-          if (context.mounted) {
-            botToast(context.l10n.picture_saved, second: 3);
-          }
-        },
-        // The sheet is its own route, so the player's setState alone
-        // would leave the switch showing the old value.
-        footer: StatefulBuilder(
-          builder: (context, setSheetState) => ShioriSwitchRow(
-            title: context.l10n.include_subtitles,
-            value: _includeSubtitles,
-            onChanged: (value) {
-              setState(() => _includeSubtitles = value);
-              setSheetState(() {});
-            },
-          ),
-        ),
-      ),
-    );
-    onChanged?.call(true);
-  }
-
-  Widget btnToShowShareScreenshot(
-    Chapter episode, {
-    void Function(bool)? onChanged,
-  }) {
-    return IconButton(
-      tooltip: context.l10n.share,
-      onPressed: () =>
-          _showShareScreenshotActions(context, episode, onChanged: onChanged),
-      icon: Icon(Icons.adaptive.share, color: Colors.white),
-    );
-  }
+  }) => showAnimeShareScreenshotActions(
+    sheetContext,
+    episode: episode,
+    player: _player,
+    currentPosition: _currentPosition.value,
+    includeSubtitles: () => _includeSubtitles,
+    onIncludeSubtitlesChanged: (value) {
+      setState(() => _includeSubtitles = value);
+    },
+    onChanged: onChanged,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -3049,7 +1213,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     // so wrap the player so a physical keyboard or TV remote can drive
     // playback too. See #668 / #729.
     final content = Scaffold(
-      body: isDesktop ? body : _wrapWithPlayerShortcuts(body),
+      body: isDesktop ? body : wrapWithPlayerShortcuts(body),
     );
 
     if (isDesktop) return content;
@@ -3068,94 +1232,5 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         );
       },
     );
-  }
-
-  /// Maps keyboard and TV-remote keys to player actions for non-desktop
-  /// builds. Only dedicated media keys + the usual mpv-style keys are bound
-  /// (no D-pad arrows beyond seek), so it stays additive and doesn't fight
-  /// touch input. Reuses the existing player + episode-navigation methods.
-  Widget _wrapWithPlayerShortcuts(Widget child) {
-    void seekBy(int seconds) {
-      _player.seek(_player.state.position + Duration(seconds: seconds));
-    }
-
-    final bindings = ref.watch(keyBindingsStateProvider);
-    final actions = <PlayerShortcut, VoidCallback>{
-      PlayerShortcut.playPause: _player.playOrPause,
-      PlayerShortcut.seekBackLong: () => seekBy(-playerLongSeekSeconds),
-      PlayerShortcut.seekForwardLong: () => seekBy(playerLongSeekSeconds),
-    };
-    return CallbackShortcuts(
-      bindings: <ShortcutActivator, VoidCallback>{
-        for (final MapEntry(key: shortcut, value: action) in actions.entries)
-          for (final combo in bindings[shortcut]!) combo.activator: action,
-        const SingleActivator(LogicalKeyboardKey.mediaPlayPause): () {
-          _player.playOrPause();
-        },
-        const SingleActivator(LogicalKeyboardKey.mediaPlay): () {
-          _player.play();
-        },
-        const SingleActivator(LogicalKeyboardKey.mediaPause): () {
-          _player.pause();
-        },
-        // Seek via J/L (or the keys they were rebound to) and the dedicated
-        // media keys only. Arrow keys are left unbound so they keep driving
-        // d-pad focus traversal on Android TV (and arrow-key focus movement
-        // with a keyboard) instead of seeking.
-        const SingleActivator(LogicalKeyboardKey.mediaRewind): () =>
-            seekBy(-10),
-        const SingleActivator(LogicalKeyboardKey.mediaFastForward): () =>
-            seekBy(10),
-        const SingleActivator(LogicalKeyboardKey.mediaTrackNext): () {
-          if (hasNextEpisode && mounted) {
-            pushToNewEpisode(context, _streamController.getNextEpisode());
-          }
-        },
-        const SingleActivator(LogicalKeyboardKey.mediaTrackPrevious): () {
-          if (_streamController.hasPreviousEpisode && mounted) {
-            pushToNewEpisode(context, _streamController.getPrevEpisode());
-          }
-        },
-      },
-      child: MouseRegion(
-        // Desktop debugging: a mouse has no d-pad, so let hover and clicks
-        // reveal the auto-hiding controls (bumping the same notifier the remote
-        // does). No-op on a TV, which sends no pointer-hover events.
-        onEnter: (_) => _revealControls.value++,
-        onHover: (_) => _revealControls.value++,
-        child: Listener(
-          // Reveal on a mouse click (desktop), but NOT on touch. On a touch
-          // device the mobile controls handle tap-to-toggle themselves, so
-          // revealing here on finger-down makes the following tap immediately
-          // hide them again (controls flash and vanish in under a second).
-          onPointerDown: (event) {
-            if (event.kind == PointerDeviceKind.mouse) _revealControls.value++;
-          },
-          child: Focus(autofocus: true, onKeyEvent: _onPlayerKey, child: child),
-        ),
-      ),
-    );
-  }
-
-  // On a TV remote / keyboard, reveal the on-screen controls when the user
-  // presses the d-pad. The arrow keys stay unbound above (so they still drive
-  // focus traversal between the control buttons) — we just bump [_revealControls]
-  // so the controls become visible and the focus is on something the user can
-  // see. Returns ignored so traversal + the media shortcuts still run.
-  KeyEventResult _onPlayerKey(FocusNode node, KeyEvent event) {
-    if (event is KeyDownEvent || event is KeyRepeatEvent) {
-      final k = event.logicalKey;
-      final isNav =
-          k == LogicalKeyboardKey.arrowUp ||
-          k == LogicalKeyboardKey.arrowDown ||
-          k == LogicalKeyboardKey.arrowLeft ||
-          k == LogicalKeyboardKey.arrowRight ||
-          k == LogicalKeyboardKey.select ||
-          k == LogicalKeyboardKey.enter ||
-          k == LogicalKeyboardKey.numpadEnter ||
-          k == LogicalKeyboardKey.gameButtonA;
-      if (isNav) _revealControls.value++;
-    }
-    return KeyEventResult.ignored;
   }
 }

@@ -149,7 +149,9 @@ extension MangaExtensions on Manga {
     final settings = settingsRepository.current;
 
     final sortChapterEntry =
-        (settings.sortChapterList ?? const []).where((e) => e.mangaId == id).firstOrNull ??
+        (settings.sortChapterList ?? const [])
+            .where((e) => e.mangaId == id)
+            .firstOrNull ??
         SortChapter(mangaId: id, index: 1);
     final sortIndex = sortChapterEntry.index!;
     final reverse = sortChapterEntry.reverse!;
@@ -170,9 +172,7 @@ extension MangaExtensions on Manga {
           if (s != 0) return s;
           final cmp = (sortKeys[a.id] ?? 0).compareTo(sortKeys[b.id] ?? 0);
           if (cmp != 0) return cmp;
-          return (originalIndex[a.id] ?? 0).compareTo(
-            originalIndex[b.id] ?? 0,
-          );
+          return (originalIndex[a.id] ?? 0).compareTo(originalIndex[b.id] ?? 0);
         });
         break;
       case 2: // by upload date

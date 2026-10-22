@@ -5,7 +5,7 @@ import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/modules/library/providers/file_scanner.dart';
+import 'package:mangayomi/services/local_folders.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -201,8 +201,7 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
     final years = [title.startYear, title.endYear].whereType<int>().join(' – ');
     final meta = [
       if (title.aggregateRating != null)
-        '★ ${title.aggregateRating!.toStringAsFixed(1)}'
-            '${title.voteCount == null ? '' : ' (${title.voteCount})'}',
+        '★ ${title.aggregateRating!.toStringAsFixed(1)}${title.voteCount == null ? '' : ' (${title.voteCount})'}',
       if (years.isNotEmpty) years,
     ].join(' · ');
     return InkWell(

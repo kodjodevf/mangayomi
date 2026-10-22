@@ -23,10 +23,10 @@ class AidokuRustRunner implements AidokuRunner {
     required Uint8List bytes,
     required String sourceKey,
     required FutureOr<rust.AidokuNetResponse> Function(rust.AidokuNetRequest)
-        requestHandler,
+    requestHandler,
     void Function(String message)? printHandler,
     FutureOr<rust_js.AidokuJsResponse> Function(rust_js.AidokuJsRequest)?
-        jsHandler,
+    jsHandler,
   }) async {
     AidokuLogger.log(
       'RustRunner',
@@ -141,7 +141,10 @@ class AidokuRustRunner implements AidokuRunner {
 
   @override
   Future<Home> getHome() async {
-    AidokuLogger.log('RustRunner', 'getHome: not supported natively in Rust, returning empty home');
+    AidokuLogger.log(
+      'RustRunner',
+      'getHome: not supported natively in Rust, returning empty home',
+    );
     return Home(components: const []);
   }
 
@@ -161,9 +164,7 @@ class AidokuRustRunner implements AidokuRunner {
   }) async {
     if (!features.providesImageRequests) return null;
     AidokuLogger.log('RustRunner', 'getImageRequest: url="$url"');
-    final ctxEntries = context?.entries
-        .map((e) => (e.key, e.value))
-        .toList();
+    final ctxEntries = context?.entries.map((e) => (e.key, e.value)).toList();
     final res = await _rustSource.getImageRequest(
       url: url,
       context: ctxEntries,
@@ -220,7 +221,10 @@ class AidokuRustRunner implements AidokuRunner {
     String username,
     String password,
   ) async {
-    AidokuLogger.log('RustRunner', 'handleBasicLogin: key="$key", user="$username"');
+    AidokuLogger.log(
+      'RustRunner',
+      'handleBasicLogin: key="$key", user="$username"',
+    );
     return await _rustSource.handleBasicLogin(
       key: key,
       username: username,
@@ -294,9 +298,7 @@ class AidokuRustRunner implements AidokuRunner {
       chapterNumber: c.chapterNumber,
       volumeNumber: c.volumeNumber,
       dateUploaded: c.dateUploaded != null
-          ? DateTime.fromMillisecondsSinceEpoch(
-              c.dateUploaded!.toInt() * 1000,
-            )
+          ? DateTime.fromMillisecondsSinceEpoch(c.dateUploaded!.toInt() * 1000)
           : null,
       scanlators: c.scanlators,
       url: c.url,
@@ -359,10 +361,7 @@ class AidokuRustRunner implements AidokuRunner {
         ascending: f.value.ascending,
       );
     } else if (f is FilterValueCheck) {
-      return rust.AidokuFilterValue.check(
-        id: f.id,
-        value: f.value,
-      );
+      return rust.AidokuFilterValue.check(id: f.id, value: f.value);
     } else if (f is FilterValueText) {
       return rust.AidokuFilterValue.text(id: f.id, value: f.value);
     } else if (f is FilterValueRange) {
@@ -377,13 +376,16 @@ class AidokuRustRunner implements AidokuRunner {
         final ctx = context.isNotEmpty
             ? Map.fromEntries(context.map((e) => MapEntry(e.$1, e.$2)))
             : null;
-        return Page(content: PageContentUrl(url: url, context: ctx));
+        return Page(
+          content: PageContentUrl(url: url, context: ctx),
+        );
       },
       text: (text) => Page(content: PageContentText(text)),
       image: (data) =>
           Page(content: PageContentImage(imageRef: 0, imageData: data)),
-      zipFile: (url, filePath) =>
-          Page(content: PageContentZipFile(url: url, filePath: filePath)),
+      zipFile: (url, filePath) => Page(
+        content: PageContentZipFile(url: url, filePath: filePath),
+      ),
     );
   }
 
@@ -404,9 +406,7 @@ class AidokuRustRunner implements AidokuRunner {
         );
         break;
       case 'multi-select':
-        config = FilterTypeMultiSelect(
-          MultiSelectFilter(options: f.options),
-        );
+        config = FilterTypeMultiSelect(MultiSelectFilter(options: f.options));
         break;
       case 'sort':
         config = FilterTypeSort(options: f.options);

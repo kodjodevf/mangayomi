@@ -2,6 +2,7 @@
 // handling AES-encrypted backups. Kept apart from restore.dart: this only
 // reads and decrypts a file, it never touches Isar.
 import 'dart:convert';
+import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
@@ -34,18 +35,24 @@ Future<Map<String, dynamic>> decodeMangayomiBackup(
   final l10n = l10nLocalizations(context)!;
 
   while (true) {
-    final stream = InputFileStream(path);
     try {
-      final archive = ZipDecoder().decodeStream(
-        stream,
-        password: passwordToTry,
-      );
-      // decodeStream() only parses headers and buffers raw compressed
-      // bytes - it doesn't verify/decrypt content (and so won't throw on a
-      // wrong password) until the content is actually read, hence forcing
-      // that access here rather than after returning.
-      final bytes = archive.files.first.content as List<int>;
-      final backup = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+      final backup = await Isolate.run(() {
+        final stream = InputFileStream(path);
+        try {
+          final archive = ZipDecoder().decodeStream(
+            stream,
+            password: passwordToTry,
+          );
+          // decodeStream() only parses headers and buffers raw compressed
+          // bytes - it doesn't verify/decrypt content (and so won't throw on a
+          // wrong password) until the content is actually read, hence forcing
+          // that access here rather than after returning.
+          final bytes = archive.files.first.content as List<int>;
+          return jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+        } finally {
+          stream.close();
+        }
+      });
 
       final embeddedPassword = backup['backupEncryptionPassword'] as String?;
       if (embeddedPassword != null && context.mounted) {
@@ -71,8 +78,6 @@ Future<Map<String, dynamic>> decodeMangayomiBackup(
       }
       passwordToTry = entered;
       wasIncorrect = true;
-    } finally {
-      stream.close();
     }
   }
 }

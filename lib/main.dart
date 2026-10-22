@@ -14,14 +14,17 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/repositories/custom_button_repository.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
+export 'package:mangayomi/repositories/db.dart';
+export 'package:mangayomi/services/http/m_client.dart'
+    show webViewEnvironment, customDns;
 import 'package:mangayomi/models/track.dart' as track;
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
@@ -62,11 +65,8 @@ import 'package:mangayomi/modules/widgets/memory_overlay.dart';
 import 'package:mangayomi/modules/widgets/app_ui_scale.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_ui_scale_state_provider.dart';
 import 'package:mangayomi/utils/error_toast.dart';
+export 'package:mangayomi/services/discord_rpc.dart' show discordRpc;
 
-late Isar isar;
-DiscordRPC? discordRpc;
-WebViewEnvironment? webViewEnvironment;
-String? customDns;
 void main(List<String> args) async {
   // Zone-level catch-all for anything that slips through both layers
   runZonedGuarded(

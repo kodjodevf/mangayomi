@@ -70,10 +70,7 @@ void showDeleteMangaDialog({
                             // From Library
                             if (deleteFromLib) {
                               for (var manga in mangasList) {
-                                await mangaRepository.removeFromLibrary(
-                                  ref,
-                                  manga,
-                                );
+                                await mangaRepository.removeFromLibrary(manga);
                               }
                             }
                             // Downloaded Chapters
@@ -89,7 +86,6 @@ void showDeleteMangaDialog({
                                     mangaDirectory,
                                   );
                                   await mangaRepository.removeFromLibrary(
-                                    ref,
                                     manga,
                                   );
                                 } else {

@@ -8,8 +8,8 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
-import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
-import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
+import 'package:mangayomi/models/oauth.dart';
+import 'package:mangayomi/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 
 import 'base_tracker.dart';

@@ -4,7 +4,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'sync_connection_status_provider.g.dart';
 
-enum SyncConnectionStatus { notConfigured, checking, connected, unauthorized, unreachable }
+enum SyncConnectionStatus {
+  notConfigured,
+  checking,
+  connected,
+  unauthorized,
+  unreachable,
+}
 
 @riverpod
 class SyncConnectionState extends _$SyncConnectionState {

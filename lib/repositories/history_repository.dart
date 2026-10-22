@@ -1,27 +1,29 @@
 import 'dart:async';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/changed_part_repository.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 
 class HistoryRepository {
   History? findByMangaId(int mangaId) =>
       isar.historys.where().mangaIdEqualTo(mangaId).findFirstSync();
 
-  bool isEmptyForManga(int? mangaId) =>
-      isar.historys.filter().mangaIdEqualTo(mangaId).isEmptySync();
+  bool isEmptyForManga(int? mangaId) => mangaId == null
+      ? true
+      : isar.historys.where().mangaIdEqualTo(mangaId).isEmptySync();
 
-  History? findFirstByMangaId(int? mangaId) =>
-      isar.historys.filter().mangaIdEqualTo(mangaId).findFirstSync();
+  History? findFirstByMangaId(int? mangaId) => mangaId == null
+      ? null
+      : isar.historys.where().mangaIdEqualTo(mangaId).findFirstSync();
 
-  History? findByChapterId(int? chapterId) =>
-      isar.historys.filter().chapterIdEqualTo(chapterId).findFirstSync();
+  History? findByChapterId(int? chapterId) => chapterId == null
+      ? null
+      : isar.historys.where().chapterIdEqualTo(chapterId).findFirstSync();
 
   History? getLatestHistory([ItemType? itemType]) {
     if (itemType == null) {
@@ -101,8 +103,9 @@ class HistoryRepository {
       .readingTimeSecondsProperty()
       .findAll();
 
-  List<History> getAllByMangaId(int? mangaId) =>
-      isar.historys.filter().mangaIdEqualTo(mangaId).findAllSync();
+  List<History> getAllByMangaId(int? mangaId) => mangaId == null
+      ? const []
+      : isar.historys.where().mangaIdEqualTo(mangaId).findAllSync();
 
   int countByMangaIds(List<int> mangaIds) => isar.historys
       .filter()
@@ -126,17 +129,11 @@ class HistoryRepository {
   Future<void> deleteAll(List<int> ids) =>
       dbWriteQueue.run(() => isar.writeTxn(() => isar.historys.deleteAll(ids)));
 
-  Future<void> delete(WidgetRef ref, int id) =>
-      deleteRecorded(ref.read(synchingProvider(syncId: 1).notifier), id);
-
-  /// [delete] with the sync notifier already in hand, for a caller that may
-  /// no longer hold a ref when the deletion is written (a deferred removal
-  /// committed as its screen goes away).
-  Future<void> deleteRecorded(Synching sync, int id) => dbWriteQueue.run(() {
+  Future<void> delete(int id) => dbWriteQueue.run(() {
     isar.writeTxnSync(() {
       final clientId = isar.historys.getSync(id)?.clientId;
       isar.historys.deleteSync(id);
-      sync.addChangedPart(
+      changedPartRepository.recordIfSyncOn(
         ActionType.removeHistory,
         id,
         "{}",

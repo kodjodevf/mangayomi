@@ -92,7 +92,7 @@ class _ExtensionListTileWidgetState
       confirmLabel: l10n.uninstall,
       destructive: true,
     );
-    if (confirmed) sourceRepository.uninstall(ref, widget.source);
+    if (confirmed) sourceRepository.uninstall(widget.source);
   }
 
   Widget _icon() => SourceIcon(iconUrl: widget.source.iconUrl);

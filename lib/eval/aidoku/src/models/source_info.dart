@@ -50,7 +50,8 @@ class Info {
       contentRating: json['contentRating'] != null
           ? SourceContentRating.fromValue(json['contentRating'] as int)
           : null,
-      languages: (json['languages'] as List<dynamic>?)?.cast<String>() ?? const ['en'],
+      languages:
+          (json['languages'] as List<dynamic>?)?.cast<String>() ?? const ['en'],
     );
   }
 }
@@ -79,7 +80,9 @@ class SourceConfiguration {
   factory SourceConfiguration.fromJson(Map<String, dynamic> json) {
     return SourceConfiguration(
       languageSelectType: json['languageSelectType'] != null
-          ? LanguageSelectType.values.byName(json['languageSelectType'] as String)
+          ? LanguageSelectType.values.byName(
+              json['languageSelectType'] as String,
+            )
           : null,
       supportsArtistSearch: json['supportsArtistSearch'] as bool?,
       supportsAuthorSearch: json['supportsAuthorSearch'] as bool?,
@@ -93,11 +96,7 @@ class SourceConfiguration {
 }
 
 class SourceInfo {
-  SourceInfo({
-    required this.info,
-    this.listings,
-    this.config,
-  });
+  SourceInfo({required this.info, this.listings, this.config});
 
   final Info info;
   final List<Listing>? listings;
@@ -124,7 +123,9 @@ class SourceInfo {
     return SourceInfo(
       info: Info.fromJson(infoJson),
       listings: listings,
-      config: configJson != null ? SourceConfiguration.fromJson(configJson) : null,
+      config: configJson != null
+          ? SourceConfiguration.fromJson(configJson)
+          : null,
     );
   }
 }

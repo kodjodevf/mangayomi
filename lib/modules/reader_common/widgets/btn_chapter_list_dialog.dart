@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/reader_common/reader_chapter_navigation.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/manga/detail/providers/chapter_display.dart';
-import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/modules/reader_common/providers/chapter_display.dart';
+import 'package:mangayomi/router/push_router.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
-import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
@@ -242,7 +242,7 @@ class _ChapterListTileState extends State<ChapterListTile> {
           onTap: () async {
             if (!widget.currentChap) {
               Navigator.pop(context);
-              MangaChapterPageGalleryState.setNavigatingToChapter();
+              ReaderChapterNavigation.markNavigatingToChapter();
               pushReplacementMangaReaderView(
                 context: context,
                 chapter: chapter,

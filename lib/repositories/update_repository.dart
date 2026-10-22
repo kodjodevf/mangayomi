@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/changed_part_repository.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/update.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 
 class UpdateRepository {
@@ -37,8 +36,9 @@ class UpdateRepository {
   Future<List<Update>> getAllAsync() =>
       isar.updates.filter().idIsNotNull().findAll();
 
-  List<Update> getAllByMangaId(int? mangaId) =>
-      isar.updates.filter().mangaIdEqualTo(mangaId).findAllSync();
+  List<Update> getAllByMangaId(int? mangaId) => mangaId == null
+      ? const []
+      : isar.updates.where().mangaIdEqualTo(mangaId).findAllSync();
 
   /// The updates of [itemType] whose chapter is still unread: what the tab's
   /// count shows, as the navigation badge counts across every type.
@@ -95,22 +95,20 @@ class UpdateRepository {
       .anyOf(mangaIds, (q, id) => q.mangaIdEqualTo(id))
       .countSync();
 
-  // Notifies the sync provider for each id first (its own transaction,
+  // Records sync outbox entries for each id first (its own transaction,
   // matching the original two-step shape), then deletes the rows.
-  Future<void> deleteAll(WidgetRef ref, List<int> ids) async {
+  Future<void> deleteAll(List<int> ids) async {
     await dbWriteQueue.run(() {
       isar.writeTxnSync(() {
         for (var id in ids) {
           final clientId = isar.updates.getSync(id)?.clientId;
-          ref
-              .read(synchingProvider(syncId: 1).notifier)
-              .addChangedPart(
-                ActionType.removeUpdate,
-                id,
-                "{}",
-                false,
-                clientId: clientId,
-              );
+          changedPartRepository.recordIfSyncOn(
+            ActionType.removeUpdate,
+            id,
+            "{}",
+            false,
+            clientId: clientId,
+          );
         }
       });
     });
@@ -125,6 +123,8 @@ class UpdateRepository {
       isar.updates.where().mangaIdEqualTo(mangaId).deleteAllSync();
 
   void putSync(Update update) => isar.updates.putSync(update);
+
+  void deleteSync(int id) => isar.updates.deleteSync(id);
 
   void putAllSync(List<Update> updates) => isar.updates.putAllSync(updates);
 

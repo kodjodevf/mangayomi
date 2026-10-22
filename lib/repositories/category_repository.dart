@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 
 class CategoryRepository {
+  Category? findById(int id) => isar.categorys.getSync(id);
+
   Stream<List<Category>> watchAll() =>
       isar.categorys.where().watch(fireImmediately: true);
 
@@ -111,6 +113,8 @@ class CategoryRepository {
   Future<bool> deleteAsync(int id) => isar.categorys.delete(id);
 
   int putSync(Category category) => isar.categorys.putSync(category);
+
+  void deleteSync(int id) => isar.categorys.deleteSync(id);
 
   void putAllSync(List<Category> categories) =>
       isar.categorys.putAllSync(categories);

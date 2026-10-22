@@ -101,8 +101,10 @@ void main() {
       expect(res.leftPageForSpread(0).contains('제1장'), isTrue);
     });
 
-    test('Nested div containers are unwrapped and individual paragraphs paginated', () {
-      const nestedHtml = '''
+    test(
+      'Nested div containers are unwrapped and individual paragraphs paginated',
+      () {
+        const nestedHtml = '''
 <div id="readerViewContent">
   <div class="chapter-container">
     <div class="content-body">
@@ -114,18 +116,19 @@ void main() {
 </div>
 ''';
 
-      final res = NovelPaginator.paginate(
-        htmlContent: nestedHtml,
-        pageWidth: 300,
-        pageHeight: 200,
-        fontSize: 16,
-        lineHeight: 1.5,
-      );
+        final res = NovelPaginator.paginate(
+          htmlContent: nestedHtml,
+          pageWidth: 300,
+          pageHeight: 200,
+          fontSize: 16,
+          lineHeight: 1.5,
+        );
 
-      expect(res.blockToPageMap.containsKey(0), isTrue);
-      expect(res.blockToPageMap.containsKey(1), isTrue);
-      expect(res.blockToPageMap.containsKey(2), isTrue);
-    });
+        expect(res.blockToPageMap.containsKey(0), isTrue);
+        expect(res.blockToPageMap.containsKey(1), isTrue);
+        expect(res.blockToPageMap.containsKey(2), isTrue);
+      },
+    );
 
     test('Pagination with custom fontFamily and textAlign works seamlessly', () {
       const sampleHtml =

@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
+import 'package:mangayomi/repositories/changed_part_repository.dart';
+import 'package:mangayomi/repositories/db.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 
 class TrackRepository {
@@ -94,14 +93,15 @@ class TrackRepository {
       .syncIdEqualTo(syncId)
       .findFirstSync();
 
-  List<Track> getAllByMangaId(int? mangaId) =>
-      isar.tracks.filter().mangaIdEqualTo(mangaId).findAllSync();
+  List<Track> getAllByMangaId(int? mangaId) => mangaId == null
+      ? const []
+      : isar.tracks.where().mangaIdEqualToAnyItemType(mangaId).findAllSync();
 
   List<Track> getAll() => isar.tracks.filter().idIsNotNull().findAllSync();
 
   /// How many entries are tracked on the tracker [syncId].
   int countBySyncId(int syncId) =>
-      isar.tracks.filter().syncIdEqualTo(syncId).countSync();
+      isar.tracks.where().syncIdEqualTo(syncId).countSync();
 
   List<Track> getChangedSince(int since) => isar.tracks
       .filter()
@@ -164,18 +164,16 @@ class TrackRepository {
     });
   });
 
-  Future<void> delete(Ref ref, Track track) => dbWriteQueue.run(() {
+  Future<void> delete(Track track) => dbWriteQueue.run(() {
     isar.writeTxnSync(() {
       isar.tracks.deleteSync(track.id!);
-      ref
-          .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(
-            ActionType.removeTrack,
-            track.id,
-            "{}",
-            false,
-            clientId: track.clientId,
-          );
+      changedPartRepository.recordIfSyncOn(
+        ActionType.removeTrack,
+        track.id,
+        "{}",
+        false,
+        clientId: track.clientId,
+      );
     });
   });
 
@@ -185,6 +183,10 @@ class TrackRepository {
   Future<int> putAsync(Track track) => isar.tracks.put(track);
 
   Future<bool> deleteAsync(int id) => isar.tracks.delete(id);
+
+  int putSync(Track track) => isar.tracks.putSync(track);
+
+  void deleteSync(int id) => isar.tracks.deleteSync(id);
 
   void putAllSync(List<Track> tracks) => isar.tracks.putAllSync(tracks);
 

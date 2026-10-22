@@ -49,8 +49,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
           if (manga == null) {
             return const ProgressCenter();
           }
-          final hasSourceInfo =
-              manga.lang != null && manga.source != null;
+          final hasSourceInfo = manga.lang != null && manga.source != null;
           return StreamBuilder<List<Source>>(
             initialData: hasSourceInfo
                 ? sourceRepository.getActiveByItemTypeLangName(

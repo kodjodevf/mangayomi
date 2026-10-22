@@ -9,7 +9,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:mangayomi/eval/model/m_source.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart'
     as flutter_inappwebview;
@@ -25,6 +24,9 @@ import 'package:mangayomi/services/http/cf_proxy_store.dart';
 import 'package:mangayomi/utils/localized_message.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/error_toast.dart';
+
+flutter_inappwebview.WebViewEnvironment? webViewEnvironment;
+String? customDns;
 
 class MClient {
   MClient();
@@ -601,7 +603,7 @@ Future<void> stopwebviewServer() async {
   }
 }
 
-void _handleResolveCf(HttpRequest request) async {
+Future<void> _handleResolveCf(HttpRequest request) async {
   int time = 0;
   bool timeOut = false;
   bool solved = false;

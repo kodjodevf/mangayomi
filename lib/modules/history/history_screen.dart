@@ -7,12 +7,11 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
-import 'package:mangayomi/modules/widgets/base_library_tab_screen.dart';
+import 'package:mangayomi/modules/library/widgets/base_library_tab_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -127,15 +126,11 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
   final _pendingRemoval = <int>{};
   final _removalTimers = <int, Timer>{};
 
-  /// Read while the screen is alive: a removal still pending when it goes
-  /// is written from dispose, where the ref can no longer be used.
-  late final Synching _sync = ref.read(synchingProvider(syncId: 1).notifier);
-
   @override
   void dispose() {
     for (final MapEntry(key: id, value: timer) in _removalTimers.entries) {
       timer.cancel();
-      historyRepository.deleteRecorded(_sync, id);
+      historyRepository.delete(id);
     }
     super.dispose();
   }
@@ -303,10 +298,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
       width: width,
       height: _thumbHeight,
       builder: (context) => manga.customCoverImage != null
-          ? Image.memory(
-              manga.customCoverImage as Uint8List,
-              fit: BoxFit.cover,
-            )
+          ? Image.memory(manga.customCoverImage as Uint8List, fit: BoxFit.cover)
           : cachedCompressedNetworkImage(
               headers: ref.watch(
                 headersProvider(
@@ -330,11 +322,10 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
   void _remove(AppLocalizations l10n, int? id) {
     if (id == null) return;
     const window = Duration(seconds: 5);
-    final sync = _sync;
     setState(() => _pendingRemoval.add(id));
     _removalTimers[id] = Timer(window, () {
       _removalTimers.remove(id);
-      historyRepository.deleteRecorded(sync, id);
+      historyRepository.delete(id);
     });
     botToast(
       l10n.removed_from_history,

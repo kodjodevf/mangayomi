@@ -187,8 +187,9 @@ class ChapterPageDownload extends ConsumerWidget {
                               child: CircularProgressIndicator(
                                 strokeWidth: 19,
                                 value: value,
-                                color: context.shiori.color.fg
-                                    .withValues(alpha: 0.7),
+                                color: context.shiori.color.fg.withValues(
+                                  alpha: 0.7,
+                                ),
                               ),
                             ),
                           ),
@@ -200,8 +201,9 @@ class ChapterPageDownload extends ConsumerWidget {
                             fill: 1,
                             color: progress > 0.5
                                 ? context.shiori.color.ink0
-                                : context.shiori.color.fg
-                                      .withValues(alpha: 0.7),
+                                : context.shiori.color.fg.withValues(
+                                    alpha: 0.7,
+                                  ),
                           ),
                         ),
                       ],

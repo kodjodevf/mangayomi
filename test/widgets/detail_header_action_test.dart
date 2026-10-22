@@ -43,9 +43,7 @@ void main() {
     );
   });
 
-  testWidgets('an inactive action is muted, and a full target', (
-    tester,
-  ) async {
+  testWidgets('an inactive action is muted, and a full target', (tester) async {
     var taps = 0;
     await tester.pumpWidget(
       _host(

@@ -4,7 +4,7 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/widgets/base_library_tab_screen.dart';
+import 'package:mangayomi/modules/library/widgets/base_library_tab_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
@@ -15,6 +15,7 @@ import 'package:mangayomi/modules/updates/widgets/update_chapter_list_tile_widge
 import 'package:mangayomi/modules/updates/update_errors_screen.dart';
 import 'package:mangayomi/services/update_errors_provider.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
+import 'package:mangayomi/modules/library/widgets/library_update_runner.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/utils/date.dart';
@@ -69,7 +70,7 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
     final l10n = l10nLocalizations(context)!;
 
     return [
-      if (ref.watch(updateErrorsProvider).isNotEmpty)
+      if (ref.watch(updateErrorsProvider.select((e) => e.isNotEmpty)))
         IconButton(
           splashRadius: 20,
           tooltip: context.l10n.update_errors,
@@ -142,7 +143,7 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
       getCurrentItemType(),
     );
     if (idsToDelete.isEmpty) return;
-    await updateRepository.deleteAll(ref, idsToDelete);
+    await updateRepository.deleteAll(idsToDelete);
   }
 }
 

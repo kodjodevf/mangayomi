@@ -9,7 +9,6 @@
 // can arrive even when the local copy is already newer) and leaves it to
 // the caller - which already deals in Riverpod state - to decide what to
 // invalidate.
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
@@ -19,7 +18,6 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/repositories/category_repository.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
-import 'package:mangayomi/repositories/db_write_queue.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
@@ -47,46 +45,44 @@ class SyncEntityApplier {
   /// depends on them.
   Future<bool> apply(Map<String, dynamic> response) async {
     var settingsChanged = false;
-    await dbWriteQueue.run(() {
-      isar.writeTxnSync(() {
-        final remaps = _MangaChapterRemaps(
-          manga: (response['mangaClientIdRemap'] as Map?)?.map(
-            (k, v) => MapEntry(int.parse(k as String), v as int),
-          ),
-          chapter: (response['chapterClientIdRemap'] as Map?)?.map(
-            (k, v) => MapEntry(int.parse(k as String), v as int),
-          ),
+    await mangaRepository.writeTransaction(() {
+      final remaps = _MangaChapterRemaps(
+        manga: (response['mangaClientIdRemap'] as Map?)?.map(
+          (k, v) => MapEntry(int.parse(k as String), v as int),
+        ),
+        chapter: (response['chapterClientIdRemap'] as Map?)?.map(
+          (k, v) => MapEntry(int.parse(k as String), v as int),
+        ),
+      );
+      if (remaps.manga != null) _applyMangaRemap(remaps.manga!);
+      if (remaps.chapter != null) _applyChapterRemap(remaps.chapter!);
+
+      for (final row in (response['categories'] as List? ?? [])) {
+        _applyCategory(row as Map<String, dynamic>);
+      }
+      for (final row in (response['manga'] as List? ?? [])) {
+        _applyManga(row as Map<String, dynamic>);
+      }
+      for (final row in (response['chapters'] as List? ?? [])) {
+        _applyChapter(row as Map<String, dynamic>);
+      }
+      for (final row in (response['tracks'] as List? ?? [])) {
+        _applyTrack(row as Map<String, dynamic>);
+      }
+      for (final row in (response['histories'] as List? ?? [])) {
+        _applyHistory(row as Map<String, dynamic>);
+      }
+      for (final row in (response['updates'] as List? ?? [])) {
+        _applyUpdate(row as Map<String, dynamic>);
+      }
+      if (response['settings'] != null) {
+        settingsChanged = _applySettings(
+          response['settings'] as Map<String, dynamic>,
         );
-        if (remaps.manga != null) _applyMangaRemap(remaps.manga!);
-        if (remaps.chapter != null) _applyChapterRemap(remaps.chapter!);
+      }
 
-        for (final row in (response['categories'] as List? ?? [])) {
-          _applyCategory(row as Map<String, dynamic>);
-        }
-        for (final row in (response['manga'] as List? ?? [])) {
-          _applyManga(row as Map<String, dynamic>);
-        }
-        for (final row in (response['chapters'] as List? ?? [])) {
-          _applyChapter(row as Map<String, dynamic>);
-        }
-        for (final row in (response['tracks'] as List? ?? [])) {
-          _applyTrack(row as Map<String, dynamic>);
-        }
-        for (final row in (response['histories'] as List? ?? [])) {
-          _applyHistory(row as Map<String, dynamic>);
-        }
-        for (final row in (response['updates'] as List? ?? [])) {
-          _applyUpdate(row as Map<String, dynamic>);
-        }
-        if (response['settings'] != null) {
-          settingsChanged = _applySettings(
-            response['settings'] as Map<String, dynamic>,
-          );
-        }
-
-        final tombstones = response['tombstones'] as Map<String, dynamic>?;
-        if (tombstones != null) _applyTombstones(tombstones);
-      });
+      final tombstones = response['tombstones'] as Map<String, dynamic>?;
+      if (tombstones != null) _applyTombstones(tombstones);
     });
     return settingsChanged;
   }
@@ -264,7 +260,7 @@ class SyncEntityApplier {
       ..trackingUrl = wire['trackingUrl'] as String?
       ..itemType = itemTypeFromWire(wire['itemType'] as String)
       ..updatedAt = incoming;
-    isar.tracks.putSync(track);
+    trackRepository.putSync(track);
   }
 
   void _applyHistory(Map<String, dynamic> wire) {
@@ -365,27 +361,27 @@ class SyncEntityApplier {
   void _applyTombstones(Map<String, dynamic> tombstones) {
     for (final clientId in (tombstones['categories'] as List? ?? [])) {
       final row = categoryRepository.getByClientId(clientId as int);
-      if (row != null) isar.categorys.deleteSync(row.id!);
+      if (row != null) categoryRepository.deleteSync(row.id!);
     }
     for (final clientId in (tombstones['manga'] as List? ?? [])) {
       final row = mangaRepository.getByClientId(clientId as int);
-      if (row != null) isar.mangas.deleteSync(row.id!);
+      if (row != null) mangaRepository.deleteSync(row.id!);
     }
     for (final clientId in (tombstones['chapters'] as List? ?? [])) {
       final row = chapterRepository.getByClientId(clientId as int);
-      if (row != null) isar.chapters.deleteSync(row.id!);
+      if (row != null) chapterRepository.deleteSync(row.id!);
     }
     for (final clientId in (tombstones['tracks'] as List? ?? [])) {
       final row = trackRepository.getByClientId(clientId as int);
-      if (row != null) isar.tracks.deleteSync(row.id!);
+      if (row != null) trackRepository.deleteSync(row.id!);
     }
     for (final clientId in (tombstones['histories'] as List? ?? [])) {
       final row = historyRepository.getByClientId(clientId as int);
-      if (row != null) isar.historys.deleteSync(row.id!);
+      if (row != null) historyRepository.deleteSync(row.id!);
     }
     for (final clientId in (tombstones['updates'] as List? ?? [])) {
       final row = updateRepository.getByClientId(clientId as int);
-      if (row != null) isar.updates.deleteSync(row.id!);
+      if (row != null) updateRepository.deleteSync(row.id!);
     }
   }
 }

@@ -348,7 +348,9 @@ class AppearanceSectionWidget extends ConsumerWidget {
           if (useLibass) ...[
             Consumer(
               builder: (context, ref, _) {
-                final overrideAss = ref.watch(overrideAssSubtitlesStateProvider);
+                final overrideAss = ref.watch(
+                  overrideAssSubtitlesStateProvider,
+                );
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: ShioriSpace.s16,
@@ -366,7 +368,10 @@ class AppearanceSectionWidget extends ConsumerWidget {
                 );
               },
             ),
-            Divider(height: 1, color: Colors.white.withValues(alpha: Alphas.tint)),
+            Divider(
+              height: 1,
+              color: Colors.white.withValues(alpha: Alphas.tint),
+            ),
           ],
           SubtitleAppearanceWidget(hasSubtitleTrack: hasSubtitleTrack),
         ],

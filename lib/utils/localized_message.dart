@@ -1,7 +1,7 @@
+import 'package:mangayomi/core/navigation/app_navigator.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/l10n/generated/app_localizations_en.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/router/router.dart';
 
 String localizedMessage(String Function(AppLocalizations l10n) message) {
   final context = navigatorKey.currentContext;

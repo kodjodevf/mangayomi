@@ -142,9 +142,10 @@ segments/1.ts
         .split('\n')
         .firstWhere((line) => line.startsWith('http://'));
     final media = await _readText(client, localMedia);
-    final segmentUrl = RegExp(
-      r'http://[^\s"]+/segment\.mp4\?[^\s"]+',
-    ).allMatches(media).last.group(0)!;
+    final segmentUrl = RegExp(r'http://[^\s"]+/segment\.mp4\?[^\s"]+')
+        .allMatches(media)
+        .last
+        .group(0)!;
 
     final request = await client.getUrl(Uri.parse(segmentUrl));
     final response = await request.close();

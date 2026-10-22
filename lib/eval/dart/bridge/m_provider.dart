@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
-import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
+import 'package:mangayomi/services/extension_preferences_service.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/log/log.dart';

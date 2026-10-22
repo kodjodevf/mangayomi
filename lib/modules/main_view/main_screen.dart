@@ -1,131 +1,28 @@
-import 'dart:async';
-
-import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
-import 'package:mangayomi/repositories/chapter_repository.dart';
-import 'package:mangayomi/modules/history/providers/isar_providers.dart';
-import 'package:mangayomi/repositories/history_repository.dart';
-import 'package:mangayomi/modules/more/about/providers/download_file_screen.dart';
-import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/floating_navigation_bar_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
-import 'package:mangayomi/modules/widgets/error_state.dart';
-import 'package:mangayomi/modules/widgets/loading_icon.dart';
-import 'package:mangayomi/services/fetch_item_sources.dart';
+import 'package:mangayomi/modules/main_view/controllers/main_screen_lifecycle_mixin.dart';
+import 'package:mangayomi/modules/main_view/nav_actions.dart';
+import 'package:mangayomi/modules/main_view/nav_groups.dart';
 import 'package:mangayomi/modules/main_view/nav_shrink.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
+import 'package:mangayomi/modules/main_view/widgets/mobile_bottom_navigation.dart';
+import 'package:mangayomi/modules/main_view/widgets/mode_bars.dart';
+import 'package:mangayomi/modules/main_view/widgets/nav_destination_builders.dart';
+import 'package:mangayomi/modules/main_view/widgets/tablet_layout.dart';
+import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
+import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.dart';
+import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/floating_navigation_bar_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
-import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
-import 'package:mangayomi/modules/more/data_and_storage/providers/auto_backup.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
+import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
-import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
-import 'package:mangayomi/modules/main_view/widgets/mode_bars.dart';
-import 'package:mangayomi/modules/main_view/widgets/tablet_layout.dart';
-import 'package:mangayomi/modules/main_view/widgets/mobile_bottom_navigation.dart';
-import 'package:mangayomi/modules/main_view/widgets/nav_badges.dart';
-import 'package:mangayomi/modules/main_view/nav_groups.dart';
-
-final libLocationRegex = RegExp(r"^/(Manga|Anime|Novel)Library$");
-
-/// Nav destinations kept off the anime-only TV layout (the manga & novel
-/// libraries). True means "keep this destination".
-bool _isNotHiddenLibOnTv(String nav) =>
-    nav != "/MangaLibrary" && nav != "/NovelLibrary";
-
-/// The ItemType a nav destination maps to, or null for destinations with no
-/// single content type to scope a global search to (Updates, History,
-/// Browse, More, ...). Shared by the desktop rail and mobile bottom bar's
-/// double-tap-for-global-search handling.
-ItemType? itemTypeForNavDest(String dest) => switch (dest) {
-  "/MangaLibrary" => ItemType.manga,
-  "/AnimeLibrary" => ItemType.anime,
-  "/NovelLibrary" => ItemType.novel,
-  _ => null,
-};
-
-/// How close together two taps on the same nav destination need to land to
-/// count as a double-tap/double-click, rather than two separate single taps.
-const _navDoubleTapWindow = Duration(milliseconds: 450);
-
-/// Resumes the most recently read/watched entry from history (optionally filtered by [itemType]),
-/// or shows a snackbar if none found.
-Future<void> resumeLatestHistory(
-  BuildContext context, [
-  ItemType? itemType,
-]) async {
-  // When an itemType is specified (e.g. from the active tab), strictly query that itemType.
-  final history = itemType != null
-      ? historyRepository.getLatestHistory(itemType)
-      : historyRepository.getLatestHistory();
-  if (history != null && history.chapterId != null) {
-    final chapter = chapterRepository.findByIdSync(history.chapterId!);
-    if (chapter != null && chapter.manga.value != null) {
-      await pushMangaReaderView(context: context, chapter: chapter);
-      return;
-    }
-  }
-  if (context.mounted) {
-    botToast(context.l10n.no_next_chapter, second: 2);
-  }
-}
-
-/// Whether tapping [current] counts as a double-tap on [last], given when
-/// [last] landed. Shared by the desktop rail and mobile bottom bar, which
-/// each track their own last-tap state (an index vs. a route string) but
-/// apply the same timing check to it.
-bool isNavDoubleTap<T>(
-  T current,
-  T? last,
-  DateTime? lastTapTime,
-  DateTime now,
-) {
-  return current == last &&
-      lastTapTime != null &&
-      now.difference(lastTapTime) < _navDoubleTapWindow;
-}
-
-/// Opens [destination] from a tap on the navigation: a group resolves to the
-/// member last visited. A second tap inside the double-tap window opens
-/// Global Search on a library, or resumes reading on Activity and History,
-/// as it always has on their own routes. Shared by the bottom bar and the
-/// rail.
-void openNavDestination(
-  BuildContext context,
-  WidgetRef ref,
-  String destination, {
-  required bool isDoubleTap,
-}) {
-  final target = resolveNavDestination(
-    destination,
-    visible: ref.read(visibleNavDestinationsProvider),
-    lastVisited: ref.read(lastNavMemberProvider)[destination],
-  );
-  if (isDoubleTap &&
-      (target == '/history' || destination == NavGroup.activity)) {
-    final activeType = ref.read(activeHistoryItemTypeStateProvider);
-    unawaited(resumeLatestHistory(context, activeType));
-    return;
-  }
-  final itemType = itemTypeForNavDest(target);
-  if (isDoubleTap && itemType != null) {
-    context.push('/globalSearch', extra: (null, itemType));
-    return;
-  }
-  GoRouter.of(context).go(target);
-}
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key, required this.child});
@@ -136,17 +33,12 @@ class MainScreen extends ConsumerStatefulWidget {
   ConsumerState<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends ConsumerState<MainScreen> {
-  Timer? _backupTimer;
-  Timer? _syncTimer;
-
+class _MainScreenState extends ConsumerState<MainScreen>
+    with MainScreenLifecycleMixin {
   late final String _defaultLocation;
   late final List<String> _navigationOrder;
 
-  static final Map<String, String> _hyphenatedLabelsCache = {};
-
-  final Map<String, List<NavigationRailDestination>> _desktopDestinationsCache =
-      {};
+  final NavDestinationBuilders _navBuilders = NavDestinationBuilders();
 
   // Double-tapping a Manga/Anime/Novel destination on the mobile bottom bar
   // opens Global Search scoped to that type, mirroring the desktop rail's
@@ -154,31 +46,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   // only hands back the route, not an index.
   String? _lastMobileNavDest;
   DateTime? _lastMobileNavTapTime;
-  final Map<String, List<Widget>> _mobileDestinationsCache = {};
-  void _clearCache() {
-    _hyphenatedLabelsCache.clear();
-    _desktopDestinationsCache.clear();
-    _mobileDestinationsCache.clear();
-  }
 
-  String getHyphenatedUpdatesLabel(String languageCode, String defaultLabel) {
-    final cacheKey = '$languageCode:$defaultLabel';
-    return _hyphenatedLabelsCache.putIfAbsent(cacheKey, () {
-      switch (languageCode) {
-        case 'de':
-          return "Aktuali-\nsierungen";
-        case 'es':
-        case 'es_419':
-          return "Actuali-\nzaciones";
-        case 'it':
-          return "Aggiorna-\nmenti";
-        case 'tr':
-          return "Güncel-\nlemeler";
-        default:
-          return defaultLabel;
-      }
-    });
-  }
+  int currentIndex = 0;
+  bool isLibSwitch = false;
+
+  final NavShrink _navShrink = NavShrink();
 
   @override
   void initState() {
@@ -189,7 +61,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
     // On the anime-only TV layout, never land on a hidden manga/novel library.
     final order = ref.read(animeOnlyTvModeProvider)
-        ? _navigationOrder.where(_isNotHiddenLibOnTv).toList()
+        ? _navigationOrder.where(isNotHiddenLibOnTv).toList()
         : _navigationOrder;
     final visible = order.where((e) => !hiddenItems.contains(e)).toList();
     _defaultLocation = visible.isNotEmpty ? visible.first : "/AnimeLibrary";
@@ -197,136 +69,28 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.go(_defaultLocation);
-        _initializeTimers();
-        _initializeProviders();
+        initLifecycleServices();
       }
     });
-
-    discordRpc?.connect(ref);
   }
 
-  void _rescheduleSyncTimer() {
-    _syncTimer?.cancel();
-    _syncTimer = null;
-
-    if (ref.read(restoreSyncGuardProvider)) return;
-
-    final syncPrefs = ref.read(synchingProvider(syncId: 1));
-    final freq = syncPrefs.autoSyncFrequency;
-    if (syncPrefs.syncOn &&
-        freq > 0 &&
-        (syncPrefs.authToken?.isNotEmpty ?? false)) {
-      _syncTimer = Timer.periodic(Duration(seconds: freq), _onSyncTimerTick);
-    }
+  @override
+  void dispose() {
+    disposeLifecycleServices();
+    super.dispose();
   }
 
   /// The first library the user actually has visible, in their own nav order.
   String? _firstVisibleLibrary() {
     final hidden = ref.read(hideItemsStateProvider);
     final order = ref.read(animeOnlyTvModeProvider)
-        ? _navigationOrder.where(_isNotHiddenLibOnTv)
+        ? _navigationOrder.where(isNotHiddenLibOnTv)
         : _navigationOrder;
     for (final nav in order) {
       if (libLocationRegex.hasMatch(nav) && !hidden.contains(nav)) return nav;
     }
     return null;
   }
-
-  void _initializeTimers() {
-    _backupTimer = Timer.periodic(
-      const Duration(minutes: 5),
-      _onBackupTimerTick,
-    );
-
-    _rescheduleSyncTimer();
-
-    // Pauses the auto-sync timer for the duration of a restore (and its
-    // post-restore upload), instead of just rescheduling it — a restore can
-    // outlast one sync interval, so a reschedule alone could still let the
-    // timer fire mid-restore. syncServerProvider.startSync also checks this
-    // guard directly, covering a manual sync trigger too.
-    ref.listenManual<bool>(restoreSyncGuardProvider, (_, restoring) {
-      if (restoring) {
-        _syncTimer?.cancel();
-        _syncTimer = null;
-        return;
-      }
-      _rescheduleSyncTimer();
-    });
-
-    // Listen to changes in sync preferences (frequency, syncOn, login/logout)
-    // and immediately reschedule the timer and check if due.
-    ref.listenManual(synchingProvider(syncId: 1), (prev, next) {
-      _rescheduleSyncTimer();
-      if (mounted) {
-        unawaited(autoSyncIfDue(ref));
-      }
-    });
-  }
-
-  void _initializeProviders() {
-    // The extension-repo fetches (one per item type) and the GitHub update
-    // check hit the network; delay them so they don't compete with the first
-    // paint and the initial library queries.
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        for (var type in ItemType.values) {
-          ref.read(
-            fetchItemSourcesListProvider(
-              id: null,
-              reFresh: false,
-              itemType: type,
-            ),
-          );
-        }
-      }
-    });
-    Future.delayed(const Duration(seconds: 5), () {
-      if (!mounted || isTv) return;
-      ref.listenManual<AsyncValue<UpdateInfo?>>(checkForUpdateProvider, (
-        _,
-        next,
-      ) {
-        next.whenData((updateInfo) {
-          if (updateInfo != null && mounted) {
-            showDialog(
-              context: context,
-              builder: (_) => DownloadFileScreen(updateAvailable: updateInfo),
-            );
-          }
-        });
-      });
-    });
-  }
-
-  void _onBackupTimerTick(Timer timer) {
-    if (!mounted) {
-      timer.cancel();
-      return;
-    }
-    ref.read(checkAndBackupProvider);
-  }
-
-  void _onSyncTimerTick(Timer timer) {
-    if (!mounted) {
-      timer.cancel();
-      return;
-    }
-    unawaited(autoSyncIfDue(ref));
-  }
-
-  @override
-  void dispose() {
-    _backupTimer?.cancel();
-    _syncTimer?.cancel();
-    discordRpc?.disconnect();
-    super.dispose();
-  }
-
-  int currentIndex = 0;
-  bool isLibSwitch = false;
-
-  final NavShrink _navShrink = NavShrink();
 
   bool _onPageScroll(
     ScrollNotification notification, {
@@ -354,17 +118,23 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     if (_navShrink.reset()) setState(() {});
   }
 
+  static bool _isReadingScreen(String? location) {
+    return location == '/mangaReaderView' ||
+        location == '/animePlayerView' ||
+        location == '/novelReaderView';
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen<Locale>(l10nLocaleStateProvider, (previous, next) {
-      _clearCache();
+      _navBuilders.clearCache();
       setState(() {});
     });
     // Destinations are cached by route list alone, so a toggle that only
     // changes what's baked into those same widgets (the tooltip) needs its
     // own cache-busting listener, same as the locale above.
     ref.listen<bool>(showNavDoubleTapTooltipStateProvider, (previous, next) {
-      _clearCache();
+      _navBuilders.clearCache();
       setState(() {});
     });
     ref.listen<bool>(floatingNavigationBarStateProvider, (previous, next) {
@@ -413,7 +183,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
               // Anime-only TV layout: drop the manga & novel library tabs.
               if (ref.watch(animeOnlyTvModeProvider)) {
-                dest = dest.where(_isNotHiddenLibOnTv).toList();
+                dest = dest.where(isNotHiddenLibOnTv).toList();
               }
 
               if (grouped) {
@@ -498,8 +268,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                   currentIndex: currentIndex,
                                   route: route,
                                   ref: ref,
-                                  buildNavigationWidgetsDesktop:
-                                      _buildNavigationWidgetsDesktop,
+                                  buildNavigationWidgetsDesktop: _navBuilders
+                                      .buildNavigationWidgetsDesktop,
                                   child: widget.child,
                                 )
                               : widget.child,
@@ -517,7 +287,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                 shrink: _navShrink.shrunk ? 1.0 : 0.0,
                                 onWake: _wakeNav,
                                 buildNavigationWidgetsMobile:
-                                    _buildNavigationWidgetsMobile,
+                                    _navBuilders.buildNavigationWidgetsMobile,
                                 onDestinationSelected: (destination) {
                                   if (destination == "_enableLibSwitch") {
                                     setState(() {
@@ -565,9 +335,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               );
             },
           ),
-          // A failed migration used to render the loading screen, so the app
-          // sat on a blank splash forever with nothing to act on. Show what
-          // happened and let the user run it again.
           error: (error, _) => Scaffold(
             body: ErrorState(
               message: l10n.startup_failed,
@@ -578,355 +345,4 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           loading: () => const LoadingIcon(),
         );
   }
-
-  static bool _isReadingScreen(String? location) {
-    return location == '/mangaReaderView' ||
-        location == '/animePlayerView' ||
-        location == '/novelReaderView';
-  }
-
-  /// Wraps [icon] in a [Tooltip] with [message] unless the user turned the
-  /// nav double-tap hint off in Settings, in which case it's the bare icon.
-  Widget _navTooltipIcon(bool showTooltip, String message, Widget icon) {
-    return showTooltip ? Tooltip(message: message, child: icon) : icon;
-  }
-
-  List<NavigationRailDestination> _buildNavigationWidgetsDesktop(
-    WidgetRef ref,
-    List<String> dest,
-    BuildContext context,
-  ) {
-    final cacheKey = dest.join(',');
-    if (_desktopDestinationsCache.containsKey(cacheKey)) {
-      return _desktopDestinationsCache[cacheKey]!;
-    }
-
-    final l10n = context.l10n;
-    final showTooltip = ref.read(showNavDoubleTapTooltipStateProvider);
-    final destinations = List<NavigationRailDestination?>.filled(
-      dest.length,
-      null,
-    );
-
-    if (dest.contains(NavGroup.library)) {
-      destinations[dest.indexOf(NavGroup.library)] = NavigationRailDestination(
-        padding: isTv
-            ? const EdgeInsets.symmetric(vertical: ShioriSpace.s8)
-            : null,
-        selectedIcon: const Icon(Symbols.collections_bookmark_rounded, fill: 1),
-        icon: const Icon(Symbols.collections_bookmark_rounded),
-        label: Padding(
-          padding: const EdgeInsets.only(top: ShioriSpace.s4),
-          child: Text(l10n.library),
-        ),
-      );
-    }
-    if (dest.contains(NavGroup.activity)) {
-      destinations[dest.indexOf(NavGroup.activity)] = NavigationRailDestination(
-        padding: isTv
-            ? const EdgeInsets.symmetric(vertical: ShioriSpace.s8)
-            : null,
-        selectedIcon: UpdatesBadgeWidget(
-          icon: const Icon(Symbols.notifications_rounded, fill: 1),
-          ref: ref,
-        ),
-        icon: UpdatesBadgeWidget(
-          icon: const Icon(Symbols.notifications_rounded),
-          ref: ref,
-        ),
-        label: Padding(
-          padding: const EdgeInsets.only(top: ShioriSpace.s4),
-          child: Text(l10n.activity),
-        ),
-      );
-    }
-    if (dest.contains("/MangaLibrary")) {
-      destinations[dest.indexOf("/MangaLibrary")] = NavigationRailDestination(
-        // Even breathing room between tabs on TV; null off-TV.
-        padding: isTv
-            ? const EdgeInsets.symmetric(vertical: ShioriSpace.s8)
-            : null,
-        selectedIcon: _navTooltipIcon(
-          showTooltip,
-          l10n.double_tap_search_hint(l10n.manga),
-          const Icon(Symbols.book_rounded, fill: 1),
-        ),
-        icon: _navTooltipIcon(
-          showTooltip,
-          l10n.double_tap_search_hint(l10n.manga),
-          const Icon(Symbols.book_rounded),
-        ),
-        label: Padding(
-          padding: const EdgeInsets.only(top: ShioriSpace.s4),
-          child: Text(l10n.manga),
-        ),
-      );
-    }
-    if (dest.contains("/AnimeLibrary")) {
-      destinations[dest.indexOf("/AnimeLibrary")] = NavigationRailDestination(
-        // Even breathing room between tabs on TV; null off-TV.
-        padding: isTv
-            ? const EdgeInsets.symmetric(vertical: ShioriSpace.s8)
-            : null,
-        selectedIcon: _navTooltipIcon(
-          showTooltip,
-          l10n.double_tap_search_hint(l10n.anime),
-          const Icon(Symbols.video_library_rounded),
-        ),
-        icon: _navTooltipIcon(
-          showTooltip,
-          l10n.double_tap_search_hint(l10n.anime),
-          const Icon(Symbols.video_library_rounded),
-        ),
-        label: Padding(
-          padding: const EdgeInsets.only(top: ShioriSpace.s4),
-          child: Text(l10n.anime),
-        ),
-      );
-    }
-    if (dest.contains("/NovelLibrary")) {
-      destinations[dest.indexOf("/NovelLibrary")] = NavigationRailDestination(
-        // Even breathing room between tabs on TV; null off-TV.
-        padding: isTv
-            ? const EdgeInsets.symmetric(vertical: ShioriSpace.s8)
-            : null,
-        selectedIcon: _navTooltipIcon(
-          showTooltip,
-          l10n.double_tap_search_hint(l10n.novel),
-          const Icon(Symbols.auto_stories_rounded, fill: 1),
-        ),
-        icon: _navTooltipIcon(
-          showTooltip,
-          l10n.double_tap_search_hint(l10n.novel),
-          const Icon(Symbols.auto_stories_rounded),
-        ),
-        label: Padding(
-          padding: const EdgeInsets.only(top: ShioriSpace.s4),
-          child: Text(l10n.novel),
-        ),
-      );
-    }
-    if (dest.contains("/updates")) {
-      destinations[dest.indexOf("/updates")] = NavigationRailDestination(
-        // Even breathing room between tabs on TV; null off-TV.
-        padding: isTv
-            ? const EdgeInsets.symmetric(vertical: ShioriSpace.s8)
-            : null,
-        selectedIcon: UpdatesBadgeWidget(
-          icon: const Icon(Symbols.new_releases_rounded, fill: 1),
-          ref: ref,
-        ),
-        icon: UpdatesBadgeWidget(
-          icon: const Icon(Symbols.new_releases_rounded),
-          ref: ref,
-        ),
-        label: Padding(
-          padding: const EdgeInsets.only(top: ShioriSpace.s4),
-          child: Text(
-            getHyphenatedUpdatesLabel(
-              ref.watch(l10nLocaleStateProvider).languageCode,
-              l10n.updates,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
-    }
-    if (dest.contains("/history")) {
-      destinations[dest.indexOf("/history")] = NavigationRailDestination(
-        // Even breathing room between tabs on TV; null off-TV.
-        padding: isTv
-            ? const EdgeInsets.symmetric(vertical: ShioriSpace.s8)
-            : null,
-        selectedIcon: const Icon(Symbols.history_rounded, fill: 1),
-        icon: const Icon(Symbols.history_rounded),
-        label: Padding(
-          padding: const EdgeInsets.only(top: ShioriSpace.s4),
-          child: Text(l10n.history),
-        ),
-      );
-    }
-    if (dest.contains("/browse")) {
-      destinations[dest.indexOf("/browse")] = NavigationRailDestination(
-        // Even breathing room between tabs on TV; null off-TV.
-        padding: isTv
-            ? const EdgeInsets.symmetric(vertical: ShioriSpace.s8)
-            : null,
-        selectedIcon: ExtensionBadgeWidget(
-          icon: const Icon(Symbols.explore_rounded, fill: 1),
-          ref: ref,
-        ),
-        icon: ExtensionBadgeWidget(
-          icon: const Icon(Symbols.explore_rounded),
-          ref: ref,
-        ),
-        label: Padding(
-          padding: const EdgeInsets.only(top: ShioriSpace.s4),
-          child: Text(l10n.browse),
-        ),
-      );
-    }
-    if (dest.contains("/more")) {
-      destinations[dest.indexOf("/more")] = NavigationRailDestination(
-        // Even breathing room between tabs on TV; null off-TV.
-        padding: isTv
-            ? const EdgeInsets.symmetric(vertical: ShioriSpace.s8)
-            : null,
-        selectedIcon: const Icon(Symbols.more_horiz_rounded, fill: 1),
-        icon: const Icon(Symbols.more_horiz_rounded),
-        label: Padding(
-          padding: const EdgeInsets.only(top: ShioriSpace.s4),
-          child: Text(l10n.more),
-        ),
-      );
-    }
-    if (dest.contains("/trackerLibrary")) {
-      destinations[dest.indexOf("/trackerLibrary")] = NavigationRailDestination(
-        // Even breathing room between tabs on TV; null off-TV.
-        padding: isTv
-            ? const EdgeInsets.symmetric(vertical: ShioriSpace.s8)
-            : null,
-        selectedIcon: const Icon(Symbols.account_tree_rounded, fill: 1),
-        icon: const Icon(Symbols.account_tree_rounded),
-        label: Padding(
-          padding: const EdgeInsets.only(top: ShioriSpace.s4),
-          child: Text(l10n.tracking),
-        ),
-      );
-    }
-
-    final result = destinations.nonNulls.toList();
-    _desktopDestinationsCache[cacheKey] = result;
-    return result;
-  }
-
-  List<Widget> _buildNavigationWidgetsMobile(
-    WidgetRef ref,
-    List<String> dest,
-    BuildContext context,
-  ) {
-    final cacheKey = dest.join(',');
-    if (_mobileDestinationsCache.containsKey(cacheKey)) {
-      return _mobileDestinationsCache[cacheKey]!;
-    }
-
-    final l10n = context.l10n;
-    final showTooltip = ref.read(showNavDoubleTapTooltipStateProvider);
-    final destinations = List<Widget>.filled(
-      dest.length,
-      const SizedBox.shrink(),
-    );
-
-    if (dest.contains("_disableLibSwitch")) {
-      destinations[dest.indexOf("_disableLibSwitch")] = NavigationDestination(
-        selectedIcon: const Icon(Symbols.arrow_back_rounded, fill: 1),
-        icon: const Icon(Symbols.arrow_back_rounded, fill: 1),
-        label: l10n.go_back,
-      );
-    }
-    if (dest.contains(NavGroup.library)) {
-      destinations[dest.indexOf(NavGroup.library)] = NavigationDestination(
-        selectedIcon: const Icon(Symbols.collections_bookmark_rounded, fill: 1),
-        icon: const Icon(Symbols.collections_bookmark_rounded),
-        label: l10n.library,
-      );
-    }
-    if (dest.contains(NavGroup.activity)) {
-      destinations[dest.indexOf(NavGroup.activity)] = NavigationDestination(
-        selectedIcon: UpdatesBadgeWidget(
-          icon: const Icon(Symbols.notifications_rounded, fill: 1),
-          ref: ref,
-        ),
-        icon: UpdatesBadgeWidget(
-          icon: const Icon(Symbols.notifications_rounded),
-          ref: ref,
-        ),
-        label: l10n.activity,
-      );
-    }
-    if (dest.contains("_enableLibSwitch")) {
-      destinations[dest.indexOf("_enableLibSwitch")] = NavigationDestination(
-        selectedIcon: const Icon(Symbols.collections_bookmark_rounded, fill: 1),
-        icon: const Icon(Symbols.collections_bookmark_rounded),
-        label: l10n.library,
-      );
-    }
-    if (dest.contains("/MangaLibrary")) {
-      destinations[dest.indexOf("/MangaLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Symbols.book_rounded, fill: 1),
-        icon: const Icon(Symbols.book_rounded),
-        label: l10n.manga,
-        tooltip: showTooltip ? l10n.double_tap_search_hint(l10n.manga) : '',
-      );
-    }
-    if (dest.contains("/AnimeLibrary")) {
-      destinations[dest.indexOf("/AnimeLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Symbols.video_library_rounded),
-        icon: const Icon(Symbols.video_library_rounded),
-        label: l10n.anime,
-        tooltip: showTooltip ? l10n.double_tap_search_hint(l10n.anime) : '',
-      );
-    }
-    if (dest.contains("/NovelLibrary")) {
-      destinations[dest.indexOf("/NovelLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Symbols.auto_stories_rounded, fill: 1),
-        icon: const Icon(Symbols.auto_stories_rounded),
-        label: l10n.novel,
-        tooltip: showTooltip ? l10n.double_tap_search_hint(l10n.novel) : '',
-      );
-    }
-    if (dest.contains("/updates")) {
-      destinations[dest.indexOf("/updates")] = NavigationDestination(
-        selectedIcon: UpdatesBadgeWidget(
-          icon: const Icon(Symbols.new_releases_rounded, fill: 1),
-          ref: ref,
-        ),
-        icon: UpdatesBadgeWidget(
-          icon: const Icon(Symbols.new_releases_rounded),
-          ref: ref,
-        ),
-        label: l10n.updates,
-      );
-    }
-    if (dest.contains("/history")) {
-      destinations[dest.indexOf("/history")] = NavigationDestination(
-        selectedIcon: const Icon(Symbols.history_rounded, fill: 1),
-        icon: const Icon(Symbols.history_rounded),
-        label: l10n.history,
-      );
-    }
-    if (dest.contains("/browse")) {
-      destinations[dest.indexOf("/browse")] = NavigationDestination(
-        selectedIcon: ExtensionBadgeWidget(
-          icon: const Icon(Symbols.explore_rounded, fill: 1),
-          ref: ref,
-        ),
-        icon: ExtensionBadgeWidget(
-          icon: const Icon(Symbols.explore_rounded),
-          ref: ref,
-        ),
-        label: l10n.browse,
-      );
-    }
-    if (dest.contains("/more")) {
-      destinations[dest.indexOf("/more")] = NavigationDestination(
-        selectedIcon: const Icon(Symbols.more_horiz_rounded, fill: 1),
-        icon: const Icon(Symbols.more_horiz_rounded),
-        label: l10n.more,
-      );
-    }
-    if (dest.contains("/trackerLibrary")) {
-      destinations[dest.indexOf("/trackerLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Symbols.account_tree_rounded, fill: 1),
-        icon: const Icon(Symbols.account_tree_rounded),
-        label: l10n.tracking,
-      );
-    }
-
-    _mobileDestinationsCache[cacheKey] = destinations;
-    return destinations;
-  }
 }
-
-// Use the default system font for mode bar labels (previously ABeeZee).
-final String? barFontFamily = null;

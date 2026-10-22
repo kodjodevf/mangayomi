@@ -13,8 +13,9 @@ Future<MPages> localSourcePage(
   Future<List<Manga>> Function(int offset, int limit) fetch,
   int page,
 ) async {
-  final result = (await fetch(max(0, page - 1) * 50, 50))
-      .map((e) => MManga(name: e.name))
-      .toList();
+  final result = (await fetch(
+    max(0, page - 1) * 50,
+    50,
+  )).map((e) => MManga(name: e.name)).toList();
   return MPages(list: result, hasNextPage: true);
 }

@@ -68,14 +68,18 @@ class DetailBanner extends ConsumerWidget {
                           height: AppBar().preferredSize.height,
                           color: context.isTablet
                               ? context.shiori.color.ink0
-                              : context.shiori.color.ink0.withValues(alpha: 0.9),
+                              : context.shiori.color.ink0.withValues(
+                                  alpha: 0.9,
+                                ),
                         ),
                         Container(
                           width: context.width(1),
                           height: 465,
                           color: context.isTablet
                               ? context.shiori.color.ink0
-                              : context.shiori.color.ink0.withValues(alpha: 0.9),
+                              : context.shiori.color.ink0.withValues(
+                                  alpha: 0.9,
+                                ),
                         ),
                       ],
                     ),
