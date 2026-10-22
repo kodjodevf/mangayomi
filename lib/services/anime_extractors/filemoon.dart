@@ -6,6 +6,7 @@ import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 class FilemoonExtractor {
   final InterceptedClient client = MClient.init(
@@ -52,7 +53,9 @@ class FilemoonExtractor {
           for (var item in subList) {
             subtitleTracks.add(Track(file: item["file"], label: item["label"]));
           }
-        } catch (_) {}
+        } catch (error, stackTrace) {
+          recordError(error, stack: stackTrace, source: 'filemoon');
+        }
       }
 
       final masterPlaylistResponse = await client.get(Uri.parse(masterUrl));
@@ -74,7 +77,8 @@ class FilemoonExtractor {
           subtitles: subtitleTracks,
         );
       }).toList();
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'filemoon');
       return [];
     }
   }

@@ -58,7 +58,7 @@ final class KitsuProvider extends $NotifierProvider<Kitsu, void> {
   }
 }
 
-String _$kitsuHash() => r'9dceced92ed93848803fb07b305fe8aac4caaaea';
+String _$kitsuHash() => r'bc60b948813eb4a8a2e2f16fcc8487f9b619df2e';
 
 final class KitsuFamily extends $Family
     with
@@ -105,7 +105,7 @@ abstract class _$Kitsu extends $Notifier<void> {
   });
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -115,7 +115,7 @@ abstract class _$Kitsu extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(
+    return element.handleCreate(
       ref,
       () => build(
         syncId: _$args.syncId,

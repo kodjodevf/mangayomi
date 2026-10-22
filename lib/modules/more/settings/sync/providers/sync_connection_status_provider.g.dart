@@ -93,7 +93,7 @@ abstract class _$SyncConnectionState extends $Notifier<SyncConnectionStatus> {
   SyncConnectionStatus build({required int syncId});
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<SyncConnectionStatus, SyncConnectionStatus>;
     final element =
         ref.element
@@ -103,6 +103,6 @@ abstract class _$SyncConnectionState extends $Notifier<SyncConnectionStatus> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(syncId: _$args));
+    return element.handleCreate(ref, () => build(syncId: _$args));
   }
 }

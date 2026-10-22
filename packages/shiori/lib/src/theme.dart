@@ -38,8 +38,9 @@ const _subThemes = FlexSubThemesData(
 /// With it on, the palette colours the surfaces too, at [blendLevel], as the
 /// app did before Shiori.
 ///
-/// Either way the theme is set in [shioriFontFamily] and carries
-/// [ShioriTokens], so `context.shiori` always works.
+/// Either way the theme carries [ShioriTokens], so `context.shiori` always
+/// works. The font is set to [fontFamily] if provided, otherwise
+/// [shioriFontFamily].
 ThemeData buildShioriTheme({
   required Brightness brightness,
   required FlexSchemeColor colors,
@@ -47,7 +48,9 @@ ThemeData buildShioriTheme({
   required int blendLevel,
   required ShioriDensity density,
   bool pureBlack = false,
+  String? fontFamily,
 }) {
+  final resolvedFontFamily = fontFamily ?? shioriFontFamily;
   final light = brightness == Brightness.light;
   final pure = !light && pureBlack;
 
@@ -62,7 +65,7 @@ ThemeData buildShioriTheme({
             useMaterial3ErrorColors: true,
             visualDensity: FlexColorScheme.comfortablePlatformDensity,
             useMaterial3: true,
-            fontFamily: shioriFontFamily,
+            fontFamily: resolvedFontFamily,
           )
         : FlexThemeData.dark(
             colors: colors,
@@ -78,7 +81,7 @@ ThemeData buildShioriTheme({
             useMaterial3ErrorColors: true,
             visualDensity: FlexColorScheme.comfortablePlatformDensity,
             useMaterial3: true,
-            fontFamily: shioriFontFamily,
+            fontFamily: resolvedFontFamily,
           );
     return _withTokens(theme, density);
   }
@@ -110,7 +113,7 @@ ThemeData buildShioriTheme({
           useMaterial3ErrorColors: true,
           visualDensity: FlexColorScheme.comfortablePlatformDensity,
           useMaterial3: true,
-          fontFamily: shioriFontFamily,
+          fontFamily: resolvedFontFamily,
         )
       : FlexThemeData.dark(
           colorScheme: scheme,
@@ -121,7 +124,7 @@ ThemeData buildShioriTheme({
           useMaterial3ErrorColors: true,
           visualDensity: FlexColorScheme.comfortablePlatformDensity,
           useMaterial3: true,
-          fontFamily: shioriFontFamily,
+          fontFamily: resolvedFontFamily,
         );
   return _withTokens(theme, density);
 }
@@ -177,13 +180,17 @@ ThemeData _withTokens(ThemeData theme, ShioriDensity density) {
       unselectedLabelStyle: text.row.copyWith(fontWeight: FontWeight.w500),
       indicatorSize: TabBarIndicatorSize.label,
       dividerColor: Colors.transparent,
-      // A press, a hover or a focus (a remote's) shows as a faint pill.
+      // A press, a hover or a focus (a remote's) shows as a faint neutral
+      // pill on the tabs that are not current. The current tab already wears
+      // the accent pill, and a second accent wash over it, wider than the
+      // pill, read as two similar colours overlapping.
       overlayColor: WidgetStateProperty.resolveWith(
         (states) =>
-            states.contains(WidgetState.pressed) ||
-                states.contains(WidgetState.hovered) ||
-                states.contains(WidgetState.focused)
-            ? colors.accent.withValues(alpha: Alphas.tint)
+            !states.contains(WidgetState.selected) &&
+                (states.contains(WidgetState.pressed) ||
+                    states.contains(WidgetState.hovered) ||
+                    states.contains(WidgetState.focused))
+            ? colors.fg.withValues(alpha: Alphas.tint)
             : Colors.transparent,
       ),
       splashBorderRadius: BorderRadius.circular(ShioriShape.pill),

@@ -7,6 +7,7 @@ import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 class VoeExtractor {
   VoeExtractor({http.Client? client})
@@ -97,7 +98,8 @@ class VoeExtractor {
         final videoUrl = uri.resolve(line).toString();
         return Video(videoUrl, '${prefix ?? ""}Voe: $resolution', videoUrl);
       }).toList();
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'voe_extractor');
       return [];
     }
   }

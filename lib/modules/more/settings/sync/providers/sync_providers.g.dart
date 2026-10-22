@@ -58,7 +58,7 @@ final class SynchingProvider
   }
 }
 
-String _$synchingHash() => r'b3f96d16b700d27b1533e67492c96791c8666e3f';
+String _$synchingHash() => r'422773300c817094fecf0e9a0ae2fbc97c8beb51';
 
 final class SynchingFamily extends $Family
     with
@@ -92,7 +92,7 @@ abstract class _$Synching extends $Notifier<SyncPreference> {
   SyncPreference build({required int? syncId});
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<SyncPreference, SyncPreference>;
     final element =
         ref.element
@@ -102,7 +102,7 @@ abstract class _$Synching extends $Notifier<SyncPreference> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(syncId: _$args));
+    return element.handleCreate(ref, () => build(syncId: _$args));
   }
 }
 
@@ -162,7 +162,7 @@ abstract class _$RestoreSyncGuard extends $Notifier<bool> {
   bool build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -172,6 +172,6 @@ abstract class _$RestoreSyncGuard extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

@@ -24,6 +24,7 @@ import 'package:mangayomi/services/http/doh/doh_custom_store.dart';
 import 'package:mangayomi/services/http/cf_proxy_store.dart';
 import 'package:mangayomi/utils/localized_message.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 class MClient {
   MClient();
@@ -494,7 +495,8 @@ class ResolveCloudFlareChallenge extends RetryPolicy {
             }
             return false;
           });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      recordError(e, stack: stackTrace, source: 'm_client');
       return false;
     }
   }

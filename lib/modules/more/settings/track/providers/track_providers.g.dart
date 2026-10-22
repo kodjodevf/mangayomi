@@ -91,7 +91,7 @@ abstract class _$Tracks extends $Notifier<TrackPreference?> {
   TrackPreference? build({required int? syncId});
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<TrackPreference?, TrackPreference?>;
     final element =
         ref.element
@@ -101,7 +101,7 @@ abstract class _$Tracks extends $Notifier<TrackPreference?> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(syncId: _$args));
+    return element.handleCreate(ref, () => build(syncId: _$args));
   }
 }
 
@@ -145,7 +145,7 @@ abstract class _$UpdateProgressAfterReadingState extends $Notifier<bool> {
   bool build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -155,6 +155,6 @@ abstract class _$UpdateProgressAfterReadingState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

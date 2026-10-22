@@ -53,10 +53,12 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
   @override
   Widget buildTabLabel(ItemType type, String label) {
     return Row(
+      // Shrink to the label: filling the tab would stretch the indicator
+      // pill across its whole width.
+      mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Tab(text: label),
-        const SizedBox(width: ShioriSpace.s8),
         _updateNumbers(ref, type),
       ],
     );
@@ -369,7 +371,11 @@ Widget _updateNumbers(WidgetRef ref, ItemType itemType) {
     builder: (context, snapshot) {
       final count = snapshot.data?.length ?? 0;
       if (count == 0) return const SizedBox.shrink();
-      return EntryBadgeChip(label: count.toString());
+      // The gap lives here so a tab with no badge keeps no trailing space.
+      return Padding(
+        padding: const EdgeInsetsDirectional.only(start: ShioriSpace.s8),
+        child: EntryBadgeChip(label: count.toString()),
+      );
     },
   );
 }

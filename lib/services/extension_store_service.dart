@@ -6,6 +6,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/proto/mihon_extension_store.pb.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/log/logger.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 class ExtensionStoreFetchResult {
   final String name;
@@ -26,7 +27,12 @@ class ExtensionStoreService {
     if (bytes.length >= 2 && bytes[0] == 0x1F && bytes[1] == 0x8B) {
       try {
         return gzip.decode(bytes);
-      } catch (_) {
+      } catch (error, stackTrace) {
+        recordError(
+          error,
+          stack: stackTrace,
+          source: 'extension_store_service',
+        );
         return bytes;
       }
     }
@@ -58,11 +64,11 @@ class ExtensionStoreService {
       if (firstByte == 0x5B) {
         String? repoName;
         String? repoWebsite;
-        final baseUrlMatch = RegExp(
-          r'^(.*)/[^/]+\.json$',
-        ).firstMatch(currentUrl);
-        final baseUrl =
-            baseUrlMatch != null ? baseUrlMatch.group(1)! : currentUrl;
+        final baseUrlMatch = RegExp(r'^(.*)/[^/]+\.json$')
+            .firstMatch(currentUrl);
+        final baseUrl = baseUrlMatch != null
+            ? baseUrlMatch.group(1)!
+            : currentUrl;
         try {
           final repoRes = await client.get(Uri.parse('$baseUrl/repo.json'));
           if (repoRes.statusCode == 200) {
@@ -114,7 +120,8 @@ class ExtensionStoreService {
 
       // 3. Binary Protobuf: NetworkExtensionStore
       return await _parseProtobufStore(currentUrl, bytes, client);
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'extension_store_service');
       return null;
     }
   }
@@ -171,7 +178,8 @@ class ExtensionStoreService {
         indexUrl: indexUrl,
         sources: sources,
       );
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'extension_store_service');
       return null;
     }
   }
@@ -226,7 +234,8 @@ class ExtensionStoreService {
         indexUrl: indexUrl,
         sources: sources,
       );
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'extension_store_service');
       return null;
     }
   }
@@ -310,7 +319,8 @@ class ExtensionStoreService {
         indexUrl: indexUrl,
         sources: sources,
       );
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'extension_store_service');
       return null;
     }
   }
@@ -472,7 +482,13 @@ class ExtensionStoreService {
           if (src.name != null && src.name!.isNotEmpty) {
             sources.add(src);
           }
-        } catch (_) {}
+        } catch (error, stackTrace) {
+          recordError(
+            error,
+            stack: stackTrace,
+            source: 'extension_store_service',
+          );
+        }
       }
 
       String defaultRepoName = 'Extension Repo';
@@ -502,16 +518,16 @@ class ExtensionStoreService {
 
       final repoName =
           (name != null &&
-                  name.isNotEmpty &&
-                  !name.endsWith('.json') &&
-                  name != '.dist' &&
-                  name != 'dist')
-              ? name
-              : defaultRepoName;
+              name.isNotEmpty &&
+              !name.endsWith('.json') &&
+              name != '.dist' &&
+              name != 'dist')
+          ? name
+          : defaultRepoName;
       final repoWebsite =
           (defaultRepoWebsite != null && defaultRepoWebsite.isNotEmpty)
-              ? defaultRepoWebsite
-              : repoBaseUrl;
+          ? defaultRepoWebsite
+          : repoBaseUrl;
 
       return ExtensionStoreFetchResult(
         name: repoName,
@@ -519,7 +535,8 @@ class ExtensionStoreService {
         indexUrl: indexUrl,
         sources: sources,
       );
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'extension_store_service');
       return null;
     }
   }

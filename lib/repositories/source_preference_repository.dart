@@ -6,6 +6,7 @@ import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 class SourcePreferenceRepository {
   SourcePreference? findByKey(int? sourceId, String? key) {
@@ -15,7 +16,12 @@ class SourcePreferenceRepository {
           .sourceIdEqualTo(sourceId)
           .keyEqualTo(key)
           .findFirstSync();
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(
+        error,
+        stack: stackTrace,
+        source: 'source_preference_repository',
+      );
       return null;
     }
   }
@@ -23,7 +29,12 @@ class SourcePreferenceRepository {
   List<SourcePreference> getAll() {
     try {
       return isar.sourcePreferences.filter().idIsNotNull().findAllSync();
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(
+        error,
+        stack: stackTrace,
+        source: 'source_preference_repository',
+      );
       return [];
     }
   }
@@ -35,7 +46,12 @@ class SourcePreferenceRepository {
           .filter()
           .sourceIdEqualTo(sourceId)
           .findAllSync();
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(
+        error,
+        stack: stackTrace,
+        source: 'source_preference_repository',
+      );
       return [];
     }
   }
@@ -50,7 +66,12 @@ class SourcePreferenceRepository {
           .sourceIdEqualTo(sourceId)
           .keyEqualTo(key)
           .findFirstSync();
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(
+        error,
+        stack: stackTrace,
+        source: 'source_preference_repository',
+      );
       return null;
     }
   }

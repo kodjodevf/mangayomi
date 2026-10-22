@@ -58,7 +58,7 @@ final class MyAnimeListProvider extends $NotifierProvider<MyAnimeList, void> {
   }
 }
 
-String _$myAnimeListHash() => r'7438c5b180984e6eff5ae20f0225bb3a3f2b67ff';
+String _$myAnimeListHash() => r'27f9dd93e7da4f740d7e8bd5523fac82c8da8e0b';
 
 final class MyAnimeListFamily extends $Family
     with
@@ -105,7 +105,7 @@ abstract class _$MyAnimeList extends $Notifier<void> {
   });
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -115,7 +115,7 @@ abstract class _$MyAnimeList extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(
+    return element.handleCreate(
       ref,
       () => build(
         syncId: _$args.syncId,

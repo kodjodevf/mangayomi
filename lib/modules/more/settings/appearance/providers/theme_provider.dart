@@ -50,7 +50,7 @@ ShioriDensity get _density => isTv
     : ShioriDensity.phone;
 
 /// Provides the light theme for the app, recomputed only when the palette,
-/// the blend level or the surface tint change.
+/// the blend level, or the surface tint change.
 final lightThemeProvider = Provider<ThemeData>((ref) {
   final schemeIndex = ref.watch(
     flexSchemeColorStateProvider.select((theme) => theme.$2),
@@ -67,7 +67,7 @@ final lightThemeProvider = Provider<ThemeData>((ref) {
 });
 
 /// Provides the dark theme for the app, recomputed only when the palette,
-/// the blend level, the surface tint or the pure-black toggle change.
+/// the blend level, the surface tint, or the pure-black toggle change.
 final darkThemeProvider = Provider<ThemeData>((ref) {
   final schemeIndex = ref.watch(
     flexSchemeColorStateProvider.select((theme) => theme.$2),

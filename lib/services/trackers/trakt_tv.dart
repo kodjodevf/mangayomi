@@ -16,6 +16,7 @@ import 'base_tracker.dart';
 import 'expiring_oauth_tracker.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 part 'trakt_tv.g.dart';
 
 @riverpod
@@ -65,7 +66,8 @@ class TraktTv extends _$TraktTv
       _saveOAuth(username, oAuth);
 
       return true;
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'trakt_tv');
       return false;
     }
   }
@@ -175,16 +177,19 @@ class TraktTv extends _$TraktTv
           totalChapter: e[itemType]?['aired_episodes'] ?? 1,
           coverUrl: (e['images']?['fanart'] as List?)?.isNotEmpty ?? false
               ? 'https://wsrv.nl/?url=${e['images']?['fanart'][0]}'
-              : (e[itemType]?['images']?['fanart'] as List?)?.isNotEmpty ?? false
+              : (e[itemType]?['images']?['fanart'] as List?)?.isNotEmpty ??
+                    false
               ? 'https://wsrv.nl/?url=${e[itemType]?['images']?['fanart'][0]}'
               : (e['images']?['poster'] as List?)?.isNotEmpty ?? false
               ? 'https://wsrv.nl/?url=${e['images']?['poster'][0]}'
-              : (e[itemType]?['images']?['poster'] as List?)?.isNotEmpty ?? false
+              : (e[itemType]?['images']?['poster'] as List?)?.isNotEmpty ??
+                    false
               ? 'https://wsrv.nl/?url=${e[itemType]?['images']?['poster'][0]}'
               : '',
           title: e[itemType]['title'] ?? 'Unknown Title',
           score: double.tryParse(
-            (e[itemType]?["rating"] as num?)?.toDouble().toStringAsFixed(2) ?? "",
+            (e[itemType]?["rating"] as num?)?.toDouble().toStringAsFixed(2) ??
+                "",
           ),
           startDate: e[itemType]?["first_aired"] ?? "",
           publishingType: itemType,
@@ -207,9 +212,10 @@ class TraktTv extends _$TraktTv
     final type = isMovie ? "movies" : "shows";
 
     // Check history first
-    final historyUrl = Uri.parse(
-      '$_baseApiUrl/sync/history/$type/${track.mediaId}',
-    ).replace(queryParameters: {"extended": "full", "page": "1", "limit": "3000"});
+    final historyUrl =
+        Uri.parse('$_baseApiUrl/sync/history/$type/${track.mediaId}').replace(
+          queryParameters: {"extended": "full", "page": "1", "limit": "3000"},
+        );
     final historyResult = await _makeGetRequest(historyUrl, accessToken);
     final historyData = jsonDecode(historyResult.body) as List?;
 
@@ -240,13 +246,13 @@ class TraktTv extends _$TraktTv
 
     // Check watchlist if not in history
     try {
-      final watchlistUrl = Uri.parse(
-        '$_baseApiUrl/sync/watchlist/$type',
-      ).replace(queryParameters: {"extended": "full"});
+      final watchlistUrl = Uri.parse('$_baseApiUrl/sync/watchlist/$type')
+          .replace(queryParameters: {"extended": "full"});
       final watchlistResult = await _makeGetRequest(watchlistUrl, accessToken);
       final watchlistData = jsonDecode(watchlistResult.body) as List?;
 
-      final inWatchlist = watchlistData?.any((e) {
+      final inWatchlist =
+          watchlistData?.any((e) {
             final item = e[isMovie ? 'movie' : 'show'];
             return item?['ids']?['trakt'] == track.mediaId;
           }) ??
@@ -350,8 +356,8 @@ class TraktTv extends _$TraktTv
       // 2. watching / completed -> History에 동기화
       // 실제로 본 에피소드 수를 결정: completed이고 totalChapter가 있으면 전체 수, 아니면 lastChapterRead
       final lastRead = track.lastChapterRead ?? 0;
-      final episodesCount = track.status == TrackStatus.completed &&
-              (track.totalChapter ?? 0) > 0
+      final episodesCount =
+          track.status == TrackStatus.completed && (track.totalChapter ?? 0) > 0
           ? track.totalChapter!
           : lastRead;
 
@@ -373,12 +379,13 @@ class TraktTv extends _$TraktTv
                         'number': i,
                       },
                   ],
-                }
+                },
               ];
       }
 
-      final historyUrl = Uri.parse("$_baseApiUrl/sync/history")
-          .replace(queryParameters: {'extended': 'full', 'clientId': _clientId});
+      final historyUrl = Uri.parse(
+        "$_baseApiUrl/sync/history",
+      ).replace(queryParameters: {'extended': 'full', 'clientId': _clientId});
 
       final historyBody = isMovie
           ? {
@@ -438,9 +445,8 @@ class TraktTv extends _$TraktTv
     String accessToken,
   ) async {
     try {
-      final url = Uri.parse('$_baseApiUrl/shows/$mediaId/seasons').replace(
-        queryParameters: {'extended': 'episodes'},
-      );
+      final url = Uri.parse('$_baseApiUrl/shows/$mediaId/seasons')
+          .replace(queryParameters: {'extended': 'episodes'});
       final result = await _makeGetRequest(url, accessToken);
       final data = jsonDecode(result.body) as List?;
       if (data == null) return [];

@@ -48,7 +48,7 @@ abstract class _$CustomColorFilterState extends $Notifier<CustomColorFilter?> {
   CustomColorFilter? build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<CustomColorFilter?, CustomColorFilter?>;
     final element =
         ref.element
@@ -58,7 +58,7 @@ abstract class _$CustomColorFilterState extends $Notifier<CustomColorFilter?> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -102,7 +102,7 @@ abstract class _$EnableCustomColorFilterState extends $Notifier<bool> {
   bool build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -112,7 +112,7 @@ abstract class _$EnableCustomColorFilterState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -156,7 +156,7 @@ abstract class _$ColorFilterBlendModeState
   ColorFilterBlendMode build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<ColorFilterBlendMode, ColorFilterBlendMode>;
     final element =
         ref.element
@@ -166,6 +166,6 @@ abstract class _$ColorFilterBlendModeState
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

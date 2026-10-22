@@ -47,7 +47,7 @@ abstract class _$ChaptersListState extends $Notifier<List<Chapter>> {
   List<Chapter> build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<List<Chapter>, List<Chapter>>;
     final element =
         ref.element
@@ -57,7 +57,7 @@ abstract class _$ChaptersListState extends $Notifier<List<Chapter>> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -100,7 +100,7 @@ abstract class _$IsLongPressedState extends $Notifier<bool> {
   bool build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -110,7 +110,7 @@ abstract class _$IsLongPressedState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -163,7 +163,7 @@ final class SortChapterStateProvider
   }
 }
 
-String _$sortChapterStateHash() => r'34d1527e0a27945ba95b28713dca697097864712';
+String _$sortChapterStateHash() => r'8e65b527dcff876aa2e8d34db8aece6ad83b4d5b';
 
 final class SortChapterStateFamily extends $Family
     with
@@ -197,7 +197,7 @@ abstract class _$SortChapterState extends $Notifier<SortChapter> {
   SortChapter build({required int mangaId});
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<SortChapter, SortChapter>;
     final element =
         ref.element
@@ -207,7 +207,7 @@ abstract class _$SortChapterState extends $Notifier<SortChapter> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(mangaId: _$args));
+    return element.handleCreate(ref, () => build(mangaId: _$args));
   }
 }
 
@@ -291,7 +291,7 @@ abstract class _$ChapterFilterDownloadedState extends $Notifier<int> {
   int build({required int mangaId});
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -301,7 +301,7 @@ abstract class _$ChapterFilterDownloadedState extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(mangaId: _$args));
+    return element.handleCreate(ref, () => build(mangaId: _$args));
   }
 }
 
@@ -383,7 +383,7 @@ abstract class _$ChapterFilterUnreadState extends $Notifier<int> {
   int build({required int mangaId});
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -393,7 +393,7 @@ abstract class _$ChapterFilterUnreadState extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(mangaId: _$args));
+    return element.handleCreate(ref, () => build(mangaId: _$args));
   }
 }
 
@@ -477,7 +477,7 @@ abstract class _$ChapterFilterBookmarkedState extends $Notifier<int> {
   int build({required int mangaId});
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -487,7 +487,7 @@ abstract class _$ChapterFilterBookmarkedState extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(mangaId: _$args));
+    return element.handleCreate(ref, () => build(mangaId: _$args));
   }
 }
 
@@ -576,7 +576,7 @@ abstract class _$ChapterFilterResultState extends $Notifier<bool> {
   bool build({required Manga manga});
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -586,7 +586,7 @@ abstract class _$ChapterFilterResultState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(manga: _$args));
+    return element.handleCreate(ref, () => build(manga: _$args));
   }
 }
 
@@ -675,7 +675,7 @@ abstract class _$ChapterSetIsBookmarkState extends $Notifier<void> {
   void build({required Manga manga});
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -685,7 +685,7 @@ abstract class _$ChapterSetIsBookmarkState extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(manga: _$args));
+    return element.handleCreate(ref, () => build(manga: _$args));
   }
 }
 
@@ -766,7 +766,7 @@ abstract class _$ChapterSetIsReadState extends $Notifier<void> {
   void build({required Manga manga});
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -776,7 +776,7 @@ abstract class _$ChapterSetIsReadState extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(manga: _$args));
+    return element.handleCreate(ref, () => build(manga: _$args));
   }
 }
 
@@ -859,7 +859,7 @@ abstract class _$ChapterSetDownloadState extends $Notifier<void> {
   void build({required Manga manga});
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -869,7 +869,7 @@ abstract class _$ChapterSetDownloadState extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(manga: _$args));
+    return element.handleCreate(ref, () => build(manga: _$args));
   }
 }
 
@@ -906,13 +906,13 @@ final class ChaptersListttStateProvider
 }
 
 String _$chaptersListttStateHash() =>
-    r'55c0093bb370d4d103129eeca67e652a0241f2c0';
+    r'fe080a63ed17eb2926023c5fd9a881540f28d944';
 
 abstract class _$ChaptersListttState extends $Notifier<List<Chapter>> {
   List<Chapter> build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<List<Chapter>, List<Chapter>>;
     final element =
         ref.element
@@ -922,7 +922,7 @@ abstract class _$ChaptersListttState extends $Notifier<List<Chapter>> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -1016,7 +1016,7 @@ abstract class _$ScanlatorsFilterState
   (List<String>, List<String>, List<String>) build(Manga manga);
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref =
         this.ref
             as $Ref<
@@ -1034,6 +1034,6 @@ abstract class _$ScanlatorsFilterState
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(_$args));
+    return element.handleCreate(ref, () => build(_$args));
   }
 }

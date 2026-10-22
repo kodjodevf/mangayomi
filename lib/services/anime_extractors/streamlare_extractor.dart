@@ -3,6 +3,7 @@ import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 class StreamlareExtractor {
   final InterceptedClient client = MClient.init(
@@ -76,7 +77,8 @@ class StreamlareExtractor {
         }
         return videoList;
       }
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'streamlare_extractor');
       return [];
     }
   }

@@ -13,6 +13,7 @@ import 'package:mangayomi/services/isolate_service.dart';
 import 'package:mangayomi/services/extension_store_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:mangayomi/utils/log/logger.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 Future<void> fetchSourcesList({
   int? id,
@@ -204,8 +205,9 @@ Future<void> _updateSource(
     );
   }
 
-  final existing =
-      source.id != null ? sourceRepository.getById(source.id!) : null;
+  final existing = source.id != null
+      ? sourceRepository.getById(source.id!)
+      : null;
   final updatedSource = Source()
     ..headers = jsonEncode(headers)
     ..supportLatest = supportLatest
@@ -367,7 +369,8 @@ Future<Map<String, String>> fetchHeadersDalvik(
       headers[data[i]] = data[i + 1];
     }
     return headers;
-  } catch (_) {
+  } catch (error, stackTrace) {
+    recordError(error, stack: stackTrace, source: 'fetch_sources_list');
     return {};
   }
 }
@@ -389,7 +392,8 @@ Future<bool> fetchSupportLatestDalvik(
       }),
     );
     return res.body.trim() == "true";
-  } catch (_) {
+  } catch (error, stackTrace) {
+    recordError(error, stack: stackTrace, source: 'fetch_sources_list');
     return false;
   }
 }
@@ -413,7 +417,8 @@ Future<FilterList?> fetchFilterListDalvik(
     final data = jsonDecode(res.body) as List;
 
     return FilterList(filtersFromJson(data));
-  } catch (_) {
+  } catch (error, stackTrace) {
+    recordError(error, stack: stackTrace, source: 'fetch_sources_list');
     return null;
   }
 }
@@ -516,7 +521,8 @@ Future<List<SourcePreference>?> fetchPreferencesDalvik(
             ..sourceId = source.id,
         )
         .toList();
-  } catch (_) {
+  } catch (error, stackTrace) {
+    recordError(error, stack: stackTrace, source: 'fetch_sources_list');
     return null;
   }
 }

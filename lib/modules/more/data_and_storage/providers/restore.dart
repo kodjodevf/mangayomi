@@ -78,7 +78,7 @@ Future<void> doRestore(
   // watch keeping it alive — if that widget unmounts mid-restore (dialog
   // closes, screen pops), the provider gets disposed mid-flight and every
   // ref use below throws UnmountedRefException.
-  ref.keepAlive();
+  final keepAliveLink = ref.keepAlive();
   // Resolved before any await, so it's safe to use after one.
   final l10n = l10nLocalizations(context);
   // Yield once first: doRestore is itself a provider, and mutating another
@@ -111,30 +111,33 @@ Future<void> doRestore(
         final backup =
             decodedMangayomiBackup ??
             await decodeMangayomiBackup(path, context);
-        await ref.read(
-          restoreBackupProvider(
-            backup,
-            merge: merge,
-            categoryDecisions: categoryDecisions,
-            sourceDecisions: sourceDecisions,
-          ).future,
+        final restoreProvider = restoreBackupProvider(
+          backup,
+          merge: merge,
+          categoryDecisions: categoryDecisions,
+          sourceDecisions: sourceDecisions,
         );
+        // Listened to so the auto-dispose sub-provider lives until we're done.
+        ref.listen(restoreProvider, (_, _) {}, onError: (_, _) {});
+        await ref.read(restoreProvider.future);
         break;
       case BackupType.kotatsu:
-        await ref.read(restoreKotatsuBackupProvider(archive).future);
+        final restoreProvider = restoreKotatsuBackupProvider(archive);
+        ref.listen(restoreProvider, (_, _) {}, onError: (_, _) {});
+        await ref.read(restoreProvider.future);
         break;
       case BackupType.mihon:
       case BackupType.aniyomi:
       case BackupType.neko:
-        await ref.read(
-          restoreTachiBkBackupProvider(
-            path,
-            backupType,
-            merge: merge,
-            categoryDecisions: categoryDecisions,
-            sourceDecisions: sourceDecisions,
-          ).future,
+        final restoreProvider = restoreTachiBkBackupProvider(
+          path,
+          backupType,
+          merge: merge,
+          categoryDecisions: categoryDecisions,
+          sourceDecisions: sourceDecisions,
         );
+        ref.listen(restoreProvider, (_, _) {}, onError: (_, _) {});
+        await ref.read(restoreProvider.future);
         break;
       default:
     }
@@ -157,7 +160,7 @@ Future<void> doRestore(
         // shouldn't hold up the restore flow (e.g. a caller's busy dialog)
         // waiting on it. It owns clearing the guard once it settles.
         uploadStarted = true;
-        unawaited(_uploadToSyncServerIfConnected(ref, l10n));
+        unawaited(_uploadToSyncServerIfConnected(ref, l10n, keepAliveLink.close));
       }
     } else {
       showBotToast("Backup Type not supported!");
@@ -165,6 +168,9 @@ Future<void> doRestore(
   } finally {
     if (!uploadStarted) {
       ref.read(restoreSyncGuardProvider.notifier).finish();
+      // Released on a later event-loop turn so the provider isn't disposed
+      // before its future has delivered the result to the caller.
+      Timer.run(keepAliveLink.close);
     }
   }
 }
@@ -177,6 +183,7 @@ Future<void> doRestore(
 Future<void> _uploadToSyncServerIfConnected(
   Ref ref,
   AppLocalizations l10n,
+  void Function() releaseKeepAlive,
 ) async {
   try {
     final syncPreference = ref.read(synchingProvider(syncId: 1));
@@ -202,6 +209,7 @@ Future<void> _uploadToSyncServerIfConnected(
     );
   } finally {
     ref.read(restoreSyncGuardProvider.notifier).finish();
+    releaseKeepAlive();
   }
 }
 

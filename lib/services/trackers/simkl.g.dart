@@ -58,7 +58,7 @@ final class SimklProvider extends $NotifierProvider<Simkl, void> {
   }
 }
 
-String _$simklHash() => r'e1c4532bceebbbb861b585bdf965a29a6839962c';
+String _$simklHash() => r'16ffd5e25d7de26f156b3d40a67ed469548a2db8';
 
 final class SimklFamily extends $Family
     with
@@ -105,7 +105,7 @@ abstract class _$Simkl extends $Notifier<void> {
   });
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -115,7 +115,7 @@ abstract class _$Simkl extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleCreate(
+    return element.handleCreate(
       ref,
       () => build(
         syncId: _$args.syncId,

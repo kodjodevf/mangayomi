@@ -10,6 +10,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:mangayomi/utils/error_toast.dart';
 
 class SyncApiClient {
   SyncApiClient(this._http);
@@ -30,7 +31,8 @@ class SyncApiClient {
       final body = jsonDecode(response.body) as Map<String, dynamic>;
       final supported = (body['supported'] as List?)?.cast<String>() ?? [];
       return supported.contains(supportedProtocolVersion);
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'sync_api_client');
       return false;
     }
   }

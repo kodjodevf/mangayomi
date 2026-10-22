@@ -41,13 +41,13 @@ final class L10nLocaleStateProvider
   }
 }
 
-String _$l10nLocaleStateHash() => r'88eafcec2dd0039018f12e8275d287c48d7dbae0';
+String _$l10nLocaleStateHash() => r'acff5bdfb1df187943a914743b985e81fb0ef843';
 
 abstract class _$L10nLocaleState extends $Notifier<Locale> {
   Locale build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<Locale, Locale>;
     final element =
         ref.element
@@ -57,6 +57,6 @@ abstract class _$L10nLocaleState extends $Notifier<Locale> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

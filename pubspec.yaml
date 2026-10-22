@@ -12,10 +12,10 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  go_router: ^18.0.1
-  flutter_riverpod: ^3.1.0
-  riverpod_annotation: ^4.0.0
-  html: 0.15.6
+  go_router: ^18.1.1
+  flutter_riverpod: ^3.4.3
+  riverpod_annotation: ^4.0.7
+  html: 0.15.7
   collection: ^1.19.1
   font_awesome_flutter: ^11.0.0
   flex_color_scheme: ^8.3.1
@@ -27,8 +27,8 @@ dependencies:
   photo_view: ^0.15.0
   grouped_list: ^6.0.0
   intl: ^0.20.2
-  google_fonts: ^8.0.2
-  url_launcher: ^6.3.1
+  google_fonts: ^9.0.0
+  url_launcher: ^6.3.3
   package_info_plus: ^9.0.1
   permission_handler: ^12.0.1
   flutter_inappwebview:
@@ -36,12 +36,12 @@ dependencies:
       url: https://github.com/kodjodevf/flutter_inappwebview.git
       path: flutter_inappwebview
       ref: master
-  isar_community: ^3.3.2
-  isar_community_flutter_libs: ^3.3.2
+  isar_community: ^3.4.1
+  isar_community_flutter_libs: ^3.4.1
   share_plus: ^13.0.0
   xpath_selector_html_parser: ^3.0.1
   archive: ^4.3.0
-  external_path: ^2.2.0
+  external_path: ^3.0.0
   file_picker: ^12.0.0
   flutter_secure_storage: ^11.1.1
   path_provider: ^2.1.5
@@ -98,7 +98,7 @@ dependencies:
   fixnum: ^1.1.1
   device_info_plus: ^13.2.0
   marquee: ^2.2.3
-  d4rt: ^0.2.4
+  d4rt: ^0.2.6
   flutter_discord_rpc_fork:
     git:
       url: https://github.com/kodjodevf/flutter-discord-rpc.git
@@ -139,15 +139,12 @@ dependency_overrides:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.11
-  riverpod_generator: ^4.0.0
+  build_runner: ^2.16.0
+  riverpod_generator: ^4.0.9
   flutter_launcher_icons: ^0.14.3
-  isar_community_generator:
-    git:
-      url: https://github.com/kodjodevf/isar-community-generator.git
-      ref: v3
+  isar_community_generator: ^3.4.1
   flutter_lints: ^6.0.0
-  freezed: ^3.0.0
+  freezed: ^4.0.3
   inno_bundle: ^0.9.0
   protoc_plugin: ^23.0.0
   # hive_generator:

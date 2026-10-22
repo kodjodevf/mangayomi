@@ -74,7 +74,7 @@ abstract class _$FlexSchemeColorState
   (FlexSchemeColor, int) build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref =
         this.ref as $Ref<(FlexSchemeColor, int), (FlexSchemeColor, int)>;
     final element =
@@ -85,6 +85,6 @@ abstract class _$FlexSchemeColorState
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

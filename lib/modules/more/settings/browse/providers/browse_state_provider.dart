@@ -13,6 +13,7 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/extension_store_service.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 part 'browse_state_provider.g.dart';
 
 @riverpod
@@ -190,7 +191,9 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
         ).future,
       );
       await refresh;
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'browse_state_provider');
+    }
   }
 }
 
@@ -258,7 +261,9 @@ Future<Repo?> getRepoInfos(Ref ref, {required String jsonUrl}) async {
           jsonUrl: result.indexUrl,
         );
       }
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'browse_state_provider');
+    }
   }
 
   // 2. Fallback for custom / legacy JSON list format
@@ -278,7 +283,13 @@ Future<Repo?> getRepoInfos(Ref ref, {required String jsonUrl}) async {
                 infos.addAll(decoded);
               }
             }
-          } catch (_) {}
+          } catch (error, stackTrace) {
+            recordError(
+              error,
+              stack: stackTrace,
+              source: 'browse_state_provider',
+            );
+          }
         }
         infos["jsonUrl"] = url;
         final repo = Repo.fromJson(infos);
@@ -291,7 +302,9 @@ Future<Repo?> getRepoInfos(Ref ref, {required String jsonUrl}) async {
         }
         return repo;
       }
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'browse_state_provider');
+    }
   }
 
   return null;
@@ -330,7 +343,8 @@ bool _checkValidUrl(Response res) {
     } else if (decoded is Map && decoded['sources'] is List) {
       return true;
     }
-  } catch (err) {
+  } catch (err, stackTrace) {
+    recordError(err, stack: stackTrace, source: 'browse_state_provider');
     return false;
   }
   return false;

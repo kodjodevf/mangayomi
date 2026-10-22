@@ -7,7 +7,6 @@ import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
 import 'package:mangayomi/modules/novel/utils/novel_reader_fonts.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_settings_controls.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 
 class ReaderSettingsTab extends ConsumerStatefulWidget {
   final NovelReaderController? readerController;
@@ -301,12 +300,7 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                     ),
                     labelStyle: context.shiori.text.meta,
                     label: Text(
-                      option.key == null
-                          ? ref.watch(
-                                  appFontFamilyProvider.select((t) => t.$1),
-                                ) ??
-                                context.l10n.default0
-                          : option.label,
+                      option.label,
                     ),
                     selected: fontFamilyKey == option.key,
                     onSelected: (_) {

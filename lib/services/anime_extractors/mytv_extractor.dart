@@ -3,6 +3,7 @@ import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 class MytvExtractor {
   final InterceptedClient client = MClient.init(
@@ -36,7 +37,8 @@ class MytvExtractor {
       });
 
       return videoList;
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'mytv_extractor');
       return [];
     }
   }

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 Future<List<ImdbTitle>> fetchImdbTitles(String query) async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
@@ -19,7 +20,8 @@ Future<List<ImdbTitle>> fetchImdbTitles(String query) async {
             ?.map((e) => ImdbTitle.fromJson(e))
             .toList() ??
         [];
-  } catch (_) {
+  } catch (error, stackTrace) {
+    recordError(error, stack: stackTrace, source: 'fetch_subtitles');
     return [];
   }
 }
@@ -39,7 +41,8 @@ Future<List<ImdbEpisode>?> fetchImdbEpisodes(String imdbId) async {
     return (data["episodes"] as List?)
         ?.map((e) => ImdbEpisode.fromJson(e))
         .toList();
-  } catch (_) {
+  } catch (error, stackTrace) {
+    recordError(error, stack: stackTrace, source: 'fetch_subtitles');
     return null;
   }
 }
@@ -60,7 +63,8 @@ Future<List<ImdbSubtitle>?> fetchImdbSubtitles(String imdbId) async {
         ?.map((e) => ImdbSubtitle.fromJson(e))
         .where((e) => e.url != null)
         .toList();
-  } catch (_) {
+  } catch (error, stackTrace) {
+    recordError(error, stack: stackTrace, source: 'fetch_subtitles');
     return null;
   }
 }

@@ -3,6 +3,7 @@ import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/xpath_selector.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 class VidBomExtractor {
   final InterceptedClient client = MClient.init(
@@ -29,7 +30,8 @@ class VidBomExtractor {
         }
         return Video(src, quality, src);
       }).toList();
-    } catch (_) {
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'vidbom_extractor');
       return [];
     }
   }

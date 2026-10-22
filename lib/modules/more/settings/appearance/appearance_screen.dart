@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/floating_navigation_bar_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/tint_surfaces_state_provider.dart';
@@ -44,7 +42,6 @@ class AppearanceScreen extends ConsumerWidget {
     final tintSurfaces = ref.watch(tintSurfacesStateProvider);
     final scale = ref.watch(appUiScaleStateProvider).clamp(0.85, 1.25);
     final locale = ref.watch(l10nLocaleStateProvider);
-    final rawFontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$1));
     final relativeTimestamps = ref.watch(relativeTimesTampsStateProvider);
     final dateFormatState = ref.watch(dateFormatStateProvider);
     String sampleDate(String format) => dateFormat(
@@ -123,14 +120,6 @@ class AppearanceScreen extends ConsumerWidget {
                 onChanged: (v) =>
                     ref.read(l10nLocaleStateProvider.notifier).setLocale(v),
               ),
-              ShioriSettingRow(
-                icon: Symbols.font_download_rounded,
-                title: l10n.novel_reader_font,
-                subtitle:
-                    '${rawFontFamily ?? l10n.default0} · '
-                    '${l10n.novel_reader_font_subtitle}',
-                onTap: () => _pickFont(context, ref, rawFontFamily),
-              ),
             ],
           ),
           ShioriSettingsGroup(
@@ -194,30 +183,5 @@ class AppearanceScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  /// Every Google font, searchable, with the app's own first.
-  Future<void> _pickFont(
-    BuildContext context,
-    WidgetRef ref,
-    String? current,
-  ) async {
-    // The choice sheet answers null when dismissed, so the default font
-    // needs a value of its own.
-    const defaultFont = '';
-    final picked = await showShioriChoice<String>(
-      context,
-      title: context.l10n.font,
-      searchHint: context.l10n.search,
-      selected: current ?? defaultFont,
-      options: [
-        ShioriChoice(defaultFont, context.l10n.default0),
-        for (final name in GoogleFonts.asMap().keys) ShioriChoice(name, name),
-      ],
-    );
-    if (picked == null) return;
-    ref
-        .read(appFontFamilyProvider.notifier)
-        .set(picked == defaultFont ? null : picked);
   }
 }

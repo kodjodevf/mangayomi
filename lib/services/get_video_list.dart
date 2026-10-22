@@ -19,6 +19,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:path/path.dart' as p;
 
 import '../models/source.dart';
+
+import 'package:mangayomi/utils/error_toast.dart';
 part 'get_video_list.g.dart';
 
 @riverpod
@@ -135,7 +137,8 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
           serviceType: 'getVideoList',
           proxyServer: proxyServer,
         );
-      } catch (e) {
+      } catch (e, stackTrace) {
+        recordError(e, stack: stackTrace, source: 'get_video_list');
         list = [Video(episode.url!, episode.name!, episode.url!)];
       }
 
@@ -153,8 +156,8 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
           torrentList.add(
             video..quality = video.quality.substringBeforeLast("."),
           );
-          final videoHash =
-              Uri.tryParse(video.url)?.queryParameters['infohash'];
+          final videoHash = Uri.tryParse(video.url)
+              ?.queryParameters['infohash'];
           if (videoHash != null &&
               videoHash.isNotEmpty &&
               !infoHashes.contains(videoHash)) {

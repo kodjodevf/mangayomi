@@ -15,6 +15,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 
 class DownloadFileScreen extends ConsumerStatefulWidget {
   final (String, String, String, List<dynamic>) updateAvailable;
@@ -51,7 +52,9 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
           _currentVersion = info.version;
         });
       }
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'download_file_screen');
+    }
   }
 
   @override
@@ -92,7 +95,13 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
             if (_isDownloading) {
               try {
                 await _subscription?.cancel();
-              } catch (_) {}
+              } catch (error, stackTrace) {
+                recordError(
+                  error,
+                  stack: stackTrace,
+                  source: 'download_file_screen',
+                );
+              }
             }
             if (context.mounted) {
               Navigator.pop(context);
@@ -286,7 +295,8 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
             Navigator.pop(context);
           }
         }
-      } catch (e) {
+      } catch (e, stackTrace) {
+        recordError(e, stack: stackTrace, source: 'download_file_screen');
         if (mounted) {
           setState(() {
             _isDownloading = false;
@@ -347,7 +357,9 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
         // File is corrupted or incomplete — delete and re-download.
         try {
           await file.delete();
-        } catch (_) {}
+        } catch (error, stackTrace) {
+          recordError(error, stack: stackTrace, source: 'download_file_screen');
+        }
       }
     }
 
@@ -386,7 +398,8 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
         if (mounted) {
           Navigator.pop(context);
         }
-      } catch (e) {
+      } catch (e, stackTrace) {
+        recordError(e, stack: stackTrace, source: 'download_file_screen');
         if (mounted) {
           setState(() {
             _isDownloading = false;
