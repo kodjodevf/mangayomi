@@ -201,8 +201,7 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
     final years = [title.startYear, title.endYear].whereType<int>().join(' – ');
     final meta = [
       if (title.aggregateRating != null)
-        '★ ${title.aggregateRating!.toStringAsFixed(1)}'
-            '${title.voteCount == null ? '' : ' (${title.voteCount})'}',
+        '★ ${title.aggregateRating!.toStringAsFixed(1)}${title.voteCount == null ? '' : ' (${title.voteCount})'}',
       if (years.isNotEmpty) years,
     ].join(' · ');
     return InkWell(

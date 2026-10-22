@@ -212,8 +212,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                         [
                           getMangaStatusName(widget.manga.status, context),
                           if (!isLocalArchive)
-                            '${widget.manga.source!} '
-                                '(${widget.manga.lang!.toUpperCase()})',
+                            '${widget.manga.source!} (${widget.manga.lang!.toUpperCase()})',
                         ].join(' · '),
                         style: meta,
                       ),

@@ -26,6 +26,7 @@ analyzer:
     - windows/**
     - macos/**
     - linux/**
+    - lib/services/http/rhttp/**
 include: package:flutter_lints/flutter.yaml
 
 linter:
@@ -44,7 +45,19 @@ linter:
     cancel_subscriptions: true
     close_sinks: true
     avoid_empty_else: true
+    use_build_context_synchronously: true
+    unnecessary_statements: true
+    unnecessary_null_aware_assignments: true
+    control_flow_in_finally: true
+    empty_statements: true
+    no_duplicate_case_values: true
+    valid_regexps: true
+    hash_and_equals: true
+    test_types_in_equals: true
+    throw_in_finally: true
+    no_adjacent_strings_in_list: true
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
+    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
 
 # Additional information about this file can be found at

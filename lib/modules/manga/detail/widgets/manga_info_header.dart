@@ -21,7 +21,6 @@ import 'package:mangayomi/modules/manga/detail/widgets/tracking_menu.dart';
 import 'package:mangayomi/modules/widgets/cover_hero.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -30,6 +29,10 @@ import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:shiori/shiori.dart';
+
+export 'package:mangayomi/modules/manga/detail/widgets/detail_explore_sheet.dart';
+export 'package:mangayomi/modules/manga/detail/widgets/detail_genre_chip.dart';
+export 'package:mangayomi/modules/manga/detail/widgets/edit_local_archive_dialog.dart';
 
 /// The detail page's info block: cover, title, the quick actions (favourite,
 /// update days, tracking, Explore, webview), description (collapsible) and

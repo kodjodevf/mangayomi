@@ -603,7 +603,7 @@ Future<void> stopwebviewServer() async {
   }
 }
 
-void _handleResolveCf(HttpRequest request) async {
+Future<void> _handleResolveCf(HttpRequest request) async {
   int time = 0;
   bool timeOut = false;
   bool solved = false;

@@ -937,7 +937,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   static const double _aboveControlsPanel = 128;
 
   BoxFit? _lastFit;
-  void _resize(BoxFit fit) async {
+  Future<void> _resize(BoxFit fit) async {
     if (fit == _lastFit) return;
     _lastFit = fit;
     // Wait for the widget tree to settle before updating fit
