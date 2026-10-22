@@ -24,9 +24,9 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/modules/main_view/nav_groups.dart';
-import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/onboarding/widgets/onboarding_nav_preview.dart';
 import 'package:mangayomi/modules/onboarding/widgets/onboarding_folder_status.dart';
+import 'package:mangayomi/modules/onboarding/widgets/language_list.dart';
 import 'package:mangayomi/modules/onboarding/widgets/onboarding_controls.dart';
 
 /// The nav destination for each library, so a library the user does not read
@@ -713,7 +713,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
 
   List<Widget> _stepBody(AppLocalizations l10n) => switch (_step) {
     _Step.language => [
-      const _LanguageList(),
+      const OnboardingLanguageList(),
       const SizedBox(height: ShioriSpace.s16),
       ShioriButton(expand: true, onPressed: _next, label: l10n.onboarding_next),
     ],
@@ -877,61 +877,4 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
     ItemType.anime => l10n.anime,
     ItemType.novel => l10n.novel,
   };
-}
-
-/// Every language the app speaks, each under its own name so a reader finds
-/// theirs whatever the app is showing now. A tap applies it at once, so the
-/// rest of the flow is already in that language.
-class _LanguageList extends ConsumerWidget {
-  const _LanguageList();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final tokens = context.shiori;
-    final c = tokens.color;
-    final current = ref.watch(l10nLocaleStateProvider);
-    final locales = [...AppLocalizations.supportedLocales]
-      ..sort(
-        (a, b) => languageName(context, a.toLanguageTag())
-            .toLowerCase()
-            .compareTo(languageName(context, b.toLanguageTag()).toLowerCase()),
-      );
-    bool isCurrent(Locale l) =>
-        l.languageCode == current.languageCode &&
-        (l.countryCode ?? '') == (current.countryCode ?? '');
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: isTv ? 360 : 300),
-      child: Material(
-        color: c.ink2,
-        borderRadius: BorderRadius.circular(ShioriShape.card),
-        clipBehavior: Clip.antiAlias,
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.symmetric(vertical: ShioriSpace.s4),
-          children: [
-            for (final locale in locales)
-              ListTile(
-                autofocus: isTv && isCurrent(locale),
-                selected: isCurrent(locale),
-                title: Text(
-                  languageName(context, locale.toLanguageTag()),
-                  style: tokens.text.row.copyWith(
-                    color: c.fg,
-                    fontWeight: isCurrent(locale)
-                        ? FontWeight.w700
-                        : FontWeight.w400,
-                  ),
-                ),
-                trailing: isCurrent(locale)
-                    ? Icon(Symbols.check_rounded, color: c.accentInk)
-                    : null,
-                onTap: () => ref
-                    .read(l10nLocaleStateProvider.notifier)
-                    .setLocale(locale),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
 }

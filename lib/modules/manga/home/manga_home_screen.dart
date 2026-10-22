@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/modules/browse/widgets/source_code_error_banner.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:shiori/shiori.dart';
@@ -24,15 +23,15 @@ import 'package:mangayomi/services/get_filter_list.dart';
 import 'package:mangayomi/services/get_latest_updates.dart';
 import 'package:mangayomi/services/get_popular.dart';
 import 'package:mangayomi/services/get_source_baseurl.dart';
-import 'package:mangayomi/modules/manga/home/providers/saved_searches_provider.dart';
 import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/services/supports_latest.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
+import 'package:mangayomi/modules/manga/home/widget/manga_home_image_card.dart';
 import 'package:mangayomi/modules/manga/home/widget/mangas_card_selector.dart';
+import 'package:mangayomi/modules/manga/home/widget/saved_searches_sheet.dart';
 import 'package:mangayomi/modules/widgets/cover_grid_skeleton.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
-import 'package:mangayomi/modules/manga/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:marquee/marquee.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -191,63 +190,19 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   }
 
   Future<void> _promptSaveSearch() async {
-    final query = _query.trim();
-    if (query.isEmpty) {
-      botToast(context.l10n.enter_search_to_save_first);
-      return;
-    }
-    final name = await showShioriPrompt(
-      context,
-      title: context.l10n.save_search,
-      label: context.l10n.name,
-      confirmLabel: context.l10n.save,
-      initialValue: query,
+    await showSaveSearchPrompt(
+      context: context,
+      ref: ref,
+      source: source,
+      query: _query,
     );
-    if (name == null) return;
-    ref.read(savedSearchesProvider.notifier).add(source.id!, name, query);
   }
 
   void _showSavedSearches() {
-    showShioriSheet<void>(
-      context,
-      title: context.l10n.saved_searches,
-      builder: (ctx) => Consumer(
-        builder: (ctx, ref, _) {
-          final saved =
-              ref.watch(savedSearchesProvider)[source.id] ??
-              const <SavedSearch>[];
-          if (saved.isEmpty) {
-            return ShioriEmptyState(
-              icon: Symbols.bookmark_rounded,
-              title: context.l10n.no_saved_searches,
-              compact: true,
-            );
-          }
-          return ListView(
-            shrinkWrap: true,
-            children: [
-              for (final s in saved)
-                ShioriListRow(
-                  leading: const Icon(Symbols.bookmark_rounded),
-                  title: s.name,
-                  subtitle: s.query,
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    _runSavedSearch(s.query);
-                  },
-                  trailing: IconButton(
-                    tooltip: MaterialLocalizations.of(context)
-                        .deleteButtonTooltip,
-                    icon: const Icon(Symbols.delete_rounded),
-                    onPressed: () => ref
-                        .read(savedSearchesProvider.notifier)
-                        .remove(source.id!, s.name),
-                  ),
-                ),
-            ],
-          );
-        },
-      ),
+    showSavedSearchesSheet(
+      context: context,
+      source: source,
+      onSelect: _runSavedSearch,
     );
   }
 
@@ -816,72 +771,6 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class MangaHomeImageCard extends ConsumerStatefulWidget {
-  final MManga manga;
-  final ItemType itemType;
-  final Source source;
-  final bool isComfortableGrid;
-  final Manga? libraryManga;
-  final bool autofocus;
-  const MangaHomeImageCard({
-    super.key,
-    required this.manga,
-    required this.source,
-    required this.itemType,
-    required this.isComfortableGrid,
-    this.libraryManga,
-    this.autofocus = false,
-  });
-
-  @override
-  ConsumerState<MangaHomeImageCard> createState() => _MangaHomeImageCardState();
-}
-
-class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard> {
-  @override
-  Widget build(BuildContext context) {
-    return MangaImageCardWidget(
-      getMangaDetail: widget.manga,
-      source: widget.source,
-      itemType: widget.itemType,
-      isComfortableGrid: widget.isComfortableGrid,
-      libraryManga: widget.libraryManga,
-      autofocus: widget.autofocus,
-    );
-  }
-}
-
-class MangaHomeImageCardListTile extends ConsumerStatefulWidget {
-  final MManga manga;
-  final ItemType itemType;
-  final Source source;
-  final Manga? libraryManga;
-  const MangaHomeImageCardListTile({
-    super.key,
-    required this.manga,
-    required this.source,
-    required this.itemType,
-    this.libraryManga,
-  });
-
-  @override
-  ConsumerState<MangaHomeImageCardListTile> createState() =>
-      _MangaHomeImageCardListTileState();
-}
-
-class _MangaHomeImageCardListTileState
-    extends ConsumerState<MangaHomeImageCardListTile> {
-  @override
-  Widget build(BuildContext context) {
-    return MangaImageCardListTileWidget(
-      getMangaDetail: widget.manga,
-      source: widget.source,
-      itemType: widget.itemType,
-      libraryManga: widget.libraryManga,
     );
   }
 }
