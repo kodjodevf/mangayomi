@@ -48,6 +48,7 @@ import 'package:mangayomi/modules/manga/reader/utils/reader_page_index_math.dart
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/manga_reader_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/services/reader/decoded_image_budget.dart';
 import 'package:mangayomi/utils/system_ui.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -316,9 +317,16 @@ class _MangaChapterPageGalleryState
     }
     _saveCurrentPage(pageViewToActualIndexSync(_currentIndex ?? 0));
     disposePreloadManager();
+    DecodedImageBudget.instance.clear();
     _readerController.keepAliveLink?.close();
     WakelockPlus.disable();
     super.dispose();
+  }
+
+  @override
+  void didHaveMemoryPressure() {
+    DecodedImageBudget.instance.clear();
+    super.didHaveMemoryPressure();
   }
 
   @override

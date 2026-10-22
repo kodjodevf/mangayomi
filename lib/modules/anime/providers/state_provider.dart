@@ -139,5 +139,9 @@ class SubtitleSettingsState extends _$SubtitleSettingsState {
 }
 
 final overrideAssSubtitlesStateProvider = Provider<bool>((ref) {
-  return ref.watch(subtitleSettingsStateProvider).overrideAssSubtitles ?? false;
+  return ref.watch(
+    subtitleSettingsStateProvider.select(
+      (s) => s.overrideAssSubtitles ?? false,
+    ),
+  );
 });

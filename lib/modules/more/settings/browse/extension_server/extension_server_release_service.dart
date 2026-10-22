@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:archive/archive.dart';
 import 'package:http/http.dart' as http;
@@ -92,22 +93,26 @@ class ExtensionServerReleaseService {
     File archiveFile,
     Directory installDir,
   ) async {
-    final bytes = await archiveFile.readAsBytes();
-    final archive = ZipDecoder().decodeBytes(bytes);
-    for (final file in archive.files) {
-      final outputPath = path.normalize(path.join(installDir.path, file.name));
-      if (!path.isWithin(installDir.path, outputPath) &&
-          outputPath != installDir.path) {
-        continue;
+    final archivePath = archiveFile.path;
+    final installPath = installDir.path;
+    await Isolate.run(() async {
+      final bytes = await File(archivePath).readAsBytes();
+      final archive = ZipDecoder().decodeBytes(bytes);
+      for (final file in archive.files) {
+        final outputPath = path.normalize(path.join(installPath, file.name));
+        if (!path.isWithin(installPath, outputPath) &&
+            outputPath != installPath) {
+          continue;
+        }
+        if (file.isFile) {
+          final extractedFile = File(outputPath);
+          await extractedFile.parent.create(recursive: true);
+          await extractedFile.writeAsBytes(file.content as List<int>);
+        } else {
+          await Directory(outputPath).create(recursive: true);
+        }
       }
-      if (file.isFile) {
-        final extractedFile = File(outputPath);
-        await extractedFile.parent.create(recursive: true);
-        await extractedFile.writeAsBytes(file.content as List<int>);
-      } else {
-        await Directory(outputPath).create(recursive: true);
-      }
-    }
+    });
   }
 
   /// Recursively deletes a directory, with retries on Windows to prevent lock collisions.

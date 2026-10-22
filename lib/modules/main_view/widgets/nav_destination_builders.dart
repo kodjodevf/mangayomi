@@ -174,7 +174,7 @@ class NavDestinationBuilders {
           padding: const EdgeInsets.only(top: ShioriSpace.s4),
           child: Text(
             getHyphenatedUpdatesLabel(
-              ref.watch(l10nLocaleStateProvider).languageCode,
+              ref.watch(l10nLocaleStateProvider.select((l) => l.languageCode)),
               l10n.updates,
             ),
             textAlign: TextAlign.center,

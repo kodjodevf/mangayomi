@@ -70,7 +70,7 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
     final l10n = l10nLocalizations(context)!;
 
     return [
-      if (ref.watch(updateErrorsProvider).isNotEmpty)
+      if (ref.watch(updateErrorsProvider.select((e) => e.isNotEmpty)))
         IconButton(
           splashRadius: 20,
           tooltip: context.l10n.update_errors,

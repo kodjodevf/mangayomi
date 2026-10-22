@@ -82,7 +82,7 @@ Future<bool> performRestore(BuildContext context, WidgetRef ref) async {
     }
 
     final l10n = context.l10n;
-    final preview = previewTachiBkImport(path);
+    final preview = await previewTachiBkImport(path);
     if (preview == null) {
       botToast("Unsupported or unrecognized backup file.");
       return false;

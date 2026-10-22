@@ -174,7 +174,7 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ),
       actions: [
         // Stop a running library update. Only shown while one is in progress.
-        if (ref.watch(libraryUpdateProvider).running)
+        if (ref.watch(libraryUpdateProvider.select((s) => s.running)))
           IconButton(
             splashRadius: 20,
             tooltip: l10n.cancel,

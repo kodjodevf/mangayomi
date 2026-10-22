@@ -3,6 +3,8 @@
 // restore.dart (which actually performs the write) so a backup can be
 // inspected - format, conflicts, counts - before the user commits to
 // anything destructive.
+import 'dart:isolate';
+
 import 'package:archive/archive_io.dart';
 import 'package:collection/collection.dart';
 import 'package:mangayomi/models/category.dart';
@@ -78,16 +80,21 @@ class TachiBkImportPreview {
   final int newChapterCount;
 }
 
-TachiBkImportPreview? previewTachiBkImport(String path) {
+Future<TachiBkImportPreview?> previewTachiBkImport(String path) async {
   final backupType = peekBackupType(path);
   if (backupType != BackupType.mihon &&
       backupType != BackupType.aniyomi &&
       backupType != BackupType.neko) {
     return null;
   }
-  final inputStream = InputFileStream(path);
-  final content = GZipDecoder().decodeBytes(inputStream.toUint8List());
-  inputStream.close();
+  final content = await Isolate.run(() {
+    final inputStream = InputFileStream(path);
+    try {
+      return GZipDecoder().decodeBytes(inputStream.toUint8List());
+    } finally {
+      inputStream.close();
+    }
+  });
   final backup = BackupMihon.create();
   backup.mergeFromCodedBufferReader(
     CodedBufferReader(content, sizeLimit: 250 << 20),

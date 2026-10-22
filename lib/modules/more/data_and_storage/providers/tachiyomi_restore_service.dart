@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:archive/archive_io.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,9 +35,14 @@ class TachiyomiRestoreService {
     Map<String, bool> categoryDecisions = const {},
     Map<String, int> sourceDecisions = const {},
   }) async {
-    final inputStream = InputFileStream(path);
-    final content = GZipDecoder().decodeBytes(inputStream.toUint8List());
-    inputStream.close();
+    final content = await Isolate.run(() {
+      final inputStream = InputFileStream(path);
+      try {
+        return GZipDecoder().decodeBytes(inputStream.toUint8List());
+      } finally {
+        inputStream.close();
+      }
+    });
     final backup = BackupMihon.create();
     backup.mergeFromCodedBufferReader(
       CodedBufferReader(content, sizeLimit: 250 << 20),

@@ -58,6 +58,16 @@ class DecodedImageBudget {
     if (entry != null) _totalBytes -= entry.bytes;
   }
 
+  /// Releases all held decoded images and resets the budget to 0 bytes.
+  void clear() {
+    final entries = _entries.values.toList();
+    _entries.clear();
+    _totalBytes = 0;
+    for (final entry in entries) {
+      entry.release();
+    }
+  }
+
   void _trim({required Object keep}) {
     while (_totalBytes > maxBytes && _entries.length > 1) {
       final oldestKey = _entries.keys.first;
