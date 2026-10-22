@@ -111,14 +111,6 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v2
-        with:
-          cmake-version: "3.18.1"
-
-      - name: Setup ninja
-        uses: seanmiddleditch/gha-setup-ninja@master
-
       - name: Install flutter_rust_bridge_codegen
         run: cargo install 'flutter_rust_bridge_codegen'
 
@@ -155,14 +147,6 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v2
-        with:
-          cmake-version: "3.18.1"
-
-      - name: Setup ninja
-        uses: seanmiddleditch/gha-setup-ninja@master
 
       - name: Install flutter_rust_bridge_codegen
         run: cargo install 'flutter_rust_bridge_codegen'
