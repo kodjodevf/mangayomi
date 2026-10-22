@@ -122,24 +122,27 @@ void main() {
       expect(stored().id, 227);
     });
 
-    test('keeps a change made after the caller last looked at the row', () async {
-      // What every caller of this used to get wrong: hold the row, let
-      // something else write, then write the held copy back over it.
-      final stale = isar.settings.getSync(227)!;
-      isar.writeTxnSync(
-        () => isar.settings.putSync(
-          isar.settings.getSync(227)!..themeIsDark = false,
-        ),
-      );
+    test(
+      'keeps a change made after the caller last looked at the row',
+      () async {
+        // What every caller of this used to get wrong: hold the row, let
+        // something else write, then write the held copy back over it.
+        final stale = isar.settings.getSync(227)!;
+        isar.writeTxnSync(
+          () => isar.settings.putSync(
+            isar.settings.getSync(227)!..themeIsDark = false,
+          ),
+        );
 
-      await settingsRepository.update(
-        (settings) => settings.followSystemTheme = true,
-      );
+        await settingsRepository.update(
+          (settings) => settings.followSystemTheme = true,
+        );
 
-      expect(stale.themeIsDark, true, reason: 'the held copy is stale');
-      expect(stored().themeIsDark, false, reason: 'the row is not');
-      expect(stored().followSystemTheme, true);
-    });
+        expect(stale.themeIsDark, true, reason: 'the held copy is stale');
+        expect(stored().themeIsDark, false, reason: 'the row is not');
+        expect(stored().followSystemTheme, true);
+      },
+    );
 
     test('stamps updatedAt so a sync sees the change', () async {
       final before = stored().updatedAt ?? 0;

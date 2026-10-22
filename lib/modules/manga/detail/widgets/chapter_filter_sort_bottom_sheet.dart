@@ -56,9 +56,8 @@ void showChapterFilterSortBottomSheet({
                 onTap: () {
                   ref
                       .read(
-                        chapterFilterUnreadStateProvider(
-                          mangaId: manga.id!,
-                        ).notifier,
+                        chapterFilterUnreadStateProvider(mangaId: manga.id!)
+                            .notifier,
                       )
                       .update();
                 },
@@ -71,9 +70,8 @@ void showChapterFilterSortBottomSheet({
                 onTap: () {
                   ref
                       .read(
-                        chapterFilterBookmarkedStateProvider(
-                          mangaId: manga.id!,
-                        ).notifier,
+                        chapterFilterBookmarkedStateProvider(mangaId: manga.id!)
+                            .notifier,
                       )
                       .update();
                 },
@@ -100,12 +98,12 @@ void showChapterFilterSortBottomSheet({
                       ],
                     );
                     if (shown == null) return;
-                    ref
-                        .read(scanlatorsFilterStateProvider(manga).notifier)
-                        .set([
-                          for (final g in scanlators.$1)
-                            if (!shown.contains(g)) g,
-                        ]);
+                    ref.read(scanlatorsFilterStateProvider(manga).notifier).set(
+                      [
+                        for (final g in scanlators.$1)
+                          if (!shown.contains(g)) g,
+                      ],
+                    );
                   },
                 ),
             ],
@@ -130,9 +128,7 @@ void showChapterFilterSortBottomSheet({
                   onTap: () {
                     ref
                         .read(
-                          sortChapterStateProvider(
-                            mangaId: manga.id!,
-                          ).notifier,
+                          sortChapterStateProvider(mangaId: manga.id!).notifier,
                         )
                         .set(0);
                   },
@@ -145,9 +141,7 @@ void showChapterFilterSortBottomSheet({
                   onTap: () {
                     ref
                         .read(
-                          sortChapterStateProvider(
-                            mangaId: manga.id!,
-                          ).notifier,
+                          sortChapterStateProvider(mangaId: manga.id!).notifier,
                         )
                         .set(i);
                   },

@@ -94,7 +94,9 @@ class _GlobalSearchResultCardState extends ConsumerState<GlobalSearchResultCard>
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(ShioriShape.cover),
             border: Border.all(
-              color: _focused ? context.shiori.color.accentInk : Colors.transparent,
+              color: _focused
+                  ? context.shiori.color.accentInk
+                  : Colors.transparent,
               width: 2,
             ),
           ),
@@ -125,7 +127,9 @@ class _GlobalSearchResultCardState extends ConsumerState<GlobalSearchResultCard>
                                 );
                               }
                               return ClipRRect(
-                                borderRadius: BorderRadius.circular(ShioriShape.cover),
+                                borderRadius: BorderRadius.circular(
+                                  ShioriShape.cover,
+                                ),
                                 child: cachedNetworkImage(
                                   headers: ref.watch(
                                     headersProvider(

@@ -52,10 +52,12 @@ void main() {
     );
     expect(find.byIcon(Symbols.check_circle_rounded), findsOneWidget);
     final veil = tester.widget<ColoredBox>(
-      find.ancestor(
-        of: find.byIcon(Symbols.check_circle_rounded),
-        matching: find.byType(ColoredBox),
-      ).first,
+      find
+          .ancestor(
+            of: find.byIcon(Symbols.check_circle_rounded),
+            matching: find.byType(ColoredBox),
+          )
+          .first,
     );
     final accent = _theme.extension<ShioriTokens>()!.color.accent;
     expect(veil.color, accent.withValues(alpha: Alphas.secondary));

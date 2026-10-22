@@ -126,10 +126,7 @@ class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
       AppLogger.log(
         "Starting scheduled library update (${entries.length} entries)...",
       );
-      final failures = await runUpdate(
-        mangaList: entries,
-        itemtype: "Library",
-      );
+      final failures = await runUpdate(mangaList: entries, itemtype: "Library");
       ref.read(updateErrorsProvider.notifier).set(failures);
       AppLogger.log(
         "Scheduled library update finished, ${failures.length} of "

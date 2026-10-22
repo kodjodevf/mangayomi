@@ -27,7 +27,13 @@ void main() {
       'mangayomi-download-queue-',
     );
     database = await Isar.open(
-      [MangaSchema, ChapterSchema, DownloadSchema, SettingsSchema, SourceSchema],
+      [
+        MangaSchema,
+        ChapterSchema,
+        DownloadSchema,
+        SettingsSchema,
+        SourceSchema,
+      ],
       directory: databaseDirectory.path,
       name: 'download_queue_test',
     );
@@ -53,7 +59,9 @@ void main() {
     final release = Completer<void>();
     final blocked = dbWriteQueue.run(() => release.future);
     var saved = false;
-    final pending = downloadRepository.enqueue(second).then((_) => saved = true);
+    final pending = downloadRepository
+        .enqueue(second)
+        .then((_) => saved = true);
     await Future<void>.delayed(Duration.zero);
     expect(saved, isFalse);
     release.complete();
@@ -94,26 +102,29 @@ void main() {
     expect(await downloadRepository.getPendingStarted(), hasLength(2));
   });
 
-  test('enqueue retries failures without resetting completed entries', () async {
-    final chapter = Chapter(id: 1, mangaId: 1, name: 'Episode 1');
-    database.writeTxnSync(() => database.chapters.putSync(chapter));
-    await downloadRepository.enqueue(chapter);
-    await downloadRepository.save(
-      downloadRepository.getById(1)!
-        ..failed = 1
-        ..isStartDownload = false,
-    );
-    await downloadRepository.enqueue(chapter);
-    expect(downloadRepository.getById(1)?.failed, 0);
-    expect(downloadRepository.getById(1)?.isStartDownload, true);
+  test(
+    'enqueue retries failures without resetting completed entries',
+    () async {
+      final chapter = Chapter(id: 1, mangaId: 1, name: 'Episode 1');
+      database.writeTxnSync(() => database.chapters.putSync(chapter));
+      await downloadRepository.enqueue(chapter);
+      await downloadRepository.save(
+        downloadRepository.getById(1)!
+          ..failed = 1
+          ..isStartDownload = false,
+      );
+      await downloadRepository.enqueue(chapter);
+      expect(downloadRepository.getById(1)?.failed, 0);
+      expect(downloadRepository.getById(1)?.isStartDownload, true);
 
-    await downloadRepository.save(
-      downloadRepository.getById(1)!
-        ..succeeded = 100
-        ..isDownload = true,
-    );
-    await downloadRepository.enqueue(chapter);
-    expect(downloadRepository.getById(1)?.isDownload, true);
-    expect(downloadRepository.getById(1)?.succeeded, 100);
-  });
+      await downloadRepository.save(
+        downloadRepository.getById(1)!
+          ..succeeded = 100
+          ..isDownload = true,
+      );
+      await downloadRepository.enqueue(chapter);
+      expect(downloadRepository.getById(1)?.isDownload, true);
+      expect(downloadRepository.getById(1)?.succeeded, 100);
+    },
+  );
 }

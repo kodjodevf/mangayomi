@@ -318,18 +318,17 @@ class MangaRepository {
   }
 
   // Local archives get fully wiped (via wipeManga); everything else just unfavorites.
-  Future<void> removeFromLibrary(Manga manga) =>
-      dbWriteQueue.run(() {
-        isar.writeTxnSync(() {
-          if (manga.isLocalArchive ?? false) {
-            wipeManga(manga);
-          } else {
-            manga.favorite = false;
-            manga.updatedAt = DateTime.now().millisecondsSinceEpoch;
-            isar.mangas.putSync(manga);
-          }
-        });
-      });
+  Future<void> removeFromLibrary(Manga manga) => dbWriteQueue.run(() {
+    isar.writeTxnSync(() {
+      if (manga.isLocalArchive ?? false) {
+        wipeManga(manga);
+      } else {
+        manga.favorite = false;
+        manga.updatedAt = DateTime.now().millisecondsSinceEpoch;
+        isar.mangas.putSync(manga);
+      }
+    });
+  });
 
   Future<void> putAll(List<Manga> mangas) =>
       dbWriteQueue.run(() => isar.writeTxn(() => isar.mangas.putAll(mangas)));
@@ -395,14 +394,13 @@ class MangaRepository {
 
   // Queued, transacted wipeManga for callers with a batch of mangas and no
   // other work to fold into the same transaction.
-  Future<void> wipeMangas(List<Manga> mangas) =>
-      dbWriteQueue.run(() {
-        isar.writeTxnSync(() {
-          for (final manga in mangas) {
-            wipeManga(manga);
-          }
-        });
-      });
+  Future<void> wipeMangas(List<Manga> mangas) => dbWriteQueue.run(() {
+    isar.writeTxnSync(() {
+      for (final manga in mangas) {
+        wipeManga(manga);
+      }
+    });
+  });
 
   // Deletes every Isar record tied to a manga: history, updates, downloads,
   // chapters, and the manga itself. Notifies the sync outbox so the removal

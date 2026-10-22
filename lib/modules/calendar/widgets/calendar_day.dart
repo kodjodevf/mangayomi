@@ -46,7 +46,9 @@ class CalendarDay extends StatelessWidget {
                 style: TextStyle(
                   fontSize: context.shiori.text.body.fontSize,
                   fontWeight: FontWeight.w600,
-                  color: isPast ? onBgColor.withValues(alpha: Alphas.disabled) : onBgColor,
+                  color: isPast
+                      ? onBgColor.withValues(alpha: Alphas.disabled)
+                      : onBgColor,
                 ),
               ),
               if (events > 0) ...[

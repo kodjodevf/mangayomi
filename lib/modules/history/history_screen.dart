@@ -298,10 +298,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
       width: width,
       height: _thumbHeight,
       builder: (context) => manga.customCoverImage != null
-          ? Image.memory(
-              manga.customCoverImage as Uint8List,
-              fit: BoxFit.cover,
-            )
+          ? Image.memory(manga.customCoverImage as Uint8List, fit: BoxFit.cover)
           : cachedCompressedNetworkImage(
               headers: ref.watch(
                 headersProvider(

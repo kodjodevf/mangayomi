@@ -336,7 +336,8 @@ mixin AnimeTrackSelectionMixin<T extends riv.ConsumerStatefulWidget>
 
   List<AudioTrack> _audioTracksForFallback() {
     final tracks = trackPlayer.state.tracks.audio.toList();
-    for (final sourceTrack in firstVideoForTracks.audios ?? const <vid.Track>[]) {
+    for (final sourceTrack
+        in firstVideoForTracks.audios ?? const <vid.Track>[]) {
       final file = sourceTrack.file;
       if (file == null || file.isEmpty) continue;
       tracks.add(
@@ -476,8 +477,7 @@ mixin AnimeTrackSelectionMixin<T extends riv.ConsumerStatefulWidget>
     }
   }
 
-  List<({String label, bool selected, VoidCallback onTap})>
-  tvQualityOptions() {
+  List<({String label, bool selected, VoidCallback onTap})> tvQualityOptions() {
     final videoQuality = buildVideoQualityOptions(
       player: trackPlayer,
       videos: trackVideos,

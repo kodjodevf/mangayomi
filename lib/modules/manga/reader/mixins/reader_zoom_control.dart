@@ -103,10 +103,7 @@ mixin ReaderZoomControl<T extends ConsumerStatefulWidget>
     }
     final page = pageControllers[pageViewToActualIndexForZoom(index)];
     if (page == null || !page.isReady) return;
-    final next = (page.scale * factor).clamp(
-      page.minScale,
-      page.minScale * 8,
-    );
+    final next = (page.scale * factor).clamp(page.minScale, page.minScale * 8);
     page.animateScaleAndCenter(
       next,
       page.center ?? Offset(page.sWidth / 2, page.sHeight / 2),

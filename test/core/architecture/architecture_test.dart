@@ -19,7 +19,10 @@ List<String> _findImportViolations(
   List<String> forbiddenPrefixes,
 ) {
   final violations = <String>[];
-  final importPattern = RegExp(r'''^\s*(?:import|export)\s+['"]([^'"]+)['"]''', multiLine: true);
+  final importPattern = RegExp(
+    r'''^\s*(?:import|export)\s+['"]([^'"]+)['"]''',
+    multiLine: true,
+  );
 
   for (final file in _dartFilesIn(directory)) {
     final content = file.readAsStringSync();
@@ -128,10 +131,10 @@ void main() {
     });
 
     test('Layer 2B (lib/services & lib/eval) never imports lib/modules/ or lib/main.dart and never uses WidgetRef', () {
-      final serviceImportViolations = _findImportViolations('lib/services', const [
-        'package:mangayomi/modules/',
-        'package:mangayomi/main.dart',
-      ]);
+      final serviceImportViolations = _findImportViolations(
+        'lib/services',
+        const ['package:mangayomi/modules/', 'package:mangayomi/main.dart'],
+      );
       final evalImportViolations = _findImportViolations('lib/eval', const [
         'package:mangayomi/modules/',
         'package:mangayomi/main.dart',
@@ -157,19 +160,22 @@ void main() {
       );
     });
 
-    test('Layer 3 (lib/providers) never imports lib/modules/ or lib/main.dart', () {
-      final violations = _findImportViolations('lib/providers', const [
-        'package:mangayomi/modules/',
-        'package:mangayomi/main.dart',
-      ]);
-      expect(
-        violations,
-        isEmpty,
-        reason:
-            'Shared application providers (lib/providers/) must never import feature UI modules (lib/modules/) or lib/main.dart:\n'
-            '${violations.join('\n')}',
-      );
-    });
+    test(
+      'Layer 3 (lib/providers) never imports lib/modules/ or lib/main.dart',
+      () {
+        final violations = _findImportViolations('lib/providers', const [
+          'package:mangayomi/modules/',
+          'package:mangayomi/main.dart',
+        ]);
+        expect(
+          violations,
+          isEmpty,
+          reason:
+              'Shared application providers (lib/providers/) must never import feature UI modules (lib/modules/) or lib/main.dart:\n'
+              '${violations.join('\n')}',
+        );
+      },
+    );
 
     test('Layer 4 (lib/modules & lib/router) never imports lib/main.dart or direct Isar singleton (lib/repositories/db.dart)', () {
       final moduleViolations = _findImportViolations('lib/modules', const [
@@ -191,13 +197,24 @@ void main() {
 
     test('Direct Isar singleton (lib/repositories/db.dart) is strictly confined to lib/repositories/ and bootstrap', () {
       final violations = [
-        ..._findImportViolations('lib/models', const ['package:mangayomi/repositories/db.dart']),
-        ..._findImportViolations('lib/utils', const ['package:mangayomi/repositories/db.dart']),
-        ..._findImportViolations('lib/core', const ['package:mangayomi/repositories/db.dart']),
-        ..._findImportViolations('lib/providers', const ['package:mangayomi/repositories/db.dart']),
-        ..._findImportViolations('lib/eval', const ['package:mangayomi/repositories/db.dart']),
-        ..._findImportViolations('lib/services', const ['package:mangayomi/repositories/db.dart'])
-            .where((v) => !v.startsWith('lib/services/isolate_service.dart ->')),
+        ..._findImportViolations('lib/models', const [
+          'package:mangayomi/repositories/db.dart',
+        ]),
+        ..._findImportViolations('lib/utils', const [
+          'package:mangayomi/repositories/db.dart',
+        ]),
+        ..._findImportViolations('lib/core', const [
+          'package:mangayomi/repositories/db.dart',
+        ]),
+        ..._findImportViolations('lib/providers', const [
+          'package:mangayomi/repositories/db.dart',
+        ]),
+        ..._findImportViolations('lib/eval', const [
+          'package:mangayomi/repositories/db.dart',
+        ]),
+        ..._findImportViolations('lib/services', const [
+          'package:mangayomi/repositories/db.dart',
+        ]).where((v) => !v.startsWith('lib/services/isolate_service.dart ->')),
       ];
       expect(
         violations,
@@ -208,30 +225,39 @@ void main() {
       );
     });
 
-    test('Shared UI kit (lib/modules/widgets) never imports feature modules', () {
-      final featureDirs = Directory('lib/modules')
-          .listSync()
-          .whereType<Directory>()
-          .map((d) => p.basename(d.path))
-          .where((name) => name != 'widgets')
-          .map((name) => 'package:mangayomi/modules/$name/')
-          .toList();
-      final violations = _findImportViolations('lib/modules/widgets', featureDirs);
-      expect(
-        violations,
-        isEmpty,
-        reason:
-            'lib/modules/widgets/ is the shared, feature-agnostic UI kit. Move feature-specific widgets into their owning module:\n'
-            '${violations.join('\n')}',
-      );
-    });
+    test(
+      'Shared UI kit (lib/modules/widgets) never imports feature modules',
+      () {
+        final featureDirs = Directory('lib/modules')
+            .listSync()
+            .whereType<Directory>()
+            .map((d) => p.basename(d.path))
+            .where((name) => name != 'widgets')
+            .map((name) => 'package:mangayomi/modules/$name/')
+            .toList();
+        final violations = _findImportViolations(
+          'lib/modules/widgets',
+          featureDirs,
+        );
+        expect(
+          violations,
+          isEmpty,
+          reason:
+              'lib/modules/widgets/ is the shared, feature-agnostic UI kit. Move feature-specific widgets into their owning module:\n'
+              '${violations.join('\n')}',
+        );
+      },
+    );
 
     test('Shared reader infrastructure (lib/modules/reader_common) never imports a concrete reader', () {
-      final violations = _findImportViolations('lib/modules/reader_common', const [
-        'package:mangayomi/modules/manga/',
-        'package:mangayomi/modules/novel/',
-        'package:mangayomi/modules/anime/',
-      ]);
+      final violations = _findImportViolations(
+        'lib/modules/reader_common',
+        const [
+          'package:mangayomi/modules/manga/',
+          'package:mangayomi/modules/novel/',
+          'package:mangayomi/modules/anime/',
+        ],
+      );
       expect(
         violations,
         isEmpty,
@@ -272,7 +298,9 @@ void main() {
       for (final file in _dartFilesIn('lib/modules')) {
         final lineCount = file.readAsLinesSync().length;
         if (lineCount > maxLines) {
-          oversizedFiles.add('${p.normalize(file.path)} ($lineCount lines > $maxLines)');
+          oversizedFiles.add(
+            '${p.normalize(file.path)} ($lineCount lines > $maxLines)',
+          );
         }
       }
       expect(

@@ -35,7 +35,8 @@ class ReaderInteractiveRegion extends StatefulWidget {
   const ReaderInteractiveRegion({super.key, required this.child});
 
   @override
-  State<ReaderInteractiveRegion> createState() => _ReaderInteractiveRegionState();
+  State<ReaderInteractiveRegion> createState() =>
+      _ReaderInteractiveRegionState();
 }
 
 class _ReaderInteractiveRegionState extends State<ReaderInteractiveRegion> {
@@ -55,10 +56,7 @@ class _ReaderInteractiveRegionState extends State<ReaderInteractiveRegion> {
 
   @override
   Widget build(BuildContext context) {
-    return KeyedSubtree(
-      key: _key,
-      child: widget.child,
-    );
+    return KeyedSubtree(key: _key, child: widget.child);
   }
 }
 

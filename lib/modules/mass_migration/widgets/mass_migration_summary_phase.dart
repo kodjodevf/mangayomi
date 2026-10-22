@@ -177,11 +177,7 @@ class MassMigrationSummaryPhase extends StatelessWidget {
 
 /// One figure of the summary: the number large and tabular, its label under it.
 class SummaryStatCard extends StatelessWidget {
-  const SummaryStatCard({
-    super.key,
-    required this.label,
-    required this.value,
-  });
+  const SummaryStatCard({super.key, required this.label, required this.value});
 
   final String label;
   final String value;

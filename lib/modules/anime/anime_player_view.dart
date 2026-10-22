@@ -261,7 +261,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   @override
   VoidCallback get controlsGoBackToDetail => _goBackToDetail;
   @override
-  VoidCallback get controlsChangeFitLabel => () => _changeFitLabel(ref);
+  VoidCallback get controlsChangeFitLabel =>
+      () => _changeFitLabel(ref);
   @override
   Future<void> Function(bool isFullscreen) get controlsToggleFullscreen =>
       _toggleFullscreen;

@@ -16,13 +16,27 @@ import '../models/source_features.dart';
 abstract interface class AidokuRunner {
   SourceFeatures get features;
 
-  Future<MangaPageResult> getSearchMangaList(String? query, int page, List<FilterValue> filters);
-  Future<Manga> getMangaUpdate(Manga manga, {bool needsDetails = false, bool needsChapters = false});
+  Future<MangaPageResult> getSearchMangaList(
+    String? query,
+    int page,
+    List<FilterValue> filters,
+  );
+  Future<Manga> getMangaUpdate(
+    Manga manga, {
+    bool needsDetails = false,
+    bool needsChapters = false,
+  });
   Future<List<Page>> getPageList(Manga manga, Chapter chapter);
   Future<MangaPageResult> getMangaList(Listing listing, int page);
   Future<Home> getHome();
-  Future<Uint8List?> processPageImage(Response response, {PageContext? context});
-  Future<ImageRequestResult?> getImageRequest(String url, {PageContext? context});
+  Future<Uint8List?> processPageImage(
+    Response response, {
+    PageContext? context,
+  });
+  Future<ImageRequestResult?> getImageRequest(
+    String url, {
+    PageContext? context,
+  });
   Future<List<Filter>> getSearchFilters();
   Future<List<Setting>> getSettings();
   Future<List<Listing>> getListings();

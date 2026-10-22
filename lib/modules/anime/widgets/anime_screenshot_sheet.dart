@@ -51,11 +51,7 @@ Future<void> showAnimeShareScreenshotActions(
           await shareOrCopy(
             ShareParams(
               files: [
-                XFile.fromData(
-                  imageBytes!,
-                  name: name,
-                  mimeType: 'image/png',
-                ),
+                XFile.fromData(imageBytes!, name: name, mimeType: 'image/png'),
               ],
               sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
             ),

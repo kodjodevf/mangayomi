@@ -192,9 +192,7 @@ class LibraryBody extends ConsumerWidget {
       loading: () => displayType == DisplayType.list
           ? ListView(
               physics: const NeverScrollableScrollPhysics(),
-              children: [
-                for (var i = 0; i < 8; i++) const ShioriSkeletonRow(),
-              ],
+              children: [for (var i = 0; i < 8; i++) const ShioriSkeletonRow()],
             )
           : CoverGridSkeleton(
               gridSize: ref.watch(

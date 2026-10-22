@@ -27,7 +27,10 @@ import 'package:shiori/shiori.dart';
 /// Builds and presents the unified settings menu (mobile bottom sheet and
 /// desktop anchored popup) and its drilldown sections for the anime player.
 mixin AnimePlayerSettingsMixin<T extends riv.ConsumerStatefulWidget>
-    on riv.ConsumerState<T>, AnimeMpvBridgeMixin<T>, AnimeTrackSelectionMixin<T> {
+    on
+        riv.ConsumerState<T>,
+        AnimeMpvBridgeMixin<T>,
+        AnimeTrackSelectionMixin<T> {
   Chapter get settingsEpisode;
   GlobalKey<VideoState> get settingsVideoStateKey;
   ValueNotifier<double> get settingsPlaybackSpeed;
@@ -362,16 +365,20 @@ mixin AnimePlayerSettingsMixin<T extends riv.ConsumerStatefulWidget>
   Widget _shadersSectionWidget(BuildContext context) {
     return ShadersSectionWidget(
       selectedShader: mpvSelectedShader,
-      onSelect: (arg) =>
-          (trackPlayer.platform as NativePlayer).command(["script-message", arg]),
+      onSelect: (arg) => (trackPlayer.platform as NativePlayer).command([
+        "script-message",
+        arg,
+      ]),
       onDone: () => _popSettings(context),
     );
   }
 
   Widget _statsSectionWidget(BuildContext context) {
     return StatsSectionWidget(
-      onSelect: (arg) =>
-          (trackPlayer.platform as NativePlayer).command(["script-binding", arg]),
+      onSelect: (arg) => (trackPlayer.platform as NativePlayer).command([
+        "script-binding",
+        arg,
+      ]),
       onDone: () => _popSettings(context),
     );
   }

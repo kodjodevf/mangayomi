@@ -7,7 +7,6 @@ import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/onboarding/widgets/onboarding_folder_status.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -193,7 +192,9 @@ class _OnboardingLocalFolderSectionState
         if (_addedFolderPath == null && _existingFolders.isNotEmpty) ...[
           const SizedBox(height: ShioriSpace.s12),
           OnboardingFolderStatus(
-            message: l10n.onboarding_local_existing('${_existingFolders.length}'),
+            message: l10n.onboarding_local_existing(
+              '${_existingFolders.length}',
+            ),
             titles: _existingFolders
                 .map((folder) => folder.name ?? '')
                 .where((name) => name.isNotEmpty)

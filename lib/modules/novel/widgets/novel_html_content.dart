@@ -274,7 +274,9 @@ class NovelScrollProgressBanner extends StatelessWidget {
             );
             final pagination = cachedPagination();
             final String displayLabel;
-            if (!isContinuous && pagination != null && pagination.pageCount > 0) {
+            if (!isContinuous &&
+                pagination != null &&
+                pagination.pageCount > 0) {
               displayLabel = effectivePageMode == PageMode.doublePage
                   ? pagination.pageLabelForSpread(currentSpreadIndex())
                   : pagination.pageLabelForIndex(currentSpreadIndex());

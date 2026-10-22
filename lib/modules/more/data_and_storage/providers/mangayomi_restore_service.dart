@@ -270,8 +270,9 @@ class MangayomiRestoreService {
       for (final tempManga in manga) {
         final oldId = tempManga.id;
         final key = '${tempManga.itemType.index}|${tempManga.link}';
-        final existing =
-            tempManga.link != null ? existingMangaByKey[key] : null;
+        final existing = tempManga.link != null
+            ? existingMangaByKey[key]
+            : null;
         final remappedCategories = (tempManga.categories ?? [])
             .map((id) => oldToNewCategoryId[id])
             .whereType<int>()

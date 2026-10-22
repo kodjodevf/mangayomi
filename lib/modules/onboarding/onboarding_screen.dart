@@ -551,8 +551,8 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
 
   String _leaveLabel(AppLocalizations l10n) =>
       _step == _Step.repository && (_added != null || _hasAddedLocalFolder)
-          ? l10n.onboarding_continue
-          : l10n.onboarding_skip;
+      ? l10n.onboarding_continue
+      : l10n.onboarding_skip;
 
   Widget _stepBody(AppLocalizations l10n) => switch (_step) {
     _Step.language => Column(
@@ -561,7 +561,11 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
       children: [
         const OnboardingLanguageList(),
         const SizedBox(height: ShioriSpace.s16),
-        ShioriButton(expand: true, onPressed: _next, label: l10n.onboarding_next),
+        ShioriButton(
+          expand: true,
+          onPressed: _next,
+          label: l10n.onboarding_next,
+        ),
       ],
     ),
     _Step.libraries => OnboardingLibrariesStep(
@@ -587,7 +591,9 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
     _Step.repository => OnboardingRepositoryStep(
       chosen: _chosen,
       repoType: _repoType,
-      onRepoTypeChanged: _adding ? null : (type) => setState(() => _repoType = type),
+      onRepoTypeChanged: _adding
+          ? null
+          : (type) => setState(() => _repoType = type),
       controller: _controller,
       isAdding: _adding,
       error: _error,

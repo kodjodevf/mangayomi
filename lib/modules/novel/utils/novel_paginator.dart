@@ -152,8 +152,10 @@ class NovelPaginator {
 
       void flushParagraph() {
         if (currentParagraphNodes.isEmpty) return;
-        final combinedText =
-            currentParagraphNodes.map((n) => n.text ?? '').join().trim();
+        final combinedText = currentParagraphNodes
+            .map((n) => n.text ?? '')
+            .join()
+            .trim();
         if (combinedText.isNotEmpty) {
           final p = dom.Element.tag('p');
           if (element.attributes.containsKey('data-tts-index')) {

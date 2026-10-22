@@ -10,8 +10,9 @@ class SyncProgressState {
 
   const SyncProgressState({this.active = false, this.done = 0, this.total});
 
-  double? get fraction =>
-      (!active || total == null || total == 0) ? null : (done / total!).clamp(0.0, 1.0);
+  double? get fraction => (!active || total == null || total == 0)
+      ? null
+      : (done / total!).clamp(0.0, 1.0);
 }
 
 @riverpod
@@ -26,12 +27,20 @@ class SyncProgress extends _$SyncProgress {
 
   void addTotal(int n) {
     if (n == 0) return;
-    state = SyncProgressState(active: true, done: state.done, total: (state.total ?? 0) + n);
+    state = SyncProgressState(
+      active: true,
+      done: state.done,
+      total: (state.total ?? 0) + n,
+    );
   }
 
   void addDone(int n) {
     if (n == 0) return;
-    state = SyncProgressState(active: true, done: state.done + n, total: state.total);
+    state = SyncProgressState(
+      active: true,
+      done: state.done + n,
+      total: state.total,
+    );
   }
 
   void finish() => state = const SyncProgressState();

@@ -83,6 +83,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   ScrollController get autoScrollController => scrollController;
   @override
   bool get canAutoScroll => _isContinuousMode();
+
   /// Resolved in [initState], not lazily.
   ///
   /// As a `late` field with an initialiser this was read for the first time
@@ -174,7 +175,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         WakelockPlus.enable();
       }
       _setVolumeKeys(ref.read(volumeKeysPagingStateProvider));
-      applyReaderScreenBrightness(ref.read(readerScreenBrightnessStateProvider));
+      applyReaderScreenBrightness(
+        ref.read(readerScreenBrightnessStateProvider),
+      );
     }
   }
 
@@ -401,10 +404,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                               );
                               // "Default" returns null, which causes the
                               // render to use the system default font.
-                              final fontFamily =
-                                  resolveNovelFontFamily(
-                                    ref.watch(novelFontFamilyStateProvider),
-                                  );
+                              final fontFamily = resolveNovelFontFamily(
+                                ref.watch(novelFontFamilyStateProvider),
+                              );
 
                               if (!scrollRestoreScheduled &&
                                   _readerMode.isContinuous) {
@@ -472,11 +474,12 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                         customTextColor,
                                         fallback: Colors.white,
                                       );
-                                      final parsedBackgroundColor = parseNovelColor(
-                                        customBackgroundColor,
-                                        // shiori: the book's own styles, set against whatever page colour the reader chose
-                                        fallback: const Color(0xFF292832),
-                                      );
+                                      final parsedBackgroundColor =
+                                          parseNovelColor(
+                                            customBackgroundColor,
+                                            // shiori: the book's own styles, set against whatever page colour the reader chose
+                                            fallback: const Color(0xFF292832),
+                                          );
                                       final textAlignEnum = getNovelTextAlign(
                                         textAlign,
                                       );
@@ -489,7 +492,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                           lineHeight: lineHeight,
                                           padding: padding,
                                           fontFamily: fontFamily,
-                                          removeExtraSpacing: removeExtraSpacing,
+                                          removeExtraSpacing:
+                                              removeExtraSpacing,
                                           textAlignEnum: textAlignEnum,
                                           parsedTextColor: parsedTextColor,
                                           parsedBackgroundColor:
@@ -569,12 +573,12 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                         _autoScroll.value = !_autoScroll.value;
                       },
                     ),
-                    if (ttsSupported &&
-                        showTts &&
-                        currentHtmlContent != null)
+                    if (ttsSupported && showTts && currentHtmlContent != null)
                       Positioned(
                         // Just above the panel while it is shown.
-                        bottom: _isView ? novelBottomBarHeightAbove(context) : 0,
+                        bottom: _isView
+                            ? novelBottomBarHeightAbove(context)
+                            : 0,
                         left: 0,
                         right: 0,
                         child: TtsPlayerBar(
@@ -589,16 +593,10 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                   ],
                 );
               },
-              loading: () => scaffoldWith(
-                context,
-                const ShioriLoading(),
-              ),
+              loading: () => scaffoldWith(context, const ShioriLoading()),
               error: (err, stack) {
                 if (widget.result.isRefreshing || widget.result.isReloading) {
-                  return scaffoldWith(
-                    context,
-                    const ShioriLoading(),
-                  );
+                  return scaffoldWith(context, const ShioriLoading());
                 }
                 return scaffoldWith(
                   context,

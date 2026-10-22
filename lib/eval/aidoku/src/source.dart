@@ -373,9 +373,8 @@ class Source {
         } else {
           final prefix = languages
               .where(
-                (l) => l.toLowerCase().startsWith(
-                  defaultLanguage.toLowerCase(),
-                ),
+                (l) =>
+                    l.toLowerCase().startsWith(defaultLanguage.toLowerCase()),
               )
               .toList();
           if (prefix.isNotEmpty) {

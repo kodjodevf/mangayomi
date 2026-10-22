@@ -243,11 +243,7 @@ class EditableListSetting extends SettingValue {
 }
 
 class PickerSetting extends SettingValue {
-  const PickerSetting({
-    required this.values,
-    this.titles,
-    this.defaultValue,
-  });
+  const PickerSetting({required this.values, this.titles, this.defaultValue});
   final List<String> values;
   final List<String>? titles;
   final String? defaultValue;
@@ -305,8 +301,9 @@ class Setting {
       case SettingType.select:
         final vals =
             (json['values'] as List?)?.map((e) => e.toString()).toList() ?? [];
-        final titles =
-            (json['titles'] as List?)?.map((e) => e.toString()).toList();
+        final titles = (json['titles'] as List?)
+            ?.map((e) => e.toString())
+            .toList();
         final auth = json['authToOpen'] as bool?;
         final defVal = json['default']?.toString();
         settingVal = SelectSetting(
@@ -319,11 +316,13 @@ class Setting {
       case SettingType.multiselect:
         final vals =
             (json['values'] as List?)?.map((e) => e.toString()).toList() ?? [];
-        final titles =
-            (json['titles'] as List?)?.map((e) => e.toString()).toList();
+        final titles = (json['titles'] as List?)
+            ?.map((e) => e.toString())
+            .toList();
         final auth = json['authToOpen'] as bool?;
-        final defVal =
-            (json['default'] as List?)?.map((e) => e.toString()).toList();
+        final defVal = (json['default'] as List?)
+            ?.map((e) => e.toString())
+            .toList();
         settingVal = MultiSelectSetting(
           values: vals,
           titles: titles,
@@ -440,8 +439,9 @@ class Setting {
         final lineLimit = (json['lineLimit'] as num?)?.toInt();
         final inline = (json['inline'] as bool?) ?? false;
         final placeholder = json['placeholder'] as String?;
-        final defVal =
-            (json['default'] as List?)?.map((e) => e.toString()).toList();
+        final defVal = (json['default'] as List?)
+            ?.map((e) => e.toString())
+            .toList();
         settingVal = EditableListSetting(
           lineLimit: lineLimit,
           inline: inline,
@@ -452,11 +452,15 @@ class Setting {
       case SettingType.picker:
         final vals =
             (json['values'] as List?)?.map((e) => e.toString()).toList() ?? [];
-        final titles =
-            (json['titles'] as List?)?.map((e) => e.toString()).toList();
+        final titles = (json['titles'] as List?)
+            ?.map((e) => e.toString())
+            .toList();
         final defVal = json['default']?.toString();
-        settingVal =
-            PickerSetting(values: vals, titles: titles, defaultValue: defVal);
+        settingVal = PickerSetting(
+          values: vals,
+          titles: titles,
+          defaultValue: defVal,
+        );
         break;
       case SettingType.custom:
         settingVal = const CustomSetting();

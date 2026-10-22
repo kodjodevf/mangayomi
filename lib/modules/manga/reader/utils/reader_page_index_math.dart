@@ -255,8 +255,11 @@ class ReaderPageIndexMath {
       final s = spreads;
       if (pvIndex < s.length) {
         final spread = s[pvIndex];
-        final p1Obj = spread.firstIndex < pages!.length ? pages![spread.firstIndex] : null;
-        final p2Obj = (spread.secondIndex != null && spread.secondIndex! < pages!.length)
+        final p1Obj = spread.firstIndex < pages!.length
+            ? pages![spread.firstIndex]
+            : null;
+        final p2Obj =
+            (spread.secondIndex != null && spread.secondIndex! < pages!.length)
             ? pages![spread.secondIndex!]
             : null;
 
@@ -264,11 +267,17 @@ class ReaderPageIndexMath {
           return "";
         }
 
-        final p1Num = p1Obj?.index != null ? p1Obj!.index! + 1 : spread.firstIndex + 1;
-        if (p2Obj == null || p2Obj.isTransitionPage || p2Obj.chapter?.id != p1Obj?.chapter?.id) {
+        final p1Num = p1Obj?.index != null
+            ? p1Obj!.index! + 1
+            : spread.firstIndex + 1;
+        if (p2Obj == null ||
+            p2Obj.isTransitionPage ||
+            p2Obj.chapter?.id != p1Obj?.chapter?.id) {
           return "$p1Num";
         }
-        final p2Num = p2Obj.index != null ? p2Obj.index! + 1 : (spread.secondIndex! + 1);
+        final p2Num = p2Obj.index != null
+            ? p2Obj.index! + 1
+            : (spread.secondIndex! + 1);
         return "$p1Num-$p2Num";
       }
     }

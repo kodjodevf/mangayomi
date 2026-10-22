@@ -126,17 +126,13 @@ class _CreateExtensionState extends State<CreateExtension> {
                   _iconUrl = v;
                 });
               }, initialValue: _iconUrl),
-              _textEditing(
-                l10n.notes,
-                context,
-                l10n.extension_notes_example,
-                (v) {
-                  setState(() {
-                    _notes = v;
-                  });
-                },
-                initialValue: _notes,
-              ),
+              _textEditing(l10n.notes, context, l10n.extension_notes_example, (
+                v,
+              ) {
+                setState(() {
+                  _notes = v;
+                });
+              }, initialValue: _notes),
               ShioriValueRow<int>(
                 title: l10n.type,
                 icon: _isEditMode ? Symbols.lock_rounded : null,
@@ -256,16 +252,16 @@ Widget _textEditing(
   bool enabled = true,
 }) {
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s16, vertical: ShioriSpace.s4),
+    padding: const EdgeInsets.symmetric(
+      horizontal: ShioriSpace.s16,
+      vertical: ShioriSpace.s4,
+    ),
     child: TextFormField(
       initialValue: initialValue,
       enabled: enabled,
       keyboardType: TextInputType.text,
       onChanged: onChanged,
-      decoration: InputDecoration(
-        hintText: hintText,
-        labelText: label,
-      ),
+      decoration: InputDecoration(hintText: hintText, labelText: label),
     ),
   );
 }

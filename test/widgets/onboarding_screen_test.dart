@@ -81,10 +81,9 @@ void main() {
     }
   }
 
-  ShioriButton addButton(WidgetTester tester) =>
-      tester.widget<ShioriButton>(
-        find.widgetWithText(ShioriButton, 'Add repository'),
-      );
+  ShioriButton addButton(WidgetTester tester) => tester.widget<ShioriButton>(
+    find.widgetWithText(ShioriButton, 'Add repository'),
+  );
 
   /// Walks past the library and navigation steps to the repository step.
   Future<void> toRepoStep(WidgetTester tester) async {
@@ -308,10 +307,7 @@ void main() {
       // past an empty screen to use them.
       await pump(tester);
       await toRepoStep(tester);
-      expect(
-        find.widgetWithText(ShioriButton, 'Add a folder'),
-        findsOneWidget,
-      );
+      expect(find.widgetWithText(ShioriButton, 'Add a folder'), findsOneWidget);
       expect(find.text('Or use files you already have'), findsOneWidget);
     });
 
@@ -397,7 +393,10 @@ void main() {
   group('going back', () {
     testWidgets('the first step has nothing to go back to', (tester) async {
       await pump(tester, pastLanguage: false);
-      expect(find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded), findsNothing);
+      expect(
+        find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded),
+        findsNothing,
+      );
     });
 
     testWidgets('walks back through the steps it walked forward', (
@@ -410,18 +409,27 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Add a source'), findsOneWidget);
 
-      await tester.tap(find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded));
+      await tester.tap(
+        find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded),
+      );
       await tester.pumpAndSettle();
       expect(find.text('Your libraries'), findsOneWidget);
 
-      await tester.tap(find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded));
+      await tester.tap(
+        find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded),
+      );
       await tester.pumpAndSettle();
       expect(find.text('Welcome to Mangayomi'), findsOneWidget);
 
-      await tester.tap(find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded));
+      await tester.tap(
+        find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded),
+      );
       await tester.pumpAndSettle();
       expect(find.text('Choose your language'), findsOneWidget);
-      expect(find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded), findsNothing);
+      expect(
+        find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded),
+        findsNothing,
+      );
     });
 
     testWidgets('skips the arrange step on the way back too', (tester) async {
@@ -436,7 +444,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Add a source'), findsOneWidget);
 
-      await tester.tap(find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded));
+      await tester.tap(
+        find.widgetWithIcon(IconButton, Symbols.arrow_back_rounded),
+      );
       await tester.pumpAndSettle();
       expect(find.text('Your libraries'), findsNothing);
       expect(find.text('Welcome to Mangayomi'), findsOneWidget);

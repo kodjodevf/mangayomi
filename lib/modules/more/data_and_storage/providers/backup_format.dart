@@ -217,8 +217,7 @@ TachiBkImportPreview previewMangayomiBackup(Map<String, dynamic> backup) {
       .toList();
   final categoryList = (backup["categories"] as List?)
       ?.map(
-        (e) =>
-            Category.fromJson(e)..forItemType = convertToItemTypeCategory(e),
+        (e) => Category.fromJson(e)..forItemType = convertToItemTypeCategory(e),
       )
       .toList();
 

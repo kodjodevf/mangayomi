@@ -320,7 +320,11 @@ Future<void> _scanDirectory(
           coverBytes = await _readMangaFolderCover(ref, subDirs, files);
         }
       } catch (e) {
-        botToast(localizedMessage((l10n) => l10n.error_reading_cover_image(e)), tone: ShioriToastTone.error, second: 4);
+        botToast(
+          localizedMessage((l10n) => l10n.error_reading_cover_image(e)),
+          tone: ShioriToastTone.error,
+          second: 4,
+        );
       }
     } else if (itemType == ItemType.manga && manga.customCoverImage == null) {
       coverBytes = await _readMangaFolderCover(ref, subDirs, files);
@@ -354,7 +358,11 @@ Future<void> _scanDirectory(
             : Status.unknown;
         manga.lastUpdate = dateNow;
       } catch (e) {
-        botToast(localizedMessage((l10n) => l10n.error_reading_metadata(e)), tone: ShioriToastTone.error, second: 4);
+        botToast(
+          localizedMessage((l10n) => l10n.error_reading_metadata(e)),
+          tone: ShioriToastTone.error,
+          second: 4,
+        );
       }
     }
 
@@ -399,7 +407,11 @@ Future<void> _scanDirectory(
     // Save all new and changed items to the library
     await mangaRepository.putAll(changedMangas);
   } catch (e) {
-    botToast("Database write error. Manga/Anime couldn't be saved: $e", tone: ShioriToastTone.error, second: 4);
+    botToast(
+      "Database write error. Manga/Anime couldn't be saved: $e",
+      tone: ShioriToastTone.error,
+      second: 4,
+    );
   }
 
   // If new Mangas have been added (no Id to save Chapters)
@@ -501,9 +513,13 @@ Future<void> _scanDirectory(
       await mangaRepository.putAll(processedMangas);
     }
   } catch (e) {
-    botToast(localizedMessage(
+    botToast(
+      localizedMessage(
         (l10n) => l10n.error_saving_chapter_episode_to_library(e),
-      ), tone: ShioriToastTone.error, second: 4);
+      ),
+      tone: ShioriToastTone.error,
+      second: 4,
+    );
   }
   try {
     if (chaptersToSave.isNotEmpty) {
@@ -525,7 +541,11 @@ Future<void> _scanDirectory(
       });
     }
   } catch (e) {
-    botToast("Database write error. Manga/Anime couldn't be saved: $e", tone: ShioriToastTone.error, second: 4);
+    botToast(
+      "Database write error. Manga/Anime couldn't be saved: $e",
+      tone: ShioriToastTone.error,
+      second: 4,
+    );
   }
 }
 
@@ -557,9 +577,11 @@ Future<Uint8List?> _readMangaFolderCover(
     try {
       return await imageFile.readAsBytes();
     } catch (e) {
-      botToast(localizedMessage(
-          (l10n) => l10n.error_reading_chapter_cover_image(e),
-        ), tone: ShioriToastTone.error, second: 4);
+      botToast(
+        localizedMessage((l10n) => l10n.error_reading_chapter_cover_image(e)),
+        tone: ShioriToastTone.error,
+        second: 4,
+      );
     }
   }
 
@@ -572,9 +594,11 @@ Future<Uint8List?> _readMangaFolderCover(
       );
       return data.$3;
     } catch (e) {
-      botToast(localizedMessage(
-          (l10n) => l10n.error_reading_archive_cover_image(e),
-        ), tone: ShioriToastTone.error, second: 4);
+      botToast(
+        localizedMessage((l10n) => l10n.error_reading_archive_cover_image(e)),
+        tone: ShioriToastTone.error,
+        second: 4,
+      );
     }
   }
   return null;

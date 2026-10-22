@@ -6,7 +6,6 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/more/data_and_storage/providers/backup_decoder.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/backup_format.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupAniyomi.pb.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupMihon.pb.dart';
@@ -236,15 +235,22 @@ class TachiyomiRestoreService {
           if (existingAnime != null) {
             anime = existingAnime;
             anime.favorite = true;
-            anime.categories = {...?anime.categories, ...newCategoryIds}.toList();
+            anime.categories = {
+              ...?anime.categories,
+              ...newCategoryIds,
+            }.toList();
           } else {
             final originalSourceName =
                 animeSources
-                    .firstWhereOrNull((src) => protoInt(src.sourceId) == sourceId)
+                    .firstWhereOrNull(
+                      (src) => protoInt(src.sourceId) == sourceId,
+                    )
                     ?.name ??
                 "Unknown";
-            final boundSource =
-                resolveSource(originalSourceName, ItemType.anime);
+            final boundSource = resolveSource(
+              originalSourceName,
+              ItemType.anime,
+            );
             anime = Manga(
               source: boundSource?.name ?? originalSourceName,
               author: tempAnime.author,

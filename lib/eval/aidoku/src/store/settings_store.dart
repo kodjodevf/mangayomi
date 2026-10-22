@@ -62,4 +62,3 @@ class SettingsStore {
     _storage.clear();
   }
 }
-

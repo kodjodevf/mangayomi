@@ -36,7 +36,8 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
     // Otherwise a fresh install with no all-files access would hit a permission
     // error just for streaming an episode — the dir was being created on every
     // play even though useMpvConfig defaults to false. See #740.
-    final useMpvConfig = settingsRepository.currentOrNull?.useMpvConfig ?? false;
+    final useMpvConfig =
+        settingsRepository.currentOrNull?.useMpvConfig ?? false;
     final mpvDirectory = useMpvConfig
         ? await storageProvider.getMpvDirectory()
         : null;

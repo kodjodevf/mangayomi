@@ -100,7 +100,9 @@ class ExtensionServerActionsGroup extends StatelessWidget {
           subtitle: selectedInstallDirectory.isEmpty
               ? l10n.not_configured
               : selectedInstallDirectory,
-          onTap: requiresJre && !isDownloading ? onChooseInstallDirectory : null,
+          onTap: requiresJre && !isDownloading
+              ? onChooseInstallDirectory
+              : null,
         ),
         ShioriSettingRow(
           icon: Symbols.link_rounded,

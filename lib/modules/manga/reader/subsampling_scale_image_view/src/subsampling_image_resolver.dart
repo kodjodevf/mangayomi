@@ -16,11 +16,7 @@ String md5HashString(String input) {
 Future<File?> findCachedImageFile(String url, String? cacheFolderName) async {
   try {
     final hash = md5HashString(url);
-    final foldersToCheck = [
-      ?cacheFolderName,
-      'cacheimagemanga',
-      'cacheimage',
-    ];
+    final foldersToCheck = [?cacheFolderName, 'cacheimagemanga', 'cacheimage'];
 
     final dirs = <Directory>[];
     try {

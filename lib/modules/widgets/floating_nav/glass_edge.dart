@@ -26,16 +26,7 @@ class FloatingNavGlassEdge extends StatelessWidget {
   /// a border.
   static const glassStrokeWidth = 1.0;
 
-  static const glassPatchStops = [
-    0.0,
-    0.13,
-    0.27,
-    0.44,
-    0.58,
-    0.71,
-    0.86,
-    1.0,
-  ];
+  static const glassPatchStops = [0.0, 0.13, 0.27, 0.44, 0.58, 0.71, 0.86, 1.0];
 
   static const glassPatchAlphas = [
     1.0,

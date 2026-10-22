@@ -93,7 +93,10 @@ List<VideoPrefs> buildUniqueSubtitleOptions({
     }
   }
   uniqueSubtitle.sort((a, b) => (a.title ?? '').compareTo(b.title ?? ''));
-  uniqueSubtitle.insert(0, VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()));
+  uniqueSubtitle.insert(
+    0,
+    VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()),
+  );
   return uniqueSubtitle;
 }
 

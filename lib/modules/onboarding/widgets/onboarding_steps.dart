@@ -46,7 +46,11 @@ class OnboardingLibrariesStep extends StatelessWidget {
           onTap: onLibraryToggled,
         ),
         const SizedBox(height: ShioriSpace.s16),
-        ShioriButton(expand: true, onPressed: onNext, label: l10n.onboarding_next),
+        ShioriButton(
+          expand: true,
+          onPressed: onNext,
+          label: l10n.onboarding_next,
+        ),
         const SizedBox(height: ShioriSpace.s12),
         ShioriButton.secondary(
           expand: true,
@@ -91,7 +95,11 @@ class OnboardingNavigationStep extends StatelessWidget {
         const SizedBox(height: ShioriSpace.s16),
         OnboardingNavPreview(libraries: chosen, merged: mergeLibraries),
         const SizedBox(height: ShioriSpace.s16),
-        ShioriButton(expand: true, onPressed: onNext, label: l10n.onboarding_next),
+        ShioriButton(
+          expand: true,
+          onPressed: onNext,
+          label: l10n.onboarding_next,
+        ),
       ],
     );
   }

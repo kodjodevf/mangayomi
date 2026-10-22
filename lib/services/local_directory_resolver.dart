@@ -142,11 +142,7 @@ Future<DirectoryProbe> _probeLocalDirectory(String dirPath) async {
   );
 }
 
-void _logDirectoryProbe(
-  String logContext,
-  String stage,
-  DirectoryProbe probe,
-) {
+void _logDirectoryProbe(String logContext, String stage, DirectoryProbe probe) {
   debugPrint(
     '[LocalLibraryScanner] $logContext directory probe [$stage]: '
     'path=${probe.path}, '
@@ -268,9 +264,10 @@ Future<List<String>> _externalPathRoots() async {
 }
 
 List<String> _externalPathSuffixes(String dirPath) {
-  final parts = normalizePath(
-    dirPath,
-  ).split('/').where((part) => part.isNotEmpty).toList();
+  final parts = normalizePath(dirPath)
+      .split('/')
+      .where((part) => part.isNotEmpty)
+      .toList();
   final suffixes = <String>{};
   if (parts.length > 2 && parts[0] == 'storage') {
     suffixes.add(p.joinAll(parts.skip(2)));

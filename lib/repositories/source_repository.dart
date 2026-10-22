@@ -139,8 +139,10 @@ class SourceRepository {
   List<Source> getByItemType(ItemType itemType) =>
       isar.sources.filter().itemTypeEqualTo(itemType).findAllSync();
 
-  Stream<List<Source>> watchByItemType(ItemType itemType) =>
-      isar.sources.filter().itemTypeEqualTo(itemType).watch(fireImmediately: true);
+  Stream<List<Source>> watchByItemType(ItemType itemType) => isar.sources
+      .filter()
+      .itemTypeEqualTo(itemType)
+      .watch(fireImmediately: true);
 
   Stream<List<Source>> watchActiveByItemType(ItemType itemType) => isar.sources
       .where()
@@ -189,19 +191,21 @@ class SourceRepository {
   // Marks source as the last one tapped into within itemType, so it sorts
   // first next time; every other source of that itemType loses the flag.
   Future<void> markLastUsed(ItemType itemType, int? sourceId) =>
-      dbWriteQueue.run(() => isar.writeTxn(() async {
-        final sources = await isar.sources
-            .filter()
-            .idIsNotNull()
-            .itemTypeEqualTo(itemType)
-            .findAll();
-        final updated = sources.map((src) {
-          return src
-            ..lastUsed = src.id == sourceId
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch;
-        }).toList();
-        await isar.sources.putAll(updated);
-      }));
+      dbWriteQueue.run(
+        () => isar.writeTxn(() async {
+          final sources = await isar.sources
+              .filter()
+              .idIsNotNull()
+              .itemTypeEqualTo(itemType)
+              .findAll();
+          final updated = sources.map((src) {
+            return src
+              ..lastUsed = src.id == sourceId
+              ..updatedAt = DateTime.now().millisecondsSinceEpoch;
+          }).toList();
+          await isar.sources.putAll(updated);
+        }),
+      );
 
   Future<void> putAll(List<Source> sources) => dbWriteQueue.run(
     () => isar.writeTxnSync(() => isar.sources.putAllSync(sources)),

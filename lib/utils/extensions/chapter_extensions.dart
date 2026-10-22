@@ -74,7 +74,10 @@ extension ChapterExtension on Chapter {
       if (folderPath == null || folderPath.isEmpty) continue;
       mangaDirList.add(
         Directory(
-          p.join(folderPath, manga.value!.name!.replaceForbiddenCharacters('_')),
+          p.join(
+            folderPath,
+            manga.value!.name!.replaceForbiddenCharacters('_'),
+          ),
         ),
       );
     }

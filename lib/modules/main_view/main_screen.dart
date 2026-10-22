@@ -268,8 +268,8 @@ class _MainScreenState extends ConsumerState<MainScreen>
                                   currentIndex: currentIndex,
                                   route: route,
                                   ref: ref,
-                                  buildNavigationWidgetsDesktop:
-                                      _navBuilders.buildNavigationWidgetsDesktop,
+                                  buildNavigationWidgetsDesktop: _navBuilders
+                                      .buildNavigationWidgetsDesktop,
                                   child: widget.child,
                                 )
                               : widget.child,

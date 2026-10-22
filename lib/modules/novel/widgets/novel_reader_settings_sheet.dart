@@ -299,9 +299,7 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                       vertical: 2,
                     ),
                     labelStyle: context.shiori.text.meta,
-                    label: Text(
-                      option.label,
-                    ),
+                    label: Text(option.label),
                     selected: fontFamilyKey == option.key,
                     onSelected: (_) {
                       ref

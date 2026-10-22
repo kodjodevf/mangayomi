@@ -7,7 +7,8 @@ import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart'
     as ssiv;
 import 'package:mangayomi/services/volume_keys.dart';
-import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart' show getReaderModeName;
+import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart'
+    show getReaderModeName;
 import 'package:mangayomi/modules/reader_common/utils/reader_orientation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -75,7 +76,8 @@ class MangaReaderView extends ConsumerWidget {
 
     // The source's own page for the chapter, where a reader can see why it
     // gives nothing; local archives have none.
-    final webView = stored == null || (stored.manga.value?.isLocalArchive ?? true)
+    final webView =
+        stored == null || (stored.manga.value?.isLocalArchive ?? true)
         ? null
         : buildWebViewData(stored);
     void openWebView() => context.push("/mangawebview", extra: webView);
@@ -339,7 +341,9 @@ class _MangaChapterPageGalleryState
         WakelockPlus.enable();
       }
       setVolumeKeys(ref.read(volumeKeysPagingStateProvider));
-      applyReaderScreenBrightness(ref.read(readerScreenBrightnessStateProvider));
+      applyReaderScreenBrightness(
+        ref.read(readerScreenBrightnessStateProvider),
+      );
     }
   }
 
@@ -459,7 +463,9 @@ class _MangaChapterPageGalleryState
       });
       setVolumeKeys(ref.read(volumeKeysPagingStateProvider));
       applyReaderOrientation(ref.read(readerOrientationStateProvider));
-      applyReaderScreenBrightness(ref.read(readerScreenBrightnessStateProvider));
+      applyReaderScreenBrightness(
+        ref.read(readerScreenBrightnessStateProvider),
+      );
     });
 
     final saved = _savedPageIndex;
@@ -744,19 +750,20 @@ class _MangaChapterPageGalleryState
                         }
                       }
                     },
-                    onDoublePageControllerChanged: (index, controller, attached) {
-                      if (attached) {
-                        doublePageControllers[index] = controller;
-                      } else if (identical(
-                        doublePageControllers[index],
-                        controller,
-                      )) {
-                        // A spread rebuilt under a new key registers its
-                        // controller before the old one is disposed; only
-                        // drop the entry if it is still the disposed one's.
-                        doublePageControllers.remove(index);
-                      }
-                    },
+                    onDoublePageControllerChanged:
+                        (index, controller, attached) {
+                          if (attached) {
+                            doublePageControllers[index] = controller;
+                          } else if (identical(
+                            doublePageControllers[index],
+                            controller,
+                          )) {
+                            // A spread rebuilt under a new key registers its
+                            // controller before the old one is disposed; only
+                            // drop the entry if it is still the disposed one's.
+                            doublePageControllers.remove(index);
+                          }
+                        },
                     onPageChanged: _onPageChanged,
                   ),
                 ),
@@ -1017,7 +1024,10 @@ class _MangaChapterPageGalleryState
                     child: Center(
                       child: AnimatedOpacity(
                         opacity: _showModeHint && !_isView ? 1 : 0,
-                        duration: ShioriMotion.of(context, ShioriMotion.standard),
+                        duration: ShioriMotion.of(
+                          context,
+                          ShioriMotion.standard,
+                        ),
                         child: ShioriOverlayLabel(
                           getReaderModeName(readerMode, context),
                         ),

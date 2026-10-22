@@ -712,9 +712,9 @@ class _DesktopControllerWidgetState
     );
   }
 
-  Future<void> _changeFullScreen(WidgetRef ref, void Function(bool) setFullScreenCallback, {bool? value}) =>
-      changeDesktopFullScreen(ref, setFullScreenCallback, value: value);
+  Future<void> _changeFullScreen(
+    WidgetRef ref,
+    void Function(bool) setFullScreenCallback, {
+    bool? value,
+  }) => changeDesktopFullScreen(ref, setFullScreenCallback, value: value);
 }
-
-
-
