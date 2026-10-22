@@ -7,7 +7,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_settings_controls.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_switches.dart';
 import 'package:mangayomi/services/volume_keys.dart';
-import 'package:mangayomi/modules/manga/reader/utils/reader_orientation.dart';
+import 'package:mangayomi/modules/reader_common/utils/reader_orientation.dart';
 
 class GeneralSettingsTab extends ConsumerWidget {
   final ValueNotifier<bool>? autoScrollPage;

@@ -11,7 +11,7 @@ import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
 import 'package:mangayomi/modules/anime/widgets/player_overlay_surface.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
-import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/router/push_router.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';

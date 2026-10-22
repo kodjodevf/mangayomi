@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/modules/manga/detail/providers/chapter_display.dart';
+import 'package:mangayomi/modules/reader_common/providers/chapter_display.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/chapter_transition_page.dart';
 import 'package:shiori/shiori.dart';
 

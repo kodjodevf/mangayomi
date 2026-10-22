@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mangayomi/utils/haptics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/manga/detail/providers/chapter_display.dart';
+import 'package:mangayomi/modules/reader_common/providers/chapter_display.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/cached_network.dart';

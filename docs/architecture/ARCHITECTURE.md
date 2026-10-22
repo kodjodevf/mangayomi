@@ -84,7 +84,7 @@ flowchart TD
   ```
 - **Contract:**
   - Feature modules may import `lib/models/`, `lib/repositories/`, `lib/services/`, `lib/providers/`, and `lib/utils/`.
-  - **Cross-Feature Isolation:** Sibling media features (`manga/reader`, `anime`, `novel`) must not import each other's internal widgets or controllers. Shared UI belongs in `lib/modules/widgets/` and shared logic in `lib/services/` or `lib/providers/`.
+  - **Cross-Feature Isolation:** Sibling media features (`manga/reader`, `anime`, `novel`) must not import each other's internal widgets or controllers. Reader infrastructure shared by all three (chapter navigation, app bar, chapter list dialog, auto-scroll, gestures, orientation, chapter display) lives in `lib/modules/reader_common/`, which must never import a concrete reader. Feature-agnostic UI belongs in `lib/modules/widgets/` (which must never import a feature module) and shared logic in `lib/services/` or `lib/providers/`.
 
 ---
 

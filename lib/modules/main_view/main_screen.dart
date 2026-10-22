@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/services/discord_rpc.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/router/push_router.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/repositories/history_repository.dart';

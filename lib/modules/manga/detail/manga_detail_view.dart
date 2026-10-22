@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_quick_filters.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/manga/detail/providers/chapter_display.dart';
+import 'package:mangayomi/modules/reader_common/providers/chapter_display.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';

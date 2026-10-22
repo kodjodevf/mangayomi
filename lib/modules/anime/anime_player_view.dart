@@ -32,14 +32,14 @@ import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
-import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/router/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_audio_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_decoder_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/chapter_bar_title.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/reader_app_bar.dart'
+import 'package:mangayomi/modules/reader_common/widgets/chapter_bar_title.dart';
+import 'package:mangayomi/modules/reader_common/widgets/reader_app_bar.dart'
     show buildWebViewData;
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';

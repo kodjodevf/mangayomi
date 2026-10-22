@@ -10,16 +10,16 @@ import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.
 import 'package:mangayomi/modules/novel/utils/reading_time.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/services/volume_keys.dart';
-import 'package:mangayomi/modules/manga/reader/utils/reader_orientation.dart';
+import 'package:mangayomi/modules/reader_common/utils/reader_orientation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/services/discord_rpc.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
-import 'package:mangayomi/modules/manga/reader/mixins/reader_gestures.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/auto_scroll_button.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/reader_app_bar.dart';
+import 'package:mangayomi/modules/reader_common/mixins/reader_gestures.dart';
+import 'package:mangayomi/modules/reader_common/widgets/auto_scroll_button.dart';
+import 'package:mangayomi/modules/reader_common/widgets/reader_app_bar.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
 import 'package:mangayomi/modules/novel/mixins/novel_pagination_tts_mixin.dart';
@@ -40,13 +40,11 @@ import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/system_ui.dart';
 import 'package:mangayomi/utils/utils.dart';
-import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/router/push_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:mangayomi/modules/manga/reader/mixins/reader_auto_scroll.dart';
-
-typedef DoubleClickAnimationListener = void Function();
+import 'package:mangayomi/modules/reader_common/mixins/reader_auto_scroll.dart';
 
 class NovelReaderView extends ConsumerWidget {
   final int chapterId;

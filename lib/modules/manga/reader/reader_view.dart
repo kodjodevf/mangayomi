@@ -8,41 +8,42 @@ import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subs
     as ssiv;
 import 'package:mangayomi/services/volume_keys.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart' show getReaderModeName;
-import 'package:mangayomi/modules/manga/reader/utils/reader_orientation.dart';
+import 'package:mangayomi/modules/reader_common/utils/reader_orientation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/reader_common/reader_chapter_navigation.dart';
 import 'package:shiori/shiori.dart';
-import 'package:mangayomi/modules/manga/detail/providers/chapter_display.dart';
+import 'package:mangayomi/modules/reader_common/providers/chapter_display.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/services/discord_rpc.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_double_page_mixin.dart';
-import 'package:mangayomi/modules/manga/reader/mixins/reader_gestures.dart';
+import 'package:mangayomi/modules/reader_common/mixins/reader_gestures.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_input_and_mode_mixin.dart';
 import 'package:mangayomi/modules/manga/reader/services/page_navigation_service.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_memory_management.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_prefetch_mixin.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_zoom_control.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/reader_app_bar.dart';
+import 'package:mangayomi/modules/reader_common/widgets/reader_app_bar.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_auto_scroll_sheet.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_bottom_bar.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_overlays.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_page_content.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_settings_modal.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_slider_preview_overlay.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/auto_scroll_button.dart';
+import 'package:mangayomi/modules/reader_common/widgets/auto_scroll_button.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/page_indicator.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/riverpod.dart';
-import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
+import 'package:mangayomi/router/push_router.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/services/chapter_cache.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/chapter_bar_title.dart';
+import 'package:mangayomi/modules/reader_common/widgets/chapter_bar_title.dart';
 import 'package:mangayomi/modules/manga/reader/utils/reader_page_index_math.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/providers/manga_reader_provider.dart';
@@ -51,9 +52,7 @@ import 'package:mangayomi/utils/system_ui.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:mangayomi/modules/manga/reader/mixins/reader_auto_scroll.dart';
-
-typedef DoubleClickAnimationListener = void Function();
+import 'package:mangayomi/modules/reader_common/mixins/reader_auto_scroll.dart';
 
 class MangaReaderView extends ConsumerWidget {
   final int chapterId;
@@ -170,12 +169,6 @@ class MangaReaderView extends ConsumerWidget {
   }
 }
 
-class MangaChapterPageGalleryState {
-  static void setNavigatingToChapter() {
-    _MangaChapterPageGalleryState._isNavigatingToChapter = true;
-  }
-}
-
 class MangaChapterPageGallery extends ConsumerStatefulWidget {
   const MangaChapterPageGallery({
     super.key,
@@ -273,10 +266,10 @@ class _MangaChapterPageGalleryState
   final Stopwatch _readingStopwatch = Stopwatch();
   int? _discordReaderSession;
 
-  /// Flag to prevent fullscreen from being disabled when navigating between
-  /// chapters via pushReplacement. The old widget's dispose runs after the new
-  /// widget is created, which would clobber the new reader's fullscreen state.
-  static bool _isNavigatingToChapter = false;
+  // Fullscreen is kept when navigating between chapters via pushReplacement:
+  // the old widget's dispose runs after the new widget is created, which
+  // would clobber the new reader's fullscreen state. See
+  // [ReaderChapterNavigation].
 
   @override
   void dispose() {
@@ -309,8 +302,8 @@ class _MangaChapterPageGalleryState
     _listController.dispose();
 
     _extendedController.dispose();
-    if (_isNavigatingToChapter) {
-      _isNavigatingToChapter = false;
+    if (ReaderChapterNavigation.consume()) {
+      // Chapter switch: the new reader owns fullscreen now.
     } else if (isDesktop) {
       setFullScreen(value: false);
     } else {
@@ -542,7 +535,7 @@ class _MangaChapterPageGalleryState
   void _goToChapter(bool next) {
     if (next && !_readerController.hasNextChapter) return;
     if (!next && !_readerController.hasPreviousChapter) return;
-    _isNavigatingToChapter = true;
+    ReaderChapterNavigation.markNavigatingToChapter();
     try {
       pushReplacementMangaReaderView(
         context: context,
@@ -552,7 +545,7 @@ class _MangaChapterPageGalleryState
       );
     } catch (_) {
       // If the replacement fails, dispose() never runs to reset this flag, so reset it here instead.
-      _isNavigatingToChapter = false;
+      ReaderChapterNavigation.reset();
       rethrow;
     }
   }

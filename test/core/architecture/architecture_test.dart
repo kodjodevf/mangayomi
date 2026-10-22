@@ -226,6 +226,35 @@ void main() {
       );
     });
 
+    test('Shared reader infrastructure (lib/modules/reader_common) never imports a concrete reader', () {
+      final violations = _findImportViolations('lib/modules/reader_common', const [
+        'package:mangayomi/modules/manga/',
+        'package:mangayomi/modules/novel/',
+        'package:mangayomi/modules/anime/',
+      ]);
+      expect(
+        violations,
+        isEmpty,
+        reason:
+            'lib/modules/reader_common/ is shared by the manga, novel and anime readers and must not depend on any of them:\n'
+            '${violations.join('\n')}',
+      );
+    });
+
+    test('Novel reader and anime player never import the manga module (use reader_common instead)', () {
+      final violations = [
+        ..._findImportViolations('lib/modules/novel', const ['package:mangayomi/modules/manga/']),
+        ..._findImportViolations('lib/modules/anime', const ['package:mangayomi/modules/manga/']),
+      ];
+      expect(
+        violations,
+        isEmpty,
+        reason:
+            'Move shared reader code into lib/modules/reader_common/ instead of importing manga internals:\n'
+            '${violations.join('\n')}',
+      );
+    });
+
     test('Phase 3: Reader and Player entry views remain decomposed (< 1400 lines) and no module file exceeds 1400 lines', () {
       const maxLines = 1400;
       final oversizedFiles = <String>[];

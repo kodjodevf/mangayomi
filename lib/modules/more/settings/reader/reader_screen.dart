@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_switches.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_mode_glyph.dart';
 import 'package:shiori/shiori.dart';
-import 'package:mangayomi/modules/manga/reader/utils/reader_orientation.dart';
+import 'package:mangayomi/modules/reader_common/utils/reader_orientation.dart';
 import 'package:mangayomi/services/volume_keys.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
