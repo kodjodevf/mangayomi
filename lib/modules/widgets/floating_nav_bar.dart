@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/widgets/floating_nav/floating_nav_item.dart';
+import 'package:mangayomi/modules/widgets/floating_nav/glass_edge.dart';
 import 'package:shiori/shiori.dart';
 
 /// The optional floating capsule used in place of the material NavigationBar
@@ -54,8 +56,10 @@ class FloatingNavBar extends StatefulWidget {
   /// height to save, and where a rail would otherwise take over.
   final bool showLabels;
 
-  static const _duration = ShioriMotion.standard;
-  static const _curve = Curves.easeOutCubic;
+  static const duration = ShioriMotion.standard;
+  static const curve = Curves.easeOutCubic;
+  static const _duration = duration;
+  static const _curve = curve;
 
   /// The shrink has its own timing, and it is not symmetric.
   ///
@@ -93,7 +97,7 @@ class FloatingNavBar extends StatefulWidget {
 
   /// Gap between an icon and its label, and the room either side of a labelled
   /// item, in the labelled layout.
-  static const _labelGap = 6.0;
+  static const labelGap = 6.0;
 
   /// Even spacing between items, and the same again at each end, however wide
   /// the items themselves are.
@@ -120,21 +124,12 @@ class FloatingNavBar extends StatefulWidget {
   /// Hairline. Anything heavier stops reading as glass and starts reading as
   /// a border.
   @visibleForTesting
-  static const glassStrokeWidth = 1.0;
+  static const glassStrokeWidth = FloatingNavGlassEdge.glassStrokeWidth;
 
   @visibleForTesting
-  static const glassPatchStops = [0.0, 0.13, 0.27, 0.44, 0.58, 0.71, 0.86, 1.0];
+  static const glassPatchStops = FloatingNavGlassEdge.glassPatchStops;
   @visibleForTesting
-  static const glassPatchAlphas = [
-    1.0,
-    0.42,
-    0.92,
-    0.34,
-    0.86,
-    0.38,
-    0.98,
-    0.5,
-  ];
+  static const glassPatchAlphas = FloatingNavGlassEdge.glassPatchAlphas;
 
   /// Space between the pill and the bar itself: top, bottom, and the two end
   /// caps. One value for every bar edge is what keeps that gap even.
@@ -601,7 +596,7 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
               : scheme.primaryContainer)
         : scheme.secondaryContainer.withValues(alpha: dragging ? 1.0 : 0.9);
 
-    return _Zoom(
+    return FloatingNavZoom(
       zoom: lifted ? FloatingNavBar._dragZoom : 1.0,
       give: dragging ? _edgePush * FloatingNavBar._barGive : 0.0,
       child: SizedBox(
@@ -739,7 +734,7 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                             // surface catching light, not a frame behind it.
                             Positioned.fill(
                               child: IgnorePointer(
-                                child: _GlassEdge(
+                                child: FloatingNavGlassEdge(
                                   color: light
                                       ? scheme.outline
                                       : scheme.onSurface,
@@ -769,10 +764,10 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                                     : 0,
                                 children: [
                                   for (var i = 0; i < count; i++)
-                                    _Sized(
+                                    FloatingNavSized(
                                       key: _itemKeys[i],
                                       expand: !widget.showLabels,
-                                      child: _FloatingNavItem(
+                                      child: FloatingNavItem(
                                         destination: widget.destinations[i],
                                         selected: i == resting,
                                         iconSize:
@@ -807,233 +802,6 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                   },
                 ),
               ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// The lit top and bottom edges of the bar.
-///
-/// The bar's glass edge.
-///
-/// A hairline stroke following the whole outline, caps included. A horizontal
-/// band cannot reach the far left and right points of a stadium at all, since
-/// those sit at mid height, which left the ends unlit. Stroking the path fixes
-/// that and is thinner besides.
-///
-/// It is dimmest around the equator and brightest along the top, so the caps
-/// keep some light without the stroke reading as a drawn border, and it varies
-/// along its length the way glass catches light in patches.
-class _GlassEdge extends StatelessWidget {
-  const _GlassEdge({
-    required this.color,
-    required this.light,
-    required this.radius,
-  });
-
-  final Color color;
-  final bool light;
-  final double radius;
-
-  @override
-  Widget build(BuildContext context) {
-    return ShaderMask(
-      blendMode: BlendMode.dstIn,
-      shaderCallback: (rect) => LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        colors: [
-          for (final a in FloatingNavBar.glassPatchAlphas)
-            Colors.white.withValues(alpha: a),
-        ],
-        stops: FloatingNavBar.glassPatchStops,
-      ).createShader(rect),
-      child: CustomPaint(
-        painter: _GlassEdgePainter(color: color, light: light, radius: radius),
-      ),
-    );
-  }
-}
-
-class _GlassEdgePainter extends CustomPainter {
-  const _GlassEdgePainter({
-    required this.color,
-    required this.light,
-    required this.radius,
-  });
-
-  final Color color;
-  final bool light;
-  final double radius;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final paint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = FloatingNavBar.glassStrokeWidth
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          color.withValues(alpha: light ? 0.34 : 0.36),
-          // Never zero: this is where the caps are, and they should keep a
-          // trace of light rather than breaking the outline.
-          color.withValues(alpha: light ? 0.08 : 0.07),
-          color.withValues(alpha: light ? 0.20 : 0.18),
-        ],
-        stops: const [0.0, 0.5, 1.0],
-      ).createShader(rect);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        // Inset by half the stroke so it lands inside the clip rather than
-        // being shaved in half by it.
-        rect.deflate(FloatingNavBar.glassStrokeWidth / 2),
-        Radius.circular(radius),
-      ),
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_GlassEdgePainter old) =>
-      old.color != color || old.light != light || old.radius != radius;
-}
-
-/// One navigation item: sharing the bar evenly, or hugging its own content.
-/// Exists so each item can carry the key the bar measures it by.
-class _Sized extends StatelessWidget {
-  const _Sized({super.key, required this.expand, required this.child});
-
-  final bool expand;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => expand ? Expanded(child: child) : child;
-}
-
-/// Scales the bar up while a drag is in flight, and lets it give sideways when
-/// the pill is pushed into an end cap.
-class _Zoom extends StatelessWidget {
-  const _Zoom({required this.zoom, required this.give, required this.child});
-
-  final double zoom;
-
-  /// Signed, negative pushes left. Scales horizontally from the opposite edge
-  /// so the bar grows towards the side being pushed.
-  final double give;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedScale(
-      duration: FloatingNavBar._duration,
-      curve: FloatingNavBar._curve,
-      scale: zoom,
-      alignment: Alignment.bottomCenter,
-      child: Transform.scale(
-        scaleX: 1 + give.abs(),
-        scaleY: 1,
-        alignment: give < 0 ? Alignment.centerRight : Alignment.centerLeft,
-        child: child,
-      ),
-    );
-  }
-}
-
-class _FloatingNavItem extends StatelessWidget {
-  const _FloatingNavItem({
-    required this.destination,
-    required this.selected,
-    required this.iconSize,
-    required this.nudge,
-    required this.onTap,
-    required this.light,
-    this.label,
-    this.labelStyle,
-  });
-
-  final NavigationDestination destination;
-  final bool selected;
-  final double iconSize;
-  final bool light;
-
-  /// Horizontal shift so the icon lands on the pill's centre rather than its
-  /// slot's. Zero everywhere except the two end slots.
-  final double nudge;
-
-  /// Shown beside the icon in the labelled layout; null keeps it icon-only.
-  final String? label;
-  final TextStyle? labelStyle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final icon = selected
-        ? (destination.selectedIcon ?? destination.icon)
-        : destination.icon;
-    // Each selected icon uses the foreground paired with its pill. Unselected
-    // icons stay neutral and remain readable while the pill crosses them.
-    final color = light
-        ? (selected ? scheme.onPrimaryContainer : scheme.onSurfaceVariant)
-        : (selected ? scheme.onSecondaryContainer : scheme.onSurface);
-    Widget themedItem(double size, Color resolvedColor) => IconTheme(
-      data: IconThemeData(
-        size: size,
-        color: resolvedColor,
-        // Several destinations (history, more) have an "outlined" variant
-        // that is the same drawing, so filling cannot show selection.
-        shadows: selected
-            ? [Shadow(color: resolvedColor, blurRadius: 0.9)]
-            : null,
-      ),
-      child: label == null
-          ? icon
-          : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                icon,
-                const SizedBox(width: FloatingNavBar._labelGap),
-                Flexible(
-                  child: Text(
-                    label!,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: labelStyle?.copyWith(color: resolvedColor),
-                  ),
-                ),
-              ],
-            ),
-    );
-    return Semantics(
-      // The label is gone visually, so it has to survive for screen readers.
-      label: destination.label,
-      selected: selected,
-      button: true,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: onTap,
-        child: Center(
-          child: Transform.translate(
-            offset: Offset(nudge, 0),
-            child: TweenAnimationBuilder<double>(
-              tween: Tween(end: iconSize),
-              duration: FloatingNavBar._duration,
-              curve: FloatingNavBar._curve,
-              builder: (context, size, _) {
-                if (!light) return themedItem(size, color);
-                return TweenAnimationBuilder<Color?>(
-                  tween: ColorTween(end: color),
-                  duration: FloatingNavBar._duration,
-                  curve: FloatingNavBar._curve,
-                  builder: (context, animatedColor, _) =>
-                      themedItem(size, animatedColor ?? color),
-                );
-              },
             ),
           ),
         ),

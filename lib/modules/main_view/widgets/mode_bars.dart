@@ -2,7 +2,9 @@ import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shiori/shiori.dart';
-import 'package:mangayomi/modules/main_view/main_screen.dart';
+
+// Use the default system font for mode bar labels (previously ABeeZee).
+const String? barFontFamily = null;
 
 class DownloadedOnlyBar extends StatelessWidget {
   const DownloadedOnlyBar({
