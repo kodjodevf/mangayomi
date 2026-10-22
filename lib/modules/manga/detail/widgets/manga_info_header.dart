@@ -7,21 +7,21 @@ import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
-import 'package:mangayomi/modules/library/library_screen.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/detail_explore_sheet.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/detail_genre_chip.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/detail_header_action.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/edit_local_archive_dialog.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/manga_cover_viewer.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/read_action.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/readmore.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/split_chapters_dialog.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracking_menu.dart';
-import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
 import 'package:mangayomi/modules/widgets/cover_hero.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
-import 'package:mangayomi/services/discovery/media_lookup_context.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
@@ -106,7 +106,11 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
                     child: IconButton.filledTonal(
                       tooltip: l10n.edit,
                       onPressed: () {
-                        _editLocalArchiveInfos();
+                        showEditLocalArchiveDialog(
+                          context,
+                          manga: widget.manga,
+                          l10n: l10n,
+                        );
                       },
                       icon: const Icon(Symbols.edit_rounded),
                     ),
@@ -426,7 +430,7 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
           Expanded(child: widget.action),
           if (!widget.isLocalArchive) Expanded(child: _smartUpdateDays()),
           _action(),
-          Expanded(child: _ExploreAction(manga: widget.manga)),
+          Expanded(child: DetailExploreButton(manga: widget.manga)),
           if (!widget.isLocalArchive)
             Expanded(
               child: DetailHeaderAction(
@@ -522,295 +526,11 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
     );
   }
 
-  void _editLocalArchiveInfos() {
-    final l10n = l10nLocalizations(context)!;
-    TextEditingController? name = TextEditingController(
-      text: widget.manga.name!,
-    );
-    TextEditingController? description = TextEditingController(
-      text: widget.manga.description!,
-    );
-    showDialog(
-      context: context,
-      builder: (context) => ShioriDialog(
-        title: l10n.edit,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          spacing: ShioriSpace.s16,
-          children: [
-            TextField(
-              controller: name,
-              decoration: InputDecoration(labelText: l10n.name),
-            ),
-            TextField(
-              controller: description,
-              minLines: 2,
-              maxLines: 6,
-              decoration: InputDecoration(labelText: l10n.description),
-            ),
-          ],
-        ),
-        actions: [
-          ShioriButton.quiet(
-            label: l10n.cancel,
-            onPressed: () => Navigator.pop(context),
-          ),
-          ShioriButton(
-            label: l10n.save,
-            onPressed: () {
-              final manga = widget.manga;
-              manga.description = description.text;
-              manga.name = name.text;
-              mangaRepository.save(manga);
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   void _trackingDraggableMenu(List<TrackPreference>? entries) {
     openTrackingMenu(
       context: context,
       manga: widget.manga,
       entries: entries ?? const [],
-    );
-  }
-}
-
-/// A genre chip that exposes the same search menu in every detail layout.
-class DetailGenreChip extends StatelessWidget {
-  const DetailGenreChip({
-    super.key,
-    required this.label,
-    required this.libraryLabel,
-    required this.sourceLabel,
-    required this.onSelected,
-  });
-
-  final String label;
-  final String libraryLabel;
-  final String sourceLabel;
-  final ValueChanged<int> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.only(
-        end: ShioriSpace.s4,
-        bottom: ShioriSpace.s4,
-      ),
-      child: SizedBox(
-        height: 32,
-        child: MenuAnchor(
-          style: shioriMenuStyle(context),
-          menuChildren: [
-            ShioriMenuEntry(
-              ShioriMenuItem(
-                label: libraryLabel,
-                icon: Symbols.collections_bookmark_rounded,
-                onSelected: () => onSelected(0),
-              ),
-            ),
-            ShioriMenuEntry(
-              ShioriMenuItem(
-                label: sourceLabel,
-                icon: Symbols.travel_explore_rounded,
-                onSelected: () => onSelected(1),
-              ),
-            ),
-          ],
-          builder: (context, controller, _) => Material(
-            color: context.shiori.color.ink2,
-            shape: StadiumBorder(
-              side: BorderSide(color: context.shiori.color.hairline),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: () =>
-                  controller.isOpen ? controller.close() : controller.open(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: ShioriSpace.s12,
-                ),
-                child: Align(
-                  widthFactor: 1,
-                  child: Text(
-                    label,
-                    style: context.shiori.text.meta.copyWith(
-                      color: context.shiori.color.fg,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// A place a title leads to from its detail page.
-class DetailExploreAction {
-  const DetailExploreAction({
-    required this.icon,
-    required this.label,
-    required this.description,
-    required this.onPressed,
-  });
-
-  final IconData icon;
-  final String label;
-
-  /// What is found there, under its name.
-  final String description;
-  final VoidCallback onPressed;
-}
-
-/// Explore, among the quick actions under the cover: where the title leads
-/// (what is like it, what it is related to, the order to watch it in, what
-/// comes after), in a sheet.
-///
-/// These places were first a bordered strip of segments, then a row of
-/// cards down the page: either way a section of their own for what is
-/// secondary on a detail page, which is read and managed first. They are
-/// one action now, beside the others, and a tap opens a sheet where each
-/// place is a full row with a line saying what is there.
-class _ExploreAction extends StatelessWidget {
-  const _ExploreAction({required this.manga});
-
-  final Manga manga;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    return DetailHeaderAction(
-      icon: Symbols.explore_rounded,
-      label: l10n.group_explore,
-      onPressed: () => showShioriSheet<void>(
-        context,
-        title: l10n.group_explore,
-        builder: (_) => _ExplorePlaces(manga: manga),
-      ),
-    );
-  }
-}
-
-/// The places [manga] leads to, worked out when the sheet opens: sequels
-/// need a MyAnimeList or AniList track to look anything up, so they appear
-/// once there is one.
-class _ExplorePlaces extends ConsumerWidget {
-  const _ExplorePlaces({required this.manga});
-
-  final Manga manga;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    // Captured now: the sheet closes before the place opens.
-    final router = GoRouter.of(context);
-    DetailExploreAction recommendations(MediaLookupContext media) =>
-        DetailExploreAction(
-          icon: Symbols.auto_awesome_rounded,
-          label: l10n.recommendations,
-          description: l10n.explore_recommendations_subtitle,
-          onPressed: () => router.push(
-            "/recommendations",
-            extra: (media, ref.read(algorithmWeightsStateProvider)),
-          ),
-        );
-    // Everything this title is related to, including the one thing that
-    // cannot be reached any other way from in here: its adaptation in the
-    // other medium.
-    final related = DetailExploreAction(
-      icon: Symbols.account_tree_rounded,
-      label: l10n.related_titles,
-      description: l10n.explore_related_subtitle,
-      onPressed: () =>
-          router.push("/related", extra: (manga.name!, manga.itemType)),
-    );
-
-    if (manga.itemType != ItemType.anime) {
-      return DetailExploreList(
-        actions: [
-          recommendations(MediaLookupContext.fromManga(manga)),
-          related,
-        ],
-      );
-    }
-    return StreamBuilder(
-      stream: trackRepository.watchByMangaId(manga.id!),
-      builder: (context, snapshot) {
-        final tracks = snapshot.data ?? const <Track>[];
-        Track? sequelTrack;
-        for (final track in tracks) {
-          final mediaId = track.mediaId;
-          if (mediaId != null &&
-              mediaId > 0 &&
-              (track.syncId == TrackerProviders.myAnimeList.syncId ||
-                  track.syncId == TrackerProviders.anilist.syncId)) {
-            sequelTrack ??= track;
-          }
-        }
-        final media = MediaLookupContext.fromManga(manga, tracks: tracks);
-        return DetailExploreList(
-          actions: [
-            recommendations(media),
-            related,
-            DetailExploreAction(
-              icon: Symbols.format_list_numbered_rounded,
-              label: l10n.watch_order,
-              description: l10n.explore_watch_order_subtitle,
-              onPressed: () =>
-                  router.push("/watchOrder", extra: (media, null as Track?)),
-            ),
-            if (sequelTrack != null)
-              DetailExploreAction(
-                icon: Symbols.playlist_play_rounded,
-                label: l10n.sequels,
-                description: l10n.explore_sequels_subtitle,
-                onPressed: () =>
-                    router.push("/watchOrder", extra: (media, sequelTrack)),
-              ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-/// The places to go, each a full row: its icon, its name, what is there, and
-/// a chevron. A tap closes the sheet, then opens the place.
-class DetailExploreList extends StatelessWidget {
-  const DetailExploreList({super.key, required this.actions});
-
-  final List<DetailExploreAction> actions;
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: ShioriSpace.s8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final action in actions)
-              ShioriSettingRow(
-                icon: action.icon,
-                title: action.label,
-                subtitle: action.description,
-                trailing: const Icon(Symbols.chevron_forward_rounded),
-                onTap: () {
-                  Navigator.pop(context);
-                  action.onPressed();
-                },
-              ),
-          ],
-        ),
-      ),
     );
   }
 }
