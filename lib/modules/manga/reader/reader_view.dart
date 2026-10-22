@@ -19,7 +19,6 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/services/discord_rpc.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_double_page_mixin.dart';
 import 'package:mangayomi/modules/reader_common/mixins/reader_gestures.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_input_and_mode_mixin.dart';

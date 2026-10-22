@@ -20,10 +20,10 @@ import 'package:mangayomi/modules/anime/widgets/player_overlay_surface.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/router/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
+import 'package:mangayomi/utils/system_ui.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
-import 'package:window_manager/window_manager.dart';
 
 class DesktopControllerWidget extends ConsumerStatefulWidget {
   final Function(Duration?) tempDuration;
@@ -1065,12 +1065,3 @@ class _CustomMaterialDesktopFullscreenButtonState
   }
 }
 
-Future<bool> setFullScreen({bool? value}) async {
-  if (value != null) {
-    await windowManager.setFullScreen(value);
-    return value;
-  }
-  final isFullScreen = await windowManager.isFullScreen();
-  await windowManager.setFullScreen(!isFullScreen);
-  return !isFullScreen;
-}

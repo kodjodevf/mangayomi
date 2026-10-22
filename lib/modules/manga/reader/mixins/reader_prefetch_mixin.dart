@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/modules/library/providers/file_scanner.dart';
+import 'package:mangayomi/services/local_folders.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_memory_management.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';

@@ -16,7 +16,6 @@ import 'package:mangayomi/services/discord_rpc.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
-import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/reader_common/mixins/reader_gestures.dart';
 import 'package:mangayomi/modules/reader_common/widgets/auto_scroll_button.dart';
 import 'package:mangayomi/modules/reader_common/widgets/reader_app_bar.dart';

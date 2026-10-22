@@ -241,16 +241,27 @@ void main() {
       );
     });
 
-    test('Novel reader and anime player never import the manga module (use reader_common instead)', () {
+    test('Sibling media modules (manga, anime, novel) are 100% isolated and never import each other', () {
       final violations = [
-        ..._findImportViolations('lib/modules/novel', const ['package:mangayomi/modules/manga/']),
-        ..._findImportViolations('lib/modules/anime', const ['package:mangayomi/modules/manga/']),
+        ..._findImportViolations('lib/modules/manga', const [
+          'package:mangayomi/modules/anime/',
+          'package:mangayomi/modules/novel/',
+        ]),
+        ..._findImportViolations('lib/modules/anime', const [
+          'package:mangayomi/modules/manga/',
+          'package:mangayomi/modules/novel/',
+          'package:mangayomi/modules/library/',
+        ]),
+        ..._findImportViolations('lib/modules/novel', const [
+          'package:mangayomi/modules/manga/',
+          'package:mangayomi/modules/anime/',
+        ]),
       ];
       expect(
         violations,
         isEmpty,
         reason:
-            'Move shared reader code into lib/modules/reader_common/ instead of importing manga internals:\n'
+            'Media features (manga, anime, novel) must remain strictly decoupled. Shared code belongs in lib/modules/reader_common/, lib/modules/widgets/, or lib/services/:\n'
             '${violations.join('\n')}',
       );
     });
