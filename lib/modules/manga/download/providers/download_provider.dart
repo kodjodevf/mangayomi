@@ -53,6 +53,7 @@ Future<void> downloadChapter(
   VoidCallback? callback,
 }) async {
   final keepAlive = ref.keepAlive();
+  Future<void> progressWrites = Future.value();
   // Enqueue under the same write queue as consolidation before claiming an ID.
   // An old Updates/detail widget may still carry an ID merged during its click.
   try {
@@ -130,6 +131,8 @@ Future<void> downloadChapter(
       directory: mangaMainDirectory,
       headers: metadataHeaders,
       onlyIfMissing: true,
+      // A remote cover must not hold the download slot; use a local page below.
+      fetchCover: itemType != ItemType.manga,
     );
     List<Track>? subtitles;
     bool isOk = false;
@@ -219,7 +222,11 @@ Future<void> downloadChapter(
             chapterDirectory.path,
             mangaMainDirectory.path,
             chapterName,
-            pages.map((e) => e.fileName!).toList(),
+            // The pending batch excludes cached pages; the archive needs all pages.
+            List.generate(
+              pageUrls.length,
+              (index) => p.join(chapterDirectory.path, padIndex(index)),
+            ),
             comicInfo: comicInfo,
           ).future,
         );
@@ -263,7 +270,7 @@ Future<void> downloadChapter(
       }
     }
 
-    setProgress(DownloadProgress(0, 0, itemType));
+    await setProgress(DownloadProgress(0, 0, itemType));
     void savePageUrls() {
       // Re-downloading a chapter that is already on disk reads it locally, and
       // local pages carry no url. Storing those placeholders would leave the
@@ -496,8 +503,10 @@ Future<void> downloadChapter(
           subtitles: subtitles,
           subDownloadDir: subtitleDirectoryBase,
         ).download((progress) {
-          setProgress(progress);
+          progressWrites = progressWrites.then((_) => setProgress(progress));
         });
+        // Worker callbacks are synchronous, but archive creation and writes are not.
+        await progressWrites;
         await exportCoverFromDownloadedPages();
       }
     } else if (itemType == ItemType.novel) {
@@ -527,8 +536,9 @@ Future<void> downloadChapter(
       }
     } else if (hasM3U8File) {
       await m3u8Downloader?.download((progress) {
-        setProgress(progress);
+        progressWrites = progressWrites.then((_) => setProgress(progress));
       });
+      await progressWrites;
     }
     if (callback != null) {
       callback();
@@ -540,10 +550,12 @@ Future<void> downloadChapter(
     // Surface the failure instead of swallowing it — a silent catch here is
     // exactly how "downloads just don't start" stays invisible.
     if (!isDownloadCancelled(chapter)) botToast("Download failed: $e");
+    await progressWrites.catchError((Object _) {});
     await markDownloadFailed(chapter);
     if (callback != null) callback();
     keepAlive.close();
   } finally {
+    await progressWrites.catchError((Object _) {});
     if (acquired) DownloadGate.instance.release(sourceKey);
     unscheduleDownload(chapter.id);
     keepAlive.close();

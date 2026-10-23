@@ -47,6 +47,16 @@ class DownloadIsolatePool {
     return _instance!;
   }
 
+  /// Exercises the real file/HTTP worker without the optional Rust transport.
+  /// Tests run on CI before the native app library is built.
+  @visibleForTesting
+  static void configureForTesting() {
+    _instance?.dispose();
+    _instance = DownloadIsolatePool.forTesting(
+      workerEntryPoint: _dartHttpWorkerEntryPoint,
+    );
+  }
+
   /// Configure the pool size (call before initialize)
   static void configure({int poolSize = 3}) {
     if (_instance != null && _instance!._initialized) {
@@ -465,6 +475,14 @@ void _workerEntryPoint(SendPort mainPort) async {
     ),
   );
 
+  await _runWorker(mainPort, httpClient);
+}
+
+void _dartHttpWorkerEntryPoint(SendPort mainPort) async {
+  await _runWorker(mainPort, Client());
+}
+
+Future<void> _runWorker(SendPort mainPort, Client httpClient) async {
   // Create the receive port for this worker
   final receivePort = ReceivePort();
 
