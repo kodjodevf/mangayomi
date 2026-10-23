@@ -31,6 +31,9 @@ enum ReaderSwitch {
   showPageNumber,
   animatePageTransitions,
   markDuplicateChaptersRead,
+  skipReadChapters,
+  skipFilteredChapters,
+  skipDuplicateChapters,
   volumeKeysPaging,
   volumeKeysInverted;
 
@@ -54,6 +57,9 @@ enum ReaderSwitch {
     showPageNumber => l10n.show_page_number,
     animatePageTransitions => l10n.animate_page_transitions,
     markDuplicateChaptersRead => l10n.mark_duplicate_chapters_read,
+    skipReadChapters => l10n.skip_read_chapters,
+    skipFilteredChapters => l10n.skip_filtered_chapters,
+    skipDuplicateChapters => l10n.skip_duplicate_chapters,
     volumeKeysPaging => l10n.volume_keys_paging,
     volumeKeysInverted => l10n.volume_keys_inverted,
   };
@@ -63,6 +69,8 @@ enum ReaderSwitch {
     doublePageSingleFirstPage => l10n.double_page_single_first_page_subtitle,
     doublePageAuto => l10n.double_page_auto_subtitle,
     flashOnPageChange => l10n.flash_on_page_change_subtitle,
+    skipReadChapters => l10n.skip_read_chapters_subtitle,
+    skipDuplicateChapters => l10n.skip_duplicate_chapters_subtitle,
     // iOS can only watch the volume, and says what that does to it.
     volumeKeysPaging => Platform.isIOS ? l10n.volume_keys_paging_ios : null,
     _ => null,
@@ -96,6 +104,9 @@ enum ReaderSwitch {
     markDuplicateChaptersRead => ref.watch(
       autoReadDuplicateChaptersStateProvider,
     ),
+    skipReadChapters => ref.watch(skipReadChaptersStateProvider),
+    skipFilteredChapters => ref.watch(skipFilteredChaptersStateProvider),
+    skipDuplicateChapters => ref.watch(skipDuplicateChaptersStateProvider),
     volumeKeysPaging => ref.watch(volumeKeysPagingStateProvider),
     volumeKeysInverted => ref.watch(volumeKeysInvertedStateProvider),
   };
@@ -140,6 +151,12 @@ enum ReaderSwitch {
         ref.read(animatePageTransitionsStateProvider.notifier).set(value);
       case markDuplicateChaptersRead:
         ref.read(autoReadDuplicateChaptersStateProvider.notifier).set(value);
+      case skipReadChapters:
+        ref.read(skipReadChaptersStateProvider.notifier).set(value);
+      case skipFilteredChapters:
+        ref.read(skipFilteredChaptersStateProvider.notifier).set(value);
+      case skipDuplicateChapters:
+        ref.read(skipDuplicateChaptersStateProvider.notifier).set(value);
       case volumeKeysPaging:
         ref.read(volumeKeysPagingStateProvider.notifier).set(value);
       case volumeKeysInverted:

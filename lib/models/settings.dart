@@ -492,6 +492,12 @@ class Settings {
   bool? doublePageSingleFirstPage;
   bool? doublePageAuto;
 
+  bool? skipReadChapters;
+
+  bool? skipFilteredChapters;
+
+  bool? skipDuplicateChapters;
+
   int? deleteAfterReadingSlot;
 
   bool? deleteBookmarkedAfterReading;
@@ -734,6 +740,9 @@ class Settings {
     this.tvHomeGenreRows,
     this.doublePageSingleFirstPage = false,
     this.doublePageAuto = false,
+    this.skipReadChapters = false,
+    this.skipFilteredChapters = true,
+    this.skipDuplicateChapters = true,
     this.deleteAfterReadingSlot = 0,
     this.deleteBookmarkedAfterReading = false,
     this.downloadAheadWhileReading = 0,
@@ -1106,6 +1115,9 @@ class Settings {
     tvHomeGenreRows = json['tvHomeGenreRows'];
     doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
     doublePageAuto = json['doublePageAuto'];
+    skipReadChapters = json['skipReadChapters'];
+    skipFilteredChapters = json['skipFilteredChapters'];
+    skipDuplicateChapters = json['skipDuplicateChapters'];
     deleteAfterReadingSlot = json['deleteAfterReadingSlot'];
     deleteBookmarkedAfterReading = json['deleteBookmarkedAfterReading'];
     downloadAheadWhileReading = json['downloadAheadWhileReading'];
@@ -1366,6 +1378,9 @@ class Settings {
     'tvHomeGenreRows': tvHomeGenreRows,
     'doublePageSingleFirstPage': doublePageSingleFirstPage,
     'doublePageAuto': doublePageAuto,
+    'skipReadChapters': skipReadChapters,
+    'skipFilteredChapters': skipFilteredChapters,
+    'skipDuplicateChapters': skipDuplicateChapters,
     'deleteAfterReadingSlot': deleteAfterReadingSlot,
     'deleteBookmarkedAfterReading': deleteBookmarkedAfterReading,
     'downloadAheadWhileReading': downloadAheadWhileReading,

@@ -330,6 +330,27 @@ final settingsIndex = <SettingsEntry>[
     extra: 0,
   ),
   SettingsEntry(
+    title: (l) => l.skip_read_chapters,
+    subtitle: (l) => l.skip_read_chapters_subtitle,
+    section: (l) => l.reader,
+    route: '/readerSettingsSection',
+    extra: 0,
+  ),
+  SettingsEntry(
+    title: (l) => l.skip_filtered_chapters,
+    subtitle: null,
+    section: (l) => l.reader,
+    route: '/readerSettingsSection',
+    extra: 0,
+  ),
+  SettingsEntry(
+    title: (l) => l.skip_duplicate_chapters,
+    subtitle: (l) => l.skip_duplicate_chapters_subtitle,
+    section: (l) => l.reader,
+    route: '/readerSettingsSection',
+    extra: 0,
+  ),
+  SettingsEntry(
     title: (l) => l.show_page_number,
     subtitle: null,
     section: (l) => l.reader,

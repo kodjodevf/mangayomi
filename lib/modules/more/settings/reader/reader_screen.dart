@@ -163,6 +163,9 @@ class ReaderScreen extends ConsumerWidget {
             const ReaderSwitchRow(ReaderSwitch.navigateToPan),
             const ReaderSwitchRow(ReaderSwitch.keepScreenOn),
             const ReaderSwitchRow(ReaderSwitch.markDuplicateChaptersRead),
+            const ReaderSwitchRow(ReaderSwitch.skipReadChapters),
+            const ReaderSwitchRow(ReaderSwitch.skipFilteredChapters),
+            const ReaderSwitchRow(ReaderSwitch.skipDuplicateChapters),
           ],
         ),
         ShioriSettingsGroup(

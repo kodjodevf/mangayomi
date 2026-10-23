@@ -1669,6 +1669,23 @@ class AppLocalizationsFr extends AppLocalizations {
       'Marquer les numéros de chapitres en double comme lus';
 
   @override
+  String get skip_read_chapters => 'Passer les chapitres lus';
+
+  @override
+  String get skip_read_chapters_subtitle =>
+      'Les chapitres suivant et précédent passent ceux déjà lus.';
+
+  @override
+  String get skip_filtered_chapters => 'Passer les chapitres filtrés';
+
+  @override
+  String get skip_duplicate_chapters => 'Passer les chapitres en double';
+
+  @override
+  String get skip_duplicate_chapters_subtitle =>
+      'Lire une seule copie de chaque numéro de chapitre, du même scanlateur quand il y en a une.';
+
+  @override
   String get default_skip_intro_length =>
       'Longueur par défaut du passage de l\'intro';
 

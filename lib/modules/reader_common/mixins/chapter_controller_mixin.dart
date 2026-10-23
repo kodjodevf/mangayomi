@@ -69,7 +69,7 @@ mixin ChapterControllerMixin {
       return null;
     }
 
-    final index = findIn(manga.getChapterListForReading());
+    final index = findIn(manga.getChapterListForReading(current: chapter));
     if (index != null) return (index, true);
     // Fallback to raw list if chapter was filtered out.
     final all = manga.chapters.toList();
@@ -79,7 +79,7 @@ mixin ChapterControllerMixin {
   Chapter _chapterWithOffset(int offset) {
     final idx = _chapterIndexWithOffset(offset);
     final list = idx.$2
-        ? getManga().getChapterListForReading()
+        ? getManga().getChapterListForReading(current: chapter)
         : getManga().chapters.toList();
     if (idx.$1 < 0 || idx.$1 >= list.length) {
       throw RangeError('No chapter at offset $offset from ${chapter.id}');
@@ -88,7 +88,7 @@ mixin ChapterControllerMixin {
   }
 
   int getChaptersLength(bool isInFilterList) => isInFilterList
-      ? getManga().getChapterListForReading().length
+      ? getManga().getChapterListForReading(current: chapter).length
       : getManga().chapters.length;
 
   // ---------------------------------------------------------------------------

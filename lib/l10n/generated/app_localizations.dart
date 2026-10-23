@@ -3043,6 +3043,36 @@ abstract class AppLocalizations {
   /// **'Mark duplicate chapter numbers as read'**
   String get mark_duplicate_chapters_read;
 
+  /// No description provided for @skip_read_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip read chapters'**
+  String get skip_read_chapters;
+
+  /// No description provided for @skip_read_chapters_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Next and previous chapter go past the ones already read.'**
+  String get skip_read_chapters_subtitle;
+
+  /// No description provided for @skip_filtered_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip filtered chapters'**
+  String get skip_filtered_chapters;
+
+  /// No description provided for @skip_duplicate_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip duplicate chapters'**
+  String get skip_duplicate_chapters;
+
+  /// No description provided for @skip_duplicate_chapters_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read one copy of each chapter number, from the same scanlator when there is one.'**
+  String get skip_duplicate_chapters_subtitle;
+
   /// No description provided for @default_skip_intro_length.
   ///
   /// In en, this message translates to:

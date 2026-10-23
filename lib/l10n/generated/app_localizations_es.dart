@@ -1668,6 +1668,23 @@ class AppLocalizationsEs extends AppLocalizations {
       'Marcar números de capítulos duplicados como leídos';
 
   @override
+  String get skip_read_chapters => 'Skip read chapters';
+
+  @override
+  String get skip_read_chapters_subtitle =>
+      'Next and previous chapter go past the ones already read.';
+
+  @override
+  String get skip_filtered_chapters => 'Skip filtered chapters';
+
+  @override
+  String get skip_duplicate_chapters => 'Skip duplicate chapters';
+
+  @override
+  String get skip_duplicate_chapters_subtitle =>
+      'Read one copy of each chapter number, from the same scanlator when there is one.';
+
+  @override
   String get default_skip_intro_length =>
       'Duración predeterminada para saltar la introducción';
 
