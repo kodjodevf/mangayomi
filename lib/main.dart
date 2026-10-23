@@ -52,6 +52,7 @@ import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
+import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/security/app_lock_screen.dart';
 import 'package:media_kit/media_kit.dart';
@@ -300,7 +301,7 @@ class _MyAppState extends ConsumerState<MyApp>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(seconds: 5), () {
         if (!mounted) return;
-        unawaited(autoUpdateLibraryIfDue(ref));
+        unawaited(_autoUpdateLibrary());
         unawaited(autoSyncIfDue(ref));
       });
     });
@@ -318,6 +319,15 @@ class _MyAppState extends ConsumerState<MyApp>
             .clearCache(showToast: false);
       }
     });
+  }
+
+  /// The scheduled library refresh, when due; starts the download queue when
+  /// it queued new chapters.
+  Future<void> _autoUpdateLibrary() async {
+    final result = await autoUpdateLibraryIfDue(ref);
+    if (!mounted || (result?.queued ?? 0) == 0) return;
+    ref.invalidate(processDownloadsProvider());
+    ref.read(processDownloadsProvider());
   }
 
   @override
@@ -338,7 +348,7 @@ class _MyAppState extends ConsumerState<MyApp>
       // a session that stays open for days - a desktop one, typically - would
       // never run one. The interval check makes this a no-op the rest of the
       // time.
-      unawaited(autoUpdateLibraryIfDue(ref));
+      unawaited(_autoUpdateLibrary());
       unawaited(autoSyncIfDue(ref));
     }
   }

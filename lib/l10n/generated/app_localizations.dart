@@ -1237,6 +1237,42 @@ abstract class AppLocalizations {
   /// **'Delete download after reading'**
   String get delete_download_after_reading;
 
+  /// No description provided for @auto_download.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto download'**
+  String get auto_download;
+
+  /// No description provided for @download_new_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Download new chapters'**
+  String get download_new_chapters;
+
+  /// No description provided for @download_new_chapters_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'After a library update, queue the new unread chapters of series already in the library.'**
+  String get download_new_chapters_subtitle;
+
+  /// No description provided for @download_new_chapters_included.
+  ///
+  /// In en, this message translates to:
+  /// **'Only these categories'**
+  String get download_new_chapters_included;
+
+  /// No description provided for @download_new_chapters_excluded.
+  ///
+  /// In en, this message translates to:
+  /// **'Except these categories'**
+  String get download_new_chapters_excluded;
+
+  /// No description provided for @download_new_chapters_all_categories.
+  ///
+  /// In en, this message translates to:
+  /// **'All categories'**
+  String get download_new_chapters_all_categories;
+
   /// No description provided for @concurrent_downloads.
   ///
   /// In en, this message translates to:

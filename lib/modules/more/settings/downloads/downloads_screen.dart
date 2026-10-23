@@ -6,6 +6,7 @@ import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/downloads/widgets/auto_download_group.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/local_directory_access.dart';
@@ -81,6 +82,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
               ),
             ],
           ),
+          const AutoDownloadGroup(),
           ShioriSettingsGroup(
             title: l10n.download_queue,
             children: [

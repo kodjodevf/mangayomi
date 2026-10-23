@@ -58,3 +58,16 @@ class LibraryUpdateRules {
     return true;
   }
 }
+
+/// Whether the new chapters a library update finds for [manga] are
+/// downloaded, given the categories [included] (none meaning every one) and
+/// [excluded]. An excluded category wins over an included one.
+bool downloadsNewChaptersOf(
+  Manga manga, {
+  required Iterable<int> included,
+  required Iterable<int> excluded,
+}) {
+  final categories = manga.categories ?? const <int>[];
+  if (categories.any(excluded.contains)) return false;
+  return included.isEmpty || categories.any(included.contains);
+}

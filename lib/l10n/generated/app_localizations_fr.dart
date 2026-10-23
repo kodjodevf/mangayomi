@@ -674,6 +674,25 @@ class AppLocalizationsFr extends AppLocalizations {
   String get delete_download_after_reading => 'Supprimer après la lecture';
 
   @override
+  String get auto_download => 'Téléchargement automatique';
+
+  @override
+  String get download_new_chapters => 'Télécharger les nouveaux chapitres';
+
+  @override
+  String get download_new_chapters_subtitle =>
+      'Après une mise à jour de la bibliothèque, ajoute à la file les nouveaux chapitres non lus des séries déjà présentes.';
+
+  @override
+  String get download_new_chapters_included => 'Seulement ces catégories';
+
+  @override
+  String get download_new_chapters_excluded => 'Sauf ces catégories';
+
+  @override
+  String get download_new_chapters_all_categories => 'Toutes les catégories';
+
+  @override
   String get concurrent_downloads => 'Téléchargements simultanés';
 
   @override

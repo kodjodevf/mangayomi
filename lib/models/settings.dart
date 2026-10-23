@@ -492,6 +492,12 @@ class Settings {
   bool? doublePageSingleFirstPage;
   bool? doublePageAuto;
 
+  bool? downloadNewChapters;
+
+  List<int>? downloadNewChaptersCategories;
+
+  List<int>? downloadNewChaptersExcludedCategories;
+
   bool? libraryUpdateSkipCompleted;
 
   bool? libraryUpdateSkipUnread;
@@ -722,6 +728,9 @@ class Settings {
     this.tvHomeGenreRows,
     this.doublePageSingleFirstPage = false,
     this.doublePageAuto = false,
+    this.downloadNewChapters = false,
+    this.downloadNewChaptersCategories,
+    this.downloadNewChaptersExcludedCategories,
     this.libraryUpdateSkipCompleted = false,
     this.libraryUpdateSkipUnread = false,
     this.libraryUpdateSkipNotStarted = false,
@@ -1088,6 +1097,11 @@ class Settings {
     tvHomeGenreRows = json['tvHomeGenreRows'];
     doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
     doublePageAuto = json['doublePageAuto'];
+    downloadNewChapters = json['downloadNewChapters'];
+    downloadNewChaptersCategories =
+        (json['downloadNewChaptersCategories'] as List?)?.cast<int>();
+    downloadNewChaptersExcludedCategories =
+        (json['downloadNewChaptersExcludedCategories'] as List?)?.cast<int>();
     libraryUpdateSkipCompleted = json['libraryUpdateSkipCompleted'];
     libraryUpdateSkipUnread = json['libraryUpdateSkipUnread'];
     libraryUpdateSkipNotStarted = json['libraryUpdateSkipNotStarted'];
@@ -1340,6 +1354,10 @@ class Settings {
     'tvHomeGenreRows': tvHomeGenreRows,
     'doublePageSingleFirstPage': doublePageSingleFirstPage,
     'doublePageAuto': doublePageAuto,
+    'downloadNewChapters': downloadNewChapters,
+    'downloadNewChaptersCategories': downloadNewChaptersCategories,
+    'downloadNewChaptersExcludedCategories':
+        downloadNewChaptersExcludedCategories,
     'libraryUpdateSkipCompleted': libraryUpdateSkipCompleted,
     'libraryUpdateSkipUnread': libraryUpdateSkipUnread,
     'libraryUpdateSkipNotStarted': libraryUpdateSkipNotStarted,

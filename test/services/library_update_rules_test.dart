@@ -53,4 +53,55 @@ void main() {
     expect(rules.allows(_manga(), [_chapter(read: true), _chapter()]), isTrue);
     expect(rules.allows(_manga(), []), isTrue);
   });
+
+  group('downloadsNewChaptersOf', () {
+    test('every category when none is included', () {
+      expect(
+        downloadsNewChaptersOf(_manga(), included: [], excluded: []),
+        isTrue,
+      );
+      expect(
+        downloadsNewChaptersOf(
+          _manga(categories: [3]),
+          included: [],
+          excluded: [],
+        ),
+        isTrue,
+      );
+    });
+
+    test('only the included categories when some are', () {
+      expect(
+        downloadsNewChaptersOf(
+          _manga(categories: [1]),
+          included: [1],
+          excluded: [],
+        ),
+        isTrue,
+      );
+      expect(
+        downloadsNewChaptersOf(
+          _manga(categories: [2]),
+          included: [1],
+          excluded: [],
+        ),
+        isFalse,
+      );
+      expect(
+        downloadsNewChaptersOf(_manga(), included: [1], excluded: []),
+        isFalse,
+      );
+    });
+
+    test('an excluded category wins over an included one', () {
+      expect(
+        downloadsNewChaptersOf(
+          _manga(categories: [1, 2]),
+          included: [1],
+          excluded: [2],
+        ),
+        isFalse,
+      );
+    });
+  });
 }

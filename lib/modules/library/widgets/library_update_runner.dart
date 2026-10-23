@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/services/update_errors_provider.dart';
@@ -32,7 +33,7 @@ Future<void> updateLibrary({
     second: 30,
     alignY: !context.isTablet ? 0.85 : 1,
   );
-  final failures = await ref
+  final result = await ref
       .read(libraryUpdateProvider.notifier)
       .runUpdate(
         mangaList: mangaList,
@@ -52,7 +53,12 @@ Future<void> updateLibrary({
           );
         },
       );
+  final failures = result.failures;
   final failed = failures.length;
+  if (result.queued > 0) {
+    ref.invalidate(processDownloadsProvider());
+    ref.read(processDownloadsProvider());
+  }
   ref.read(libraryUpdateProvider.notifier).end();
   await Future.delayed(const Duration(seconds: 1));
   BotToast.cleanAll();

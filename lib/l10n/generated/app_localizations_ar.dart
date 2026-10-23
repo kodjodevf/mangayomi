@@ -680,6 +680,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get delete_download_after_reading => 'حذف التحميل بعد القراءة';
 
   @override
+  String get auto_download => 'Auto download';
+
+  @override
+  String get download_new_chapters => 'Download new chapters';
+
+  @override
+  String get download_new_chapters_subtitle =>
+      'After a library update, queue the new unread chapters of series already in the library.';
+
+  @override
+  String get download_new_chapters_included => 'Only these categories';
+
+  @override
+  String get download_new_chapters_excluded => 'Except these categories';
+
+  @override
+  String get download_new_chapters_all_categories => 'All categories';
+
+  @override
   String get concurrent_downloads => 'التحميلات المتزامنة';
 
   @override

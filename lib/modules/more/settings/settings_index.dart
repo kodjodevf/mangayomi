@@ -40,6 +40,12 @@ final settingsIndex = <SettingsEntry>[
     route: '/general',
   ),
   SettingsEntry(
+    title: (l) => l.library_update_restrictions,
+    subtitle: (l) => l.library_update_restrictions_subtitle,
+    section: (l) => l.general,
+    route: '/general',
+  ),
+  SettingsEntry(
     title: (l) => l.auto_library_update_wifi_only,
     subtitle: (l) => l.auto_library_update_wifi_only_subtitle,
     section: (l) => l.general,
@@ -755,6 +761,12 @@ final settingsIndex = <SettingsEntry>[
   SettingsEntry(
     title: (l) => l.delete_download_after_reading,
     subtitle: null,
+    section: (l) => l.downloads,
+    route: '/downloads',
+  ),
+  SettingsEntry(
+    title: (l) => l.download_new_chapters,
+    subtitle: (l) => l.download_new_chapters_subtitle,
     section: (l) => l.downloads,
     route: '/downloads',
   ),
