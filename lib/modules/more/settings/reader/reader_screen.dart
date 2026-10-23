@@ -163,6 +163,9 @@ class ReaderScreen extends ConsumerWidget {
             const ReaderSwitchRow(ReaderSwitch.navigateToPan),
             const ReaderSwitchRow(ReaderSwitch.keepScreenOn),
             const ReaderSwitchRow(ReaderSwitch.markDuplicateChaptersRead),
+            const ReaderSwitchRow(ReaderSwitch.skipReadChapters),
+            const ReaderSwitchRow(ReaderSwitch.skipFilteredChapters),
+            const ReaderSwitchRow(ReaderSwitch.skipDuplicateChapters),
           ],
         ),
         ShioriSettingsGroup(
@@ -171,6 +174,7 @@ class ReaderScreen extends ConsumerWidget {
             const ReaderSwitchRow(ReaderSwitch.webtoonDisableZoomOut),
             const ReaderSwitchRow(ReaderSwitch.webtoonDoubleTapZoom),
             const ReaderSwitchRow(ReaderSwitch.showPageGaps),
+            const ReaderSwitchRow(ReaderSwitch.splitTallImages),
             ShioriSliderRow(
               title: l10n.webtoon_side_padding,
               value: webtoonSidePadding.toDouble(),

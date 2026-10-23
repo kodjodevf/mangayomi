@@ -161,7 +161,8 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
     if (path != null) {
       widget.data.resolvedFilePath = path;
     }
-    if (path != null && widget.cropBorders) {
+    // A slice of a page is decoded on its own, from the file.
+    if (path != null && (widget.cropBorders || widget.data.srcRect != null)) {
       await _loadFromPath(path);
     } else {
       final provider = widget.data.getImageProvider(ref, true);
@@ -175,7 +176,7 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
           if (cachedPath != null) {
             widget.data.resolvedFilePath = cachedPath;
           }
-          if (widget.cropBorders) {
+          if (widget.cropBorders || widget.data.srcRect != null) {
             if (cachedPath != null) {
               await _loadFromPath(cachedPath);
               return;
@@ -227,11 +228,17 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
     if (!mounted) return;
 
     try {
-      final dims = await ffiImageDecoder.getImageDimensionsAsync(
-        path,
-        cropBorders: widget.cropBorders,
-        cancelToken: this,
-      );
+      // A slice is a region of the whole image, so its borders are not
+      // cropped: cropping needs the whole image to find them.
+      final region = widget.data.srcRect;
+      final cropBorders = widget.cropBorders && region == null;
+      final dims = region != null
+          ? [region.width.round(), region.height.round()]
+          : await ffiImageDecoder.getImageDimensionsAsync(
+              path,
+              cropBorders: cropBorders,
+              cancelToken: this,
+            );
 
       if (dims == null || dims.length < 2) {
         // If operation was cancelled by a quick toggle, return quietly without error
@@ -240,6 +247,8 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
 
       final int croppedWidth = dims[0];
       final int croppedHeight = dims[1];
+      final int left = region?.left.round() ?? 0;
+      final int top = region?.top.round() ?? 0;
 
       if (!mounted) return;
 
@@ -271,12 +280,12 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
       final result = await ffiImageDecoder.decodeRegionAsync(
         DecodeParams(
           filePath: path,
-          left: 0,
-          top: 0,
-          right: croppedWidth,
-          bottom: croppedHeight,
+          left: left,
+          top: top,
+          right: left + croppedWidth,
+          bottom: top + croppedHeight,
           sampleSize: sampleSize,
-          cropBorders: widget.cropBorders,
+          cropBorders: cropBorders,
         ),
         cancelToken: this,
       );

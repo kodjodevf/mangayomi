@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 /// Skips building the real cover — a network fetch + decode — while the
 /// nearest Scrollable is flinging fast, showing an empty box of the same
@@ -33,8 +34,24 @@ class _DeferredCoverImageState extends State<DeferredCoverImage> {
     }
   }
 
+  bool _rebuildScheduled = false;
+
   void _onScrollingChanged() {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    // A list laid out again settles its scroll position during layout, and
+    // that can end a scroll: no rebuild can be asked for then, so it waits
+    // for the frame to finish.
+    final binding = SchedulerBinding.instance;
+    if (binding.schedulerPhase == SchedulerPhase.persistentCallbacks) {
+      if (_rebuildScheduled) return;
+      _rebuildScheduled = true;
+      binding.addPostFrameCallback((_) {
+        _rebuildScheduled = false;
+        if (mounted) setState(() {});
+      });
+      return;
+    }
+    setState(() {});
   }
 
   @override

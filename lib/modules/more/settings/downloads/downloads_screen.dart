@@ -6,6 +6,7 @@ import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/downloads/widgets/auto_download_group.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/local_directory_access.dart';
@@ -79,8 +80,31 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                     .read(deleteDownloadAfterReadingStateProvider.notifier)
                     .set(v),
               ),
+              if (deleteDownloadAfterReading) ...[
+                ShioriValueRow<int>(
+                  title: l10n.delete_after_reading_slot,
+                  description: l10n.delete_after_reading_slot_subtitle,
+                  value: ref.watch(deleteAfterReadingSlotStateProvider),
+                  options: [
+                    ShioriChoice(0, l10n.delete_after_reading_last),
+                    for (var n = 1; n <= 4; n++)
+                      ShioriChoice(n, l10n.delete_after_reading_nth(n)),
+                  ],
+                  onChanged: (v) => ref
+                      .read(deleteAfterReadingSlotStateProvider.notifier)
+                      .set(v),
+                ),
+                ShioriSwitchRow(
+                  title: l10n.delete_bookmarked_after_reading,
+                  value: ref.watch(deleteBookmarkedAfterReadingStateProvider),
+                  onChanged: (v) => ref
+                      .read(deleteBookmarkedAfterReadingStateProvider.notifier)
+                      .set(v),
+                ),
+              ],
             ],
           ),
+          const AutoDownloadGroup(),
           ShioriSettingsGroup(
             title: l10n.download_queue,
             children: [

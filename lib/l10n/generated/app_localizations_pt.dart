@@ -673,6 +673,56 @@ class AppLocalizationsPt extends AppLocalizations {
   String get delete_download_after_reading => 'Excluir download após a leitura';
 
   @override
+  String get delete_after_reading_slot => 'Delete which chapter';
+
+  @override
+  String get delete_after_reading_last => 'The chapter just read';
+
+  @override
+  String delete_after_reading_nth(int n) {
+    return '$n chapters back';
+  }
+
+  @override
+  String get delete_after_reading_slot_subtitle =>
+      'Keeping a few read chapters lets you go back to them offline.';
+
+  @override
+  String get delete_bookmarked_after_reading =>
+      'Also delete bookmarked chapters';
+
+  @override
+  String get auto_download => 'Auto download';
+
+  @override
+  String get download_new_chapters => 'Download new chapters';
+
+  @override
+  String get download_new_chapters_subtitle =>
+      'After a library update, queue the new unread chapters of series already in the library.';
+
+  @override
+  String get download_new_chapters_included => 'Only these categories';
+
+  @override
+  String get download_new_chapters_excluded => 'Except these categories';
+
+  @override
+  String get download_new_chapters_all_categories => 'All categories';
+
+  @override
+  String get download_ahead => 'Download ahead while reading';
+
+  @override
+  String get download_ahead_subtitle =>
+      'While reading a downloaded chapter of a series in the library, download the next unread ones.';
+
+  @override
+  String download_ahead_count(int n) {
+    return 'Next $n chapters';
+  }
+
+  @override
   String get concurrent_downloads => 'Downloads simultâneos';
 
   @override
@@ -1613,6 +1663,23 @@ class AppLocalizationsPt extends AppLocalizations {
       'Marcar números de capítulos duplicados como lidos';
 
   @override
+  String get skip_read_chapters => 'Skip read chapters';
+
+  @override
+  String get skip_read_chapters_subtitle =>
+      'Next and previous chapter go past the ones already read.';
+
+  @override
+  String get skip_filtered_chapters => 'Skip filtered chapters';
+
+  @override
+  String get skip_duplicate_chapters => 'Skip duplicate chapters';
+
+  @override
+  String get skip_duplicate_chapters_subtitle =>
+      'Read one copy of each chapter number, from the same scanlator when there is one.';
+
+  @override
   String get default_skip_intro_length =>
       'Duração padrão para pular a introdução';
 
@@ -2242,6 +2309,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get subtitle_delay => 'Atraso (ms)';
 
   @override
+  String get audio_delay => 'Audio delay (ms)';
+
+  @override
+  String get audio_delay_subtitle =>
+      'Plays the sound later (positive) or earlier (negative) than the picture. Kept from one episode to the next.';
+
+  @override
   String get subtitle_speed => 'Velocidade';
 
   @override
@@ -2496,6 +2570,16 @@ class AppLocalizationsPt extends AppLocalizations {
       'Força o player a usar a orientação de paisagem.';
 
   @override
+  String get remember_player_volume => 'Remember volume';
+
+  @override
+  String get remember_player_volume_subtitle =>
+      'Start each episode at the volume the last one ended with.';
+
+  @override
+  String get remember_player_brightness => 'Remember brightness';
+
+  @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
@@ -2533,6 +2617,36 @@ class AppLocalizationsPt extends AppLocalizations {
   String get app_lock => 'Bloqueio do aplicativo';
 
   @override
+  String get app_lock_delay => 'Lock after';
+
+  @override
+  String get app_lock_delay_immediately => 'Leaving the app';
+
+  @override
+  String app_lock_delay_minutes(int n) {
+    return '$n min away';
+  }
+
+  @override
+  String get app_lock_delay_launch_only => 'Only when the app starts';
+
+  @override
+  String get secure_screen => 'Secure screen';
+
+  @override
+  String get secure_screen_subtitle =>
+      'Hide the app from the app switcher, and on Android from screenshots and screen recordings.';
+
+  @override
+  String get secure_screen_never => 'Never';
+
+  @override
+  String get secure_screen_incognito => 'In incognito mode';
+
+  @override
+  String get secure_screen_always => 'Always';
+
+  @override
   String get require_biometric_or_device_credential =>
       'Requer autenticação biométrica ou credenciais do dispositivo para abrir o aplicativo';
 
@@ -2561,6 +2675,21 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get brightness => 'Brilho';
+
+  @override
+  String get video_filters => 'Video filters';
+
+  @override
+  String get video_filter_contrast => 'Contrast';
+
+  @override
+  String get video_filter_saturation => 'Saturation';
+
+  @override
+  String get video_filter_gamma => 'Gamma';
+
+  @override
+  String get video_filter_hue => 'Hue';
 
   @override
   String get volume => 'Volume';
@@ -2845,6 +2974,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get split_wide_pages => 'Dividir páginas duplas';
+
+  @override
+  String get split_tall_images => 'Split tall images';
+
+  @override
+  String get split_tall_images_subtitle =>
+      'Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.';
 
   @override
   String get dual_page_invert => 'Inverter metades de páginas cortadas';
@@ -3490,6 +3626,25 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get auto_library_update_wifi_only_subtitle =>
       'Ignorar a atualização agendada quando estiver em dados móveis.';
+
+  @override
+  String get library_update_restrictions => 'Skip when updating';
+
+  @override
+  String get library_update_skip_completed => 'Completed series';
+
+  @override
+  String get library_update_skip_unread => 'Series with unread chapters';
+
+  @override
+  String get library_update_skip_not_started => 'Series not started';
+
+  @override
+  String get library_update_restrictions_subtitle =>
+      'Applies to every library update. Categories set to skip updates are also left out when the whole library is updated.';
+
+  @override
+  String get library_update_restrictions_none => 'None';
 
   @override
   String get padding => 'Espaçamento';

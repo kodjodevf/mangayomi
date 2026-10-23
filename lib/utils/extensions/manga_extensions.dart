@@ -70,6 +70,23 @@ extension MangaExtensions on Manga {
         .length;
   }
 
+  /// Every chapter, by chapter number.
+  List<Chapter> _chaptersByNumber() {
+    final data = chapters.toList();
+    final sortKeys = _chapterSortKeys(name ?? '', data);
+    // List.sort isn't stable, so chapters tying at the same key (notably
+    // every unrecognized-number chapter, which falls back to 0) would
+    // otherwise shuffle unpredictably between rebuilds. Break ties by
+    // original position to keep them in a consistent, deterministic order.
+    final originalIndex = {for (var i = 0; i < data.length; i++) data[i].id: i};
+    data.sort((a, b) {
+      final cmp = (sortKeys[a.id] ?? 0).compareTo(sortKeys[b.id] ?? 0);
+      if (cmp != 0) return cmp;
+      return (originalIndex[a.id] ?? 0).compareTo(originalIndex[b.id] ?? 0);
+    });
+    return data;
+  }
+
   /// Filtered chapters respecting the user's active filters (unread,
   /// bookmarked, downloaded, scanlator). Sorted by chapter number ascending.
   /// Base list — no user-chosen sort, no deduplication.
@@ -101,18 +118,7 @@ extension MangaExtensions on Manga {
     final filter = scanlators.where((e) => e.mangaId == id);
     final filterScanlator = filter.firstOrNull?.scanlators ?? [];
 
-    final data = chapters.toList();
-    final sortKeys = _chapterSortKeys(name ?? '', data);
-    // List.sort isn't stable, so chapters tying at the same key (notably
-    // every unrecognized-number chapter, which falls back to 0) would
-    // otherwise shuffle unpredictably between rebuilds. Break ties by
-    // original position to keep them in a consistent, deterministic order.
-    final originalIndex = {for (var i = 0; i < data.length; i++) data[i].id: i};
-    data.sort((a, b) {
-      final cmp = (sortKeys[a.id] ?? 0).compareTo(sortKeys[b.id] ?? 0);
-      if (cmp != 0) return cmp;
-      return (originalIndex[a.id] ?? 0).compareTo(originalIndex[b.id] ?? 0);
-    });
+    final data = _chaptersByNumber();
 
     final chapterIds = data.map((c) => c.id).whereType<int>().toList();
     final downloadedIds = (filterDownloaded == 0 || chapterIds.isEmpty)
@@ -205,14 +211,50 @@ extension MangaExtensions on Manga {
   /// number (key is null — e.g. "Special") are never collapsed: there is no
   /// reliable way to tell them apart, so treating them all as duplicates
   /// would silently drop real chapters instead of just scanlator copies.
-  List<Chapter> getChapterListForReading() {
-    final list = getFilteredChapters();
+  ///
+  /// The reader's skip settings decide what goes: filtered chapters, other
+  /// copies of a chapter, and, with [current] given (the chapter being read,
+  /// which always stays), read chapters. Among copies of a chapter, the one
+  /// from [current]'s scanlator is kept.
+  List<Chapter> getChapterListForReading({Chapter? current}) {
+    final settings = settingsRepository.current;
+    var list = (settings.skipFilteredChapters ?? true)
+        ? getFilteredChapters(settings)
+        : _chaptersByNumber();
+    if (current != null && (settings.skipReadChapters ?? false)) {
+      list = [
+        for (final c in list)
+          if (c.isRead != true || c.id == current.id) c,
+      ];
+    }
+    if (!(settings.skipDuplicateChapters ?? true)) return list;
     final sortKeys = _chapterSortKeys(name ?? '', list);
-    final seen = <double>{};
-    return list.where((c) {
+    // The copy kept for each chapter number: the first one, unless another
+    // is [current] or from its scanlator.
+    final kept = <double, Chapter>{};
+    int rank(Chapter c) => c.id == current?.id
+        ? 2
+        : current != null && c.scanlator == current.scanlator
+        ? 1
+        : 0;
+    for (final c in list) {
       final key = sortKeys[c.id];
-      return key == null || seen.add(key);
-    }).toList();
+      if (key == null) continue;
+      final previous = kept[key];
+      if (previous == null || rank(c) > rank(previous)) kept[key] = c;
+    }
+    // Each number at the place of its first copy.
+    final seen = <double>{};
+    final result = <Chapter>[];
+    for (final c in list) {
+      final key = sortKeys[c.id];
+      if (key == null) {
+        result.add(c);
+      } else if (seen.add(key)) {
+        result.add(kept[key]!);
+      }
+    }
+    return result;
   }
 
   /// Number of currently-filtered chapters whose name has no detectable

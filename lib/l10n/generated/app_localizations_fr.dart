@@ -674,6 +674,56 @@ class AppLocalizationsFr extends AppLocalizations {
   String get delete_download_after_reading => 'Supprimer après la lecture';
 
   @override
+  String get delete_after_reading_slot => 'Chapitre à supprimer';
+
+  @override
+  String get delete_after_reading_last => 'Le chapitre qui vient d\'être lu';
+
+  @override
+  String delete_after_reading_nth(int n) {
+    return '$n chapitres en arrière';
+  }
+
+  @override
+  String get delete_after_reading_slot_subtitle =>
+      'Garder quelques chapitres lus permet d\'y revenir hors ligne.';
+
+  @override
+  String get delete_bookmarked_after_reading =>
+      'Supprimer aussi les chapitres marqués';
+
+  @override
+  String get auto_download => 'Téléchargement automatique';
+
+  @override
+  String get download_new_chapters => 'Télécharger les nouveaux chapitres';
+
+  @override
+  String get download_new_chapters_subtitle =>
+      'Après une mise à jour de la bibliothèque, ajoute à la file les nouveaux chapitres non lus des séries déjà présentes.';
+
+  @override
+  String get download_new_chapters_included => 'Seulement ces catégories';
+
+  @override
+  String get download_new_chapters_excluded => 'Sauf ces catégories';
+
+  @override
+  String get download_new_chapters_all_categories => 'Toutes les catégories';
+
+  @override
+  String get download_ahead => 'Télécharger en avance pendant la lecture';
+
+  @override
+  String get download_ahead_subtitle =>
+      'Pendant la lecture d\'un chapitre téléchargé d\'une série de la bibliothèque, télécharge les suivants non lus.';
+
+  @override
+  String download_ahead_count(int n) {
+    return '$n chapitres suivants';
+  }
+
+  @override
   String get concurrent_downloads => 'Téléchargements simultanés';
 
   @override
@@ -1619,6 +1669,23 @@ class AppLocalizationsFr extends AppLocalizations {
       'Marquer les numéros de chapitres en double comme lus';
 
   @override
+  String get skip_read_chapters => 'Passer les chapitres lus';
+
+  @override
+  String get skip_read_chapters_subtitle =>
+      'Les chapitres suivant et précédent passent ceux déjà lus.';
+
+  @override
+  String get skip_filtered_chapters => 'Passer les chapitres filtrés';
+
+  @override
+  String get skip_duplicate_chapters => 'Passer les chapitres en double';
+
+  @override
+  String get skip_duplicate_chapters_subtitle =>
+      'Lire une seule copie de chaque numéro de chapitre, du même scanlateur quand il y en a une.';
+
+  @override
   String get default_skip_intro_length =>
       'Longueur par défaut du passage de l\'intro';
 
@@ -2249,6 +2316,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get subtitle_delay => 'Délai (ms)';
 
   @override
+  String get audio_delay => 'Décalage audio (ms)';
+
+  @override
+  String get audio_delay_subtitle =>
+      'Joue le son plus tard (positif) ou plus tôt (négatif) que l\'image. Conservé d\'un épisode à l\'autre.';
+
+  @override
   String get subtitle_speed => 'Vitesse';
 
   @override
@@ -2505,6 +2579,16 @@ class AppLocalizationsFr extends AppLocalizations {
       'Forcer le lecteur à utiliser l\'orientation paysage.';
 
   @override
+  String get remember_player_volume => 'Retenir le volume';
+
+  @override
+  String get remember_player_volume_subtitle =>
+      'Commence chaque épisode au volume de fin du précédent.';
+
+  @override
+  String get remember_player_brightness => 'Retenir la luminosité';
+
+  @override
   String get dns_over_https => 'DNS-sur-HTTPS (DoH)';
 
   @override
@@ -2543,6 +2627,36 @@ class AppLocalizationsFr extends AppLocalizations {
   String get app_lock => 'Verrouillage de l\'application';
 
   @override
+  String get app_lock_delay => 'Verrouiller après';
+
+  @override
+  String get app_lock_delay_immediately => 'Avoir quitté l\'app';
+
+  @override
+  String app_lock_delay_minutes(int n) {
+    return '$n min d\'absence';
+  }
+
+  @override
+  String get app_lock_delay_launch_only => 'Seulement au démarrage de l\'app';
+
+  @override
+  String get secure_screen => 'Écran sécurisé';
+
+  @override
+  String get secure_screen_subtitle =>
+      'Masque l\'app dans le sélecteur d\'apps et, sur Android, des captures et enregistrements d\'écran.';
+
+  @override
+  String get secure_screen_never => 'Jamais';
+
+  @override
+  String get secure_screen_incognito => 'En navigation privée';
+
+  @override
+  String get secure_screen_always => 'Toujours';
+
+  @override
   String get require_biometric_or_device_credential =>
       'Exiger l\'authentification biométrique ou les identifiants de l\'appareil pour ouvrir l\'application';
 
@@ -2571,6 +2685,21 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get brightness => 'Luminosité';
+
+  @override
+  String get video_filters => 'Filtres vidéo';
+
+  @override
+  String get video_filter_contrast => 'Contraste';
+
+  @override
+  String get video_filter_saturation => 'Saturation';
+
+  @override
+  String get video_filter_gamma => 'Gamma';
+
+  @override
+  String get video_filter_hue => 'Teinte';
 
   @override
   String get volume => 'Volume';
@@ -2854,6 +2983,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get split_wide_pages => 'Découper les pages doubles';
+
+  @override
+  String get split_tall_images => 'Découper les images hautes';
+
+  @override
+  String get split_tall_images_subtitle =>
+      'Webtoon : affiche les images très hautes en tranches, décodées une à une, pour utiliser moins de mémoire. Pas avec le recadrage des bords.';
 
   @override
   String get dual_page_invert => 'Inverser les demi-pages découpées';
@@ -3508,6 +3644,25 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get auto_library_update_wifi_only_subtitle =>
       'Ignorer la mise à jour planifiée lors de l\'utilisation des données mobiles.';
+
+  @override
+  String get library_update_restrictions => 'Ignorer lors des mises à jour';
+
+  @override
+  String get library_update_skip_completed => 'Séries terminées';
+
+  @override
+  String get library_update_skip_unread => 'Séries avec des chapitres non lus';
+
+  @override
+  String get library_update_skip_not_started => 'Séries non commencées';
+
+  @override
+  String get library_update_restrictions_subtitle =>
+      'S\'applique à chaque mise à jour. Les catégories réglées pour ignorer les mises à jour sont aussi exclues quand toute la bibliothèque est mise à jour.';
+
+  @override
+  String get library_update_restrictions_none => 'Aucune';
 
   @override
   String get padding => 'Espacement';

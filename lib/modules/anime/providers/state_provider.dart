@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/anime/utils/video_filters.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'state_provider.g.dart';
@@ -145,3 +146,24 @@ final overrideAssSubtitlesStateProvider = Provider<bool>((ref) {
     ),
   );
 });
+
+/// The player's picture adjustments, kept from one episode to the next.
+@riverpod
+class VideoFiltersState extends _$VideoFiltersState {
+  @override
+  Map<VideoFilter, int> build() =>
+      videoFiltersFrom(settingsRepository.current.playerVideoFilters);
+
+  void set(VideoFilter filter, int value) => _save({...state, filter: value});
+
+  void reset() => _save({for (final filter in VideoFilter.values) filter: 0});
+
+  void _save(Map<VideoFilter, int> filters) {
+    state = filters;
+    settingsRepository.update(
+      (s) => s.playerVideoFilters = [
+        for (final filter in VideoFilter.values) filters[filter] ?? 0,
+      ],
+    );
+  }
+}

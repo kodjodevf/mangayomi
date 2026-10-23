@@ -10,6 +10,7 @@ import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_
 import 'package:mangayomi/modules/manga/reader/mixins/reader_memory_management.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
+import 'package:mangayomi/services/reader/tall_image_slices.dart';
 import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/services/downloaded_chapter.dart';
@@ -286,5 +287,34 @@ mixin ReaderPrefetchMixin<T extends ConsumerStatefulWidget>
     setState(() {
       preloadManager.splitPage(index, page1, page2);
     });
+  }
+
+  /// Replaces a very tall page, read top to bottom, with slices of it: see
+  /// [tallImageSlices].
+  void splitTallPage(int index, double width, double height) {
+    if (index < 0 || index >= pages.length) return;
+    final page = pages[index];
+    if (page.srcRect != null || page.isTransitionPage) return;
+    final slices = tallImageSlices(width, height);
+    if (slices.isEmpty) return;
+    final parts = [
+      for (final slice in slices)
+        UChapDataPreload(
+            page.chapter,
+            page.directory,
+            page.pageUrl,
+            page.isLocale,
+            page.archiveImage,
+            page.index,
+            page.chapterUrlModel,
+            page.pageIndex,
+            srcRect: slice,
+            localImagePath: page.localImagePath,
+          )
+          ..resolvedFilePath = page.resolvedFilePath
+          ..loadedWidth = slice.width
+          ..loadedHeight = slice.height,
+    ];
+    setState(() => preloadManager.replacePage(index, parts));
   }
 }

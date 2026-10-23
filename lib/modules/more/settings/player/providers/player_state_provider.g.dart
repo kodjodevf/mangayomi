@@ -647,3 +647,110 @@ abstract class _$ForceLandscapePlayerState extends $Notifier<bool> {
     return element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(RememberPlayerVolumeState)
+final rememberPlayerVolumeStateProvider = RememberPlayerVolumeStateProvider._();
+
+final class RememberPlayerVolumeStateProvider
+    extends $NotifierProvider<RememberPlayerVolumeState, bool> {
+  RememberPlayerVolumeStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'rememberPlayerVolumeStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$rememberPlayerVolumeStateHash();
+
+  @$internal
+  @override
+  RememberPlayerVolumeState create() => RememberPlayerVolumeState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$rememberPlayerVolumeStateHash() =>
+    r'fe1df6d68850577abff8fcb6958c6783595c4669';
+
+abstract class _$RememberPlayerVolumeState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(RememberPlayerBrightnessState)
+final rememberPlayerBrightnessStateProvider =
+    RememberPlayerBrightnessStateProvider._();
+
+final class RememberPlayerBrightnessStateProvider
+    extends $NotifierProvider<RememberPlayerBrightnessState, bool> {
+  RememberPlayerBrightnessStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'rememberPlayerBrightnessStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$rememberPlayerBrightnessStateHash();
+
+  @$internal
+  @override
+  RememberPlayerBrightnessState create() => RememberPlayerBrightnessState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$rememberPlayerBrightnessStateHash() =>
+    r'15afe918ff681f63e174194cc1d7ed17a120f74b';
+
+abstract class _$RememberPlayerBrightnessState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

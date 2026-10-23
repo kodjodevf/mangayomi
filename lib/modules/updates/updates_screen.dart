@@ -132,6 +132,7 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
         context: context,
         mangaList: mangaList,
         itemType: itemType,
+        wholeLibrary: true,
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);

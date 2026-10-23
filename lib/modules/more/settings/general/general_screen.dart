@@ -111,6 +111,7 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                       .read(autoLibraryUpdateWifiOnlyStateProvider.notifier)
                       .set(v),
                 ),
+              _UpdateRestrictionsRow(),
             ],
           ),
           ShioriSettingsGroup(
@@ -379,5 +380,63 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
       maxLines: 3,
     );
     if (ua != null) ref.read(userAgentStateProvider.notifier).set(ua);
+  }
+}
+
+enum _UpdateRestriction { completed, unread, notStarted }
+
+/// The entries every library update leaves alone, picked in one sheet.
+class _UpdateRestrictionsRow extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final values = {
+      _UpdateRestriction.completed: ref.watch(
+        libraryUpdateSkipCompletedStateProvider,
+      ),
+      _UpdateRestriction.unread: ref.watch(
+        libraryUpdateSkipUnreadStateProvider,
+      ),
+      _UpdateRestriction.notStarted: ref.watch(
+        libraryUpdateSkipNotStartedStateProvider,
+      ),
+    };
+    String label(_UpdateRestriction r) => switch (r) {
+      _UpdateRestriction.completed => l10n.library_update_skip_completed,
+      _UpdateRestriction.unread => l10n.library_update_skip_unread,
+      _UpdateRestriction.notStarted => l10n.library_update_skip_not_started,
+    };
+    final selected = {
+      for (final MapEntry(:key, :value) in values.entries)
+        if (value) key,
+    };
+    return ShioriSettingRow(
+      title: l10n.library_update_restrictions,
+      subtitle: selected.isEmpty
+          ? l10n.library_update_restrictions_none
+          : selected.map(label).join(', '),
+      onTap: () async {
+        final picked = await showShioriMultiChoice<_UpdateRestriction>(
+          context,
+          title: l10n.library_update_restrictions,
+          message: l10n.library_update_restrictions_subtitle,
+          selected: selected,
+          options: [
+            for (final r in _UpdateRestriction.values)
+              ShioriChoice(r, label(r)),
+          ],
+        );
+        if (picked == null) return;
+        ref
+            .read(libraryUpdateSkipCompletedStateProvider.notifier)
+            .set(picked.contains(_UpdateRestriction.completed));
+        ref
+            .read(libraryUpdateSkipUnreadStateProvider.notifier)
+            .set(picked.contains(_UpdateRestriction.unread));
+        ref
+            .read(libraryUpdateSkipNotStartedStateProvider.notifier)
+            .set(picked.contains(_UpdateRestriction.notStarted));
+      },
+    );
   }
 }

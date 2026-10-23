@@ -837,3 +837,55 @@ class ChapterSwipeEndActionState extends _$ChapterSwipeEndActionState {
     settingsRepository.update((s) => s.chapterSwipeEndAction = value.index);
   }
 }
+
+@riverpod
+class SkipReadChaptersState extends _$SkipReadChaptersState {
+  @override
+  bool build() {
+    return settingsRepository.current.skipReadChapters ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.skipReadChapters = value);
+  }
+}
+
+@riverpod
+class SkipFilteredChaptersState extends _$SkipFilteredChaptersState {
+  @override
+  bool build() {
+    return settingsRepository.current.skipFilteredChapters ?? true;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.skipFilteredChapters = value);
+  }
+}
+
+@riverpod
+class SkipDuplicateChaptersState extends _$SkipDuplicateChaptersState {
+  @override
+  bool build() {
+    return settingsRepository.current.skipDuplicateChapters ?? true;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.skipDuplicateChapters = value);
+  }
+}
+
+@riverpod
+class SplitTallImagesState extends _$SplitTallImagesState {
+  @override
+  bool build() {
+    return settingsRepository.current.splitTallImages ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.splitTallImages = value);
+  }
+}

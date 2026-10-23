@@ -13,6 +13,7 @@ import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.da
 import 'package:mangayomi/modules/anime/widgets/mobile_primary_button_bar.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:mangayomi/services/screen_brightness.dart';
@@ -217,6 +218,7 @@ class _MobileControllerWidgetState
     _timer?.cancel();
     _volumeTimer?.cancel();
     _brightnessTimer?.cancel();
+    _rememberVolumeAndBrightness();
     _volumeValue.dispose();
     _volumeIndicator.dispose();
     _brightnessValue.dispose();
@@ -355,6 +357,12 @@ class _MobileControllerWidgetState
     Future.microtask(() async {
       try {
         _volumeController.showSystemUI = false;
+        final remembered = ref.read(rememberPlayerVolumeStateProvider)
+            ? settingsRepository.current.playerVolume
+            : null;
+        if (remembered != null) {
+          _volumeController.setVolume(remembered.clamp(0.0, 1.0));
+        }
         _volumeValue.value = await _volumeController.getVolume();
         _volumeController.addListener((value) {
           if (mounted && !_volumeInterceptEventStream) {
@@ -365,8 +373,32 @@ class _MobileControllerWidgetState
     });
 
     Future.microtask(() async {
+      final remembered = ref.read(rememberPlayerBrightnessStateProvider)
+          ? settingsRepository.current.playerBrightness
+          : null;
+      if (remembered != null) {
+        _brightnessChanged = true;
+        await ScreenBrightness.set(remembered.clamp(0.0, 1.0));
+      }
       final current = await ScreenBrightness.current();
       if (mounted && current != null) _brightnessValue.value = current;
+    });
+  }
+
+  /// Keeps the volume and brightness the episode ended with, for the next
+  /// one, when asked to.
+  void _rememberVolumeAndBrightness() {
+    final volume = ref.read(rememberPlayerVolumeStateProvider)
+        ? _volumeValue.value
+        : null;
+    final brightness =
+        _brightnessChanged && ref.read(rememberPlayerBrightnessStateProvider)
+        ? _brightnessValue.value
+        : null;
+    if (volume == null && brightness == null) return;
+    settingsRepository.update((s) {
+      if (volume != null) s.playerVolume = volume;
+      if (brightness != null) s.playerBrightness = brightness;
     });
   }
 

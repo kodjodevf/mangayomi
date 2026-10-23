@@ -56,3 +56,16 @@ class VolumeBoostCapState extends _$VolumeBoostCapState {
     settingsRepository.update((s) => s.volumeBoostCap = value);
   }
 }
+
+@riverpod
+class AudioDelayState extends _$AudioDelayState {
+  @override
+  int build() {
+    return settingsRepository.current.audioDelayMs ?? 0;
+  }
+
+  void set(int value) {
+    state = value;
+    settingsRepository.update((s) => s.audioDelayMs = value);
+  }
+}
