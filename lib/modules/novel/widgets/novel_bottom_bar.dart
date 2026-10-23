@@ -7,7 +7,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/router/push_router.dart';
 import 'package:mangayomi/modules/reader_common/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/reader_common/widgets/reader_app_bar.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
 import 'package:mangayomi/modules/novel/utils/novel_paginator.dart';
 import 'package:mangayomi/modules/novel/utils/reading_time.dart';

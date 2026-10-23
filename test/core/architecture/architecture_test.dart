@@ -256,13 +256,14 @@ void main() {
           'package:mangayomi/modules/manga/',
           'package:mangayomi/modules/novel/',
           'package:mangayomi/modules/anime/',
+          'package:mangayomi/modules/more/',
         ],
       );
       expect(
         violations,
         isEmpty,
         reason:
-            'lib/modules/reader_common/ is shared by the manga, novel and anime readers and must not depend on any of them:\n'
+            'lib/modules/reader_common/ is shared by the manga, novel and anime readers and must not depend on any of them, nor on the settings screens:\n'
             '${violations.join('\n')}',
       );
     });

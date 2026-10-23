@@ -11,7 +11,7 @@ import 'package:mangayomi/modules/reader_common/widgets/btn_chapter_list_dialog.
 import 'package:mangayomi/modules/manga/reader/widgets/custom_value_indicator_shape.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_mode_glyph.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_mode_picker.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:shiori/shiori.dart';

@@ -6,7 +6,7 @@ import 'package:mangayomi/modules/manga/reader/widgets/double_page_view.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/transition_view_vertical.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/manga/reader/utils/reader_page_index_math.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';

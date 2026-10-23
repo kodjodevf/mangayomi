@@ -83,7 +83,7 @@ flowchart TD
 - **Contract:**
   - Feature modules may import `lib/models/`, `lib/repositories/`, `lib/services/`, `lib/providers/`, and `lib/utils/`.
   - **Cross-Feature Isolation:** Sibling media features (`manga`, `anime`, `novel`) must not import each other's internal widgets or controllers.
-  - **Shared Reader Infrastructure (`lib/modules/reader_common/`):** Shared reading logic (chapter navigation, reader app bars, gestures, orientation, auto-scroll) resides in `reader_common/`, which must never import a concrete reader implementation.
+  - **Shared Reader Infrastructure (`lib/modules/reader_common/`):** Shared reading logic (chapter navigation, reader app bars, gestures, orientation, auto-scroll) resides in `reader_common/`, along with the reader and player key bindings, and must never import a concrete reader implementation or the settings screens in `lib/modules/more/`. Settings providers the readers read (e.g. `reader_state_provider.dart`) live in `lib/providers/`.
   - **Shared Widgets (`lib/modules/widgets/`):** Generic, feature-agnostic UI components reside in `lib/modules/widgets/` and must never import feature modules.
   - **Memory Management in Readers:** Readers must coordinate with `DecodedImageBudget` to bound decoded image textures, releasing pixels on `dispose()` and responding to system `didHaveMemoryPressure()` callbacks.
 
@@ -139,7 +139,7 @@ This test suite statically inspects all `.dart` files under `lib/` and fails imm
 2. Any file in `lib/services/`, `lib/models/`, `lib/eval/`, or `lib/utils/` imports `lib/modules/` or `lib/main.dart`.
 3. Any file in `lib/repositories/` or `lib/services/` declares a dependency on `WidgetRef`.
 4. Any file in `lib/modules/widgets/` imports feature-specific modules (`lib/modules/manga`, `anime`, `novel`, etc.).
-5. Any file in `lib/modules/reader_common/` imports a concrete reader implementation.
+5. Any file in `lib/modules/reader_common/` imports a concrete reader implementation or `lib/modules/more/`.
 6. Sibling media modules (`manga`, `anime`, `novel`) import each other directly.
 7. Direct Isar database access (`db.dart`) is imported outside `lib/repositories/` and bootstrap.
 8. Any module file in `lib/modules/` exceeds the 1,400-line ceiling.

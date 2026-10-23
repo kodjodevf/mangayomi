@@ -6,7 +6,7 @@ import 'package:mangayomi/modules/manga/reader/mixins/reader_double_page_mixin.d
 import 'package:mangayomi/modules/manga/reader/mixins/reader_memory_management.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_zoom_control.dart';
 import 'package:mangayomi/modules/manga/reader/services/page_navigation_service.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/services/volume_keys.dart';
 
 /// Handles hardware volume keys, desktop wheel navigation, e-ink page-turn

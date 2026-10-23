@@ -1,30 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
-import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
+import 'package:mangayomi/modules/reader_common/key_bindings.dart';
 import 'package:mangayomi/modules/widgets/keyboard_shortcuts_dialog.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-
-/// What a video player shortcut does.
-enum PlayerShortcut {
-  playPause,
-  seekBackShort,
-  seekForwardShort,
-  seekBackLong,
-  seekForwardLong,
-  skipIntro,
-  previousFrame,
-  nextFrame,
-  volumeUp,
-  volumeDown,
-  mute,
-  previousEpisode,
-  nextEpisode,
-  fullScreen,
-  exitFullScreen,
-  shaders,
-  shadersOff,
-  showShortcuts,
-}
 
 /// The seconds the arrow keys seek; J and L seek [playerLongSeekSeconds].
 const playerShortSeekSeconds = 5;

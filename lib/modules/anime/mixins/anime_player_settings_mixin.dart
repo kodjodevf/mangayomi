@@ -16,7 +16,7 @@ import 'package:mangayomi/modules/anime/widgets/audio_section_widget.dart';
 import 'package:mangayomi/modules/anime/widgets/player_settings_sections.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_section_widget.dart';
 import 'package:mangayomi/modules/anime/widgets/unified_settings_sheet.dart';
-import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
+import 'package:mangayomi/modules/reader_common/key_bindings.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/platform_utils.dart';

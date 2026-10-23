@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/anime/utils/player_shortcuts.dart';
 import 'package:mangayomi/modules/reader_common/mixins/reader_gestures.dart';
-import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
+import 'package:mangayomi/modules/reader_common/key_bindings.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/widgets/keyboard_shortcuts_dialog.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
