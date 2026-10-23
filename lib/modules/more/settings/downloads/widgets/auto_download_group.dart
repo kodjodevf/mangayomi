@@ -8,7 +8,7 @@ import 'package:mangayomi/repositories/category_repository.dart';
 import 'package:shiori/shiori.dart';
 
 /// Downloads that start on their own: the new chapters a library update
-/// finds.
+/// finds, and the chapters after the one being read.
 class AutoDownloadGroup extends ConsumerWidget {
   const AutoDownloadGroup({super.key});
 
@@ -20,6 +20,7 @@ class AutoDownloadGroup extends ConsumerWidget {
     final excluded = ref.watch(
       downloadNewChaptersExcludedCategoriesStateProvider,
     );
+    final ahead = ref.watch(downloadAheadWhileReadingStateProvider);
     final categories = categoryRepository.getAll()
       ..sort((a, b) {
         final byType = a.forItemType.index.compareTo(b.forItemType.index);
@@ -57,10 +58,24 @@ class AutoDownloadGroup extends ConsumerWidget {
                 .set(ids),
           ),
         ],
+        ShioriValueRow<int>(
+          title: l10n.download_ahead,
+          description: ahead == 0 ? l10n.download_ahead_subtitle : null,
+          value: ahead,
+          options: [
+            for (final n in downloadAheadCounts)
+              ShioriChoice(n, n == 0 ? l10n.off : l10n.download_ahead_count(n)),
+          ],
+          onChanged: (v) =>
+              ref.read(downloadAheadWhileReadingStateProvider.notifier).set(v),
+        ),
       ],
     );
   }
 }
+
+/// The chapters Download ahead can be set to; 0 is off.
+const downloadAheadCounts = [0, 2, 3, 5, 10];
 
 /// A set of categories picked in a sheet, every media type together.
 class _CategoriesRow extends StatelessWidget {

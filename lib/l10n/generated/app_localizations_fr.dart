@@ -693,6 +693,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get download_new_chapters_all_categories => 'Toutes les catégories';
 
   @override
+  String get download_ahead => 'Télécharger en avance pendant la lecture';
+
+  @override
+  String get download_ahead_subtitle =>
+      'Pendant la lecture d\'un chapitre téléchargé d\'une série de la bibliothèque, télécharge les suivants non lus.';
+
+  @override
+  String download_ahead_count(int n) {
+    return '$n chapitres suivants';
+  }
+
+  @override
   String get concurrent_downloads => 'Téléchargements simultanés';
 
   @override

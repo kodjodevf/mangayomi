@@ -771,6 +771,12 @@ final settingsIndex = <SettingsEntry>[
     route: '/downloads',
   ),
   SettingsEntry(
+    title: (l) => l.download_ahead,
+    subtitle: (l) => l.download_ahead_subtitle,
+    section: (l) => l.downloads,
+    route: '/downloads',
+  ),
+  SettingsEntry(
     title: (l) => l.allow_concurrent_downloads,
     subtitle: (l) => l.allow_concurrent_downloads_subtitle,
     section: (l) => l.downloads,

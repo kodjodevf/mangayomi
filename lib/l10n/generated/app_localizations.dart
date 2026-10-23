@@ -1273,6 +1273,24 @@ abstract class AppLocalizations {
   /// **'All categories'**
   String get download_new_chapters_all_categories;
 
+  /// No description provided for @download_ahead.
+  ///
+  /// In en, this message translates to:
+  /// **'Download ahead while reading'**
+  String get download_ahead;
+
+  /// No description provided for @download_ahead_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'While reading a downloaded chapter of a series in the library, download the next unread ones.'**
+  String get download_ahead_subtitle;
+
+  /// No description provided for @download_ahead_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Next {n} chapters'**
+  String download_ahead_count(int n);
+
   /// No description provided for @concurrent_downloads.
   ///
   /// In en, this message translates to:

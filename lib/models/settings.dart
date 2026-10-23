@@ -492,6 +492,8 @@ class Settings {
   bool? doublePageSingleFirstPage;
   bool? doublePageAuto;
 
+  int? downloadAheadWhileReading;
+
   bool? downloadNewChapters;
 
   List<int>? downloadNewChaptersCategories;
@@ -728,6 +730,7 @@ class Settings {
     this.tvHomeGenreRows,
     this.doublePageSingleFirstPage = false,
     this.doublePageAuto = false,
+    this.downloadAheadWhileReading = 0,
     this.downloadNewChapters = false,
     this.downloadNewChaptersCategories,
     this.downloadNewChaptersExcludedCategories,
@@ -1097,6 +1100,7 @@ class Settings {
     tvHomeGenreRows = json['tvHomeGenreRows'];
     doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
     doublePageAuto = json['doublePageAuto'];
+    downloadAheadWhileReading = json['downloadAheadWhileReading'];
     downloadNewChapters = json['downloadNewChapters'];
     downloadNewChaptersCategories =
         (json['downloadNewChaptersCategories'] as List?)?.cast<int>();
@@ -1354,6 +1358,7 @@ class Settings {
     'tvHomeGenreRows': tvHomeGenreRows,
     'doublePageSingleFirstPage': doublePageSingleFirstPage,
     'doublePageAuto': doublePageAuto,
+    'downloadAheadWhileReading': downloadAheadWhileReading,
     'downloadNewChapters': downloadNewChapters,
     'downloadNewChaptersCategories': downloadNewChaptersCategories,
     'downloadNewChaptersExcludedCategories':

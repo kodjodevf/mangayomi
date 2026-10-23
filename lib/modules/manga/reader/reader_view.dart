@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:mangayomi/modules/reader_common/key_bindings.dart';
+import 'package:mangayomi/modules/manga/reader/utils/download_ahead.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart'
@@ -476,6 +477,7 @@ class _MangaChapterPageGalleryState
       applyReaderScreenBrightness(
         ref.read(readerScreenBrightnessStateProvider),
       );
+      downloadAhead(ref, chapter);
     });
 
     final saved = _savedPageIndex;

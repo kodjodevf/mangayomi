@@ -688,6 +688,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get download_new_chapters_all_categories => 'All categories';
 
   @override
+  String get download_ahead => 'Download ahead while reading';
+
+  @override
+  String get download_ahead_subtitle =>
+      'While reading a downloaded chapter of a series in the library, download the next unread ones.';
+
+  @override
+  String download_ahead_count(int n) {
+    return 'Next $n chapters';
+  }
+
+  @override
   String get concurrent_downloads => 'Concurrent downloads';
 
   @override

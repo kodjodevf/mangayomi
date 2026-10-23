@@ -165,3 +165,16 @@ class DownloadNewChaptersExcludedCategoriesState
     );
   }
 }
+
+@riverpod
+class DownloadAheadWhileReadingState extends _$DownloadAheadWhileReadingState {
+  @override
+  int build() {
+    return settingsRepository.current.downloadAheadWhileReading ?? 0;
+  }
+
+  void set(int value) {
+    state = value;
+    settingsRepository.update((s) => s.downloadAheadWhileReading = value);
+  }
+}

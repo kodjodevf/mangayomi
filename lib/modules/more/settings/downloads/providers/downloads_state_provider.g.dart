@@ -605,3 +605,57 @@ abstract class _$DownloadNewChaptersExcludedCategoriesState
     return element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(DownloadAheadWhileReadingState)
+final downloadAheadWhileReadingStateProvider =
+    DownloadAheadWhileReadingStateProvider._();
+
+final class DownloadAheadWhileReadingStateProvider
+    extends $NotifierProvider<DownloadAheadWhileReadingState, int> {
+  DownloadAheadWhileReadingStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'downloadAheadWhileReadingStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$downloadAheadWhileReadingStateHash();
+
+  @$internal
+  @override
+  DownloadAheadWhileReadingState create() => DownloadAheadWhileReadingState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$downloadAheadWhileReadingStateHash() =>
+    r'da8b086aaa57b932dbc22e84bdee6e68758304ae';
+
+abstract class _$DownloadAheadWhileReadingState extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
