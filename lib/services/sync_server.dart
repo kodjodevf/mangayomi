@@ -9,6 +9,7 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:mangayomi/services/background_work/background_work.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/blend_level_state_provider.dart';
@@ -172,6 +173,7 @@ class SyncServer extends _$SyncServer {
     }
     final progress = ref.read(syncProgressProvider(syncId: syncId).notifier);
     progress.begin();
+    BackgroundWork.begin(BackgroundWorkKind.sync);
     try {
       if (!await _apiClient.checkVersion(_getServer())) {
         if (!silent && l10n != null) {
@@ -213,6 +215,7 @@ class SyncServer extends _$SyncServer {
       return false;
     } finally {
       progress.finish();
+      BackgroundWork.end(BackgroundWorkKind.sync);
     }
   }
 

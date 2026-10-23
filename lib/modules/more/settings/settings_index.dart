@@ -1028,4 +1028,10 @@ final settingsIndex = <SettingsEntry>[
     section: (l) => l.security,
     route: '/security',
   ),
+  SettingsEntry(
+    title: (l) => l.hide_notification_content,
+    subtitle: (l) => l.hide_notification_content_subtitle,
+    section: (l) => l.security,
+    route: '/security',
+  ),
 ];

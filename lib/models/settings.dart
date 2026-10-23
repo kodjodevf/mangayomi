@@ -492,6 +492,8 @@ class Settings {
   bool? doublePageSingleFirstPage;
   bool? doublePageAuto;
 
+  bool? hideNotificationContent;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -716,6 +718,7 @@ class Settings {
     this.tvHomeGenreRows,
     this.doublePageSingleFirstPage = false,
     this.doublePageAuto = false,
+    this.hideNotificationContent = false,
     this.developerMode = false,
   });
 
@@ -1079,6 +1082,7 @@ class Settings {
     tvHomeGenreRows = json['tvHomeGenreRows'];
     doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
     doublePageAuto = json['doublePageAuto'];
+    hideNotificationContent = json['hideNotificationContent'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -1328,6 +1332,7 @@ class Settings {
     'tvHomeGenreRows': tvHomeGenreRows,
     'doublePageSingleFirstPage': doublePageSingleFirstPage,
     'doublePageAuto': doublePageAuto,
+    'hideNotificationContent': hideNotificationContent,
   };
 }
 
