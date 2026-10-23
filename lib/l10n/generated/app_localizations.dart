@@ -6175,6 +6175,42 @@ abstract class AppLocalizations {
   /// **'Skip the scheduled update while on mobile data.'**
   String get auto_library_update_wifi_only_subtitle;
 
+  /// No description provided for @library_update_restrictions.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip when updating'**
+  String get library_update_restrictions;
+
+  /// No description provided for @library_update_skip_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed series'**
+  String get library_update_skip_completed;
+
+  /// No description provided for @library_update_skip_unread.
+  ///
+  /// In en, this message translates to:
+  /// **'Series with unread chapters'**
+  String get library_update_skip_unread;
+
+  /// No description provided for @library_update_skip_not_started.
+  ///
+  /// In en, this message translates to:
+  /// **'Series not started'**
+  String get library_update_skip_not_started;
+
+  /// No description provided for @library_update_restrictions_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Applies to every library update. Categories set to skip updates are also left out when the whole library is updated.'**
+  String get library_update_restrictions_subtitle;
+
+  /// No description provided for @library_update_restrictions_none.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get library_update_restrictions_none;
+
   /// No description provided for @padding.
   ///
   /// In en, this message translates to:

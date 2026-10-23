@@ -3467,6 +3467,25 @@ class AppLocalizationsTr extends AppLocalizations {
       'Hücresel verideyken planlanan güncellemeyi atlayın.';
 
   @override
+  String get library_update_restrictions => 'Skip when updating';
+
+  @override
+  String get library_update_skip_completed => 'Completed series';
+
+  @override
+  String get library_update_skip_unread => 'Series with unread chapters';
+
+  @override
+  String get library_update_skip_not_started => 'Series not started';
+
+  @override
+  String get library_update_restrictions_subtitle =>
+      'Applies to every library update. Categories set to skip updates are also left out when the whole library is updated.';
+
+  @override
+  String get library_update_restrictions_none => 'None';
+
+  @override
   String get padding => 'Kenar Boşluğu';
 
   @override

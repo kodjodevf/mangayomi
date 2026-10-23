@@ -15,6 +15,7 @@ Future<void> updateLibrary({
   required BuildContext context,
   required List<Manga> mangaList,
   required ItemType itemType,
+  bool wholeLibrary = false,
 }) async {
   final itemtype = itemType.name[0].toUpperCase() + itemType.name.substring(1);
   AppLogger.log("Starting $itemtype library update...");
@@ -36,6 +37,7 @@ Future<void> updateLibrary({
       .runUpdate(
         mangaList: mangaList,
         itemtype: itemtype,
+        wholeLibrary: wholeLibrary,
         onProgress: (done, failed, total) {
           if (!context.mounted) return;
           botToast(

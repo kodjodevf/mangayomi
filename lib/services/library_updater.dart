@@ -2,8 +2,11 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/security_state_provider.dart';
+import 'package:mangayomi/repositories/category_repository.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/services/library_update_rules.dart';
 import 'package:mangayomi/services/update_errors_provider.dart';
 import 'package:mangayomi/services/update_manga_detail_providers.dart';
 import 'package:mangayomi/utils/log/logger.dart';
@@ -42,11 +45,16 @@ class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
   /// Returns the entries that failed. Honours the Stop button: the caller has
   /// already marked the run as started, and this checks for a cancellation
   /// between entries.
+  ///
+  /// Entries the update restrictions leave out are dropped first; with
+  /// [wholeLibrary], so are those in a category set to skip updates.
   Future<List<UpdateError>> runUpdate({
     required List<Manga> mangaList,
     required String itemtype,
+    bool wholeLibrary = false,
     void Function(int done, int failed, int total)? onProgress,
   }) async {
+    mangaList = filterForUpdate(mangaList, wholeLibrary: wholeLibrary);
     final failures = <UpdateError>[];
     for (var i = 0; i < mangaList.length; i++) {
       // Stop early if the user pressed Stop.
@@ -126,7 +134,11 @@ class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
       AppLogger.log(
         "Starting scheduled library update (${entries.length} entries)...",
       );
-      final failures = await runUpdate(mangaList: entries, itemtype: "Library");
+      final failures = await runUpdate(
+        mangaList: entries,
+        itemtype: "Library",
+        wholeLibrary: true,
+      );
       ref.read(updateErrorsProvider.notifier).set(failures);
       AppLogger.log(
         "Scheduled library update finished, ${failures.length} of "
@@ -136,6 +148,29 @@ class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
       end();
     }
   }
+}
+
+/// [mangaList] without the entries the update restrictions leave out; with
+/// [wholeLibrary], also without those in a category set to skip updates.
+List<Manga> filterForUpdate(
+  List<Manga> mangaList, {
+  bool wholeLibrary = false,
+}) {
+  final rules = LibraryUpdateRules.fromSettings(
+    settingsRepository.current,
+    skippedCategoryIds: wholeLibrary
+        ? {
+            for (final category in categoryRepository.getAll())
+              if (category.shouldUpdate == false) category.id!,
+          }
+        : const {},
+  );
+  if (rules.isEmpty) return mangaList;
+  return [
+    for (final manga in mangaList)
+      if (rules.allows(manga, chapterRepository.getAllByMangaId(manga.id)))
+        manga,
+  ];
 }
 
 final libraryUpdateProvider =

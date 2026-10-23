@@ -3454,6 +3454,25 @@ class AppLocalizationsAs extends AppLocalizations {
       'ম\'বাইল ডাটা ব্যৱহাৰ কৰাৰ সময়ত নিৰ্ধাৰিত আপডেট বাদ দিয়ক।';
 
   @override
+  String get library_update_restrictions => 'Skip when updating';
+
+  @override
+  String get library_update_skip_completed => 'Completed series';
+
+  @override
+  String get library_update_skip_unread => 'Series with unread chapters';
+
+  @override
+  String get library_update_skip_not_started => 'Series not started';
+
+  @override
+  String get library_update_restrictions_subtitle =>
+      'Applies to every library update. Categories set to skip updates are also left out when the whole library is updated.';
+
+  @override
+  String get library_update_restrictions_none => 'None';
+
+  @override
   String get padding => 'পেডিং';
 
   @override

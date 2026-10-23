@@ -3510,6 +3510,25 @@ class AppLocalizationsFr extends AppLocalizations {
       'Ignorer la mise à jour planifiée lors de l\'utilisation des données mobiles.';
 
   @override
+  String get library_update_restrictions => 'Ignorer lors des mises à jour';
+
+  @override
+  String get library_update_skip_completed => 'Séries terminées';
+
+  @override
+  String get library_update_skip_unread => 'Séries avec des chapitres non lus';
+
+  @override
+  String get library_update_skip_not_started => 'Séries non commencées';
+
+  @override
+  String get library_update_restrictions_subtitle =>
+      'S\'applique à chaque mise à jour. Les catégories réglées pour ignorer les mises à jour sont aussi exclues quand toute la bibliothèque est mise à jour.';
+
+  @override
+  String get library_update_restrictions_none => 'Aucune';
+
+  @override
   String get padding => 'Espacement';
 
   @override

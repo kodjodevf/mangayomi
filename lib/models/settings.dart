@@ -492,6 +492,12 @@ class Settings {
   bool? doublePageSingleFirstPage;
   bool? doublePageAuto;
 
+  bool? libraryUpdateSkipCompleted;
+
+  bool? libraryUpdateSkipUnread;
+
+  bool? libraryUpdateSkipNotStarted;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -716,6 +722,9 @@ class Settings {
     this.tvHomeGenreRows,
     this.doublePageSingleFirstPage = false,
     this.doublePageAuto = false,
+    this.libraryUpdateSkipCompleted = false,
+    this.libraryUpdateSkipUnread = false,
+    this.libraryUpdateSkipNotStarted = false,
     this.developerMode = false,
   });
 
@@ -1079,6 +1088,9 @@ class Settings {
     tvHomeGenreRows = json['tvHomeGenreRows'];
     doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
     doublePageAuto = json['doublePageAuto'];
+    libraryUpdateSkipCompleted = json['libraryUpdateSkipCompleted'];
+    libraryUpdateSkipUnread = json['libraryUpdateSkipUnread'];
+    libraryUpdateSkipNotStarted = json['libraryUpdateSkipNotStarted'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -1328,6 +1340,9 @@ class Settings {
     'tvHomeGenreRows': tvHomeGenreRows,
     'doublePageSingleFirstPage': doublePageSingleFirstPage,
     'doublePageAuto': doublePageAuto,
+    'libraryUpdateSkipCompleted': libraryUpdateSkipCompleted,
+    'libraryUpdateSkipUnread': libraryUpdateSkipUnread,
+    'libraryUpdateSkipNotStarted': libraryUpdateSkipNotStarted,
   };
 }
 
