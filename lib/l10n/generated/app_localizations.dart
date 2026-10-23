@@ -1069,18 +1069,6 @@ abstract class AppLocalizations {
   /// **'Colours backgrounds, cards and bars with the chosen palette, as before. Off, they stay neutral and the palette only colours the accent.'**
   String get tint_surfaces_with_palette_subtitle;
 
-  /// No description provided for @novel_reader_font.
-  ///
-  /// In en, this message translates to:
-  /// **'App font'**
-  String get novel_reader_font;
-
-  /// No description provided for @novel_reader_font_subtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Font used throughout the app interface and novel reader.'**
-  String get novel_reader_font_subtitle;
-
   /// No description provided for @timestamp.
   ///
   /// In en, this message translates to:

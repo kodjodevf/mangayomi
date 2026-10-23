@@ -1406,8 +1406,6 @@
   "chapter_swipe_disabled": "अक्षम",
   "tint_surfaces_with_palette": "सतहों को पैलेट से रंगें",
   "tint_surfaces_with_palette_subtitle": "पहले की तरह बैकग्राउंड, कार्ड और बार को चुने गए पैलेट से रंगता है। बंद होने पर वे न्यूट्रल रहते हैं और पैलेट केवल एक्सेंट रंग देता है।",
-  "novel_reader_font": "नॉवेल रीडर फ़ॉन्ट",
-  "novel_reader_font_subtitle": "नॉवेल रीडर के डिफ़ॉल्ट फ़ॉन्ट में इस्तेमाल होता है। ऐप का बाकी हिस्सा Figtree इस्तेमाल करता है।",
   "floating_navigation_bar": "फ़्लोटिंग नेविगेशन बार",
   "floating_navigation_bar_description": "सामान्य जुड़े हुए नेविगेशन बार की जगह एक तैरता कैप्सूल इस्तेमाल करें।",
   "add_repo_sources_to_add": "जोड़ी जाने वाली एक्सटेंशन सूचियाँ:",

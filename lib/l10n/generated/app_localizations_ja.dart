@@ -578,13 +578,6 @@ class AppLocalizationsJa extends AppLocalizations {
       '以前のように、背景・カード・バーを選んだパレットで色付けします。オフにすると中立色のままで、パレットはアクセントだけに使われます。';
 
   @override
-  String get novel_reader_font => '小説リーダーのフォント';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      '小説リーダーの「デフォルト」フォントで使われます。アプリのその他の部分は Figtree を使います。';
-
-  @override
   String get timestamp => 'タイムスタンプ';
 
   @override

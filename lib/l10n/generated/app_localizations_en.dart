@@ -585,13 +585,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Colours backgrounds, cards and bars with the chosen palette, as before. Off, they stay neutral and the palette only colours the accent.';
 
   @override
-  String get novel_reader_font => 'App font';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      'Font used throughout the app interface and novel reader.';
-
-  @override
   String get timestamp => 'Timestamp';
 
   @override

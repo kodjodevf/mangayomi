@@ -582,13 +582,6 @@ class AppLocalizationsTr extends AppLocalizations {
       'Arka planları, kartları ve çubukları eskisi gibi seçilen paletle renklendirir. Kapalıyken nötr kalırlar ve palet yalnızca vurgu rengini boyar.';
 
   @override
-  String get novel_reader_font => 'Roman okuyucu yazı tipi';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      'Roman okuyucunun Varsayılan yazı tipi tarafından kullanılır. Uygulamanın geri kalanı Figtree kullanır.';
-
-  @override
   String get timestamp => 'Zaman Damgası';
 
   @override

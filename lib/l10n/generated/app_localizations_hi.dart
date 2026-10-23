@@ -584,13 +584,6 @@ class AppLocalizationsHi extends AppLocalizations {
       'पहले की तरह बैकग्राउंड, कार्ड और बार को चुने गए पैलेट से रंगता है। बंद होने पर वे न्यूट्रल रहते हैं और पैलेट केवल एक्सेंट रंग देता है।';
 
   @override
-  String get novel_reader_font => 'नॉवेल रीडर फ़ॉन्ट';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      'नॉवेल रीडर के डिफ़ॉल्ट फ़ॉन्ट में इस्तेमाल होता है। ऐप का बाकी हिस्सा Figtree इस्तेमाल करता है।';
-
-  @override
   String get timestamp => 'समय चिह्न';
 
   @override

@@ -1379,8 +1379,6 @@
   "chapter_swipe_disabled": "Deaktiviert",
   "tint_surfaces_with_palette": "Oberflächen mit der Palette einfärben",
   "tint_surfaces_with_palette_subtitle": "Färbt Hintergründe, Karten und Leisten mit der gewählten Palette ein, wie früher. Aus bleiben sie neutral und die Palette färbt nur die Akzentfarbe.",
-  "novel_reader_font": "Schrift des Romanlesers",
-  "novel_reader_font_subtitle": "Wird von der Standardschrift des Romanlesers verwendet. Der Rest der App nutzt Figtree.",
   "floating_navigation_bar": "Schwebende Navigationsleiste",
   "floating_navigation_bar_description": "Eine schwebende Kapsel statt der fest angedockten Navigationsleiste.",
   "add_repo_sources_to_add": "Diese Erweiterungslisten werden hinzugefügt:",

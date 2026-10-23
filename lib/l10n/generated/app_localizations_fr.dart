@@ -589,13 +589,6 @@ class AppLocalizationsFr extends AppLocalizations {
       'Colore les fonds, les cartes et les barres avec la palette choisie, comme avant. Désactivé, ils restent neutres et la palette ne colore que l\'accent.';
 
   @override
-  String get novel_reader_font => 'Police de l\'app';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      'Police utilisée dans l\'interface de l\'app et le lecteur de romans.';
-
-  @override
   String get timestamp => 'Horodatage';
 
   @override

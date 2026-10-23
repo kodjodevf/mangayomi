@@ -1376,8 +1376,6 @@
   "chapter_swipe_disabled": "Disabilitato",
   "tint_surfaces_with_palette": "Colora le superfici con la tavolozza",
   "tint_surfaces_with_palette_subtitle": "Colora sfondi, schede e barre con la tavolozza scelta, come prima. Disattivato, restano neutri e la tavolozza colora solo l'accento.",
-  "novel_reader_font": "Carattere del lettore di romanzi",
-  "novel_reader_font_subtitle": "Usato dal carattere predefinito del lettore di romanzi. Il resto dell'app usa Figtree.",
   "floating_navigation_bar": "Barra di navigazione fluttuante",
   "floating_navigation_bar_description": "Una capsula fluttuante al posto della barra di navigazione fissa.",
   "add_repo_sources_to_add": "Elenchi di estensioni che verranno aggiunti:",

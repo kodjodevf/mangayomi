@@ -1376,8 +1376,6 @@
   "chapter_swipe_disabled": "Dinonaktifkan",
   "tint_surfaces_with_palette": "Warnai permukaan dengan palet",
   "tint_surfaces_with_palette_subtitle": "Mewarnai latar, kartu, dan bilah dengan palet pilihan, seperti dulu. Jika mati, semuanya tetap netral dan palet hanya mewarnai aksen.",
-  "novel_reader_font": "Font pembaca novel",
-  "novel_reader_font_subtitle": "Dipakai oleh font Bawaan di pembaca novel. Bagian lain aplikasi memakai Figtree.",
   "floating_navigation_bar": "Bilah navigasi mengambang",
   "floating_navigation_bar_description": "Gunakan kapsul mengambang alih-alih bilah navigasi yang menempel.",
   "add_repo_sources_to_add": "Daftar ekstensi yang akan ditambahkan:",

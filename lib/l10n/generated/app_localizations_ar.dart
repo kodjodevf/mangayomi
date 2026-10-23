@@ -596,13 +596,6 @@ class AppLocalizationsAr extends AppLocalizations {
       'يلوّن الخلفيات والبطاقات والأشرطة باللوحة المختارة، كما في السابق. عند الإيقاف تبقى محايدة ولا تلوّن اللوحة إلا لون التمييز.';
 
   @override
-  String get novel_reader_font => 'خط قارئ الروايات';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      'يستخدمه الخط الافتراضي في قارئ الروايات. يستخدم باقي التطبيق خط Figtree.';
-
-  @override
   String get timestamp => 'طابع الوقت';
 
   @override

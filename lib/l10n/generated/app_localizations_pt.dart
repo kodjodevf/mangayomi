@@ -588,13 +588,6 @@ class AppLocalizationsPt extends AppLocalizations {
       'Colore fundos, cartões e barras com a paleta escolhida, como antes. Desligado, ficam neutros e a paleta só colore o destaque.';
 
   @override
-  String get novel_reader_font => 'Fonte do leitor de novels';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      'Usada pela fonte padrão do leitor de novels. O resto do app usa Figtree.';
-
-  @override
   String get timestamp => 'Carimbo de data/hora';
 
   @override

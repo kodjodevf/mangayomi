@@ -1379,8 +1379,6 @@
   "chapter_swipe_disabled": "ปิดใช้งาน",
   "tint_surfaces_with_palette": "ย้อมสีพื้นผิวด้วยชุดสี",
   "tint_surfaces_with_palette_subtitle": "ย้อมพื้นหลัง การ์ด และแถบด้วยชุดสีที่เลือกเหมือนเดิม เมื่อปิด จะคงเป็นสีกลางและชุดสีจะใช้กับสีเน้นเท่านั้น",
-  "novel_reader_font": "แบบอักษรตัวอ่านนิยาย",
-  "novel_reader_font_subtitle": "ใช้กับแบบอักษรเริ่มต้นของตัวอ่านนิยาย ส่วนอื่นของแอปใช้ Figtree",
   "floating_navigation_bar": "แถบนำทางแบบลอย",
   "floating_navigation_bar_description": "ใช้แคปซูลลอยแทนแถบนำทางแบบติดขอบ",
   "add_repo_sources_to_add": "รายการส่วนขยายที่จะเพิ่ม:",

@@ -590,13 +590,6 @@ class AppLocalizationsIt extends AppLocalizations {
       'Colora sfondi, schede e barre con la tavolozza scelta, come prima. Disattivato, restano neutri e la tavolozza colora solo l\'accento.';
 
   @override
-  String get novel_reader_font => 'Carattere del lettore di romanzi';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      'Usato dal carattere predefinito del lettore di romanzi. Il resto dell\'app usa Figtree.';
-
-  @override
   String get timestamp => 'Timestamp';
 
   @override

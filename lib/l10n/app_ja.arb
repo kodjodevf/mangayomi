@@ -1480,8 +1480,6 @@
   "chapter_swipe_disabled": "無効",
   "tint_surfaces_with_palette": "サーフェスをパレットで色付け",
   "tint_surfaces_with_palette_subtitle": "以前のように、背景・カード・バーを選んだパレットで色付けします。オフにすると中立色のままで、パレットはアクセントだけに使われます。",
-  "novel_reader_font": "小説リーダーのフォント",
-  "novel_reader_font_subtitle": "小説リーダーの「デフォルト」フォントで使われます。アプリのその他の部分は Figtree を使います。",
   "floating_navigation_bar": "フローティングナビゲーションバー",
   "floating_navigation_bar_description": "固定のナビゲーションバーの代わりに、浮かぶカプセルを使います。",
   "add_repo_sources_to_add": "追加される拡張機能リスト:",

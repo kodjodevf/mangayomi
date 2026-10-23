@@ -1376,8 +1376,6 @@
   "chapter_swipe_disabled": "Devre dışı",
   "tint_surfaces_with_palette": "Yüzeyleri paletle renklendir",
   "tint_surfaces_with_palette_subtitle": "Arka planları, kartları ve çubukları eskisi gibi seçilen paletle renklendirir. Kapalıyken nötr kalırlar ve palet yalnızca vurgu rengini boyar.",
-  "novel_reader_font": "Roman okuyucu yazı tipi",
-  "novel_reader_font_subtitle": "Roman okuyucunun Varsayılan yazı tipi tarafından kullanılır. Uygulamanın geri kalanı Figtree kullanır.",
   "floating_navigation_bar": "Yüzen gezinme çubuğu",
   "floating_navigation_bar_description": "Sabit gezinme çubuğu yerine yüzen bir kapsül kullan.",
   "add_repo_sources_to_add": "Eklenecek uzantı listeleri:",

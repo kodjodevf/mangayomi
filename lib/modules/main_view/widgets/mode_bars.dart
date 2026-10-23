@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shiori/shiori.dart';
 
-// Use the default system font for mode bar labels (previously ABeeZee).
-const String? barFontFamily = null;
-
 class DownloadedOnlyBar extends StatelessWidget {
   const DownloadedOnlyBar({
     super.key,
@@ -79,7 +76,7 @@ class _ModeBar extends StatelessWidget {
               padding: const EdgeInsets.all(ShioriSpace.s8),
               child: Text(
                 label,
-                style: TextStyle(color: onFill, fontFamily: barFontFamily),
+                style: TextStyle(color: onFill),
               ),
             ),
           ],
