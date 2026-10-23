@@ -178,3 +178,30 @@ class DownloadAheadWhileReadingState extends _$DownloadAheadWhileReadingState {
     settingsRepository.update((s) => s.downloadAheadWhileReading = value);
   }
 }
+
+@riverpod
+class DeleteAfterReadingSlotState extends _$DeleteAfterReadingSlotState {
+  @override
+  int build() {
+    return settingsRepository.current.deleteAfterReadingSlot ?? 0;
+  }
+
+  void set(int value) {
+    state = value;
+    settingsRepository.update((s) => s.deleteAfterReadingSlot = value);
+  }
+}
+
+@riverpod
+class DeleteBookmarkedAfterReadingState
+    extends _$DeleteBookmarkedAfterReadingState {
+  @override
+  bool build() {
+    return settingsRepository.current.deleteBookmarkedAfterReading ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.deleteBookmarkedAfterReading = value);
+  }
+}

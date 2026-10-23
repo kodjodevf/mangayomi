@@ -659,3 +659,113 @@ abstract class _$DownloadAheadWhileReadingState extends $Notifier<int> {
     return element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(DeleteAfterReadingSlotState)
+final deleteAfterReadingSlotStateProvider =
+    DeleteAfterReadingSlotStateProvider._();
+
+final class DeleteAfterReadingSlotStateProvider
+    extends $NotifierProvider<DeleteAfterReadingSlotState, int> {
+  DeleteAfterReadingSlotStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteAfterReadingSlotStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteAfterReadingSlotStateHash();
+
+  @$internal
+  @override
+  DeleteAfterReadingSlotState create() => DeleteAfterReadingSlotState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$deleteAfterReadingSlotStateHash() =>
+    r'5762da9084ef97325c1be9f1e319cda0e5369a2c';
+
+abstract class _$DeleteAfterReadingSlotState extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(DeleteBookmarkedAfterReadingState)
+final deleteBookmarkedAfterReadingStateProvider =
+    DeleteBookmarkedAfterReadingStateProvider._();
+
+final class DeleteBookmarkedAfterReadingStateProvider
+    extends $NotifierProvider<DeleteBookmarkedAfterReadingState, bool> {
+  DeleteBookmarkedAfterReadingStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteBookmarkedAfterReadingStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() =>
+      _$deleteBookmarkedAfterReadingStateHash();
+
+  @$internal
+  @override
+  DeleteBookmarkedAfterReadingState create() =>
+      DeleteBookmarkedAfterReadingState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$deleteBookmarkedAfterReadingStateHash() =>
+    r'94a780a2800b4d0c9069f2e44e975b7c8ae549f6';
+
+abstract class _$DeleteBookmarkedAfterReadingState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

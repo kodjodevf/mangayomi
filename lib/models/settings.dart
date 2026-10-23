@@ -492,6 +492,10 @@ class Settings {
   bool? doublePageSingleFirstPage;
   bool? doublePageAuto;
 
+  int? deleteAfterReadingSlot;
+
+  bool? deleteBookmarkedAfterReading;
+
   int? downloadAheadWhileReading;
 
   bool? downloadNewChapters;
@@ -730,6 +734,8 @@ class Settings {
     this.tvHomeGenreRows,
     this.doublePageSingleFirstPage = false,
     this.doublePageAuto = false,
+    this.deleteAfterReadingSlot = 0,
+    this.deleteBookmarkedAfterReading = false,
     this.downloadAheadWhileReading = 0,
     this.downloadNewChapters = false,
     this.downloadNewChaptersCategories,
@@ -1100,6 +1106,8 @@ class Settings {
     tvHomeGenreRows = json['tvHomeGenreRows'];
     doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
     doublePageAuto = json['doublePageAuto'];
+    deleteAfterReadingSlot = json['deleteAfterReadingSlot'];
+    deleteBookmarkedAfterReading = json['deleteBookmarkedAfterReading'];
     downloadAheadWhileReading = json['downloadAheadWhileReading'];
     downloadNewChapters = json['downloadNewChapters'];
     downloadNewChaptersCategories =
@@ -1358,6 +1366,8 @@ class Settings {
     'tvHomeGenreRows': tvHomeGenreRows,
     'doublePageSingleFirstPage': doublePageSingleFirstPage,
     'doublePageAuto': doublePageAuto,
+    'deleteAfterReadingSlot': deleteAfterReadingSlot,
+    'deleteBookmarkedAfterReading': deleteBookmarkedAfterReading,
     'downloadAheadWhileReading': downloadAheadWhileReading,
     'downloadNewChapters': downloadNewChapters,
     'downloadNewChaptersCategories': downloadNewChaptersCategories,

@@ -1237,6 +1237,36 @@ abstract class AppLocalizations {
   /// **'Delete download after reading'**
   String get delete_download_after_reading;
 
+  /// No description provided for @delete_after_reading_slot.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete which chapter'**
+  String get delete_after_reading_slot;
+
+  /// No description provided for @delete_after_reading_last.
+  ///
+  /// In en, this message translates to:
+  /// **'The chapter just read'**
+  String get delete_after_reading_last;
+
+  /// No description provided for @delete_after_reading_nth.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} chapters back'**
+  String delete_after_reading_nth(int n);
+
+  /// No description provided for @delete_after_reading_slot_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keeping a few read chapters lets you go back to them offline.'**
+  String get delete_after_reading_slot_subtitle;
+
+  /// No description provided for @delete_bookmarked_after_reading.
+  ///
+  /// In en, this message translates to:
+  /// **'Also delete bookmarked chapters'**
+  String get delete_bookmarked_after_reading;
+
   /// No description provided for @auto_download.
   ///
   /// In en, this message translates to:

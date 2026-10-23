@@ -80,6 +80,28 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                     .read(deleteDownloadAfterReadingStateProvider.notifier)
                     .set(v),
               ),
+              if (deleteDownloadAfterReading) ...[
+                ShioriValueRow<int>(
+                  title: l10n.delete_after_reading_slot,
+                  description: l10n.delete_after_reading_slot_subtitle,
+                  value: ref.watch(deleteAfterReadingSlotStateProvider),
+                  options: [
+                    ShioriChoice(0, l10n.delete_after_reading_last),
+                    for (var n = 1; n <= 4; n++)
+                      ShioriChoice(n, l10n.delete_after_reading_nth(n)),
+                  ],
+                  onChanged: (v) => ref
+                      .read(deleteAfterReadingSlotStateProvider.notifier)
+                      .set(v),
+                ),
+                ShioriSwitchRow(
+                  title: l10n.delete_bookmarked_after_reading,
+                  value: ref.watch(deleteBookmarkedAfterReadingStateProvider),
+                  onChanged: (v) => ref
+                      .read(deleteBookmarkedAfterReadingStateProvider.notifier)
+                      .set(v),
+                ),
+              ],
             ],
           ),
           const AutoDownloadGroup(),

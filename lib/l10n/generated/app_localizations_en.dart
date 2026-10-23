@@ -669,6 +669,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delete_download_after_reading => 'Delete download after reading';
 
   @override
+  String get delete_after_reading_slot => 'Delete which chapter';
+
+  @override
+  String get delete_after_reading_last => 'The chapter just read';
+
+  @override
+  String delete_after_reading_nth(int n) {
+    return '$n chapters back';
+  }
+
+  @override
+  String get delete_after_reading_slot_subtitle =>
+      'Keeping a few read chapters lets you go back to them offline.';
+
+  @override
+  String get delete_bookmarked_after_reading =>
+      'Also delete bookmarked chapters';
+
+  @override
   String get auto_download => 'Auto download';
 
   @override
