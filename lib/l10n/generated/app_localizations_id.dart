@@ -2552,6 +2552,16 @@ class AppLocalizationsId extends AppLocalizations {
       'Paksa pemain untuk menggunakan orientasi lanskap.';
 
   @override
+  String get remember_player_volume => 'Remember volume';
+
+  @override
+  String get remember_player_volume_subtitle =>
+      'Start each episode at the volume the last one ended with.';
+
+  @override
+  String get remember_player_brightness => 'Remember brightness';
+
+  @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override

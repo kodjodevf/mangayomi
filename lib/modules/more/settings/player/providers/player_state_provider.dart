@@ -174,3 +174,29 @@ class ForceLandscapePlayerState extends _$ForceLandscapePlayerState {
     settingsRepository.update((s) => s.forceLandscapePlayer = value);
   }
 }
+
+@riverpod
+class RememberPlayerVolumeState extends _$RememberPlayerVolumeState {
+  @override
+  bool build() {
+    return settingsRepository.current.rememberPlayerVolume ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.rememberPlayerVolume = value);
+  }
+}
+
+@riverpod
+class RememberPlayerBrightnessState extends _$RememberPlayerBrightnessState {
+  @override
+  bool build() {
+    return settingsRepository.current.rememberPlayerBrightness ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.rememberPlayerBrightness = value);
+  }
+}

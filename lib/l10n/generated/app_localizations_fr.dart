@@ -2579,6 +2579,16 @@ class AppLocalizationsFr extends AppLocalizations {
       'Forcer le lecteur à utiliser l\'orientation paysage.';
 
   @override
+  String get remember_player_volume => 'Retenir le volume';
+
+  @override
+  String get remember_player_volume_subtitle =>
+      'Commence chaque épisode au volume de fin du précédent.';
+
+  @override
+  String get remember_player_brightness => 'Retenir la luminosité';
+
+  @override
   String get dns_over_https => 'DNS-sur-HTTPS (DoH)';
 
   @override

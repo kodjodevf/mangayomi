@@ -667,6 +667,18 @@ final settingsIndex = <SettingsEntry>[
     route: '/playerMode',
   ),
   SettingsEntry(
+    title: (l) => l.remember_player_volume,
+    subtitle: (l) => l.remember_player_volume_subtitle,
+    section: (l) => l.player,
+    route: '/playerMode',
+  ),
+  SettingsEntry(
+    title: (l) => l.remember_player_brightness,
+    subtitle: null,
+    section: (l) => l.player,
+    route: '/playerMode',
+  ),
+  SettingsEntry(
     title: (l) => l.forceLandscapeModeSubtitle,
     subtitle: null,
     section: (l) => l.player,

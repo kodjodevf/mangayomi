@@ -37,6 +37,7 @@ import 'package:mangayomi/router/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_audio_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_decoder_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/reader_common/widgets/chapter_bar_title.dart';
@@ -360,6 +361,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   late final audioChannel = ref.read(audioChannelStateProvider);
   late final volumeBoostCap = ref.read(volumeBoostCapStateProvider);
   late final audioDelayMs = ref.read(audioDelayStateProvider);
+  late final double? rememberedVolume =
+      ref.read(rememberPlayerVolumeStateProvider)
+      ? settingsRepository.current.playerVolume
+      : null;
   late final Player _player = Player(
     configuration: PlayerConfiguration(
       libass: useLibass,
@@ -374,6 +379,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         "volume-max": "${volumeBoostCap + 100}",
         if (audioDelayMs != 0) "audio-delay": "${audioDelayMs / 1000}",
         ...videoFilterOptions(ref.read(videoFiltersStateProvider)),
+        // On a desktop the volume is the player's own; a phone's is the
+        // system's, which the mobile controls restore.
+        if (isDesktop && rememberedVolume != null)
+          "volume": "${rememberedVolume!.round()}",
         if (audioChannel != AudioChannel.reverseStereo)
           "audio-channels": audioChannel.mpvName,
         if (audioChannel == AudioChannel.reverseStereo)
@@ -827,6 +836,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _subSettingsSub?.close();
     WidgetsBinding.instance.removeObserver(this);
     _setCurrentPosition(true, saveWatchTime: true);
+    if (isDesktop && ref.read(rememberPlayerVolumeStateProvider)) {
+      final volume = _player.state.volume;
+      settingsRepository.update((s) => s.playerVolume = volume);
+    }
     final playerCleanup = disposePlaybackSession(
       listenerCancellations: [
         _completed.cancel(),

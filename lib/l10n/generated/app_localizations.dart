@@ -4615,6 +4615,24 @@ abstract class AppLocalizations {
   /// **'Force the player to use landscape orientation.'**
   String get forceLandscapeModeSubtitle;
 
+  /// No description provided for @remember_player_volume.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember volume'**
+  String get remember_player_volume;
+
+  /// No description provided for @remember_player_volume_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start each episode at the volume the last one ended with.'**
+  String get remember_player_volume_subtitle;
+
+  /// No description provided for @remember_player_brightness.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember brightness'**
+  String get remember_player_brightness;
+
   /// No description provided for @dns_over_https.
   ///
   /// In en, this message translates to:

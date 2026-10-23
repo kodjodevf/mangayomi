@@ -492,6 +492,14 @@ class Settings {
   bool? doublePageSingleFirstPage;
   bool? doublePageAuto;
 
+  bool? rememberPlayerVolume;
+
+  bool? rememberPlayerBrightness;
+
+  double? playerVolume;
+
+  double? playerBrightness;
+
   List<int>? playerVideoFilters;
 
   int? audioDelayMs;
@@ -750,6 +758,10 @@ class Settings {
     this.tvHomeGenreRows,
     this.doublePageSingleFirstPage = false,
     this.doublePageAuto = false,
+    this.rememberPlayerVolume = false,
+    this.rememberPlayerBrightness = false,
+    this.playerVolume,
+    this.playerBrightness,
     this.playerVideoFilters,
     this.audioDelayMs = 0,
     this.secureScreen = 0,
@@ -1130,6 +1142,10 @@ class Settings {
     tvHomeGenreRows = json['tvHomeGenreRows'];
     doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
     doublePageAuto = json['doublePageAuto'];
+    rememberPlayerVolume = json['rememberPlayerVolume'];
+    rememberPlayerBrightness = json['rememberPlayerBrightness'];
+    playerVolume = json['playerVolume'];
+    playerBrightness = json['playerBrightness'];
     playerVideoFilters = (json['playerVideoFilters'] as List?)?.cast<int>();
     audioDelayMs = json['audioDelayMs'];
     secureScreen = json['secureScreen'];
@@ -1398,6 +1414,10 @@ class Settings {
     'tvHomeGenreRows': tvHomeGenreRows,
     'doublePageSingleFirstPage': doublePageSingleFirstPage,
     'doublePageAuto': doublePageAuto,
+    'rememberPlayerVolume': rememberPlayerVolume,
+    'rememberPlayerBrightness': rememberPlayerBrightness,
+    'playerVolume': playerVolume,
+    'playerBrightness': playerBrightness,
     'playerVideoFilters': playerVideoFilters,
     'audioDelayMs': audioDelayMs,
     'secureScreen': secureScreen,

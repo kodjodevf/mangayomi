@@ -164,6 +164,21 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                 onChanged: (v) =>
                     ref.read(forceLandscapePlayerStateProvider.notifier).set(v),
               ),
+              ShioriSwitchRow(
+                title: l10n.remember_player_volume,
+                subtitle: l10n.remember_player_volume_subtitle,
+                value: ref.watch(rememberPlayerVolumeStateProvider),
+                onChanged: (v) =>
+                    ref.read(rememberPlayerVolumeStateProvider.notifier).set(v),
+              ),
+              if (!isDesktop)
+                ShioriSwitchRow(
+                  title: l10n.remember_player_brightness,
+                  value: ref.watch(rememberPlayerBrightnessStateProvider),
+                  onChanged: (v) => ref
+                      .read(rememberPlayerBrightnessStateProvider.notifier)
+                      .set(v),
+                ),
             ],
           ),
         ],
