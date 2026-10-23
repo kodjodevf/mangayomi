@@ -14,6 +14,19 @@ List<File> _dartFilesIn(String relativeDir) {
     ..sort((a, b) => a.path.compareTo(b.path));
 }
 
+/// [uri] as imported from [file], with a relative import under lib/ turned
+/// into the package: form the rules are written in, so `../main.dart` is
+/// caught like `package:mangayomi/main.dart`.
+String _packageUri(File file, String uri) {
+  if (uri.contains(':')) return uri;
+  final target = p.posix.normalize(
+    p.posix.join(p.posix.dirname(p.split(file.path).join('/')), uri),
+  );
+  return target.startsWith('lib/')
+      ? 'package:mangayomi/${target.substring('lib/'.length)}'
+      : uri;
+}
+
 List<String> _findImportViolations(
   String directory,
   List<String> forbiddenPrefixes,
@@ -27,7 +40,7 @@ List<String> _findImportViolations(
   for (final file in _dartFilesIn(directory)) {
     final content = file.readAsStringSync();
     for (final match in importPattern.allMatches(content)) {
-      final uri = match.group(1)!;
+      final uri = _packageUri(file, match.group(1)!);
       for (final prefix in forbiddenPrefixes) {
         if (uri.startsWith(prefix)) {
           violations.add('${p.normalize(file.path)} -> $uri');
@@ -63,6 +76,21 @@ void main() {
         reason: 'docs/architecture/ARCHITECTURE.md must exist as the single source of truth.',
       );
       expect(doc.readAsStringSync().trim(), isNotEmpty);
+    });
+
+    test('Relative imports are checked like package imports', () {
+      expect(
+        _packageUri(File('lib/models/chapter.dart'), '../main.dart'),
+        'package:mangayomi/main.dart',
+      );
+      expect(
+        _packageUri(File('lib/modules/manga/a.dart'), '../anime/b.dart'),
+        'package:mangayomi/modules/anime/b.dart',
+      );
+      expect(
+        _packageUri(File('lib/models/chapter.dart'), 'manga.dart'),
+        'package:mangayomi/models/manga.dart',
+      );
     });
 
     test('Layer 1 (lib/models) never imports higher layers or main.dart', () {
