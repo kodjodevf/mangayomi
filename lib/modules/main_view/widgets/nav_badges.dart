@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 
 class ExtensionBadgeWidget extends ConsumerWidget {

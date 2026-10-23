@@ -302,8 +302,6 @@
   "pure_black_dark_mode": "Pure black dark mode",
   "tint_surfaces_with_palette": "Tint surfaces with the palette",
   "tint_surfaces_with_palette_subtitle": "Colours backgrounds, cards and bars with the chosen palette, as before. Off, they stay neutral and the palette only colours the accent.",
-  "novel_reader_font": "App font",
-  "novel_reader_font_subtitle": "Font used throughout the app interface and novel reader.",
   "timestamp": "Timestamp",
   "relative_timestamp": "Relative timestamp",
   "relative_timestamp_short": "Short (Today, Yesterday)",

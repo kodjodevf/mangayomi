@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/utils/error_toast.dart';
 
@@ -24,6 +25,21 @@ void main() {
 
       expect(CrashReports.latest?.source, 'restore_decode');
       expect(CrashReports.latest?.stack, isNull);
+    });
+
+    test('prints the error unredacted in a debug build', () {
+      final printed = <String?>[];
+      final previous = debugPrint;
+      debugPrint = (message, {wrapWidth}) => printed.add(message);
+      addTearDown(() => debugPrint = previous);
+
+      recordError(
+        Exception('401 for https://api.example.com/me?token=abc123'),
+        source: 'tracker',
+      );
+
+      expect(printed.single, contains('token=abc123'));
+      expect(CrashReports.latest?.error, isNot(contains('abc123')));
     });
   });
 }

@@ -584,13 +584,6 @@ class AppLocalizationsTh extends AppLocalizations {
       'ย้อมพื้นหลัง การ์ด และแถบด้วยชุดสีที่เลือกเหมือนเดิม เมื่อปิด จะคงเป็นสีกลางและชุดสีจะใช้กับสีเน้นเท่านั้น';
 
   @override
-  String get novel_reader_font => 'แบบอักษรตัวอ่านนิยาย';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      'ใช้กับแบบอักษรเริ่มต้นของตัวอ่านนิยาย ส่วนอื่นของแอปใช้ Figtree';
-
-  @override
   String get timestamp => 'ลงเวลา';
 
   @override

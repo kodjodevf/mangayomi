@@ -1,24 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
-import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
+import 'package:mangayomi/modules/reader_common/key_bindings.dart';
 import 'package:mangayomi/modules/widgets/keyboard_shortcuts_dialog.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-
-/// What a reader shortcut does.
-enum ReaderShortcut {
-  previousPage,
-  nextPage,
-  previousChapter,
-  nextChapter,
-  toggleBars,
-  fullScreen,
-  zoomIn,
-  zoomOut,
-  zoomReset,
-  leave,
-  showShortcuts,
-}
 
 /// The keys of each shortcut, as shown to the reader, in the order the
 /// list of shortcuts shows them. [isReverseHorizontal] swaps the arrows

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/modules/anime/utils/player_shortcuts.dart';
 import 'package:mangayomi/modules/reader_common/mixins/reader_gestures.dart';
-import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
+import 'package:mangayomi/modules/reader_common/key_bindings.dart';
 
 void main() {
   const ctrlB = KeyCombo(LogicalKeyboardKey.keyB, control: true);

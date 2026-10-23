@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:mangayomi/modules/more/settings/keyboard_shortcuts/key_bindings.dart';
+import 'package:mangayomi/modules/reader_common/key_bindings.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart'
@@ -36,7 +36,7 @@ import 'package:mangayomi/modules/manga/reader/widgets/reader_settings_modal.dar
 import 'package:mangayomi/modules/manga/reader/widgets/reader_slider_preview_overlay.dart';
 import 'package:mangayomi/modules/reader_common/widgets/auto_scroll_button.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/page_indicator.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/riverpod.dart';
 import 'package:mangayomi/router/push_router.dart';
@@ -316,8 +316,10 @@ class _MangaChapterPageGalleryState
       unawaited(discordRpc?.endReaderSession(discordReaderSession));
     }
     _saveCurrentPage(pageViewToActualIndexSync(_currentIndex ?? 0));
+    // Releases this reader's own decoded pages. The budget itself is shared
+    // with the reader replacing this one on a chapter switch, so clearing it
+    // here would throw away images the new reader just decoded.
     disposePreloadManager();
-    DecodedImageBudget.instance.clear();
     _readerController.keepAliveLink?.close();
     WakelockPlus.disable();
     super.dispose();

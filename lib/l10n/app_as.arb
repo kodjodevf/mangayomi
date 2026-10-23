@@ -1376,8 +1376,6 @@
   "chapter_swipe_disabled": "অক্ষম কৰা হৈছে",
   "tint_surfaces_with_palette": "পেলেটেৰে পৃষ্ঠবোৰ ৰং কৰক",
   "tint_surfaces_with_palette_subtitle": "আগৰ দৰে বাছনি কৰা পেলেটেৰে পটভূমি, কাৰ্ড আৰু বাৰবোৰ ৰং কৰে। বন্ধ থাকিলে সেইবোৰ নিৰপেক্ষ হৈ থাকে আৰু পেলেটে কেৱল একচেণ্ট ৰং দিয়ে।",
-  "novel_reader_font": "উপন্যাস পঢ়োতাৰ ফণ্ট",
-  "novel_reader_font_subtitle": "উপন্যাস পঢ়োতাৰ ডিফল্ট ফণ্টে ব্যৱহাৰ কৰে। এপৰ বাকী অংশই Figtree ব্যৱহাৰ কৰে।",
   "floating_navigation_bar": "ভাহি থকা নেভিগেচন বাৰ",
   "floating_navigation_bar_description": "সাধাৰণ লাগি থকা নেভিগেচন বাৰৰ সলনি এটা ভাহি থকা কেপচুল ব্যৱহাৰ কৰক।",
   "add_repo_sources_to_add": "যোগ কৰা হ'ব এই এক্সটেনচন তালিকাবোৰ:",

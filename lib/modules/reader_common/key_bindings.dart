@@ -1,10 +1,45 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mangayomi/modules/anime/utils/player_shortcuts.dart';
-import 'package:mangayomi/modules/reader_common/mixins/reader_gestures.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'key_bindings.g.dart';
+
+/// What a reader shortcut does.
+enum ReaderShortcut {
+  previousPage,
+  nextPage,
+  previousChapter,
+  nextChapter,
+  toggleBars,
+  fullScreen,
+  zoomIn,
+  zoomOut,
+  zoomReset,
+  leave,
+  showShortcuts,
+}
+
+/// What a video player shortcut does.
+enum PlayerShortcut {
+  playPause,
+  seekBackShort,
+  seekForwardShort,
+  seekBackLong,
+  seekForwardLong,
+  skipIntro,
+  previousFrame,
+  nextFrame,
+  volumeUp,
+  volumeDown,
+  mute,
+  previousEpisode,
+  nextEpisode,
+  fullScreen,
+  exitFullScreen,
+  shaders,
+  shadersOff,
+  showShortcuts,
+}
 
 /// A key plus the modifiers held with it, e.g. Ctrl + B.
 class KeyCombo {

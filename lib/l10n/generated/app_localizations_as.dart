@@ -585,13 +585,6 @@ class AppLocalizationsAs extends AppLocalizations {
       'আগৰ দৰে বাছনি কৰা পেলেটেৰে পটভূমি, কাৰ্ড আৰু বাৰবোৰ ৰং কৰে। বন্ধ থাকিলে সেইবোৰ নিৰপেক্ষ হৈ থাকে আৰু পেলেটে কেৱল একচেণ্ট ৰং দিয়ে।';
 
   @override
-  String get novel_reader_font => 'উপন্যাস পঢ়োতাৰ ফণ্ট';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      'উপন্যাস পঢ়োতাৰ ডিফল্ট ফণ্টে ব্যৱহাৰ কৰে। এপৰ বাকী অংশই Figtree ব্যৱহাৰ কৰে।';
-
-  @override
   String get timestamp => 'টাইমষ্টেম্প';
 
   @override

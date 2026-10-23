@@ -586,13 +586,6 @@ class AppLocalizationsId extends AppLocalizations {
       'Mewarnai latar, kartu, dan bilah dengan palet pilihan, seperti dulu. Jika mati, semuanya tetap netral dan palet hanya mewarnai aksen.';
 
   @override
-  String get novel_reader_font => 'Font pembaca novel';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      'Dipakai oleh font Bawaan di pembaca novel. Bagian lain aplikasi memakai Figtree.';
-
-  @override
   String get timestamp => 'Cap Waktu';
 
   @override

@@ -1408,8 +1408,6 @@
   "chapter_swipe_disabled": "معطل",
   "tint_surfaces_with_palette": "تلوين الأسطح بلوحة الألوان",
   "tint_surfaces_with_palette_subtitle": "يلوّن الخلفيات والبطاقات والأشرطة باللوحة المختارة، كما في السابق. عند الإيقاف تبقى محايدة ولا تلوّن اللوحة إلا لون التمييز.",
-  "novel_reader_font": "خط قارئ الروايات",
-  "novel_reader_font_subtitle": "يستخدمه الخط الافتراضي في قارئ الروايات. يستخدم باقي التطبيق خط Figtree.",
   "floating_navigation_bar": "شريط تنقل عائم",
   "floating_navigation_bar_description": "استخدام كبسولة عائمة بدل شريط التنقل الثابت.",
   "add_repo_sources_to_add": "قوائم الإضافات التي ستُضاف:",

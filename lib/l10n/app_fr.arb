@@ -93,8 +93,6 @@
   "pure_black_dark_mode": "Mode noir pur",
   "tint_surfaces_with_palette": "Teinter les surfaces avec la palette",
   "tint_surfaces_with_palette_subtitle": "Colore les fonds, les cartes et les barres avec la palette choisie, comme avant. Désactivé, ils restent neutres et la palette ne colore que l'accent.",
-  "novel_reader_font": "Police de l'app",
-  "novel_reader_font_subtitle": "Police utilisée dans l'interface de l'app et le lecteur de romans.",
   "timestamp": "Horodatage",
   "relative_timestamp": "Horodatages relatifs",
   "relative_timestamp_short": "Court (Aujourd'hui, Hier)",

@@ -586,13 +586,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Färbt Hintergründe, Karten und Leisten mit der gewählten Palette ein, wie früher. Aus bleiben sie neutral und die Palette färbt nur die Akzentfarbe.';
 
   @override
-  String get novel_reader_font => 'Schrift des Romanlesers';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      'Wird von der Standardschrift des Romanlesers verwendet. Der Rest der App nutzt Figtree.';
-
-  @override
   String get timestamp => 'Zeitstempel';
 
   @override

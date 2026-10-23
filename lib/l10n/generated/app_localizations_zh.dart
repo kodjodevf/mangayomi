@@ -568,12 +568,6 @@ class AppLocalizationsZh extends AppLocalizations {
       '像以前一样，用所选调色板为背景、卡片和栏着色。关闭时它们保持中性色，调色板只用于强调色。';
 
   @override
-  String get novel_reader_font => '小说阅读器字体';
-
-  @override
-  String get novel_reader_font_subtitle => '供小说阅读器的“默认”字体使用。应用的其他部分使用 Figtree。';
-
-  @override
   String get timestamp => '时间戳';
 
   @override

@@ -2,6 +2,7 @@
 // handling AES-encrypted backups. Kept apart from restore.dart: this only
 // reads and decrypts a file, it never touches Isar.
 import 'dart:convert';
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
@@ -59,7 +60,10 @@ Future<Map<String, dynamic>> decodeMangayomiBackup(
         await persistResolvedPassword(embeddedPassword, context);
       }
       return backup;
-    } catch (_) {
+    } catch (error) {
+      if (!isBackupPasswordError(error, triedPassword: passwordToTry != null)) {
+        rethrow;
+      }
       if (!triedStoredPassword) {
         triedStoredPassword = true;
         final stored = await BackupPasswordStorage.get();
@@ -80,4 +84,17 @@ Future<Map<String, dynamic>> decodeMangayomiBackup(
       wasIncorrect = true;
     }
   }
+}
+
+/// Whether [error], from reading a backup, means its password is missing or
+/// wrong, as opposed to the file being unreadable: a corrupt or empty file
+/// is reported as it is instead of asking for a password over and over.
+bool isBackupPasswordError(Object error, {required bool triedPassword}) {
+  if (error is FileSystemException) return false;
+  if (error is ArchiveException && error.message.contains('password')) {
+    return true;
+  }
+  // ZipCrypto's only password check lets one wrong password in 256 through,
+  // and the entry then fails to inflate or decode like a corrupt one.
+  return triedPassword;
 }

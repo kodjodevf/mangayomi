@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/navigation_overlay.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_gesture_handler.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_interactive_region.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/providers/reader_state_provider.dart';
 
 /// The reader's interaction layer above the page content: the tap-zone
 /// gesture handler, the page-turn flash effect, and (while open) the

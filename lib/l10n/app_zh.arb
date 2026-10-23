@@ -1409,8 +1409,6 @@
   "chapter_swipe_disabled": "已禁用",
   "tint_surfaces_with_palette": "用调色板为界面着色",
   "tint_surfaces_with_palette_subtitle": "像以前一样，用所选调色板为背景、卡片和栏着色。关闭时它们保持中性色，调色板只用于强调色。",
-  "novel_reader_font": "小说阅读器字体",
-  "novel_reader_font_subtitle": "供小说阅读器的“默认”字体使用。应用的其他部分使用 Figtree。",
   "floating_navigation_bar": "悬浮导航栏",
   "floating_navigation_bar_description": "使用悬浮胶囊代替固定的导航栏。",
   "add_repo_sources_to_add": "将添加以下扩展列表：",

@@ -597,13 +597,6 @@ class AppLocalizationsRu extends AppLocalizations {
       'Окрашивает фоны, карточки и панели в выбранную палитру, как раньше. Если выключено, они остаются нейтральными, а палитра окрашивает только акцент.';
 
   @override
-  String get novel_reader_font => 'Шрифт читалки ранобэ';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      'Используется шрифтом «По умолчанию» в читалке ранобэ. Остальное приложение использует Figtree.';
-
-  @override
   String get timestamp => 'Временная метка';
 
   @override

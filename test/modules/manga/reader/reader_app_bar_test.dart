@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/reader_common/widgets/reader_app_bar.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:shiori/shiori.dart';
 
 class _NotFullScreen extends FullScreenReaderState {

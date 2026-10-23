@@ -1406,8 +1406,6 @@
   "chapter_swipe_disabled": "Desativado",
   "tint_surfaces_with_palette": "Tingir as superfícies com a paleta",
   "tint_surfaces_with_palette_subtitle": "Colore fundos, cartões e barras com a paleta escolhida, como antes. Desligado, ficam neutros e a paleta só colore o destaque.",
-  "novel_reader_font": "Fonte do leitor de novels",
-  "novel_reader_font_subtitle": "Usada pela fonte padrão do leitor de novels. O resto do app usa Figtree.",
   "floating_navigation_bar": "Barra de navegação flutuante",
   "floating_navigation_bar_description": "Uma cápsula flutuante em vez da barra de navegação fixa.",
   "add_repo_sources_to_add": "Listas de extensões que serão adicionadas:",

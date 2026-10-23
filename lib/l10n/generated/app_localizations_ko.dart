@@ -571,13 +571,6 @@ class AppLocalizationsKo extends AppLocalizations {
       '예전처럼 배경, 카드, 바를 선택한 팔레트로 물들입니다. 끄면 중립색으로 남고 팔레트는 강조색에만 쓰입니다.';
 
   @override
-  String get novel_reader_font => '소설 리더 글꼴';
-
-  @override
-  String get novel_reader_font_subtitle =>
-      '소설 리더의 기본 글꼴에 사용됩니다. 앱의 나머지 부분은 Figtree를 사용합니다.';
-
-  @override
   String get timestamp => '타임스탬프';
 
   @override

@@ -1368,8 +1368,6 @@
   "chapter_swipe_disabled": "사용 안 함",
   "tint_surfaces_with_palette": "팔레트로 표면 물들이기",
   "tint_surfaces_with_palette_subtitle": "예전처럼 배경, 카드, 바를 선택한 팔레트로 물들입니다. 끄면 중립색으로 남고 팔레트는 강조색에만 쓰입니다.",
-  "novel_reader_font": "소설 리더 글꼴",
-  "novel_reader_font_subtitle": "소설 리더의 기본 글꼴에 사용됩니다. 앱의 나머지 부분은 Figtree를 사용합니다.",
   "floating_navigation_bar": "떠 있는 내비게이션 바",
   "floating_navigation_bar_description": "고정된 내비게이션 바 대신 떠 있는 캡슐을 사용합니다.",
   "add_repo_sources_to_add": "추가될 확장 프로그램 목록:",
