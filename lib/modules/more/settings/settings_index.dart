@@ -751,6 +751,12 @@ final settingsIndex = <SettingsEntry>[
     route: '/playerAudioScreen',
   ),
   SettingsEntry(
+    title: (l) => l.audio_delay,
+    subtitle: (l) => l.audio_delay_subtitle,
+    section: (l) => l.video_audio,
+    route: '/playerAudioScreen',
+  ),
+  SettingsEntry(
     title: (l) => l.advanced,
     subtitle: null,
     section: (l) => l.advanced,

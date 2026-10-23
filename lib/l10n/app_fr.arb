@@ -543,6 +543,8 @@
   "internal_player_info": "Progression, contrôles, orientation",
   "subtitle_delay_text": "Délai des sous-titres",
   "subtitle_delay": "Délai (ms)",
+  "audio_delay": "Décalage audio (ms)",
+  "audio_delay_subtitle": "Joue le son plus tard (positif) ou plus tôt (négatif) que l'image. Conservé d'un épisode à l'autre.",
   "subtitle_speed": "Vitesse",
   "tracks": "Pistes",
   "calendar": "Calendrier",

@@ -4207,6 +4207,18 @@ abstract class AppLocalizations {
   /// **'Delay (ms)'**
   String get subtitle_delay;
 
+  /// No description provided for @audio_delay.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio delay (ms)'**
+  String get audio_delay;
+
+  /// No description provided for @audio_delay_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Plays the sound later (positive) or earlier (negative) than the picture. Kept from one episode to the next.'**
+  String get audio_delay_subtitle;
+
   /// No description provided for @subtitle_speed.
   ///
   /// In en, this message translates to:

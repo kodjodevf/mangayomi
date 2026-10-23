@@ -492,6 +492,8 @@ class Settings {
   bool? doublePageSingleFirstPage;
   bool? doublePageAuto;
 
+  int? audioDelayMs;
+
   int? secureScreen;
 
   int? appLockDelayMinutes;
@@ -746,6 +748,7 @@ class Settings {
     this.tvHomeGenreRows,
     this.doublePageSingleFirstPage = false,
     this.doublePageAuto = false,
+    this.audioDelayMs = 0,
     this.secureScreen = 0,
     this.appLockDelayMinutes = 0,
     this.splitTallImages = false,
@@ -1124,6 +1127,7 @@ class Settings {
     tvHomeGenreRows = json['tvHomeGenreRows'];
     doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
     doublePageAuto = json['doublePageAuto'];
+    audioDelayMs = json['audioDelayMs'];
     secureScreen = json['secureScreen'];
     appLockDelayMinutes = json['appLockDelayMinutes'];
     splitTallImages = json['splitTallImages'];
@@ -1390,6 +1394,7 @@ class Settings {
     'tvHomeGenreRows': tvHomeGenreRows,
     'doublePageSingleFirstPage': doublePageSingleFirstPage,
     'doublePageAuto': doublePageAuto,
+    'audioDelayMs': audioDelayMs,
     'secureScreen': secureScreen,
     'appLockDelayMinutes': appLockDelayMinutes,
     'splitTallImages': splitTallImages,

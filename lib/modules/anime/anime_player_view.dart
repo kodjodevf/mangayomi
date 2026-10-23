@@ -290,6 +290,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   @override
   TextEditingController get mpvSubDelayController => _subDelayController;
   @override
+  TextEditingController get mpvAudioDelayController => _audioDelayController;
+  @override
   TextEditingController get mpvSubSpeedController => _subSpeedController;
   @override
   Future<void> mpvSeekTo(int absoluteSeconds) => _seekTo(absoluteSeconds);
@@ -356,6 +358,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   late final audioChannel = ref.read(audioChannelStateProvider);
   late final volumeBoostCap = ref.read(volumeBoostCapStateProvider);
+  late final audioDelayMs = ref.read(audioDelayStateProvider);
   late final Player _player = Player(
     configuration: PlayerConfiguration(
       libass: useLibass,
@@ -368,6 +371,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         if (audioPreferredLang.isNotEmpty) "alang": audioPreferredLang,
         if (enableAudioPitchCorrection) "audio-pitch-correction": "yes",
         "volume-max": "${volumeBoostCap + 100}",
+        if (audioDelayMs != 0) "audio-delay": "${audioDelayMs / 1000}",
         if (audioChannel != AudioChannel.reverseStereo)
           "audio-channels": audioChannel.mpvName,
         if (audioChannel == AudioChannel.reverseStereo)
@@ -458,6 +462,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool _includeSubtitles = false;
   final _subDelayController = TextEditingController(text: "0");
   final _subSpeedController = TextEditingController(text: "1.00");
+  late final _audioDelayController = TextEditingController(
+    text: "${ref.read(audioDelayStateProvider)}",
+  );
   int lastRpcTimestampUpdate = DateTime.now().millisecondsSinceEpoch;
 
   late final StreamSubscription<Duration> _currentPositionSub;
@@ -718,6 +725,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _currentPosition.addListener(_updateRpcTimestamp);
     _subDelayController.addListener(onSubDelayChanged);
     _subSpeedController.addListener(onSubSpeedChanged);
+    _audioDelayController.addListener(onAudioDelayChanged);
     if (useLibass) {
       _subSettingsSub = ref.listenManual(subtitleSettingsStateProvider, (
         previous,
@@ -812,6 +820,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _watchStopwatch.stop();
     _currentPosition.removeListener(_updateRpcTimestamp);
     _subDelayController.removeListener(onSubDelayChanged);
+    _audioDelayController.removeListener(onAudioDelayChanged);
     _subSpeedController.removeListener(onSubSpeedChanged);
     _subSettingsSub?.close();
     WidgetsBinding.instance.removeObserver(this);
@@ -846,6 +855,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _autoplayNext.dispose();
     _skipPhase.dispose();
     _subDelayController.dispose();
+    _audioDelayController.dispose();
     _subSpeedController.dispose();
     if (!isDesktop) _setLandscapeMode(false);
     discordRpc?.showIdleText();

@@ -2315,6 +2315,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get subtitle_delay => 'Ritardo (ms)';
 
   @override
+  String get audio_delay => 'Audio delay (ms)';
+
+  @override
+  String get audio_delay_subtitle =>
+      'Plays the sound later (positive) or earlier (negative) than the picture. Kept from one episode to the next.';
+
+  @override
   String get subtitle_speed => 'Velocità';
 
   @override

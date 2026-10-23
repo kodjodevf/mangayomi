@@ -423,6 +423,7 @@ mixin AnimePlayerSettingsMixin<T extends riv.ConsumerStatefulWidget>
         unawaited(setAudioTrack(track));
       },
       onDone: () => _popSettings(context),
+      audioDelayController: mpvAudioDelayController,
     );
   }
 }
