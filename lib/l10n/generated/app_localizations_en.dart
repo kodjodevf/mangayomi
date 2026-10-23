@@ -2573,6 +2573,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get app_lock => 'App lock';
 
   @override
+  String get app_lock_delay => 'Lock after';
+
+  @override
+  String get app_lock_delay_immediately => 'Leaving the app';
+
+  @override
+  String app_lock_delay_minutes(int n) {
+    return '$n min away';
+  }
+
+  @override
+  String get app_lock_delay_launch_only => 'Only when the app starts';
+
+  @override
   String get require_biometric_or_device_credential =>
       'Require biometric or device credential to open the app';
 

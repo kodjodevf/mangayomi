@@ -4675,6 +4675,30 @@ abstract class AppLocalizations {
   /// **'App lock'**
   String get app_lock;
 
+  /// No description provided for @app_lock_delay.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock after'**
+  String get app_lock_delay;
+
+  /// No description provided for @app_lock_delay_immediately.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaving the app'**
+  String get app_lock_delay_immediately;
+
+  /// No description provided for @app_lock_delay_minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} min away'**
+  String app_lock_delay_minutes(int n);
+
+  /// No description provided for @app_lock_delay_launch_only.
+  ///
+  /// In en, this message translates to:
+  /// **'Only when the app starts'**
+  String get app_lock_delay_launch_only;
+
   /// No description provided for @require_biometric_or_device_credential.
   ///
   /// In en, this message translates to:

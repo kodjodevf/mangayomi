@@ -2610,6 +2610,20 @@ class AppLocalizationsFr extends AppLocalizations {
   String get app_lock => 'Verrouillage de l\'application';
 
   @override
+  String get app_lock_delay => 'Verrouiller après';
+
+  @override
+  String get app_lock_delay_immediately => 'Avoir quitté l\'app';
+
+  @override
+  String app_lock_delay_minutes(int n) {
+    return '$n min d\'absence';
+  }
+
+  @override
+  String get app_lock_delay_launch_only => 'Seulement au démarrage de l\'app';
+
+  @override
   String get require_biometric_or_device_credential =>
       'Exiger l\'authentification biométrique ou les identifiants de l\'appareil pour ouvrir l\'application';
 

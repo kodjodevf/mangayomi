@@ -123,3 +123,55 @@ abstract class _$AppUnlockedState extends $Notifier<bool> {
     return element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(AppLockDelayState)
+final appLockDelayStateProvider = AppLockDelayStateProvider._();
+
+final class AppLockDelayStateProvider
+    extends $NotifierProvider<AppLockDelayState, int> {
+  AppLockDelayStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'appLockDelayStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$appLockDelayStateHash();
+
+  @$internal
+  @override
+  AppLockDelayState create() => AppLockDelayState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$appLockDelayStateHash() => r'25599b7e0e2e3f81430c0f0db2b9d19de21793ea';
+
+abstract class _$AppLockDelayState extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

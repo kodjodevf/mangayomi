@@ -492,6 +492,8 @@ class Settings {
   bool? doublePageSingleFirstPage;
   bool? doublePageAuto;
 
+  int? appLockDelayMinutes;
+
   bool? splitTallImages;
 
   bool? skipReadChapters;
@@ -742,6 +744,7 @@ class Settings {
     this.tvHomeGenreRows,
     this.doublePageSingleFirstPage = false,
     this.doublePageAuto = false,
+    this.appLockDelayMinutes = 0,
     this.splitTallImages = false,
     this.skipReadChapters = false,
     this.skipFilteredChapters = true,
@@ -1118,6 +1121,7 @@ class Settings {
     tvHomeGenreRows = json['tvHomeGenreRows'];
     doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
     doublePageAuto = json['doublePageAuto'];
+    appLockDelayMinutes = json['appLockDelayMinutes'];
     splitTallImages = json['splitTallImages'];
     skipReadChapters = json['skipReadChapters'];
     skipFilteredChapters = json['skipFilteredChapters'];
@@ -1382,6 +1386,7 @@ class Settings {
     'tvHomeGenreRows': tvHomeGenreRows,
     'doublePageSingleFirstPage': doublePageSingleFirstPage,
     'doublePageAuto': doublePageAuto,
+    'appLockDelayMinutes': appLockDelayMinutes,
     'splitTallImages': splitTallImages,
     'skipReadChapters': skipReadChapters,
     'skipFilteredChapters': skipFilteredChapters,

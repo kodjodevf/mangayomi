@@ -1074,4 +1074,10 @@ final settingsIndex = <SettingsEntry>[
     section: (l) => l.security,
     route: '/security',
   ),
+  SettingsEntry(
+    title: (l) => l.app_lock_delay,
+    subtitle: null,
+    section: (l) => l.security,
+    route: '/security',
+  ),
 ];

@@ -30,3 +30,16 @@ class AppUnlockedState extends _$AppUnlockedState {
 
   void lock() => state = false;
 }
+
+@riverpod
+class AppLockDelayState extends _$AppLockDelayState {
+  @override
+  int build() {
+    return settingsRepository.current.appLockDelayMinutes ?? 0;
+  }
+
+  void set(int value) {
+    state = value;
+    settingsRepository.update((s) => s.appLockDelayMinutes = value);
+  }
+}

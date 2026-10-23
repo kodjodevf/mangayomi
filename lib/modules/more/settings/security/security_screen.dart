@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/app_lock.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 class SecurityScreen extends ConsumerStatefulWidget {
@@ -85,6 +86,24 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
                       }
                     : null,
               ),
+              if (appLockEnabled)
+                ShioriValueRow<int>(
+                  title: l10n.app_lock_delay,
+                  value: ref.watch(appLockDelayStateProvider),
+                  options: [
+                    for (final minutes in appLockDelays)
+                      ShioriChoice(minutes, switch (minutes) {
+                        0 => l10n.app_lock_delay_immediately,
+                        appLockOnLaunchOnly => l10n.app_lock_delay_launch_only,
+                        _ => l10n.app_lock_delay_minutes(minutes),
+                      }),
+                  ],
+                  // Loosening the lock asks, as turning it off does.
+                  onChanged: (value) async {
+                    if (!await _authenticate()) return;
+                    ref.read(appLockDelayStateProvider.notifier).set(value);
+                  },
+                ),
             ],
           ),
         ],
