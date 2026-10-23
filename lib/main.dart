@@ -53,6 +53,7 @@ import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/utils/app_lock.dart';
+import 'package:mangayomi/services/secure_screen.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/security/app_lock_screen.dart';
@@ -283,6 +284,11 @@ class _MyAppState extends ConsumerState<MyApp>
     WidgetsBinding.instance.addObserver(this);
     if (!isMobile) windowManager.addListener(this);
     initializeDateFormatting();
+    ref.listenManual(
+      secureScreenOnProvider,
+      (_, secure) => SecureScreen.apply(secure),
+      fireImmediately: true,
+    );
     customDns = ref.read(customDnsStateProvider);
     _initDeepLinks();
     _setupMpvConfig();
@@ -325,6 +331,10 @@ class _MyAppState extends ConsumerState<MyApp>
   /// When the app last left the screen, for the lock delay.
   DateTime? _backgroundedAt;
 
+  /// Whether the app is off screen or on its way, on iOS, where a secure
+  /// screen is covered so the app switcher's preview shows nothing.
+  bool _obscured = false;
+
   /// The scheduled library refresh, when due; starts the download queue when
   /// it queued new chapters.
   Future<void> _autoUpdateLibrary() async {
@@ -337,6 +347,11 @@ class _MyAppState extends ConsumerState<MyApp>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
+    // iOS takes the app switcher's preview as the app goes inactive.
+    if (Platform.isIOS) {
+      final obscured = state != AppLifecycleState.resumed;
+      if (obscured != _obscured) setState(() => _obscured = obscured);
+    }
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden) {
       if (Platform.isLinux) {
@@ -440,6 +455,16 @@ class _MyAppState extends ConsumerState<MyApp>
         final withBackHandler = !isMobile
             ? _MouseBackButtonHandler(router: router, child: base)
             : base;
+
+        if (_obscured && ref.watch(secureScreenOnProvider)) {
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              withBackHandler,
+              ColoredBox(color: Theme.of(context).scaffoldBackgroundColor),
+            ],
+          );
+        }
 
         if (!Platform.isLinux) {
           final isUnlocked = ref.watch(appUnlockedStateProvider);

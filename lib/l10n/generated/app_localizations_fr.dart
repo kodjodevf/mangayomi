@@ -2624,6 +2624,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get app_lock_delay_launch_only => 'Seulement au démarrage de l\'app';
 
   @override
+  String get secure_screen => 'Écran sécurisé';
+
+  @override
+  String get secure_screen_subtitle =>
+      'Masque l\'app dans le sélecteur d\'apps et, sur Android, des captures et enregistrements d\'écran.';
+
+  @override
+  String get secure_screen_never => 'Jamais';
+
+  @override
+  String get secure_screen_incognito => 'En navigation privée';
+
+  @override
+  String get secure_screen_always => 'Toujours';
+
+  @override
   String get require_biometric_or_device_credential =>
       'Exiger l\'authentification biométrique ou les identifiants de l\'appareil pour ouvrir l\'application';
 

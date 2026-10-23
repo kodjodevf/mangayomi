@@ -2535,6 +2535,22 @@ class AppLocalizationsKo extends AppLocalizations {
   String get app_lock_delay_launch_only => 'Only when the app starts';
 
   @override
+  String get secure_screen => 'Secure screen';
+
+  @override
+  String get secure_screen_subtitle =>
+      'Hide the app from the app switcher, and on Android from screenshots and screen recordings.';
+
+  @override
+  String get secure_screen_never => 'Never';
+
+  @override
+  String get secure_screen_incognito => 'In incognito mode';
+
+  @override
+  String get secure_screen_always => 'Always';
+
+  @override
   String get require_biometric_or_device_credential =>
       '앱을 열 때 생체 인식 또는 기기 자격 증명 요구';
 

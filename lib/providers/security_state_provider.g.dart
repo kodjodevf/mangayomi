@@ -175,3 +175,100 @@ abstract class _$AppLockDelayState extends $Notifier<int> {
     return element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(SecureScreenState)
+final secureScreenStateProvider = SecureScreenStateProvider._();
+
+final class SecureScreenStateProvider
+    extends $NotifierProvider<SecureScreenState, SecureScreenMode> {
+  SecureScreenStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'secureScreenStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$secureScreenStateHash();
+
+  @$internal
+  @override
+  SecureScreenState create() => SecureScreenState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SecureScreenMode value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SecureScreenMode>(value),
+    );
+  }
+}
+
+String _$secureScreenStateHash() => r'10409e3bf968b124117f2901b498d07664acd36a';
+
+abstract class _$SecureScreenState extends $Notifier<SecureScreenMode> {
+  SecureScreenMode build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<SecureScreenMode, SecureScreenMode>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<SecureScreenMode, SecureScreenMode>,
+              SecureScreenMode,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// Whether the screen is secure right now: see [isScreenSecure].
+
+@ProviderFor(secureScreenOn)
+final secureScreenOnProvider = SecureScreenOnProvider._();
+
+/// Whether the screen is secure right now: see [isScreenSecure].
+
+final class SecureScreenOnProvider extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  /// Whether the screen is secure right now: see [isScreenSecure].
+  SecureScreenOnProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'secureScreenOnProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$secureScreenOnHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return secureScreenOn(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$secureScreenOnHash() => r'761acf2f28c9ce206f19d797927905028d254d5e';

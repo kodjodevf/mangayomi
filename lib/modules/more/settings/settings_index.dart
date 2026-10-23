@@ -1080,4 +1080,10 @@ final settingsIndex = <SettingsEntry>[
     section: (l) => l.security,
     route: '/security',
   ),
+  SettingsEntry(
+    title: (l) => l.secure_screen,
+    subtitle: (l) => l.secure_screen_subtitle,
+    section: (l) => l.security,
+    route: '/security',
+  ),
 ];

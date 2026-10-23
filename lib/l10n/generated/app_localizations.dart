@@ -4699,6 +4699,36 @@ abstract class AppLocalizations {
   /// **'Only when the app starts'**
   String get app_lock_delay_launch_only;
 
+  /// No description provided for @secure_screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure screen'**
+  String get secure_screen;
+
+  /// No description provided for @secure_screen_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide the app from the app switcher, and on Android from screenshots and screen recordings.'**
+  String get secure_screen_subtitle;
+
+  /// No description provided for @secure_screen_never.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get secure_screen_never;
+
+  /// No description provided for @secure_screen_incognito.
+  ///
+  /// In en, this message translates to:
+  /// **'In incognito mode'**
+  String get secure_screen_incognito;
+
+  /// No description provided for @secure_screen_always.
+  ///
+  /// In en, this message translates to:
+  /// **'Always'**
+  String get secure_screen_always;
+
   /// No description provided for @require_biometric_or_device_credential.
   ///
   /// In en, this message translates to:
