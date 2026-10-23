@@ -3447,3 +3447,56 @@ abstract class _$SkipDuplicateChaptersState extends $Notifier<bool> {
     return element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(SplitTallImagesState)
+final splitTallImagesStateProvider = SplitTallImagesStateProvider._();
+
+final class SplitTallImagesStateProvider
+    extends $NotifierProvider<SplitTallImagesState, bool> {
+  SplitTallImagesStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'splitTallImagesStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$splitTallImagesStateHash();
+
+  @$internal
+  @override
+  SplitTallImagesState create() => SplitTallImagesState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$splitTallImagesStateHash() =>
+    r'ccc683e2a656b5b7f69e189f52e2bcd2b9bc9c1c';
+
+abstract class _$SplitTallImagesState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

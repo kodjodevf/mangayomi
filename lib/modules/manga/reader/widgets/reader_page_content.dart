@@ -63,6 +63,9 @@ class ReaderPageContent extends ConsumerWidget {
 
   final void Function(int index, bool failed) onFailedToLoadImage;
   final void Function(int index, double width, double height) onWidePage;
+
+  /// A page read top to bottom loaded much taller than wide.
+  final void Function(int index, double width, double height) onTallPage;
   final void Function(int index) onPageImageLoaded;
 
   /// A single page's image finished loading wider than tall; the caller
@@ -94,6 +97,7 @@ class ReaderPageContent extends ConsumerWidget {
     required this.pageControllerFor,
     required this.onFailedToLoadImage,
     required this.onWidePage,
+    required this.onTallPage,
     required this.onPageImageLoaded,
     required this.onWideSinglePageLoaded,
     required this.onDoublePageZoomChanged,
@@ -144,6 +148,13 @@ class ReaderPageContent extends ConsumerWidget {
         onImageLoaded: (index, width, height) {
           if (ref.read(splitWidePagesStateProvider) && width > height * 1.2) {
             onWidePage(index, width, height);
+          } else if (!isHorizontalContinuous &&
+              pageMode != PageMode.doublePage &&
+              ref.read(splitTallImagesStateProvider) &&
+              // Cropping borders reads the whole image to find them, and
+              // reports the cropped size, which a slice cannot be cut from.
+              !ref.read(cropBordersStateProvider)) {
+            onTallPage(index, width, height);
           }
           onPageImageLoaded(index);
         },

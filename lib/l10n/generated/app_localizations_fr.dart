@@ -2923,6 +2923,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get split_wide_pages => 'Découper les pages doubles';
 
   @override
+  String get split_tall_images => 'Découper les images hautes';
+
+  @override
+  String get split_tall_images_subtitle =>
+      'Webtoon : affiche les images très hautes en tranches, décodées une à une, pour utiliser moins de mémoire. Pas avec le recadrage des bords.';
+
+  @override
   String get dual_page_invert => 'Inverser les demi-pages découpées';
 
   @override

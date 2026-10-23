@@ -89,10 +89,12 @@ class UChapDataPreload {
   });
 
   /// Identifies this page among its neighbours in a list or page view, for
-  /// widget keys. The two halves of a split wide page share [index] and only
-  /// differ by [srcRect].
+  /// widget keys. The parts of a split page (the halves of a wide one, the
+  /// slices of a tall one) share [index] and only differ by [srcRect].
   String widgetKey(int fallbackIndex) {
-    final half = srcRect == null ? '' : '-${srcRect!.left.round()}';
+    final half = srcRect == null
+        ? ''
+        : '-${srcRect!.left.round()}-${srcRect!.top.round()}';
     return '${chapter?.id ?? "trans"}-${index ?? fallbackIndex}$half';
   }
 

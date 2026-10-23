@@ -492,6 +492,8 @@ class Settings {
   bool? doublePageSingleFirstPage;
   bool? doublePageAuto;
 
+  bool? splitTallImages;
+
   bool? skipReadChapters;
 
   bool? skipFilteredChapters;
@@ -740,6 +742,7 @@ class Settings {
     this.tvHomeGenreRows,
     this.doublePageSingleFirstPage = false,
     this.doublePageAuto = false,
+    this.splitTallImages = false,
     this.skipReadChapters = false,
     this.skipFilteredChapters = true,
     this.skipDuplicateChapters = true,
@@ -1115,6 +1118,7 @@ class Settings {
     tvHomeGenreRows = json['tvHomeGenreRows'];
     doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
     doublePageAuto = json['doublePageAuto'];
+    splitTallImages = json['splitTallImages'];
     skipReadChapters = json['skipReadChapters'];
     skipFilteredChapters = json['skipFilteredChapters'];
     skipDuplicateChapters = json['skipDuplicateChapters'];
@@ -1378,6 +1382,7 @@ class Settings {
     'tvHomeGenreRows': tvHomeGenreRows,
     'doublePageSingleFirstPage': doublePageSingleFirstPage,
     'doublePageAuto': doublePageAuto,
+    'splitTallImages': splitTallImages,
     'skipReadChapters': skipReadChapters,
     'skipFilteredChapters': skipFilteredChapters,
     'skipDuplicateChapters': skipDuplicateChapters,

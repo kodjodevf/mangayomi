@@ -17,6 +17,7 @@ enum ReaderSwitch {
   webtoonDoubleTapZoom,
   navigateToPan,
   splitWidePages,
+  splitTallImages,
   dualPageInvert,
   dualPageRotateToFit,
   dualPageRotateToFitInvert,
@@ -43,6 +44,7 @@ enum ReaderSwitch {
     webtoonDoubleTapZoom => l10n.webtoon_double_tap_zoom_enabled,
     navigateToPan => l10n.navigate_to_pan,
     splitWidePages => l10n.split_wide_pages,
+    splitTallImages => l10n.split_tall_images,
     dualPageInvert => l10n.dual_page_invert,
     dualPageRotateToFit => l10n.dual_page_rotate_to_fit,
     dualPageRotateToFitInvert => l10n.dual_page_rotate_to_fit_invert,
@@ -69,6 +71,7 @@ enum ReaderSwitch {
     doublePageSingleFirstPage => l10n.double_page_single_first_page_subtitle,
     doublePageAuto => l10n.double_page_auto_subtitle,
     flashOnPageChange => l10n.flash_on_page_change_subtitle,
+    splitTallImages => l10n.split_tall_images_subtitle,
     skipReadChapters => l10n.skip_read_chapters_subtitle,
     skipDuplicateChapters => l10n.skip_duplicate_chapters_subtitle,
     // iOS can only watch the volume, and says what that does to it.
@@ -82,6 +85,7 @@ enum ReaderSwitch {
     webtoonDoubleTapZoom => ref.watch(webtoonDoubleTapZoomEnabledStateProvider),
     navigateToPan => ref.watch(navigateToPanStateProvider),
     splitWidePages => ref.watch(splitWidePagesStateProvider),
+    splitTallImages => ref.watch(splitTallImagesStateProvider),
     dualPageInvert => ref.watch(dualPageInvertStateProvider),
     dualPageRotateToFit => ref.watch(dualPageRotateToFitStateProvider),
     dualPageRotateToFitInvert => ref.watch(
@@ -123,6 +127,8 @@ enum ReaderSwitch {
         ref.read(navigateToPanStateProvider.notifier).set(value);
       case splitWidePages:
         ref.read(splitWidePagesStateProvider.notifier).set(value);
+      case splitTallImages:
+        ref.read(splitTallImagesStateProvider.notifier).set(value);
       case dualPageInvert:
         ref.read(dualPageInvertStateProvider.notifier).set(value);
       case dualPageRotateToFit:

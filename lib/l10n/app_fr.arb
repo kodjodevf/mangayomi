@@ -771,6 +771,8 @@
   "navigate_to_pan": "Naviguer vers le panoramique",
   "navigate_to_pan_subtitle": "Déplace d'abord l'image zoomée avant de tourner la page",
   "split_wide_pages": "Découper les pages doubles",
+  "split_tall_images": "Découper les images hautes",
+  "split_tall_images_subtitle": "Webtoon : affiche les images très hautes en tranches, décodées une à une, pour utiliser moins de mémoire. Pas avec le recadrage des bords.",
   "dual_page_invert": "Inverser les demi-pages découpées",
   "dual_page_rotate_to_fit": "Faire pivoter pour adapter",
   "dual_page_rotate_to_fit_invert": "Inverser le sens de rotation",

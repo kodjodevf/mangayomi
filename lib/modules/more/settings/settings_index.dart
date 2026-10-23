@@ -379,6 +379,13 @@ final settingsIndex = <SettingsEntry>[
     extra: 1,
   ),
   SettingsEntry(
+    title: (l) => l.split_tall_images,
+    subtitle: (l) => l.split_tall_images_subtitle,
+    section: (l) => l.reader,
+    route: '/readerSettingsSection',
+    extra: 0,
+  ),
+  SettingsEntry(
     title: (l) => l.dual_page_invert,
     subtitle: null,
     section: (l) => l.reader,

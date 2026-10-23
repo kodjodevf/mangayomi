@@ -876,3 +876,16 @@ class SkipDuplicateChaptersState extends _$SkipDuplicateChaptersState {
     settingsRepository.update((s) => s.skipDuplicateChapters = value);
   }
 }
+
+@riverpod
+class SplitTallImagesState extends _$SplitTallImagesState {
+  @override
+  bool build() {
+    return settingsRepository.current.splitTallImages ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.splitTallImages = value);
+  }
+}

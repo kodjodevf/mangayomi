@@ -174,6 +174,7 @@ class ReaderScreen extends ConsumerWidget {
             const ReaderSwitchRow(ReaderSwitch.webtoonDisableZoomOut),
             const ReaderSwitchRow(ReaderSwitch.webtoonDoubleTapZoom),
             const ReaderSwitchRow(ReaderSwitch.showPageGaps),
+            const ReaderSwitchRow(ReaderSwitch.splitTallImages),
             ShioriSliderRow(
               title: l10n.webtoon_side_padding,
               value: webtoonSidePadding.toDouble(),

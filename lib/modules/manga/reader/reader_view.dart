@@ -734,6 +734,7 @@ class _MangaChapterPageGalleryState
                     ),
                     onFailedToLoadImage: _onFailedToLoadImage,
                     onWidePage: splitWidePage,
+                    onTallPage: splitTallPage,
                     onPageImageLoaded: _onContinuousPageImageLoaded,
                     onWideSinglePageLoaded: (index) {
                       Future.delayed(const Duration(milliseconds: 300), () {

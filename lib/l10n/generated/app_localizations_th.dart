@@ -2880,6 +2880,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get split_wide_pages => 'แบ่งหน้าคู่';
 
   @override
+  String get split_tall_images => 'Split tall images';
+
+  @override
+  String get split_tall_images_subtitle =>
+      'Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.';
+
+  @override
   String get dual_page_invert => 'สลับหน้าคู่ที่ถูกแบ่ง';
 
   @override

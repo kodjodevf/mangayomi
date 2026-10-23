@@ -1151,6 +1151,8 @@
   "navigate_to_pan": "Navigate to pan",
   "navigate_to_pan_subtitle": "Move zoomed image before turning page",
   "split_wide_pages": "Split wide pages",
+  "split_tall_images": "Split tall images",
+  "split_tall_images_subtitle": "Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.",
   "dual_page_invert": "Invert cut half pages",
   "dual_page_rotate_to_fit": "Rotate to fit",
   "dual_page_rotate_to_fit_invert": "Invert rotation direction",

@@ -5239,6 +5239,18 @@ abstract class AppLocalizations {
   /// **'Split wide pages'**
   String get split_wide_pages;
 
+  /// No description provided for @split_tall_images.
+  ///
+  /// In en, this message translates to:
+  /// **'Split tall images'**
+  String get split_tall_images;
+
+  /// No description provided for @split_tall_images_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.'**
+  String get split_tall_images_subtitle;
+
   /// No description provided for @dual_page_invert.
   ///
   /// In en, this message translates to:

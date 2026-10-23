@@ -2824,6 +2824,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get split_wide_pages => '넓은 페이지 분할';
 
   @override
+  String get split_tall_images => 'Split tall images';
+
+  @override
+  String get split_tall_images_subtitle =>
+      'Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.';
+
+  @override
   String get dual_page_invert => '잘린 페이지 반전';
 
   @override
