@@ -316,8 +316,10 @@ class _MangaChapterPageGalleryState
       unawaited(discordRpc?.endReaderSession(discordReaderSession));
     }
     _saveCurrentPage(pageViewToActualIndexSync(_currentIndex ?? 0));
+    // Releases this reader's own decoded pages. The budget itself is shared
+    // with the reader replacing this one on a chapter switch, so clearing it
+    // here would throw away images the new reader just decoded.
     disposePreloadManager();
-    DecodedImageBudget.instance.clear();
     _readerController.keepAliveLink?.close();
     WakelockPlus.disable();
     super.dispose();
