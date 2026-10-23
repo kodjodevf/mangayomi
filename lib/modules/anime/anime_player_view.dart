@@ -20,6 +20,7 @@ import 'package:mangayomi/modules/anime/mixins/anime_track_selection_mixin.dart'
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
 import 'package:mangayomi/modules/anime/utils/playback_media.dart';
+import 'package:mangayomi/modules/anime/utils/video_filters.dart';
 import 'package:mangayomi/modules/anime/utils/video_prefs.dart';
 import 'package:mangayomi/modules/anime/providers/state_provider.dart';
 import 'package:mangayomi/modules/anime/utils/player_lifecycle.dart';
@@ -372,6 +373,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         if (enableAudioPitchCorrection) "audio-pitch-correction": "yes",
         "volume-max": "${volumeBoostCap + 100}",
         if (audioDelayMs != 0) "audio-delay": "${audioDelayMs / 1000}",
+        ...videoFilterOptions(ref.read(videoFiltersStateProvider)),
         if (audioChannel != AudioChannel.reverseStereo)
           "audio-channels": audioChannel.mpvName,
         if (audioChannel == AudioChannel.reverseStereo)

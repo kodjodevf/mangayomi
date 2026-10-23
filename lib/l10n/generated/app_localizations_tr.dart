@@ -2652,6 +2652,21 @@ class AppLocalizationsTr extends AppLocalizations {
   String get brightness => 'Parlaklık';
 
   @override
+  String get video_filters => 'Video filters';
+
+  @override
+  String get video_filter_contrast => 'Contrast';
+
+  @override
+  String get video_filter_saturation => 'Saturation';
+
+  @override
+  String get video_filter_gamma => 'Gamma';
+
+  @override
+  String get video_filter_hue => 'Hue';
+
+  @override
   String get volume => 'Ses düzeyi';
 
   @override

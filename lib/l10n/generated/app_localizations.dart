@@ -4795,6 +4795,36 @@ abstract class AppLocalizations {
   /// **'Brightness'**
   String get brightness;
 
+  /// No description provided for @video_filters.
+  ///
+  /// In en, this message translates to:
+  /// **'Video filters'**
+  String get video_filters;
+
+  /// No description provided for @video_filter_contrast.
+  ///
+  /// In en, this message translates to:
+  /// **'Contrast'**
+  String get video_filter_contrast;
+
+  /// No description provided for @video_filter_saturation.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturation'**
+  String get video_filter_saturation;
+
+  /// No description provided for @video_filter_gamma.
+  ///
+  /// In en, this message translates to:
+  /// **'Gamma'**
+  String get video_filter_gamma;
+
+  /// No description provided for @video_filter_hue.
+  ///
+  /// In en, this message translates to:
+  /// **'Hue'**
+  String get video_filter_hue;
+
   /// No description provided for @volume.
   ///
   /// In en, this message translates to:

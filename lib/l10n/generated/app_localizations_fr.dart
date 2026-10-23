@@ -2677,6 +2677,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get brightness => 'Luminosité';
 
   @override
+  String get video_filters => 'Filtres vidéo';
+
+  @override
+  String get video_filter_contrast => 'Contraste';
+
+  @override
+  String get video_filter_saturation => 'Saturation';
+
+  @override
+  String get video_filter_gamma => 'Gamma';
+
+  @override
+  String get video_filter_hue => 'Teinte';
+
+  @override
   String get volume => 'Volume';
 
   @override
