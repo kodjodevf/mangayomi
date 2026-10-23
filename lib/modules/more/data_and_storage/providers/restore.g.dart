@@ -102,7 +102,7 @@ final class DoRestoreProvider
   }
 }
 
-String _$doRestoreHash() => r'423970328efb46211e280b52ee0706499e1a1cf8';
+String _$doRestoreHash() => r'61c70ed6cd5fdd3f046332e66278bbdbd6de72ba';
 
 /// Restores the backup at [path], replacing or merging into the library.
 ///
@@ -235,7 +235,7 @@ final class RestoreBackupProvider
   }
 }
 
-String _$restoreBackupHash() => r'6af385ae2015151b982b02ae21d672e45eaad355';
+String _$restoreBackupHash() => r'565b754bb5c6e56283aff9c3db768b56becab631';
 
 final class RestoreBackupFamily extends $Family
     with
@@ -329,7 +329,7 @@ final class RestoreKotatsuBackupProvider
 }
 
 String _$restoreKotatsuBackupHash() =>
-    r'411be6e760301dde79c332fdc5e7d472b15568bf';
+    r'39c3d5bba8974765f3ecf602cc949fb31c4078cb';
 
 final class RestoreKotatsuBackupFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<void>, Archive> {
@@ -421,7 +421,7 @@ final class RestoreTachiBkBackupProvider
 }
 
 String _$restoreTachiBkBackupHash() =>
-    r'b3e27ed4e87587c761e1edaa4d5a1ad40a7a6348';
+    r'4b73efbb7a59becf695cfef1c840f932bdd8aa64';
 
 final class RestoreTachiBkBackupFamily extends $Family
     with

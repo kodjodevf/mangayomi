@@ -115,6 +115,7 @@ dependencies:
   native_toolchain_c: ^0.19.4
   cupertino_ui: ^1.0.2
   image: ^4.10.1
+  flutter_foreground_task: ^9.2.2
 
 dependency_overrides:
   protobuf: ^5.0.0

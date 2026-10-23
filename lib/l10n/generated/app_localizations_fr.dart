@@ -2543,6 +2543,38 @@ class AppLocalizationsFr extends AppLocalizations {
   String get app_lock => 'Verrouillage de l\'application';
 
   @override
+  String get background_work => 'Tâches en arrière-plan';
+
+  @override
+  String get background_work_in_progress => 'En cours…';
+
+  @override
+  String get background_downloading => 'Téléchargement';
+
+  @override
+  String get background_updating_library => 'Mise à jour de la bibliothèque';
+
+  @override
+  String get background_restoring => 'Restauration de la sauvegarde';
+
+  @override
+  String get background_syncing => 'Synchronisation';
+
+  @override
+  String get background_cancel_downloads => 'Annuler les téléchargements';
+
+  @override
+  String get background_stop_update => 'Arrêter la mise à jour';
+
+  @override
+  String get hide_notification_content =>
+      'Masquer le contenu des notifications';
+
+  @override
+  String get hide_notification_content_subtitle =>
+      'Les notifications disent ce que fait l\'app sans nommer les séries ni les chapitres.';
+
+  @override
   String get require_biometric_or_device_credential =>
       'Exiger l\'authentification biométrique ou les identifiants de l\'appareil pour ouvrir l\'application';
 

@@ -2429,6 +2429,37 @@ class AppLocalizationsZh extends AppLocalizations {
   String get app_lock => '应用锁';
 
   @override
+  String get background_work => 'Background work';
+
+  @override
+  String get background_work_in_progress => 'Working…';
+
+  @override
+  String get background_downloading => 'Downloading';
+
+  @override
+  String get background_updating_library => 'Updating library';
+
+  @override
+  String get background_restoring => 'Restoring backup';
+
+  @override
+  String get background_syncing => 'Syncing';
+
+  @override
+  String get background_cancel_downloads => 'Cancel downloads';
+
+  @override
+  String get background_stop_update => 'Stop update';
+
+  @override
+  String get hide_notification_content => 'Hide notification content';
+
+  @override
+  String get hide_notification_content_subtitle =>
+      'Notifications say what the app is doing without naming series or chapters.';
+
+  @override
   String get require_biometric_or_device_credential => '需要生物识别或设备凭证才能打开应用';
 
   @override

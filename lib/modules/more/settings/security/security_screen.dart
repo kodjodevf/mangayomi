@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,6 +89,20 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
               ),
             ],
           ),
+          if (Platform.isAndroid)
+            ShioriSettingsGroup(
+              children: [
+                ShioriSwitchRow(
+                  icon: Symbols.notifications_off_rounded,
+                  title: l10n.hide_notification_content,
+                  subtitle: l10n.hide_notification_content_subtitle,
+                  value: ref.watch(hideNotificationContentStateProvider),
+                  onChanged: (v) => ref
+                      .read(hideNotificationContentStateProvider.notifier)
+                      .set(v),
+                ),
+              ],
+            ),
         ],
       ),
     );

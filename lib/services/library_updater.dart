@@ -4,6 +4,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/security_state_provider.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/services/background_work/background_work.dart';
 import 'package:mangayomi/services/update_errors_provider.dart';
 import 'package:mangayomi/services/update_manga_detail_providers.dart';
 import 'package:mangayomi/utils/log/logger.dart';
@@ -48,6 +49,20 @@ class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
     void Function(int done, int failed, int total)? onProgress,
   }) async {
     final failures = <UpdateError>[];
+    BackgroundWork.begin(BackgroundWorkKind.libraryUpdate);
+    try {
+      return await _runUpdate(mangaList, itemtype, failures, onProgress);
+    } finally {
+      BackgroundWork.end(BackgroundWorkKind.libraryUpdate);
+    }
+  }
+
+  Future<List<UpdateError>> _runUpdate(
+    List<Manga> mangaList,
+    String itemtype,
+    List<UpdateError> failures,
+    void Function(int done, int failed, int total)? onProgress,
+  ) async {
     for (var i = 0; i < mangaList.length; i++) {
       // Stop early if the user pressed Stop.
       if (state.cancelRequested) break;
@@ -72,6 +87,14 @@ class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
         );
       }
       onProgress?.call(i + 1, failures.length, mangaList.length);
+      BackgroundWork.report(
+        BackgroundWorkKind.libraryUpdate,
+        BackgroundWorkProgress(
+          done: i + 1,
+          total: mangaList.length,
+          detail: manga.name,
+        ),
+      );
     }
     return failures;
   }

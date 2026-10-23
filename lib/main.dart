@@ -52,6 +52,12 @@ import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:mangayomi/services/background_work/background_work.dart';
+import 'package:mangayomi/services/background_work/download_work.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
+import 'package:mangayomi/services/download_manager/download_gate.dart';
 import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/security/app_lock_screen.dart';
 import 'package:media_kit/media_kit.dart';
@@ -150,6 +156,9 @@ void main(List<String> args) async {
         AppLogger.log('DB init failed: $e\n$st', logLevel: LogLevel.error);
         startupError = e;
       }
+      // The background work notification's buttons reach the app through
+      // this port.
+      if (Platform.isAndroid) FlutterForegroundTask.initCommunicationPort();
       runApp(
         startupError != null
             ? _StartupErrorApp(error: startupError.toString())
@@ -281,6 +290,7 @@ class _MyAppState extends ConsumerState<MyApp>
     WidgetsBinding.instance.addObserver(this);
     if (!isMobile) windowManager.addListener(this);
     initializeDateFormatting();
+    _initBackgroundWork();
     customDns = ref.read(customDnsStateProvider);
     _initDeepLinks();
     _setupMpvConfig();
@@ -453,8 +463,27 @@ class _MyAppState extends ConsumerState<MyApp>
     );
   }
 
+  /// The notification shown while the app works in the background, and
+  /// what its buttons do.
+  void _initBackgroundWork() {
+    DownloadWork.instance.start();
+    FlutterForegroundTask.addTaskDataCallback(BackgroundWork.handleAction);
+    BackgroundWork.onAction = (action) {
+      switch (action) {
+        case 'stop_library_update':
+          ref.read(libraryUpdateProvider.notifier).requestCancel();
+        case 'cancel_downloads':
+          for (final id in scheduledDownloads.value) {
+            chapterRepository.findByIdSync(id)?.cancelDownloads(id);
+          }
+      }
+    };
+  }
+
   @override
   void dispose() {
+    DownloadWork.instance.dispose();
+    FlutterForegroundTask.removeTaskDataCallback(BackgroundWork.handleAction);
     WidgetsBinding.instance.removeObserver(this);
     if (!isMobile) {
       windowManager.removeListener(this);

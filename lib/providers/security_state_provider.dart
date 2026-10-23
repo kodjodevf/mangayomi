@@ -30,3 +30,16 @@ class AppUnlockedState extends _$AppUnlockedState {
 
   void lock() => state = false;
 }
+
+@riverpod
+class HideNotificationContentState extends _$HideNotificationContentState {
+  @override
+  bool build() {
+    return settingsRepository.current.hideNotificationContent ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.hideNotificationContent = value);
+  }
+}
