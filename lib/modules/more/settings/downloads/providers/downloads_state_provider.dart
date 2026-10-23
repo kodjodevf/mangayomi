@@ -121,3 +121,87 @@ class DownloadDelaySecondsState extends _$DownloadDelaySecondsState {
     settingsRepository.update((s) => s.downloadDelaySeconds = value);
   }
 }
+
+@riverpod
+class DownloadNewChaptersState extends _$DownloadNewChaptersState {
+  @override
+  bool build() {
+    return settingsRepository.current.downloadNewChapters ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.downloadNewChapters = value);
+  }
+}
+
+@riverpod
+class DownloadNewChaptersCategoriesState
+    extends _$DownloadNewChaptersCategoriesState {
+  @override
+  List<int> build() {
+    return settingsRepository.current.downloadNewChaptersCategories ?? const [];
+  }
+
+  void set(List<int> value) {
+    state = value;
+    settingsRepository.update((s) => s.downloadNewChaptersCategories = value);
+  }
+}
+
+@riverpod
+class DownloadNewChaptersExcludedCategoriesState
+    extends _$DownloadNewChaptersExcludedCategoriesState {
+  @override
+  List<int> build() {
+    return settingsRepository.current.downloadNewChaptersExcludedCategories ??
+        const [];
+  }
+
+  void set(List<int> value) {
+    state = value;
+    settingsRepository.update(
+      (s) => s.downloadNewChaptersExcludedCategories = value,
+    );
+  }
+}
+
+@riverpod
+class DownloadAheadWhileReadingState extends _$DownloadAheadWhileReadingState {
+  @override
+  int build() {
+    return settingsRepository.current.downloadAheadWhileReading ?? 0;
+  }
+
+  void set(int value) {
+    state = value;
+    settingsRepository.update((s) => s.downloadAheadWhileReading = value);
+  }
+}
+
+@riverpod
+class DeleteAfterReadingSlotState extends _$DeleteAfterReadingSlotState {
+  @override
+  int build() {
+    return settingsRepository.current.deleteAfterReadingSlot ?? 0;
+  }
+
+  void set(int value) {
+    state = value;
+    settingsRepository.update((s) => s.deleteAfterReadingSlot = value);
+  }
+}
+
+@riverpod
+class DeleteBookmarkedAfterReadingState
+    extends _$DeleteBookmarkedAfterReadingState {
+  @override
+  bool build() {
+    return settingsRepository.current.deleteBookmarkedAfterReading ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.deleteBookmarkedAfterReading = value);
+  }
+}

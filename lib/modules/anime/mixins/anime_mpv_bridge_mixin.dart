@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
@@ -40,6 +41,7 @@ mixin AnimeMpvBridgeMixin<T extends riv.ConsumerStatefulWidget>
   ValueNotifier<String> get mpvSelectedShader;
   TextEditingController get mpvSubDelayController;
   TextEditingController get mpvSubSpeedController;
+  TextEditingController get mpvAudioDelayController;
 
   Future<void> mpvSeekTo(int absoluteSeconds);
   Future<void> mpvSeekBy(int deltaSeconds);
@@ -380,6 +382,20 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       );
       malloc.free(namePtr);
       malloc.free(valuePtr);
+    }
+  }
+
+  /// Applies the audio delay typed or stepped in the player, in
+  /// milliseconds, and keeps it for the next episodes.
+  void onAudioDelayChanged() {
+    final delayMs = int.tryParse(mpvAudioDelayController.text);
+    if (delayMs == null) return;
+    (mpvBridgePlayer.platform as NativePlayer).setProperty(
+      'audio-delay',
+      '${delayMs / 1000}',
+    );
+    if (settingsRepository.current.audioDelayMs != delayMs) {
+      settingsRepository.update((s) => s.audioDelayMs = delayMs);
     }
   }
 

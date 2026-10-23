@@ -119,3 +119,44 @@ class AutoLibraryUpdateWifiOnlyState extends _$AutoLibraryUpdateWifiOnlyState {
     settingsRepository.update((s) => s.autoLibraryUpdateWifiOnly = value);
   }
 }
+
+@riverpod
+class LibraryUpdateSkipCompletedState
+    extends _$LibraryUpdateSkipCompletedState {
+  @override
+  bool build() {
+    return settingsRepository.current.libraryUpdateSkipCompleted ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.libraryUpdateSkipCompleted = value);
+  }
+}
+
+@riverpod
+class LibraryUpdateSkipUnreadState extends _$LibraryUpdateSkipUnreadState {
+  @override
+  bool build() {
+    return settingsRepository.current.libraryUpdateSkipUnread ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.libraryUpdateSkipUnread = value);
+  }
+}
+
+@riverpod
+class LibraryUpdateSkipNotStartedState
+    extends _$LibraryUpdateSkipNotStartedState {
+  @override
+  bool build() {
+    return settingsRepository.current.libraryUpdateSkipNotStarted ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.libraryUpdateSkipNotStarted = value);
+  }
+}

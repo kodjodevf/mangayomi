@@ -2,9 +2,13 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/security_state_provider.dart';
+import 'package:mangayomi/repositories/category_repository.dart';
+import 'package:mangayomi/repositories/chapter_repository.dart';
+import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/background_work/background_work.dart';
+import 'package:mangayomi/services/library_update_rules.dart';
 import 'package:mangayomi/services/update_errors_provider.dart';
 import 'package:mangayomi/services/update_manga_detail_providers.dart';
 import 'package:mangayomi/utils/log/logger.dart';
@@ -26,6 +30,18 @@ class LibraryUpdateState {
       );
 }
 
+/// What a library update did.
+class LibraryUpdateResult {
+  const LibraryUpdateResult({this.failures = const [], this.queued = 0});
+
+  /// The entries that failed to update.
+  final List<UpdateError> failures;
+
+  /// New chapters added to the download queue; the queue itself is started
+  /// by the caller.
+  final int queued;
+}
+
 class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
   @override
   LibraryUpdateState build() => const LibraryUpdateState();
@@ -40,69 +56,111 @@ class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
   /// [onProgress] rather than touching the UI, so the same loop can run both
   /// behind the library's update button and unattended on launch.
   ///
-  /// Returns the entries that failed. Honours the Stop button: the caller has
-  /// already marked the run as started, and this checks for a cancellation
-  /// between entries.
-  Future<List<UpdateError>> runUpdate({
+  /// Returns the entries that failed and the new chapters queued for
+  /// download. Honours the Stop button: the caller has already marked the run
+  /// as started, and this checks for a cancellation between entries.
+  ///
+  /// Entries the update restrictions leave out are dropped first; with
+  /// [wholeLibrary], so are those in a category set to skip updates.
+  Future<LibraryUpdateResult> runUpdate({
     required List<Manga> mangaList,
     required String itemtype,
+    bool wholeLibrary = false,
     void Function(int done, int failed, int total)? onProgress,
   }) async {
+    mangaList = filterForUpdate(mangaList, wholeLibrary: wholeLibrary);
+    final settings = settingsRepository.current;
+    final downloadNew = settings.downloadNewChapters ?? false;
     final failures = <UpdateError>[];
+    var queued = 0;
     BackgroundWork.begin(BackgroundWorkKind.libraryUpdate);
     try {
-      return await _runUpdate(mangaList, itemtype, failures, onProgress);
-    } finally {
-      BackgroundWork.end(BackgroundWorkKind.libraryUpdate);
-    }
-  }
-
-  Future<List<UpdateError>> _runUpdate(
-    List<Manga> mangaList,
-    String itemtype,
-    List<UpdateError> failures,
-    void Function(int done, int failed, int total)? onProgress,
-  ) async {
-    for (var i = 0; i < mangaList.length; i++) {
-      // Stop early if the user pressed Stop.
-      if (state.cancelRequested) break;
-      final manga = mangaList[i];
-      try {
-        await ref.read(
-          updateMangaDetailProvider(
-            mangaId: manga.id,
-            isInit: false,
-            showToast: false,
-          ).future,
-        );
-      } catch (e) {
-        AppLogger.log("Failed to update $itemtype:", logLevel: LogLevel.error);
-        AppLogger.log(e.toString(), logLevel: LogLevel.error);
-        failures.add(
-          UpdateError(
-            mangaId: manga.id!,
-            name: manga.name ?? "Unknown $itemtype",
-            error: e.toString(),
+      for (var i = 0; i < mangaList.length; i++) {
+        // Stop early if the user pressed Stop.
+        if (state.cancelRequested) break;
+        final manga = mangaList[i];
+        try {
+          // The chapters known before the update, to tell the new ones apart.
+          // An entry with none yet is new to the library: its whole list is
+          // "new", and downloading all of it is not what was asked.
+          final before =
+              downloadNew &&
+                  downloadsNewChaptersOf(
+                    manga,
+                    included:
+                        settings.downloadNewChaptersCategories ?? const [],
+                    excluded:
+                        settings.downloadNewChaptersExcludedCategories ??
+                        const [],
+                  )
+              ? {
+                  for (final chapter in chapterRepository.getAllByMangaId(
+                    manga.id,
+                  ))
+                    chapter.id,
+                }
+              : const <int?>{};
+          await ref.read(
+            updateMangaDetailProvider(
+              mangaId: manga.id,
+              isInit: false,
+              showToast: false,
+            ).future,
+          );
+          if (before.isNotEmpty) {
+            queued += await _queueNewChapters(manga, before);
+          }
+        } catch (e) {
+          AppLogger.log(
+            "Failed to update $itemtype:",
+            logLevel: LogLevel.error,
+          );
+          AppLogger.log(e.toString(), logLevel: LogLevel.error);
+          failures.add(
+            UpdateError(
+              mangaId: manga.id!,
+              name: manga.name ?? "Unknown $itemtype",
+              error: e.toString(),
+            ),
+          );
+        }
+        onProgress?.call(i + 1, failures.length, mangaList.length);
+        BackgroundWork.report(
+          BackgroundWorkKind.libraryUpdate,
+          BackgroundWorkProgress(
+            done: i + 1,
+            total: mangaList.length,
+            detail: manga.name,
           ),
         );
       }
-      onProgress?.call(i + 1, failures.length, mangaList.length);
-      BackgroundWork.report(
-        BackgroundWorkKind.libraryUpdate,
-        BackgroundWorkProgress(
-          done: i + 1,
-          total: mangaList.length,
-          detail: manga.name,
-        ),
-      );
+    } finally {
+      BackgroundWork.end(BackgroundWorkKind.libraryUpdate);
     }
-    return failures;
+    return LibraryUpdateResult(failures: failures, queued: queued);
+  }
+
+  /// Queues the unread chapters of [manga] that are not in [before], oldest
+  /// first, and returns how many were queued.
+  Future<int> _queueNewChapters(Manga manga, Set<int?> before) async {
+    final fresh =
+        chapterRepository
+            .getAllByMangaId(manga.id)
+            .where((c) => !before.contains(c.id) && c.isRead != true)
+            .toList()
+          ..sort((a, b) => a.id!.compareTo(b.id!));
+    var queued = 0;
+    for (final chapter in fresh) {
+      if (await downloadRepository.enqueue(chapter) != null) queued++;
+    }
+    return queued;
   }
 
   /// Runs the scheduled library refresh when one is due, then records when it
-  /// started so the next launch knows to leave it alone.
-  Future<void> autoUpdateIfDue() async {
-    if (!ref.read(appUnlockedStateProvider)) return;
+  /// started so the next launch knows to leave it alone. Resolves to the
+  /// run's result, or null when none ran.
+  Future<LibraryUpdateResult?> autoUpdateIfDue() async {
+    if (!ref.read(appUnlockedStateProvider)) return null;
 
     final settings = settingsRepository.current;
     if (!isLibraryUpdateDue(
@@ -110,10 +168,10 @@ class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
       lastRun: settings.lastAutoLibraryUpdate,
       now: DateTime.now().millisecondsSinceEpoch,
     )) {
-      return;
+      return null;
     }
 
-    if (state.running) return;
+    if (state.running) return null;
     begin();
 
     try {
@@ -126,7 +184,7 @@ class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
           AppLogger.log(
             "Scheduled library update skipped: metered connection.",
           );
-          return;
+          return null;
         }
       }
 
@@ -137,7 +195,7 @@ class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
           await mangaRepository.getFavoritesNonLocalArchiveByItemType(itemType),
         );
       }
-      if (entries.isEmpty) return;
+      if (entries.isEmpty) return null;
 
       // Stamped before the run rather than after: a run cut short by the app
       // closing shouldn't make every following launch start over. Nothing above
@@ -149,16 +207,44 @@ class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
       AppLogger.log(
         "Starting scheduled library update (${entries.length} entries)...",
       );
-      final failures = await runUpdate(mangaList: entries, itemtype: "Library");
-      ref.read(updateErrorsProvider.notifier).set(failures);
+      final result = await runUpdate(
+        mangaList: entries,
+        itemtype: "Library",
+        wholeLibrary: true,
+      );
+      ref.read(updateErrorsProvider.notifier).set(result.failures);
       AppLogger.log(
-        "Scheduled library update finished, ${failures.length} of "
+        "Scheduled library update finished, ${result.failures.length} of "
         "${entries.length} failed.",
       );
+      return result;
     } finally {
       end();
     }
   }
+}
+
+/// [mangaList] without the entries the update restrictions leave out; with
+/// [wholeLibrary], also without those in a category set to skip updates.
+List<Manga> filterForUpdate(
+  List<Manga> mangaList, {
+  bool wholeLibrary = false,
+}) {
+  final rules = LibraryUpdateRules.fromSettings(
+    settingsRepository.current,
+    skippedCategoryIds: wholeLibrary
+        ? {
+            for (final category in categoryRepository.getAll())
+              if (category.shouldUpdate == false) category.id!,
+          }
+        : const {},
+  );
+  if (rules.isEmpty) return mangaList;
+  return [
+    for (final manga in mangaList)
+      if (rules.allows(manga, chapterRepository.getAllByMangaId(manga.id)))
+        manga,
+  ];
 }
 
 final libraryUpdateProvider =
@@ -186,5 +272,5 @@ bool isLibraryUpdateDue({
 
 /// Runs the scheduled library refresh when one is due, then records when it
 /// started so the next launch knows to leave it alone.
-Future<void> autoUpdateLibraryIfDue(dynamic ref) =>
+Future<LibraryUpdateResult?> autoUpdateLibraryIfDue(dynamic ref) =>
     ref.read(libraryUpdateProvider.notifier).autoUpdateIfDue();

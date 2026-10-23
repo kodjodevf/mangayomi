@@ -52,6 +52,9 @@ import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
+import 'package:mangayomi/utils/app_lock.dart';
+import 'package:mangayomi/services/secure_screen.dart';
+import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:mangayomi/services/background_work/background_work.dart';
 import 'package:mangayomi/services/background_work/download_work.dart';
@@ -290,6 +293,11 @@ class _MyAppState extends ConsumerState<MyApp>
     WidgetsBinding.instance.addObserver(this);
     if (!isMobile) windowManager.addListener(this);
     initializeDateFormatting();
+    ref.listenManual(
+      secureScreenOnProvider,
+      (_, secure) => SecureScreen.apply(secure),
+      fireImmediately: true,
+    );
     _initBackgroundWork();
     customDns = ref.read(customDnsStateProvider);
     _initDeepLinks();
@@ -310,7 +318,7 @@ class _MyAppState extends ConsumerState<MyApp>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(seconds: 5), () {
         if (!mounted) return;
-        unawaited(autoUpdateLibraryIfDue(ref));
+        unawaited(_autoUpdateLibrary());
         unawaited(autoSyncIfDue(ref));
       });
     });
@@ -330,25 +338,57 @@ class _MyAppState extends ConsumerState<MyApp>
     });
   }
 
+  /// When the app last left the screen, for the lock delay.
+  DateTime? _backgroundedAt;
+
+  /// Whether the app is off screen or on its way, on iOS, where a secure
+  /// screen is covered so the app switcher's preview shows nothing.
+  bool _obscured = false;
+
+  /// The scheduled library refresh, when due; starts the download queue when
+  /// it queued new chapters.
+  Future<void> _autoUpdateLibrary() async {
+    final result = await autoUpdateLibraryIfDue(ref);
+    if (!mounted || (result?.queued ?? 0) == 0) return;
+    ref.invalidate(processDownloadsProvider());
+    ref.read(processDownloadsProvider());
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
+    // iOS takes the app switcher's preview as the app goes inactive.
+    if (Platform.isIOS) {
+      final obscured = state != AppLifecycleState.resumed;
+      if (obscured != _obscured) setState(() => _obscured = obscured);
+    }
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden) {
       if (Platform.isLinux) {
         return;
       }
-      // Lock the app when going to background (if lock is enabled)
+      // Lock the app when going to background (if lock is enabled), or note
+      // when it left for a lock delay to count from.
+      _backgroundedAt ??= DateTime.now();
       final lockEnabled = ref.read(appLockEnabledStateProvider);
-      if (lockEnabled) {
+      if (lockEnabled && ref.read(appLockDelayStateProvider) == 0) {
         ref.read(appUnlockedStateProvider.notifier).lock();
       }
     } else if (state == AppLifecycleState.resumed) {
+      if (ref.read(appLockEnabledStateProvider) &&
+          shouldLockOnResume(
+            delayMinutes: ref.read(appLockDelayStateProvider),
+            backgroundedAt: _backgroundedAt,
+            now: DateTime.now(),
+          )) {
+        ref.read(appUnlockedStateProvider.notifier).lock();
+      }
+      _backgroundedAt = null;
       // Launch is the other trigger for the scheduled refresh, so without this
       // a session that stays open for days - a desktop one, typically - would
       // never run one. The interval check makes this a no-op the rest of the
       // time.
-      unawaited(autoUpdateLibraryIfDue(ref));
+      unawaited(_autoUpdateLibrary());
       unawaited(autoSyncIfDue(ref));
     }
   }
@@ -425,6 +465,16 @@ class _MyAppState extends ConsumerState<MyApp>
         final withBackHandler = !isMobile
             ? _MouseBackButtonHandler(router: router, child: base)
             : base;
+
+        if (_obscured && ref.watch(secureScreenOnProvider)) {
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              withBackHandler,
+              ColoredBox(color: Theme.of(context).scaffoldBackgroundColor),
+            ],
+          );
+        }
 
         if (!Platform.isLinux) {
           final isUnlocked = ref.watch(appUnlockedStateProvider);

@@ -108,6 +108,28 @@ class MainActivity: FlutterFragmentActivity() {
             }
         }
 
+        // Secure screen: the window is left out of screenshots, recordings
+        // and the recent apps preview.
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            "com.kodjodevf.mangayomi.secure_screen"
+        ).setMethodCallHandler { call, result ->
+            when (call.method) {
+                "set" -> {
+                    val secure = call.arguments as? Boolean ?: false
+                    runOnUiThread {
+                        if (secure) {
+                            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                        } else {
+                            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                        }
+                    }
+                    result.success(null)
+                }
+                else -> result.notImplemented()
+            }
+        }
+
         MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             "com.kodjodevf.mangayomi.device",

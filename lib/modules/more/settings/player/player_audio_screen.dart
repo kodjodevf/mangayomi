@@ -73,6 +73,21 @@ class _PlayerAudioScreenState extends ConsumerState<PlayerAudioScreen> {
                     .read(volumeBoostCapStateProvider.notifier)
                     .set(v.round()),
               ),
+              ShioriSliderRow(
+                title: l10n.audio_delay,
+                subtitle: l10n.audio_delay_subtitle,
+                value: ref.watch(audioDelayStateProvider).toDouble(),
+                min: -5000,
+                max: 5000,
+                divisions: 200,
+                valueLabel: (v) => '${v.round()} ms',
+                defaultValue: 0,
+                onReset: () =>
+                    ref.read(audioDelayStateProvider.notifier).set(0),
+                resetTooltip: l10n.reset,
+                onChanged: (v) =>
+                    ref.read(audioDelayStateProvider.notifier).set(v.round()),
+              ),
             ],
           ),
         ],

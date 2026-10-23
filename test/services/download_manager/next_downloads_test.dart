@@ -64,4 +64,49 @@ void main() {
       [24, 25],
     );
   });
+
+  group('selectDownloadAhead', () {
+    test('the next unread chapters after a downloaded one', () {
+      final chapters = episodes(watched: 3);
+      expect(
+        selectDownloadAhead(
+          chapters,
+          chapters[3],
+          count: 3,
+          downloads: [queued(4, completed: true), queued(6)],
+        ).map((chapter) => chapter.id),
+        [5, 7, 8],
+      );
+    });
+
+    test('nothing while reading a chapter that is not downloaded', () {
+      final chapters = episodes();
+      expect(
+        selectDownloadAhead(chapters, chapters[0], count: 3, downloads: []),
+        isEmpty,
+      );
+      expect(
+        selectDownloadAhead(
+          chapters,
+          chapters[0],
+          count: 3,
+          downloads: [queued(1)],
+        ),
+        isEmpty,
+      );
+    });
+
+    test('nothing past the last chapter', () {
+      final chapters = episodes();
+      expect(
+        selectDownloadAhead(
+          chapters,
+          chapters.last,
+          count: 3,
+          downloads: [queued(25, completed: true)],
+        ),
+        isEmpty,
+      );
+    });
+  });
 }

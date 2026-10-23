@@ -488,3 +488,166 @@ abstract class _$AutoLibraryUpdateWifiOnlyState extends $Notifier<bool> {
     return element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(LibraryUpdateSkipCompletedState)
+final libraryUpdateSkipCompletedStateProvider =
+    LibraryUpdateSkipCompletedStateProvider._();
+
+final class LibraryUpdateSkipCompletedStateProvider
+    extends $NotifierProvider<LibraryUpdateSkipCompletedState, bool> {
+  LibraryUpdateSkipCompletedStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'libraryUpdateSkipCompletedStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$libraryUpdateSkipCompletedStateHash();
+
+  @$internal
+  @override
+  LibraryUpdateSkipCompletedState create() => LibraryUpdateSkipCompletedState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$libraryUpdateSkipCompletedStateHash() =>
+    r'5552d607931695ca1af633a8c0d6c77c95684dcb';
+
+abstract class _$LibraryUpdateSkipCompletedState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(LibraryUpdateSkipUnreadState)
+final libraryUpdateSkipUnreadStateProvider =
+    LibraryUpdateSkipUnreadStateProvider._();
+
+final class LibraryUpdateSkipUnreadStateProvider
+    extends $NotifierProvider<LibraryUpdateSkipUnreadState, bool> {
+  LibraryUpdateSkipUnreadStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'libraryUpdateSkipUnreadStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$libraryUpdateSkipUnreadStateHash();
+
+  @$internal
+  @override
+  LibraryUpdateSkipUnreadState create() => LibraryUpdateSkipUnreadState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$libraryUpdateSkipUnreadStateHash() =>
+    r'88ea091932b4f2ff8578f4a3721f60e651e01df8';
+
+abstract class _$LibraryUpdateSkipUnreadState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(LibraryUpdateSkipNotStartedState)
+final libraryUpdateSkipNotStartedStateProvider =
+    LibraryUpdateSkipNotStartedStateProvider._();
+
+final class LibraryUpdateSkipNotStartedStateProvider
+    extends $NotifierProvider<LibraryUpdateSkipNotStartedState, bool> {
+  LibraryUpdateSkipNotStartedStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'libraryUpdateSkipNotStartedStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$libraryUpdateSkipNotStartedStateHash();
+
+  @$internal
+  @override
+  LibraryUpdateSkipNotStartedState create() =>
+      LibraryUpdateSkipNotStartedState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$libraryUpdateSkipNotStartedStateHash() =>
+    r'6ca48b30499c586a6c4021f622acc5cce74127df';
+
+abstract class _$LibraryUpdateSkipNotStartedState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

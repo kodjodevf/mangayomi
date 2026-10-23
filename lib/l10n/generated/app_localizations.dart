@@ -1237,6 +1237,90 @@ abstract class AppLocalizations {
   /// **'Delete download after reading'**
   String get delete_download_after_reading;
 
+  /// No description provided for @delete_after_reading_slot.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete which chapter'**
+  String get delete_after_reading_slot;
+
+  /// No description provided for @delete_after_reading_last.
+  ///
+  /// In en, this message translates to:
+  /// **'The chapter just read'**
+  String get delete_after_reading_last;
+
+  /// No description provided for @delete_after_reading_nth.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} chapters back'**
+  String delete_after_reading_nth(int n);
+
+  /// No description provided for @delete_after_reading_slot_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keeping a few read chapters lets you go back to them offline.'**
+  String get delete_after_reading_slot_subtitle;
+
+  /// No description provided for @delete_bookmarked_after_reading.
+  ///
+  /// In en, this message translates to:
+  /// **'Also delete bookmarked chapters'**
+  String get delete_bookmarked_after_reading;
+
+  /// No description provided for @auto_download.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto download'**
+  String get auto_download;
+
+  /// No description provided for @download_new_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Download new chapters'**
+  String get download_new_chapters;
+
+  /// No description provided for @download_new_chapters_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'After a library update, queue the new unread chapters of series already in the library.'**
+  String get download_new_chapters_subtitle;
+
+  /// No description provided for @download_new_chapters_included.
+  ///
+  /// In en, this message translates to:
+  /// **'Only these categories'**
+  String get download_new_chapters_included;
+
+  /// No description provided for @download_new_chapters_excluded.
+  ///
+  /// In en, this message translates to:
+  /// **'Except these categories'**
+  String get download_new_chapters_excluded;
+
+  /// No description provided for @download_new_chapters_all_categories.
+  ///
+  /// In en, this message translates to:
+  /// **'All categories'**
+  String get download_new_chapters_all_categories;
+
+  /// No description provided for @download_ahead.
+  ///
+  /// In en, this message translates to:
+  /// **'Download ahead while reading'**
+  String get download_ahead;
+
+  /// No description provided for @download_ahead_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'While reading a downloaded chapter of a series in the library, download the next unread ones.'**
+  String get download_ahead_subtitle;
+
+  /// No description provided for @download_ahead_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Next {n} chapters'**
+  String download_ahead_count(int n);
+
   /// No description provided for @concurrent_downloads.
   ///
   /// In en, this message translates to:
@@ -2959,6 +3043,36 @@ abstract class AppLocalizations {
   /// **'Mark duplicate chapter numbers as read'**
   String get mark_duplicate_chapters_read;
 
+  /// No description provided for @skip_read_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip read chapters'**
+  String get skip_read_chapters;
+
+  /// No description provided for @skip_read_chapters_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Next and previous chapter go past the ones already read.'**
+  String get skip_read_chapters_subtitle;
+
+  /// No description provided for @skip_filtered_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip filtered chapters'**
+  String get skip_filtered_chapters;
+
+  /// No description provided for @skip_duplicate_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip duplicate chapters'**
+  String get skip_duplicate_chapters;
+
+  /// No description provided for @skip_duplicate_chapters_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read one copy of each chapter number, from the same scanlator when there is one.'**
+  String get skip_duplicate_chapters_subtitle;
+
   /// No description provided for @default_skip_intro_length.
   ///
   /// In en, this message translates to:
@@ -4093,6 +4207,18 @@ abstract class AppLocalizations {
   /// **'Delay (ms)'**
   String get subtitle_delay;
 
+  /// No description provided for @audio_delay.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio delay (ms)'**
+  String get audio_delay;
+
+  /// No description provided for @audio_delay_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Plays the sound later (positive) or earlier (negative) than the picture. Kept from one episode to the next.'**
+  String get audio_delay_subtitle;
+
   /// No description provided for @subtitle_speed.
   ///
   /// In en, this message translates to:
@@ -4489,6 +4615,24 @@ abstract class AppLocalizations {
   /// **'Force the player to use landscape orientation.'**
   String get forceLandscapeModeSubtitle;
 
+  /// No description provided for @remember_player_volume.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember volume'**
+  String get remember_player_volume;
+
+  /// No description provided for @remember_player_volume_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start each episode at the volume the last one ended with.'**
+  String get remember_player_volume_subtitle;
+
+  /// No description provided for @remember_player_brightness.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember brightness'**
+  String get remember_player_brightness;
+
   /// No description provided for @dns_over_https.
   ///
   /// In en, this message translates to:
@@ -4560,6 +4704,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'App lock'**
   String get app_lock;
+
+  /// No description provided for @app_lock_delay.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock after'**
+  String get app_lock_delay;
+
+  /// No description provided for @app_lock_delay_immediately.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaving the app'**
+  String get app_lock_delay_immediately;
+
+  /// No description provided for @app_lock_delay_minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} min away'**
+  String app_lock_delay_minutes(int n);
+
+  /// No description provided for @app_lock_delay_launch_only.
+  ///
+  /// In en, this message translates to:
+  /// **'Only when the app starts'**
+  String get app_lock_delay_launch_only;
+
+  /// No description provided for @secure_screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure screen'**
+  String get secure_screen;
+
+  /// No description provided for @secure_screen_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide the app from the app switcher, and on Android from screenshots and screen recordings.'**
+  String get secure_screen_subtitle;
+
+  /// No description provided for @secure_screen_never.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get secure_screen_never;
+
+  /// No description provided for @secure_screen_incognito.
+  ///
+  /// In en, this message translates to:
+  /// **'In incognito mode'**
+  String get secure_screen_incognito;
+
+  /// No description provided for @secure_screen_always.
+  ///
+  /// In en, this message translates to:
+  /// **'Always'**
+  String get secure_screen_always;
 
   /// No description provided for @background_work.
   ///
@@ -4674,6 +4872,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Brightness'**
   String get brightness;
+
+  /// No description provided for @video_filters.
+  ///
+  /// In en, this message translates to:
+  /// **'Video filters'**
+  String get video_filters;
+
+  /// No description provided for @video_filter_contrast.
+  ///
+  /// In en, this message translates to:
+  /// **'Contrast'**
+  String get video_filter_contrast;
+
+  /// No description provided for @video_filter_saturation.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturation'**
+  String get video_filter_saturation;
+
+  /// No description provided for @video_filter_gamma.
+  ///
+  /// In en, this message translates to:
+  /// **'Gamma'**
+  String get video_filter_gamma;
+
+  /// No description provided for @video_filter_hue.
+  ///
+  /// In en, this message translates to:
+  /// **'Hue'**
+  String get video_filter_hue;
 
   /// No description provided for @volume.
   ///
@@ -5184,6 +5412,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Split wide pages'**
   String get split_wide_pages;
+
+  /// No description provided for @split_tall_images.
+  ///
+  /// In en, this message translates to:
+  /// **'Split tall images'**
+  String get split_tall_images;
+
+  /// No description provided for @split_tall_images_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.'**
+  String get split_tall_images_subtitle;
 
   /// No description provided for @dual_page_invert.
   ///
@@ -6234,6 +6474,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Skip the scheduled update while on mobile data.'**
   String get auto_library_update_wifi_only_subtitle;
+
+  /// No description provided for @library_update_restrictions.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip when updating'**
+  String get library_update_restrictions;
+
+  /// No description provided for @library_update_skip_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed series'**
+  String get library_update_skip_completed;
+
+  /// No description provided for @library_update_skip_unread.
+  ///
+  /// In en, this message translates to:
+  /// **'Series with unread chapters'**
+  String get library_update_skip_unread;
+
+  /// No description provided for @library_update_skip_not_started.
+  ///
+  /// In en, this message translates to:
+  /// **'Series not started'**
+  String get library_update_skip_not_started;
+
+  /// No description provided for @library_update_restrictions_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Applies to every library update. Categories set to skip updates are also left out when the whole library is updated.'**
+  String get library_update_restrictions_subtitle;
+
+  /// No description provided for @library_update_restrictions_none.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get library_update_restrictions_none;
 
   /// No description provided for @padding.
   ///

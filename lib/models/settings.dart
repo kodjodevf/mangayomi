@@ -492,6 +492,47 @@ class Settings {
   bool? doublePageSingleFirstPage;
   bool? doublePageAuto;
 
+  bool? rememberPlayerVolume;
+
+  bool? rememberPlayerBrightness;
+
+  double? playerVolume;
+
+  double? playerBrightness;
+
+  List<int>? playerVideoFilters;
+
+  int? audioDelayMs;
+
+  int? secureScreen;
+
+  int? appLockDelayMinutes;
+
+  bool? splitTallImages;
+
+  bool? skipReadChapters;
+
+  bool? skipFilteredChapters;
+
+  bool? skipDuplicateChapters;
+
+  int? deleteAfterReadingSlot;
+
+  bool? deleteBookmarkedAfterReading;
+
+  int? downloadAheadWhileReading;
+
+  bool? downloadNewChapters;
+
+  List<int>? downloadNewChaptersCategories;
+
+  List<int>? downloadNewChaptersExcludedCategories;
+
+  bool? libraryUpdateSkipCompleted;
+
+  bool? libraryUpdateSkipUnread;
+
+  bool? libraryUpdateSkipNotStarted;
   bool? hideNotificationContent;
 
   Settings({
@@ -718,6 +759,27 @@ class Settings {
     this.tvHomeGenreRows,
     this.doublePageSingleFirstPage = false,
     this.doublePageAuto = false,
+    this.rememberPlayerVolume = false,
+    this.rememberPlayerBrightness = false,
+    this.playerVolume,
+    this.playerBrightness,
+    this.playerVideoFilters,
+    this.audioDelayMs = 0,
+    this.secureScreen = 0,
+    this.appLockDelayMinutes = 0,
+    this.splitTallImages = false,
+    this.skipReadChapters = false,
+    this.skipFilteredChapters = true,
+    this.skipDuplicateChapters = true,
+    this.deleteAfterReadingSlot = 0,
+    this.deleteBookmarkedAfterReading = false,
+    this.downloadAheadWhileReading = 0,
+    this.downloadNewChapters = false,
+    this.downloadNewChaptersCategories,
+    this.downloadNewChaptersExcludedCategories,
+    this.libraryUpdateSkipCompleted = false,
+    this.libraryUpdateSkipUnread = false,
+    this.libraryUpdateSkipNotStarted = false,
     this.hideNotificationContent = false,
     this.developerMode = false,
   });
@@ -1082,6 +1144,29 @@ class Settings {
     tvHomeGenreRows = json['tvHomeGenreRows'];
     doublePageSingleFirstPage = json['doublePageSingleFirstPage'];
     doublePageAuto = json['doublePageAuto'];
+    rememberPlayerVolume = json['rememberPlayerVolume'];
+    rememberPlayerBrightness = json['rememberPlayerBrightness'];
+    playerVolume = json['playerVolume'];
+    playerBrightness = json['playerBrightness'];
+    playerVideoFilters = (json['playerVideoFilters'] as List?)?.cast<int>();
+    audioDelayMs = json['audioDelayMs'];
+    secureScreen = json['secureScreen'];
+    appLockDelayMinutes = json['appLockDelayMinutes'];
+    splitTallImages = json['splitTallImages'];
+    skipReadChapters = json['skipReadChapters'];
+    skipFilteredChapters = json['skipFilteredChapters'];
+    skipDuplicateChapters = json['skipDuplicateChapters'];
+    deleteAfterReadingSlot = json['deleteAfterReadingSlot'];
+    deleteBookmarkedAfterReading = json['deleteBookmarkedAfterReading'];
+    downloadAheadWhileReading = json['downloadAheadWhileReading'];
+    downloadNewChapters = json['downloadNewChapters'];
+    downloadNewChaptersCategories =
+        (json['downloadNewChaptersCategories'] as List?)?.cast<int>();
+    downloadNewChaptersExcludedCategories =
+        (json['downloadNewChaptersExcludedCategories'] as List?)?.cast<int>();
+    libraryUpdateSkipCompleted = json['libraryUpdateSkipCompleted'];
+    libraryUpdateSkipUnread = json['libraryUpdateSkipUnread'];
+    libraryUpdateSkipNotStarted = json['libraryUpdateSkipNotStarted'];
     hideNotificationContent = json['hideNotificationContent'];
   }
 
@@ -1332,6 +1417,28 @@ class Settings {
     'tvHomeGenreRows': tvHomeGenreRows,
     'doublePageSingleFirstPage': doublePageSingleFirstPage,
     'doublePageAuto': doublePageAuto,
+    'rememberPlayerVolume': rememberPlayerVolume,
+    'rememberPlayerBrightness': rememberPlayerBrightness,
+    'playerVolume': playerVolume,
+    'playerBrightness': playerBrightness,
+    'playerVideoFilters': playerVideoFilters,
+    'audioDelayMs': audioDelayMs,
+    'secureScreen': secureScreen,
+    'appLockDelayMinutes': appLockDelayMinutes,
+    'splitTallImages': splitTallImages,
+    'skipReadChapters': skipReadChapters,
+    'skipFilteredChapters': skipFilteredChapters,
+    'skipDuplicateChapters': skipDuplicateChapters,
+    'deleteAfterReadingSlot': deleteAfterReadingSlot,
+    'deleteBookmarkedAfterReading': deleteBookmarkedAfterReading,
+    'downloadAheadWhileReading': downloadAheadWhileReading,
+    'downloadNewChapters': downloadNewChapters,
+    'downloadNewChaptersCategories': downloadNewChaptersCategories,
+    'downloadNewChaptersExcludedCategories':
+        downloadNewChaptersExcludedCategories,
+    'libraryUpdateSkipCompleted': libraryUpdateSkipCompleted,
+    'libraryUpdateSkipUnread': libraryUpdateSkipUnread,
+    'libraryUpdateSkipNotStarted': libraryUpdateSkipNotStarted,
     'hideNotificationContent': hideNotificationContent,
   };
 }

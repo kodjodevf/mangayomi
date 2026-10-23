@@ -11,6 +11,8 @@ import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
+import 'package:mangayomi/services/download_manager/delete_after_reading.dart';
+import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'reader_controller_provider.g.dart';
 
@@ -207,7 +209,14 @@ class ReaderController extends _$ReaderController
         if (isRead) {
           chapter.updateTrackChapterRead(ref);
           if (ref.read(deleteDownloadAfterReadingStateProvider)) {
-            chapter.deleteDownloadedFiles();
+            chapterToDeleteAfterReading(
+              getManga().getChapterListForReading(),
+              chapter,
+              slot: ref.read(deleteAfterReadingSlotStateProvider),
+              deleteBookmarked: ref.read(
+                deleteBookmarkedAfterReadingStateProvider,
+              ),
+            )?.deleteDownloadedFiles();
           }
         }
       }

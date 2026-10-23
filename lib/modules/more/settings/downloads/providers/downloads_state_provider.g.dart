@@ -434,3 +434,338 @@ abstract class _$DownloadDelaySecondsState extends $Notifier<int> {
     return element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(DownloadNewChaptersState)
+final downloadNewChaptersStateProvider = DownloadNewChaptersStateProvider._();
+
+final class DownloadNewChaptersStateProvider
+    extends $NotifierProvider<DownloadNewChaptersState, bool> {
+  DownloadNewChaptersStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'downloadNewChaptersStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$downloadNewChaptersStateHash();
+
+  @$internal
+  @override
+  DownloadNewChaptersState create() => DownloadNewChaptersState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$downloadNewChaptersStateHash() =>
+    r'6e67678141fa810f6322570063a49ce7e5771f23';
+
+abstract class _$DownloadNewChaptersState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(DownloadNewChaptersCategoriesState)
+final downloadNewChaptersCategoriesStateProvider =
+    DownloadNewChaptersCategoriesStateProvider._();
+
+final class DownloadNewChaptersCategoriesStateProvider
+    extends $NotifierProvider<DownloadNewChaptersCategoriesState, List<int>> {
+  DownloadNewChaptersCategoriesStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'downloadNewChaptersCategoriesStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() =>
+      _$downloadNewChaptersCategoriesStateHash();
+
+  @$internal
+  @override
+  DownloadNewChaptersCategoriesState create() =>
+      DownloadNewChaptersCategoriesState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<int> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<int>>(value),
+    );
+  }
+}
+
+String _$downloadNewChaptersCategoriesStateHash() =>
+    r'd63ef0fd5eaac72faed0b7964684798497c1398b';
+
+abstract class _$DownloadNewChaptersCategoriesState
+    extends $Notifier<List<int>> {
+  List<int> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<List<int>, List<int>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<int>, List<int>>,
+              List<int>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(DownloadNewChaptersExcludedCategoriesState)
+final downloadNewChaptersExcludedCategoriesStateProvider =
+    DownloadNewChaptersExcludedCategoriesStateProvider._();
+
+final class DownloadNewChaptersExcludedCategoriesStateProvider
+    extends
+        $NotifierProvider<
+          DownloadNewChaptersExcludedCategoriesState,
+          List<int>
+        > {
+  DownloadNewChaptersExcludedCategoriesStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'downloadNewChaptersExcludedCategoriesStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() =>
+      _$downloadNewChaptersExcludedCategoriesStateHash();
+
+  @$internal
+  @override
+  DownloadNewChaptersExcludedCategoriesState create() =>
+      DownloadNewChaptersExcludedCategoriesState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<int> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<int>>(value),
+    );
+  }
+}
+
+String _$downloadNewChaptersExcludedCategoriesStateHash() =>
+    r'996505753f12713da12a3f1ede83d67f21569647';
+
+abstract class _$DownloadNewChaptersExcludedCategoriesState
+    extends $Notifier<List<int>> {
+  List<int> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<List<int>, List<int>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<int>, List<int>>,
+              List<int>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(DownloadAheadWhileReadingState)
+final downloadAheadWhileReadingStateProvider =
+    DownloadAheadWhileReadingStateProvider._();
+
+final class DownloadAheadWhileReadingStateProvider
+    extends $NotifierProvider<DownloadAheadWhileReadingState, int> {
+  DownloadAheadWhileReadingStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'downloadAheadWhileReadingStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$downloadAheadWhileReadingStateHash();
+
+  @$internal
+  @override
+  DownloadAheadWhileReadingState create() => DownloadAheadWhileReadingState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$downloadAheadWhileReadingStateHash() =>
+    r'da8b086aaa57b932dbc22e84bdee6e68758304ae';
+
+abstract class _$DownloadAheadWhileReadingState extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(DeleteAfterReadingSlotState)
+final deleteAfterReadingSlotStateProvider =
+    DeleteAfterReadingSlotStateProvider._();
+
+final class DeleteAfterReadingSlotStateProvider
+    extends $NotifierProvider<DeleteAfterReadingSlotState, int> {
+  DeleteAfterReadingSlotStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteAfterReadingSlotStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteAfterReadingSlotStateHash();
+
+  @$internal
+  @override
+  DeleteAfterReadingSlotState create() => DeleteAfterReadingSlotState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$deleteAfterReadingSlotStateHash() =>
+    r'5762da9084ef97325c1be9f1e319cda0e5369a2c';
+
+abstract class _$DeleteAfterReadingSlotState extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(DeleteBookmarkedAfterReadingState)
+final deleteBookmarkedAfterReadingStateProvider =
+    DeleteBookmarkedAfterReadingStateProvider._();
+
+final class DeleteBookmarkedAfterReadingStateProvider
+    extends $NotifierProvider<DeleteBookmarkedAfterReadingState, bool> {
+  DeleteBookmarkedAfterReadingStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteBookmarkedAfterReadingStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() =>
+      _$deleteBookmarkedAfterReadingStateHash();
+
+  @$internal
+  @override
+  DeleteBookmarkedAfterReadingState create() =>
+      DeleteBookmarkedAfterReadingState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$deleteBookmarkedAfterReadingStateHash() =>
+    r'94a780a2800b4d0c9069f2e44e975b7c8ae549f6';
+
+abstract class _$DeleteBookmarkedAfterReadingState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

@@ -40,6 +40,12 @@ final settingsIndex = <SettingsEntry>[
     route: '/general',
   ),
   SettingsEntry(
+    title: (l) => l.library_update_restrictions,
+    subtitle: (l) => l.library_update_restrictions_subtitle,
+    section: (l) => l.general,
+    route: '/general',
+  ),
+  SettingsEntry(
     title: (l) => l.auto_library_update_wifi_only,
     subtitle: (l) => l.auto_library_update_wifi_only_subtitle,
     section: (l) => l.general,
@@ -324,6 +330,27 @@ final settingsIndex = <SettingsEntry>[
     extra: 0,
   ),
   SettingsEntry(
+    title: (l) => l.skip_read_chapters,
+    subtitle: (l) => l.skip_read_chapters_subtitle,
+    section: (l) => l.reader,
+    route: '/readerSettingsSection',
+    extra: 0,
+  ),
+  SettingsEntry(
+    title: (l) => l.skip_filtered_chapters,
+    subtitle: null,
+    section: (l) => l.reader,
+    route: '/readerSettingsSection',
+    extra: 0,
+  ),
+  SettingsEntry(
+    title: (l) => l.skip_duplicate_chapters,
+    subtitle: (l) => l.skip_duplicate_chapters_subtitle,
+    section: (l) => l.reader,
+    route: '/readerSettingsSection',
+    extra: 0,
+  ),
+  SettingsEntry(
     title: (l) => l.show_page_number,
     subtitle: null,
     section: (l) => l.reader,
@@ -350,6 +377,13 @@ final settingsIndex = <SettingsEntry>[
     section: (l) => l.reader,
     route: '/readerSettingsSection',
     extra: 1,
+  ),
+  SettingsEntry(
+    title: (l) => l.split_tall_images,
+    subtitle: (l) => l.split_tall_images_subtitle,
+    section: (l) => l.reader,
+    route: '/readerSettingsSection',
+    extra: 0,
   ),
   SettingsEntry(
     title: (l) => l.dual_page_invert,
@@ -633,6 +667,18 @@ final settingsIndex = <SettingsEntry>[
     route: '/playerMode',
   ),
   SettingsEntry(
+    title: (l) => l.remember_player_volume,
+    subtitle: (l) => l.remember_player_volume_subtitle,
+    section: (l) => l.player,
+    route: '/playerMode',
+  ),
+  SettingsEntry(
+    title: (l) => l.remember_player_brightness,
+    subtitle: null,
+    section: (l) => l.player,
+    route: '/playerMode',
+  ),
+  SettingsEntry(
     title: (l) => l.forceLandscapeModeSubtitle,
     subtitle: null,
     section: (l) => l.player,
@@ -717,6 +763,12 @@ final settingsIndex = <SettingsEntry>[
     route: '/playerAudioScreen',
   ),
   SettingsEntry(
+    title: (l) => l.audio_delay,
+    subtitle: (l) => l.audio_delay_subtitle,
+    section: (l) => l.video_audio,
+    route: '/playerAudioScreen',
+  ),
+  SettingsEntry(
     title: (l) => l.advanced,
     subtitle: null,
     section: (l) => l.advanced,
@@ -755,6 +807,18 @@ final settingsIndex = <SettingsEntry>[
   SettingsEntry(
     title: (l) => l.delete_download_after_reading,
     subtitle: null,
+    section: (l) => l.downloads,
+    route: '/downloads',
+  ),
+  SettingsEntry(
+    title: (l) => l.download_new_chapters,
+    subtitle: (l) => l.download_new_chapters_subtitle,
+    section: (l) => l.downloads,
+    route: '/downloads',
+  ),
+  SettingsEntry(
+    title: (l) => l.download_ahead,
+    subtitle: (l) => l.download_ahead_subtitle,
     section: (l) => l.downloads,
     route: '/downloads',
   ),
@@ -1025,6 +1089,18 @@ final settingsIndex = <SettingsEntry>[
   SettingsEntry(
     title: (l) => l.app_lock,
     subtitle: (l) => l.app_lock_description,
+    section: (l) => l.security,
+    route: '/security',
+  ),
+  SettingsEntry(
+    title: (l) => l.app_lock_delay,
+    subtitle: null,
+    section: (l) => l.security,
+    route: '/security',
+  ),
+  SettingsEntry(
+    title: (l) => l.secure_screen,
+    subtitle: (l) => l.secure_screen_subtitle,
     section: (l) => l.security,
     route: '/security',
   ),
