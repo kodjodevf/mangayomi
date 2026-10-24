@@ -5,20 +5,35 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
+
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/services/download_manager/download_queue_order.dart';
 
 final _scheduledDownloadIds = <int>{};
 
+/// The downloads scheduled in this session, waiting in the gate or running;
+/// notifies as they come and go. Records left queued by an earlier session
+/// are not in it until they are started again.
+final scheduledDownloads = ValueNotifier<Set<int>>(const {});
+
 bool isDownloadScheduled(int? id) => _scheduledDownloadIds.contains(id);
 
 /// Claims [id] for scheduling. Returns false if it was already scheduled,
 /// so the caller can no-op instead of starting a second concurrent attempt
 /// for the same chapter.
-bool scheduleDownload(int id) => _scheduledDownloadIds.add(id);
+bool scheduleDownload(int id) {
+  final added = _scheduledDownloadIds.add(id);
+  if (added) scheduledDownloads.value = Set.unmodifiable(_scheduledDownloadIds);
+  return added;
+}
 
-void unscheduleDownload(int? id) => _scheduledDownloadIds.remove(id);
+void unscheduleDownload(int? id) {
+  if (_scheduledDownloadIds.remove(id)) {
+    scheduledDownloads.value = Set.unmodifiable(_scheduledDownloadIds);
+  }
+}
 
 /// Delay before releasing the next queued download from the gate. With rate
 /// limiting off ([baseSeconds] 0) there is no artificial delay — the gate's

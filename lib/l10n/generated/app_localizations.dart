@@ -4759,6 +4759,66 @@ abstract class AppLocalizations {
   /// **'Always'**
   String get secure_screen_always;
 
+  /// No description provided for @background_work.
+  ///
+  /// In en, this message translates to:
+  /// **'Background work'**
+  String get background_work;
+
+  /// No description provided for @background_work_in_progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Working…'**
+  String get background_work_in_progress;
+
+  /// No description provided for @background_downloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading'**
+  String get background_downloading;
+
+  /// No description provided for @background_updating_library.
+  ///
+  /// In en, this message translates to:
+  /// **'Updating library'**
+  String get background_updating_library;
+
+  /// No description provided for @background_restoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring backup'**
+  String get background_restoring;
+
+  /// No description provided for @background_syncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing'**
+  String get background_syncing;
+
+  /// No description provided for @background_cancel_downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel downloads'**
+  String get background_cancel_downloads;
+
+  /// No description provided for @background_stop_update.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop update'**
+  String get background_stop_update;
+
+  /// No description provided for @hide_notification_content.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide notification content'**
+  String get hide_notification_content;
+
+  /// No description provided for @hide_notification_content_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications say what the app is doing without naming series or chapters.'**
+  String get hide_notification_content_subtitle;
+
   /// No description provided for @require_biometric_or_device_credential.
   ///
   /// In en, this message translates to:

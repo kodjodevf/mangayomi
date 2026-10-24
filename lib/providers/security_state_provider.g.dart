@@ -272,3 +272,57 @@ final class SecureScreenOnProvider extends $FunctionalProvider<bool, bool, bool>
 }
 
 String _$secureScreenOnHash() => r'761acf2f28c9ce206f19d797927905028d254d5e';
+
+@ProviderFor(HideNotificationContentState)
+final hideNotificationContentStateProvider =
+    HideNotificationContentStateProvider._();
+
+final class HideNotificationContentStateProvider
+    extends $NotifierProvider<HideNotificationContentState, bool> {
+  HideNotificationContentStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'hideNotificationContentStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$hideNotificationContentStateHash();
+
+  @$internal
+  @override
+  HideNotificationContentState create() => HideNotificationContentState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$hideNotificationContentStateHash() =>
+    r'e71d14ffcff4b0f971730bd0eb0879ef995474c0';
+
+abstract class _$HideNotificationContentState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:archive/archive_io.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/services/background_work/background_work.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/backup_decoder.dart';
@@ -57,6 +58,7 @@ Future<void> doRestore(
   // restore (and its post-restore upload, if any) finishes — otherwise
   // either could race the restore and pull stale server data back down.
   ref.read(restoreSyncGuardProvider.notifier).start();
+  BackgroundWork.begin(BackgroundWorkKind.restore);
   var uploadStarted = false;
   try {
     // Zip filenames aren't encrypted even when file content is, so this
@@ -134,6 +136,7 @@ Future<void> doRestore(
       showBotToast("Backup Type not supported!");
     }
   } finally {
+    BackgroundWork.end(BackgroundWorkKind.restore);
     if (!uploadStarted) {
       ref.read(restoreSyncGuardProvider.notifier).finish();
       // Released on a later event-loop turn so the provider isn't disposed

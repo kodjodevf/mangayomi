@@ -7,6 +7,7 @@ import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/services/background_work/background_work.dart';
 import 'package:mangayomi/services/library_update_rules.dart';
 import 'package:mangayomi/services/update_errors_provider.dart';
 import 'package:mangayomi/services/update_manga_detail_providers.dart';
@@ -72,50 +73,69 @@ class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
     final downloadNew = settings.downloadNewChapters ?? false;
     final failures = <UpdateError>[];
     var queued = 0;
-    for (var i = 0; i < mangaList.length; i++) {
-      // Stop early if the user pressed Stop.
-      if (state.cancelRequested) break;
-      final manga = mangaList[i];
-      try {
-        // The chapters known before the update, to tell the new ones apart.
-        // An entry with none yet is new to the library: its whole list is
-        // "new", and downloading all of it is not what was asked.
-        final before =
-            downloadNew &&
-                downloadsNewChaptersOf(
-                  manga,
-                  included: settings.downloadNewChaptersCategories ?? const [],
-                  excluded:
-                      settings.downloadNewChaptersExcludedCategories ??
-                      const [],
-                )
-            ? {
-                for (final chapter in chapterRepository.getAllByMangaId(
-                  manga.id,
-                ))
-                  chapter.id,
-              }
-            : const <int?>{};
-        await ref.read(
-          updateMangaDetailProvider(
-            mangaId: manga.id,
-            isInit: false,
-            showToast: false,
-          ).future,
-        );
-        if (before.isNotEmpty) queued += await _queueNewChapters(manga, before);
-      } catch (e) {
-        AppLogger.log("Failed to update $itemtype:", logLevel: LogLevel.error);
-        AppLogger.log(e.toString(), logLevel: LogLevel.error);
-        failures.add(
-          UpdateError(
-            mangaId: manga.id!,
-            name: manga.name ?? "Unknown $itemtype",
-            error: e.toString(),
+    BackgroundWork.begin(BackgroundWorkKind.libraryUpdate);
+    try {
+      for (var i = 0; i < mangaList.length; i++) {
+        // Stop early if the user pressed Stop.
+        if (state.cancelRequested) break;
+        final manga = mangaList[i];
+        try {
+          // The chapters known before the update, to tell the new ones apart.
+          // An entry with none yet is new to the library: its whole list is
+          // "new", and downloading all of it is not what was asked.
+          final before =
+              downloadNew &&
+                  downloadsNewChaptersOf(
+                    manga,
+                    included:
+                        settings.downloadNewChaptersCategories ?? const [],
+                    excluded:
+                        settings.downloadNewChaptersExcludedCategories ??
+                        const [],
+                  )
+              ? {
+                  for (final chapter in chapterRepository.getAllByMangaId(
+                    manga.id,
+                  ))
+                    chapter.id,
+                }
+              : const <int?>{};
+          await ref.read(
+            updateMangaDetailProvider(
+              mangaId: manga.id,
+              isInit: false,
+              showToast: false,
+            ).future,
+          );
+          if (before.isNotEmpty) {
+            queued += await _queueNewChapters(manga, before);
+          }
+        } catch (e) {
+          AppLogger.log(
+            "Failed to update $itemtype:",
+            logLevel: LogLevel.error,
+          );
+          AppLogger.log(e.toString(), logLevel: LogLevel.error);
+          failures.add(
+            UpdateError(
+              mangaId: manga.id!,
+              name: manga.name ?? "Unknown $itemtype",
+              error: e.toString(),
+            ),
+          );
+        }
+        onProgress?.call(i + 1, failures.length, mangaList.length);
+        BackgroundWork.report(
+          BackgroundWorkKind.libraryUpdate,
+          BackgroundWorkProgress(
+            done: i + 1,
+            total: mangaList.length,
+            detail: manga.name,
           ),
         );
       }
-      onProgress?.call(i + 1, failures.length, mangaList.length);
+    } finally {
+      BackgroundWork.end(BackgroundWorkKind.libraryUpdate);
     }
     return LibraryUpdateResult(failures: failures, queued: queued);
   }

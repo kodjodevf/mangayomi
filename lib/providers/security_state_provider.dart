@@ -69,3 +69,16 @@ bool secureScreenOn(Ref ref) => isScreenSecure(
   ref.watch(secureScreenStateProvider),
   incognito: ref.watch(incognitoModeStateProvider),
 );
+
+@riverpod
+class HideNotificationContentState extends _$HideNotificationContentState {
+  @override
+  bool build() {
+    return settingsRepository.current.hideNotificationContent ?? false;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.hideNotificationContent = value);
+  }
+}

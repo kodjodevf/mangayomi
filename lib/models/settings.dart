@@ -533,6 +533,7 @@ class Settings {
   bool? libraryUpdateSkipUnread;
 
   bool? libraryUpdateSkipNotStarted;
+  bool? hideNotificationContent;
 
   Settings({
     this.id = 227,
@@ -779,6 +780,7 @@ class Settings {
     this.libraryUpdateSkipCompleted = false,
     this.libraryUpdateSkipUnread = false,
     this.libraryUpdateSkipNotStarted = false,
+    this.hideNotificationContent = false,
     this.developerMode = false,
   });
 
@@ -1165,6 +1167,7 @@ class Settings {
     libraryUpdateSkipCompleted = json['libraryUpdateSkipCompleted'];
     libraryUpdateSkipUnread = json['libraryUpdateSkipUnread'];
     libraryUpdateSkipNotStarted = json['libraryUpdateSkipNotStarted'];
+    hideNotificationContent = json['hideNotificationContent'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -1436,6 +1439,7 @@ class Settings {
     'libraryUpdateSkipCompleted': libraryUpdateSkipCompleted,
     'libraryUpdateSkipUnread': libraryUpdateSkipUnread,
     'libraryUpdateSkipNotStarted': libraryUpdateSkipNotStarted,
+    'hideNotificationContent': hideNotificationContent,
   };
 }
 

@@ -102,7 +102,7 @@ final class DoRestoreProvider
   }
 }
 
-String _$doRestoreHash() => r'423970328efb46211e280b52ee0706499e1a1cf8';
+String _$doRestoreHash() => r'61c70ed6cd5fdd3f046332e66278bbdbd6de72ba';
 
 /// Restores the backup at [path], replacing or merging into the library.
 ///
