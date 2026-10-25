@@ -27,6 +27,8 @@ import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/tracker_library_cache.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/backup_format.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupAnime.pb.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupAniyomi.pb.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupChapter.pb.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupHistory.pb.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupManga.pb.dart';
@@ -158,12 +160,14 @@ void main() {
     WidgetRef ref,
     BuildContext ctx, {
     required bool merge,
+    String name = 'madomi_2026-10-20.tachibk',
+    List<int>? bytes,
   }) async {
     await tester.runAsync(() async {
-      final path = '${directory.path}/madomi_2026-10-20.tachibk';
-      File(
-        path,
-      ).writeAsBytesSync(GZipEncoder().encodeBytes(_backup().writeToBuffer()));
+      final path = '${directory.path}/$name';
+      File(path).writeAsBytesSync(
+        GZipEncoder().encodeBytes(bytes ?? _backup().writeToBuffer()),
+      );
       await ref.read(
         doRestoreProvider(path: path, context: ctx, merge: merge).future,
       );
@@ -191,13 +195,46 @@ void main() {
   test('checkBackupType accepts any .tachibk', () {
     expect(
       checkBackupType('/x/madomi_2026-10-20.tachibk', Archive()),
-      BackupType.mihon,
+      BackupType.aniyomi,
     );
     expect(
       checkBackupType('/x/xyz.jmir.tachiyomi.mi_2026.tachibk', Archive()),
       BackupType.aniyomi,
     );
     expect(checkBackupType('/x/neko_2026.tachibk', Archive()), BackupType.neko);
+  });
+
+  testWidgets('a backup from an unrecognised fork restores its anime too', (
+    tester,
+  ) async {
+    // Anime forks (Animetail, Kuukiyomi…) name files their own way; the
+    // anime must not be dropped silently.
+    final backup = BackupAniyomi(
+      backupManga: _backup().backupManga,
+      backupSources: _backup().backupSources,
+      backupAnime: [
+        BackupAnime(
+          source: Int64(8),
+          url: '/show',
+          title: 'Show',
+          favorite: true,
+        ),
+      ],
+      backupAnimeSources: [BackupSource(sourceId: Int64(8), name: 'AnimeSrc')],
+    );
+    final (ctx, ref) = await _pumpShell(tester);
+    await restore(
+      tester,
+      ref,
+      ctx,
+      merge: false,
+      name: 'animetail_2026-10-20.tachibk',
+      bytes: backup.writeToBuffer(),
+    );
+
+    final restored = {for (final m in mangaRepository.getAll()) m.name: m};
+    expect(restored['Series']?.itemType, ItemType.manga);
+    expect(restored['Show']?.itemType, ItemType.anime);
   });
 
   testWidgets('replace restore writes reading time and lastRead date', (
