@@ -64,6 +64,12 @@ class ShioriPageTransition extends StatelessWidget {
   /// incoming page fades in over the rest.
   static const double _outgoingShare = 0.35;
 
+  /// The incoming page's opacity at [t], 0 to 1 over the movement.
+  static double incomingOpacity(double t) => _fadeIn.transform(t);
+
+  /// The outgoing page's opacity at [t], 0 to 1 over the movement.
+  static double outgoingOpacity(double t) => _fadeOut.transform(t);
+
   // FastOutSlowIn for the slides, LinearOutSlowIn for the fade in and
   // FastOutLinearIn for the fade out: Material motion's own easings.
   static final _slide = CurveTween(curve: Curves.fastOutSlowIn);
@@ -121,17 +127,25 @@ abstract final class ShioriFadeThrough {
 ///
 /// With [lazy], a child is built the first time it is shown rather than up
 /// front, and kept from then on.
+///
+/// [slideDirection] turns a switch into the pages' shared axis movement
+/// instead: given the child being left and the one being opened, it says
+/// which way the opened one comes from, 1 from the end side, -1 from the
+/// start side, 0 to fade as usual. For siblings laid out in a row, such as
+/// the members of a segmented control.
 class ShioriFadeThroughStack extends StatefulWidget {
   const ShioriFadeThroughStack({
     super.key,
     required this.index,
     required this.children,
     this.lazy = false,
+    this.slideDirection,
   });
 
   final int index;
   final List<Widget> children;
   final bool lazy;
+  final int Function(int from, int to)? slideDirection;
 
   @override
   State<ShioriFadeThroughStack> createState() => _ShioriFadeThroughStackState();
@@ -153,6 +167,9 @@ class _ShioriFadeThroughStackState extends State<ShioriFadeThroughStack>
   /// The child being left while the switch runs.
   int? _previous;
 
+  /// Which way the switch running slides, or 0 for a fade.
+  int _direction = 0;
+
   /// The children shown at least once, for [ShioriFadeThroughStack.lazy].
   late final Set<int> _visited = {widget.index};
 
@@ -166,6 +183,12 @@ class _ShioriFadeThroughStackState extends State<ShioriFadeThroughStack>
         _controller.value = 1;
       } else {
         _previous = oldWidget.index;
+        _direction =
+            widget.slideDirection?.call(oldWidget.index, widget.index).sign ??
+            0;
+        _controller.duration = _direction == 0
+            ? ShioriFadeThrough.duration
+            : ShioriPageTransition.duration;
         _controller.forward(from: 0);
       }
     }
@@ -183,6 +206,11 @@ class _ShioriFadeThroughStackState extends State<ShioriFadeThroughStack>
       animation: _controller,
       builder: (context, _) {
         final t = _controller.value;
+        final slide = _direction != 0 && _previous != null;
+        final rtl = Directionality.of(context) == TextDirection.rtl;
+        final distance =
+            ShioriPageTransition.slideDistance * _direction * (rtl ? -1 : 1);
+        final moved = Curves.fastOutSlowIn.transform(t);
         // The child being opened is painted last, so it covers the one being
         // left; keys keep every child's state through the reordering.
         final order = [
@@ -201,15 +229,29 @@ class _ShioriFadeThroughStackState extends State<ShioriFadeThroughStack>
                   offstage: i != widget.index && i != _previous,
                   child: TickerMode(
                     enabled: i == widget.index,
-                    child: Opacity(
-                      opacity: i == widget.index
-                          ? ShioriFadeThrough.incoming(t)
-                          : 1,
-                      child: IgnorePointer(
-                        ignoring: i != widget.index,
-                        child: widget.lazy && !_visited.contains(i)
-                            ? const SizedBox.shrink()
-                            : widget.children[i],
+                    child: _slid(
+                      slide: slide,
+                      offset: i == widget.index
+                          ? distance * (1 - moved)
+                          : i == _previous
+                          ? -distance * moved
+                          : 0,
+                      child: Opacity(
+                        opacity: !slide
+                            ? (i == widget.index
+                                  ? ShioriFadeThrough.incoming(t)
+                                  : 1)
+                            : i == widget.index
+                            ? ShioriPageTransition.incomingOpacity(t)
+                            : i == _previous
+                            ? ShioriPageTransition.outgoingOpacity(t)
+                            : 1,
+                        child: IgnorePointer(
+                          ignoring: i != widget.index,
+                          child: widget.lazy && !_visited.contains(i)
+                              ? const SizedBox.shrink()
+                              : widget.children[i],
+                        ),
                       ),
                     ),
                   ),
@@ -220,4 +262,13 @@ class _ShioriFadeThroughStackState extends State<ShioriFadeThroughStack>
       },
     );
   }
+
+  /// [child] moved sideways by [offset] while a slide runs. The same wrapper
+  /// whether it slides or not, so a switch never rebuilds the child's tree.
+  Widget _slid({
+    required bool slide,
+    required double offset,
+    required Widget child,
+  }) =>
+      Transform.translate(offset: Offset(slide ? offset : 0, 0), child: child);
 }

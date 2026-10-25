@@ -45,25 +45,55 @@ class ShioriSegmentedControl<T> extends StatelessWidget {
     final tokens = context.shiori;
     final c = tokens.color;
     final motion = ShioriMotion.of(context, ShioriMotion.fast);
+    final index = segments.indexWhere((s) => s.value == selected);
+    final count = segments.length;
     return Container(
       padding: const EdgeInsets.all(ShioriSpace.s4 - 1),
       decoration: BoxDecoration(
         color: c.ink2,
         borderRadius: BorderRadius.circular(ShioriShape.pill),
       ),
-      child: Row(
+      child: Stack(
         children: [
-          for (final segment in segments)
-            Expanded(
-              child: _Segment(
-                segment: segment,
-                selected: segment.value == selected,
-                motion: motion,
-                onTap: () {
-                  if (segment.value != selected) onSelected(segment.value);
-                },
+          // One pill that slides from the segment left to the one picked.
+          // Each segment fading its own fill in and out went through a dark
+          // flash, transparent being black with no opacity.
+          if (index >= 0)
+            Positioned.fill(
+              child: AnimatedAlign(
+                duration: motion,
+                curve: ShioriMotion.standardCurve,
+                alignment: AlignmentDirectional(
+                  count == 1 ? 0 : -1 + 2 * index / (count - 1),
+                  0,
+                ),
+                child: FractionallySizedBox(
+                  widthFactor: 1 / count,
+                  heightFactor: 1,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: c.ink3,
+                      borderRadius: BorderRadius.circular(ShioriShape.pill),
+                    ),
+                  ),
+                ),
               ),
             ),
+          Row(
+            children: [
+              for (final segment in segments)
+                Expanded(
+                  child: _Segment(
+                    segment: segment,
+                    selected: segment.value == selected,
+                    motion: motion,
+                    onTap: () {
+                      if (segment.value != selected) onSelected(segment.value);
+                    },
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
     );
@@ -99,16 +129,11 @@ class _Segment<T> extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(ShioriShape.pill),
-          child: AnimatedContainer(
-            duration: motion,
-            curve: ShioriMotion.standardCurve,
+          // The pill behind is the control's, sliding between segments.
+          child: Container(
             height: height,
             padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s8),
             alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: selected ? c.ink3 : Colors.transparent,
-              borderRadius: BorderRadius.circular(ShioriShape.pill),
-            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               spacing: ShioriSpace.s4,
@@ -121,13 +146,17 @@ class _Segment<T> extends StatelessWidget {
                     color: fg,
                   ),
                 Flexible(
-                  child: Text(
-                    segment.label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  child: AnimatedDefaultTextStyle(
+                    duration: motion,
+                    curve: ShioriMotion.standardCurve,
                     style: tokens.text.row.copyWith(
                       color: fg,
                       fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                    ),
+                    child: Text(
+                      segment.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),

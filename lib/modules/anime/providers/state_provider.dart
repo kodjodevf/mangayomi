@@ -135,7 +135,13 @@ class SubtitleSettingsState extends _$SubtitleSettingsState {
   }
 
   void setOverrideAss(bool value) {
-    set(state..overrideAssSubtitles = value, true);
+    // On a copy: changing the current settings in place left the listeners'
+    // previous value already switched, so none could tell it had changed.
+    set(
+      PlayerSubtitleSettings.fromJson(state.toJson())
+        ..overrideAssSubtitles = value,
+      true,
+    );
   }
 }
 

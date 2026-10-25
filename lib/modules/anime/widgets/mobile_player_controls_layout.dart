@@ -159,6 +159,12 @@ class MobilePlayerControlsOverlayLayout extends StatelessWidget {
   }
 }
 
+/// The insets the player's controls keep clear of: the gesture bar at the
+/// bottom only. The video runs under a notch or a camera cutout, so the
+/// controls do too, rather than stopping short of it in landscape.
+EdgeInsets mobilePlayerControlInsets(BuildContext context) =>
+    EdgeInsets.only(bottom: MediaQuery.viewPaddingOf(context).bottom);
+
 class MobilePlayerUnlockControl extends StatelessWidget {
   const MobilePlayerUnlockControl({
     super.key,
@@ -172,6 +178,9 @@ class MobilePlayerUnlockControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      // Under the cutout, as the rest of the controls.
+      left: false,
+      right: false,
       minimum: const EdgeInsets.symmetric(
         horizontal: ShioriSpace.s16,
         vertical: ShioriSpace.s24,

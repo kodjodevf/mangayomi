@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/reader_common/widgets/btn_chapter_list_dialog.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/crop_off_glyph.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/custom_value_indicator_shape.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_mode_glyph.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_mode_picker.dart';
@@ -375,7 +376,8 @@ class ReaderBottomBar extends ConsumerWidget {
                 : ReaderModeGlyph(readerMode),
           ),
 
-          // Crop borders button: filled in the accent while it is on.
+          // Crop borders button: the crop struck through while it is off,
+          // and in the accent while it is on.
           Consumer(
             builder: (context, ref, child) {
               final cropBorders = ref.watch(cropBordersStateProvider);
@@ -385,12 +387,8 @@ class ReaderBottomBar extends ConsumerWidget {
                 onPressed: () {
                   ref.read(cropBordersStateProvider.notifier).set(!cropBorders);
                 },
-                icon: const Icon(Symbols.crop_rounded),
-                selectedIcon: Icon(
-                  Symbols.crop_rounded,
-                  fill: 1,
-                  color: accent,
-                ),
+                icon: const CropOffGlyph(),
+                selectedIcon: Icon(Symbols.crop_rounded, color: accent),
               );
             },
           ),
