@@ -745,7 +745,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         previous,
         next,
       ) {
-        applySubtitleSettingsToMpv(next);
+        unawaited(
+          applySubtitleSettingsToMpv(
+            next,
+            redraw:
+                (previous?.overrideAssSubtitles ?? false) !=
+                (next.overrideAssSubtitles ?? false),
+          ),
+        );
       });
     }
     WidgetsBinding.instance.addObserver(this);

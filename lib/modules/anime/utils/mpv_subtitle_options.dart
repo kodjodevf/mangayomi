@@ -34,7 +34,8 @@ Map<String, String> mpvSubtitleStyle(PlayerSubtitleSettings settings) {
       settings.backgroundColorB ?? 0,
     ),
     "sub-ass-override": overrideAss ? "force" : "scale",
-    if (overrideAss) "sub-ass-justify": "yes",
+    // Set either way: left at yes, it outlived the override it came with.
+    "sub-ass-justify": overrideAss ? "yes" : "no",
   };
 }
 

@@ -49,14 +49,28 @@ mixin AnimeMpvBridgeMixin<T extends riv.ConsumerStatefulWidget>
   Future<void> mpvSeekBy(int deltaSeconds);
   Future<void> mpvPushToNewEpisode(BuildContext context, Chapter episode);
 
-  void applySubtitleSettingsToMpv(PlayerSubtitleSettings settings) {
+  /// Sends the subtitle style to mpv. With [redraw], the subtitle track is
+  /// selected again afterwards, so the lines already on screen are drawn
+  /// again under the new style: switching the ASS override off left them
+  /// styled as before.
+  Future<void> applySubtitleSettingsToMpv(
+    PlayerSubtitleSettings settings, {
+    bool redraw = false,
+  }) async {
     if (!mpvUseLibass) return;
     try {
       final nativePlayer = mpvBridgePlayer.platform as NativePlayer;
       for (final MapEntry(:key, :value) in mpvSubtitleStyle(settings).entries) {
-        nativePlayer.setProperty(key, value);
+        await nativePlayer.setProperty(key, value);
       }
-    } catch (_) {}
+      if (!redraw) return;
+      final sid = await nativePlayer.getProperty('sid');
+      if (sid.isEmpty || sid == 'no') return;
+      await nativePlayer.setProperty('sid', 'no');
+      await nativePlayer.setProperty('sid', sid);
+    } catch (e, s) {
+      recordError(e, stack: s, source: 'mpv_subtitle_style');
+    }
   }
 
   Future<void> handleMpvEvents(Pointer<generated.mpv_event> event) async {
