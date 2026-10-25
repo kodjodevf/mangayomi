@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:desktop_webview_window/desktop_webview_window.dart';
+import 'package:desktop_webview_window_fork/desktop_webview_window_fork.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';

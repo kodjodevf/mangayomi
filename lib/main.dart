@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:archive/archive.dart';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:desktop_webview_window/desktop_webview_window.dart';
+import 'package:desktop_webview_window_fork/desktop_webview_window_fork.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
