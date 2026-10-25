@@ -488,6 +488,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get statistics => 'सांख्यिकी';
 
   @override
+  String get recapSettingTitle => 'Statistics recap';
+
+  @override
+  String get recapSettingSubtitle =>
+      'Show Statistics as a Status Window with monthly Episodes. Turn off for the classic view.';
+
+  @override
   String get settings => 'सेटिंग्स';
 
   @override

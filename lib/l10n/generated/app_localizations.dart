@@ -889,6 +889,18 @@ abstract class AppLocalizations {
   /// **'Statistics'**
   String get statistics;
 
+  /// No description provided for @recapSettingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics recap'**
+  String get recapSettingTitle;
+
+  /// No description provided for @recapSettingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Statistics as a Status Window with monthly Episodes. Turn off for the classic view.'**
+  String get recapSettingSubtitle;
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:

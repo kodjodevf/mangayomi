@@ -266,6 +266,8 @@
   "download_queue": "Download queue",
   "categories": "Categories",
   "statistics": "Statistics",
+  "recapSettingTitle": "Statistics recap",
+  "recapSettingSubtitle": "Show Statistics as a Status Window with monthly Episodes. Turn off for the classic view.",
   "settings": "Settings",
   "about": "About",
   "help": "Help",

@@ -473,6 +473,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get statistics => '统计';
 
   @override
+  String get recapSettingTitle => 'Statistics recap';
+
+  @override
+  String get recapSettingSubtitle =>
+      'Show Statistics as a Status Window with monthly Episodes. Turn off for the classic view.';
+
+  @override
   String get settings => '设置';
 
   @override
