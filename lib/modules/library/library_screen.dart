@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/widgets/collapsing_header.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/modules/main_view/nav_groups.dart';
+import 'package:mangayomi/modules/main_view/widgets/nav_group_swipe.dart';
 import 'package:mangayomi/modules/main_view/widgets/nav_group_switcher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -560,41 +561,49 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     final route = libraryRouteFor(widget.itemType);
     final selecting = ref.watch(isLongPressedStateProvider);
     final showShelf = !isTv && !_isSearch && !selecting;
+    // A sideways swipe switches media as the switcher does, and for the same
+    // reason not while selecting.
+    Widget swipe(Widget child) =>
+        NavGroupSwipe(route: route, enabled: !selecting, child: child);
     if (!showShelf) {
-      return Column(
-        children: [
-          // Not while selecting: switching to Anime mid-selection would mix
-          // series of two kinds in one action, and the navigation bar is
-          // already hidden for the same reason.
-          if (!selecting) NavGroupSwitcher(route: route),
-          ActiveFilterChips(itemType: widget.itemType, settings: _settings),
-          Expanded(child: body),
-        ],
+      return swipe(
+        Column(
+          children: [
+            // Not while selecting: switching to Anime mid-selection would mix
+            // series of two kinds in one action, and the navigation bar is
+            // already hidden for the same reason.
+            if (!selecting) NavGroupSwitcher(route: route),
+            ActiveFilterChips(itemType: widget.itemType, settings: _settings),
+            Expanded(child: body),
+          ],
+        ),
       );
     }
     // The outer scroll of the NestedScrollView moves the header; past the
     // switcher's height the title names the media instead of the group.
-    return CollapseOnScroll(
-      collapsed: _headerCollapsed,
-      threshold: context.shiori.density.minTarget + ShioriSpace.s12,
-      accept: (notification) => notification.depth == 0,
-      child: NestedScrollView(
-        headerSliverBuilder: (context, _) => [
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                NavGroupSwitcher(route: route),
-                ContinueShelf(itemType: widget.itemType),
-                ActiveFilterChips(
-                  itemType: widget.itemType,
-                  settings: _settings,
-                ),
-              ],
+    return swipe(
+      CollapseOnScroll(
+        collapsed: _headerCollapsed,
+        threshold: context.shiori.density.minTarget + ShioriSpace.s12,
+        accept: (notification) => notification.depth == 0,
+        child: NestedScrollView(
+          headerSliverBuilder: (context, _) => [
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  NavGroupSwitcher(route: route),
+                  ContinueShelf(itemType: widget.itemType),
+                  ActiveFilterChips(
+                    itemType: widget.itemType,
+                    settings: _settings,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-        body: body,
+          ],
+          body: body,
+        ),
       ),
     );
   }

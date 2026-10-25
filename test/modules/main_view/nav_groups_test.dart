@@ -96,4 +96,31 @@ void main() {
     }
     expect(NavGroup.of('/browse'), isNull);
   });
+
+  group('switcher order', () {
+    const visible = [
+      '/NovelLibrary',
+      '/more',
+      '/MangaLibrary',
+      '/AnimeLibrary',
+    ];
+
+    test('the visible members of a group, in the user order', () {
+      expect(visibleGroupMembers('/MangaLibrary', visible), [
+        '/NovelLibrary',
+        '/MangaLibrary',
+        '/AnimeLibrary',
+      ]);
+      expect(visibleGroupMembers('/browse', visible), isEmpty);
+    });
+
+    test('the way a switch goes along the switcher', () {
+      expect(navGroupDirection('/NovelLibrary', '/AnimeLibrary', visible), 1);
+      expect(navGroupDirection('/AnimeLibrary', '/MangaLibrary', visible), -1);
+      // Not two members of one group on show: no direction.
+      expect(navGroupDirection('/MangaLibrary', '/more', visible), 0);
+      expect(navGroupDirection('/updates', '/history', visible), 0);
+      expect(navGroupDirection('/MangaLibrary', '/MangaLibrary', visible), 0);
+    });
+  });
 }

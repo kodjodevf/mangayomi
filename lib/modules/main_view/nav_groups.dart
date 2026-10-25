@@ -55,6 +55,26 @@ List<String> groupDestinations(List<String> destinations) {
   return out;
 }
 
+/// The members of [route]'s group the user has [visible], in their order,
+/// as the group's switcher shows them. Empty when [route] is in no group.
+List<String> visibleGroupMembers(String route, List<String> visible) {
+  final group = NavGroup.of(route);
+  if (group == null) return const [];
+  return NavGroup.members[group]!.where(visible.contains).toList()
+    ..sort((a, b) => visible.indexOf(a).compareTo(visible.indexOf(b)));
+}
+
+/// Which way switching from [from] to [to] goes along their group's
+/// switcher: 1 toward its end, -1 toward its start, 0 when they are not two
+/// members of one group on show.
+int navGroupDirection(String from, String to, List<String> visible) {
+  final members = visibleGroupMembers(from, visible);
+  final i = members.indexOf(from);
+  final j = members.indexOf(to);
+  if (i < 0 || j < 0 || i == j) return 0;
+  return j > i ? 1 : -1;
+}
+
 /// The route a tap on [destination] opens: itself for a plain route; for a
 /// group, the member last visited if it is still visible, else the group's
 /// first visible member in the user's order.
