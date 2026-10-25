@@ -176,6 +176,23 @@ void main() {
     );
   });
 
+  test('finished lists a series only in its last completion month', () async {
+    // Series 0 is fully read, with completions in August, September and
+    // October: it was caught up in October, not before.
+    final caughtUp = mangaIds[0];
+    Future<List<int>> finishedIn(int month) async => (await container.read(
+      episodeProvider(
+        itemType: ItemType.manga,
+        year: 2026,
+        month: month,
+      ).future,
+    )).finishedIds;
+
+    expect(await finishedIn(8), isNot(contains(caughtUp)));
+    expect(await finishedIn(9), isNot(contains(caughtUp)));
+    expect(await finishedIn(10), contains(caughtUp));
+  });
+
   test('clock falls back to History.date when the log is empty', () async {
     await database.writeTxn(() => database.readingLogs.clear());
 

@@ -221,8 +221,15 @@ Future<MonthStats> episode(
     start.millisecondsSinceEpoch,
   )).whereType<int>().toSet();
 
+  // Finished this month: nothing unread now, and no completion after the
+  // month, so the last one fell inside it.
+  final completedLater = await readingLogRepository.mangaIdsCompletedFrom(
+    itemType,
+    end.millisecondsSinceEpoch,
+  );
   final caughtUpIds = <int>{};
   for (final id in rows.map((r) => r.mangaId!).toSet()) {
+    if (completedLater.contains(id)) continue;
     if (await chapterRepository.countUnreadByMangaId(id) == 0) {
       caughtUpIds.add(id);
     }

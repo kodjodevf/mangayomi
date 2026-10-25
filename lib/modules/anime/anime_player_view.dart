@@ -57,6 +57,7 @@ import 'package:media_kit/generated/libmpv/bindings.dart' as generated;
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:mangayomi/modules/anime/utils/always_on_top.dart';
 import 'package:mangayomi/modules/anime/utils/mpv_subtitle_options.dart';
+import 'package:mangayomi/modules/reader_common/mixins/chapter_controller_mixin.dart';
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final int episodeId;
@@ -634,6 +635,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   @override
   void initState() {
     super.initState();
+    beginReadingSession();
     _rememberVolume = ref.read(rememberPlayerVolumeStateProvider);
     _watchStopwatch.start();
     _controller = VideoController(

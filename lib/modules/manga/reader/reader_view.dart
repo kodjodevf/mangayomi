@@ -55,6 +55,7 @@ import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:mangayomi/modules/reader_common/mixins/reader_auto_scroll.dart';
+import 'package:mangayomi/modules/reader_common/mixins/chapter_controller_mixin.dart';
 
 class MangaReaderView extends ConsumerWidget {
   final int chapterId;
@@ -464,6 +465,7 @@ class _MangaChapterPageGalleryState
   @override
   void initState() {
     super.initState();
+    beginReadingSession();
     _readingStopwatch.start();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;

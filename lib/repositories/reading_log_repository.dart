@@ -41,6 +41,19 @@ class ReadingLogRepository {
       .mangaIdProperty()
       .findAll();
 
+  /// Series of [itemType] with a completion at or after [ms].
+  Future<Set<int>> mangaIdsCompletedFrom(ItemType itemType, int ms) async => {
+    ...(await isar.readingLogs
+            .where()
+            .atGreaterThan(ms, include: true)
+            .filter()
+            .itemTypeEqualTo(itemType)
+            .kindEqualTo(ReadingLogKind.completion)
+            .mangaIdProperty()
+            .findAll())
+        .whereType<int>(),
+  };
+
   Future<void> deleteByMangaIds(List<int> mangaIds) => dbWriteQueue.run(
     () => isar.writeTxnSync(() => deleteByMangaIdsSync(mangaIds)),
   );

@@ -9,6 +9,7 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/reading_log.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/sync_preference.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/update.dart';
@@ -56,6 +57,7 @@ void main() {
         ChangedPartSchema,
         SyncPreferenceSchema,
         DownloadSchema,
+        SourceSchema,
       ],
       directory: directory.path,
       name: 'merge_log_${directory.path.hashCode}',
@@ -109,5 +111,47 @@ void main() {
       (primary.id, primaryChapter.id),
       (primary.id, otherOnly.id),
     ]);
+  });
+
+  // Isar can hand a deleted series' id to the next one added, so log rows
+  // left behind would be credited to an unrelated series.
+  group('deleting a series removes its reading log', () {
+    late Manga gone;
+    late Manga kept;
+
+    setUp(() {
+      gone = _manga('/gone');
+      kept = _manga('/kept');
+      isar.writeTxnSync(() {
+        isar.mangas.putAllSync([gone, kept]);
+        isar.readingLogs.putAllSync([
+          for (final m in [gone, kept])
+            ReadingLog(
+              mangaId: m.id,
+              itemType: ItemType.manga,
+              at: 1000,
+              kind: ReadingLogKind.completion,
+            ),
+        ]);
+      });
+    });
+
+    List<int?> loggedIds() =>
+        isar.readingLogs.where().mangaIdProperty().findAllSync();
+
+    test('wipe', () async {
+      await mangaRepository.wipeMangas([gone]);
+      expect(loggedIds(), [kept.id]);
+    });
+
+    test('source group delete, even when keeping history', () async {
+      await mangaRepository.deleteLibrarySourceGroup([gone], keepHistory: true);
+      expect(loggedIds(), [kept.id]);
+    });
+
+    test('single delete', () async {
+      await mangaRepository.delete(gone.id!);
+      expect(loggedIds(), [kept.id]);
+    });
   });
 }

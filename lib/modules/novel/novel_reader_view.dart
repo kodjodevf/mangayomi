@@ -44,6 +44,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:mangayomi/modules/reader_common/mixins/reader_auto_scroll.dart';
+import 'package:mangayomi/modules/reader_common/mixins/chapter_controller_mixin.dart';
 
 class NovelReaderView extends ConsumerWidget {
   final int chapterId;
@@ -222,6 +223,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   @override
   void initState() {
     super.initState();
+    beginReadingSession();
     // Before anything that can fail, so the controller dispose() needs is
     // always there: this is the whole point of not leaving it lazy.
     readerController = ref.read(

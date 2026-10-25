@@ -41,6 +41,7 @@ void main() {
   });
 
   setUp(() async {
+    beginReadingSession();
     databaseDirectory = await Directory.systemTemp.createTemp(
       'mangayomi-reading-log-hooks-',
     );
@@ -188,6 +189,43 @@ void main() {
     await Future<void>.delayed(const Duration(milliseconds: 50));
 
     expect(rows(ReadingLogKind.completion), hasLength(1));
+  });
+
+  /// Reaches the last page of [chapter], then releases its controller the
+  /// way continuous mode does when the reader scrolls on to the next chapter.
+  Future<void> readToEnd(Chapter chapter) async {
+    final controller = container.read(
+      readerControllerProvider(chapter: chapter).notifier,
+    );
+    controller.setPageIndex(9, false, List.filled(10, ''));
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    controller.keepAliveLink?.close();
+    // Let the now-unused controller dispose.
+    await Future<void>.delayed(Duration.zero);
+  }
+
+  test(
+    'continuous mode rebuilding a controller logs no second completion',
+    () async {
+      // Scrolling back over a chapter boundary disposes and recreates the
+      // previous chapter's controller within the same reading session.
+      final chapter = await seedChapter();
+
+      await readToEnd(chapter);
+      await readToEnd(chapter);
+
+      expect(rows(ReadingLogKind.completion), hasLength(1));
+    },
+  );
+
+  test('opening the reader again counts a re-read', () async {
+    final chapter = await seedChapter();
+
+    await readToEnd(chapter);
+    beginReadingSession();
+    await readToEnd(chapter);
+
+    expect(rows(ReadingLogKind.completion), hasLength(2));
   });
 
   test('re-watching a seen episode logs a completion', () async {
