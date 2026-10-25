@@ -664,6 +664,44 @@ void main() {
       handle.dispose();
     });
 
+    testWidgets('one pill slides from the segment left to the one picked', (
+      tester,
+    ) async {
+      Widget control(int selected) => _host(
+        ShioriSegmentedControl<int>(
+          segments: const [
+            ShioriSegment(value: 0, label: 'A'),
+            ShioriSegment(value: 1, label: 'B'),
+            ShioriSegment(value: 2, label: 'C'),
+          ],
+          selected: selected,
+          onSelected: (_) {},
+        ),
+      );
+      double pillX() => tester
+          .getCenter(
+            find.descendant(
+              of: find.byType(AnimatedAlign),
+              matching: find.byType(DecoratedBox),
+            ),
+          )
+          .dx;
+
+      await tester.pumpWidget(control(0));
+      final atA = pillX();
+      expect(atA, closeTo(tester.getCenter(find.text('A')).dx, 1));
+
+      await tester.pumpWidget(control(2));
+      await tester.pump(const Duration(milliseconds: 40));
+      // On its way, one pill only, between the two.
+      expect(
+        pillX(),
+        inExclusiveRange(atA, tester.getCenter(find.text('C')).dx),
+      );
+      await tester.pumpAndSettle();
+      expect(pillX(), closeTo(tester.getCenter(find.text('C')).dx, 1));
+    });
+
     testWidgets('each segment is a full target', (tester) async {
       await tester.pumpWidget(
         _host(
