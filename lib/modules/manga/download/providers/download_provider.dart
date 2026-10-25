@@ -131,8 +131,9 @@ Future<void> downloadChapter(
       directory: mangaMainDirectory,
       headers: metadataHeaders,
       onlyIfMissing: true,
-      // A remote cover must not hold the download slot; use a local page below.
-      fetchCover: itemType != ItemType.manga,
+      // A remote cover must not hold the download slot: it is fetched once
+      // the chapter is done, with a page standing in for it until then.
+      fetchCover: false,
     );
     List<Track>? subtitles;
     bool isOk = false;
@@ -184,6 +185,7 @@ Future<void> downloadChapter(
         directory: mangaMainDirectory,
         imageFile: imageFiles.first,
         onlyIfMissing: true,
+        fromPage: true,
       );
     }
 
@@ -544,6 +546,15 @@ Future<void> downloadChapter(
       callback();
     }
     await deleteEmptyAnimeEpisodeDirectory();
+    // Not awaited: the series' own cover may take its time, and the source's
+    // slot is released below whatever it does.
+    unawaited(
+      fetchMissingMangaCover(
+        manga: manga,
+        directory: mangaMainDirectory,
+        headers: metadataHeaders,
+      ),
+    );
     await ref.read(scanLocalLibraryProvider.future);
     keepAlive.close();
   } catch (e) {
