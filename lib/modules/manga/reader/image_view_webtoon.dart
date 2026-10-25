@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/manga/reader/utils/reader_motion.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/double_page_view.dart';
@@ -154,6 +155,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
   double _animTargetScale = 1.0;
   Offset _animStartOffset = Offset.zero;
   Offset _animTargetOffset = Offset.zero;
+  Curve _animCurve = Curves.decelerate;
 
   Offset _doubleTapPosition = Offset.zero;
 
@@ -197,11 +199,11 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     );
     _zoomAnimationController = AnimationController(
       vsync: this,
-      duration: _durationForSpeed(doubleTapAnimationValue),
+      duration: ReaderMotion.stripDoubleTapZoom(doubleTapAnimationValue),
     );
     _zoomAnimationController.addListener(() {
       final t = _zoomAnimationController.value;
-      final curveVal = Curves.easeOutCubic.transform(t);
+      final curveVal = _animCurve.transform(t);
       _scale =
           _animStartScale + (_animTargetScale - _animStartScale) * curveVal;
       _offset =
@@ -215,25 +217,17 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
       ..setTranslationRaw(_offset.dx, _offset.dy, 0.0);
   }
 
-  Duration _durationForSpeed(int speed) {
-    return switch (speed) {
-      0 => const Duration(milliseconds: 10),
-      1 => const Duration(milliseconds: 800),
-      _ => const Duration(milliseconds: 200),
-    };
-  }
+  Duration _doubleTapAnimationDuration() => ReaderMotion.stripDoubleTapZoom(
+    ref.read(doubleTapAnimationSpeedStateProvider),
+  );
 
-  Duration _doubleTapAnimationDuration() {
-    final doubleTapAnimationValue = ref.read(
-      doubleTapAnimationSpeedStateProvider,
-    );
-    return _durationForSpeed(doubleTapAnimationValue);
-  }
-
+  /// Decelerating by default, as a double tap and a fling do: the strip
+  /// leaves at the speed it was given.
   void _animateTo(
     double targetScale,
     Offset targetOffset, {
     Duration? duration,
+    Curve curve = Curves.decelerate,
   }) {
     if (_zoomAnimationController.isAnimating) {
       _zoomAnimationController.stop();
@@ -242,6 +236,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     _animTargetScale = targetScale;
     _animStartOffset = _offset;
     _animTargetOffset = targetOffset;
+    _animCurve = curve;
 
     _zoomAnimationController.duration =
         duration ?? _doubleTapAnimationDuration();
@@ -392,7 +387,12 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
 
     // 1. Rebound spring if zoomed out below 1.0
     if (_scale < 1.0) {
-      _animateTo(1.0, Offset.zero, duration: ShioriMotion.standard);
+      _animateTo(
+        1.0,
+        Offset.zero,
+        duration: ShioriMotion.standard,
+        curve: Curves.easeOutCubic,
+      );
       return;
     }
 
@@ -407,14 +407,16 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
         final maxDy =
             (screenHeight * (_scale - 1).clamp(0.0, double.infinity)) / 2;
 
-        final targetDx = (_offset.dx + velocity.dx * 0.2).clamp(-maxDx, maxDx);
-        final targetDy = (_offset.dy + velocity.dy * 0.2).clamp(-maxDy, maxDy);
+        final targetDx = (_offset.dx + velocity.dx * ReaderMotion.flingTravel)
+            .clamp(-maxDx, maxDx);
+        final targetDy = (_offset.dy + velocity.dy * ReaderMotion.flingTravel)
+            .clamp(-maxDy, maxDy);
 
         if ((Offset(targetDx, targetDy) - _offset).distance > 8) {
           _animateTo(
             _scale,
             Offset(targetDx, targetDy),
-            duration: const Duration(seconds: 1),
+            duration: ReaderMotion.flingDuration,
           );
         }
       }
