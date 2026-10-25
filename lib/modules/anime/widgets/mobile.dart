@@ -78,9 +78,9 @@ class _MobileControllerWidgetState
   Duration controlsTransitionDuration = ShioriMotion.enter;
   Color backdropColor = ShioriScrim.shadow;
   Timer? _timer;
-  late final skipDuration = ref.watch(
-    defaultDoubleTapToSkipLengthStateProvider,
-  );
+  // Read, not watched: a late final is read once, and a double tap can be
+  // the first to read it, outside build, where watch is not allowed.
+  late final skipDuration = ref.read(defaultDoubleTapToSkipLengthStateProvider);
   final ValueNotifier<double> _brightnessValue = ValueNotifier(0.0);
   final ValueNotifier<bool> _brightnessIndicator = ValueNotifier(false);
   Timer? _brightnessTimer;
@@ -347,9 +347,15 @@ class _MobileControllerWidgetState
   }
 
   late final VolumeController _volumeController;
+
+  /// Read once the controls start: dispose() can no longer use ref.
+  late final bool _rememberVolume;
+  late final bool _rememberBrightness;
   @override
   void initState() {
     super.initState();
+    _rememberVolume = ref.read(rememberPlayerVolumeStateProvider);
+    _rememberBrightness = ref.read(rememberPlayerBrightnessStateProvider);
     widget.revealControls.addListener(_onRevealRequest);
     widget.isLocked?.addListener(_onLockChanged);
     _volumeController = VolumeController.instance;
@@ -357,7 +363,7 @@ class _MobileControllerWidgetState
     Future.microtask(() async {
       try {
         _volumeController.showSystemUI = false;
-        final remembered = ref.read(rememberPlayerVolumeStateProvider)
+        final remembered = _rememberVolume
             ? settingsRepository.current.playerVolume
             : null;
         if (remembered != null) {
@@ -373,7 +379,7 @@ class _MobileControllerWidgetState
     });
 
     Future.microtask(() async {
-      final remembered = ref.read(rememberPlayerBrightnessStateProvider)
+      final remembered = _rememberBrightness
           ? settingsRepository.current.playerBrightness
           : null;
       if (remembered != null) {
@@ -388,11 +394,8 @@ class _MobileControllerWidgetState
   /// Keeps the volume and brightness the episode ended with, for the next
   /// one, when asked to.
   void _rememberVolumeAndBrightness() {
-    final volume = ref.read(rememberPlayerVolumeStateProvider)
-        ? _volumeValue.value
-        : null;
-    final brightness =
-        _brightnessChanged && ref.read(rememberPlayerBrightnessStateProvider)
+    final volume = _rememberVolume ? _volumeValue.value : null;
+    final brightness = _brightnessChanged && _rememberBrightness
         ? _brightnessValue.value
         : null;
     if (volume == null && brightness == null) return;

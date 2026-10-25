@@ -17,10 +17,11 @@ List<Widget> mobilePrimaryButtonBar(
   VideoController controller, {
   FocusNode? playPauseFocus,
 }) {
-  final hasPrevEpisode =
-      streamController.getEpisodeIndex().$1 + 1 !=
-      streamController.getEpisodesLength(streamController.getEpisodeIndex().$2);
-  final hasNextEpisode = streamController.getEpisodeIndex().$1 != 0;
+  // The same neighbours as getPrevEpisode and getNextEpisode pick. Testing the
+  // index by hand had them swapped: on the first episode Previous threw and
+  // Next did nothing.
+  final hasPrevEpisode = streamController.hasPreviousEpisode;
+  final hasNextEpisode = streamController.hasNextEpisode;
   final isFullScreen = isFullscreen(context);
   final l10n = context.l10n;
   void open(Chapter episode) {

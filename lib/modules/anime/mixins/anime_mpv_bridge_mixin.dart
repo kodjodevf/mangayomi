@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
@@ -6,6 +7,7 @@ import 'dart:math';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
@@ -71,19 +73,30 @@ mixin AnimeMpvBridgeMixin<T extends riv.ConsumerStatefulWidget>
         if (propName.startsWith("user-data/") &&
             prop.ref.format == generated.mpv_format.MPV_FORMAT_NODE) {
           final value = prop.ref.data.cast<generated.mpv_node>();
-          await _handleMpvNodeEvents(propName, value);
+          // Not awaited. media_kit reads the next mpv event only once this
+          // handler returns, and several of these seek, pause or push an
+          // episode: each waits for mpv's reply, which arrives as one of
+          // those next events. Awaiting them froze the player for good, on
+          // the skip button among others. Each reads its event before its
+          // first await, while the event is still the current one.
+          unawaited(
+            _handleMpvNodeEvents(propName, value).catchError(_recordMpvError),
+          );
         } else if (propName.startsWith("user-data/") &&
             prop.ref.format == generated.mpv_format.MPV_FORMAT_INT64) {
           final value = prop.ref.data.cast<Int64>().value;
-          await _handleMpvNumberEvents(propName, value);
+          unawaited(
+            _handleMpvNumberEvents(propName, value).catchError(_recordMpvError),
+          );
         }
       }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint(e.toString());
-      }
+    } catch (e, s) {
+      _recordMpvError(e, s);
     }
   }
+
+  void _recordMpvError(Object error, StackTrace stack) =>
+      recordError(error, stack: stack, source: 'mpv_event');
 
   String? _readMpvString(Pointer<generated.mpv_node> value) {
     if (value.ref.format != generated.mpv_format.MPV_FORMAT_STRING) return null;
