@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:desktop_webview_window_fork/desktop_webview_window_fork.dart';
+import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
@@ -13,6 +12,7 @@ import 'package:mangayomi/modules/more/settings/general/providers/general_state_
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -109,58 +109,57 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     }
     if (Platform.isLinux) {
       // Like Windows, the controls live in this screen rather than in the
-      // webview window: the plugin's own title bar is a second Flutter engine,
-      // and tearing it down when the window closes crashes the app.
+      // webview window, so the native title bar only shows the title and host.
       // Opened as a child of this window and centred on it, so size it to
       // cover the area below the toolbar.
       final size = MediaQuery.sizeOf(context);
       _desktopWebview = await WebviewWindow.create(
         configuration: CreateConfiguration(
           title: widget.title,
-          titleBarHeight: 0,
+          brightness: Brightness.dark,
+          titleBar: const TitleBarOptions(
+            showNavigation: false,
+            showReload: false,
+          ),
           windowWidth: (size.width - 64).round(),
           windowHeight: (size.height - 180).round(),
         ),
       );
-      final navigating = _desktopWebview!.isNavigating;
-      navigating.addListener(() {
-        if (mounted) setState(() => _progress = navigating.value ? 0 : 1);
-      });
-      _desktopWebview!.setOnHistoryChangedCallback((canGoBack, canGoForward) {
-        if (mounted) {
-          setState(() {
-            _canGoback = canGoBack;
-            _canGoForward = canGoForward;
-          });
-        }
+      final navigation = _desktopWebview!.navigationState;
+      navigation.addListener(() {
+        if (!mounted) return;
+        final state = navigation.value;
+        setState(() {
+          _progress = state.isLoading ? 0 : 1;
+          _canGoback = state.canGoBack;
+          _canGoForward = state.canGoForward;
+        });
       });
 
       _cookieTimer = Timer.periodic(const Duration(seconds: 1), (_) async {
         try {
           final cookieList = await _desktopWebview!.getAllCookies();
           final ua =
-              await _desktopWebview!.evaluateJavaScript(
-                "navigator.userAgent",
-              ) ??
+              (await _desktopWebview!.evaluateJavaScript("navigator.userAgent"))
+                  as String? ??
               "";
           final cookie = cookieList
               .map((e) => "${e.name}=${e.value}")
               .join(";");
           await MClient.setCookie(widget.url, ua, null, cookie: cookie);
           // location.href is the main frame's URL; the plugin's URL requests
-          // also include iframes (ads, captchas). Results come back
-          // JSON-encoded on Linux, quotes included.
-          final href = await _desktopWebview!.evaluateJavaScript(
-            "location.href",
-          );
-          final url = href == null ? null : jsonDecode(href) as String;
+          // also include iframes (ads, captchas).
+          final url =
+              await _desktopWebview!.evaluateJavaScript("location.href")
+                  as String?;
           if (mounted && url != null && url != 'about:blank' && url != _url) {
             setState(() => _url = url);
           }
-        } catch (_) {}
+        } catch (e, stackTrace) {
+          recordError(e, stack: stackTrace, source: 'webview cookie poll');
+        }
       });
       _desktopWebview!
-        ..setBrightness(Brightness.dark)
         ..launch(widget.url)
         ..onClose.whenComplete(() {
           // The native window has already closed itself; mark it so dispose()

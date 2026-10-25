@@ -8,7 +8,6 @@
 
 #include <app_links_linux/app_links_plugin_linux.h>
 #include <desktop_webview_window/desktop_webview_window_plugin.h>
-#include <desktop_webview_window_fork/desktop_webview_window_plugin.h>
 #include <flutter_qjs/flutter_qjs_plugin.h>
 #include <flutter_secure_storage_linux/flutter_secure_storage_linux_plugin.h>
 #include <isar_community_flutter_libs/isar_flutter_libs_plugin.h>
@@ -28,9 +27,6 @@ void fl_register_plugins(FlPluginRegistry* registry) {
   g_autoptr(FlPluginRegistrar) desktop_webview_window_registrar =
       fl_plugin_registry_get_registrar_for_plugin(registry, "DesktopWebviewWindowPlugin");
   desktop_webview_window_plugin_register_with_registrar(desktop_webview_window_registrar);
-  g_autoptr(FlPluginRegistrar) desktop_webview_window_fork_registrar =
-      fl_plugin_registry_get_registrar_for_plugin(registry, "DesktopWebviewWindowPlugin");
-  desktop_webview_window_plugin_register_with_registrar(desktop_webview_window_fork_registrar);
   g_autoptr(FlPluginRegistrar) flutter_qjs_registrar =
       fl_plugin_registry_get_registrar_for_plugin(registry, "FlutterQjsPlugin");
   flutter_qjs_plugin_register_with_registrar(flutter_qjs_registrar);

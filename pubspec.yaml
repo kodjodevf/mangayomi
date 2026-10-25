@@ -83,11 +83,7 @@ dependencies:
   pseudom: ^1.0.1
   path: ^1.9.0
   freezed_annotation: ^3.0.0
-  desktop_webview_window_fork:
-    git:
-      url: https://github.com/kodjodevf/desktop_webview_window.git
-      path: packages/desktop_webview_window
-      ref: main
+  desktop_webview_window: ^0.4.0
   flutter_html: ^3.0.0
   convert: ^3.1.2
   connectivity_plus: 6.1.4
