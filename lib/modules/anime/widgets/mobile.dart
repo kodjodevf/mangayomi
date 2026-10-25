@@ -660,7 +660,7 @@ class _MobileControllerWidgetState
                       else
                         MobilePlayerControlsOverlayLayout(
                           compactPortrait: compactPortrait,
-                          safeInsets: MediaQuery.viewPaddingOf(context),
+                          safeInsets: mobilePlayerControlInsets(context),
                           topControls: widget.topButtonBarWidget,
                           // Only display [primaryButtonBar] if [buffering] is false.
                           primaryControls: AnimatedOpacity(
@@ -755,11 +755,7 @@ class _MobileControllerWidgetState
                     _mountSeekForwardButton ||
                     showSwipeDuration)
                   Padding(
-                    padding: EdgeInsets.only(
-                      left: MediaQuery.viewPaddingOf(context).left,
-                      right: MediaQuery.viewPaddingOf(context).right,
-                      bottom: MediaQuery.viewPaddingOf(context).bottom,
-                    ),
+                    padding: mobilePlayerControlInsets(context),
                     child: Column(
                       children: [
                         const Spacer(),
