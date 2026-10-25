@@ -11,12 +11,13 @@ Future<void> exportMangaMetadata({
   required Directory directory,
   Map<String, String>? headers,
   bool onlyIfMissing = false,
+  bool fetchCover = true,
 }) async {
   await directory.create(recursive: true);
 
   final metadataFile = File(p.join(directory.path, "metadata.json"));
 
-  if (!onlyIfMissing || findMangaCoverFile(directory) == null) {
+  if (fetchCover && (!onlyIfMissing || findMangaCoverFile(directory) == null)) {
     final imageUrl = (manga.customCoverFromTracker ?? manga.imageUrl ?? "")
         .trim();
     if (imageUrl.isNotEmpty) {
