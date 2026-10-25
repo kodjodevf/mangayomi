@@ -114,6 +114,15 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   final Stopwatch _readingStopwatch = Stopwatch();
   int? _discordReaderSession;
 
+  /// Hands the reading time measured so far to the chapter and starts
+  /// counting again, so an app the system kills in the background loses at
+  /// most what came after the last save.
+  void _flushReadingTime() {
+    final seconds = _readingStopwatch.elapsed.inSeconds;
+    _readingStopwatch.reset();
+    readerController.setHistoryUpdate(elapsedSeconds: seconds);
+  }
+
   void onScroll() {
     if (scrollController.hasClients) {
       offset = scrollController.offset;
@@ -131,9 +140,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     applyReaderScreenBrightness(-1);
     updatePaginatedOffsetBeforeDispose(_readerMode);
     readerController.setChapterOffset(offset, maxOffset, true);
-    readerController.setHistoryUpdate(
-      elapsedSeconds: _readingStopwatch.elapsed.inSeconds,
-    );
+    _flushReadingTime();
     scrollController.removeListener(onScroll);
     scrollController.dispose();
     rebuildDetail.close();
@@ -163,6 +170,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       _readingStopwatch.stop();
+      _flushReadingTime();
       if (keepOn) {
         WakelockPlus.disable();
       }

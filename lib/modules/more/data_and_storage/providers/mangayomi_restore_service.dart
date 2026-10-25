@@ -19,6 +19,7 @@ import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/custom_button_repository.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/reading_log_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/restore_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
@@ -142,6 +143,8 @@ class MangayomiRestoreService {
             }
 
             historyRepository.clearSync();
+
+            readingLogRepository.clearSync();
             if (history != null) {
               final historyToPut = <History>[];
               for (var element in history) {

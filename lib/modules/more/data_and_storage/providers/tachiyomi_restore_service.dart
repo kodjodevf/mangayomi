@@ -19,6 +19,7 @@ import 'package:mangayomi/repositories/category_repository.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/reading_log_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/restore_repository.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
@@ -73,6 +74,7 @@ class TachiyomiRestoreService {
         mangaRepository.clearSync();
         chapterRepository.clearSync();
         historyRepository.clearSync();
+        readingLogRepository.clearSync();
       }
       final existingCategories = merge
           ? categoryRepository.getByItemType(ItemType.manga)

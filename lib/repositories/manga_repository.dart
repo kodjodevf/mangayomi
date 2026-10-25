@@ -14,6 +14,7 @@ import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/reading_log_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
@@ -547,6 +548,11 @@ class MangaRepository {
               isar.historys.putSync(h);
               h.chapter.saveSync();
             }
+
+            readingLogRepository.moveMangaSync(otherId, primary.id!, {
+              for (final MapEntry(:key, :value) in remap.entries)
+                key: value.id!,
+            });
 
             final updateEntries = updateRepository.getAllByMangaId(otherId);
             for (final u in updateEntries) {

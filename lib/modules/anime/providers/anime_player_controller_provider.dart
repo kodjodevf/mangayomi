@@ -74,7 +74,6 @@ class AnimeStreamController extends _$AnimeStreamController
     Duration? totalDuration, {
     bool save = false,
   }) {
-    if (episode.isRead!) return;
     if (incognitoMode) return;
     final markEpisodeAsSeenType = ref.read(markEpisodeAsSeenTypeStateProvider);
     final isWatch =
@@ -84,6 +83,9 @@ class AnimeStreamController extends _$AnimeStreamController
         ? duration.inSeconds >=
               ((totalDuration.inSeconds * markEpisodeAsSeenType) / 100).ceil()
         : false;
+    // Before the seen check, so re-watches count in the Statistics recap.
+    if (isWatch) logCompletionOnce();
+    if (episode.isRead!) return;
     if (isWatch || save) {
       final ep = episode;
       ep.isRead = isWatch;

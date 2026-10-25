@@ -756,7 +756,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       _watchStopwatch.stop();
-      _setCurrentPosition(true);
+      // Save the watch time now: the system may kill the app in the
+      // background, and dispose() would never run.
+      _setCurrentPosition(true, saveWatchTime: true);
+      _watchStopwatch.reset();
     } else if (state == AppLifecycleState.resumed) {
       _watchStopwatch.start();
     }

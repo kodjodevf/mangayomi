@@ -231,6 +231,24 @@ void main() {
     expect(history.date, '1720000000000');
   });
 
+  testWidgets('replace restore clears the reading log', (tester) async {
+    final (ctx, ref) = await _pumpShell(tester);
+    isar.writeTxnSync(
+      () => isar.readingLogs.putSync(
+        ReadingLog(
+          mangaId: 999,
+          itemType: ItemType.manga,
+          at: 1,
+          kind: ReadingLogKind.completion,
+        ),
+      ),
+    );
+
+    await restore(tester, ref, ctx, merge: false);
+
+    expect(isar.readingLogs.countSync(), 0);
+  });
+
   testWidgets('merge restore twice keeps max', (tester) async {
     final (ctx, ref) = await _pumpShell(tester);
     await restore(tester, ref, ctx, merge: true);
