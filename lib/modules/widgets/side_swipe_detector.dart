@@ -61,9 +61,15 @@ class _SideSwipeDetectorState extends State<SideSwipeDetector> {
       _overscroll = 0;
     } else if (notification is OverscrollNotification) {
       // Clamped pages, as on Android: the pull past the edge is reported.
-      _overscroll -= notification.overscroll;
+      // The finger's only: a fling to the last page carries on past it, and
+      // that is not asking for more.
+      if (notification.dragDetails != null) {
+        _overscroll -= notification.overscroll;
+      }
     } else if (notification is ScrollUpdateNotification) {
-      // Bouncing pages, as on iOS: the pull shows as being out of range.
+      // Bouncing pages, as on iOS: the pull shows as being out of range,
+      // again the finger's only.
+      if (notification.dragDetails == null) return false;
       final m = notification.metrics;
       if (m.pixels < m.minScrollExtent) {
         _overscroll = m.minScrollExtent - m.pixels;
