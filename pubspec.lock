@@ -342,7 +342,7 @@ packages:
     description:
       path: "packages/desktop_webview_window"
       ref: main
-      resolved-ref: e1de53a5c430c01fb41f2e7435579cf204bd3c77
+      resolved-ref: e932383440ba5c2c65c44e872447e1c9757a120c
       url: "https://github.com/kodjodevf/desktop_webview_window.git"
     source: git
     version: "0.3.0"
