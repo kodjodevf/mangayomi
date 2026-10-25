@@ -299,6 +299,7 @@ class MobilePlayerBottomControlsLayout extends StatelessWidget {
               key: const ValueKey('mobile-player-bottom-controls-wide-row'),
               children: [
                 lockButton,
+                const SizedBox(width: ShioriSpace.s8),
                 seekButton,
                 chapterButton,
                 Expanded(
@@ -321,9 +322,9 @@ class MobilePlayerBottomControlsLayout extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               lockButton,
-              const Spacer(),
-              seekButton,
               const SizedBox(width: ShioriSpace.s8),
+              seekButton,
+              const Spacer(),
               shortcutButtons,
             ],
           ),
