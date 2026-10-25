@@ -375,7 +375,8 @@ class ReaderBottomBar extends ConsumerWidget {
                 : ReaderModeGlyph(readerMode),
           ),
 
-          // Crop borders button: filled in the accent while it is on.
+          // Crop borders button: two icons, the whole frame while it is off
+          // and the cropped one, in the accent, while it is on.
           Consumer(
             builder: (context, ref, child) {
               final cropBorders = ref.watch(cropBordersStateProvider);
@@ -385,12 +386,8 @@ class ReaderBottomBar extends ConsumerWidget {
                 onPressed: () {
                   ref.read(cropBordersStateProvider.notifier).set(!cropBorders);
                 },
-                icon: const Icon(Symbols.crop_rounded),
-                selectedIcon: Icon(
-                  Symbols.crop_rounded,
-                  fill: 1,
-                  color: accent,
-                ),
+                icon: const Icon(Symbols.crop_free_rounded),
+                selectedIcon: Icon(Symbols.crop_rounded, color: accent),
               );
             },
           ),
