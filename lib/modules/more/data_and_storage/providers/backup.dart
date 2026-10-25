@@ -94,7 +94,7 @@ Future<String> writeMangayomiBackupZip({
   datas.addAll({"version": "2"});
   if (list.contains(0)) {
     final res = mangaRepository
-        .getFavoritesNonLocalArchive()
+        .getFavorites()
         .map((e) => e.toJson())
         .toList();
     datas.addAll({"manga": res});
