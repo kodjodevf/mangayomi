@@ -1375,6 +1375,264 @@ abstract class AppLocalizations {
   /// **'ENTER ▶'**
   String get recapGateEnter;
 
+  /// No description provided for @recapEpisodesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Episodes'**
+  String get recapEpisodesTitle;
+
+  /// No description provided for @recapEpisodeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Episode: {month}'**
+  String recapEpisodeTitle(Object month);
+
+  /// No description provided for @recapEpisodeTeaser.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h · {count} {units}'**
+  String recapEpisodeTeaser(Object count, Object hours, Object units);
+
+  /// No description provided for @recapEpisodesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Episodes begin with your next session. Until then, there\'s the Prologue.'**
+  String get recapEpisodesEmpty;
+
+  /// No description provided for @recapPrologue.
+  ///
+  /// In en, this message translates to:
+  /// **'Prologue'**
+  String get recapPrologue;
+
+  /// No description provided for @recapPrologueTeaser.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything before the log began, since {date}'**
+  String recapPrologueTeaser(Object date);
+
+  /// No description provided for @recapPrologueTeaserUndated.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything before the log began'**
+  String get recapPrologueTeaserUndated;
+
+  /// No description provided for @recapStripEpisodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'EPISODE'**
+  String get recapStripEpisodeLabel;
+
+  /// No description provided for @recapStripTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'{series} series. {hours} hours. One very tired thumb.'**
+  String recapStripTagline(Object hours, Object series);
+
+  /// No description provided for @recapStripPrologueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'THE READER'**
+  String get recapStripPrologueTitle;
+
+  /// No description provided for @recapStripPrologueSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Since {date}. Before the log began.'**
+  String recapStripPrologueSince(Object date);
+
+  /// No description provided for @recapStripPrologueUndated.
+  ///
+  /// In en, this message translates to:
+  /// **'Before the log began.'**
+  String get recapStripPrologueUndated;
+
+  /// No description provided for @recapStripHoursIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'In {month}, you {type, select, anime{watched} other{read}} for…'**
+  String recapStripHoursIntro(Object month, String type);
+
+  /// No description provided for @recapStripHoursIntroSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Since {date}, you\'ve been {type, select, anime{watching} other{reading}} for…'**
+  String recapStripHoursIntroSince(Object date, String type);
+
+  /// No description provided for @recapStripHoursIntroAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All told, you\'ve been {type, select, anime{watching} other{reading}} for…'**
+  String recapStripHoursIntroAllTime(String type);
+
+  /// No description provided for @recapStripHoursSfx.
+  ///
+  /// In en, this message translates to:
+  /// **'HOURS!!'**
+  String get recapStripHoursSfx;
+
+  /// No description provided for @recapStripDeltaUp.
+  ///
+  /// In en, this message translates to:
+  /// **'+{hours}h vs previous month'**
+  String recapStripDeltaUp(Object hours);
+
+  /// No description provided for @recapStripDeltaDown.
+  ///
+  /// In en, this message translates to:
+  /// **'−{hours}h vs previous month'**
+  String recapStripDeltaDown(Object hours);
+
+  /// No description provided for @recapStripDeltaSame.
+  ///
+  /// In en, this message translates to:
+  /// **'Same as previous month. Consistent.'**
+  String get recapStripDeltaSame;
+
+  /// No description provided for @recapStripSleepless.
+  ///
+  /// In en, this message translates to:
+  /// **'…that\'s {days} days without sleep.'**
+  String recapStripSleepless(Object days);
+
+  /// No description provided for @recapStripCountsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{type, select, anime{EPISODES WATCHED} other{CHAPTERS SCROLLED}}'**
+  String recapStripCountsLabel(String type);
+
+  /// No description provided for @recapStripSeriesLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{across 1 series} other{across {count} series}}'**
+  String recapStripSeriesLine(num count);
+
+  /// No description provided for @recapStripNewLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} new this month'**
+  String recapStripNewLine(Object count);
+
+  /// No description provided for @recapStripLibraryLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} in your library'**
+  String recapStripLibraryLine(Object count);
+
+  /// No description provided for @recapStripTopLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR #1'**
+  String get recapStripTopLabel;
+
+  /// No description provided for @recapStripTopHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} hours together. No one else came close.'**
+  String recapStripTopHours(Object hours);
+
+  /// No description provided for @recapStripTopUnits.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} {units} together. No one else came close.'**
+  String recapStripTopUnits(Object count, Object units);
+
+  /// No description provided for @recapStripBiggestDayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'BIGGEST DAY'**
+  String get recapStripBiggestDayLabel;
+
+  /// No description provided for @recapStripBiggestDayCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'{units} in one day. Did you even blink?'**
+  String recapStripBiggestDayCaption(Object units);
+
+  /// No description provided for @recapStripCalendarLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'DAYS YOU SHOWED UP'**
+  String get recapStripCalendarLabel;
+
+  /// No description provided for @recapStripDaysRead.
+  ///
+  /// In en, this message translates to:
+  /// **'{read} of {total} days'**
+  String recapStripDaysRead(Object read, Object total);
+
+  /// No description provided for @recapStripStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Longest streak: 1 day} other{Longest streak: {count} days}}'**
+  String recapStripStreak(num count);
+
+  /// No description provided for @recapStripGenresLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'THIS MONTH\'S GENRES, AS SOUND EFFECTS'**
+  String get recapStripGenresLabel;
+
+  /// No description provided for @recapStripGenresLabelAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'YOUR GENRES, AS SOUND EFFECTS'**
+  String get recapStripGenresLabelAllTime;
+
+  /// No description provided for @recapStripClockBubble.
+  ///
+  /// In en, this message translates to:
+  /// **'You {type, select, anime{watched} other{read}} most around {hour}.'**
+  String recapStripClockBubble(Object hour, String type);
+
+  /// No description provided for @recapStripClockDawn.
+  ///
+  /// In en, this message translates to:
+  /// **'A dawn cultivator!'**
+  String get recapStripClockDawn;
+
+  /// No description provided for @recapStripClockNight.
+  ///
+  /// In en, this message translates to:
+  /// **'A night owl!'**
+  String get recapStripClockNight;
+
+  /// No description provided for @recapStripClockSecond.
+  ///
+  /// In en, this message translates to:
+  /// **'2nd peak: {hour}'**
+  String recapStripClockSecond(Object hour);
+
+  /// No description provided for @recapStripFinishedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'CLEARED THIS MONTH'**
+  String get recapStripFinishedLabel;
+
+  /// No description provided for @recapStripFinishedCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 series finished or caught up} other{{count} series finished or caught up}}'**
+  String recapStripFinishedCaption(num count);
+
+  /// No description provided for @recapStripToBeContinued.
+  ///
+  /// In en, this message translates to:
+  /// **'TO BE CONTINUED…'**
+  String get recapStripToBeContinued;
+
+  /// No description provided for @recapStripNext.
+  ///
+  /// In en, this message translates to:
+  /// **'NEXT: {month}'**
+  String recapStripNext(Object month);
+
+  /// No description provided for @recapStripReadNext.
+  ///
+  /// In en, this message translates to:
+  /// **'READ {month} →'**
+  String recapStripReadNext(Object month);
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/more/statistics/recap/episodes/episode_routes.dart';
 import 'package:mangayomi/modules/more/statistics/recap/status_window/sw_theme.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:shiori/shiori.dart';
@@ -19,7 +20,7 @@ class SwGate extends StatelessWidget {
       type: MaterialType.transparency,
       child: InkWell(
         borderRadius: SwShape.window,
-        onTap: () => context.push('/statistics/episodes?type=${itemType.name}'),
+        onTap: () => context.push(episodeListLocation(itemType)),
         child: Ink(
           padding: const EdgeInsets.all(ShioriSpace.s16),
           decoration: BoxDecoration(

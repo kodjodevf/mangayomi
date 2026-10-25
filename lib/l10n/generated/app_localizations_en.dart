@@ -830,6 +830,224 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recapGateEnter => 'ENTER ▶';
 
   @override
+  String get recapEpisodesTitle => 'Episodes';
+
+  @override
+  String recapEpisodeTitle(Object month) {
+    return 'Episode: $month';
+  }
+
+  @override
+  String recapEpisodeTeaser(Object count, Object hours, Object units) {
+    return '${hours}h · $count $units';
+  }
+
+  @override
+  String get recapEpisodesEmpty =>
+      'Monthly Episodes begin with your next session. Until then, there\'s the Prologue.';
+
+  @override
+  String get recapPrologue => 'Prologue';
+
+  @override
+  String recapPrologueTeaser(Object date) {
+    return 'Everything before the log began, since $date';
+  }
+
+  @override
+  String get recapPrologueTeaserUndated => 'Everything before the log began';
+
+  @override
+  String get recapStripEpisodeLabel => 'EPISODE';
+
+  @override
+  String recapStripTagline(Object hours, Object series) {
+    return '$series series. $hours hours. One very tired thumb.';
+  }
+
+  @override
+  String get recapStripPrologueTitle => 'THE READER';
+
+  @override
+  String recapStripPrologueSince(Object date) {
+    return 'Since $date. Before the log began.';
+  }
+
+  @override
+  String get recapStripPrologueUndated => 'Before the log began.';
+
+  @override
+  String recapStripHoursIntro(Object month, String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'anime': 'watched',
+      'other': 'read',
+    });
+    return 'In $month, you $_temp0 for…';
+  }
+
+  @override
+  String recapStripHoursIntroSince(Object date, String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'anime': 'watching',
+      'other': 'reading',
+    });
+    return 'Since $date, you\'ve been $_temp0 for…';
+  }
+
+  @override
+  String recapStripHoursIntroAllTime(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'anime': 'watching',
+      'other': 'reading',
+    });
+    return 'All told, you\'ve been $_temp0 for…';
+  }
+
+  @override
+  String get recapStripHoursSfx => 'HOURS!!';
+
+  @override
+  String recapStripDeltaUp(Object hours) {
+    return '+${hours}h vs previous month';
+  }
+
+  @override
+  String recapStripDeltaDown(Object hours) {
+    return '−${hours}h vs previous month';
+  }
+
+  @override
+  String get recapStripDeltaSame => 'Same as previous month. Consistent.';
+
+  @override
+  String recapStripSleepless(Object days) {
+    return '…that\'s $days days without sleep.';
+  }
+
+  @override
+  String recapStripCountsLabel(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'anime': 'EPISODES WATCHED',
+      'other': 'CHAPTERS SCROLLED',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String recapStripSeriesLine(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'across $count series',
+      one: 'across 1 series',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recapStripNewLine(Object count) {
+    return '$count new this month';
+  }
+
+  @override
+  String recapStripLibraryLine(Object count) {
+    return '$count in your library';
+  }
+
+  @override
+  String get recapStripTopLabel => 'YOUR #1';
+
+  @override
+  String recapStripTopHours(Object hours) {
+    return '$hours hours together. No one else came close.';
+  }
+
+  @override
+  String recapStripTopUnits(Object count, Object units) {
+    return '$count $units together. No one else came close.';
+  }
+
+  @override
+  String get recapStripBiggestDayLabel => 'BIGGEST DAY';
+
+  @override
+  String recapStripBiggestDayCaption(Object units) {
+    return '$units in one day. Did you even blink?';
+  }
+
+  @override
+  String get recapStripCalendarLabel => 'DAYS YOU SHOWED UP';
+
+  @override
+  String recapStripDaysRead(Object read, Object total) {
+    return '$read of $total days';
+  }
+
+  @override
+  String recapStripStreak(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Longest streak: $count days',
+      one: 'Longest streak: 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recapStripGenresLabel => 'THIS MONTH\'S GENRES, AS SOUND EFFECTS';
+
+  @override
+  String get recapStripGenresLabelAllTime => 'YOUR GENRES, AS SOUND EFFECTS';
+
+  @override
+  String recapStripClockBubble(Object hour, String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'anime': 'watched',
+      'other': 'read',
+    });
+    return 'You $_temp0 most around $hour.';
+  }
+
+  @override
+  String get recapStripClockDawn => 'A dawn cultivator!';
+
+  @override
+  String get recapStripClockNight => 'A night owl!';
+
+  @override
+  String recapStripClockSecond(Object hour) {
+    return '2nd peak: $hour';
+  }
+
+  @override
+  String get recapStripFinishedLabel => 'CLEARED THIS MONTH';
+
+  @override
+  String recapStripFinishedCaption(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count series finished or caught up',
+      one: '1 series finished or caught up',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recapStripToBeContinued => 'TO BE CONTINUED…';
+
+  @override
+  String recapStripNext(Object month) {
+    return 'NEXT: $month';
+  }
+
+  @override
+  String recapStripReadNext(Object month) {
+    return 'READ $month →';
+  }
+
+  @override
   String get settings => 'Settings';
 
   @override
