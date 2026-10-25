@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/widgets/collapsing_header.dart';
+import 'package:mangayomi/modules/widgets/side_swipe_detector.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -375,6 +376,9 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     ];
     final tokens = context.shiori;
     final hasMediaSwitch = types.length > 1;
+    final mediaIndex = types.contains(currentTab.type)
+        ? types.indexOf(currentTab.type)
+        : 0;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -463,28 +467,41 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
             // Only the page on show of each is built (a TabBarView builds
             // the current page), so this loads each media's sources and
             // leaves its extensions until they are opened.
+            //
+            // A swipe past the last page opens the next media's Sources, and
+            // past the first one the previous media's Extensions, as if the
+            // pairs were one row of pages; the media slides along with it.
             Expanded(
-              child: ShioriFadeThroughStack(
-                index: types.contains(currentTab.type)
-                    ? types.indexOf(currentTab.type)
-                    : 0,
-                children: [
-                  for (final type in types)
-                    TabBarView(
-                      key: ValueKey(type),
-                      controller: _kindController,
-                      children: [
-                        for (final kind in BrowseTabKind.values)
-                          KeyedSubtree(
-                            key: ValueKey((type, kind)),
-                            child:
-                                _tabViews()[_tabList.indexWhere(
-                                  (t) => t.type == type && t.kind == kind,
-                                )],
-                          ),
-                      ],
-                    ),
-                ],
+              child: SideSwipeDetector(
+                enabled: hasMediaSwitch,
+                onNext: mediaIndex + 1 < types.length
+                    ? () => _open(types[mediaIndex + 1], BrowseTabKind.sources)
+                    : null,
+                onPrevious: mediaIndex > 0
+                    ? () =>
+                          _open(types[mediaIndex - 1], BrowseTabKind.extensions)
+                    : null,
+                child: ShioriFadeThroughStack(
+                  index: mediaIndex,
+                  slideDirection: (from, to) => to - from,
+                  children: [
+                    for (final type in types)
+                      TabBarView(
+                        key: ValueKey(type),
+                        controller: _kindController,
+                        children: [
+                          for (final kind in BrowseTabKind.values)
+                            KeyedSubtree(
+                              key: ValueKey((type, kind)),
+                              child:
+                                  _tabViews()[_tabList.indexWhere(
+                                    (t) => t.type == type && t.kind == kind,
+                                  )],
+                            ),
+                        ],
+                      ),
+                  ],
+                ),
               ),
             ),
           ],
