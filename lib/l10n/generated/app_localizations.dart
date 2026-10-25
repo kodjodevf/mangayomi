@@ -901,6 +901,480 @@ abstract class AppLocalizations {
   /// **'Show Statistics as a Status Window with monthly Episodes. Turn off for the classic view.'**
   String get recapSettingSubtitle;
 
+  /// No description provided for @recapClassicView.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic view'**
+  String get recapClassicView;
+
+  /// No description provided for @recapRecapView.
+  ///
+  /// In en, this message translates to:
+  /// **'Recap view'**
+  String get recapRecapView;
+
+  /// No description provided for @recapUnits.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{{type, select, anime{episode} other{chapter}}} other{{type, select, anime{episodes} other{chapters}}}}'**
+  String recapUnits(num count, String type);
+
+  /// No description provided for @recapUnitsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{type, select, anime{EPISODES} other{CHAPTERS}}'**
+  String recapUnitsLabel(String type);
+
+  /// No description provided for @recapNotificationTag.
+  ///
+  /// In en, this message translates to:
+  /// **'[ NOTIFICATION ]'**
+  String get recapNotificationTag;
+
+  /// No description provided for @recapNotifyHours.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {type, select, anime{watched} other{read}} for {hours} hours. Your endurance stat has increased.'**
+  String recapNotifyHours(Object hours, String type);
+
+  /// No description provided for @recapNotifyUnits.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} {units} {type, select, anime{watched} other{read}}. The System acknowledges your persistence.'**
+  String recapNotifyUnits(Object count, String type, Object units);
+
+  /// No description provided for @recapNotifyLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} series bound to your library. Inventory space is running low.'**
+  String recapNotifyLibrary(Object count);
+
+  /// No description provided for @recapNotifyTop.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} hours spent with {series}. Bond level: MAX.'**
+  String recapNotifyTop(Object hours, Object series);
+
+  /// No description provided for @recapNotifyEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'A new player has entered. {type, select, anime{Watch an episode} other{Read a chapter}} to begin.'**
+  String recapNotifyEmpty(String type);
+
+  /// No description provided for @recapStatusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'STATUS'**
+  String get recapStatusTitle;
+
+  /// No description provided for @recapLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'LEVEL'**
+  String get recapLevel;
+
+  /// No description provided for @recapName.
+  ///
+  /// In en, this message translates to:
+  /// **'NAME'**
+  String get recapName;
+
+  /// No description provided for @recapClass.
+  ///
+  /// In en, this message translates to:
+  /// **'CLASS'**
+  String get recapClass;
+
+  /// No description provided for @recapEpithet.
+  ///
+  /// In en, this message translates to:
+  /// **'TITLE'**
+  String get recapEpithet;
+
+  /// No description provided for @recapSince.
+  ///
+  /// In en, this message translates to:
+  /// **'SINCE'**
+  String get recapSince;
+
+  /// No description provided for @recapDefaultName.
+  ///
+  /// In en, this message translates to:
+  /// **'Reader'**
+  String get recapDefaultName;
+
+  /// No description provided for @recapEditName.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name'**
+  String get recapEditName;
+
+  /// No description provided for @recapExp.
+  ///
+  /// In en, this message translates to:
+  /// **'EXP {value}'**
+  String recapExp(Object value);
+
+  /// No description provided for @recapToNextLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} {units} to Lv. {level}'**
+  String recapToNextLevel(Object count, Object level, Object units);
+
+  /// No description provided for @recapHoursLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'HOURS'**
+  String get recapHoursLabel;
+
+  /// No description provided for @recapLibraryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'LIBRARY'**
+  String get recapLibraryLabel;
+
+  /// No description provided for @recapClearedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'CLEARED'**
+  String get recapClearedLabel;
+
+  /// No description provided for @recapHoursNote.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{= 1 day straight} other{= {count} days straight}}'**
+  String recapHoursNote(num count);
+
+  /// No description provided for @recapLibraryNote.
+  ///
+  /// In en, this message translates to:
+  /// **'in your library'**
+  String get recapLibraryNote;
+
+  /// No description provided for @recapClearedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'fully finished'**
+  String get recapClearedNote;
+
+  /// No description provided for @recapClassRegressor.
+  ///
+  /// In en, this message translates to:
+  /// **'Regressor'**
+  String get recapClassRegressor;
+
+  /// No description provided for @recapClassMurimMaster.
+  ///
+  /// In en, this message translates to:
+  /// **'Murim Master'**
+  String get recapClassMurimMaster;
+
+  /// No description provided for @recapClassHunter.
+  ///
+  /// In en, this message translates to:
+  /// **'Hunter'**
+  String get recapClassHunter;
+
+  /// No description provided for @recapClassArchmage.
+  ///
+  /// In en, this message translates to:
+  /// **'Archmage'**
+  String get recapClassArchmage;
+
+  /// No description provided for @recapClassRomantic.
+  ///
+  /// In en, this message translates to:
+  /// **'Romantic'**
+  String get recapClassRomantic;
+
+  /// No description provided for @recapClassVillain.
+  ///
+  /// In en, this message translates to:
+  /// **'Villain'**
+  String get recapClassVillain;
+
+  /// No description provided for @recapClassWanderer.
+  ///
+  /// In en, this message translates to:
+  /// **'Wanderer'**
+  String get recapClassWanderer;
+
+  /// No description provided for @recapEpithetDisciple.
+  ///
+  /// In en, this message translates to:
+  /// **'Disciple of {source}'**
+  String recapEpithetDisciple(Object source);
+
+  /// No description provided for @recapEpithetWanderer.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Wanderer without a source} =1{Wanderer of 1 source} other{Wanderer of {count} sources}}'**
+  String recapEpithetWanderer(num count);
+
+  /// No description provided for @recapSkillsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'SKILLS'**
+  String get recapSkillsTitle;
+
+  /// No description provided for @recapSkillsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No genres yet. Add series to your library to unlock skills.'**
+  String get recapSkillsEmpty;
+
+  /// No description provided for @recapBondedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'BONDED SERIES'**
+  String get recapBondedTitle;
+
+  /// No description provided for @recapBondMax.
+  ///
+  /// In en, this message translates to:
+  /// **'★ BOND LV. MAX'**
+  String get recapBondMax;
+
+  /// No description provided for @recapBondDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} hours together · {count} {units}'**
+  String recapBondDetail(Object count, Object hours, Object units);
+
+  /// No description provided for @recapBondedEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No bonds yet. The series you spend the most time with appear here.'**
+  String get recapBondedEmpty;
+
+  /// No description provided for @recapCycleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'CULTIVATION CYCLE'**
+  String get recapCycleTitle;
+
+  /// No description provided for @recapPeak.
+  ///
+  /// In en, this message translates to:
+  /// **'PEAK'**
+  String get recapPeak;
+
+  /// No description provided for @recapCycleLine.
+  ///
+  /// In en, this message translates to:
+  /// **'You cultivate most around {hour}.'**
+  String recapCycleLine(Object hour);
+
+  /// No description provided for @recapBestDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Best day'**
+  String get recapBestDay;
+
+  /// No description provided for @recapCycleEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No reading recorded yet. Your cycle appears once you read.'**
+  String get recapCycleEmpty;
+
+  /// No description provided for @recapTitlesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'TITLES EARNED'**
+  String get recapTitlesTitle;
+
+  /// No description provided for @recapLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'???'**
+  String get recapLocked;
+
+  /// No description provided for @recapBadgeRegressor.
+  ///
+  /// In en, this message translates to:
+  /// **'Regressor'**
+  String get recapBadgeRegressor;
+
+  /// No description provided for @recapBadgeRegressorDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} regression and return stories'**
+  String recapBadgeRegressorDetail(Object count);
+
+  /// No description provided for @recapBadgeRegressorGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'25 regression or return stories'**
+  String get recapBadgeRegressorGoal;
+
+  /// No description provided for @recapBadgeLoyalist.
+  ///
+  /// In en, this message translates to:
+  /// **'{source} Loyalist'**
+  String recapBadgeLoyalist(Object source);
+
+  /// No description provided for @recapBadgeLoyalistName.
+  ///
+  /// In en, this message translates to:
+  /// **'Source Loyalist'**
+  String get recapBadgeLoyalistName;
+
+  /// No description provided for @recapBadgeLoyalistDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} series from {source}'**
+  String recapBadgeLoyalistDetail(Object count, Object source);
+
+  /// No description provided for @recapBadgeLoyalistGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'100 series from one source'**
+  String get recapBadgeLoyalistGoal;
+
+  /// No description provided for @recapBadgeMarathoner.
+  ///
+  /// In en, this message translates to:
+  /// **'Marathoner'**
+  String get recapBadgeMarathoner;
+
+  /// No description provided for @recapBadgeMarathonerDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} {units} of {series}'**
+  String recapBadgeMarathonerDetail(Object count, Object series, Object units);
+
+  /// No description provided for @recapBadgeMarathonerGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'300 {units} of one series'**
+  String recapBadgeMarathonerGoal(Object units);
+
+  /// No description provided for @recapBadgeCollector.
+  ///
+  /// In en, this message translates to:
+  /// **'Collector'**
+  String get recapBadgeCollector;
+
+  /// No description provided for @recapBadgeCollectorDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} series in your library'**
+  String recapBadgeCollectorDetail(Object count);
+
+  /// No description provided for @recapBadgeCollectorGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'500 series in your library'**
+  String get recapBadgeCollectorGoal;
+
+  /// No description provided for @recapBadgeDawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Dawn Cultivator'**
+  String get recapBadgeDawn;
+
+  /// No description provided for @recapBadgeDawnGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak reading between 5 and 9 AM'**
+  String get recapBadgeDawnGoal;
+
+  /// No description provided for @recapBadgeNightOwl.
+  ///
+  /// In en, this message translates to:
+  /// **'Night Owl'**
+  String get recapBadgeNightOwl;
+
+  /// No description provided for @recapBadgeNightOwlGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak reading between midnight and 4 AM'**
+  String get recapBadgeNightOwlGoal;
+
+  /// No description provided for @recapBadgePeakDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak reading at {hour}'**
+  String recapBadgePeakDetail(Object hour);
+
+  /// No description provided for @recapBadgeCompletionist.
+  ///
+  /// In en, this message translates to:
+  /// **'Completionist'**
+  String get recapBadgeCompletionist;
+
+  /// No description provided for @recapBadgeCompletionistDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} series cleared'**
+  String recapBadgeCompletionistDetail(Object count);
+
+  /// No description provided for @recapBadgeCompletionistGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear 10 series'**
+  String get recapBadgeCompletionistGoal;
+
+  /// No description provided for @recapBadgeVeteran.
+  ///
+  /// In en, this message translates to:
+  /// **'Veteran'**
+  String get recapBadgeVeteran;
+
+  /// No description provided for @recapBadgeVeteranDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} years on the path'**
+  String recapBadgeVeteranDetail(Object count);
+
+  /// No description provided for @recapBadgeVeteranGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Read for 2 years'**
+  String get recapBadgeVeteranGoal;
+
+  /// No description provided for @recapBadgeBinger.
+  ///
+  /// In en, this message translates to:
+  /// **'Binger'**
+  String get recapBadgeBinger;
+
+  /// No description provided for @recapBadgeBingerDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} {units} in one day'**
+  String recapBadgeBingerDetail(Object count, Object units);
+
+  /// No description provided for @recapBadgeBingerGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'100 {units} in one day'**
+  String recapBadgeBingerGoal(Object units);
+
+  /// No description provided for @recapGateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'GATE REPORT'**
+  String get recapGateTitle;
+
+  /// No description provided for @recapGateHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Your monthly Episodes'**
+  String get recapGateHeadline;
+
+  /// No description provided for @recapGateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours, {units} and the series that carried each month.'**
+  String recapGateBody(Object units);
+
+  /// No description provided for @recapGateEnter.
+  ///
+  /// In en, this message translates to:
+  /// **'ENTER ▶'**
+  String get recapGateEnter;
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:

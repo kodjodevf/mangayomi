@@ -5,7 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/more/statistics/recap/status_window/status_window_view.dart';
+import 'package:mangayomi/modules/more/statistics/recap/status_window/sw_theme.dart';
 import 'package:mangayomi/modules/more/statistics/statistics_provider.dart';
+import 'package:mangayomi/providers/statistics_recap_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/item_type_filters.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
@@ -57,20 +60,47 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
       );
     }
     final l10n = context.l10n;
+    final recap = ref.watch(statisticsRecapStateProvider);
+    final tabs = _visibleTabTypes.map((type) {
+      return Tab(text: type.localized(l10n));
+    }).toList();
     return Scaffold(
+      // The recap is always dark, whatever the app theme.
+      backgroundColor: recap ? SwColors.bg : null,
       appBar: AppBar(
         title: Text(l10n.statistics),
+        backgroundColor: recap ? SwColors.bgTop : null,
+        foregroundColor: recap ? SwColors.text : null,
+        actions: [
+          PopupMenuButton<bool>(
+            icon: const Icon(Symbols.more_vert_rounded),
+            onSelected: (v) =>
+                ref.read(statisticsRecapStateProvider.notifier).set(v),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: !recap,
+                child: Text(
+                  recap ? l10n.recapClassicView : l10n.recapRecapView,
+                ),
+              ),
+            ],
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
-          tabs: _visibleTabTypes.map((type) {
-            return Tab(text: type.localized(l10n));
-          }).toList(),
+          tabs: tabs,
+          labelColor: recap ? SwColors.cyan : null,
+          unselectedLabelColor: recap ? SwColors.muted : null,
+          indicatorColor: recap ? SwColors.cyan : null,
+          dividerColor: recap ? SwColors.hairline : null,
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: _visibleTabTypes.map((type) {
-          return _buildStatisticsTab(itemType: type);
+          return recap
+              ? StatusWindowView(itemType: type)
+              : _buildStatisticsTab(itemType: type);
         }).toList(),
       ),
     );
