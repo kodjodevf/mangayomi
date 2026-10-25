@@ -1,7 +1,9 @@
 import 'dart:isolate';
+import 'dart:math';
 
 import 'package:archive/archive_io.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -10,6 +12,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/backup_format.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupAniyomi.pb.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupHistory.pb.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupMihon.pb.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/restore_invalidation.dart';
 import 'package:mangayomi/repositories/category_repository.dart';
@@ -148,6 +151,7 @@ class TachiyomiRestoreService {
                   if (c.url != null) c.url!: c,
               }
             : <String, Chapter>{};
+        final chaptersByUrl = {...existingChaptersByUrl};
         History? history;
         for (var tempChapter in tempManga.chapters) {
           if (existingChaptersByUrl.containsKey(tempChapter.url)) continue;
@@ -167,6 +171,7 @@ class TachiyomiRestoreService {
           );
           chapterRepository.putSync(chapter..manga.value = manga);
           chapter.manga.saveSync();
+          if (chapter.url != null) chaptersByUrl[chapter.url!] = chapter;
           if ((history == null ||
               int.parse(history.date ?? "0") <
                   protoInt(tempChapter.lastModifiedAt))) {
@@ -180,12 +185,14 @@ class TachiyomiRestoreService {
             )..chapter.value = chapter;
           }
         }
-        if (history != null &&
-            (!merge ||
-                historyRepository.findFirstByMangaId(manga.id) == null)) {
-          historyRepository.putSync(history);
-          history.chapter.saveSync();
-        }
+        _saveHistory(
+          series: manga,
+          itemType: ItemType.manga,
+          fromChapters: history,
+          entries: tempManga.history,
+          chaptersByUrl: chaptersByUrl,
+          merge: merge,
+        );
       }
     });
 
@@ -284,6 +291,7 @@ class TachiyomiRestoreService {
                     if (c.url != null) c.url!: c,
                 }
               : <String, Chapter>{};
+          final episodesByUrl = {...existingEpisodesByUrl};
           History? history;
           for (var tempEpisode in tempAnime.episodes) {
             if (existingEpisodesByUrl.containsKey(tempEpisode.url)) continue;
@@ -301,6 +309,7 @@ class TachiyomiRestoreService {
             );
             chapterRepository.putSync(episode..manga.value = anime);
             episode.manga.saveSync();
+            if (episode.url != null) episodesByUrl[episode.url!] = episode;
             if ((history == null ||
                 int.parse(history.date ?? "0") <
                     protoInt(tempEpisode.lastModifiedAt))) {
@@ -312,12 +321,14 @@ class TachiyomiRestoreService {
               )..chapter.value = episode;
             }
           }
-          if (history != null &&
-              (!merge ||
-                  historyRepository.findFirstByMangaId(anime.id) == null)) {
-            historyRepository.putSync(history);
-            history.chapter.saveSync();
-          }
+          _saveHistory(
+            series: anime,
+            itemType: ItemType.anime,
+            fromChapters: history,
+            entries: tempAnime.history,
+            chaptersByUrl: episodesByUrl,
+            merge: merge,
+          );
         }
       });
     }
@@ -332,4 +343,79 @@ class TachiyomiRestoreService {
     });
     invalidateCommonRestoreState(ref);
   }
+
+  /// Writes the series' History row. Mihon keeps the real reading time and
+  /// last-read date in [entries]; chapter lastModifiedAt is often 0 (Madomi),
+  /// so it only stands in when there are no entries. A merge over an existing
+  /// row keeps the larger time and the later date, so restoring the same
+  /// backup twice never double-counts.
+  static void _saveHistory({
+    required Manga series,
+    required ItemType itemType,
+    required History? fromChapters,
+    required List<BackupHistory> entries,
+    required Map<String, Chapter> chaptersByUrl,
+    required bool merge,
+  }) {
+    final summary = summarizeBackupHistory(entries);
+    final lastReadMs = summary.lastReadMs;
+    final latestUrl = lastReadMs == null
+        ? null
+        : entries.firstWhere((e) => protoInt(e.lastRead) == lastReadMs).url;
+    final latestChapter = chaptersByUrl[latestUrl];
+
+    final existing = merge
+        ? historyRepository.findFirstByMangaId(series.id)
+        : null;
+    if (existing != null) {
+      existing.readingTimeSeconds = max(
+        existing.readingTimeSeconds ?? 0,
+        summary.seconds,
+      );
+      final existingDate = int.tryParse(existing.date ?? '') ?? 0;
+      if (lastReadMs != null && lastReadMs > existingDate) {
+        existing.date = '$lastReadMs';
+        if (latestChapter != null) {
+          existing.chapterId = latestChapter.id;
+          existing.chapter.value = latestChapter;
+        }
+      }
+      historyRepository.putSync(existing);
+      existing.chapter.saveSync();
+      return;
+    }
+
+    var history = fromChapters;
+    if (latestChapter != null) {
+      history = History(
+        mangaId: series.id,
+        date: '$lastReadMs',
+        itemType: itemType,
+        chapterId: latestChapter.id,
+      )..chapter.value = latestChapter;
+    }
+    if (history == null) return;
+    if (lastReadMs != null) history.date = '$lastReadMs';
+    if (summary.seconds > 0) history.readingTimeSeconds = summary.seconds;
+    historyRepository.putSync(history);
+    history.chapter.saveSync();
+  }
+}
+
+/// Total reading time (seconds) and latest read (epoch ms) of one series'
+/// Mihon history entries. readDuration is in milliseconds.
+@visibleForTesting
+({int seconds, int? lastReadMs}) summarizeBackupHistory(
+  List<BackupHistory> entries,
+) {
+  var durationMs = 0;
+  int? lastReadMs;
+  for (final entry in entries) {
+    durationMs += protoInt(entry.readDuration);
+    final lastRead = protoInt(entry.lastRead);
+    if (lastRead > 0 && (lastReadMs == null || lastRead > lastReadMs)) {
+      lastReadMs = lastRead;
+    }
+  }
+  return (seconds: durationMs ~/ 1000, lastReadMs: lastReadMs);
 }
