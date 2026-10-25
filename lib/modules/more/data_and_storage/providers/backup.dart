@@ -13,6 +13,7 @@ import 'package:mangayomi/repositories/custom_button_repository.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/reading_log_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/repositories/source_preference_repository.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
@@ -93,10 +94,7 @@ Future<String> writeMangayomiBackupZip({
   Map<String, dynamic> datas = {};
   datas.addAll({"version": "2"});
   if (list.contains(0)) {
-    final res = mangaRepository
-        .getFavorites()
-        .map((e) => e.toJson())
-        .toList();
+    final res = mangaRepository.getFavorites().map((e) => e.toJson()).toList();
     datas.addAll({"manga": res});
   }
   if (list.contains(1)) {
@@ -116,6 +114,9 @@ Future<String> writeMangayomiBackupZip({
   if (list.contains(4)) {
     final res = historyRepository.getAll().map((e) => e.toJson()).toList();
     datas.addAll({"history": res});
+    // Rides with history, so saved option lists need no new index.
+    final log = readingLogRepository.getAllSync().map((e) => e.toJson());
+    datas.addAll({"readingLog": log.toList()});
   }
   if (list.contains(5)) {
     final res = updateRepository.getAll().map((e) => e.toJson()).toList();
