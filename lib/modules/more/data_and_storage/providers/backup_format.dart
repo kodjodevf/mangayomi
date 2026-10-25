@@ -47,7 +47,9 @@ BackupType checkBackupType(String path, Archive archive) {
         ? BackupType.mihon
         : path.contains("neko")
         ? BackupType.neko
-        : BackupType.unknown;
+        // Other Mihon forks (Madomi, …) write the same format under their
+        // own file names.
+        : BackupType.mihon;
   }
   return BackupType.unknown;
 }
