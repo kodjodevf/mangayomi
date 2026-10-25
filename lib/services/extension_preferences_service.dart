@@ -62,8 +62,12 @@ void setPreferenceSetting(SourcePreference sourcePreference, Source source) {
   }
 }
 
-dynamic getPreferenceValue(int sourceId, String key) {
-  final sourcePreference = getSourcePreferenceEntry(key, sourceId);
+dynamic getPreferenceValue(int sourceId, String key, {Source? source}) {
+  final sourcePreference = getSourcePreferenceEntry(
+    key,
+    sourceId,
+    source: source,
+  );
 
   if (sourcePreference.listPreference != null) {
     final pref = sourcePreference.listPreference!;
@@ -78,18 +82,28 @@ dynamic getPreferenceValue(int sourceId, String key) {
   return sourcePreference.multiSelectListPreference!.values;
 }
 
-SourcePreference getSourcePreferenceEntry(String key, int sourceId) {
+/// [source], when given, is the source asking for its own setting. Its
+/// defaults come from its code, and while it is being installed the stored
+/// copy has none yet: a source that read a setting in getHeaders() could
+/// never be installed, the button just stopping without a word (#1064).
+SourcePreference getSourcePreferenceEntry(
+  String key,
+  int sourceId, {
+  Source? source,
+}) {
   SourcePreference? sourcePreference = sourcePreferenceRepository.findByKey(
     sourceId,
     key,
   );
   if (sourcePreference == null) {
-    final source = sourceRepository.getById(sourceId)!;
-    sourcePreference = getSourcePreference(source: source).firstWhere(
+    final withCode = (source?.sourceCode?.isNotEmpty ?? false)
+        ? source!
+        : sourceRepository.getById(sourceId)!;
+    sourcePreference = getSourcePreference(source: withCode).firstWhere(
       (element) => element.key == key,
       orElse: () => throw "Error when getting source preference",
     );
-    setPreferenceSetting(sourcePreference, source);
+    setPreferenceSetting(sourcePreference, withCode);
   }
 
   return sourcePreference;
