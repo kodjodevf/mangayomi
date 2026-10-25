@@ -361,8 +361,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   late final audioChannel = ref.read(audioChannelStateProvider);
   late final volumeBoostCap = ref.read(volumeBoostCapStateProvider);
   late final audioDelayMs = ref.read(audioDelayStateProvider);
-  late final double? rememberedVolume =
-      ref.read(rememberPlayerVolumeStateProvider)
+
+  /// Read once the player starts: dispose() can no longer use ref.
+  late final bool _rememberVolume;
+  late final double? rememberedVolume = _rememberVolume
       ? settingsRepository.current.playerVolume
       : null;
   late final Player _player = Player(
@@ -632,6 +634,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   @override
   void initState() {
     super.initState();
+    _rememberVolume = ref.read(rememberPlayerVolumeStateProvider);
     _watchStopwatch.start();
     _controller = VideoController(
       _player,
@@ -836,7 +839,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _subSettingsSub?.close();
     WidgetsBinding.instance.removeObserver(this);
     _setCurrentPosition(true, saveWatchTime: true);
-    if (isDesktop && ref.read(rememberPlayerVolumeStateProvider)) {
+    if (isDesktop && _rememberVolume) {
       final volume = _player.state.volume;
       settingsRepository.update((s) => s.playerVolume = volume);
     }
