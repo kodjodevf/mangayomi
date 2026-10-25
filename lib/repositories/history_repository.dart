@@ -104,6 +104,9 @@ class HistoryRepository {
       .readingTimeSecondsProperty()
       .findAll();
 
+  Future<List<History>> getAllByItemType(ItemType itemType) =>
+      isar.historys.filter().itemTypeEqualTo(itemType).findAll();
+
   List<History> getAllByMangaId(int? mangaId) => mangaId == null
       ? const []
       : isar.historys.where().mangaIdEqualTo(mangaId).findAllSync();

@@ -96,6 +96,16 @@ class ChapterRepository {
       .isReadEqualTo(true)
       .count();
 
+  /// One entry per read chapter of a favourite, so counting ids gives each
+  /// series' read count without loading the chapters.
+  Future<List<int?>> readMangaIdsByFavoriteItemType(ItemType itemType) => isar
+      .chapters
+      .filter()
+      .manga((q) => q.favoriteEqualTo(true).itemTypeEqualTo(itemType))
+      .isReadEqualTo(true)
+      .mangaIdProperty()
+      .findAll();
+
   int countByMangaIds(List<int> mangaIds) => isar.chapters
       .filter()
       .anyOf(mangaIds, (q, id) => q.mangaIdEqualTo(id))
