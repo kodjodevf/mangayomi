@@ -205,15 +205,25 @@ mixin AnimePlayerControlsMixin<T extends riv.ConsumerStatefulWidget>
 
   Widget mobileBottomButtonBar(BuildContext context) {
     final compactPortrait = usesCompactPortraitControls(context);
-    // The line under the timeline, laid out as desktop's: the chapter on
-    // the left; on the right the stream's and the playback's choices, each
-    // a pill with its value, then the settings and fullscreen. The lock and
-    // the skip sit above the panel (see [mobileAbovePanel]); the episodes
-    // are in the middle of the picture and in the top bar.
+    // The line under the timeline, laid out as desktop's: on the left the
+    // lock, the skip (+85 s, or the source's own button) and the chapter; on
+    // the right the stream's and the playback's choices, each a pill with
+    // its value, then the settings and fullscreen. The episodes are in the
+    // middle of the picture and in the top bar.
     return MobilePlayerBottomControlsLayout(
       compactPortrait: compactPortrait,
-      lockButton: const SizedBox.shrink(),
-      seekButton: const SizedBox.shrink(),
+      lockButton: KeyedSubtree(
+        key: const ValueKey('mobile-player-lock-button'),
+        child: ShioriOverlayPill(
+          icon: Symbols.lock_open_rounded,
+          tooltip: context.l10n.lock,
+          onTap: () {
+            HapticFeedback.lightImpact();
+            controlsIsLocked.value = true;
+          },
+        ),
+      ),
+      seekButton: seekToWidget(iconOnly: compactPortrait),
       chapterButton: compactPortrait
           ? const SizedBox.shrink()
           : chapterMarkWidget(),
@@ -228,32 +238,6 @@ mixin AnimePlayerControlsMixin<T extends riv.ConsumerStatefulWidget>
                 PlayerPill.fullscreen,
               }
             : const {...PlayerPill.values},
-      ),
-    );
-  }
-
-  /// Above the panel, on the left as desktop's skip: the lock and the
-  /// skip (+85 s, or the source's own button).
-  Widget mobileAbovePanel(BuildContext context) {
-    final compactPortrait = usesCompactPortraitControls(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s8),
-      child: Row(
-        children: [
-          KeyedSubtree(
-            key: const ValueKey('mobile-player-lock-button'),
-            child: ShioriOverlayPill(
-              icon: Symbols.lock_open_rounded,
-              tooltip: context.l10n.lock,
-              onTap: () {
-                HapticFeedback.lightImpact();
-                controlsIsLocked.value = true;
-              },
-            ),
-          ),
-          const SizedBox(width: ShioriSpace.s8),
-          seekToWidget(iconOnly: compactPortrait),
-        ],
       ),
     );
   }

@@ -36,9 +36,6 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
   /// The opening and the ending AniSkip knows, marked on the timeline.
   final ValueListenable<List<(int, int)>>? skipRanges;
 
-  /// A row just above the panel, on the left: the lock and the skip, as
-  /// desktop's skip sits above its bar.
-  final Widget? abovePanelWidget;
   // Bumped by the player on each d-pad key so the controls reveal on a TV remote.
   final ValueNotifier<int> revealControls;
   final ValueNotifier<bool>? isLocked;
@@ -53,7 +50,6 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
     required this.revealControls,
     this.isLocked,
     this.skipRanges,
-    this.abovePanelWidget,
   });
 
   @override
@@ -704,7 +700,6 @@ class _MobileControllerWidgetState
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ?widget.abovePanelWidget,
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(
                                   ShioriSpace.s8,
