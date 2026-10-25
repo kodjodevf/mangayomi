@@ -12,6 +12,7 @@ import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/history.dart';
+import 'package:mangayomi/models/reading_log.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/backup_password_fallback.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -331,6 +332,7 @@ class StorageProvider {
         CustomButtonSchema,
         UpdateSchema,
         HistorySchema,
+        ReadingLogSchema,
         DownloadSchema,
         SourceSchema,
         SettingsSchema,
