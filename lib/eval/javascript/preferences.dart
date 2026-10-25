@@ -9,7 +9,7 @@ class JsPreferences {
 
   void init() {
     runtime.onMessage('get', (dynamic args) {
-      return getPreferenceValue(source!.id!, args[0]);
+      return getPreferenceValue(source!.id!, args[0], source: source);
     });
     runtime.onMessage('getString', (dynamic args) {
       return getSourcePreferenceStringValue(source!.id!, args[0], args[1]);
