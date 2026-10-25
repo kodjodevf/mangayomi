@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/manga/reader/utils/reader_motion.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
@@ -119,15 +120,9 @@ class _DoublePageViewState extends State<DoublePageView>
       PhotoViewScaleStateController();
   StreamSubscription? _zoomSubscription;
 
-  Duration _doubleTapAnimationDuration() {
-    final doubleTapAnimationValue =
-        settingsRepository.current.doubleTapAnimationSpeed ?? 1;
-    return switch (doubleTapAnimationValue) {
-      0 => const Duration(milliseconds: 10),
-      1 => const Duration(milliseconds: 800),
-      _ => const Duration(milliseconds: 200),
-    };
-  }
+  Duration _doubleTapAnimationDuration() => ReaderMotion.doubleTapZoom(
+    settingsRepository.current.doubleTapAnimationSpeed,
+  );
 
   void _onScaleEnd(
     BuildContext context,
@@ -158,7 +153,10 @@ class _DoublePageViewState extends State<DoublePageView>
         vsync: this,
       );
       _animation = Tween(begin: 1.0, end: 2.0).animate(
-        CurvedAnimation(curve: Curves.ease, parent: _scaleAnimationController),
+        CurvedAnimation(
+          curve: Curves.easeInOutQuad,
+          parent: _scaleAnimationController,
+        ),
       );
       _animationListener = () {
         _photoViewController.scale = _animation.value;
