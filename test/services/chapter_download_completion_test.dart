@@ -45,7 +45,8 @@ void main() {
   });
 
   testWidgets(
-    'a cold download does not wait for a stalled optional cover',
+    'a cold download does not wait for a stalled optional cover, which '
+    'replaces the page standing in for it once it comes',
     (tester) => _runDownloadTest(tester, 0, stalledCover: true),
   );
   testWidgets(
@@ -134,6 +135,8 @@ Future<void> _checkDownload(
   final image = base64Decode(
     'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAI0lEQVR4nGP8//8/AymAiSTVDKMaiANMRKqDg1ENxACSQwkAVW0DHeN02ZEAAAAASUVORK5CYII=',
   );
+  // Told apart from the pages by a trailing byte, still a PNG.
+  final coverImage = [...image, 0];
   server.listen((request) async {
     if (request.uri.path == '/cover') {
       coverRequests++;
@@ -147,7 +150,7 @@ Future<void> _checkDownload(
       }
     }
     request.response.headers.contentType = ContentType('image', 'png');
-    request.response.add(image);
+    request.response.add(request.uri.path == '/cover' ? coverImage : image);
     await request.response.close();
   });
   db.writeTxnSync(() {
@@ -264,7 +267,21 @@ Future<void> _checkDownload(
   await download.timeout(const Duration(seconds: 10));
   // Completion must include packing and persistence; no post-download polling.
   expect(db.downloads.getSync(1)?.isDownload, !failPages);
-  expect(coverRequests, 0);
+  if (stalledCover) {
+    // Done while the cover still hangs: a page stands in for it...
+    final cover = File(p.join(mangaDirectory.path, 'cover.png'));
+    expect(await cover.readAsBytes(), image);
+    // ...until the series' own cover comes, fetched after the download.
+    releaseCover.complete();
+    final deadline = DateTime.now().add(const Duration(seconds: 10));
+    while (!_sameBytes(await cover.readAsBytes(), coverImage)) {
+      if (DateTime.now().isAfter(deadline)) fail('the cover was not replaced');
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+    }
+    expect(coverRequests, 1);
+  } else {
+    expect(coverRequests, 0);
+  }
   if (failPages) {
     expect(imageRequests, greaterThan(0));
     expect(await cbz.exists(), false);
@@ -288,10 +305,14 @@ Future<void> _checkDownload(
     }
     expect(
       await File(p.join(mangaDirectory.path, 'cover.png')).readAsBytes(),
-      image,
+      stalledCover ? coverImage : image,
     );
   }
   expect(db.chapters.getSync(1)!.lastPageRead, '7');
   expect(db.chapters.getSync(1)!.isBookmarked, true);
   expect(db.settings.getSync(227)!.chapterPageIndexList!.single.index, 6);
 }
+
+bool _sameBytes(List<int> a, List<int> b) =>
+    a.length == b.length &&
+    Iterable<int>.generate(a.length).every((i) => a[i] == b[i]);
