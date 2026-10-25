@@ -192,15 +192,19 @@ class StripSfx extends StatelessWidget {
       overflow: maxLines == null ? null : TextOverflow.ellipsis,
     );
     if (stroke <= 0) return fill;
+    // Resolve the outline's style the way [Text] resolves the fill's, or
+    // inherited letter spacing and leading pull the two apart.
+    final inherited = DefaultTextStyle.of(context);
     return CustomPaint(
-      painter: _StrokePainter(
+      painter: SfxStrokePainter(
         text: text,
-        style: style,
+        style: inherited.style.merge(style),
         stroke: stroke,
         textAlign: textAlign ?? TextAlign.start,
         textDirection: Directionality.of(context),
         textScaler: MediaQuery.textScalerOf(context),
         maxLines: maxLines,
+        textHeightBehavior: inherited.textHeightBehavior,
       ),
       child: fill,
     );
@@ -208,8 +212,8 @@ class StripSfx extends StatelessWidget {
 }
 
 /// Paints [text] as an ink outline in the exact box its fill [Text] got.
-class _StrokePainter extends CustomPainter {
-  const _StrokePainter({
+class SfxStrokePainter extends CustomPainter {
+  const SfxStrokePainter({
     required this.text,
     required this.style,
     required this.stroke,
@@ -217,6 +221,7 @@ class _StrokePainter extends CustomPainter {
     required this.textDirection,
     required this.textScaler,
     required this.maxLines,
+    required this.textHeightBehavior,
   });
 
   final String text;
@@ -226,6 +231,7 @@ class _StrokePainter extends CustomPainter {
   final TextDirection textDirection;
   final TextScaler textScaler;
   final int? maxLines;
+  final TextHeightBehavior? textHeightBehavior;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -244,6 +250,7 @@ class _StrokePainter extends CustomPainter {
       textDirection: textDirection,
       textScaler: textScaler,
       maxLines: maxLines,
+      textHeightBehavior: textHeightBehavior,
       ellipsis: maxLines == null ? null : '…',
     )..layout(minWidth: size.width, maxWidth: size.width);
     painter.paint(canvas, Offset.zero);
@@ -251,11 +258,12 @@ class _StrokePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_StrokePainter old) =>
+  bool shouldRepaint(SfxStrokePainter old) =>
       old.text != text ||
       old.style != style ||
       old.stroke != stroke ||
       old.textAlign != textAlign ||
+      old.textHeightBehavior != textHeightBehavior ||
       old.textScaler != textScaler;
 }
 

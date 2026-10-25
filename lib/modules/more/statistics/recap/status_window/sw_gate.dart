@@ -53,9 +53,11 @@ class SwGate extends StatelessWidget {
               ),
               Align(
                 alignment: Alignment.centerRight,
-                child: Text(
+                child: recapIconText(
                   l10n.recapGateEnter,
-                  style: text.bodyStrong.copyWith(color: SwColors.rose),
+                  Symbols.play_arrow_rounded,
+                  text.bodyStrong.copyWith(color: SwColors.rose),
+                  trailing: true,
                 ),
               ),
             ],

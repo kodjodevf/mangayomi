@@ -675,7 +675,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get recapBondedTitle => 'BONDED SERIES';
 
   @override
-  String get recapBondMax => '★ BOND LV. MAX';
+  String get recapBondMax => 'BOND LV. MAX';
 
   @override
   String recapBondDetail(Object count, Object hours, Object units) {
@@ -825,7 +825,7 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get recapGateEnter => 'ENTER ▶';
+  String get recapGateEnter => 'ENTER';
 
   @override
   String get recapEpisodesTitle => 'Episodes';

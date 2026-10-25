@@ -217,3 +217,26 @@ class SwCountUp extends StatelessWidget {
     );
   }
 }
+
+/// [label] with an icon sized to its text. Icons instead of ★/▶ glyphs,
+/// which the display fonts lack and iOS may draw as emoji.
+Widget recapIconText(
+  String label,
+  IconData icon,
+  TextStyle style, {
+  bool trailing = false,
+}) {
+  final glyph = WidgetSpan(
+    alignment: PlaceholderAlignment.middle,
+    child: Icon(icon, size: style.fontSize, color: style.color, fill: 1),
+  );
+  const gap = TextSpan(text: ' ');
+  return Text.rich(
+    TextSpan(
+      children: trailing
+          ? [TextSpan(text: label), gap, glyph]
+          : [glyph, gap, TextSpan(text: label)],
+    ),
+    style: style,
+  );
+}

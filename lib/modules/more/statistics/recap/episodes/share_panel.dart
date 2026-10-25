@@ -59,6 +59,8 @@ class _SharePanelState extends State<SharePanel> {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      // Panels get the strip's full width, not their content's.
+      fit: StackFit.passthrough,
       children: [
         RepaintBoundary(key: _boundary, child: widget.child),
         Positioned(

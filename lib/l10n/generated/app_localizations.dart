@@ -1132,7 +1132,7 @@ abstract class AppLocalizations {
   /// No description provided for @recapBondMax.
   ///
   /// In en, this message translates to:
-  /// **'★ BOND LV. MAX'**
+  /// **'BOND LV. MAX'**
   String get recapBondMax;
 
   /// No description provided for @recapBondDetail.
@@ -1372,7 +1372,7 @@ abstract class AppLocalizations {
   /// No description provided for @recapGateEnter.
   ///
   /// In en, this message translates to:
-  /// **'ENTER ▶'**
+  /// **'ENTER'**
   String get recapGateEnter;
 
   /// No description provided for @recapEpisodesTitle.

@@ -18,6 +18,8 @@ import 'package:mangayomi/modules/more/statistics/recap/episodes/panels/hours_pa
 import 'package:mangayomi/modules/more/statistics/recap/episodes/panels/prologue_panel.dart';
 import 'package:mangayomi/modules/more/statistics/recap/episodes/panels/title_panel.dart';
 import 'package:mangayomi/modules/more/statistics/recap/episodes/panels/top_series_panel.dart';
+import 'package:mangayomi/modules/more/statistics/recap/episodes/share_panel.dart';
+import 'package:mangayomi/modules/more/statistics/recap/episodes/strip_theme.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_cover.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_fonts.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_math.dart';
@@ -25,7 +27,10 @@ import 'package:mangayomi/modules/more/statistics/recap/recap_models.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_providers.dart';
 import 'package:shiori/shiori.dart';
 
-MonthStats _october({List<int> finishedIds = const [2, 3]}) => MonthStats(
+MonthStats _october({
+  List<int> finishedIds = const [2, 3],
+  List<Skill>? genres,
+}) => MonthStats(
   month: DateTime(2026, 10),
   seconds: 40 * 3600,
   completions: 340,
@@ -40,10 +45,12 @@ MonthStats _october({List<int> finishedIds = const [2, 3]}) => MonthStats(
     chaptersRead: 80,
     seconds: 9 * 3600,
   ),
-  genres: const [
-    Skill(genre: 'Action', count: 20, share: 0.8, rank: SkillRank.sss),
-    Skill(genre: 'Murim', count: 6, share: 0.24, rank: SkillRank.b),
-  ],
+  genres:
+      genres ??
+      const [
+        Skill(genre: 'Action', count: 20, share: 0.8, rank: SkillRank.sss),
+        Skill(genre: 'Murim', count: 6, share: 0.24, rank: SkillRank.b),
+      ],
   hourHistogram: [for (var h = 0; h < 24; h++) h == 7 ? 30 : 1],
   finishedIds: finishedIds,
   previousSeconds: 28 * 3600,
@@ -215,6 +222,40 @@ void main() {
 
     expect(find.byType(EpisodeScreen), findsNothing);
     expect(find.byType(EpisodeListScreen), findsOneWidget);
+  });
+
+  testWidgets('share buttons never cover panel content', (tester) async {
+    // Wide enough that the date fits one line, as it does in real fonts.
+    await _pump(tester, '/statistics/episodes/2026-10?type=manga', width: 600);
+
+    final panel = find.ancestor(
+      of: find.byType(BiggestDayPanel),
+      matching: find.byType(SharePanel),
+    );
+    final button = tester.getRect(
+      find.descendant(of: panel, matching: find.byType(IconButton)),
+    );
+    final numeral = tester.getRect(
+      find.descendant(of: panel, matching: find.byType(StripSfx)).last,
+    );
+    expect(button.overlaps(numeral), isFalse);
+  });
+
+  testWidgets('every panel spans the full strip width', (tester) async {
+    // Wide enough that the label fits one line and can't stretch the panel.
+    await _pump(
+      tester,
+      '/statistics/episodes/2026-10?type=manga',
+      width: 600,
+      month: _october(
+        genres: const [
+          Skill(genre: 'Gag', count: 1, share: 0.1, rank: SkillRank.c),
+        ],
+      ),
+    );
+
+    final full = tester.getSize(find.byType(TitlePanel)).width;
+    expect(tester.getSize(find.byType(GenresPanel)).width, full);
   });
 
   testWidgets('episode and list fit a narrow phone', (tester) async {

@@ -39,7 +39,8 @@ class BiggestDayPanel extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(l10n.recapStripBiggestDayLabel, style: text.label),
-            const SizedBox(height: ShioriSpace.s8),
+            // Clears the share button for the numeral on the right.
+            const SizedBox(height: ShioriSpace.s24),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

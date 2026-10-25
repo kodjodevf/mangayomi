@@ -101,9 +101,10 @@ class SwBonded extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          recapIconText(
                             l10n.recapBondMax,
-                            style: text.label.copyWith(color: SwColors.gold),
+                            Symbols.star_rounded,
+                            text.label.copyWith(color: SwColors.gold),
                           ),
                           const SizedBox(height: ShioriSpace.s4),
                           // The title yields height to the detail line on
