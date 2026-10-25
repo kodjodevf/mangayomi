@@ -47,9 +47,10 @@ BackupType checkBackupType(String path, Archive archive) {
         ? BackupType.mihon
         : path.contains("neko")
         ? BackupType.neko
-        // Other Mihon forks (Madomi, …) write the same format under their
-        // own file names.
-        : BackupType.mihon;
+        // Other forks name files their own way. Aniyomi's format is Mihon's
+        // plus anime fields Mihon never uses, so reading it that way keeps
+        // anime from anime forks and finds none in manga-only ones (Madomi…).
+        : BackupType.aniyomi;
   }
   return BackupType.unknown;
 }
