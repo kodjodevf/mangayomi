@@ -4,7 +4,9 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/modules/main_view/nav_groups.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -73,6 +75,18 @@ import 'package:mangayomi/services/crash_route_observer.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 export 'package:mangayomi/core/navigation/app_navigator.dart' show navigatorKey;
 part 'router.g.dart';
+
+/// The routes of the shell's branches, in the order they are declared below.
+const _shellBranchRoutes = [
+  '/MangaLibrary',
+  '/AnimeLibrary',
+  '/NovelLibrary',
+  '/trackerLibrary',
+  '/history',
+  '/updates',
+  '/browse',
+  '/more',
+];
 
 @riverpod
 GoRouter router(Ref ref) {
@@ -148,14 +162,30 @@ class RouterNotifier extends ChangeNotifier {
         key: state.pageKey,
         child: MainScreen(child: navigationShell),
       ),
-      navigatorContainerBuilder: (context, navigationShell, children) => isTv
-          ? children[navigationShell.currentIndex]
-          // Switched with Material's fade through, switches its
-          // tabs; every tab stays mounted.
-          : ShioriFadeThroughStack(
-              index: navigationShell.currentIndex,
-              children: children,
-            ),
+      navigatorContainerBuilder: (context, navigationShell, children) {
+        assert(
+          children.length == _shellBranchRoutes.length,
+          '_shellBranchRoutes must list every branch, in order',
+        );
+        return isTv
+            ? children[navigationShell.currentIndex]
+            // Switched with Material's fade through, switches its
+            // tabs; every tab stays mounted.
+            : ShioriFadeThroughStack(
+                index: navigationShell.currentIndex,
+                // Between two members of a group (Manga, Anime and Novels in
+                // Library), the tab slides along the switcher's row.
+                slideDirection: (from, to) => navGroupDirection(
+                  _shellBranchRoutes[from],
+                  _shellBranchRoutes[to],
+                  ProviderScope.containerOf(
+                    context,
+                    listen: false,
+                  ).read(visibleNavDestinationsProvider),
+                ),
+                children: children,
+              );
+      },
       branches: [
         _branch(
           _genericRoute<String?>(

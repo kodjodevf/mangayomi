@@ -6,6 +6,7 @@ import 'package:mangayomi/modules/manga/reader/mixins/reader_double_page_mixin.d
 import 'package:mangayomi/modules/manga/reader/mixins/reader_memory_management.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_zoom_control.dart';
 import 'package:mangayomi/modules/manga/reader/services/page_navigation_service.dart';
+import 'package:mangayomi/modules/manga/reader/utils/reader_motion.dart';
 import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/services/volume_keys.dart';
 
@@ -76,19 +77,27 @@ mixin ReaderInputAndModeMixin<T extends ConsumerStatefulWidget>
       final isHorizontal = readerMode.isHorizontalContinuous;
       final viewportSize = MediaQuery.sizeOf(context);
       final dimension = isHorizontal ? viewportSize.width : viewportSize.height;
-      final offset = dimension * 0.60 * (forward ? 1 : -1);
-      final duration = animatePageTransitions
-          ? const Duration(milliseconds: 160)
-          : const Duration(milliseconds: 10);
+      // Three quarters of the screen, so the last lines read stay in sight,
+      // scrolled as a list scrolls: 300 ms from rest plus 300 ms a screen,
+      // landing softly.
+      final offset = dimension * 0.75 * (forward ? 1 : -1);
       if (inputContinuousScrollController.hasClients) {
-        final target = (inputContinuousScrollController.offset + offset).clamp(
+        final from = inputContinuousScrollController.offset;
+        final target = (from + offset).clamp(
           inputContinuousScrollController.position.minScrollExtent,
           inputContinuousScrollController.position.maxScrollExtent,
         );
+        if (!animatePageTransitions) {
+          inputContinuousScrollController.jumpTo(target);
+          return;
+        }
         inputContinuousScrollController.animateTo(
           target,
-          duration: duration,
-          curve: Curves.easeInOut,
+          duration: ReaderMotion.scroll(
+            distance: target - from,
+            extent: dimension,
+          ),
+          curve: ReaderMotion.quinticOut,
         );
       }
       return;

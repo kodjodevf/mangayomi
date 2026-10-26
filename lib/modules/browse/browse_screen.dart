@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/widgets/collapsing_header.dart';
+import 'package:mangayomi/modules/widgets/side_swipe_detector.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -89,17 +90,29 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
       vsync: this,
     );
     _tabBarController.addListener(_onTabChanged);
-    _kindController.addListener(_onKindChanged);
   }
 
-  /// A swipe between Sources and Extensions, once it settles, opens that
-  /// kind for the media on show.
-  void _onKindChanged() {
-    if (_kindController.indexIsChanging || _tabList.isEmpty) return;
-    _open(
-      _tabList[_tabBarController.index].type,
-      BrowseTabKind.values[_kindController.index],
-    );
+  /// Each media's Sources and Extensions pages, side by side, off TV. One
+  /// controller per media, so a media can be put on the right page while it
+  /// is not on show: the one tab controller they used to share only moved a
+  /// hidden pair when its animation value changed, and a swipe between the
+  /// pages had already changed it, leaving the next media on Sources under an
+  /// Extensions tab.
+  final _pageControllers = <ItemType, PageController>{};
+
+  PageController _pagesOf(ItemType type) => _pageControllers.putIfAbsent(
+    type,
+    () => PageController(initialPage: _kindController.index),
+  );
+
+  /// A swipe between Sources and Extensions of the media on show.
+  void _onPageSwiped(ItemType type, int page) {
+    // A hidden media's pages being put in place report it too.
+    if (_tabList.isEmpty || type != _tabList[_tabBarController.index].type) {
+      return;
+    }
+    if (_kindController.index != page) _kindController.animateTo(page);
+    _open(type, BrowseTabKind.values[page]);
   }
 
   /// The index of the tab somebody asked us to open on, or zero.
@@ -140,6 +153,9 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     _headerCollapsed.dispose();
     _tvActiveRow.dispose();
     _kindController.dispose();
+    for (final pages in _pageControllers.values) {
+      pages.dispose();
+    }
     _tabBarController.dispose();
     _textEditingController.dispose();
     super.dispose();
@@ -238,9 +254,33 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   void _open(ItemType type, BrowseTabKind kind) {
     final index = _tabList.indexWhere((t) => t.type == type && t.kind == kind);
     if (index >= 0 && index != _tabBarController.index) {
+      if (!isTv) _showPage(type, kind);
       _tabBarController.index = index;
       // The other list starts at its top: the switch comes back.
       _headerCollapsed.value = false;
+    }
+  }
+
+  /// Puts [type]'s pages on [kind]: sliding there for the media on show, at
+  /// once for another, before it shows.
+  void _showPage(ItemType type, BrowseTabKind kind) {
+    final pages = _pagesOf(type);
+    if (!pages.hasClients) {
+      // Never laid out: started over on the right page.
+      pages.dispose();
+      _pageControllers[type] = PageController(initialPage: kind.index);
+      return;
+    }
+    if (pages.page?.round() == kind.index) return;
+    final onShow = _tabList[_tabBarController.index].type == type;
+    if (onShow) {
+      pages.animateToPage(
+        kind.index,
+        duration: kTabScrollDuration,
+        curve: Curves.ease,
+      );
+    } else {
+      pages.jumpToPage(kind.index);
     }
   }
 
@@ -375,6 +415,9 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     ];
     final tokens = context.shiori;
     final hasMediaSwitch = types.length > 1;
+    final mediaIndex = types.contains(currentTab.type)
+        ? types.indexOf(currentTab.type)
+        : 0;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -460,31 +503,45 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
             // Each media's pair is mounted up front and kept, and switching
             // media fades through between them: rebuilding the lists on
             // every switch showed a loading frame first, a visible hitch.
-            // Only the page on show of each is built (a TabBarView builds
+            // Only the page on show of each is built (a PageView builds
             // the current page), so this loads each media's sources and
             // leaves its extensions until they are opened.
+            //
+            // A swipe past the last page opens the next media's Sources, and
+            // past the first one the previous media's Extensions, as if the
+            // pairs were one row of pages; the media slides along with it.
             Expanded(
-              child: ShioriFadeThroughStack(
-                index: types.contains(currentTab.type)
-                    ? types.indexOf(currentTab.type)
-                    : 0,
-                children: [
-                  for (final type in types)
-                    TabBarView(
-                      key: ValueKey(type),
-                      controller: _kindController,
-                      children: [
-                        for (final kind in BrowseTabKind.values)
-                          KeyedSubtree(
-                            key: ValueKey((type, kind)),
-                            child:
-                                _tabViews()[_tabList.indexWhere(
-                                  (t) => t.type == type && t.kind == kind,
-                                )],
-                          ),
-                      ],
-                    ),
-                ],
+              child: SideSwipeDetector(
+                enabled: hasMediaSwitch,
+                onNext: mediaIndex + 1 < types.length
+                    ? () => _open(types[mediaIndex + 1], BrowseTabKind.sources)
+                    : null,
+                onPrevious: mediaIndex > 0
+                    ? () =>
+                          _open(types[mediaIndex - 1], BrowseTabKind.extensions)
+                    : null,
+                child: ShioriFadeThroughStack(
+                  index: mediaIndex,
+                  slideDirection: (from, to) => to - from,
+                  children: [
+                    for (final type in types)
+                      PageView(
+                        key: ValueKey(type),
+                        controller: _pagesOf(type),
+                        onPageChanged: (page) => _onPageSwiped(type, page),
+                        children: [
+                          for (final kind in BrowseTabKind.values)
+                            KeyedSubtree(
+                              key: ValueKey((type, kind)),
+                              child:
+                                  _tabViews()[_tabList.indexWhere(
+                                    (t) => t.type == type && t.kind == kind,
+                                  )],
+                            ),
+                        ],
+                      ),
+                  ],
+                ),
               ),
             ),
           ],

@@ -20,6 +20,7 @@ void main() {
       'sub-border-color': '#FF000000',
       'sub-back-color': '#00000000',
       'sub-ass-override': 'scale',
+      'sub-ass-justify': 'no',
     });
   });
 
@@ -30,6 +31,15 @@ void main() {
 
     expect(style['sub-ass-override'], 'force');
     expect(style['sub-ass-justify'], 'yes');
+  });
+
+  test('switching the ASS override off also stops justifying them', () {
+    final style = mpvSubtitleStyle(
+      PlayerSubtitleSettings(overrideAssSubtitles: false),
+    );
+
+    expect(style['sub-ass-override'], 'scale');
+    expect(style['sub-ass-justify'], 'no');
   });
 
   test('the initial options add the fixed layout to the style', () {

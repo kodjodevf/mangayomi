@@ -70,7 +70,7 @@ class _GlyphPainter extends CustomPainter {
       );
     }
     canvas.drawPath(
-      _parse(data)..fillType = PathFillType.evenOdd,
+      parseSymbolPath(data)..fillType = PathFillType.evenOdd,
       Paint()..color = color,
     );
     canvas.restore();
@@ -83,8 +83,9 @@ class _GlyphPainter extends CustomPainter {
 
 final _cache = <String, Path>{};
 
-/// The absolute M, L, C, Q and Z commands these paths are written in.
-Path _parse(String data) => Path.from(
+/// A Material Symbols path on the 960-unit grid, in the absolute M, L, C, Q
+/// and Z commands these glyphs are written in.
+Path parseSymbolPath(String data) => Path.from(
   _cache.putIfAbsent(data, () {
     final path = Path();
     final tokens = RegExp(r'[MLCQZ]|-?\d+(?:\.\d+)?')

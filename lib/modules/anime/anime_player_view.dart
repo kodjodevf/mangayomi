@@ -747,7 +747,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         previous,
         next,
       ) {
-        applySubtitleSettingsToMpv(next);
+        unawaited(applySubtitleSettingsToMpv(next));
       });
     }
     WidgetsBinding.instance.addObserver(this);
@@ -1039,7 +1039,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                     topButtonBarWidget: topButtonBar(context),
                     videoStatekey: _key,
                     bottomButtonBarWidget: mobileBottomButtonBar(context),
-                    abovePanelWidget: mobileAbovePanel(context),
                     streamController: _streamController,
                     revealControls: _revealControls,
                     chapterMarks: _chapterMarks,

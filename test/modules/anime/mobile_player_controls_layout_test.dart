@@ -404,8 +404,10 @@ void main() {
 
     expect(row.left, greaterThanOrEqualTo(12));
     expect(row.right, lessThanOrEqualTo(size.width - 12));
+    // The lock and the skip together on the left, the shortcuts on the right.
     expect(tester.getCenter(lock).dx, lessThan(row.center.dx));
-    expect(tester.getCenter(seek).dx, greaterThan(row.center.dx));
+    expect(tester.getRect(seek).left, greaterThan(tester.getRect(lock).right));
+    expect(tester.getCenter(seek).dx, lessThan(row.center.dx));
     expect(
       tester.getRect(seek).right,
       lessThanOrEqualTo(tester.getRect(shortcuts).left),
@@ -470,7 +472,8 @@ void main() {
       find.byKey(const ValueKey('mobile-player-compact-controls-row')),
     );
     expect(tester.getCenter(lock).dx, lessThan(row.center.dx));
-    expect(tester.getCenter(seek).dx, greaterThan(row.center.dx));
+    expect(tester.getRect(seek).left, greaterThan(tester.getRect(lock).right));
+    expect(tester.getCenter(seek).dx, lessThan(row.center.dx));
     expect(
       tester.getRect(seek).right,
       lessThanOrEqualTo(tester.getRect(fullscreen).left),

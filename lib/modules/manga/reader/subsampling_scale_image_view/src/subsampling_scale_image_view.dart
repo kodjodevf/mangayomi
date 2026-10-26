@@ -16,6 +16,7 @@ import 'subsampling_image_resolver.dart';
 import 'subsampling_types.dart';
 import 'tiling_engine.dart';
 import '../../u_chap_data_preload.dart';
+import '../../utils/reader_motion.dart';
 
 export 'subsampling_types.dart';
 
@@ -1157,7 +1158,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
       final velocity = details.velocity.pixelsPerSecond;
       if (velocity.distance > 400) {
         final targetTranslate = _clampTranslate(
-          _vTranslate + velocity * 0.2,
+          _vTranslate + velocity * ReaderMotion.flingTravel,
           _scale,
         );
         if ((targetTranslate - _vTranslate).distance > 10) {
@@ -1166,7 +1167,8 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
             _scale,
             _vTranslate,
             targetTranslate,
-            const Duration(seconds: 1),
+            ReaderMotion.flingDuration,
+            curve: Curves.decelerate,
           );
         }
       }
@@ -1178,16 +1180,29 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     if (widget.pageController != null &&
         widget.pageController!.hasClients &&
         _scale <= _getMinScale() * 1.01) {
+      final position = widget.pageController!.position;
       final double currentPageValue = widget.pageController!.page ?? 0.0;
       final int targetPage = settlePage(
         currentPageValue,
-        widget.pageController!.position.axisDirection,
+        position.axisDirection,
         details.velocity.pixelsPerSecond,
       );
+      // Settled in the time the release speed takes, so the page carries on
+      // at the finger's pace rather than speeding up or braking.
+      final extent = position.viewportDimension;
+      final duration = ReaderMotion.settle(
+        distance: (targetPage - currentPageValue) * extent,
+        extent: extent,
+        velocity: pageScrollDeltaForPan(
+          position.axisDirection,
+          details.velocity.pixelsPerSecond,
+        ),
+      );
+      if (duration == Duration.zero) return;
       widget.pageController!.animateToPage(
         targetPage,
-        duration: ShioriMotion.standard,
-        curve: Curves.easeOutCubic,
+        duration: duration,
+        curve: ReaderMotion.quinticOut,
       );
     }
   }
@@ -1226,14 +1241,14 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     _scaleAnimation = Tween<double>(begin: _scale, end: targetScale).animate(
       CurvedAnimation(
         parent: _animationController,
-        curve: Curves.easeInOutCubic,
+        curve: Curves.easeInOutQuad,
       ),
     );
     _translateAnimation =
         Tween<ui.Offset>(begin: _vTranslate, end: targetTranslate).animate(
           CurvedAnimation(
             parent: _animationController,
-            curve: Curves.easeInOutCubic,
+            curve: Curves.easeInOutQuad,
           ),
         );
     _animationController.duration = widget.doubleTapZoomDuration;

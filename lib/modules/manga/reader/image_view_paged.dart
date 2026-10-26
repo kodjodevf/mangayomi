@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/manga/reader/utils/reader_motion.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/utils/downloaded_page_file.dart';
@@ -232,16 +233,9 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
     });
   }
 
-  Duration _doubleTapAnimationDuration() {
-    final doubleTapAnimationValue = ref.read(
-      doubleTapAnimationSpeedStateProvider,
-    );
-    return switch (doubleTapAnimationValue) {
-      0 => const Duration(milliseconds: 10),
-      1 => const Duration(milliseconds: 800),
-      _ => const Duration(milliseconds: 200),
-    };
-  }
+  Duration _doubleTapAnimationDuration() => ReaderMotion.doubleTapZoom(
+    ref.read(doubleTapAnimationSpeedStateProvider),
+  );
 
   @override
   Widget build(BuildContext context) {

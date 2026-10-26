@@ -1118,8 +1118,13 @@ class _MangaChapterPageGalleryState
       _updateChapterIfNeeded(actualIndex);
 
       // ── Next-chapter preloading: trigger when near the end ──
+      // On a new page only: this runs on every frame of a scroll, and even a
+      // preload already done works out the next chapter from the whole
+      // chapter list, which made webtoon scrolling stutter near the end.
       final distToEnd = pagesLength - 1 - last;
-      if (distToEnd <= pagePreloadAmount && !isLastPageTransition) {
+      if (pageChanged &&
+          distToEnd <= pagePreloadAmount &&
+          !isLastPageTransition) {
         triggerNextChapterPreload();
       }
 

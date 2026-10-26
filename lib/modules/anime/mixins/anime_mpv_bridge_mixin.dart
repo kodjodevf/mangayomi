@@ -49,14 +49,20 @@ mixin AnimeMpvBridgeMixin<T extends riv.ConsumerStatefulWidget>
   Future<void> mpvSeekBy(int deltaSeconds);
   Future<void> mpvPushToNewEpisode(BuildContext context, Chapter episode);
 
-  void applySubtitleSettingsToMpv(PlayerSubtitleSettings settings) {
+  /// Sends the subtitle style to mpv, which applies it to the subtitles on
+  /// screen at once.
+  Future<void> applySubtitleSettingsToMpv(
+    PlayerSubtitleSettings settings,
+  ) async {
     if (!mpvUseLibass) return;
     try {
       final nativePlayer = mpvBridgePlayer.platform as NativePlayer;
       for (final MapEntry(:key, :value) in mpvSubtitleStyle(settings).entries) {
-        nativePlayer.setProperty(key, value);
+        await nativePlayer.setProperty(key, value);
       }
-    } catch (_) {}
+    } catch (e, s) {
+      recordError(e, stack: s, source: 'mpv_subtitle_style');
+    }
   }
 
   Future<void> handleMpvEvents(Pointer<generated.mpv_event> event) async {

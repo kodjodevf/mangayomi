@@ -36,9 +36,6 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
   /// The opening and the ending AniSkip knows, marked on the timeline.
   final ValueListenable<List<(int, int)>>? skipRanges;
 
-  /// A row just above the panel, on the left: the lock and the skip, as
-  /// desktop's skip sits above its bar.
-  final Widget? abovePanelWidget;
   // Bumped by the player on each d-pad key so the controls reveal on a TV remote.
   final ValueNotifier<int> revealControls;
   final ValueNotifier<bool>? isLocked;
@@ -53,7 +50,6 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
     required this.revealControls,
     this.isLocked,
     this.skipRanges,
-    this.abovePanelWidget,
   });
 
   @override
@@ -664,7 +660,7 @@ class _MobileControllerWidgetState
                       else
                         MobilePlayerControlsOverlayLayout(
                           compactPortrait: compactPortrait,
-                          safeInsets: MediaQuery.viewPaddingOf(context),
+                          safeInsets: mobilePlayerControlInsets(context),
                           topControls: widget.topButtonBarWidget,
                           // Only display [primaryButtonBar] if [buffering] is false.
                           primaryControls: AnimatedOpacity(
@@ -704,7 +700,6 @@ class _MobileControllerWidgetState
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              ?widget.abovePanelWidget,
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(
                                   ShioriSpace.s8,
@@ -760,11 +755,7 @@ class _MobileControllerWidgetState
                     _mountSeekForwardButton ||
                     showSwipeDuration)
                   Padding(
-                    padding: EdgeInsets.only(
-                      left: MediaQuery.viewPaddingOf(context).left,
-                      right: MediaQuery.viewPaddingOf(context).right,
-                      bottom: MediaQuery.viewPaddingOf(context).bottom,
-                    ),
+                    padding: mobilePlayerControlInsets(context),
                     child: Column(
                       children: [
                         const Spacer(),

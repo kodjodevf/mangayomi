@@ -47,13 +47,11 @@ class NavGroupSwitcher extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     if (!isGroupedNavRoute(ref, route)) return const SizedBox.shrink();
     final l10n = context.l10n;
-    final visible = ref.watch(visibleNavDestinationsProvider);
-    final members =
-        NavGroup.members[NavGroup.of(route)]!
-            .where(visible.contains)
-            // The user's own order, not the group's.
-            .toList()
-          ..sort((a, b) => visible.indexOf(a).compareTo(visible.indexOf(b)));
+    // The user's own order, not the group's.
+    final members = visibleGroupMembers(
+      route,
+      ref.watch(visibleNavDestinationsProvider),
+    );
     ShioriSegment<String> segment(String r) => switch (r) {
       '/MangaLibrary' => ShioriSegment(
         value: r,

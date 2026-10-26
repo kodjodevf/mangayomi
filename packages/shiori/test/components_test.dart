@@ -664,6 +664,44 @@ void main() {
       handle.dispose();
     });
 
+    testWidgets('one pill slides from the segment left to the one picked', (
+      tester,
+    ) async {
+      Widget control(int selected) => _host(
+        ShioriSegmentedControl<int>(
+          segments: const [
+            ShioriSegment(value: 0, label: 'A'),
+            ShioriSegment(value: 1, label: 'B'),
+            ShioriSegment(value: 2, label: 'C'),
+          ],
+          selected: selected,
+          onSelected: (_) {},
+        ),
+      );
+      double pillX() => tester
+          .getCenter(
+            find.descendant(
+              of: find.byType(AnimatedAlign),
+              matching: find.byType(DecoratedBox),
+            ),
+          )
+          .dx;
+
+      await tester.pumpWidget(control(0));
+      final atA = pillX();
+      expect(atA, closeTo(tester.getCenter(find.text('A')).dx, 1));
+
+      await tester.pumpWidget(control(2));
+      await tester.pump(const Duration(milliseconds: 40));
+      // On its way, one pill only, between the two.
+      expect(
+        pillX(),
+        inExclusiveRange(atA, tester.getCenter(find.text('C')).dx),
+      );
+      await tester.pumpAndSettle();
+      expect(pillX(), closeTo(tester.getCenter(find.text('C')).dx, 1));
+    });
+
     testWidgets('each segment is a full target', (tester) async {
       await tester.pumpWidget(
         _host(
@@ -922,13 +960,31 @@ void main() {
   });
 
   group('ShioriFadeThroughStack', () {
-    Widget stack(int index, {bool lazy = false}) => _host(
+    Widget stack(
+      int index, {
+      bool lazy = false,
+      int Function(int from, int to)? slideDirection,
+    }) => _host(
       ShioriFadeThroughStack(
         index: index,
         lazy: lazy,
+        slideDirection: slideDirection,
         children: const [_Counted('a'), _Counted('b')],
       ),
     );
+
+    double dxOf(WidgetTester tester, String label) => tester
+        .widget<Transform>(
+          find
+              .ancestor(
+                of: find.text(label, skipOffstage: false),
+                matching: find.byType(Transform),
+              )
+              .first,
+        )
+        .transform
+        .getTranslation()
+        .x;
 
     testWidgets('builds a lazy child only once it is shown', (tester) async {
       _Counted.inits.clear();
@@ -973,6 +1029,37 @@ void main() {
       expect(opacityOf('b'), inExclusiveRange(0, 1));
       await tester.pumpAndSettle();
       expect(opacityOf('b'), 1);
+    });
+
+    testWidgets('without a direction a switch does not move', (tester) async {
+      await tester.pumpWidget(stack(0));
+      await tester.pumpWidget(stack(1));
+      await tester.pump(const Duration(milliseconds: 60));
+      expect(dxOf(tester, 'a'), 0);
+      expect(dxOf(tester, 'b'), 0);
+    });
+
+    testWidgets('a direction slides the new child in from that side', (
+      tester,
+    ) async {
+      int direction(int from, int to) => to - from;
+      await tester.pumpWidget(stack(0, slideDirection: direction));
+      await tester.pumpWidget(stack(1, slideDirection: direction));
+      await tester.pump(const Duration(milliseconds: 100));
+      // Forward: the new one comes from the end side, the old one leaves
+      // toward the start.
+      expect(dxOf(tester, 'b'), greaterThan(0));
+      expect(dxOf(tester, 'a'), lessThan(0));
+      await tester.pumpAndSettle();
+      expect(dxOf(tester, 'b'), 0);
+
+      // Back: mirrored.
+      await tester.pumpWidget(stack(0, slideDirection: direction));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(dxOf(tester, 'a'), lessThan(0));
+      expect(dxOf(tester, 'b'), greaterThan(0));
+      await tester.pumpAndSettle();
+      expect(dxOf(tester, 'a'), 0);
     });
   });
 }
