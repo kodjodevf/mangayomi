@@ -494,6 +494,17 @@ class AppLocalizationsHi extends AppLocalizations {
   String get about => 'के बारे में';
 
   @override
+  String get open_source_licenses => 'ओपन सोर्स लाइसेंस';
+
+  @override
+  String get open_source_licenses_subtitle =>
+      'वे पैकेज जिनसे Mangayomi बना है, और उनके लाइसेंस';
+
+  @override
+  String get open_source_licenses_empty =>
+      'कोई लाइसेंस जानकारी उपलब्ध नहीं है।';
+
+  @override
   String get help => 'मदद';
 
   @override
@@ -668,53 +679,53 @@ class AppLocalizationsHi extends AppLocalizations {
   String get delete_download_after_reading => 'पढ़ने के बाद डाउनलोड हटा दें';
 
   @override
-  String get delete_after_reading_slot => 'Delete which chapter';
+  String get delete_after_reading_slot => 'कौन सा अध्याय हटाएँ';
 
   @override
-  String get delete_after_reading_last => 'The chapter just read';
+  String get delete_after_reading_last => 'अभी पढ़ा गया अध्याय';
 
   @override
   String delete_after_reading_nth(int n) {
-    return '$n chapters back';
+    return '$n अध्याय पीछे';
   }
 
   @override
   String get delete_after_reading_slot_subtitle =>
-      'Keeping a few read chapters lets you go back to them offline.';
+      'कुछ पढ़े हुए अध्याय रखने से आप उन्हें ऑफ़लाइन फिर से पढ़ सकते हैं।';
 
   @override
   String get delete_bookmarked_after_reading =>
-      'Also delete bookmarked chapters';
+      'बुकमार्क किए गए अध्याय भी हटाएँ';
 
   @override
-  String get auto_download => 'Auto download';
+  String get auto_download => 'स्वतः डाउनलोड';
 
   @override
-  String get download_new_chapters => 'Download new chapters';
+  String get download_new_chapters => 'नए अध्याय डाउनलोड करें';
 
   @override
   String get download_new_chapters_subtitle =>
-      'After a library update, queue the new unread chapters of series already in the library.';
+      'लाइब्रेरी अपडेट के बाद, लाइब्रेरी में मौजूद सीरीज़ के नए अपठित अध्याय डाउनलोड कतार में जोड़ें।';
 
   @override
-  String get download_new_chapters_included => 'Only these categories';
+  String get download_new_chapters_included => 'केवल ये श्रेणियाँ';
 
   @override
-  String get download_new_chapters_excluded => 'Except these categories';
+  String get download_new_chapters_excluded => 'ये श्रेणियाँ छोड़कर';
 
   @override
-  String get download_new_chapters_all_categories => 'All categories';
+  String get download_new_chapters_all_categories => 'सभी श्रेणियाँ';
 
   @override
-  String get download_ahead => 'Download ahead while reading';
+  String get download_ahead => 'पढ़ते समय आगे से डाउनलोड करें';
 
   @override
   String get download_ahead_subtitle =>
-      'While reading a downloaded chapter of a series in the library, download the next unread ones.';
+      'लाइब्रेरी की सीरीज़ का डाउनलोड किया गया अध्याय पढ़ते समय, अगले अपठित अध्याय डाउनलोड करें।';
 
   @override
   String download_ahead_count(int n) {
-    return 'Next $n chapters';
+    return 'अगले $n अध्याय';
   }
 
   @override
@@ -1654,21 +1665,21 @@ class AppLocalizationsHi extends AppLocalizations {
       'डुप्लिकेट अध्याय संख्याओं को पढ़ा गया के रूप में चिह्नित करें';
 
   @override
-  String get skip_read_chapters => 'Skip read chapters';
+  String get skip_read_chapters => 'पढ़े हुए अध्याय छोड़ें';
 
   @override
   String get skip_read_chapters_subtitle =>
-      'Next and previous chapter go past the ones already read.';
+      'अगला और पिछला अध्याय, पहले से पढ़े गए अध्यायों को छोड़ देगा।';
 
   @override
-  String get skip_filtered_chapters => 'Skip filtered chapters';
+  String get skip_filtered_chapters => 'फ़िल्टर किए गए अध्याय छोड़ें';
 
   @override
-  String get skip_duplicate_chapters => 'Skip duplicate chapters';
+  String get skip_duplicate_chapters => 'डुप्लिकेट अध्याय छोड़ें';
 
   @override
   String get skip_duplicate_chapters_subtitle =>
-      'Read one copy of each chapter number, from the same scanlator when there is one.';
+      'हर अध्याय संख्या की एक प्रति पढ़ें, और जब संभव हो तो उसी स्कैनलेटर से।';
 
   @override
   String get default_skip_intro_length => 'डिफ़ॉल्ट परिचय छोड़ने की अवधि';
@@ -2288,11 +2299,11 @@ class AppLocalizationsHi extends AppLocalizations {
   String get subtitle_delay => 'विलंब (ms)';
 
   @override
-  String get audio_delay => 'Audio delay (ms)';
+  String get audio_delay => 'ऑडियो विलंब (ms)';
 
   @override
   String get audio_delay_subtitle =>
-      'Plays the sound later (positive) or earlier (negative) than the picture. Kept from one episode to the next.';
+      'आवाज़ को चित्र से बाद में (धनात्मक) या पहले (ऋणात्मक) चलाता है। एक एपिसोड से अगले तक बरकरार रहता है।';
 
   @override
   String get subtitle_speed => 'गति';
@@ -2547,14 +2558,14 @@ class AppLocalizationsHi extends AppLocalizations {
       'प्लेयर को लैंडस्केप ओरिएंटेशन का उपयोग करने के लिए मजबूर करें।';
 
   @override
-  String get remember_player_volume => 'Remember volume';
+  String get remember_player_volume => 'वॉल्यूम याद रखें';
 
   @override
   String get remember_player_volume_subtitle =>
-      'Start each episode at the volume the last one ended with.';
+      'हर एपिसोड उसी वॉल्यूम पर शुरू करें जिस पर पिछला समाप्त हुआ था।';
 
   @override
-  String get remember_player_brightness => 'Remember brightness';
+  String get remember_player_brightness => 'चमक याद रखें';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
@@ -2594,65 +2605,65 @@ class AppLocalizationsHi extends AppLocalizations {
   String get app_lock => 'ऐप लॉक';
 
   @override
-  String get app_lock_delay => 'Lock after';
+  String get app_lock_delay => 'इसके बाद लॉक करें';
 
   @override
-  String get app_lock_delay_immediately => 'Leaving the app';
+  String get app_lock_delay_immediately => 'ऐप छोड़ते ही';
 
   @override
   String app_lock_delay_minutes(int n) {
-    return '$n min away';
+    return '$n मिनट दूर रहने पर';
   }
 
   @override
-  String get app_lock_delay_launch_only => 'Only when the app starts';
+  String get app_lock_delay_launch_only => 'केवल ऐप शुरू होने पर';
 
   @override
-  String get secure_screen => 'Secure screen';
+  String get secure_screen => 'सुरक्षित स्क्रीन';
 
   @override
   String get secure_screen_subtitle =>
-      'Hide the app from the app switcher, and on Android from screenshots and screen recordings.';
+      'ऐप स्विचर से ऐप छिपाएँ, और Android पर स्क्रीनशॉट और स्क्रीन रिकॉर्डिंग से भी।';
 
   @override
-  String get secure_screen_never => 'Never';
+  String get secure_screen_never => 'कभी नहीं';
 
   @override
-  String get secure_screen_incognito => 'In incognito mode';
+  String get secure_screen_incognito => 'गुप्त मोड में';
 
   @override
-  String get secure_screen_always => 'Always';
+  String get secure_screen_always => 'हमेशा';
 
   @override
-  String get background_work => 'Background work';
+  String get background_work => 'बैकग्राउंड कार्य';
 
   @override
-  String get background_work_in_progress => 'Working…';
+  String get background_work_in_progress => 'कार्य जारी है…';
 
   @override
-  String get background_downloading => 'Downloading';
+  String get background_downloading => 'डाउनलोड हो रहा है';
 
   @override
-  String get background_updating_library => 'Updating library';
+  String get background_updating_library => 'लाइब्रेरी अपडेट हो रही है';
 
   @override
-  String get background_restoring => 'Restoring backup';
+  String get background_restoring => 'बैकअप पुनर्स्थापित हो रहा है';
 
   @override
-  String get background_syncing => 'Syncing';
+  String get background_syncing => 'समन्वयन हो रहा है';
 
   @override
-  String get background_cancel_downloads => 'Cancel downloads';
+  String get background_cancel_downloads => 'डाउनलोड रद्द करें';
 
   @override
-  String get background_stop_update => 'Stop update';
+  String get background_stop_update => 'अपडेट रोकें';
 
   @override
-  String get hide_notification_content => 'Hide notification content';
+  String get hide_notification_content => 'सूचना की सामग्री छिपाएँ';
 
   @override
   String get hide_notification_content_subtitle =>
-      'Notifications say what the app is doing without naming series or chapters.';
+      'सूचनाएँ बताती हैं कि ऐप क्या कर रहा है, लेकिन सीरीज़ या अध्यायों के नाम नहीं बताती।';
 
   @override
   String get require_biometric_or_device_credential =>
@@ -2685,19 +2696,19 @@ class AppLocalizationsHi extends AppLocalizations {
   String get brightness => 'चमक';
 
   @override
-  String get video_filters => 'Video filters';
+  String get video_filters => 'वीडियो फ़िल्टर';
 
   @override
-  String get video_filter_contrast => 'Contrast';
+  String get video_filter_contrast => 'विपरीतता';
 
   @override
-  String get video_filter_saturation => 'Saturation';
+  String get video_filter_saturation => 'संतृप्ति';
 
   @override
-  String get video_filter_gamma => 'Gamma';
+  String get video_filter_gamma => 'गामा';
 
   @override
-  String get video_filter_hue => 'Hue';
+  String get video_filter_hue => 'ह्यू';
 
   @override
   String get volume => 'वॉल्यूम';
@@ -2981,11 +2992,11 @@ class AppLocalizationsHi extends AppLocalizations {
   String get split_wide_pages => 'चौड़े पन्नों को विभाजित करें';
 
   @override
-  String get split_tall_images => 'Split tall images';
+  String get split_tall_images => 'लंबी छवियाँ विभाजित करें';
 
   @override
   String get split_tall_images_subtitle =>
-      'Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.';
+      'वेबटून: बहुत लंबी छवियाँ टुकड़ों में दिखाएँ, एक बार में एक टुकड़ा डिकोड करके, ताकि कम मेमोरी लगे। बॉर्डर क्रॉप के साथ नहीं।';
 
   @override
   String get dual_page_invert => 'विभाजित पन्नों के हिस्सों को उलटें';
@@ -3625,23 +3636,23 @@ class AppLocalizationsHi extends AppLocalizations {
       'मोबाइल डेटा पर होने पर निर्धारित अपडेट छोड़ें।';
 
   @override
-  String get library_update_restrictions => 'Skip when updating';
+  String get library_update_restrictions => 'अपडेट के समय छोड़ें';
 
   @override
-  String get library_update_skip_completed => 'Completed series';
+  String get library_update_skip_completed => 'पूरी हो चुकी सीरीज़';
 
   @override
-  String get library_update_skip_unread => 'Series with unread chapters';
+  String get library_update_skip_unread => 'अपठित अध्याय वाली सीरीज़';
 
   @override
-  String get library_update_skip_not_started => 'Series not started';
+  String get library_update_skip_not_started => 'शुरू न की गई सीरीज़';
 
   @override
   String get library_update_restrictions_subtitle =>
-      'Applies to every library update. Categories set to skip updates are also left out when the whole library is updated.';
+      'हर लाइब्रेरी अपडेट पर लागू होता है। जिन श्रेणियों में अपडेट छोड़ने के लिए सेट है, वे भी पूरी लाइब्रेरी अपडेट होने पर छोड़ दी जाती हैं।';
 
   @override
-  String get library_update_restrictions_none => 'None';
+  String get library_update_restrictions_none => 'कोई नहीं';
 
   @override
   String get padding => 'पैडिंग';

@@ -58,6 +58,7 @@ import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/modules/more/about/about_screen.dart';
 import 'package:mangayomi/modules/more/about/error_reports_screen.dart';
+import 'package:mangayomi/modules/more/about/licenses_screen.dart';
 import 'package:mangayomi/modules/more/download_queue/download_queue_screen.dart';
 import 'package:mangayomi/modules/more/more_screen.dart';
 import 'package:mangayomi/modules/more/settings/appearance/appearance_screen.dart';
@@ -259,6 +260,7 @@ class RouterNotifier extends ChangeNotifier {
     ),
     _genericRoute(name: "about", child: const AboutScreen()),
     _genericRoute(name: "errorReports", child: const ErrorReportsScreen()),
+    _genericRoute(name: "openSourceLicenses", child: const LicensesScreen()),
     _genericRoute(name: "track", child: const TrackScreen()),
     _genericRoute(name: "sync", child: const SyncScreen()),
     _genericRoute<ItemType>(

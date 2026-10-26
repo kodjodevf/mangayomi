@@ -494,6 +494,16 @@ class AppLocalizationsTh extends AppLocalizations {
   String get about => 'เกี่ยวกับ';
 
   @override
+  String get open_source_licenses => 'ใบอนุญาตซอฟต์แวร์โอเพนซอร์ส';
+
+  @override
+  String get open_source_licenses_subtitle =>
+      'แพ็กเกจที่ใช้สร้าง Mangayomi และใบอนุญาตของแต่ละแพ็กเกจ';
+
+  @override
+  String get open_source_licenses_empty => 'ไม่มีข้อมูลใบอนุญาต';
+
+  @override
   String get help => 'ช่วยเหลือ';
 
   @override
@@ -669,53 +679,52 @@ class AppLocalizationsTh extends AppLocalizations {
   String get delete_download_after_reading => 'ลบหลังอ่าน';
 
   @override
-  String get delete_after_reading_slot => 'Delete which chapter';
+  String get delete_after_reading_slot => 'ลบตอนไหน';
 
   @override
-  String get delete_after_reading_last => 'The chapter just read';
+  String get delete_after_reading_last => 'ตอนที่เพิ่งอ่านจบ';
 
   @override
   String delete_after_reading_nth(int n) {
-    return '$n chapters back';
+    return 'ย้อนหลัง $n ตอน';
   }
 
   @override
   String get delete_after_reading_slot_subtitle =>
-      'Keeping a few read chapters lets you go back to them offline.';
+      'เก็บตอนที่อ่านแล้วไว้บ้าง เพื่อให้กลับไปอ่านแบบออฟไลน์ได้';
 
   @override
-  String get delete_bookmarked_after_reading =>
-      'Also delete bookmarked chapters';
+  String get delete_bookmarked_after_reading => 'ลบตอนที่เพิ่มเข้าชั้นด้วย';
 
   @override
-  String get auto_download => 'Auto download';
+  String get auto_download => 'ดาวน์โหลดอัตโนมัติ';
 
   @override
-  String get download_new_chapters => 'Download new chapters';
+  String get download_new_chapters => 'ดาวน์โหลดตอนใหม่';
 
   @override
   String get download_new_chapters_subtitle =>
-      'After a library update, queue the new unread chapters of series already in the library.';
+      'หลังอัพเดทชั้นหนังสือ ให้เข้าคิวดาวน์โหลดตอนใหม่ที่ยังไม่ได้อ่านของเรื่องที่อยู่ในชั้นหนังสือ';
 
   @override
-  String get download_new_chapters_included => 'Only these categories';
+  String get download_new_chapters_included => 'เฉพาะหมวดหมู่เหล่านี้';
 
   @override
-  String get download_new_chapters_excluded => 'Except these categories';
+  String get download_new_chapters_excluded => 'ยกเว้นหมวดหมู่เหล่านี้';
 
   @override
-  String get download_new_chapters_all_categories => 'All categories';
+  String get download_new_chapters_all_categories => 'ทุกหมวดหมู่';
 
   @override
-  String get download_ahead => 'Download ahead while reading';
+  String get download_ahead => 'ดาวน์โหลดล่วงหน้าขณะอ่าน';
 
   @override
   String get download_ahead_subtitle =>
-      'While reading a downloaded chapter of a series in the library, download the next unread ones.';
+      'ขณะอ่านตอนที่ดาวน์โหลดแล้วของเรื่องในชั้นหนังสือ ให้ดาวน์โหลดตอนถัดไปที่ยังไม่ได้อ่าน';
 
   @override
   String download_ahead_count(int n) {
-    return 'Next $n chapters';
+    return 'ตอนถัดไป $n ตอน';
   }
 
   @override
@@ -1651,21 +1660,21 @@ class AppLocalizationsTh extends AppLocalizations {
       'ทำเครื่องหมายหมายเลขบทที่ซ้ำกันว่าอ่านแล้ว';
 
   @override
-  String get skip_read_chapters => 'Skip read chapters';
+  String get skip_read_chapters => 'ข้ามตอนที่อ่านแล้ว';
 
   @override
   String get skip_read_chapters_subtitle =>
-      'Next and previous chapter go past the ones already read.';
+      'ปุ่มตอนถัดไปและตอนก่อนหน้าจะข้ามตอนที่อ่านแล้ว';
 
   @override
-  String get skip_filtered_chapters => 'Skip filtered chapters';
+  String get skip_filtered_chapters => 'ข้ามตอนที่ถูกกรอง';
 
   @override
-  String get skip_duplicate_chapters => 'Skip duplicate chapters';
+  String get skip_duplicate_chapters => 'ข้ามตอนที่ซ้ำ';
 
   @override
   String get skip_duplicate_chapters_subtitle =>
-      'Read one copy of each chapter number, from the same scanlator when there is one.';
+      'อ่านเพียงฉบับเดียวของแต่ละหมายเลขตอน โดยเลือกจากกลุ่มแปลเดียวกันเมื่อมี';
 
   @override
   String get default_skip_intro_length => 'ค่าพื้นฐานความยาวการเข้าอินโทร';
@@ -2281,11 +2290,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get subtitle_delay => 'ความล่าช้า (ms)';
 
   @override
-  String get audio_delay => 'Audio delay (ms)';
+  String get audio_delay => 'ดีเลย์เสียง (มิลลิวินาที)';
 
   @override
   String get audio_delay_subtitle =>
-      'Plays the sound later (positive) or earlier (negative) than the picture. Kept from one episode to the next.';
+      'เล่นเสียงช้ากว่าภาพ (ค่าบวก) หรือเร็วกว่าภาพ (ค่าลบ) ค่านี้จะคงไว้ข้ามจากตอนหนึ่งไปอีกตอน';
 
   @override
   String get subtitle_speed => 'ความเร็ว';
@@ -2539,14 +2548,14 @@ class AppLocalizationsTh extends AppLocalizations {
       'บังคับให้เครื่องเล่นใช้การวางแนวแนวนอน';
 
   @override
-  String get remember_player_volume => 'Remember volume';
+  String get remember_player_volume => 'จำระดับเสียง';
 
   @override
   String get remember_player_volume_subtitle =>
-      'Start each episode at the volume the last one ended with.';
+      'เริ่มแต่ละตอนที่ระดับเสียงเดียวกับตอนก่อนหน้าที่ใช้ล่าสุด';
 
   @override
-  String get remember_player_brightness => 'Remember brightness';
+  String get remember_player_brightness => 'จำความสว่าง';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
@@ -2586,65 +2595,65 @@ class AppLocalizationsTh extends AppLocalizations {
   String get app_lock => 'ล็อกแอป';
 
   @override
-  String get app_lock_delay => 'Lock after';
+  String get app_lock_delay => 'ล็อกหลังจาก';
 
   @override
-  String get app_lock_delay_immediately => 'Leaving the app';
+  String get app_lock_delay_immediately => 'เมื่อออกจากแอป';
 
   @override
   String app_lock_delay_minutes(int n) {
-    return '$n min away';
+    return 'ไม่อยู่ $n นาที';
   }
 
   @override
-  String get app_lock_delay_launch_only => 'Only when the app starts';
+  String get app_lock_delay_launch_only => 'เฉพาะตอนเปิดแอป';
 
   @override
-  String get secure_screen => 'Secure screen';
+  String get secure_screen => 'หน้าจอปลอดภัย';
 
   @override
   String get secure_screen_subtitle =>
-      'Hide the app from the app switcher, and on Android from screenshots and screen recordings.';
+      'ซ่อนแอปในตัวสลับแอป และบน Android จะป้องกันการแคปหน้าจอและการบันทึกหน้าจอ';
 
   @override
-  String get secure_screen_never => 'Never';
+  String get secure_screen_never => 'ไม่เลย';
 
   @override
-  String get secure_screen_incognito => 'In incognito mode';
+  String get secure_screen_incognito => 'ในโหมดไม่ระบุตัวตน';
 
   @override
-  String get secure_screen_always => 'Always';
+  String get secure_screen_always => 'เสมอ';
 
   @override
-  String get background_work => 'Background work';
+  String get background_work => 'งานเบื้องหลัง';
 
   @override
-  String get background_work_in_progress => 'Working…';
+  String get background_work_in_progress => 'กำลังดำเนินการ…';
 
   @override
-  String get background_downloading => 'Downloading';
+  String get background_downloading => 'กำลังดาวน์โหลด';
 
   @override
-  String get background_updating_library => 'Updating library';
+  String get background_updating_library => 'กำลังอัพเดทชั้นหนังสือ';
 
   @override
-  String get background_restoring => 'Restoring backup';
+  String get background_restoring => 'กำลังกู้คืนข้อมูลสำรอง';
 
   @override
-  String get background_syncing => 'Syncing';
+  String get background_syncing => 'กำลังซิงค์';
 
   @override
-  String get background_cancel_downloads => 'Cancel downloads';
+  String get background_cancel_downloads => 'ยกเลิกการดาวน์โหลด';
 
   @override
-  String get background_stop_update => 'Stop update';
+  String get background_stop_update => 'หยุดการอัพเดท';
 
   @override
-  String get hide_notification_content => 'Hide notification content';
+  String get hide_notification_content => 'ซ่อนเนื้อหาการแจ้งเตือน';
 
   @override
   String get hide_notification_content_subtitle =>
-      'Notifications say what the app is doing without naming series or chapters.';
+      'การแจ้งเตือนจะบอกว่าแอปกำลังทำอะไรอยู่ โดยไม่ระบุชื่อเรื่องหรือตอน';
 
   @override
   String get require_biometric_or_device_credential =>
@@ -2677,19 +2686,19 @@ class AppLocalizationsTh extends AppLocalizations {
   String get brightness => 'ความสว่าง';
 
   @override
-  String get video_filters => 'Video filters';
+  String get video_filters => 'ตัวกรองวิดีโอ';
 
   @override
-  String get video_filter_contrast => 'Contrast';
+  String get video_filter_contrast => 'คอนทราสต์';
 
   @override
-  String get video_filter_saturation => 'Saturation';
+  String get video_filter_saturation => 'ความเข้ม';
 
   @override
-  String get video_filter_gamma => 'Gamma';
+  String get video_filter_gamma => 'แกมมา';
 
   @override
-  String get video_filter_hue => 'Hue';
+  String get video_filter_hue => 'เฉดสี';
 
   @override
   String get volume => 'ระดับเสียง';
@@ -2973,11 +2982,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get split_wide_pages => 'แบ่งหน้าคู่';
 
   @override
-  String get split_tall_images => 'Split tall images';
+  String get split_tall_images => 'แบ่งรูปภาพที่สูงมาก';
 
   @override
   String get split_tall_images_subtitle =>
-      'Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.';
+      'เว็บตูน: แสดงรูปภาพที่สูงมากเป็นส่วน ๆ ถอดรหัสทีละส่วนเพื่อใช้หน่วยความจำน้อยลง ไม่ทำงานร่วมกับการตัดขอบ';
 
   @override
   String get dual_page_invert => 'สลับหน้าคู่ที่ถูกแบ่ง';
@@ -3609,23 +3618,23 @@ class AppLocalizationsTh extends AppLocalizations {
       'ข้ามการอัปเดตตามกำหนดเวลาเมื่อใช้ข้อมูลมือถือ';
 
   @override
-  String get library_update_restrictions => 'Skip when updating';
+  String get library_update_restrictions => 'ข้ามเมื่ออัพเดท';
 
   @override
-  String get library_update_skip_completed => 'Completed series';
+  String get library_update_skip_completed => 'เรื่องที่จบแล้ว';
 
   @override
-  String get library_update_skip_unread => 'Series with unread chapters';
+  String get library_update_skip_unread => 'เรื่องที่มีตอนที่ยังไม่ได้อ่าน';
 
   @override
-  String get library_update_skip_not_started => 'Series not started';
+  String get library_update_skip_not_started => 'เรื่องที่ยังไม่ได้เริ่มอ่าน';
 
   @override
   String get library_update_restrictions_subtitle =>
-      'Applies to every library update. Categories set to skip updates are also left out when the whole library is updated.';
+      'มีผลกับการอัพเดทชั้นหนังสือทุกครั้ง หมวดหมู่ที่ตั้งให้ข้ามการอัพเดทจะถูกข้ามเมื่ออัพเดทชั้นหนังสือทั้งหมดด้วย';
 
   @override
-  String get library_update_restrictions_none => 'None';
+  String get library_update_restrictions_none => 'ไม่มี';
 
   @override
   String get padding => 'ระยะขอบ';

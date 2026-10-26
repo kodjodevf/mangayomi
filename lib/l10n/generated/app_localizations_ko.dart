@@ -481,6 +481,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get about => '정보';
 
   @override
+  String get open_source_licenses => '오픈 소스 라이선스';
+
+  @override
+  String get open_source_licenses_subtitle => 'Mangayomi를 구성하는 패키지와 각 라이선스';
+
+  @override
+  String get open_source_licenses_empty => '라이선스 정보가 없습니다.';
+
+  @override
   String get help => '도움말';
 
   @override
@@ -655,53 +664,52 @@ class AppLocalizationsKo extends AppLocalizations {
   String get delete_download_after_reading => '읽은 후 다운로드 삭제';
 
   @override
-  String get delete_after_reading_slot => 'Delete which chapter';
+  String get delete_after_reading_slot => '삭제할 화';
 
   @override
-  String get delete_after_reading_last => 'The chapter just read';
+  String get delete_after_reading_last => '방금 읽은 화';
 
   @override
   String delete_after_reading_nth(int n) {
-    return '$n chapters back';
+    return '$n화 전';
   }
 
   @override
   String get delete_after_reading_slot_subtitle =>
-      'Keeping a few read chapters lets you go back to them offline.';
+      '읽은 화를 몇 개 남겨 두면 오프라인에서도 다시 볼 수 있습니다.';
 
   @override
-  String get delete_bookmarked_after_reading =>
-      'Also delete bookmarked chapters';
+  String get delete_bookmarked_after_reading => '북마크한 화도 함께 삭제';
 
   @override
-  String get auto_download => 'Auto download';
+  String get auto_download => '자동 다운로드';
 
   @override
-  String get download_new_chapters => 'Download new chapters';
+  String get download_new_chapters => '새 화 다운로드';
 
   @override
   String get download_new_chapters_subtitle =>
-      'After a library update, queue the new unread chapters of series already in the library.';
+      '보관함을 업데이트한 후, 보관함에 있는 작품의 새 안 읽은 화를 다운로드 대기열에 추가합니다.';
 
   @override
-  String get download_new_chapters_included => 'Only these categories';
+  String get download_new_chapters_included => '이 카테고리만';
 
   @override
-  String get download_new_chapters_excluded => 'Except these categories';
+  String get download_new_chapters_excluded => '이 카테고리 제외';
 
   @override
-  String get download_new_chapters_all_categories => 'All categories';
+  String get download_new_chapters_all_categories => '모든 카테고리';
 
   @override
-  String get download_ahead => 'Download ahead while reading';
+  String get download_ahead => '읽는 중 미리 다운로드';
 
   @override
   String get download_ahead_subtitle =>
-      'While reading a downloaded chapter of a series in the library, download the next unread ones.';
+      '보관함에 있는 작품의 다운로드된 화를 읽는 동안, 다음 안 읽은 화를 다운로드합니다.';
 
   @override
   String download_ahead_count(int n) {
-    return 'Next $n chapters';
+    return '다음 $n화';
   }
 
   @override
@@ -1622,21 +1630,20 @@ class AppLocalizationsKo extends AppLocalizations {
   String get mark_duplicate_chapters_read => '중복 화 번호를 읽은 상태로 표시';
 
   @override
-  String get skip_read_chapters => 'Skip read chapters';
+  String get skip_read_chapters => '읽은 화 건너뛰기';
 
   @override
-  String get skip_read_chapters_subtitle =>
-      'Next and previous chapter go past the ones already read.';
+  String get skip_read_chapters_subtitle => '다음 화와 이전 화로 이동할 때 이미 읽은 화를 건너뜁니다.';
 
   @override
-  String get skip_filtered_chapters => 'Skip filtered chapters';
+  String get skip_filtered_chapters => '필터링된 화 건너뛰기';
 
   @override
-  String get skip_duplicate_chapters => 'Skip duplicate chapters';
+  String get skip_duplicate_chapters => '중복 화 건너뛰기';
 
   @override
   String get skip_duplicate_chapters_subtitle =>
-      'Read one copy of each chapter number, from the same scanlator when there is one.';
+      '화 번호마다 한 편만 읽습니다. 가능하면 같은 번역팀의 판본을 읽습니다.';
 
   @override
   String get default_skip_intro_length => '기본 인트로 건너뛰기 시간';
@@ -2238,11 +2245,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get subtitle_delay => '지연 (ms)';
 
   @override
-  String get audio_delay => 'Audio delay (ms)';
+  String get audio_delay => '오디오 지연 (ms)';
 
   @override
   String get audio_delay_subtitle =>
-      'Plays the sound later (positive) or earlier (negative) than the picture. Kept from one episode to the next.';
+      '소리를 화면보다 늦게(양수) 또는 빠르게(음수) 재생합니다. 다음 에피소드에도 유지됩니다.';
 
   @override
   String get subtitle_speed => '속도';
@@ -2492,14 +2499,14 @@ class AppLocalizationsKo extends AppLocalizations {
   String get forceLandscapeModeSubtitle => '플레이어에서 가로 방향을 강제합니다.';
 
   @override
-  String get remember_player_volume => 'Remember volume';
+  String get remember_player_volume => '음량 기억';
 
   @override
   String get remember_player_volume_subtitle =>
-      'Start each episode at the volume the last one ended with.';
+      '각 에피소드를 이전 에피소드가 끝났을 때의 음량으로 시작합니다.';
 
   @override
-  String get remember_player_brightness => 'Remember brightness';
+  String get remember_player_brightness => '밝기 기억';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
@@ -2538,65 +2545,65 @@ class AppLocalizationsKo extends AppLocalizations {
   String get app_lock => '앱 잠금';
 
   @override
-  String get app_lock_delay => 'Lock after';
+  String get app_lock_delay => '잠금 시점';
 
   @override
-  String get app_lock_delay_immediately => 'Leaving the app';
+  String get app_lock_delay_immediately => '앱을 나갈 때';
 
   @override
   String app_lock_delay_minutes(int n) {
-    return '$n min away';
+    return '$n분 동안 자리 비움';
   }
 
   @override
-  String get app_lock_delay_launch_only => 'Only when the app starts';
+  String get app_lock_delay_launch_only => '앱을 시작할 때만';
 
   @override
-  String get secure_screen => 'Secure screen';
+  String get secure_screen => '보안 화면';
 
   @override
   String get secure_screen_subtitle =>
-      'Hide the app from the app switcher, and on Android from screenshots and screen recordings.';
+      '앱 전환 화면에서 앱을 숨기고, Android에서는 스크린샷과 화면 녹화도 막습니다.';
 
   @override
-  String get secure_screen_never => 'Never';
+  String get secure_screen_never => '사용 안 함';
 
   @override
-  String get secure_screen_incognito => 'In incognito mode';
+  String get secure_screen_incognito => '시크릿 모드에서';
 
   @override
-  String get secure_screen_always => 'Always';
+  String get secure_screen_always => '항상';
 
   @override
-  String get background_work => 'Background work';
+  String get background_work => '백그라운드 작업';
 
   @override
-  String get background_work_in_progress => 'Working…';
+  String get background_work_in_progress => '작업 중…';
 
   @override
-  String get background_downloading => 'Downloading';
+  String get background_downloading => '다운로드 중';
 
   @override
-  String get background_updating_library => 'Updating library';
+  String get background_updating_library => '보관함 업데이트 중';
 
   @override
-  String get background_restoring => 'Restoring backup';
+  String get background_restoring => '백업 복원 중';
 
   @override
-  String get background_syncing => 'Syncing';
+  String get background_syncing => '동기화 중';
 
   @override
-  String get background_cancel_downloads => 'Cancel downloads';
+  String get background_cancel_downloads => '다운로드 취소';
 
   @override
-  String get background_stop_update => 'Stop update';
+  String get background_stop_update => '업데이트 중지';
 
   @override
-  String get hide_notification_content => 'Hide notification content';
+  String get hide_notification_content => '알림 내용 숨기기';
 
   @override
   String get hide_notification_content_subtitle =>
-      'Notifications say what the app is doing without naming series or chapters.';
+      '알림에 작품이나 화 이름 없이 앱이 하는 작업만 표시합니다.';
 
   @override
   String get require_biometric_or_device_credential =>
@@ -2629,19 +2636,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get brightness => '밝기';
 
   @override
-  String get video_filters => 'Video filters';
+  String get video_filters => '비디오 필터';
 
   @override
-  String get video_filter_contrast => 'Contrast';
+  String get video_filter_contrast => '대비';
 
   @override
-  String get video_filter_saturation => 'Saturation';
+  String get video_filter_saturation => '채도';
 
   @override
-  String get video_filter_gamma => 'Gamma';
+  String get video_filter_gamma => '감마';
 
   @override
-  String get video_filter_hue => 'Hue';
+  String get video_filter_hue => '색조';
 
   @override
   String get volume => '볼륨';
@@ -2917,11 +2924,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get split_wide_pages => '넓은 페이지 분할';
 
   @override
-  String get split_tall_images => 'Split tall images';
+  String get split_tall_images => '긴 이미지 나누기';
 
   @override
   String get split_tall_images_subtitle =>
-      'Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.';
+      '웹툰: 매우 긴 이미지를 조각으로 나누어 한 번에 하나씩 디코딩해 메모리를 적게 사용합니다. \'테두리 자르기\'를 사용할 때는 적용되지 않습니다.';
 
   @override
   String get dual_page_invert => '잘린 페이지 반전';
@@ -3553,23 +3560,23 @@ class AppLocalizationsKo extends AppLocalizations {
       '모바일 데이터 사용 중에는 예약된 업데이트를 건너뜁니다.';
 
   @override
-  String get library_update_restrictions => 'Skip when updating';
+  String get library_update_restrictions => '업데이트 시 건너뛰기';
 
   @override
-  String get library_update_skip_completed => 'Completed series';
+  String get library_update_skip_completed => '완결된 작품';
 
   @override
-  String get library_update_skip_unread => 'Series with unread chapters';
+  String get library_update_skip_unread => '안 읽은 화가 있는 작품';
 
   @override
-  String get library_update_skip_not_started => 'Series not started';
+  String get library_update_skip_not_started => '시작하지 않은 작품';
 
   @override
   String get library_update_restrictions_subtitle =>
-      'Applies to every library update. Categories set to skip updates are also left out when the whole library is updated.';
+      '모든 보관함 업데이트에 적용됩니다. 업데이트 건너뛰기로 설정된 카테고리는 전체 보관함을 업데이트할 때도 제외됩니다.';
 
   @override
-  String get library_update_restrictions_none => 'None';
+  String get library_update_restrictions_none => '없음';
 
   @override
   String get padding => '여백';
