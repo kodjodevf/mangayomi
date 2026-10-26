@@ -4,6 +4,10 @@ on:
   workflow_call:
   workflow_dispatch: # Allow manual triggering of this workflow
 
+permissions:
+  # The job commits the regenerated source list and pushes it.
+  contents: write
+
 jobs:
   update-source:
     runs-on: ubuntu-latest

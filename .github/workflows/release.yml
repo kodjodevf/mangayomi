@@ -524,5 +524,8 @@ jobs:
           allowUpdates: true
 
   ios-source-build:
+    permissions:
+      # The called workflow pushes the regenerated source list.
+      contents: write
     needs: publish-release
     uses: ./.github/workflows/update_sideloading_source.yml
