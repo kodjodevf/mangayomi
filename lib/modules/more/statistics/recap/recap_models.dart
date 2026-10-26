@@ -123,7 +123,8 @@ class StatusWindowData {
   final Epithet epithet;
   final List<Skill> skills;
 
-  /// Top 5 by seconds, then chapters read.
+  /// Every read series by how long you've been reading it ([bondMs]), then
+  /// chapters, then time.
   final List<RecapSeries> bonded;
 
   /// 24 buckets, local hour.

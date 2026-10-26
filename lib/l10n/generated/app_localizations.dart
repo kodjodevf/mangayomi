@@ -955,6 +955,12 @@ abstract class AppLocalizations {
   /// **'{hours} hours spent with {series}. Bond level: MAX.'**
   String recapNotifyTop(Object hours, Object series);
 
+  /// No description provided for @recapNotifyBond.
+  ///
+  /// In en, this message translates to:
+  /// **'{span} with {series}. Bond level: MAX.'**
+  String recapNotifyBond(Object series, Object span);
+
   /// No description provided for @recapNotifyEmpty.
   ///
   /// In en, this message translates to:
@@ -1138,14 +1144,62 @@ abstract class AppLocalizations {
   /// No description provided for @recapBondDetail.
   ///
   /// In en, this message translates to:
+  /// **'{span} together · {count} {units}'**
+  String recapBondDetail(Object count, Object span, Object units);
+
+  /// No description provided for @recapBondDetailHours.
+  ///
+  /// In en, this message translates to:
   /// **'{hours} hours together · {count} {units}'**
-  String recapBondDetail(Object count, Object hours, Object units);
+  String recapBondDetailHours(Object count, Object hours, Object units);
+
+  /// No description provided for @recapBondYears.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 year} other{{count} years}}'**
+  String recapBondYears(num count);
+
+  /// No description provided for @recapBondMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month} other{{count} months}}'**
+  String recapBondMonths(num count);
+
+  /// No description provided for @recapBondDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day} other{{count} days}}'**
+  String recapBondDays(num count);
+
+  /// No description provided for @recapBondYearsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}y'**
+  String recapBondYearsShort(Object count);
+
+  /// No description provided for @recapBondMonthsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}mo'**
+  String recapBondMonthsShort(Object count);
+
+  /// No description provided for @recapBondDaysShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}d'**
+  String recapBondDaysShort(Object count);
 
   /// No description provided for @recapBondedEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No bonds yet. The series you spend the most time with appear here.'**
+  /// **'No bonds yet. The series you\'ve read the longest appear here.'**
   String get recapBondedEmpty;
+
+  /// No description provided for @recapBondedViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'VIEW ALL {count}'**
+  String recapBondedViewAll(Object count);
 
   /// No description provided for @recapCycleTitle.
   ///
@@ -1536,6 +1590,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} {units} together. No one else came close.'**
   String recapStripTopUnits(Object count, Object units);
+
+  /// No description provided for @recapStripTopSpan.
+  ///
+  /// In en, this message translates to:
+  /// **'{span} together. No one else came close.'**
+  String recapStripTopSpan(Object span);
 
   /// No description provided for @recapStripBiggestDayLabel.
   ///

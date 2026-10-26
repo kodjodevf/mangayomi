@@ -63,7 +63,7 @@ class EpisodeListScreen extends ConsumerWidget {
                       context.push(episodeLocation(itemType, episode.month)),
                 ),
               _EpisodeTile(
-                coverIds: [for (final s in data.prologue.bonded) s.id],
+                coverIds: [for (final s in data.prologue.bonded.take(5)) s.id],
                 title: l10n.recapPrologue,
                 teaser: since == null
                     ? l10n.recapPrologueTeaserUndated

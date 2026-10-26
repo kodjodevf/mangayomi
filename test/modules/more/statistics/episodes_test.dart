@@ -66,6 +66,10 @@ StatusWindowData _allTime() => deriveStatusWindow(
         genres: const ['Action'],
         source: 'Asura Scans',
         dateAdded: DateTime(2023, 3, 4).millisecondsSinceEpoch,
+        // Series 3 has the only known last read: the longest bond.
+        lastReadMs: i == 3
+            ? DateTime(2026, 10, 1).millisecondsSinceEpoch
+            : null,
         chaptersRead: 40 + i,
         seconds: 3600 * (12 - i),
       ),
@@ -273,6 +277,23 @@ void main() {
     expect(find.textContaining('2023'), findsWidgets);
     expect(find.byType(HoursPanel), findsOneWidget);
     expect(find.textContaining('vs previous'), findsNothing);
+  });
+
+  testWidgets('the prologue #1 is the longest bond', (tester) async {
+    await _pump(tester, '/statistics/episodes/prologue?type=manga');
+
+    final panel = find.byType(TopSeriesPanel);
+    expect(
+      find.descendant(of: panel, matching: find.text('SERIES 3')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: panel,
+        matching: find.textContaining('3 years together'),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('bad month param returns to list', (tester) async {

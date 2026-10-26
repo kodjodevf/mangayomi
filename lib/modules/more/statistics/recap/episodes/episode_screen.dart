@@ -18,6 +18,7 @@ import 'package:mangayomi/modules/more/statistics/recap/episodes/share_panel.dar
 import 'package:mangayomi/modules/more/statistics/recap/episodes/strip_theme.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_fonts.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_format.dart';
+import 'package:mangayomi/modules/more/statistics/recap/recap_math.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_models.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_providers.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
@@ -223,6 +224,7 @@ class EpisodeScreen extends ConsumerWidget {
     final l10n = context.l10n;
     final type = itemType.name;
     final since = data.since;
+    // Your #1 of all time is the series you've been reading the longest.
     final top = data.bonded.firstOrNull;
     // The oldest monthly Episode follows the Prologue.
     final first = months.lastOrNull;
@@ -256,7 +258,7 @@ class EpisodeScreen extends ConsumerWidget {
             text: text,
           ),
         ),
-      if (top != null) ('top', _topPanel(context, top, text)),
+      if (top != null) ('top', _topPanel(context, top, text, bond: true)),
       if (data.skills.isNotEmpty)
         (
           'genres',
@@ -286,11 +288,19 @@ class EpisodeScreen extends ConsumerWidget {
     ];
   }
 
-  Widget _topPanel(BuildContext context, RecapSeries top, StripText text) {
+  /// With [bond], the caption says how long you've read [top] when known.
+  Widget _topPanel(
+    BuildContext context,
+    RecapSeries top,
+    StripText text, {
+    bool bond = false,
+  }) {
     final l10n = context.l10n;
     return TopSeriesPanel(
       series: top,
-      caption: top.seconds > 0
+      caption: bond && bondMs(top) > 0
+          ? l10n.recapStripTopSpan(bondSpan(context, top))
+          : top.seconds > 0
           ? l10n.recapStripTopHours(tenthHours(context, top.seconds))
           : l10n.recapStripTopUnits(
               formatCount(context, top.chaptersRead),

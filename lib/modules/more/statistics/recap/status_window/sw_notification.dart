@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_format.dart';
+import 'package:mangayomi/modules/more/statistics/recap/recap_math.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_models.dart';
 import 'package:mangayomi/modules/more/statistics/recap/status_window/sw_theme.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -24,7 +25,7 @@ class SwNotification extends StatelessWidget {
     final l10n = context.l10n;
     final type = itemType.name;
     final hours = wholeHours(data.totalSeconds);
-    final top = data.bonded.isEmpty ? null : data.bonded.first;
+    final top = data.bonded.firstOrNull;
     final candidates = [
       if (hours > 0) l10n.recapNotifyHours(formatCount(context, hours), type),
       if (data.units > 0)
@@ -35,7 +36,9 @@ class SwNotification extends StatelessWidget {
         ),
       if (data.libraryCount > 0)
         l10n.recapNotifyLibrary(formatCount(context, data.libraryCount)),
-      if (top != null && wholeHours(top.seconds) > 0)
+      if (top != null && bondMs(top) > 0)
+        l10n.recapNotifyBond(bondSpan(context, top), top.name)
+      else if (top != null && wholeHours(top.seconds) > 0)
         l10n.recapNotifyTop(tenthHours(context, top.seconds), top.name),
     ];
     final message = candidates.isEmpty

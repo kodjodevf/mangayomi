@@ -5,7 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_cover.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_format.dart';
+import 'package:mangayomi/modules/more/statistics/recap/recap_math.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_models.dart';
+import 'package:mangayomi/modules/more/statistics/recap/status_window/sw_bonded_list.dart';
 import 'package:mangayomi/modules/more/statistics/recap/status_window/sw_theme.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:shiori/shiori.dart';
@@ -13,8 +15,8 @@ import 'package:shiori/shiori.dart';
 void openSeries(BuildContext context, int id) =>
     context.push('/manga-reader/detail', extra: id);
 
-/// The series you spent the most time with: #1 large over its own blurred
-/// cover, then the next four.
+/// The series you've been reading the longest: #1 large over its own
+/// blurred cover, then the next four, then a way to the full list.
 class SwBonded extends StatelessWidget {
   const SwBonded({
     super.key,
@@ -23,8 +25,11 @@ class SwBonded extends StatelessWidget {
     required this.text,
   });
 
+  /// Every read series, longest bond first.
   final List<RecapSeries> bonded;
   final ItemType itemType;
+
+  static const _shown = 5;
   final SwText text;
 
   @override
@@ -43,13 +48,32 @@ class SwBonded extends StatelessWidget {
                   Row(
                     spacing: ShioriSpace.s8,
                     children: [
-                      for (var i = 1; i < 5; i++)
+                      for (var i = 1; i < _shown; i++)
                         Expanded(
                           child: i < bonded.length
                               ? _small(context, bonded[i])
                               : const SizedBox(),
                         ),
                     ],
+                  ),
+                if (bonded.length > _shown)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () =>
+                          context.push(bondedListLocation(itemType)),
+                      style: TextButton.styleFrom(
+                        foregroundColor: SwColors.cyan,
+                      ),
+                      child: recapIconText(
+                        l10n.recapBondedViewAll(
+                          formatCount(context, bonded.length),
+                        ),
+                        Symbols.arrow_forward_rounded,
+                        text.label.copyWith(color: SwColors.cyan),
+                        trailing: true,
+                      ),
+                    ),
                   ),
               ],
             ),
@@ -120,14 +144,7 @@ class SwBonded extends StatelessWidget {
                           ),
                           const SizedBox(height: ShioriSpace.s4),
                           Text(
-                            l10n.recapBondDetail(
-                              formatCount(context, series.chaptersRead),
-                              tenthHours(context, series.seconds),
-                              l10n.recapUnits(
-                                series.chaptersRead,
-                                itemType.name,
-                              ),
-                            ),
+                            bondDetail(context, series, itemType),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: text.body,
@@ -180,7 +197,7 @@ class SwBonded extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      '${tenthHours(context, series.seconds)}h',
+                      _short(context, series),
                       textAlign: TextAlign.center,
                       style: text.small.copyWith(color: SwColors.bright),
                     ),
@@ -193,4 +210,32 @@ class SwBonded extends StatelessWidget {
       ),
     );
   }
+}
+
+/// How long you've been reading [series], or its hours when the dates to
+/// tell are missing.
+String bondDetail(BuildContext context, RecapSeries series, ItemType itemType) {
+  final l10n = context.l10n;
+  final count = formatCount(context, series.chaptersRead);
+  final units = l10n.recapUnits(series.chaptersRead, itemType.name);
+  if (bondMs(series) == 0) {
+    return l10n.recapBondDetailHours(
+      count,
+      tenthHours(context, series.seconds),
+      units,
+    );
+  }
+  return l10n.recapBondDetail(count, bondSpan(context, series), units);
+}
+
+/// [bondDetail] for a small tile: "5y", "7mo", or "9.4h" without dates.
+String _short(BuildContext context, RecapSeries series) {
+  final l10n = context.l10n;
+  if (bondMs(series) == 0) return '${tenthHours(context, series.seconds)}h';
+  final span = bondLength(series);
+  return switch (span.unit) {
+    BondUnit.years => l10n.recapBondYearsShort(span.count),
+    BondUnit.months => l10n.recapBondMonthsShort(span.count),
+    BondUnit.days => l10n.recapBondDaysShort(span.count),
+  };
 }

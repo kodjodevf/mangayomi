@@ -11,6 +11,7 @@ import 'package:mangayomi/modules/more/statistics/recap/recap_math.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_models.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_providers.dart';
 import 'package:mangayomi/modules/more/statistics/recap/status_window/status_window_view.dart';
+import 'package:mangayomi/modules/more/statistics/recap/status_window/sw_bonded_list.dart';
 import 'package:mangayomi/modules/more/statistics/statistics_provider.dart';
 import 'package:mangayomi/modules/more/statistics/statistics_screen.dart';
 import 'package:mangayomi/providers/reader_state_provider.dart';
@@ -95,6 +96,7 @@ Future<void> _pump(
   StatusWindowData? data,
   double width = 420,
   Manga? Function(int id)? manga,
+  Widget home = const StatisticsScreen(),
 }) async {
   tester.view.physicalSize = Size(width, 5200);
   tester.view.devicePixelRatio = 1;
@@ -132,7 +134,7 @@ Future<void> _pump(
         ),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: const StatisticsScreen(),
+        home: home,
       ),
     ),
   );
@@ -143,14 +145,105 @@ AppLocalizations _l10n(WidgetTester tester) =>
     AppLocalizations.of(tester.element(find.byType(StatisticsScreen)))!;
 
 void main() {
+  testWidgets('bonded tiles show how long you have read each series', (
+    tester,
+  ) async {
+    int ms(int y, int m, int d) => DateTime(y, m, d).millisecondsSinceEpoch;
+    await _pump(
+      tester,
+      data: deriveStatusWindow(
+        favs: [
+          RecapSeries(
+            id: 1,
+            name: 'Nano Machine',
+            dateAdded: ms(2021, 3, 1),
+            lastReadMs: ms(2026, 10, 1),
+            chaptersRead: 100,
+          ),
+          RecapSeries(
+            id: 2,
+            name: 'Binge',
+            dateAdded: ms(2026, 2, 10),
+            lastReadMs: ms(2026, 10, 1),
+            chaptersRead: 300,
+          ),
+        ],
+        units: 400,
+        clearedCount: 0,
+        clockMs: const [],
+        firstLogMs: null,
+        maxDayCompletions: 0,
+        now: DateTime(2026, 10, 25),
+      ),
+    );
+
+    expect(find.textContaining('5 years together'), findsOneWidget);
+    expect(find.text('7mo'), findsOneWidget);
+  });
+
+  testWidgets('without reading dates bonded tiles fall back to hours', (
+    tester,
+  ) async {
+    // _veteranData has no last-read dates, like a library restored before
+    // the restore fix.
+    await _pump(tester);
+
+    expect(find.textContaining('hours together'), findsOneWidget);
+    expect(find.textContaining('together'), findsOneWidget);
+    // Equal (unknown) bonds rank by chapters: ids 30, then 29 to 26.
+    expect(find.text('2h'), findsOneWidget);
+  });
+
   testWidgets('bonded series without a cover show their titles', (
     tester,
   ) async {
     await _pump(tester, manga: (id) => _coverless(id, 'Cover $id'));
 
     // #2 to #5 are small tiles whose only text would otherwise be hours.
-    expect(find.text('Cover 4'), findsOneWidget);
+    expect(find.text('Cover 27'), findsOneWidget);
   });
+  testWidgets('bonded offers every series past the top five', (tester) async {
+    await _pump(tester);
+
+    expect(find.textContaining('VIEW ALL 30'), findsOneWidget);
+  });
+
+  testWidgets('five bonded series or fewer have nothing more to view', (
+    tester,
+  ) async {
+    final five = _veteranData();
+    await _pump(
+      tester,
+      data: deriveStatusWindow(
+        favs: five.bonded.take(5).toList(),
+        units: 100,
+        clearedCount: 0,
+        clockMs: const [],
+        firstLogMs: null,
+        maxDayCompletions: 0,
+        now: DateTime(2026, 10, 25),
+      ),
+    );
+
+    expect(find.textContaining('VIEW ALL'), findsNothing);
+  });
+
+  testWidgets('the bonded list ranks every series', (tester) async {
+    await _pump(
+      tester,
+      home: const SwBondedListScreen(itemType: ItemType.manga),
+    );
+
+    expect(find.text('#1'), findsOneWidget);
+    expect(find.text('#30'), findsOneWidget);
+    // No dates, so chapters decide: series 29 first, series 0 last.
+    expect(
+      tester.getTopLeft(find.text('Return of Series 29')).dy,
+      lessThan(tester.getTopLeft(find.text('Return of Series 0')).dy),
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('shows level 97 and 707 to next', (tester) async {
     await _pump(tester);
 

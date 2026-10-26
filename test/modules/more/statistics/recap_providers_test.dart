@@ -120,7 +120,8 @@ void main() {
     expect(data.skills.first.genre, 'Action');
     // Clock comes from the log: every row counted once.
     expect(data.hourHistogram.fold<int>(0, (a, b) => a + b), _logRows);
-    expect(data.bonded, hasLength(5));
+    // Every read series, for the full list.
+    expect(data.bonded, hasLength(_series));
   });
 
   test('episodeList lists 3 months newest first', () async {
@@ -203,4 +204,33 @@ void main() {
     expect(data.hourHistogram[3], 400);
     expect(data.hourHistogram.fold<int>(0, (a, b) => a + b), 400);
   });
+
+  test(
+    'without a History date a bond runs to the newest read chapter',
+    () async {
+      // Restores before the restore fix left History dated 1970; a read
+      // chapter's upload date is the next best sign of when it was read.
+      final upload = DateTime(2026, 10, 1).millisecondsSinceEpoch;
+      final later = DateTime(2026, 10, 20).millisecondsSinceEpoch;
+      final id = mangaIds[450];
+      await database.writeTxn(() async {
+        final chapters = await database.chapters
+            .filter()
+            .mangaIdEqualTo(id)
+            .findAll();
+        for (final chapter in chapters) {
+          // Read chapters are the first half; an unread one came out later.
+          chapter.dateUpload = chapter.isRead! ? '$upload' : '$later';
+        }
+        await database.chapters.putAll(chapters);
+      });
+
+      final data = await container.read(
+        statusWindowProvider(itemType: ItemType.manga).future,
+      );
+
+      expect(data.bonded.first.id, id);
+      expect(data.bonded.first.lastReadMs, upload);
+    },
+  );
 }

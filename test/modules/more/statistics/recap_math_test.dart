@@ -12,6 +12,7 @@ RecapSeries _series(
   int? dateAdded,
   int chaptersRead = 0,
   int seconds = 0,
+  int? lastReadMs,
 }) => RecapSeries(
   id: id,
   name: name,
@@ -20,7 +21,10 @@ RecapSeries _series(
   dateAdded: dateAdded,
   chaptersRead: chaptersRead,
   seconds: seconds,
+  lastReadMs: lastReadMs,
 );
+
+int _ms(int y, int m, int d) => DateTime(y, m, d).millisecondsSinceEpoch;
 
 List<RecapSeries> _withGenre(String genre, int hits, {int total = 10}) => [
   for (var i = 0; i < total; i++)
@@ -340,11 +344,75 @@ void main() {
     expect(data.since, DateTime(2022, 6, 1));
     expect(data.totalSeconds, 700);
     expect(data.libraryCount, 4);
-    expect(data.bonded.map((s) => s.name), ['C', 'B', 'A']);
+    // No series has both dates, so every bond is as long: chapters decide.
+    expect(data.bonded.map((s) => s.name), ['B', 'A', 'C']);
     expect(data.hourHistogram[9], 2);
     expect(data.weekdayHistogram[0], 2);
     expect(_badge(data.badges, BadgeId.dawnCultivator).unlocked, isTrue);
     expect(_badge(data.badges, BadgeId.veteran).unlocked, isTrue);
+  });
+
+  group('bonded', () {
+    test('the longest bond comes first, not the most chapters', () {
+      final data = deriveStatusWindow(
+        favs: [
+          _series(
+            1,
+            name: 'Binge',
+            dateAdded: _ms(2025, 1, 10),
+            lastReadMs: _ms(2026, 10, 20),
+            chaptersRead: 300,
+            seconds: 90000,
+          ),
+          _series(
+            2,
+            name: 'Nano Machine',
+            dateAdded: _ms(2021, 3, 1),
+            lastReadMs: _ms(2026, 10, 1),
+            chaptersRead: 100,
+            seconds: 30000,
+          ),
+        ],
+        units: 400,
+        clearedCount: 0,
+        clockMs: const [],
+        firstLogMs: null,
+        maxDayCompletions: 0,
+        now: DateTime(2026, 10, 25),
+      );
+
+      expect(data.bonded.map((s) => s.name), ['Nano Machine', 'Binge']);
+    });
+
+    test('bondLength counts whole years, then months, then days', () {
+      RecapSeries span(int from, int to) =>
+          _series(1, dateAdded: from, lastReadMs: to);
+
+      expect(bondLength(span(_ms(2021, 3, 1), _ms(2026, 10, 1))), (
+        unit: BondUnit.years,
+        count: 5,
+      ));
+      expect(bondLength(span(_ms(2026, 2, 10), _ms(2026, 10, 1))), (
+        unit: BondUnit.months,
+        count: 7,
+      ));
+      expect(bondLength(span(_ms(2026, 9, 20), _ms(2026, 10, 1))), (
+        unit: BondUnit.days,
+        count: 11,
+      ));
+      expect(bondLength(span(_ms(2026, 10, 1), _ms(2026, 10, 1))), (
+        unit: BondUnit.days,
+        count: 1,
+      ));
+    });
+
+    test('a missing or 1970 last-read date counts as no bond yet', () {
+      // Old restores dated History from a 0 timestamp.
+      final added = _ms(2021, 3, 1);
+      expect(bondMs(_series(1, dateAdded: added, lastReadMs: 0)), 0);
+      expect(bondMs(_series(1, dateAdded: added)), 0);
+      expect(bondMs(_series(1, lastReadMs: added)), 0);
+    });
   });
 
   group('aggregateMonth', () {

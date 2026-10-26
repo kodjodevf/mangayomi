@@ -34,6 +34,7 @@ import 'package:mangayomi/modules/more/settings/player/player_decoder_screen.dar
 import 'package:mangayomi/modules/more/settings/player/player_overview_screen.dart';
 import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/statistics/recap/episodes/episode_routes.dart';
+import 'package:mangayomi/modules/more/statistics/recap/status_window/sw_bonded_list.dart';
 import 'package:mangayomi/modules/more/statistics/statistics_screen.dart';
 import 'package:mangayomi/modules/novel/novel_reader_view.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
@@ -247,6 +248,7 @@ class RouterNotifier extends ChangeNotifier {
     ),
     _genericRoute(name: "statistics", child: const StatisticsScreen()),
     ...episodeRoutes,
+    bondedListRoute,
     _genericRoute(name: "general", child: const GeneralScreen()),
     _genericRoute(name: "readerMode", child: const ReaderScreen()),
     _genericRoute<int>(

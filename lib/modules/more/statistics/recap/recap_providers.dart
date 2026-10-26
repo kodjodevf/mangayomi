@@ -104,6 +104,17 @@ Future<StatusWindowData> statusWindow(
     if (date != null && date > 0) lastRead[id] = max(lastRead[id] ?? 0, date);
   }
 
+  // History dated 1970 (restores before the restore fix) leaves no last
+  // read; the newest read chapter's upload date is the next best sign.
+  final now = DateTime.now().millisecondsSinceEpoch;
+  final uploads = await chapterRepository.newestReadUploadByFavoriteItemType(
+    itemType,
+  );
+  int? lastReadOrUpload(int id) {
+    final at = max(lastRead[id] ?? 0, min(uploads[id] ?? 0, now));
+    return at > 0 ? at : null;
+  }
+
   final cleared = await _clearedIds(itemType);
   final favs = [
     for (final manga in mangas)
@@ -111,7 +122,7 @@ Future<StatusWindowData> statusWindow(
         manga,
         chaptersRead: readCounts[manga.id] ?? 0,
         seconds: seconds[manga.id] ?? 0,
-        lastReadMs: lastRead[manga.id],
+        lastReadMs: lastReadOrUpload(manga.id!),
         cleared: cleared.contains(manga.id),
       ),
   ];

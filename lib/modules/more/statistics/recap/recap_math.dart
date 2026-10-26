@@ -262,6 +262,28 @@ int peakHour(List<int> hist) {
   return peak;
 }
 
+enum BondUnit { years, months, days }
+
+/// How long you've been reading [s]: from adding it to the last read.
+/// 0 without both dates; a 1970 last read (old restores) counts as none.
+int bondMs(RecapSeries s) {
+  final from = s.dateAdded;
+  final to = s.lastReadMs;
+  if (from == null || from <= 0 || to == null || to <= 0) return 0;
+  return max(0, to - from);
+}
+
+/// [bondMs] in whole years, else whole months, else days (at least one).
+({BondUnit unit, int count}) bondLength(RecapSeries s) {
+  final to = DateTime.fromMillisecondsSinceEpoch(s.lastReadMs ?? 0);
+  final from = to.subtract(Duration(milliseconds: bondMs(s)));
+  var months = (to.year - from.year) * 12 + to.month - from.month;
+  if (to.day < from.day) months--;
+  if (months >= 12) return (unit: BondUnit.years, count: months ~/ 12);
+  if (months >= 1) return (unit: BondUnit.months, count: months);
+  return (unit: BondUnit.days, count: max(1, to.difference(from).inDays));
+}
+
 StatusWindowData deriveStatusWindow({
   required List<RecapSeries> favs,
   required int units,
@@ -281,12 +303,13 @@ StatusWindowData deriveStatusWindow({
       ? null
       : DateTime.fromMillisecondsSinceEpoch(starts.reduce(min));
   final hours = hourHistogram(clockMs);
-  final bonded = favs.where((s) => s.seconds > 0 || s.chaptersRead > 0).toList()
+  final read = favs.where((s) => s.seconds > 0 || s.chaptersRead > 0);
+  final bonded = read.toList()
     ..sort((a, b) {
-      final bySeconds = b.seconds.compareTo(a.seconds);
-      return bySeconds != 0
-          ? bySeconds
-          : b.chaptersRead.compareTo(a.chaptersRead);
+      final byBond = bondMs(b).compareTo(bondMs(a));
+      if (byBond != 0) return byBond;
+      final byChapters = b.chaptersRead.compareTo(a.chaptersRead);
+      return byChapters != 0 ? byChapters : b.seconds.compareTo(a.seconds);
     });
 
   return StatusWindowData(
@@ -301,7 +324,7 @@ StatusWindowData deriveStatusWindow({
     readerClass: classify(favs),
     epithet: epithetFor(favs),
     skills: rankSkills(favs),
-    bonded: bonded.take(5).toList(),
+    bonded: bonded,
     hourHistogram: hours,
     weekdayHistogram: weekdayHistogram(clockMs),
     badges: badgesFor(

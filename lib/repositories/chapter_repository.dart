@@ -106,6 +106,26 @@ class ChapterRepository {
       .mangaIdProperty()
       .findAll();
 
+  /// Each favourite's newest read-chapter upload date, epoch milliseconds.
+  Future<Map<int, int>> newestReadUploadByFavoriteItemType(
+    ItemType itemType,
+  ) async {
+    final read = isar.chapters
+        .filter()
+        .manga((q) => q.favoriteEqualTo(true).itemTypeEqualTo(itemType))
+        .isReadEqualTo(true);
+    // Two property queries over the same filter return rows in the same order.
+    final ids = await read.mangaIdProperty().findAll();
+    final uploads = await read.dateUploadProperty().findAll();
+    final newest = <int, int>{};
+    for (var i = 0; i < ids.length; i++) {
+      final id = ids[i];
+      final upload = int.tryParse(uploads[i] ?? '') ?? 0;
+      if (id != null && upload > (newest[id] ?? 0)) newest[id] = upload;
+    }
+    return newest;
+  }
+
   int countByMangaIds(List<int> mangaIds) => isar.chapters
       .filter()
       .anyOf(mangaIds, (q, id) => q.mangaIdEqualTo(id))

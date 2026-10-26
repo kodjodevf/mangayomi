@@ -562,6 +562,11 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String recapNotifyBond(Object series, Object span) {
+    return '$span with $series. Bond level: MAX.';
+  }
+
+  @override
   String recapNotifyEmpty(String type) {
     String _temp0 = intl.Intl.selectLogic(type, {
       'anime': 'Watch an episode',
@@ -682,13 +687,71 @@ class AppLocalizationsId extends AppLocalizations {
   String get recapBondMax => 'BOND LV. MAX';
 
   @override
-  String recapBondDetail(Object count, Object hours, Object units) {
+  String recapBondDetail(Object count, Object span, Object units) {
+    return '$span together · $count $units';
+  }
+
+  @override
+  String recapBondDetailHours(Object count, Object hours, Object units) {
     return '$hours hours together · $count $units';
   }
 
   @override
+  String recapBondYears(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count years',
+      one: '1 year',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recapBondMonths(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months',
+      one: '1 month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recapBondDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recapBondYearsShort(Object count) {
+    return '${count}y';
+  }
+
+  @override
+  String recapBondMonthsShort(Object count) {
+    return '${count}mo';
+  }
+
+  @override
+  String recapBondDaysShort(Object count) {
+    return '${count}d';
+  }
+
+  @override
   String get recapBondedEmpty =>
-      'No bonds yet. The series you spend the most time with appear here.';
+      'No bonds yet. The series you\'ve read the longest appear here.';
+
+  @override
+  String recapBondedViewAll(Object count) {
+    return 'VIEW ALL $count';
+  }
 
   @override
   String get recapCycleTitle => 'CULTIVATION CYCLE';
@@ -967,6 +1030,11 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String recapStripTopUnits(Object count, Object units) {
     return '$count $units together. No one else came close.';
+  }
+
+  @override
+  String recapStripTopSpan(Object span) {
+    return '$span together. No one else came close.';
   }
 
   @override

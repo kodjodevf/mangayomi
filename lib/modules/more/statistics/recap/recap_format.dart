@@ -1,5 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:mangayomi/modules/more/statistics/recap/recap_math.dart';
+import 'package:mangayomi/modules/more/statistics/recap/recap_models.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 String formatCount(BuildContext context, num value) =>
     NumberFormat.decimalPattern(Localizations.localeOf(context).toString())
@@ -30,3 +33,14 @@ String monthLabel(BuildContext context, DateTime month) =>
 /// "Oct 12".
 String dayLabel(BuildContext context, DateTime day) =>
     DateFormat.MMMd(Localizations.localeOf(context).toString()).format(day);
+
+/// "5 years", "7 months" or "9 days": [bondLength] in words.
+String bondSpan(BuildContext context, RecapSeries series) {
+  final l10n = context.l10n;
+  final span = bondLength(series);
+  return switch (span.unit) {
+    BondUnit.years => l10n.recapBondYears(span.count),
+    BondUnit.months => l10n.recapBondMonths(span.count),
+    BondUnit.days => l10n.recapBondDays(span.count),
+  };
+}

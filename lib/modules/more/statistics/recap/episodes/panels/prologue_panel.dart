@@ -22,7 +22,7 @@ class ProloguePanel extends StatelessWidget {
       tagline: since == null
           ? l10n.recapStripPrologueUndated
           : l10n.recapStripPrologueSince(monthLabel(context, since)),
-      coverIds: [for (final s in data.bonded) s.id],
+      coverIds: [for (final s in data.bonded.take(5)) s.id],
       text: text,
     );
   }
