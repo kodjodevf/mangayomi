@@ -114,7 +114,9 @@ jobs:
           cache: true
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: Setup Java toolchain
         uses: actions/setup-java@v4
@@ -153,7 +155,9 @@ jobs:
           cache: true
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: Setup Java toolchain
         uses: actions/setup-java@v4
@@ -203,8 +207,9 @@ jobs:
           cache: true
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: stable
           targets: aarch64-apple-ios,x86_64-apple-ios
 
       - name: Install flutter_rust_bridge_codegen
@@ -241,7 +246,9 @@ jobs:
           cache: true
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: Install flutter_rust_bridge_codegen
         run: cargo install 'flutter_rust_bridge_codegen'
@@ -278,7 +285,9 @@ jobs:
           cache: true
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: Install flutter_rust_bridge_codegen
         run: cargo install 'flutter_rust_bridge_codegen'
@@ -320,7 +329,9 @@ jobs:
           cache: true
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: Install flutter_rust_bridge_codegen
         run: cargo install 'flutter_rust_bridge_codegen'

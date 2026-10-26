@@ -29,7 +29,9 @@ jobs:
           channel: "stable"
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: Setup Java toolchain (Only Android target)
         uses: actions/setup-java@v4
@@ -89,7 +91,9 @@ jobs:
           channel: "stable"
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: Setup Java toolchain (Only Android target)
         uses: actions/setup-java@v4
@@ -160,8 +164,9 @@ jobs:
           architecture: x64
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: stable
           targets: aarch64-apple-ios,x86_64-apple-ios
 
       - name: Setup Rust cache
@@ -220,7 +225,9 @@ jobs:
           channel: "stable"
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: flutter pub get
         run: flutter pub get
@@ -256,7 +263,9 @@ jobs:
           channel: "stable"
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: flutter pub get
         run: flutter pub get
@@ -316,7 +325,9 @@ jobs:
           channel: "stable"
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: flutter pub get
         run: flutter pub get
@@ -325,7 +336,7 @@ jobs:
         run: flutter build linux --release --verbose
 
       - name: Zip
-        uses: thedoctor0/zip-release@main
+        uses: thedoctor0/zip-release@0.7.6
         with:
           type: "zip"
           filename: Mangayomi-${{ github.ref_name }}-linux.zip
@@ -472,7 +483,9 @@ jobs:
           channel: "stable"
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: flutter pub get
         run: flutter pub get
