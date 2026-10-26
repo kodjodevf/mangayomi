@@ -10,25 +10,53 @@ void showEditLocalArchiveDialog(
   required Manga manga,
   required AppLocalizations l10n,
 }) {
-  final nameController = TextEditingController(text: manga.name ?? '');
-  final descriptionController = TextEditingController(
-    text: manga.description ?? '',
+  showDialog<void>(
+    context: context,
+    builder: (context) => _EditLocalArchiveDialog(manga: manga, l10n: l10n),
+  );
+}
+
+class _EditLocalArchiveDialog extends StatefulWidget {
+  final Manga manga;
+  final AppLocalizations l10n;
+
+  const _EditLocalArchiveDialog({required this.manga, required this.l10n});
+
+  @override
+  State<_EditLocalArchiveDialog> createState() =>
+      _EditLocalArchiveDialogState();
+}
+
+class _EditLocalArchiveDialogState extends State<_EditLocalArchiveDialog> {
+  late final _nameController = TextEditingController(
+    text: widget.manga.name ?? '',
+  );
+  late final _descriptionController = TextEditingController(
+    text: widget.manga.description ?? '',
   );
 
-  showDialog(
-    context: context,
-    builder: (context) => ShioriDialog(
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = widget.l10n;
+    return ShioriDialog(
       title: l10n.edit,
       content: Column(
         mainAxisSize: MainAxisSize.min,
         spacing: ShioriSpace.s16,
         children: [
           TextField(
-            controller: nameController,
+            controller: _nameController,
             decoration: InputDecoration(labelText: l10n.name),
           ),
           TextField(
-            controller: descriptionController,
+            controller: _descriptionController,
             minLines: 2,
             maxLines: 6,
             decoration: InputDecoration(labelText: l10n.description),
@@ -43,13 +71,13 @@ void showEditLocalArchiveDialog(
         ShioriButton(
           label: l10n.save,
           onPressed: () {
-            manga.description = descriptionController.text;
-            manga.name = nameController.text;
-            mangaRepository.save(manga);
+            widget.manga.description = _descriptionController.text;
+            widget.manga.name = _nameController.text;
+            mangaRepository.save(widget.manga);
             Navigator.pop(context);
           },
         ),
       ],
-    ),
-  );
+    );
+  }
 }

@@ -266,17 +266,17 @@ class SyncScreen extends ConsumerWidget {
   // field. Logging in opens the system browser to that server's own login
   // page (OAuth/PKCE against the server's /api/oauth/authorize), so this
   // dialog never sees or handles a credential itself.
-  void _showDialogLogin(
+  Future<void> _showDialogLogin(
     BuildContext context,
     WidgetRef ref,
     SyncPreference syncPreference,
-  ) {
+  ) async {
     final serverController = TextEditingController(text: syncPreference.server);
     String server = syncPreference.server ?? "";
     String errorMessage = "";
     bool isLoading = false;
     final l10n = l10nLocalizations(context)!;
-    showDialog(
+    await showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
@@ -334,5 +334,6 @@ class SyncScreen extends ConsumerWidget {
         },
       ),
     );
+    serverController.dispose();
   }
 }

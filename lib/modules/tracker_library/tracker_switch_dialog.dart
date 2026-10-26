@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
+import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
+import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/track_state_providers.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:shiori/shiori.dart';
@@ -15,6 +17,11 @@ void showTrackerSwitchProviderDialog(
   required List<TrackPreference> preferences,
   required AppLocalizations l10n,
 }) {
+  final hideItems = ref.read(hideItemsStateProvider);
+  final animeOnly = ref.read(animeOnlyTvModeProvider);
+  final showManga = !animeOnly && !hideItems.contains("/MangaLibrary");
+  final showAnime = !hideItems.contains("/AnimeLibrary");
+
   showDialog(
     context: context,
     builder: (ctx) {
@@ -29,6 +36,8 @@ void showTrackerSwitchProviderDialog(
                 l10n,
                 TrackerProviders.myAnimeList.syncId,
                 preferences: preferences,
+                showManga: showManga,
+                showAnime: showAnime,
               ),
               _buildListTile(
                 ctx,
@@ -36,6 +45,8 @@ void showTrackerSwitchProviderDialog(
                 l10n,
                 TrackerProviders.anilist.syncId,
                 preferences: preferences,
+                showManga: showManga,
+                showAnime: showAnime,
               ),
               _buildListTile(
                 ctx,
@@ -43,21 +54,29 @@ void showTrackerSwitchProviderDialog(
                 l10n,
                 TrackerProviders.kitsu.syncId,
                 preferences: preferences,
+                showManga: showManga,
+                showAnime: showAnime,
               ),
-              _buildListTile(
-                ctx,
-                ref,
-                l10n,
-                TrackerProviders.simkl.syncId,
-                preferences: preferences,
-              ),
-              _buildListTile(
-                ctx,
-                ref,
-                l10n,
-                TrackerProviders.trakt.syncId,
-                preferences: preferences,
-              ),
+              if (showAnime || !showManga) ...[
+                _buildListTile(
+                  ctx,
+                  ref,
+                  l10n,
+                  TrackerProviders.simkl.syncId,
+                  preferences: preferences,
+                  showManga: showManga,
+                  showAnime: showAnime,
+                ),
+                _buildListTile(
+                  ctx,
+                  ref,
+                  l10n,
+                  TrackerProviders.trakt.syncId,
+                  preferences: preferences,
+                  showManga: showManga,
+                  showAnime: showAnime,
+                ),
+              ],
             ],
           ),
         ),
@@ -112,6 +131,8 @@ Widget _buildListTile(
   int syncId, {
   bool? isManga,
   required List<TrackPreference> preferences,
+  bool showManga = true,
+  bool showAnime = true,
 }) {
   final isLoggedIn = preferences.any((p) => p.syncId == syncId);
   return Padding(
@@ -145,9 +166,10 @@ Widget _buildListTile(
       ),
       enabled: isLoggedIn,
       onTap: () {
-        if (isManga == null &&
-            syncId != TrackerProviders.simkl.syncId &&
-            syncId != TrackerProviders.trakt.syncId) {
+        final isAnimeOnlyTracker =
+            syncId == TrackerProviders.simkl.syncId ||
+            syncId == TrackerProviders.trakt.syncId;
+        if (isManga == null && !isAnimeOnlyTracker && showManga && showAnime) {
           context.pop();
           _openSwitchTypeDialog(
             context,
@@ -157,11 +179,11 @@ Widget _buildListTile(
             preferences: preferences,
           );
         } else {
+          final targetIsManga =
+              isManga ?? (!isAnimeOnlyTracker && (showManga || !showAnime));
           ref.read(lastTrackerLibraryLocationStateProvider.notifier).set((
             syncId,
-            isManga ??
-                (syncId != TrackerProviders.simkl.syncId &&
-                    syncId != TrackerProviders.trakt.syncId),
+            targetIsManga,
           ));
           context.pop();
         }

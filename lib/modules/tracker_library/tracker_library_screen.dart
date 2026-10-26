@@ -7,6 +7,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
+import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_section.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_title.dart';
@@ -14,6 +15,7 @@ import 'package:mangayomi/modules/tracker_library/tracker_section_screen.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_sections_builder.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_switch_dialog.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/repositories/tracker_library_cache_repository.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -49,12 +51,32 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final lastLocation = ref.watch(lastTrackerLibraryLocationStateProvider);
-    final trackerProvider =
+    final hideItems = ref.watch(hideItemsStateProvider);
+    final animeOnly = ref.watch(animeOnlyTvModeProvider);
+    final showManga = !animeOnly && !hideItems.contains("/MangaLibrary");
+    final showAnime = !hideItems.contains("/AnimeLibrary");
+
+    var trackerProvider =
         TrackerProviders.values.firstWhereOrNull(
           (t) => t.syncId == lastLocation.$1,
         ) ??
         TrackerProviders.myAnimeList;
-    final itemType = lastLocation.$2 ? ItemType.manga : ItemType.anime;
+    if (!showAnime &&
+        showManga &&
+        (trackerProvider == TrackerProviders.simkl ||
+            trackerProvider == TrackerProviders.trakt)) {
+      trackerProvider = TrackerProviders.myAnimeList;
+    }
+    final isSimklOrTrakt =
+        trackerProvider.syncId == TrackerProviders.simkl.syncId ||
+        trackerProvider.syncId == TrackerProviders.trakt.syncId;
+    final itemType = isSimklOrTrakt
+        ? ItemType.anime
+        : !showManga && showAnime
+        ? ItemType.anime
+        : showManga && !showAnime
+        ? ItemType.manga
+        : (lastLocation.$2 ? ItemType.manga : ItemType.anime);
 
     _sections = buildTrackerSections(
       ref: ref,
