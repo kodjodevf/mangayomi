@@ -50,7 +50,7 @@ class _HistoryScreenState extends BaseLibraryTabScreenState<HistoryScreen> {
 
   void _syncActiveItemType() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
+      if (mounted && visibleTabTypes.isNotEmpty) {
         ref
             .read(activeHistoryItemTypeStateProvider.notifier)
             .set(getCurrentItemType());
@@ -100,6 +100,7 @@ class _HistoryScreenState extends BaseLibraryTabScreenState<HistoryScreen> {
   }
 
   Future<void> _clearHistory() async {
+    if (visibleTabTypes.isEmpty) return;
     final idsToDelete = await historyRepository.getIdsByItemType(
       getCurrentItemType(),
     );
