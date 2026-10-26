@@ -91,7 +91,8 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
       });
     } else if (value == 1) {
       manga.whenData((value) {
-        var randomManga = (value..shuffle()).first;
+        if (value.isEmpty) return;
+        final randomManga = (value.toList()..shuffle()).first;
         pushToMangaReaderDetail(
           ref: ref,
           archiveId: randomManga.isLocalArchive ?? false

@@ -94,22 +94,21 @@ class _CustomNavigationSettingsState
             );
           },
           onReorderItem: (oldIndex, newIndex) {
+            final reordered = navigationOrder.toList();
             if (oldIndex < newIndex) {
-              final draggedItem = navigationOrder[oldIndex];
+              final draggedItem = reordered[oldIndex];
               for (var i = oldIndex; i < newIndex - 1; i++) {
-                navigationOrder[i] = navigationOrder[i + 1];
+                reordered[i] = reordered[i + 1];
               }
-              navigationOrder[newIndex - 1] = draggedItem;
+              reordered[newIndex - 1] = draggedItem;
             } else {
-              final draggedItem = navigationOrder[oldIndex];
+              final draggedItem = reordered[oldIndex];
               for (var i = oldIndex; i > newIndex; i--) {
-                navigationOrder[i] = navigationOrder[i - 1];
+                reordered[i] = reordered[i - 1];
               }
-              navigationOrder[newIndex] = draggedItem;
+              reordered[newIndex] = draggedItem;
             }
-            ref
-                .read(navigationOrderStateProvider.notifier)
-                .set(navigationOrder);
+            ref.read(navigationOrderStateProvider.notifier).set(reordered);
           },
         ),
       ),

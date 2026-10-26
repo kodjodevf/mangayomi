@@ -92,9 +92,8 @@ GoRouter router(Ref ref) {
   final router = RouterNotifier();
   final hiddenItems = ref.read(hideItemsStateProvider);
   final initLocation = ref
-      .watch(navigationOrderStateProvider)
-      .where((e) => !hiddenItems.contains(e))
-      .first;
+      .read(navigationOrderStateProvider)
+      .firstWhere((e) => !hiddenItems.contains(e), orElse: () => '/more');
 
   return GoRouter(
     observers: [BotToastNavigatorObserver(), CrashRouteObserver()],
