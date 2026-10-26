@@ -92,6 +92,7 @@ class SwBonded extends StatelessWidget {
                         child: RecapCover(
                           mangaId: series.id,
                           placeholder: SwColors.coverPlaceholder,
+                          showTitle: true,
                         ),
                       ),
                     ),
@@ -159,6 +160,7 @@ class SwBonded extends StatelessWidget {
                 RecapCover(
                   mangaId: series.id,
                   placeholder: SwColors.coverPlaceholder,
+                  showTitle: true,
                 ),
                 Align(
                   alignment: Alignment.bottomCenter,

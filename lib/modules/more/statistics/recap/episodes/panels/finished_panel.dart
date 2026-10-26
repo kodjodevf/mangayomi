@@ -11,7 +11,7 @@ import 'package:shiori/shiori.dart';
 class FinishedPanel extends StatelessWidget {
   const FinishedPanel({super.key, required this.ids, required this.text});
 
-  static const _shown = 5;
+  static const _shown = 4;
   static const _coverWidth = 92.0;
   static const _coverHeight = 132.0;
   static const _tilts = [-7.0, 4.0, -3.0, 6.0, -5.0];
@@ -82,6 +82,16 @@ class FinishedPanel extends StatelessWidget {
                               child: RecapCover(
                                 mangaId: id,
                                 placeholder: StripColors.coverPlaceholder,
+                                showTitle: true,
+                                // The next cover hides this one's right edge.
+                                titlePadding: i + 1 < shown.length
+                                    ? EdgeInsets.fromLTRB(
+                                        ShioriSpace.s8,
+                                        ShioriSpace.s8,
+                                        _coverWidth - step + ShioriSpace.s4,
+                                        ShioriSpace.s8,
+                                      )
+                                    : const EdgeInsets.all(ShioriSpace.s8),
                               ),
                             ),
                           ),

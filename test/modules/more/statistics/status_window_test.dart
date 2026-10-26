@@ -2,6 +2,7 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/statistics/recap/recap_cover.dart';
@@ -72,11 +73,28 @@ StatusWindowData _emptyData() => deriveStatusWindow(
   now: DateTime(2026, 10, 25),
 );
 
+/// A series whose cover link is gone, as after a restore from a dead CDN.
+Manga _coverless(int id, String name) => Manga(
+  source: 'Asura Scans',
+  author: '',
+  artist: '',
+  genre: const [],
+  imageUrl: null,
+  lang: 'en',
+  link: '/$id',
+  name: name,
+  status: Status.ongoing,
+  description: '',
+  sourceId: null,
+  itemType: ItemType.manga,
+);
+
 Future<void> _pump(
   WidgetTester tester, {
   bool recap = true,
   StatusWindowData? data,
   double width = 420,
+  Manga? Function(int id)? manga,
 }) async {
   tester.view.physicalSize = Size(width, 5200);
   tester.view.devicePixelRatio = 1;
@@ -89,7 +107,7 @@ Future<void> _pump(
         statisticsRecapStateProvider.overrideWith(() => _Recap(recap)),
         statisticsReaderNameStateProvider.overrideWith(_NoName.new),
         recapFontsProvider.overrideWithValue(RecapFonts.system),
-        recapMangaProvider.overrideWith((ref, id) async => null),
+        recapMangaProvider.overrideWith((ref, id) async => manga?.call(id)),
         statusWindowProvider.overrideWith(
           (ref, type) async => data ?? _veteranData(),
         ),
@@ -125,6 +143,14 @@ AppLocalizations _l10n(WidgetTester tester) =>
     AppLocalizations.of(tester.element(find.byType(StatisticsScreen)))!;
 
 void main() {
+  testWidgets('bonded series without a cover show their titles', (
+    tester,
+  ) async {
+    await _pump(tester, manga: (id) => _coverless(id, 'Cover $id'));
+
+    // #2 to #5 are small tiles whose only text would otherwise be hours.
+    expect(find.text('Cover 4'), findsOneWidget);
+  });
   testWidgets('shows level 97 and 707 to next', (tester) async {
     await _pump(tester);
 
