@@ -48,7 +48,11 @@ Future<Map<String, dynamic>> decodeMangayomiBackup(
           // bytes - it doesn't verify/decrypt content (and so won't throw on a
           // wrong password) until the content is actually read, hence forcing
           // that access here rather than after returning.
-          final bytes = archive.files.first.content as List<int>;
+          final jsonFile = archive.files.where((f) => f.isFile).firstOrNull;
+          if (jsonFile == null) {
+            throw const FormatException('Empty backup archive');
+          }
+          final bytes = jsonFile.content as List<int>;
           return jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
         } finally {
           stream.close();

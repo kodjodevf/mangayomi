@@ -13,6 +13,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
 import 'package:mangayomi/modules/browse/extension/extension_screen.dart';
 import 'package:mangayomi/modules/browse/sources/sources_screen.dart';
+import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:shiori/shiori.dart';
 
@@ -94,5 +95,82 @@ void main() {
 
     expect(find.byType(ExtensionScreen), findsOneWidget);
     expect(find.byType(SourcesScreen), findsNothing);
+  });
+
+  testWidgets('updates media segments live when types are hidden in settings', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(400, 860);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      ProviderScope(
+        child: MaterialApp.router(
+          routerConfig: GoRouter(
+            routes: [
+              GoRoute(path: '/', builder: (_, _) => const BrowseScreen()),
+            ],
+          ),
+          theme: buildShioriTheme(
+            brightness: Brightness.dark,
+            colors: FlexColor.schemesList[2].dark,
+            tintSurfaces: false,
+            blendLevel: 10,
+            density: ShioriDensity.phone,
+          ),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+        ),
+      ),
+    );
+    await settle(tester);
+
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(BrowseScreen)),
+    );
+
+    var segmented = tester.widget<ShioriSegmentedControl<ItemType>>(
+      find.byType(ShioriSegmentedControl<ItemType>),
+    );
+    expect(segmented.segments.map((s) => s.value).toList(), [
+      ItemType.manga,
+      ItemType.anime,
+      ItemType.novel,
+    ]);
+
+    // Disable Manga while BrowseScreen stays mounted.
+    container.read(hideItemsStateProvider.notifier).set(['/MangaLibrary']);
+    await settle(tester);
+
+    segmented = tester.widget<ShioriSegmentedControl<ItemType>>(
+      find.byType(ShioriSegmentedControl<ItemType>),
+    );
+    expect(segmented.segments.map((s) => s.value).toList(), [
+      ItemType.anime,
+      ItemType.novel,
+    ]);
+    expect(segmented.selected, ItemType.anime);
+
+    // Disable Novel as well -> only Anime remains, media switch hides.
+    container.read(hideItemsStateProvider.notifier).set([
+      '/MangaLibrary',
+      '/NovelLibrary',
+    ]);
+    await settle(tester);
+
+    expect(find.byType(ShioriSegmentedControl<ItemType>), findsNothing);
+
+    // Re-enable all types -> media switch returns with all 3 types.
+    container.read(hideItemsStateProvider.notifier).set([]);
+    await settle(tester);
+
+    segmented = tester.widget<ShioriSegmentedControl<ItemType>>(
+      find.byType(ShioriSegmentedControl<ItemType>),
+    );
+    expect(segmented.segments.map((s) => s.value).toList(), [
+      ItemType.manga,
+      ItemType.anime,
+      ItemType.novel,
+    ]);
   });
 }

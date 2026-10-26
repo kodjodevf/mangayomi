@@ -36,11 +36,21 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
       types = types.where((t) => t == ItemType.anime).toList();
     }
     _visibleTabTypes = types;
+    final requestedIndex = widget.data.$2;
+    final requestedType =
+        requestedIndex >= 0 && requestedIndex < ItemType.values.length
+        ? ItemType.values[requestedIndex]
+        : null;
+    final initialIndex = requestedType != null
+        ? _visibleTabTypes.indexOf(requestedType)
+        : 0;
     _tabBarController = TabController(
       length: _visibleTabTypes.length,
+      initialIndex: _visibleTabTypes.isEmpty || initialIndex < 0
+          ? 0
+          : initialIndex,
       vsync: this,
     );
-    _tabBarController.animateTo(widget.data.$2);
   }
 
   @override
@@ -68,12 +78,14 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
       child: Scaffold(
         appBar: AppBar(
           title: Text(widget.data.$1 ? l10n.edit_categories : l10n.categories),
-          bottom: TabBar(
-            controller: _tabBarController,
-            tabs: _visibleTabTypes.map((type) {
-              return Tab(text: type.localized(l10n));
-            }).toList(),
-          ),
+          bottom: _visibleTabTypes.length < 2
+              ? null
+              : TabBar(
+                  controller: _tabBarController,
+                  tabs: _visibleTabTypes.map((type) {
+                    return Tab(text: type.localized(l10n));
+                  }).toList(),
+                ),
         ),
         body: TabBarView(
           controller: _tabBarController,

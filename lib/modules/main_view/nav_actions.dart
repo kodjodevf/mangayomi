@@ -8,9 +8,11 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/modules/main_view/nav_groups.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
 import 'package:mangayomi/router/push_router.dart';
+import 'package:mangayomi/utils/item_type_filters.dart';
 
 final libLocationRegex = RegExp(r"^/(Manga|Anime|Novel)Library$");
 
@@ -89,8 +91,12 @@ void openNavDestination(
   );
   if (isDoubleTap &&
       (target == '/history' || destination == NavGroup.activity)) {
+    final visibleTypes = hiddenItemTypes(ref.read(hideItemsStateProvider));
     final activeType = ref.read(activeHistoryItemTypeStateProvider);
-    unawaited(resumeLatestHistory(context, activeType));
+    final effectiveType = visibleTypes.contains(activeType)
+        ? activeType
+        : visibleTypes.firstOrNull;
+    unawaited(resumeLatestHistory(context, effectiveType));
     return;
   }
   final itemType = itemTypeForNavDest(target);

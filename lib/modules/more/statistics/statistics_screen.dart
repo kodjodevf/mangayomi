@@ -60,12 +60,14 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.statistics),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: _visibleTabTypes.map((type) {
-            return Tab(text: type.localized(l10n));
-          }).toList(),
-        ),
+        bottom: _visibleTabTypes.length < 2
+            ? null
+            : TabBar(
+                controller: _tabController,
+                tabs: _visibleTabTypes.map((type) {
+                  return Tab(text: type.localized(l10n));
+                }).toList(),
+              ),
       ),
       body: TabBarView(
         controller: _tabController,

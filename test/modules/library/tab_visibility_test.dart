@@ -33,8 +33,15 @@ class _TabsHost extends ConsumerStatefulWidget {
 }
 
 class _TabsHostState extends BaseLibraryTabScreenState<_TabsHost> {
+  ItemType? lastNotifiedType;
+
   @override
   String get title => 'Tabs';
+
+  @override
+  void onTabChanged(ItemType type) {
+    lastNotifiedType = type;
+  }
 
   @override
   Widget buildTab(ItemType type) => Text('content-${type.name}');
@@ -128,5 +135,19 @@ void main() {
 
     expect(state.visibleTabTypes, [ItemType.manga, ItemType.novel]);
     expect(state.tabController.index, 0);
+    expect(state.lastNotifiedType, ItemType.manga);
+  });
+
+  testWidgets('hides the TabBar when only one type remains visible', (
+    tester,
+  ) async {
+    await pump(tester, []);
+    expect(find.byType(TabBar), findsOneWidget);
+
+    setHidden(tester, ['/MangaLibrary', '/NovelLibrary']);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TabBar), findsNothing);
+    expect(find.text('content-anime'), findsOneWidget);
   });
 }

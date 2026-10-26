@@ -121,6 +121,7 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
   }
 
   Future<void> _updateLibrary() async {
+    if (visibleTabTypes.isEmpty) return;
     try {
       setState(() => _isLoading = true);
       final itemType = getCurrentItemType();
@@ -140,6 +141,7 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
   }
 
   Future<void> _clearUpdates() async {
+    if (visibleTabTypes.isEmpty) return;
     final idsToDelete = await updateRepository.getIdsByItemType(
       getCurrentItemType(),
     );

@@ -5,5 +5,9 @@ part 'calendar_provider.g.dart';
 
 @riverpod
 Stream<List<Manga>> getCalendarStream(Ref ref, {ItemType? itemType}) async* {
-  yield* mangaRepository.watchCalendarFavorites(itemType ?? ItemType.manga);
+  if (itemType == null) {
+    yield const [];
+    return;
+  }
+  yield* mangaRepository.watchCalendarFavorites(itemType);
 }

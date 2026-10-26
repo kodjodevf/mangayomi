@@ -12,6 +12,7 @@ import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/browse/widgets/extension_server_warning_banner.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/providers/reader_state_provider.dart';
 
 class BrowseSScreen extends ConsumerWidget {
   const BrowseSScreen({super.key});
@@ -29,6 +30,7 @@ class BrowseSScreen extends ConsumerWidget {
     final developerMode = ref.watch(developerModeStateProvider);
     // On the anime-only TV layout, hide the manga & novel repo settings.
     final animeOnly = ref.watch(animeOnlyTvModeProvider);
+    final hideItems = ref.watch(hideItemsStateProvider);
     final l10n = context.l10n;
     ShioriSettingRow repo(String title, String subtitle, ItemType type) =>
         ShioriSettingRow(
@@ -72,18 +74,19 @@ class BrowseSScreen extends ConsumerWidget {
                   trailing: const Icon(Symbols.chevron_forward_rounded),
                   onTap: () => context.push('/extensionServer'),
                 ),
-              if (!animeOnly)
+              if (!animeOnly && !hideItems.contains("/MangaLibrary"))
                 repo(
                   l10n.manga_extensions_repo,
                   l10n.manage_manga_repo_urls,
                   ItemType.manga,
                 ),
-              repo(
-                l10n.anime_extensions_repo,
-                l10n.manage_anime_repo_urls,
-                ItemType.anime,
-              ),
-              if (!animeOnly)
+              if (!hideItems.contains("/AnimeLibrary"))
+                repo(
+                  l10n.anime_extensions_repo,
+                  l10n.manage_anime_repo_urls,
+                  ItemType.anime,
+                ),
+              if (!animeOnly && !hideItems.contains("/NovelLibrary"))
                 repo(
                   l10n.novel_extensions_repo,
                   l10n.manage_novel_repo_urls,
