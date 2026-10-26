@@ -231,10 +231,10 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
     await _removeOrphanSources(removedRepo);
   }
 
-  void _showAddRepoDialog(BuildContext context) {
+  Future<void> _showAddRepoDialog(BuildContext context) async {
     bool isLoading = false;
     final controller = TextEditingController();
-    showDialog(
+    await showDialog(
       context: context,
       builder: (context) {
         return SizedBox(
@@ -391,5 +391,6 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
         );
       },
     );
+    controller.dispose();
   }
 }

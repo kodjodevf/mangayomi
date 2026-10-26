@@ -26,9 +26,11 @@ class AndroidProxyServerState extends _$AndroidProxyServerState {
     if (!proxyServer.startsWith("http")) {
       proxyServer = "http://$proxyServer";
     }
-    if ((proxyServer.contains("localhost") ||
+    final parts = proxyServer.replaceAll("://", ":").split(":");
+    if (parts.length >= 2 &&
+        (proxyServer.contains("localhost") ||
             RegExp(r'^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$')
-                .hasMatch(proxyServer.replaceAll("://", ":").split(":")[1])) &&
+                .hasMatch(parts[1])) &&
         proxyServer.split(":").length < 3) {
       proxyServer = "$proxyServer:8080";
     }
@@ -156,7 +158,12 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
   void setVisibility(Repo repo, bool hidden) {
     final value = state.map((e) {
       if (e == repo) {
-        e.hidden = hidden;
+        return Repo(
+          name: e.name,
+          website: e.website,
+          jsonUrl: e.jsonUrl,
+          hidden: hidden,
+        );
       }
       return e;
     }).toList();
@@ -182,6 +189,7 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
   }
 
   Future<void> _refreshSources() async {
+    if (!ref.mounted) return;
     try {
       final refresh = ref.refresh(
         fetchItemSourcesListProvider(
