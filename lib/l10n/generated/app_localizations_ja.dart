@@ -488,6 +488,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get about => 'について';
 
   @override
+  String get open_source_licenses => 'オープンソースライセンス';
+
+  @override
+  String get open_source_licenses_subtitle => 'Mangayomiが使用しているパッケージとそのライセンス';
+
+  @override
+  String get open_source_licenses_empty => 'ライセンス情報はありません。';
+
+  @override
   String get help => 'ヘルプ';
 
   @override
@@ -662,53 +671,52 @@ class AppLocalizationsJa extends AppLocalizations {
   String get delete_download_after_reading => '読後に削除';
 
   @override
-  String get delete_after_reading_slot => 'Delete which chapter';
+  String get delete_after_reading_slot => '削除するチャプター';
 
   @override
-  String get delete_after_reading_last => 'The chapter just read';
+  String get delete_after_reading_last => '読んだばかりのチャプター';
 
   @override
   String delete_after_reading_nth(int n) {
-    return '$n chapters back';
+    return '$n チャプター前';
   }
 
   @override
   String get delete_after_reading_slot_subtitle =>
-      'Keeping a few read chapters lets you go back to them offline.';
+      '読んだチャプターを少し残しておくと、オフラインでも読み返せます。';
 
   @override
-  String get delete_bookmarked_after_reading =>
-      'Also delete bookmarked chapters';
+  String get delete_bookmarked_after_reading => 'ブックマーク済みのチャプターも削除';
 
   @override
-  String get auto_download => 'Auto download';
+  String get auto_download => '自動ダウンロード';
 
   @override
-  String get download_new_chapters => 'Download new chapters';
+  String get download_new_chapters => '新しいチャプターをダウンロード';
 
   @override
   String get download_new_chapters_subtitle =>
-      'After a library update, queue the new unread chapters of series already in the library.';
+      'ライブラリの更新後、ライブラリに登録済みの作品の新しい未読チャプターをダウンロードキューに追加します。';
 
   @override
-  String get download_new_chapters_included => 'Only these categories';
+  String get download_new_chapters_included => 'これらのカテゴリーのみ';
 
   @override
-  String get download_new_chapters_excluded => 'Except these categories';
+  String get download_new_chapters_excluded => 'これらのカテゴリーを除く';
 
   @override
-  String get download_new_chapters_all_categories => 'All categories';
+  String get download_new_chapters_all_categories => 'すべてのカテゴリー';
 
   @override
-  String get download_ahead => 'Download ahead while reading';
+  String get download_ahead => '読書中に先読みダウンロード';
 
   @override
   String get download_ahead_subtitle =>
-      'While reading a downloaded chapter of a series in the library, download the next unread ones.';
+      'ライブラリの作品のダウンロード済みチャプターを読んでいる間に、次の未読チャプターをダウンロードします。';
 
   @override
   String download_ahead_count(int n) {
-    return 'Next $n chapters';
+    return '次の$nチャプター';
   }
 
   @override
@@ -1627,21 +1635,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get mark_duplicate_chapters_read => '重複する章番号を読済みとしてマーク';
 
   @override
-  String get skip_read_chapters => 'Skip read chapters';
+  String get skip_read_chapters => '既読チャプターをスキップ';
 
   @override
   String get skip_read_chapters_subtitle =>
-      'Next and previous chapter go past the ones already read.';
+      '次のチャプター・前のチャプターへの移動時に、既読のチャプターを飛ばします。';
 
   @override
-  String get skip_filtered_chapters => 'Skip filtered chapters';
+  String get skip_filtered_chapters => 'フィルター済みチャプターをスキップ';
 
   @override
-  String get skip_duplicate_chapters => 'Skip duplicate chapters';
+  String get skip_duplicate_chapters => '重複チャプターをスキップ';
 
   @override
   String get skip_duplicate_chapters_subtitle =>
-      'Read one copy of each chapter number, from the same scanlator when there is one.';
+      'チャプター番号ごとに1つを読みます。可能な場合は同じ翻訳グループのものを選びます。';
 
   @override
   String get default_skip_intro_length => 'デフォルトイントロスキップ長';
@@ -2243,11 +2251,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get subtitle_delay => '遅延（ms）';
 
   @override
-  String get audio_delay => 'Audio delay (ms)';
+  String get audio_delay => '音声遅延（ms）';
 
   @override
   String get audio_delay_subtitle =>
-      'Plays the sound later (positive) or earlier (negative) than the picture. Kept from one episode to the next.';
+      '映像より音声を遅らせ（正の値）、または早め（負の値）に再生します。次のエピソードにも引き継がれます。';
 
   @override
   String get subtitle_speed => '速度';
@@ -2495,14 +2503,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get forceLandscapeModeSubtitle => 'プレーヤーを強制的にランドスケープ向きで使用させます。';
 
   @override
-  String get remember_player_volume => 'Remember volume';
+  String get remember_player_volume => '音量を記憶';
 
   @override
-  String get remember_player_volume_subtitle =>
-      'Start each episode at the volume the last one ended with.';
+  String get remember_player_volume_subtitle => '各エピソードを、前のエピソード終了時の音量で開始します。';
 
   @override
-  String get remember_player_brightness => 'Remember brightness';
+  String get remember_player_brightness => '明るさを記憶';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
@@ -2541,65 +2548,65 @@ class AppLocalizationsJa extends AppLocalizations {
   String get app_lock => 'アプリのロック';
 
   @override
-  String get app_lock_delay => 'Lock after';
+  String get app_lock_delay => 'ロックするまでの時間';
 
   @override
-  String get app_lock_delay_immediately => 'Leaving the app';
+  String get app_lock_delay_immediately => 'アプリから離れたとき';
 
   @override
   String app_lock_delay_minutes(int n) {
-    return '$n min away';
+    return '離れてから$n分後';
   }
 
   @override
-  String get app_lock_delay_launch_only => 'Only when the app starts';
+  String get app_lock_delay_launch_only => 'アプリの起動時のみ';
 
   @override
-  String get secure_screen => 'Secure screen';
+  String get secure_screen => '画面のセキュリティ保護';
 
   @override
   String get secure_screen_subtitle =>
-      'Hide the app from the app switcher, and on Android from screenshots and screen recordings.';
+      'アプリスイッチャーからアプリを隠します。Androidでは、スクリーンショットと画面録画も防止します。';
 
   @override
-  String get secure_screen_never => 'Never';
+  String get secure_screen_never => 'しない';
 
   @override
-  String get secure_screen_incognito => 'In incognito mode';
+  String get secure_screen_incognito => 'シークレットモード時';
 
   @override
-  String get secure_screen_always => 'Always';
+  String get secure_screen_always => '常に';
 
   @override
-  String get background_work => 'Background work';
+  String get background_work => 'バックグラウンド処理';
 
   @override
-  String get background_work_in_progress => 'Working…';
+  String get background_work_in_progress => '処理中…';
 
   @override
-  String get background_downloading => 'Downloading';
+  String get background_downloading => 'ダウンロード中';
 
   @override
-  String get background_updating_library => 'Updating library';
+  String get background_updating_library => 'ライブラリを更新中';
 
   @override
-  String get background_restoring => 'Restoring backup';
+  String get background_restoring => 'バックアップを復元中';
 
   @override
-  String get background_syncing => 'Syncing';
+  String get background_syncing => '同期中';
 
   @override
-  String get background_cancel_downloads => 'Cancel downloads';
+  String get background_cancel_downloads => 'ダウンロードをキャンセル';
 
   @override
-  String get background_stop_update => 'Stop update';
+  String get background_stop_update => '更新を停止';
 
   @override
-  String get hide_notification_content => 'Hide notification content';
+  String get hide_notification_content => '通知の内容を非表示';
 
   @override
   String get hide_notification_content_subtitle =>
-      'Notifications say what the app is doing without naming series or chapters.';
+      '通知には、作品名やチャプター名を含めず、アプリの動作のみを表示します。';
 
   @override
   String get require_biometric_or_device_credential =>
@@ -2632,19 +2639,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get brightness => '明るさ';
 
   @override
-  String get video_filters => 'Video filters';
+  String get video_filters => '映像フィルター';
 
   @override
-  String get video_filter_contrast => 'Contrast';
+  String get video_filter_contrast => 'コントラスト';
 
   @override
-  String get video_filter_saturation => 'Saturation';
+  String get video_filter_saturation => '彩度';
 
   @override
-  String get video_filter_gamma => 'Gamma';
+  String get video_filter_gamma => 'ガンマ';
 
   @override
-  String get video_filter_hue => 'Hue';
+  String get video_filter_hue => '色相';
 
   @override
   String get volume => '音量';
@@ -2926,11 +2933,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get split_wide_pages => '見開きページを分割';
 
   @override
-  String get split_tall_images => 'Split tall images';
+  String get split_tall_images => '縦長の画像を分割';
 
   @override
   String get split_tall_images_subtitle =>
-      'Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.';
+      'ウェブトゥーン：非常に縦長の画像を1つずつ分割して読み込み、メモリ使用量を抑えます。「枠線をトリミング」と併用できません。';
 
   @override
   String get dual_page_invert => '分割した半ページの左右を反転';
@@ -3542,23 +3549,23 @@ class AppLocalizationsJa extends AppLocalizations {
       'モバイルデータ通信中は予定された更新をスキップします。';
 
   @override
-  String get library_update_restrictions => 'Skip when updating';
+  String get library_update_restrictions => '更新時にスキップ';
 
   @override
-  String get library_update_skip_completed => 'Completed series';
+  String get library_update_skip_completed => '完結済みの作品';
 
   @override
-  String get library_update_skip_unread => 'Series with unread chapters';
+  String get library_update_skip_unread => '未読チャプターがある作品';
 
   @override
-  String get library_update_skip_not_started => 'Series not started';
+  String get library_update_skip_not_started => '未開始の作品';
 
   @override
   String get library_update_restrictions_subtitle =>
-      'Applies to every library update. Categories set to skip updates are also left out when the whole library is updated.';
+      'すべてのライブラリ更新に適用されます。更新をスキップするよう設定したカテゴリーも、ライブラリ全体を更新する際は除外されます。';
 
   @override
-  String get library_update_restrictions_none => 'None';
+  String get library_update_restrictions_none => 'なし';
 
   @override
   String get padding => '余白';

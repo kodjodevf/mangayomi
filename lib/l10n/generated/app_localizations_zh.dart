@@ -479,6 +479,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get about => '关于';
 
   @override
+  String get open_source_licenses => '开源许可证';
+
+  @override
+  String get open_source_licenses_subtitle => 'Mangayomi 所使用的软件包及其许可证';
+
+  @override
+  String get open_source_licenses_empty => '没有可用的许可证信息。';
+
+  @override
   String get help => '帮助';
 
   @override
@@ -652,53 +661,49 @@ class AppLocalizationsZh extends AppLocalizations {
   String get delete_download_after_reading => '完成阅读后删除下载内容';
 
   @override
-  String get delete_after_reading_slot => 'Delete which chapter';
+  String get delete_after_reading_slot => '删除哪个章节';
 
   @override
-  String get delete_after_reading_last => 'The chapter just read';
+  String get delete_after_reading_last => '刚读完的章节';
 
   @override
   String delete_after_reading_nth(int n) {
-    return '$n chapters back';
+    return '往前 $n 个章节';
   }
 
   @override
-  String get delete_after_reading_slot_subtitle =>
-      'Keeping a few read chapters lets you go back to them offline.';
+  String get delete_after_reading_slot_subtitle => '保留几个已读章节，方便离线时回看。';
 
   @override
-  String get delete_bookmarked_after_reading =>
-      'Also delete bookmarked chapters';
+  String get delete_bookmarked_after_reading => '同时删除已书签的章节';
 
   @override
-  String get auto_download => 'Auto download';
+  String get auto_download => '自动下载';
 
   @override
-  String get download_new_chapters => 'Download new chapters';
+  String get download_new_chapters => '下载新章节';
 
   @override
-  String get download_new_chapters_subtitle =>
-      'After a library update, queue the new unread chapters of series already in the library.';
+  String get download_new_chapters_subtitle => '图书馆更新后，将库中作品的新未读章节加入下载队列。';
 
   @override
-  String get download_new_chapters_included => 'Only these categories';
+  String get download_new_chapters_included => '仅限这些类别';
 
   @override
-  String get download_new_chapters_excluded => 'Except these categories';
+  String get download_new_chapters_excluded => '这些类别除外';
 
   @override
-  String get download_new_chapters_all_categories => 'All categories';
+  String get download_new_chapters_all_categories => '所有类别';
 
   @override
-  String get download_ahead => 'Download ahead while reading';
+  String get download_ahead => '阅读时提前下载';
 
   @override
-  String get download_ahead_subtitle =>
-      'While reading a downloaded chapter of a series in the library, download the next unread ones.';
+  String get download_ahead_subtitle => '阅读库中作品的已下载章节时，下载接下来的未读章节。';
 
   @override
   String download_ahead_count(int n) {
-    return 'Next $n chapters';
+    return '接下来的 $n 个章节';
   }
 
   @override
@@ -1609,21 +1614,20 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mark_duplicate_chapters_read => '将重复的章节号标记为已读';
 
   @override
-  String get skip_read_chapters => 'Skip read chapters';
+  String get skip_read_chapters => '跳过已读章节';
 
   @override
-  String get skip_read_chapters_subtitle =>
-      'Next and previous chapter go past the ones already read.';
+  String get skip_read_chapters_subtitle => '切换到下一章或上一章时，跳过已读的章节。';
 
   @override
-  String get skip_filtered_chapters => 'Skip filtered chapters';
+  String get skip_filtered_chapters => '跳过被筛选的章节';
 
   @override
-  String get skip_duplicate_chapters => 'Skip duplicate chapters';
+  String get skip_duplicate_chapters => '跳过重复章节';
 
   @override
   String get skip_duplicate_chapters_subtitle =>
-      'Read one copy of each chapter number, from the same scanlator when there is one.';
+      '每个章节号只阅读一份；如有多个版本，优先选择同一译者的版本。';
 
   @override
   String get default_skip_intro_length => '默认跳过介绍长度';
@@ -2216,11 +2220,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get subtitle_delay => '延迟（毫秒）';
 
   @override
-  String get audio_delay => 'Audio delay (ms)';
+  String get audio_delay => '音频延迟（毫秒）';
 
   @override
-  String get audio_delay_subtitle =>
-      'Plays the sound later (positive) or earlier (negative) than the picture. Kept from one episode to the next.';
+  String get audio_delay_subtitle => '让声音比画面延后（正值）或提前（负值）播放。在各集之间保持不变。';
 
   @override
   String get subtitle_speed => '速度';
@@ -2467,14 +2470,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get forceLandscapeModeSubtitle => '强制播放器使用横屏方向。';
 
   @override
-  String get remember_player_volume => 'Remember volume';
+  String get remember_player_volume => '记住音量';
 
   @override
-  String get remember_player_volume_subtitle =>
-      'Start each episode at the volume the last one ended with.';
+  String get remember_player_volume_subtitle => '每集都以上一集结束时的音量开始播放。';
 
   @override
-  String get remember_player_brightness => 'Remember brightness';
+  String get remember_player_brightness => '记住亮度';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
@@ -2513,65 +2515,63 @@ class AppLocalizationsZh extends AppLocalizations {
   String get app_lock => '应用锁';
 
   @override
-  String get app_lock_delay => 'Lock after';
+  String get app_lock_delay => '锁定时机';
 
   @override
-  String get app_lock_delay_immediately => 'Leaving the app';
+  String get app_lock_delay_immediately => '离开应用时';
 
   @override
   String app_lock_delay_minutes(int n) {
-    return '$n min away';
+    return '离开 $n 分钟后';
   }
 
   @override
-  String get app_lock_delay_launch_only => 'Only when the app starts';
+  String get app_lock_delay_launch_only => '仅在应用启动时';
 
   @override
-  String get secure_screen => 'Secure screen';
+  String get secure_screen => '安全屏幕';
 
   @override
-  String get secure_screen_subtitle =>
-      'Hide the app from the app switcher, and on Android from screenshots and screen recordings.';
+  String get secure_screen_subtitle => '在应用切换器中隐藏应用；在 Android 上还会禁止截图和录屏。';
 
   @override
-  String get secure_screen_never => 'Never';
+  String get secure_screen_never => '从不';
 
   @override
-  String get secure_screen_incognito => 'In incognito mode';
+  String get secure_screen_incognito => '隐身模式时';
 
   @override
-  String get secure_screen_always => 'Always';
+  String get secure_screen_always => '始终';
 
   @override
-  String get background_work => 'Background work';
+  String get background_work => '后台任务';
 
   @override
-  String get background_work_in_progress => 'Working…';
+  String get background_work_in_progress => '处理中…';
 
   @override
-  String get background_downloading => 'Downloading';
+  String get background_downloading => '下载中';
 
   @override
-  String get background_updating_library => 'Updating library';
+  String get background_updating_library => '正在更新图书馆';
 
   @override
-  String get background_restoring => 'Restoring backup';
+  String get background_restoring => '正在恢复备份';
 
   @override
-  String get background_syncing => 'Syncing';
+  String get background_syncing => '同步中';
 
   @override
-  String get background_cancel_downloads => 'Cancel downloads';
+  String get background_cancel_downloads => '取消下载';
 
   @override
-  String get background_stop_update => 'Stop update';
+  String get background_stop_update => '停止更新';
 
   @override
-  String get hide_notification_content => 'Hide notification content';
+  String get hide_notification_content => '隐藏通知内容';
 
   @override
-  String get hide_notification_content_subtitle =>
-      'Notifications say what the app is doing without naming series or chapters.';
+  String get hide_notification_content_subtitle => '通知只说明应用正在执行的操作，不显示作品或章节名称。';
 
   @override
   String get require_biometric_or_device_credential => '需要生物识别或设备凭证才能打开应用';
@@ -2601,19 +2601,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get brightness => '亮度';
 
   @override
-  String get video_filters => 'Video filters';
+  String get video_filters => '视频滤镜';
 
   @override
-  String get video_filter_contrast => 'Contrast';
+  String get video_filter_contrast => '对比度';
 
   @override
-  String get video_filter_saturation => 'Saturation';
+  String get video_filter_saturation => '饱和度';
 
   @override
-  String get video_filter_gamma => 'Gamma';
+  String get video_filter_gamma => '伽马';
 
   @override
-  String get video_filter_hue => 'Hue';
+  String get video_filter_hue => '色相';
 
   @override
   String get volume => '音量';
@@ -2885,11 +2885,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get split_wide_pages => '拆分双页';
 
   @override
-  String get split_tall_images => 'Split tall images';
+  String get split_tall_images => '分割长图';
 
   @override
   String get split_tall_images_subtitle =>
-      'Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.';
+      '条漫：将超高图片分片显示，每次只解码一片，以减少内存占用。不能与「裁剪边框」同时使用。';
 
   @override
   String get dual_page_invert => '反转拆分的半页';
@@ -3491,23 +3491,23 @@ class AppLocalizationsZh extends AppLocalizations {
   String get auto_library_update_wifi_only_subtitle => '使用移动数据时跳过计划更新。';
 
   @override
-  String get library_update_restrictions => 'Skip when updating';
+  String get library_update_restrictions => '更新时跳过';
 
   @override
-  String get library_update_skip_completed => 'Completed series';
+  String get library_update_skip_completed => '已完结的作品';
 
   @override
-  String get library_update_skip_unread => 'Series with unread chapters';
+  String get library_update_skip_unread => '有未读章节的作品';
 
   @override
-  String get library_update_skip_not_started => 'Series not started';
+  String get library_update_skip_not_started => '未开始的作品';
 
   @override
   String get library_update_restrictions_subtitle =>
-      'Applies to every library update. Categories set to skip updates are also left out when the whole library is updated.';
+      '适用于所有图书馆更新。设为跳过更新的类别，在更新整个图书馆时也会被排除。';
 
   @override
-  String get library_update_restrictions_none => 'None';
+  String get library_update_restrictions_none => '无';
 
   @override
   String get padding => '内边距';

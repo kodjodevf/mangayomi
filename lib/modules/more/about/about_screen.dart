@@ -105,6 +105,16 @@ class AboutScreen extends ConsumerWidget {
                       ),
                   ],
                 ),
+                ShioriSettingsGroup(
+                  children: [
+                    ShioriSettingRow(
+                      icon: Symbols.gavel_rounded,
+                      title: l10n.open_source_licenses,
+                      subtitle: l10n.open_source_licenses_subtitle,
+                      onTap: () => context.push('/openSourceLicenses'),
+                    ),
+                  ],
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

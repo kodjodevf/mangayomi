@@ -3,6 +3,8 @@ PODS:
     - FlutterMacOS
   - connectivity_plus (0.0.1):
     - FlutterMacOS
+  - desktop_webview_window (0.0.1):
+    - FlutterMacOS
   - device_info_plus (0.0.1):
     - FlutterMacOS
   - file_picker_darwin (1.0.0):
@@ -20,7 +22,7 @@ PODS:
     - FlutterMacOS
   - flutter_tts (0.0.1):
     - FlutterMacOS
-  - flutter_web_auth_2 (3.0.0):
+  - flutter_web_auth_2 (6.0.0):
     - FlutterMacOS
   - FlutterMacOS (1.0.0)
   - isar_community_flutter_libs (1.0.0):
@@ -60,6 +62,7 @@ PODS:
 DEPENDENCIES:
   - app_links (from `Flutter/ephemeral/.symlinks/plugins/app_links/macos`)
   - connectivity_plus (from `Flutter/ephemeral/.symlinks/plugins/connectivity_plus/macos`)
+  - desktop_webview_window (from `Flutter/ephemeral/.symlinks/plugins/desktop_webview_window/macos`)
   - device_info_plus (from `Flutter/ephemeral/.symlinks/plugins/device_info_plus/macos`)
   - file_picker_darwin (from `Flutter/ephemeral/.symlinks/plugins/file_picker_darwin/darwin`)
   - flutter_discord_rpc_fork (from `Flutter/ephemeral/.symlinks/plugins/flutter_discord_rpc_fork/macos`)
@@ -94,6 +97,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/app_links/macos
   connectivity_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/connectivity_plus/macos
+  desktop_webview_window:
+    :path: Flutter/ephemeral/.symlinks/plugins/desktop_webview_window/macos
   device_info_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/device_info_plus/macos
   file_picker_darwin:
@@ -146,6 +151,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   app_links: 05a6ec2341985eb05e9f97dc63f5837c39895c3f
   connectivity_plus: 4adf20a405e25b42b9c9f87feff8f4b6fde18a4e
+  desktop_webview_window: 7f0f8ee036596e7d39e11dfeb7c7e60b5f0faef9
   device_info_plus: 4fb280989f669696856f8b129e4a5e3cd6c48f76
   file_picker_darwin: 4c2b9a50ea44cb3b071381ea0cf48591bdd80251
   flutter_discord_rpc_fork: 9f54b8cb8643b2fb84c685509e2eca403e284652
@@ -153,7 +159,7 @@ SPEC CHECKSUMS:
   flutter_qjs: fb5f03156dded35ac5564c04f3f67eaed99e3aa3
   flutter_secure_storage_darwin: 46e401699982ee74142909676535e0f6a7321e58
   flutter_tts: ae915565cc6948444b513acc8ee021993281e027
-  flutter_web_auth_2: 62b08da29f15a20fa63f144234622a1488d45b65
+  flutter_web_auth_2: 76f8f0edeeab87e22c87f25a25f71c65b7ecb24b
   FlutterMacOS: c232990155153907050900a2e175c7773903ba4e
   isar_community_flutter_libs: a631ceb5622413b56bcd0a8bf49cb55bf3d8bb2b
   local_auth_darwin: c3ee6cce0a8d56be34c8ccb66ba31f7f180aaebb
@@ -170,7 +176,7 @@ SPEC CHECKSUMS:
   volume_controller: 96b8e381b9f7d227636335110bc82ee96386434b
   wakelock_plus: 917609be14d812ddd9e9528876538b2263aaa03b
   window_manager: b729e31d38fb04905235df9ea896128991cad99e
-  window_to_front: 2d7d31f268d0b13b7e63b26e31eb0a2e9612239e
+  window_to_front: 1a8d00f6612a8308c3dc2cbc42969e596de09586
 
 PODFILE CHECKSUM: f0c21717cb7ee9112f915044c74bfceb5b12e02a
 

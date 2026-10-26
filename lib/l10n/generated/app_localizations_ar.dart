@@ -506,6 +506,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get about => 'حول';
 
   @override
+  String get open_source_licenses => 'التراخيص مفتوحة المصدر';
+
+  @override
+  String get open_source_licenses_subtitle =>
+      'الحزم التي بُنيت بها Mangayomi وتراخيصها';
+
+  @override
+  String get open_source_licenses_empty => 'لا تتوفر معلومات عن التراخيص.';
+
+  @override
   String get help => 'مساعدة';
 
   @override
@@ -680,53 +690,53 @@ class AppLocalizationsAr extends AppLocalizations {
   String get delete_download_after_reading => 'حذف التحميل بعد القراءة';
 
   @override
-  String get delete_after_reading_slot => 'Delete which chapter';
+  String get delete_after_reading_slot => 'أي فصل يُحذف';
 
   @override
-  String get delete_after_reading_last => 'The chapter just read';
+  String get delete_after_reading_last => 'الفصل الذي قُرئ للتو';
 
   @override
   String delete_after_reading_nth(int n) {
-    return '$n chapters back';
+    return 'قبل $n فصول';
   }
 
   @override
   String get delete_after_reading_slot_subtitle =>
-      'Keeping a few read chapters lets you go back to them offline.';
+      'الاحتفاظ ببعض الفصول المقروءة يتيح لك العودة إليها دون اتصال.';
 
   @override
   String get delete_bookmarked_after_reading =>
-      'Also delete bookmarked chapters';
+      'حذف الفصول المحفوظة بالإشارة المرجعية أيضاً';
 
   @override
-  String get auto_download => 'Auto download';
+  String get auto_download => 'التنزيل التلقائي';
 
   @override
-  String get download_new_chapters => 'Download new chapters';
+  String get download_new_chapters => 'تنزيل الفصول الجديدة';
 
   @override
   String get download_new_chapters_subtitle =>
-      'After a library update, queue the new unread chapters of series already in the library.';
+      'بعد تحديث المكتبة، أضف إلى قائمة الانتظار الفصول الجديدة غير المقروءة للسلاسل الموجودة في المكتبة.';
 
   @override
-  String get download_new_chapters_included => 'Only these categories';
+  String get download_new_chapters_included => 'هذه الفئات فقط';
 
   @override
-  String get download_new_chapters_excluded => 'Except these categories';
+  String get download_new_chapters_excluded => 'باستثناء هذه الفئات';
 
   @override
-  String get download_new_chapters_all_categories => 'All categories';
+  String get download_new_chapters_all_categories => 'جميع الفئات';
 
   @override
-  String get download_ahead => 'Download ahead while reading';
+  String get download_ahead => 'التنزيل مسبقاً أثناء القراءة';
 
   @override
   String get download_ahead_subtitle =>
-      'While reading a downloaded chapter of a series in the library, download the next unread ones.';
+      'أثناء قراءة فصل محمّل من سلسلة في المكتبة، قم بتنزيل الفصول غير المقروءة التالية.';
 
   @override
   String download_ahead_count(int n) {
-    return 'Next $n chapters';
+    return 'الفصول الـ$n التالية';
   }
 
   @override
@@ -1667,21 +1677,21 @@ class AppLocalizationsAr extends AppLocalizations {
       'ضع علامة على أرقام الفصول المكررة كمقروءة';
 
   @override
-  String get skip_read_chapters => 'Skip read chapters';
+  String get skip_read_chapters => 'تخطي الفصول المقروءة';
 
   @override
   String get skip_read_chapters_subtitle =>
-      'Next and previous chapter go past the ones already read.';
+      'ينتقل الفصل التالي والسابق متجاوزين الفصول المقروءة.';
 
   @override
-  String get skip_filtered_chapters => 'Skip filtered chapters';
+  String get skip_filtered_chapters => 'تخطي الفصول المصفّاة';
 
   @override
-  String get skip_duplicate_chapters => 'Skip duplicate chapters';
+  String get skip_duplicate_chapters => 'تخطي الفصول المكررة';
 
   @override
   String get skip_duplicate_chapters_subtitle =>
-      'Read one copy of each chapter number, from the same scanlator when there is one.';
+      'اقرأ نسخة واحدة من كل رقم فصل، من نفس المترجم عند توفره.';
 
   @override
   String get default_skip_intro_length => 'طول تخطي المقدمة الافتراضي';
@@ -2293,11 +2303,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get subtitle_delay => 'التأخير (ms)';
 
   @override
-  String get audio_delay => 'Audio delay (ms)';
+  String get audio_delay => 'تأخير الصوت (ms)';
 
   @override
   String get audio_delay_subtitle =>
-      'Plays the sound later (positive) or earlier (negative) than the picture. Kept from one episode to the next.';
+      'يشغّل الصوت متأخراً (موجب) أو متقدماً (سالب) عن الصورة. يُحفظ من حلقة إلى التي تليها.';
 
   @override
   String get subtitle_speed => 'السرعة';
@@ -2551,14 +2561,14 @@ class AppLocalizationsAr extends AppLocalizations {
       'فرض المشغل لاستخدام اتجاه المناظر الطبيعية.';
 
   @override
-  String get remember_player_volume => 'Remember volume';
+  String get remember_player_volume => 'تذكر مستوى الصوت';
 
   @override
   String get remember_player_volume_subtitle =>
-      'Start each episode at the volume the last one ended with.';
+      'ابدأ كل حلقة بمستوى الصوت الذي انتهت به الحلقة السابقة.';
 
   @override
-  String get remember_player_brightness => 'Remember brightness';
+  String get remember_player_brightness => 'تذكر السطوع';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
@@ -2598,65 +2608,65 @@ class AppLocalizationsAr extends AppLocalizations {
   String get app_lock => 'قفل التطبيق';
 
   @override
-  String get app_lock_delay => 'Lock after';
+  String get app_lock_delay => 'القفل بعد';
 
   @override
-  String get app_lock_delay_immediately => 'Leaving the app';
+  String get app_lock_delay_immediately => 'مغادرة التطبيق';
 
   @override
   String app_lock_delay_minutes(int n) {
-    return '$n min away';
+    return '$n دقيقة بعيداً';
   }
 
   @override
-  String get app_lock_delay_launch_only => 'Only when the app starts';
+  String get app_lock_delay_launch_only => 'عند تشغيل التطبيق فقط';
 
   @override
-  String get secure_screen => 'Secure screen';
+  String get secure_screen => 'شاشة آمنة';
 
   @override
   String get secure_screen_subtitle =>
-      'Hide the app from the app switcher, and on Android from screenshots and screen recordings.';
+      'إخفاء التطبيق من مبدّل التطبيقات، وعلى Android من لقطات الشاشة وتسجيلات الشاشة.';
 
   @override
-  String get secure_screen_never => 'Never';
+  String get secure_screen_never => 'أبداً';
 
   @override
-  String get secure_screen_incognito => 'In incognito mode';
+  String get secure_screen_incognito => 'في وضع التصفح المتخفي';
 
   @override
-  String get secure_screen_always => 'Always';
+  String get secure_screen_always => 'دائماً';
 
   @override
-  String get background_work => 'Background work';
+  String get background_work => 'المهام في الخلفية';
 
   @override
-  String get background_work_in_progress => 'Working…';
+  String get background_work_in_progress => 'جارٍ العمل…';
 
   @override
-  String get background_downloading => 'Downloading';
+  String get background_downloading => 'جارٍ التنزيل';
 
   @override
-  String get background_updating_library => 'Updating library';
+  String get background_updating_library => 'جارٍ تحديث المكتبة';
 
   @override
-  String get background_restoring => 'Restoring backup';
+  String get background_restoring => 'جارٍ استعادة النسخة الاحتياطية';
 
   @override
-  String get background_syncing => 'Syncing';
+  String get background_syncing => 'جارٍ المزامنة';
 
   @override
-  String get background_cancel_downloads => 'Cancel downloads';
+  String get background_cancel_downloads => 'إلغاء التنزيلات';
 
   @override
-  String get background_stop_update => 'Stop update';
+  String get background_stop_update => 'إيقاف التحديث';
 
   @override
-  String get hide_notification_content => 'Hide notification content';
+  String get hide_notification_content => 'إخفاء محتوى الإشعارات';
 
   @override
   String get hide_notification_content_subtitle =>
-      'Notifications say what the app is doing without naming series or chapters.';
+      'تُظهر الإشعارات ما يفعله التطبيق دون ذكر أسماء السلاسل أو الفصول.';
 
   @override
   String get require_biometric_or_device_credential =>
@@ -2689,19 +2699,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get brightness => 'السطوع';
 
   @override
-  String get video_filters => 'Video filters';
+  String get video_filters => 'مرشحات الفيديو';
 
   @override
-  String get video_filter_contrast => 'Contrast';
+  String get video_filter_contrast => 'التباين';
 
   @override
-  String get video_filter_saturation => 'Saturation';
+  String get video_filter_saturation => 'التشبع';
 
   @override
-  String get video_filter_gamma => 'Gamma';
+  String get video_filter_gamma => 'جاما';
 
   @override
-  String get video_filter_hue => 'Hue';
+  String get video_filter_hue => 'درجة اللون';
 
   @override
   String get volume => 'مستوى الصوت';
@@ -2981,11 +2991,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get split_wide_pages => 'تقسيم الصفحات العريضة';
 
   @override
-  String get split_tall_images => 'Split tall images';
+  String get split_tall_images => 'تقسيم الصور الطويلة';
 
   @override
   String get split_tall_images_subtitle =>
-      'Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.';
+      'ويبتون: اعرض الصور الطويلة جداً مقسّمة إلى شرائح، تُفكّ واحدة تلو الأخرى لاستهلاك ذاكرة أقل. لا تعمل مع خيار قص الحواف.';
 
   @override
   String get dual_page_invert => 'عكس نصفي الصفحات المقسمة';
@@ -3622,23 +3632,23 @@ class AppLocalizationsAr extends AppLocalizations {
       'تخطي التحديث المجدول أثناء استخدام بيانات الجوال.';
 
   @override
-  String get library_update_restrictions => 'Skip when updating';
+  String get library_update_restrictions => 'تخطي عند التحديث';
 
   @override
-  String get library_update_skip_completed => 'Completed series';
+  String get library_update_skip_completed => 'السلاسل المكتملة';
 
   @override
-  String get library_update_skip_unread => 'Series with unread chapters';
+  String get library_update_skip_unread => 'السلاسل التي بها فصول غير مقروءة';
 
   @override
-  String get library_update_skip_not_started => 'Series not started';
+  String get library_update_skip_not_started => 'السلاسل التي لم تبدأ';
 
   @override
   String get library_update_restrictions_subtitle =>
-      'Applies to every library update. Categories set to skip updates are also left out when the whole library is updated.';
+      'ينطبق على كل تحديث للمكتبة. الفئات المضبوطة على تخطي التحديثات تُستثنى أيضاً عند تحديث المكتبة بأكملها.';
 
   @override
-  String get library_update_restrictions_none => 'None';
+  String get library_update_restrictions_none => 'لا شيء';
 
   @override
   String get padding => 'الهامش';
