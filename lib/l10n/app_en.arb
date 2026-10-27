@@ -525,6 +525,8 @@
   "reorder_navigation_description": "Reorder and toggle each navigation to your needs.",
   "floating_navigation_bar": "Floating navigation bar",
   "floating_navigation_bar_description": "Use a floating capsule instead of the standard attached navigation bar.",
+  "show_updates_badge": "Show badge on Updates icon",
+  "show_updates_badge_description": "Count the chapters found since you last opened Updates.",
   "full_screen_player": "Use fullscreen",
   "full_screen_player_info": "Automatically use fullscreen when playing a video.",
   "episode_progress": "Progress: {n}",

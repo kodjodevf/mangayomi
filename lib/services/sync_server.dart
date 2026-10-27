@@ -15,6 +15,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/blend_level_state_provider.dart';
 import 'package:mangayomi/providers/flex_scheme_color_state_provider.dart';
 import 'package:mangayomi/providers/floating_navigation_bar_state_provider.dart';
+import 'package:mangayomi/providers/show_updates_badge_state_provider.dart';
 import 'package:mangayomi/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/providers/browse_state_provider.dart';
@@ -379,6 +380,7 @@ class SyncServer extends _$SyncServer {
     ref.invalidate(pureBlackDarkModeStateProvider);
     ref.invalidate(tintSurfacesStateProvider);
     ref.invalidate(floatingNavigationBarStateProvider);
+    ref.invalidate(showUpdatesBadgeStateProvider);
     ref.invalidate(l10nLocaleStateProvider);
     ref.invalidate(extensionsRepoStateProvider(ItemType.manga));
     ref.invalidate(extensionsRepoStateProvider(ItemType.anime));

@@ -1254,6 +1254,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'Una cápsula flotante en lugar de la barra de navegación fija.';
 
   @override
+  String get show_updates_badge => 'Show badge on Updates icon';
+
+  @override
+  String get show_updates_badge_description =>
+      'Count the chapters found since you last opened Updates.';
+
+  @override
   String get full_screen_player => 'Usar pantalla completa';
 
   @override

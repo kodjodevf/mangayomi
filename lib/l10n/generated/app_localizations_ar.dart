@@ -1257,6 +1257,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'استخدام كبسولة عائمة بدل شريط التنقل الثابت.';
 
   @override
+  String get show_updates_badge => 'Show badge on Updates icon';
+
+  @override
+  String get show_updates_badge_description =>
+      'Count the chapters found since you last opened Updates.';
+
+  @override
   String get full_screen_player => 'استخدام الشاشة الكاملة';
 
   @override

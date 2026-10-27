@@ -1263,6 +1263,13 @@ class AppLocalizationsRu extends AppLocalizations {
       'Плавающая капсула вместо обычной закреплённой панели навигации.';
 
   @override
+  String get show_updates_badge => 'Show badge on Updates icon';
+
+  @override
+  String get show_updates_badge_description =>
+      'Count the chapters found since you last opened Updates.';
+
+  @override
   String get full_screen_player => 'Использовать полноэкранный режим';
 
   @override
