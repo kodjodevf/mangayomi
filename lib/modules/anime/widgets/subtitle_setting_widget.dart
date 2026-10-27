@@ -571,27 +571,28 @@ class _PresetChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Tooltip(
       message: tooltip,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(ShioriShape.card),
-        onTap: onTap,
-        child: Container(
-          width: 28,
-          height: 28,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.35),
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.25),
-                blurRadius: 3,
-                offset: const Offset(0, 1),
-              ),
-            ],
+      child: Container(
+        width: 28,
+        height: 28,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.35),
+            width: 1.5,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 3,
+              offset: const Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(customBorder: const CircleBorder(), onTap: onTap),
         ),
       ),
     );

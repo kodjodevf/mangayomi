@@ -226,6 +226,7 @@ class _ChapterListTileState extends State<ChapterListTile> {
     final meta = tokens.caption;
     return AnimatedContainer(
       duration: ShioriMotion.of(context, ShioriMotion.standard),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: widget.currentChap
             ? c.accent.withValues(alpha: Alphas.accentTint)
@@ -236,7 +237,7 @@ class _ChapterListTileState extends State<ChapterListTile> {
             : null,
       ),
       child: Material(
-        color: Colors.transparent,
+        type: MaterialType.transparency,
         child: InkWell(
           borderRadius: BorderRadius.circular(ShioriShape.card),
           onTap: () async {

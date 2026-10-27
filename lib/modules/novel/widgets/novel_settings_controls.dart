@@ -94,22 +94,23 @@ class NovelThemeButton extends StatelessWidget {
     final primaryColor = context.shiori.color.accent;
     final bg = _parseColor(backgroundColor);
     final txt = _parseColor(textColor);
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
+    return AnimatedContainer(
+      duration: ShioriMotion.standard,
+      height: 52,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: bg,
         borderRadius: BorderRadius.circular(ShioriShape.card),
-        child: AnimatedContainer(
-          duration: ShioriMotion.standard,
-          height: 52,
-          decoration: BoxDecoration(
-            color: bg,
-            borderRadius: BorderRadius.circular(ShioriShape.card),
-            border: Border.all(
-              color: isSelected ? primaryColor : context.shiori.color.hairline,
-              width: isSelected ? 2 : 1,
-            ),
-          ),
+        border: Border.all(
+          color: isSelected ? primaryColor : context.shiori.color.hairline,
+          width: isSelected ? 2 : 1,
+        ),
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(ShioriShape.card),
           child: Stack(
             children: [
               Center(
@@ -324,34 +325,37 @@ class NovelColorPicker extends StatelessWidget {
   }
 
   Widget _swatch(BuildContext context, Color optionColor, bool isSelected) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          onColorChanged(_colorToHex(optionColor));
-          Navigator.of(context).pop();
-        },
+    return AnimatedContainer(
+      duration: ShioriMotion.standard,
+      width: 48,
+      height: 48,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: optionColor,
         borderRadius: BorderRadius.circular(ShioriShape.cover),
-        child: AnimatedContainer(
-          duration: ShioriMotion.standard,
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: optionColor,
-            borderRadius: BorderRadius.circular(ShioriShape.cover),
-            border: Border.all(
-              color: isSelected
-                  ? context.shiori.color.accentInk
-                  : context.shiori.color.fgMuted,
-              width: isSelected ? 2.5 : 1,
-            ),
-          ),
+        border: Border.all(
+          color: isSelected
+              ? context.shiori.color.accentInk
+              : context.shiori.color.fgMuted,
+          width: isSelected ? 2.5 : 1,
+        ),
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: () {
+            onColorChanged(_colorToHex(optionColor));
+            Navigator.of(context).pop();
+          },
+          borderRadius: BorderRadius.circular(ShioriShape.cover),
           child: isSelected
-              ? Icon(
-                  Symbols.check_circle_rounded,
-                  fill: 1,
-                  size: 22,
-                  color: ShioriColors.onFill(optionColor),
+              ? Center(
+                  child: Icon(
+                    Symbols.check_circle_rounded,
+                    fill: 1,
+                    size: 22,
+                    color: ShioriColors.onFill(optionColor),
+                  ),
                 )
               : null,
         ),
@@ -361,67 +365,70 @@ class NovelColorPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => _showColorPickerDialog(context),
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        border: Border.all(color: context.shiori.color.hairline, width: 1),
         borderRadius: BorderRadius.circular(ShioriShape.card),
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: ShioriSpace.s12,
-            vertical: ShioriSpace.s8,
-          ),
-          decoration: BoxDecoration(
-            border: Border.all(color: context.shiori.color.hairline, width: 1),
-            borderRadius: BorderRadius.circular(ShioriShape.card),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: _parseColor(color),
-                  borderRadius: BorderRadius.circular(ShioriShape.cover),
-                  border: Border.all(
-                    color: context.shiori.color.hairline,
-                    width: 1.5,
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: () => _showColorPickerDialog(context),
+          borderRadius: BorderRadius.circular(ShioriShape.card),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: ShioriSpace.s12,
+              vertical: ShioriSpace.s8,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: _parseColor(color),
+                    borderRadius: BorderRadius.circular(ShioriShape.cover),
+                    border: Border.all(
+                      color: context.shiori.color.hairline,
+                      width: 1.5,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: ShioriSpace.s8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: context.shiori.text.badge.fontSize,
-                        fontWeight: FontWeight.w600,
+                const SizedBox(width: ShioriSpace.s8),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: context.shiori.text.badge.fontSize,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    Text(
-                      color,
-                      style: TextStyle(
-                        fontSize: context.shiori.text.badge.fontSize,
-                        color: context.shiori.color.fgMuted,
-                        fontFamily: 'monospace',
+                      Text(
+                        color,
+                        style: TextStyle(
+                          fontSize: context.shiori.text.badge.fontSize,
+                          color: context.shiori.color.fgMuted,
+                          fontFamily: 'monospace',
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Icon(
-                Symbols.palette_rounded,
-                color: context.shiori.color.accent.withValues(
-                  alpha: Alphas.accentTint,
+                Icon(
+                  Symbols.palette_rounded,
+                  color: context.shiori.color.accent.withValues(
+                    alpha: Alphas.accentTint,
+                  ),
+                  size: 16,
                 ),
-                size: 16,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -443,34 +450,35 @@ class NovelAlignButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
+    return AnimatedContainer(
+      duration: ShioriMotion.standard,
+      height: 36,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: isSelected
+            ? context.shiori.color.accent.withValues(alpha: Alphas.accentTint)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(ShioriShape.cover),
-        child: AnimatedContainer(
-          duration: ShioriMotion.standard,
-          height: 36,
-          decoration: BoxDecoration(
-            color: isSelected
-                ? context.shiori.color.accent.withValues(
-                    alpha: Alphas.accentTint,
-                  )
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(ShioriShape.cover),
-            border: Border.all(
+        border: Border.all(
+          color: isSelected
+              ? context.shiori.color.accent
+              : context.shiori.color.hairline,
+          width: isSelected ? 1.5 : 1,
+        ),
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(ShioriShape.cover),
+          child: Center(
+            child: Icon(
+              icon,
+              size: 18,
               color: isSelected
                   ? context.shiori.color.accent
-                  : context.shiori.color.hairline,
-              width: isSelected ? 1.5 : 1,
+                  : context.shiori.color.fg,
             ),
-          ),
-          child: Icon(
-            icon,
-            size: 18,
-            color: isSelected
-                ? context.shiori.color.accent
-                : context.shiori.color.fg,
           ),
         ),
       ),
@@ -495,52 +503,57 @@ class NovelModeChipButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primaryColor = context.shiori.color.accent;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
+    return AnimatedContainer(
+      duration: ShioriMotion.standard,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: isSelected
+            ? primaryColor.withValues(alpha: Alphas.accentTint)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(ShioriShape.card),
-        child: AnimatedContainer(
-          duration: ShioriMotion.standard,
-          padding: const EdgeInsets.symmetric(
-            horizontal: ShioriSpace.s8,
-            vertical: ShioriSpace.s8,
-          ),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? primaryColor.withValues(alpha: Alphas.accentTint)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(ShioriShape.card),
-            border: Border.all(
-              color: isSelected ? primaryColor : context.shiori.color.hairline,
-              width: isSelected ? 1.5 : 1,
+        border: Border.all(
+          color: isSelected ? primaryColor : context.shiori.color.hairline,
+          width: isSelected ? 1.5 : 1,
+        ),
+      ),
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(ShioriShape.card),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: ShioriSpace.s8,
+              vertical: ShioriSpace.s8,
             ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Icon(
-                icon,
-                size: 17,
-                color: isSelected ? primaryColor : context.shiori.color.fg,
-              ),
-              const SizedBox(width: ShioriSpace.s8),
-              Flexible(
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: context.shiori.text.meta.fontSize,
-                    fontWeight: isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    color: isSelected ? primaryColor : context.shiori.color.fg,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Icon(
+                  icon,
+                  size: 17,
+                  color: isSelected ? primaryColor : context.shiori.color.fg,
+                ),
+                const SizedBox(width: ShioriSpace.s8),
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: context.shiori.text.meta.fontSize,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                      color: isSelected
+                          ? primaryColor
+                          : context.shiori.color.fg,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

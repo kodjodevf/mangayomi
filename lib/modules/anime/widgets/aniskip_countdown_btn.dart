@@ -79,62 +79,65 @@ class _AniSkipCountDownButtonState extends ConsumerState<AniSkipCountDownButton>
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s32),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(ShioriShape.pill),
-          onTap: _seekTo,
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              final remaining =
-                  widget.timeoutLength -
-                  (_controller.duration! * _controller.value).inSeconds;
-              return ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: tokens.density.minTarget,
-                ),
-                child: PlayerOverlaySurface(
-                  padding: const EdgeInsetsDirectional.fromSTEB(
-                    ShioriSpace.s8,
-                    ShioriSpace.s8,
-                    ShioriSpace.s16,
-                    ShioriSpace.s8,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          final remaining =
+              widget.timeoutLength -
+              (_controller.duration! * _controller.value).inSeconds;
+          return PlayerOverlaySurface(
+            padding: EdgeInsets.zero,
+            child: Material(
+              type: MaterialType.transparency,
+              child: InkWell(
+                customBorder: const StadiumBorder(),
+                onTap: _seekTo,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: tokens.density.minTarget,
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: ShioriSpace.s12,
-                    children: [
-                      SizedBox.square(
-                        dimension: 22,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            CircularProgressIndicator(
-                              value: 1 - _controller.value,
-                              strokeWidth: 2.5,
-                              color: tokens.color.accentInk,
-                              backgroundColor: Colors.white.withValues(
-                                alpha: Alphas.hairline,
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(
+                      ShioriSpace.s8,
+                      ShioriSpace.s8,
+                      ShioriSpace.s16,
+                      ShioriSpace.s8,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: ShioriSpace.s12,
+                      children: [
+                        SizedBox.square(
+                          dimension: 22,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              CircularProgressIndicator(
+                                value: 1 - _controller.value,
+                                strokeWidth: 2.5,
+                                color: tokens.color.accentInk,
+                                backgroundColor: Colors.white.withValues(
+                                  alpha: Alphas.hairline,
+                                ),
                               ),
-                            ),
-                            Text(
-                              '$remaining',
-                              style: TextStyle(
-                                fontSize: tokens.text.badge.fontSize,
+                              Text(
+                                '$remaining',
+                                style: TextStyle(
+                                  fontSize: tokens.text.badge.fontSize,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      Text(widget.skipTypeText),
-                    ],
+                        Text(widget.skipTypeText),
+                      ],
+                    ),
                   ),
                 ),
-              );
-            },
-          ),
-        ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
