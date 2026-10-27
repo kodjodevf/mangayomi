@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/manga/reader/utils/reader_motion.dart';
+import 'package:mangayomi/modules/manga/reader/utils/webtoon_scroll_physics.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/double_page_view.dart';
@@ -383,6 +384,8 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
   }
 
   void _handleScaleEnd(ScaleEndDetails details) {
+    // A one-finger pan, not the end of a pinch or a double-tap-drag zoom.
+    final wasPanning = _previousPointerCount == 1 && !_isQuickScaling;
     _isQuickScaling = false;
 
     // 1. Rebound spring if zoomed out below 1.0
@@ -418,6 +421,20 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
             Offset(targetDx, targetDy),
             duration: ReaderMotion.flingDuration,
           );
+        }
+
+        // The drag scrolled the strip once the page met its edge; the
+        // fling carries on the same way instead of stopping there.
+        if (wasPanning) {
+          final isVertical = widget.scrollDirection == Axis.vertical;
+          final stripVelocity = stripFlingVelocity(
+            offset: isVertical ? _offset.dy : _offset.dx,
+            maxOffset: isVertical ? maxDy : maxDx,
+            velocity: isVertical ? velocity.dy : velocity.dx,
+          );
+          if (stripVelocity != 0) {
+            glideStrip(widget.scrollController, stripVelocity);
+          }
         }
       }
     }
