@@ -1705,6 +1705,24 @@ abstract class AppLocalizations {
   /// **'About'**
   String get about;
 
+  /// No description provided for @open_source_licenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Open source licenses'**
+  String get open_source_licenses;
+
+  /// No description provided for @open_source_licenses_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The packages Mangayomi is built with, and their licenses'**
+  String get open_source_licenses_subtitle;
+
+  /// No description provided for @open_source_licenses_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No license information is available.'**
+  String get open_source_licenses_empty;
+
   /// No description provided for @help.
   ///
   /// In en, this message translates to:

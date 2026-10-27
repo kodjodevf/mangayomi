@@ -1120,6 +1120,16 @@ class AppLocalizationsTr extends AppLocalizations {
   String get about => 'Hakkında';
 
   @override
+  String get open_source_licenses => 'Açık kaynak lisansları';
+
+  @override
+  String get open_source_licenses_subtitle =>
+      'Mangayomi\'nin üzerine inşa edildiği paketler ve lisansları';
+
+  @override
+  String get open_source_licenses_empty => 'Lisans bilgisi mevcut değil.';
+
+  @override
   String get help => 'Yardım';
 
   @override
@@ -1294,53 +1304,52 @@ class AppLocalizationsTr extends AppLocalizations {
   String get delete_download_after_reading => 'Okuduktan sonra indirmeyi sil';
 
   @override
-  String get delete_after_reading_slot => 'Delete which chapter';
+  String get delete_after_reading_slot => 'Hangi bölüm silinsin';
 
   @override
-  String get delete_after_reading_last => 'The chapter just read';
+  String get delete_after_reading_last => 'Az önce okunan bölüm';
 
   @override
   String delete_after_reading_nth(int n) {
-    return '$n chapters back';
+    return '$n bölüm geriden';
   }
 
   @override
   String get delete_after_reading_slot_subtitle =>
-      'Keeping a few read chapters lets you go back to them offline.';
+      'Okunmuş birkaç bölümü saklamak, onlara çevrimdışıyken dönmenizi sağlar.';
 
   @override
-  String get delete_bookmarked_after_reading =>
-      'Also delete bookmarked chapters';
+  String get delete_bookmarked_after_reading => 'Yer imli bölümleri de sil';
 
   @override
-  String get auto_download => 'Auto download';
+  String get auto_download => 'Otomatik indirme';
 
   @override
-  String get download_new_chapters => 'Download new chapters';
+  String get download_new_chapters => 'Yeni bölümleri indir';
 
   @override
   String get download_new_chapters_subtitle =>
-      'After a library update, queue the new unread chapters of series already in the library.';
+      'Kütüphane güncellendikten sonra, kütüphanedeki serilerin yeni okunmamış bölümlerini indirme kuyruğuna ekle.';
 
   @override
-  String get download_new_chapters_included => 'Only these categories';
+  String get download_new_chapters_included => 'Yalnızca bu kategoriler';
 
   @override
-  String get download_new_chapters_excluded => 'Except these categories';
+  String get download_new_chapters_excluded => 'Bu kategoriler hariç';
 
   @override
-  String get download_new_chapters_all_categories => 'All categories';
+  String get download_new_chapters_all_categories => 'Tüm kategoriler';
 
   @override
-  String get download_ahead => 'Download ahead while reading';
+  String get download_ahead => 'Okurken önden indir';
 
   @override
   String get download_ahead_subtitle =>
-      'While reading a downloaded chapter of a series in the library, download the next unread ones.';
+      'Kütüphanedeki bir serinin indirilmiş bölümünü okurken, sonraki okunmamış bölümleri indir.';
 
   @override
   String download_ahead_count(int n) {
-    return 'Next $n chapters';
+    return 'Sonraki $n bölüm';
   }
 
   @override
@@ -2286,21 +2295,21 @@ class AppLocalizationsTr extends AppLocalizations {
       'Yinelenen bölüm numaralarını okunmuş olarak işaretleyin';
 
   @override
-  String get skip_read_chapters => 'Skip read chapters';
+  String get skip_read_chapters => 'Okunmuş bölümleri atla';
 
   @override
   String get skip_read_chapters_subtitle =>
-      'Next and previous chapter go past the ones already read.';
+      'Sonraki ve önceki bölüm, zaten okunmuş olanların üzerinden geçer.';
 
   @override
-  String get skip_filtered_chapters => 'Skip filtered chapters';
+  String get skip_filtered_chapters => 'Filtrelenmiş bölümleri atla';
 
   @override
-  String get skip_duplicate_chapters => 'Skip duplicate chapters';
+  String get skip_duplicate_chapters => 'Yinelenen bölümleri atla';
 
   @override
   String get skip_duplicate_chapters_subtitle =>
-      'Read one copy of each chapter number, from the same scanlator when there is one.';
+      'Her bölüm numarasının bir kopyasını oku; mümkünse aynı scanlator\'dan olanı.';
 
   @override
   String get default_skip_intro_length => 'Varsayılan Giriş Atla süresi';
@@ -2923,11 +2932,11 @@ class AppLocalizationsTr extends AppLocalizations {
   String get subtitle_delay => 'Gecikme (ms)';
 
   @override
-  String get audio_delay => 'Audio delay (ms)';
+  String get audio_delay => 'Ses gecikmesi (ms)';
 
   @override
   String get audio_delay_subtitle =>
-      'Plays the sound later (positive) or earlier (negative) than the picture. Kept from one episode to the next.';
+      'Sesi görüntüye göre daha geç (pozitif) veya daha erken (negatif) çalar. Bölümler arasında korunur.';
 
   @override
   String get subtitle_speed => 'Hız';
@@ -3182,14 +3191,14 @@ class AppLocalizationsTr extends AppLocalizations {
       'Oynatıcıyı yatay yönelim kullanmaya zorla.';
 
   @override
-  String get remember_player_volume => 'Remember volume';
+  String get remember_player_volume => 'Ses düzeyini hatırla';
 
   @override
   String get remember_player_volume_subtitle =>
-      'Start each episode at the volume the last one ended with.';
+      'Her bölüm, bir önceki bölümün bittiği ses düzeyinde başlar.';
 
   @override
-  String get remember_player_brightness => 'Remember brightness';
+  String get remember_player_brightness => 'Parlaklığı hatırla';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
@@ -3230,65 +3239,65 @@ class AppLocalizationsTr extends AppLocalizations {
   String get app_lock => 'Uygulama Kilidi';
 
   @override
-  String get app_lock_delay => 'Lock after';
+  String get app_lock_delay => 'Şu süreden sonra kilitle';
 
   @override
-  String get app_lock_delay_immediately => 'Leaving the app';
+  String get app_lock_delay_immediately => 'Uygulamadan çıkıldığında';
 
   @override
   String app_lock_delay_minutes(int n) {
-    return '$n min away';
+    return '$n dk uzakta';
   }
 
   @override
-  String get app_lock_delay_launch_only => 'Only when the app starts';
+  String get app_lock_delay_launch_only => 'Yalnızca uygulama başladığında';
 
   @override
-  String get secure_screen => 'Secure screen';
+  String get secure_screen => 'Güvenli ekran';
 
   @override
   String get secure_screen_subtitle =>
-      'Hide the app from the app switcher, and on Android from screenshots and screen recordings.';
+      'Uygulamayı uygulama değiştiricide gizle; Android\'de ekran görüntülerini ve ekran kayıtlarını da engelle.';
 
   @override
-  String get secure_screen_never => 'Never';
+  String get secure_screen_never => 'Asla';
 
   @override
-  String get secure_screen_incognito => 'In incognito mode';
+  String get secure_screen_incognito => 'Gizli modda';
 
   @override
-  String get secure_screen_always => 'Always';
+  String get secure_screen_always => 'Her zaman';
 
   @override
-  String get background_work => 'Background work';
+  String get background_work => 'Arka plan işlemleri';
 
   @override
-  String get background_work_in_progress => 'Working…';
+  String get background_work_in_progress => 'Çalışıyor…';
 
   @override
-  String get background_downloading => 'Downloading';
+  String get background_downloading => 'İndiriliyor';
 
   @override
-  String get background_updating_library => 'Updating library';
+  String get background_updating_library => 'Kütüphane güncelleniyor';
 
   @override
-  String get background_restoring => 'Restoring backup';
+  String get background_restoring => 'Yedek geri yükleniyor';
 
   @override
-  String get background_syncing => 'Syncing';
+  String get background_syncing => 'Senkronize ediliyor';
 
   @override
-  String get background_cancel_downloads => 'Cancel downloads';
+  String get background_cancel_downloads => 'İndirmeleri iptal et';
 
   @override
-  String get background_stop_update => 'Stop update';
+  String get background_stop_update => 'Güncellemeyi durdur';
 
   @override
-  String get hide_notification_content => 'Hide notification content';
+  String get hide_notification_content => 'Bildirim içeriğini gizle';
 
   @override
   String get hide_notification_content_subtitle =>
-      'Notifications say what the app is doing without naming series or chapters.';
+      'Bildirimler, uygulamanın ne yaptığını serileri veya bölümleri adlandırmadan belirtir.';
 
   @override
   String get require_biometric_or_device_credential =>
@@ -3321,19 +3330,19 @@ class AppLocalizationsTr extends AppLocalizations {
   String get brightness => 'Parlaklık';
 
   @override
-  String get video_filters => 'Video filters';
+  String get video_filters => 'Video filtreleri';
 
   @override
-  String get video_filter_contrast => 'Contrast';
+  String get video_filter_contrast => 'Kontrast';
 
   @override
-  String get video_filter_saturation => 'Saturation';
+  String get video_filter_saturation => 'Doygunluk';
 
   @override
-  String get video_filter_gamma => 'Gamma';
+  String get video_filter_gamma => 'Gama';
 
   @override
-  String get video_filter_hue => 'Hue';
+  String get video_filter_hue => 'Ton';
 
   @override
   String get volume => 'Ses düzeyi';
@@ -3620,11 +3629,11 @@ class AppLocalizationsTr extends AppLocalizations {
   String get split_wide_pages => 'Geniş sayfaları böl';
 
   @override
-  String get split_tall_images => 'Split tall images';
+  String get split_tall_images => 'Uzun görselleri böl';
 
   @override
   String get split_tall_images_subtitle =>
-      'Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.';
+      'Webtoon: çok uzun görselleri dilimler halinde, seferde bir tanesini çözerek gösterir; daha az bellek kullanır. Kenarlıkları kırp seçeneğiyle birlikte kullanılmaz.';
 
   @override
   String get dual_page_invert => 'Bölünen yarım sayfaları ters çevir';
@@ -4262,23 +4271,23 @@ class AppLocalizationsTr extends AppLocalizations {
       'Hücresel verideyken planlanan güncellemeyi atlayın.';
 
   @override
-  String get library_update_restrictions => 'Skip when updating';
+  String get library_update_restrictions => 'Güncellerken atla';
 
   @override
-  String get library_update_skip_completed => 'Completed series';
+  String get library_update_skip_completed => 'Tamamlanmış seriler';
 
   @override
-  String get library_update_skip_unread => 'Series with unread chapters';
+  String get library_update_skip_unread => 'Okunmamış bölümü olan seriler';
 
   @override
-  String get library_update_skip_not_started => 'Series not started';
+  String get library_update_skip_not_started => 'Başlanmamış seriler';
 
   @override
   String get library_update_restrictions_subtitle =>
-      'Applies to every library update. Categories set to skip updates are also left out when the whole library is updated.';
+      'Her kütüphane güncellemesi için geçerlidir. Güncellemelerin atlanmasına ayarlanmış kategoriler, tüm kütüphane güncellenirken de dışarıda bırakılır.';
 
   @override
-  String get library_update_restrictions_none => 'None';
+  String get library_update_restrictions_none => 'Hiçbiri';
 
   @override
   String get padding => 'Kenar Boşluğu';

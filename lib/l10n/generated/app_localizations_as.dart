@@ -1123,6 +1123,16 @@ class AppLocalizationsAs extends AppLocalizations {
   String get about => 'বিষয়ে';
 
   @override
+  String get open_source_licenses => 'মুক্ত উৎস লাইচেঞ্চ';
+
+  @override
+  String get open_source_licenses_subtitle =>
+      'Mangayomi নিৰ্মাণত ব্যৱহৃত পেকেজ আৰু সিহতৰ লাইচেঞ্চ';
+
+  @override
+  String get open_source_licenses_empty => 'লাইচেঞ্চৰ তথ্য উপলব্ধ নাই।';
+
+  @override
   String get help => 'সহায়';
 
   @override
@@ -1298,53 +1308,52 @@ class AppLocalizationsAs extends AppLocalizations {
       'পঢ়াৰ পিছত ডাউনলোড কৰা ফাইল ডিলিট কৰক';
 
   @override
-  String get delete_after_reading_slot => 'Delete which chapter';
+  String get delete_after_reading_slot => 'কোনটো অধ্যায় মচিব';
 
   @override
-  String get delete_after_reading_last => 'The chapter just read';
+  String get delete_after_reading_last => 'এইমাত্ৰ পঢ়া অধ্যায়';
 
   @override
   String delete_after_reading_nth(int n) {
-    return '$n chapters back';
+    return '$n অধ্যায় আগৰ';
   }
 
   @override
   String get delete_after_reading_slot_subtitle =>
-      'Keeping a few read chapters lets you go back to them offline.';
+      'কিছুমান পঢ়া অধ্যায় ৰাখিলে আপুনি অফলাইনতো সিহতলৈ উভতি যাব পাৰে।';
 
   @override
-  String get delete_bookmarked_after_reading =>
-      'Also delete bookmarked chapters';
+  String get delete_bookmarked_after_reading => 'বুকমাৰ্ক কৰা অধ্যায়ও মচক';
 
   @override
-  String get auto_download => 'Auto download';
+  String get auto_download => 'স্বয়ংক্ৰিয় ডাউনলোড';
 
   @override
-  String get download_new_chapters => 'Download new chapters';
+  String get download_new_chapters => 'নতুন অধ্যায় ডাউনলোড কৰক';
 
   @override
   String get download_new_chapters_subtitle =>
-      'After a library update, queue the new unread chapters of series already in the library.';
+      'পুথিভঁৰাল আপডেটৰ পিছত, পুথিভঁৰালত থকা ধাৰাবাহিকৰ নতুন নপঢ়া অধ্যায়বোৰ ডাউনলোডৰ শাৰীত ৰাখক।';
 
   @override
-  String get download_new_chapters_included => 'Only these categories';
+  String get download_new_chapters_included => 'কেৱল এই শ্ৰেণীসমূহ';
 
   @override
-  String get download_new_chapters_excluded => 'Except these categories';
+  String get download_new_chapters_excluded => 'এই শ্ৰেণীসমূহ বাদে';
 
   @override
-  String get download_new_chapters_all_categories => 'All categories';
+  String get download_new_chapters_all_categories => 'সকলো শ্ৰেণী';
 
   @override
-  String get download_ahead => 'Download ahead while reading';
+  String get download_ahead => 'পঢ়াৰ সময়ত আগত ডাউনলোড কৰক';
 
   @override
   String get download_ahead_subtitle =>
-      'While reading a downloaded chapter of a series in the library, download the next unread ones.';
+      'পুথিভঁৰালৰ ধাৰাবাহিকৰ ডাউনলোড কৰা অধ্যায় পঢ়োঁতে, পৰৱৰ্তী নপঢ়া অধ্যায়বোৰ ডাউনলোড কৰক।';
 
   @override
   String download_ahead_count(int n) {
-    return 'Next $n chapters';
+    return 'পৰৱৰ্তী $n অধ্যায়';
   }
 
   @override
@@ -2280,21 +2289,21 @@ class AppLocalizationsAs extends AppLocalizations {
       'অনুলিপি অধ্যায় সংখ্যা পড়া হিসাবে চিহ্নিত করুন';
 
   @override
-  String get skip_read_chapters => 'Skip read chapters';
+  String get skip_read_chapters => 'পঢ়া অধ্যায় এৰি যাওক';
 
   @override
   String get skip_read_chapters_subtitle =>
-      'Next and previous chapter go past the ones already read.';
+      'পৰৱৰ্তী আৰু আগৰ অধ্যায়ে ইতিমধ্যে পঢ়া অধ্যায়বোৰ এৰি যায়।';
 
   @override
-  String get skip_filtered_chapters => 'Skip filtered chapters';
+  String get skip_filtered_chapters => 'ফিল্টাৰ কৰা অধ্যায় এৰি যাওক';
 
   @override
-  String get skip_duplicate_chapters => 'Skip duplicate chapters';
+  String get skip_duplicate_chapters => 'ডুপ্লিকেট অধ্যায় এৰি যাওক';
 
   @override
   String get skip_duplicate_chapters_subtitle =>
-      'Read one copy of each chapter number, from the same scanlator when there is one.';
+      'প্ৰতিটো অধ্যায় নম্বৰৰ এটা কপি পঢ়ক, সম্ভৱ হ\'লে একে স্ক্যানলেটৰৰ।';
 
   @override
   String get default_skip_intro_length => 'ডিফল্ট ইনট্ৰ\' এৰি দিয়াৰ দৈৰ্ঘ্য';
@@ -2914,11 +2923,11 @@ class AppLocalizationsAs extends AppLocalizations {
   String get subtitle_delay => 'বিলম্ব (ms)';
 
   @override
-  String get audio_delay => 'Audio delay (ms)';
+  String get audio_delay => 'অডিঅ\' বিলম্ব (ms)';
 
   @override
   String get audio_delay_subtitle =>
-      'Plays the sound later (positive) or earlier (negative) than the picture. Kept from one episode to the next.';
+      'ছবিতকৈ শব্দ পিছত (ধনাত্মক) বা আগত (ঋণাত্মক) বজোৱা হয়। এটা খণ্ডৰ পৰা পৰৱৰ্তী খণ্ডলৈ ৰখা হয়।';
 
   @override
   String get subtitle_speed => 'গতি';
@@ -3174,14 +3183,14 @@ class AppLocalizationsAs extends AppLocalizations {
       'প্লেয়াৰক ল্যান্ডস্কেপ অৰিয়েন্টেশন ব্যৱহাৰ কৰিবলৈ বাধ্য কৰক।';
 
   @override
-  String get remember_player_volume => 'Remember volume';
+  String get remember_player_volume => 'ভলিউম মনত ৰাখক';
 
   @override
   String get remember_player_volume_subtitle =>
-      'Start each episode at the volume the last one ended with.';
+      'প্ৰতিটো খণ্ড আগৰ খণ্ডটো শেষ হোৱা ভলিউমত আৰম্ভ কৰক।';
 
   @override
-  String get remember_player_brightness => 'Remember brightness';
+  String get remember_player_brightness => 'উজ্জ্বলতা মনত ৰাখক';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
@@ -3221,65 +3230,65 @@ class AppLocalizationsAs extends AppLocalizations {
   String get app_lock => 'এপ্লিকেশন লক';
 
   @override
-  String get app_lock_delay => 'Lock after';
+  String get app_lock_delay => 'এইসময়ৰ পিছত লক কৰক';
 
   @override
-  String get app_lock_delay_immediately => 'Leaving the app';
+  String get app_lock_delay_immediately => 'এপ এৰি যোৱাৰ সময়ত';
 
   @override
   String app_lock_delay_minutes(int n) {
-    return '$n min away';
+    return '$n মিনিট দূৰত';
   }
 
   @override
-  String get app_lock_delay_launch_only => 'Only when the app starts';
+  String get app_lock_delay_launch_only => 'কেৱল এপ আৰম্ভ হওঁতে';
 
   @override
-  String get secure_screen => 'Secure screen';
+  String get secure_screen => 'সুৰক্ষিত স্ক্ৰীন';
 
   @override
   String get secure_screen_subtitle =>
-      'Hide the app from the app switcher, and on Android from screenshots and screen recordings.';
+      'এপ ছুইচাৰৰ পৰা এপ লুকাওক, আৰু এণ্ড্ৰইডত স্ক্ৰীনশ্বট আৰু স্ক্ৰীন ৰেকৰ্ডিঙৰ পৰাও।';
 
   @override
-  String get secure_screen_never => 'Never';
+  String get secure_screen_never => 'কেতিয়াও নহয়';
 
   @override
-  String get secure_screen_incognito => 'In incognito mode';
+  String get secure_screen_incognito => 'গোপন মোডত';
 
   @override
-  String get secure_screen_always => 'Always';
+  String get secure_screen_always => 'সদায়';
 
   @override
-  String get background_work => 'Background work';
+  String get background_work => 'পটভূমিৰ কাম';
 
   @override
-  String get background_work_in_progress => 'Working…';
+  String get background_work_in_progress => 'কাম চলি আছে…';
 
   @override
-  String get background_downloading => 'Downloading';
+  String get background_downloading => 'ডাউনলোড কৰি আছে';
 
   @override
-  String get background_updating_library => 'Updating library';
+  String get background_updating_library => 'পুথিভঁৰাল আপডেট কৰি আছে';
 
   @override
-  String get background_restoring => 'Restoring backup';
+  String get background_restoring => 'বেকআপ পুনৰুদ্ধাৰ কৰি আছে';
 
   @override
-  String get background_syncing => 'Syncing';
+  String get background_syncing => 'সিংক কৰি আছে';
 
   @override
-  String get background_cancel_downloads => 'Cancel downloads';
+  String get background_cancel_downloads => 'ডাউনলোড বাতিল কৰক';
 
   @override
-  String get background_stop_update => 'Stop update';
+  String get background_stop_update => 'আপডেট বন্ধ কৰক';
 
   @override
-  String get hide_notification_content => 'Hide notification content';
+  String get hide_notification_content => 'জাননীৰ বিষয়বস্তু লুকাওক';
 
   @override
   String get hide_notification_content_subtitle =>
-      'Notifications say what the app is doing without naming series or chapters.';
+      'জাননীয়ে ধাৰাবাহিক বা অধ্যায়ৰ নাম নোলোৱাকৈ এপে কি কৰি আছে সেই কথা জনায়।';
 
   @override
   String get require_biometric_or_device_credential =>
@@ -3312,19 +3321,19 @@ class AppLocalizationsAs extends AppLocalizations {
   String get brightness => 'উজ্জ্বলতা';
 
   @override
-  String get video_filters => 'Video filters';
+  String get video_filters => 'ভিডিঅ\' ফিল্টাৰ';
 
   @override
-  String get video_filter_contrast => 'Contrast';
+  String get video_filter_contrast => 'বৈপৰীত্য';
 
   @override
-  String get video_filter_saturation => 'Saturation';
+  String get video_filter_saturation => 'স্যাচুৰেশ্যন';
 
   @override
-  String get video_filter_gamma => 'Gamma';
+  String get video_filter_gamma => 'গামা';
 
   @override
-  String get video_filter_hue => 'Hue';
+  String get video_filter_hue => 'বৰ্ণ';
 
   @override
   String get volume => 'ভলিউম';
@@ -3608,11 +3617,11 @@ class AppLocalizationsAs extends AppLocalizations {
   String get split_wide_pages => 'Split wide pages';
 
   @override
-  String get split_tall_images => 'Split tall images';
+  String get split_tall_images => 'দীঘল ছবি ভাগ কৰক';
 
   @override
   String get split_tall_images_subtitle =>
-      'Webtoon: show very tall images in slices, decoded one at a time, to use less memory. Not with Crop borders.';
+      'ৱেবটুন: অতি দীঘল ছবি টুকুৰা টুকুৰকৈ দেখুৱাওক, কম মেমৰি ব্যৱহাৰৰ বাবে এবাৰে এটাকৈ ডিকোড কৰা হয়। \'সীমা কাটক\'ৰ সৈতে নহয়।';
 
   @override
   String get dual_page_invert => 'Invert cut half pages';
@@ -4249,23 +4258,23 @@ class AppLocalizationsAs extends AppLocalizations {
       'ম\'বাইল ডাটা ব্যৱহাৰ কৰাৰ সময়ত নিৰ্ধাৰিত আপডেট বাদ দিয়ক।';
 
   @override
-  String get library_update_restrictions => 'Skip when updating';
+  String get library_update_restrictions => 'আপডেটৰ সময়ত এৰি যাওক';
 
   @override
-  String get library_update_skip_completed => 'Completed series';
+  String get library_update_skip_completed => 'সম্পূৰ্ণ হোৱা ধাৰাবাহিক';
 
   @override
-  String get library_update_skip_unread => 'Series with unread chapters';
+  String get library_update_skip_unread => 'নপঢ়া অধ্যায় থকা ধাৰাবাহিক';
 
   @override
-  String get library_update_skip_not_started => 'Series not started';
+  String get library_update_skip_not_started => 'আৰম্ভ নকৰা ধাৰাবাহিক';
 
   @override
   String get library_update_restrictions_subtitle =>
-      'Applies to every library update. Categories set to skip updates are also left out when the whole library is updated.';
+      'প্ৰতিটো পুথিভঁৰাল আপডেটত প্ৰযোজ্য। আপডেট এৰি যাবলৈ ছেট কৰা শ্ৰেণীসমূহো সম্পূৰ্ণ পুথিভঁৰাল আপডেট কৰোঁতে বাদ পৰে।';
 
   @override
-  String get library_update_restrictions_none => 'None';
+  String get library_update_restrictions_none => 'একো নাই';
 
   @override
   String get padding => 'পেডিং';

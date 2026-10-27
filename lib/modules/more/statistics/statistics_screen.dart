@@ -86,14 +86,16 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
             ],
           ),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: tabs,
-          labelColor: recap ? SwColors.cyan : null,
-          unselectedLabelColor: recap ? SwColors.muted : null,
-          indicatorColor: recap ? SwColors.cyan : null,
-          dividerColor: recap ? SwColors.hairline : null,
-        ),
+        bottom: _visibleTabTypes.length < 2
+            ? null
+            : TabBar(
+                controller: _tabController,
+                tabs: tabs,
+                labelColor: recap ? SwColors.cyan : null,
+                unselectedLabelColor: recap ? SwColors.muted : null,
+                indicatorColor: recap ? SwColors.cyan : null,
+                dividerColor: recap ? SwColors.hairline : null,
+              ),
       ),
       body: TabBarView(
         controller: _tabController,

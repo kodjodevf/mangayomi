@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/main_view/widgets/nav_group_switcher.dart';
 import 'package:mangayomi/modules/widgets/collapsing_header.dart';
@@ -19,7 +20,7 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
   final textEditingController = TextEditingController();
   late TabController tabController;
   late List<ItemType> visibleTabTypes;
-  late final List<String> hideItems;
+  late final List<ProviderSubscription<Object?>> _visibilitySubscriptions;
   bool isSearch = false;
 
   /// Whether the content has scrolled the group's switcher out of sight, in
@@ -47,29 +48,89 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
   @override
   void initState() {
     super.initState();
-    hideItems = ref.read(hideItemsStateProvider);
+    visibleTabTypes = _computeVisibleTabTypes();
+    tabController = _newTabController(0);
 
-    visibleTabTypes = hiddenItemTypes(hideItems);
+    // Settings can change while this screen stays mounted (a type hidden in
+    // More > Navigation), so the tabs follow them.
+    _visibilitySubscriptions = [
+      ref.listenManual(
+        hideItemsStateProvider,
+        (_, _) => _applyVisibleTabTypes(),
+      ),
+      ref.listenManual(
+        animeOnlyTvModeProvider,
+        (_, _) => _applyVisibleTabTypes(),
+      ),
+    ];
+  }
+
+  List<ItemType> _computeVisibleTabTypes([
+    List<String>? hideItems,
+    bool? animeOnly,
+  ]) {
+    final types = hiddenItemTypes(
+      hideItems ?? ref.read(hideItemsStateProvider),
+    );
 
     // Anime-only layout: only the anime tab (hides manga/novel in History,
     // Updates, and any other screen built on this base).
-    if (ref.read(animeOnlyTvModeProvider)) {
-      visibleTabTypes = visibleTabTypes
-          .where((t) => t == ItemType.anime)
-          .toList();
+    if (animeOnly ?? ref.read(animeOnlyTvModeProvider)) {
+      return types.where((t) => t == ItemType.anime).toList();
     }
+    return types;
+  }
 
-    tabController = TabController(length: visibleTabTypes.length, vsync: this);
+  TabController _newTabController(int initialIndex) {
+    final controller = TabController(
+      length: visibleTabTypes.length,
+      vsync: this,
+      initialIndex: visibleTabTypes.isEmpty ? 0 : initialIndex,
+    );
+    controller.addListener(_onTabControllerChanged);
+    return controller;
+  }
 
-    tabController.addListener(() {
-      // Another tab's list starts at its top: the header comes back.
-      headerCollapsed.value = false;
+  void _onTabControllerChanged() {
+    // Another tab's list starts at its top: the header comes back.
+    headerCollapsed.value = false;
+    if (visibleTabTypes.isNotEmpty) {
       onTabChanged(visibleTabTypes[tabController.index]);
-      setState(() {
-        textEditingController.clear();
-        isSearch = false;
-      });
+    }
+    setState(() {
+      textEditingController.clear();
+      isSearch = false;
     });
+  }
+
+  /// Rebuilds the tabs when the visible types change, keeping the current
+  /// tab if it is still visible.
+  void _applyVisibleTabTypes([List<ItemType>? computed]) {
+    final types = computed ?? _computeVisibleTabTypes();
+    if (listEquals(types, visibleTabTypes)) return;
+
+    final selected = visibleTabTypes.isEmpty
+        ? null
+        : visibleTabTypes[tabController.index];
+    final previous = tabController;
+    final kept = selected == null ? -1 : types.indexOf(selected);
+    visibleTabTypes = types;
+    tabController = _newTabController(kept < 0 ? 0 : kept);
+    if (computed == null && mounted) {
+      setState(() {});
+    }
+    previous.removeListener(_onTabControllerChanged);
+    previous.dispose();
+    if (visibleTabTypes.isNotEmpty) {
+      final active = visibleTabTypes[tabController.index];
+      if (active != selected) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && visibleTabTypes.isNotEmpty) {
+            onTabChanged(visibleTabTypes[tabController.index]);
+          }
+        });
+      }
+    }
   }
 
   /// Called whenever the active tab type changes.
@@ -77,6 +138,10 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
 
   @override
   void dispose() {
+    for (final subscription in _visibilitySubscriptions) {
+      subscription.close();
+    }
+    tabController.removeListener(_onTabControllerChanged);
     tabController.dispose();
     textEditingController.dispose();
     headerCollapsed.dispose();
@@ -93,12 +158,13 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
       : null;
 
   /// The tab switcher below the title: TV-home style pills on Android TV, the
-  /// classic underline [TabBar] elsewhere. On TV a single visible tab (e.g.
-  /// anime-only mode) needs no switcher at all.
+  /// classic underline [TabBar] elsewhere. A single visible tab (e.g. when the
+  /// other media types are disabled in Settings or in anime-only mode) needs
+  /// no switcher at all.
   PreferredSizeWidget? _buildTabSwitcher(BuildContext context) {
+    if (visibleTabTypes.length < 2) return null;
     final l10n = l10nLocalizations(context)!;
     if (isTv) {
-      if (visibleTabTypes.length < 2) return null;
       return PreferredSize(
         preferredSize: const Size.fromHeight(48),
         child: AnimatedBuilder(
@@ -136,8 +202,22 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
     );
   }
 
+  List<Widget> _buildTabViews() => [
+    for (final type in visibleTabTypes)
+      KeyedSubtree(key: ValueKey(type), child: buildTab(type)),
+  ];
+
   @override
   Widget build(BuildContext context) {
+    _applyVisibleTabTypes(
+      _computeVisibleTabTypes(
+        ref.watch(hideItemsStateProvider),
+        ref.watch(animeOnlyTvModeProvider),
+      ),
+    );
+    if (visibleTabTypes.isEmpty) {
+      return const SizedBox.shrink();
+    }
     final grouped = navRoute != null && isGroupedNavRoute(ref, navRoute!);
     return Scaffold(
       appBar: AppBar(
@@ -208,16 +288,13 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
                   Expanded(
                     child: TabBarView(
                       controller: tabController,
-                      children: visibleTabTypes.map(buildTab).toList(),
+                      children: _buildTabViews(),
                     ),
                   ),
                 ],
               ),
             )
-          : TabBarView(
-              controller: tabController,
-              children: visibleTabTypes.map(buildTab).toList(),
-            ),
+          : TabBarView(controller: tabController, children: _buildTabViews()),
     );
   }
 }

@@ -1125,6 +1125,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get about => 'À propos';
 
   @override
+  String get open_source_licenses => 'Licences open source';
+
+  @override
+  String get open_source_licenses_subtitle =>
+      'Les packages utilisés par Mangayomi et leurs licences';
+
+  @override
+  String get open_source_licenses_empty =>
+      'Aucune information de licence n\'est disponible.';
+
+  @override
   String get help => 'Aide';
 
   @override
