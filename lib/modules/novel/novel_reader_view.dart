@@ -44,6 +44,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:mangayomi/modules/reader_common/mixins/reader_auto_scroll.dart';
+import 'package:mangayomi/modules/reader_common/mixins/chapter_controller_mixin.dart';
 
 class NovelReaderView extends ConsumerWidget {
   final int chapterId;
@@ -114,6 +115,15 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   final Stopwatch _readingStopwatch = Stopwatch();
   int? _discordReaderSession;
 
+  /// Hands the reading time measured so far to the chapter and starts
+  /// counting again, so an app the system kills in the background loses at
+  /// most what came after the last save.
+  void _flushReadingTime() {
+    final seconds = _readingStopwatch.elapsed.inSeconds;
+    _readingStopwatch.reset();
+    readerController.setHistoryUpdate(elapsedSeconds: seconds);
+  }
+
   void onScroll() {
     if (scrollController.hasClients) {
       offset = scrollController.offset;
@@ -131,9 +141,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     applyReaderScreenBrightness(-1);
     updatePaginatedOffsetBeforeDispose(_readerMode);
     readerController.setChapterOffset(offset, maxOffset, true);
-    readerController.setHistoryUpdate(
-      elapsedSeconds: _readingStopwatch.elapsed.inSeconds,
-    );
+    _flushReadingTime();
     scrollController.removeListener(onScroll);
     scrollController.dispose();
     rebuildDetail.close();
@@ -163,6 +171,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       _readingStopwatch.stop();
+      _flushReadingTime();
       if (keepOn) {
         WakelockPlus.disable();
       }
@@ -214,6 +223,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   @override
   void initState() {
     super.initState();
+    beginReadingSession();
     // Before anything that can fail, so the controller dispose() needs is
     // always there: this is the whole point of not leaving it lazy.
     readerController = ref.read(

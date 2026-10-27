@@ -8,6 +8,7 @@ import 'package:mangayomi/repositories/category_repository.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/reading_log_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/restore_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
@@ -72,6 +73,7 @@ class KotatsuRestoreService {
         chapterRepository.clearSync();
         downloadRepository.clearSync();
         historyRepository.clearSync();
+        readingLogRepository.clearSync();
         updateRepository.clearSync();
         trackRepository.clearSync();
         trackRepository.clearPreferencesSync();

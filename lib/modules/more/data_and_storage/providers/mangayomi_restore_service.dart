@@ -6,6 +6,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
+import 'package:mangayomi/models/reading_log.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -19,6 +20,7 @@ import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/custom_button_repository.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/reading_log_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/restore_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
@@ -85,6 +87,10 @@ class MangayomiRestoreService {
       final customButtons = (backup["customButtons"] as List?)
           ?.map((e) => CustomButton.fromJson(e))
           .toList();
+      // Absent from backups made before the reading log existed.
+      final readingLog = (backup["readingLog"] as List?)
+          ?.map((e) => ReadingLog.fromJson(e))
+          .toList();
 
       final currentSettings = settingsRepository.currentOrNull;
       await restoreRepository.run(() {
@@ -94,6 +100,7 @@ class MangayomiRestoreService {
             chapters: chapters,
             categories: categories,
             history: history,
+            readingLog: readingLog,
             updates: updates,
             categoryDecisions: categoryDecisions,
             sourceDecisions: sourceDecisions,
@@ -142,6 +149,19 @@ class MangayomiRestoreService {
             }
 
             historyRepository.clearSync();
+
+            readingLogRepository.clearSync();
+            if (readingLog != null) {
+              // Ids are kept, like history; rows of series not restored go.
+              readingLogRepository.putAllSync([
+                for (final row in readingLog)
+                  if (mangaMap.containsKey(row.mangaId))
+                    row
+                      ..chapterId = chapterMap.containsKey(row.chapterId)
+                          ? row.chapterId
+                          : null,
+              ]);
+            }
             if (history != null) {
               final historyToPut = <History>[];
               for (var element in history) {
@@ -236,6 +256,7 @@ class MangayomiRestoreService {
     required List<Chapter>? chapters,
     required List<Category>? categories,
     required List<History>? history,
+    required List<ReadingLog>? readingLog,
     required List<Update>? updates,
     required Map<String, bool> categoryDecisions,
     required Map<String, int> sourceDecisions,
@@ -311,6 +332,12 @@ class MangayomiRestoreService {
     }
 
     final oldToNewChapterId = <int, int>{};
+    // Chapters already in the library aren't re-inserted, so log rows find
+    // theirs by url.
+    final urlByOldChapterId = {
+      for (final c in chapters ?? const <Chapter>[])
+        if (c.id != null && c.url != null) c.id!: c.url!,
+    };
     if (chapters != null) {
       final existingUrlsByMangaId = <int, Set<String>>{};
       for (final tempChapter in chapters) {
@@ -359,6 +386,50 @@ class MangayomiRestoreService {
         historyRepository.putSync(tempHistory..chapter.value = chapterRef);
         tempHistory.chapter.saveSync();
       }
+    }
+
+    if (readingLog != null) {
+      final chapterIdsByUrl = <int, Map<String, int>>{};
+      final added = <(int, int?, int, ReadingLogKind)>{};
+      final toPut = <ReadingLog>[];
+      for (final row in readingLog) {
+        final newMangaId = row.mangaId != null
+            ? oldToNewMangaId[row.mangaId]
+            : null;
+        if (newMangaId == null) continue;
+        final oldChapterId = row.chapterId;
+        int? newChapterId;
+        if (oldChapterId != null) {
+          newChapterId = oldToNewChapterId[oldChapterId];
+          final url = urlByOldChapterId[oldChapterId];
+          if (newChapterId == null && url != null) {
+            newChapterId = chapterIdsByUrl.putIfAbsent(
+              newMangaId,
+              () => {
+                for (final c in chapterRepository.getAllByMangaId(newMangaId))
+                  if (c.url != null) c.url!: c.id!,
+              },
+            )[url];
+          }
+        }
+        final key = (newMangaId, newChapterId, row.at, row.kind);
+        if (!added.add(key) ||
+            readingLogRepository.existsSync(
+              newMangaId,
+              newChapterId,
+              row.at,
+              row.kind,
+            )) {
+          continue;
+        }
+        toPut.add(
+          row
+            ..id = null
+            ..mangaId = newMangaId
+            ..chapterId = newChapterId,
+        );
+      }
+      readingLogRepository.putAllSync(toPut);
     }
 
     if (updates != null) {

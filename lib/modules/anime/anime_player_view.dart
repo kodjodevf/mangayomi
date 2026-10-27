@@ -57,6 +57,7 @@ import 'package:media_kit/generated/libmpv/bindings.dart' as generated;
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:mangayomi/modules/anime/utils/always_on_top.dart';
 import 'package:mangayomi/modules/anime/utils/mpv_subtitle_options.dart';
+import 'package:mangayomi/modules/reader_common/mixins/chapter_controller_mixin.dart';
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final int episodeId;
@@ -634,6 +635,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   @override
   void initState() {
     super.initState();
+    beginReadingSession();
     _rememberVolume = ref.read(rememberPlayerVolumeStateProvider);
     _watchStopwatch.start();
     _controller = VideoController(
@@ -756,7 +758,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       _watchStopwatch.stop();
-      _setCurrentPosition(true);
+      // Save the watch time now: the system may kill the app in the
+      // background, and dispose() would never run.
+      _setCurrentPosition(true, saveWatchTime: true);
+      _watchStopwatch.reset();
     } else if (state == AppLifecycleState.resumed) {
       _watchStopwatch.start();
     }

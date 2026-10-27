@@ -184,6 +184,12 @@ final settingsIndex = <SettingsEntry>[
     route: '/appearance',
   ),
   SettingsEntry(
+    title: (l) => l.recapSettingTitle,
+    subtitle: (l) => l.recapSettingSubtitle,
+    section: (l) => l.appearance,
+    route: '/appearance',
+  ),
+  SettingsEntry(
     title: (l) => l.app_language,
     subtitle: null,
     section: (l) => l.appearance,

@@ -66,6 +66,7 @@ class NovelReaderController extends _$NovelReaderController
   void setChapterOffset(double newOffset, double maxOffset, bool save) {
     if (incognitoMode) return;
     final isRead = (newOffset / (maxOffset != 0 ? maxOffset : 1)) >= 0.9;
+    if (isRead) logCompletionOnce();
     if (isRead || save) {
       final ch = chapter;
       ch.isRead = isRead;

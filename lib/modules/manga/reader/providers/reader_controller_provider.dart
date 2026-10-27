@@ -138,14 +138,17 @@ class ReaderController extends _$ReaderController
     bool save, [
     List pageUrlsFallback = const [],
   ]) {
-    if (chapter.isRead! || incognitoMode) return;
+    if (incognitoMode) return;
     final pageLength = getCachedPageLength(pageUrlsFallback);
-    if (pageLength == 0 || (!save && newIndex == _lastSavedIndex)) return;
-    _lastSavedIndex = newIndex;
+    if (pageLength == 0) return;
     final isContinuousLike = getCachedIsContinuousLike();
     final isRead = isContinuousLike
         ? (newIndex + 2) >= pageLength - 1
         : (newIndex + 2) >= pageLength;
+    // Before the read check, so re-reads count in the Statistics recap.
+    if (isRead) logCompletionOnce();
+    if (chapter.isRead! || (!save && newIndex == _lastSavedIndex)) return;
+    _lastSavedIndex = newIndex;
     if (isRead || save) {
       void executeSave() {
         if (chapter.isRead! || incognitoMode) return;

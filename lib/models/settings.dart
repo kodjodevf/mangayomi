@@ -52,6 +52,12 @@ class Settings {
   double? flexColorSchemeBlendLevel;
   double? appUiScale;
 
+  /// Statistics shows the recap (Status Window + Episodes); null means on.
+  bool? statisticsRecap;
+
+  /// Name shown in the Statistics Status Window; null shows the default.
+  String? statisticsReaderName;
+
   String? dateFormat;
 
   int? relativeTimesTamps;
@@ -556,6 +562,8 @@ class Settings {
     this.chapterFilterDownloadedList,
     this.flexColorSchemeBlendLevel = 10.0,
     this.appUiScale = 1.0,
+    this.statisticsRecap,
+    this.statisticsReaderName,
     this.dateFormat = "M/d/y",
     this.relativeTimesTamps = 2,
     this.flexSchemeColorIndex = 2,
@@ -862,6 +870,8 @@ class Settings {
         ? json['flexColorSchemeBlendLevel']
         : (json['flexColorSchemeBlendLevel'] as int).toDouble();
     appUiScale = (json['appUiScale'] as num?)?.toDouble() ?? 1.0;
+    statisticsRecap = json['statisticsRecap'];
+    statisticsReaderName = json['statisticsReaderName'];
     flexSchemeColorIndex = json['flexSchemeColorIndex'];
     id = json['id'];
     incognitoMode = json['incognitoMode'];
@@ -1219,6 +1229,8 @@ class Settings {
     'filterScanlatorList': filterScanlatorList,
     'flexColorSchemeBlendLevel': flexColorSchemeBlendLevel,
     'appUiScale': appUiScale,
+    'statisticsRecap': statisticsRecap,
+    'statisticsReaderName': statisticsReaderName,
     'flexSchemeColorIndex': flexSchemeColorIndex,
     'id': id,
     'incognitoMode': incognitoMode,

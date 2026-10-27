@@ -8,6 +8,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
+import 'package:mangayomi/repositories/reading_log_repository.dart';
 
 class HistoryRepository {
   History? findByMangaId(int mangaId) =>
@@ -103,6 +104,9 @@ class HistoryRepository {
       .readingTimeSecondsProperty()
       .findAll();
 
+  Future<List<History>> getAllByItemType(ItemType itemType) =>
+      isar.historys.filter().itemTypeEqualTo(itemType).findAll();
+
   List<History> getAllByMangaId(int? mangaId) => mangaId == null
       ? const []
       : isar.historys.where().mangaIdEqualTo(mangaId).findAllSync();
@@ -126,13 +130,28 @@ class HistoryRepository {
     });
   });
 
-  Future<void> deleteAll(List<int> ids) =>
-      dbWriteQueue.run(() => isar.writeTxn(() => isar.historys.deleteAll(ids)));
+  // Removing a series from history also removes its reading log, so a
+  // title the user took out of history never shows up in a recap.
+  Future<void> deleteAll(List<int> ids) => dbWriteQueue.run(() {
+    isar.writeTxnSync(() {
+      final mangaIds = isar.historys
+          .getAllSync(ids)
+          .map((h) => h?.mangaId)
+          .whereType<int>()
+          .toList();
+      isar.historys.deleteAllSync(ids);
+      readingLogRepository.deleteByMangaIdsSync(mangaIds);
+    });
+  });
 
   Future<void> delete(int id) => dbWriteQueue.run(() {
     isar.writeTxnSync(() {
-      final clientId = isar.historys.getSync(id)?.clientId;
+      final row = isar.historys.getSync(id);
+      final clientId = row?.clientId;
       isar.historys.deleteSync(id);
+      if (row?.mangaId != null) {
+        readingLogRepository.deleteByMangaIdsSync([row!.mangaId!]);
+      }
       changedPartRepository.recordIfSyncOn(
         ActionType.removeHistory,
         id,

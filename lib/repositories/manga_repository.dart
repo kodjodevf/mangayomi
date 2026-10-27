@@ -14,6 +14,7 @@ import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/db_write_queue.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
+import 'package:mangayomi/repositories/reading_log_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
@@ -341,13 +342,18 @@ class MangaRepository {
   });
 
   Future<void> delete(int id) =>
-      dbWriteQueue.run(() => isar.writeTxn(() => isar.mangas.delete(id)));
+      dbWriteQueue.run(() => isar.writeTxnSync(() => deleteSync(id)));
 
   // Sync primitive below is for callers already inside a write transaction
   // opened by transaction()/writeTransaction() — it doesn't queue on its own.
   int putSync(Manga manga) => isar.mangas.putSync(manga);
 
-  void deleteSync(int id) => isar.mangas.deleteSync(id);
+  // Isar may give a deleted id to the next series, so its reading log goes
+  // too, or that series would inherit it.
+  void deleteSync(int id) {
+    readingLogRepository.deleteByMangaIdsSync([id]);
+    isar.mangas.deleteSync(id);
+  }
 
   void putAllSync(List<Manga> mangas) => isar.mangas.putAllSync(mangas);
 
@@ -390,8 +396,8 @@ class MangaRepository {
     });
   });
 
-  // Deletes every Isar record tied to a manga: history, updates, downloads,
-  // chapters, and the manga itself. Notifies the sync outbox so the removal
+  // Deletes every Isar record tied to a manga: history, reading log, updates,
+  // downloads, chapters, and the manga itself. Notifies the sync outbox so the removal
   // propagates. Must run inside an already-open write transaction.
   void wipeManga(Manga manga) {
     final histories = isar.historys
@@ -432,6 +438,7 @@ class MangaRepository {
         clientId: chapter.clientId,
       );
     }
+    readingLogRepository.deleteByMangaIdsSync([manga.id!]);
     isar.mangas.deleteSync(manga.id!);
     changedPartRepository.recordIfSyncOn(
       ActionType.removeItem,
@@ -475,6 +482,9 @@ class MangaRepository {
             .filter()
             .anyOf(mangaIds, (q, id) => q.mangaIdEqualTo(id))
             .deleteAllSync();
+        // Unlike history, the log can't outlive its series: a reused id
+        // would inherit it.
+        readingLogRepository.deleteByMangaIdsSync(mangaIds);
         isar.mangas.deleteAllSync(mangaIds);
       }
       if (removeSourceId != null) {
@@ -547,6 +557,11 @@ class MangaRepository {
               isar.historys.putSync(h);
               h.chapter.saveSync();
             }
+
+            readingLogRepository.moveMangaSync(otherId, primary.id!, {
+              for (final MapEntry(:key, :value) in remap.entries)
+                key: value.id!,
+            });
 
             final updateEntries = updateRepository.getAllByMangaId(otherId);
             for (final u in updateEntries) {

@@ -7,6 +7,7 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_
 import 'package:mangayomi/modules/more/settings/appearance/providers/tint_surfaces_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/widgets/follow_system_theme_button.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/providers/statistics_recap_state_provider.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/date_format_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
@@ -141,6 +142,14 @@ class AppearanceScreen extends ConsumerWidget {
                 subtitle: l10n.reorder_navigation_description,
                 trailing: const Icon(Symbols.chevron_forward_rounded),
                 onTap: () => context.push("/customNavigationSettings"),
+              ),
+              ShioriSwitchRow(
+                icon: Symbols.insights_rounded,
+                title: l10n.recapSettingTitle,
+                subtitle: l10n.recapSettingSubtitle,
+                value: ref.watch(statisticsRecapStateProvider),
+                onChanged: (v) =>
+                    ref.read(statisticsRecapStateProvider.notifier).set(v),
               ),
               if (isTv)
                 ShioriSwitchRow(

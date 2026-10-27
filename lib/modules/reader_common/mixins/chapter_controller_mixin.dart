@@ -1,10 +1,12 @@
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/reading_log.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/reading_log_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 
@@ -133,8 +135,47 @@ mixin ChapterControllerMixin {
             (history.readingTimeSeconds ?? 0) + elapsedSeconds;
       }
       await historyRepository.save(history);
+      if (elapsedSeconds > 0) {
+        await readingLogRepository.add(
+          ReadingLog(
+            mangaId: manga.id,
+            chapterId: chapter.id,
+            itemType: manga.itemType,
+            at: DateTime.now().millisecondsSinceEpoch,
+            kind: ReadingLogKind.time,
+            seconds: elapsedSeconds,
+          ),
+        );
+      }
     } finally {
       release();
     }
   }
+
+  /// Records that the chapter/episode was finished, for the Statistics recap.
+  /// Called whenever the reader reaches the end, before any "already read"
+  /// early return, so re-reads count — but once per reading session, so
+  /// paging or scrolling back over the end doesn't.
+  Future<void> logCompletionOnce() async {
+    if (incognitoMode || !_completedThisSession.add(chapter.id!)) return;
+    final manga = getManga();
+    await readingLogRepository.add(
+      ReadingLog(
+        mangaId: manga.id,
+        chapterId: chapter.id,
+        itemType: manga.itemType,
+        at: DateTime.now().millisecondsSinceEpoch,
+        kind: ReadingLogKind.completion,
+      ),
+    );
+  }
 }
+
+/// Chapters whose completion this reading session has logged. Lives outside
+/// the controllers because continuous mode disposes and rebuilds them as the
+/// reader scrolls back over a chapter boundary.
+final _completedThisSession = <int>{};
+
+/// Starts a reading session: reader, player and novel screens call it on
+/// open, so finishing a chapter again in a later session counts as a re-read.
+void beginReadingSession() => _completedThisSession.clear();
