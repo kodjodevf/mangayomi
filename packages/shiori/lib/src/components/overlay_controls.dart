@@ -57,13 +57,21 @@ class ShioriOverlayPill extends StatefulWidget {
 
 class _ShioriOverlayPillState extends State<ShioriOverlayPill> {
   bool _focused = false;
+  bool _pressed = false;
+  bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.shiori;
     final c = tokens.color;
-    final background = widget.emphasized ? c.accent : ShioriScrim.underText;
+    final baseColor = widget.emphasized ? c.accent : ShioriScrim.underText;
     final foreground = widget.emphasized ? c.onAccent : Colors.white;
+    final background = (_pressed || _hovered)
+        ? Color.alphaBlend(
+            foreground.withValues(alpha: Alphas.focus),
+            baseColor,
+          )
+        : baseColor;
     final iconSize = tokens.scaled(widget.compact ? 16 : 18);
     final pill = AnimatedContainer(
       duration: ShioriMotion.of(context, ShioriMotion.fast),
@@ -119,7 +127,11 @@ class _ShioriOverlayPillState extends State<ShioriOverlayPill> {
           onTap: widget.onTap,
           onLongPress: widget.onLongPress,
           onFocusChange: (f) => setState(() => _focused = f),
+          onHighlightChanged: (v) => setState(() => _pressed = v),
+          onHover: (v) => setState(() => _hovered = v),
           customBorder: const StadiumBorder(),
+          overlayColor: const WidgetStatePropertyAll(Colors.transparent),
+          splashFactory: NoSplash.splashFactory,
           focusColor: Colors.transparent,
           child: ExcludeSemantics(
             child: ConstrainedBox(
@@ -183,6 +195,8 @@ class ShioriOverlayIconButton extends StatefulWidget {
 
 class _ShioriOverlayIconButtonState extends State<ShioriOverlayIconButton> {
   bool _focused = false;
+  bool _pressed = false;
+  bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
@@ -200,6 +214,15 @@ class _ShioriOverlayIconButtonState extends State<ShioriOverlayIconButton> {
         : glyph < tokens.density.minTarget
         ? tokens.density.minTarget
         : glyph + ShioriSpace.s16;
+    final baseColor = widget.emphasized ? c.accent : Colors.transparent;
+    final buttonColor = enabled && (_pressed || _hovered)
+        ? (widget.emphasized
+              ? Color.alphaBlend(
+                  foreground.withValues(alpha: Alphas.focus),
+                  baseColor,
+                )
+              : Colors.white.withValues(alpha: Alphas.tint))
+        : baseColor;
     final button = AnimatedContainer(
       duration: ShioriMotion.of(context, ShioriMotion.fast),
       width: extent,
@@ -207,7 +230,7 @@ class _ShioriOverlayIconButtonState extends State<ShioriOverlayIconButton> {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: widget.emphasized ? c.accent : Colors.transparent,
+        color: buttonColor,
         border: Border.all(
           color: _focused ? c.accent : Colors.transparent,
           width: 2.5,
@@ -233,7 +256,11 @@ class _ShioriOverlayIconButtonState extends State<ShioriOverlayIconButton> {
               onTap: widget.onPressed,
               onLongPress: widget.onLongPress,
               onFocusChange: (f) => setState(() => _focused = f),
+              onHighlightChanged: (v) => setState(() => _pressed = v),
+              onHover: (v) => setState(() => _hovered = v),
               customBorder: const CircleBorder(),
+              overlayColor: const WidgetStatePropertyAll(Colors.transparent),
+              splashFactory: NoSplash.splashFactory,
               focusColor: Colors.transparent,
               child: ExcludeSemantics(
                 child: Column(
