@@ -445,7 +445,10 @@ class MihonExtensionService implements ExtensionService {
     return res;
   }
 
-  Future<Response> _postDalvik(Map<String, dynamic> body) {
+  Future<Response> _postDalvik(Map<String, dynamic> body) async {
+    if (!Platform.isLinux && cfPort == 0) {
+      await webviewServer();
+    }
     return client.post(
       Uri.parse("$androidProxyServer/dalvik"),
       body: jsonEncode(body),

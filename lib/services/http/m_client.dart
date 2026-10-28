@@ -804,6 +804,11 @@ Future<void> _handleBridgeWebview(HttpRequest request) async {
     final webUri = flutter_inappwebview.WebUri(url);
     flutter_inappwebview.HeadlessInAppWebView? headlessWebView;
     final completer = Completer<Map<String, dynamic>>();
+    final resources = <String>{};
+    final videoRegex = RegExp(
+      r'.*\.(mp4|m3u8|mpd)(\?.*)?$',
+      caseSensitive: false,
+    );
 
     Timer? timer;
     timer = Timer(Duration(seconds: time), () {
@@ -811,79 +816,154 @@ Future<void> _handleBridgeWebview(HttpRequest request) async {
         completer.complete({
           'success': false,
           'error': 'Timeout after $time seconds',
+          'resources': resources.toList(),
         });
       }
     });
 
+    Future<void> finish(
+      flutter_inappwebview.InAppWebViewController controller,
+      Uri currentUri,
+    ) async {
+      try {
+        String? jsResult;
+        for (final script in scripts) {
+          final res = await controller.evaluateJavascript(source: script);
+          if (res != null) {
+            jsResult = res.toString();
+          }
+        }
+
+        final finalUrl =
+            (await controller.getUrl())?.toString() ?? currentUri.toString();
+        final html = await controller.getHtml() ?? '';
+
+        // Extract video / source / iframe urls from DOM
+        try {
+          final domVideos = await controller.evaluateJavascript(
+            source: """
+            (function() {
+              const urls = [];
+              document.querySelectorAll('video, video source, iframe').forEach(e => {
+                const s = e.src || e.getAttribute('data-src') || '';
+                if (s) urls.push(s);
+              });
+              return urls;
+            })()
+          """,
+          );
+          if (domVideos is List) {
+            for (final v in domVideos) {
+              if (v is String && v.isNotEmpty) {
+                resources.add(v);
+              }
+            }
+          }
+        } catch (_) {}
+
+        // Scan html for media links
+        final matches = RegExp(
+          r"""https?://[^\s"'<>]+\.(?:m3u8|mp4|mpd)[^\s"'<>]*""",
+          caseSensitive: false,
+        ).allMatches(html);
+        for (final m in matches) {
+          final matchUrl = m.group(0);
+          if (matchUrl != null) resources.add(matchUrl);
+        }
+
+        final cookieManager = flutter_inappwebview.CookieManager.instance(
+          webViewEnvironment: webViewEnvironment,
+        );
+        final cookies = await cookieManager.getCookies(
+          url: flutter_inappwebview.WebUri(finalUrl),
+          webViewController: controller,
+        );
+
+        final ua =
+            await controller.evaluateJavascript(
+              source: "navigator.userAgent",
+            ) ??
+            "";
+        if (ua is String && ua.isNotEmpty) {
+          await MClient.setCookie(finalUrl, ua, controller);
+        }
+
+        final cookieList =
+            cookies
+                .map(
+                  (c) => {
+                    'name': c.name,
+                    'value': c.value,
+                    'domain': c.domain,
+                    'path': c.path,
+                    'expiresDate': c.expiresDate,
+                  },
+                )
+                .toList();
+
+        if (!completer.isCompleted) {
+          completer.complete({
+            'success': true,
+            'url': finalUrl,
+            'html': html,
+            'cookies': cookieList,
+            'resources': resources.toList(),
+            'jsResult': jsResult,
+          });
+        }
+      } catch (e) {
+        if (!completer.isCompleted) {
+          completer.complete({
+            'success': false,
+            'error': e.toString(),
+            'resources': resources.toList(),
+          });
+        }
+      }
+    }
+
     headlessWebView = flutter_inappwebview.HeadlessInAppWebView(
       webViewEnvironment: webViewEnvironment,
+      initialSettings: flutter_inappwebview.InAppWebViewSettings(
+        useOnLoadResource: true,
+        useShouldInterceptRequest: true,
+        javaScriptEnabled: true,
+        mediaPlaybackRequiresUserGesture: false,
+        allowsInlineMediaPlayback: true,
+      ),
       initialUrlRequest: flutter_inappwebview.URLRequest(
         url: webUri,
         headers: headers,
       ),
-      onLoadStop: (controller, loadedUrl) async {
-        try {
-          String? jsResult;
-          for (final script in scripts) {
-            final res = await controller.evaluateJavascript(source: script);
-            if (res != null) {
-              jsResult = res.toString();
-            }
-          }
-
-          final finalUrl =
-              (await controller.getUrl())?.toString() ??
-              loadedUrl?.toString() ??
-              url;
-          final html = await controller.getHtml() ?? '';
-
-          final cookieManager = flutter_inappwebview.CookieManager.instance(
-            webViewEnvironment: webViewEnvironment,
-          );
-          final cookies = await cookieManager.getCookies(
-            url: flutter_inappwebview.WebUri(finalUrl),
-            webViewController: controller,
-          );
-
-          final ua =
-              await controller.evaluateJavascript(
-                source: "navigator.userAgent",
-              ) ??
-              "";
-          if (ua is String && ua.isNotEmpty) {
-            await MClient.setCookie(finalUrl, ua, controller);
-          }
-
-          final cookieList =
-              cookies
-                  .map(
-                    (c) => {
-                      'name': c.name,
-                      'value': c.value,
-                      'domain': c.domain,
-                      'path': c.path,
-                      'expiresDate': c.expiresDate,
-                    },
-                  )
-                  .toList();
-
-          if (!completer.isCompleted) {
-            completer.complete({
-              'success': true,
-              'url': finalUrl,
-              'html': html,
-              'cookies': cookieList,
-              'jsResult': jsResult,
-            });
-          }
-        } catch (e) {
-          if (!completer.isCompleted) {
-            completer.complete({
-              'success': false,
-              'error': e.toString(),
+      onLoadResource: (controller, resource) async {
+        final resUrl = resource.url?.toString();
+        if (resUrl != null && resUrl.isNotEmpty) {
+          resources.add(resUrl);
+          if (videoRegex.hasMatch(resUrl)) {
+            Future.delayed(const Duration(milliseconds: 600), () async {
+              if (!completer.isCompleted) {
+                await finish(controller, webUri);
+              }
             });
           }
         }
+      },
+      shouldInterceptRequest: (controller, req) async {
+        final reqUrl = req.url.toString();
+        if (reqUrl.isNotEmpty) {
+          resources.add(reqUrl);
+          if (videoRegex.hasMatch(reqUrl)) {
+            Future.delayed(const Duration(milliseconds: 600), () async {
+              if (!completer.isCompleted) {
+                await finish(controller, webUri);
+              }
+            });
+          }
+        }
+        return null;
+      },
+      onLoadStop: (controller, loadedUrl) async {
+        await finish(controller, loadedUrl ?? webUri);
       },
       onReceivedError: (controller, req, error) {
         if (req.isForMainFrame ?? true) {
@@ -891,6 +971,7 @@ Future<void> _handleBridgeWebview(HttpRequest request) async {
             completer.complete({
               'success': false,
               'error': error.description,
+              'resources': resources.toList(),
             });
           }
         }
