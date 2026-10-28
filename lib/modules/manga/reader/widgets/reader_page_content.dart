@@ -9,6 +9,7 @@ import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subs
     as ssiv;
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/utils/reader_page_index_math.dart';
+import 'package:mangayomi/modules/manga/reader/utils/webtoon_scroll_physics.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_page_states.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/double_page_view.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/image_actions_dialog.dart';
@@ -125,7 +126,7 @@ class ReaderPageContent extends ConsumerWidget {
             ? (pagePreloadAmount.clamp(1, 3) * 1.5) * context.width(1)
             : (pagePreloadAmount.clamp(1, 3) * 1.5) * context.height(1),
         initialScrollIndex: initialScrollIndex,
-        physics: const ClampingScrollPhysics(),
+        physics: const WebtoonScrollPhysics(),
         onLongPressData: (data) => ImageActionsDialog.show(
           context: context,
           data: data,
