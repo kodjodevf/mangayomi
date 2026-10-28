@@ -219,6 +219,11 @@ class Settings {
 
   String? cfProxyUrl;
 
+  /// The `.desktop` file basename of the browser that opens external links,
+  /// or empty for the system default. Device-local: installed browsers differ
+  /// per machine.
+  String? externalBrowser;
+
   String? btServerAddress;
 
   int? btServerPort;
@@ -638,6 +643,7 @@ class Settings {
     this.doHProviderId = 0,
     this.customDohUrl = "",
     this.cfProxyUrl = "",
+    this.externalBrowser = "",
     this.btServerAddress = "127.0.0.1",
     this.btServerPort,
     this.fullScreenReader = true,
@@ -964,6 +970,7 @@ class Settings {
     doHProviderId = json['doHProviderId'];
     customDohUrl = json['customDohUrl'];
     cfProxyUrl = json['cfProxyUrl'];
+    externalBrowser = json['externalBrowser'];
     btServerAddress = json['btServerAddress'];
     btServerPort = json['btServerPort'];
     customColorFilter = json['customColorFilter'] != null
@@ -1296,6 +1303,7 @@ class Settings {
     'doHProviderId': doHProviderId,
     'customDohUrl': customDohUrl,
     'cfProxyUrl': cfProxyUrl,
+    'externalBrowser': externalBrowser,
     'btServerAddress': btServerAddress,
     'btServerPort': btServerPort,
     'fullScreenReader': fullScreenReader,

@@ -4473,4 +4473,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String shortcut_key_in_use(String action) {
     return 'すでに使用中: $action';
   }
+
+  @override
+  String get external_browser => 'Open external links with';
+
+  @override
+  String get system_default => 'System default';
+
+  @override
+  String get no_browsers_detected => 'No browsers detected';
 }
