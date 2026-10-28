@@ -8,7 +8,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
-import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:mangayomi/services/background_work/background_work.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -59,8 +59,8 @@ class SyncServer extends _$SyncServer {
 
   // ------------------------------------------------------------------
   // Login. OAuth (PKCE) only - the server's own authorize/token endpoints,
-  // opened in the system browser. There is no password form: this app talks
-  // to exactly one server it's paired with, not a third-party OAuth
+  // opened in the browser the user chose. There is no password form: this app
+  // talks to exactly one server it's paired with, not a third-party OAuth
   // provider, so the browser round trip is purely local - it's whichever
   // session is already logged into that server's website.
   // ------------------------------------------------------------------
@@ -87,11 +87,12 @@ class SyncServer extends _$SyncServer {
         },
       );
 
-      final resultUrl = await FlutterWebAuth2.authenticate(
-        url: authorizeUrl.toString(),
+      final resultUri = await ExternalBrowser.openOAuth(
+        authorizeUrl.toString(),
+        port: _desktopOAuthCallbackPort,
         callbackUrlScheme: callbackUrlScheme,
       );
-      final resultParams = Uri.parse(resultUrl).queryParameters;
+      final resultParams = resultUri?.queryParameters ?? const {};
       final code = resultParams['code'];
       // Confirms this callback answers the authorize call this same login()
       // just made, not a stray/replayed one.
