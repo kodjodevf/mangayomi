@@ -14,6 +14,7 @@ import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/http/cf_proxy_store.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/utils/constant.dart';
 
 import '../../models/manga.dart';
 import '../interface.dart';
@@ -286,6 +287,12 @@ class MihonExtensionService implements ExtensionService {
         for (var i = 0; i + 1 < tempHeaders.length; i += 2) {
           headers[tempHeaders[i].toString()] = tempHeaders[i + 1].toString();
         }
+      } else if (e['headers'] is Map) {
+        (e['headers'] as Map).forEach((k, v) {
+          if (k != null && v != null && k != 'namesAndValues\$okhttp') {
+            headers[k.toString()] = v.toString();
+          }
+        });
       }
       videos.add(
         Video(
@@ -380,12 +387,14 @@ class MihonExtensionService implements ExtensionService {
   }
 
   Map<String, String> getCookie() {
-    final userAgent = settingsRepository.current.userAgent;
+    final rawUa = settingsRepository.current.userAgent?.trim();
+    final userAgent =
+        (rawUa != null && rawUa.isNotEmpty) ? rawUa : defaultUserAgent;
     final cfProxyUrl = CfProxyStore.url.trim();
     return {
       if (source.baseUrl != null && source.baseUrl!.isNotEmpty)
         ...MClient.getCookiesPref(source.baseUrl!),
-      'user-agent': ?userAgent,
+      'user-agent': userAgent,
       // Which source of the extension this call is for. The id sent alongside
       // it is a Dart hashCode of the original one (see ExtensionStoreService),
       // which the server cannot reproduce on the JVM, so an extension holding
