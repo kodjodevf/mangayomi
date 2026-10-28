@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:http_interceptor/http_interceptor.dart';
@@ -404,6 +405,8 @@ class MihonExtensionService implements ExtensionService {
       // which is better placed than the retry below: it owns the request and
       // its cookie jar. Servers that don't support it ignore the header.
       if (cfProxyUrl.isNotEmpty) 'cf-proxy-url': cfProxyUrl,
+      if (!Platform.isLinux && cfPort > 0)
+        'x-mangayomi-webview-port': cfPort.toString(),
     };
   }
 
@@ -423,6 +426,19 @@ class MihonExtensionService implements ExtensionService {
         // solveWithCfProxy persisted the clearance cookies + user-agent, and
         // getCookie() reads them back, so the retry carries them.
         res = await _postDalvik(body);
+      } else if (!Platform.isLinux && cfPort > 0 && source.baseUrl != null) {
+        try {
+          final resolveRes = await client.post(
+            Uri.parse('http://127.0.0.1:$cfPort/resolve_cf'),
+            body: jsonEncode({'url': source.baseUrl!}),
+          );
+          if (resolveRes.statusCode == 200) {
+            final data = jsonDecode(resolveRes.body) as Map<String, dynamic>;
+            if (data['result'] == true) {
+              res = await _postDalvik(body);
+            }
+          }
+        } catch (_) {}
       }
     }
     hasError(res);

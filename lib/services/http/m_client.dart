@@ -564,6 +564,9 @@ Future<void> webviewServer() async {
         } else if (request.method == 'POST' &&
             request.uri.path == '/evaluateJavascriptViaWebview') {
           _evaluateJavascriptViaWebview(request);
+        } else if (request.method == 'POST' &&
+            request.uri.path == '/bridge_webview') {
+          _handleBridgeWebview(request);
         } else {
           request.response
             ..statusCode = HttpStatus.notFound
@@ -767,6 +770,150 @@ Future<void> _evaluateJavascriptViaWebview(HttpRequest request) async {
     request.response
       ..statusCode = HttpStatus.badRequest
       ..write(jsonEncode({'error': 'Invalid JSON'}))
+      ..close();
+  }
+}
+
+Future<void> _handleBridgeWebview(HttpRequest request) async {
+  try {
+    final body = await utf8.decoder.bind(request).join();
+    final data = jsonDecode(body) as Map<String, dynamic>;
+    final url = data['url'] as String?;
+
+    if (url == null || url.isEmpty) {
+      request.response
+        ..statusCode = HttpStatus.badRequest
+        ..headers.contentType = ContentType.json
+        ..write(jsonEncode({'success': false, 'error': 'Missing url parameter'}))
+        ..close();
+      return;
+    }
+
+    final headers =
+        (data['headers'] as Map<String, dynamic>?)?.map(
+          (key, value) => MapEntry(key, value.toString()),
+        ) ??
+        {};
+    final scripts =
+        (data['scripts'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        [];
+    final time = data['time'] as int? ?? 20;
+
+    final webUri = flutter_inappwebview.WebUri(url);
+    flutter_inappwebview.HeadlessInAppWebView? headlessWebView;
+    final completer = Completer<Map<String, dynamic>>();
+
+    Timer? timer;
+    timer = Timer(Duration(seconds: time), () {
+      if (!completer.isCompleted) {
+        completer.complete({
+          'success': false,
+          'error': 'Timeout after $time seconds',
+        });
+      }
+    });
+
+    headlessWebView = flutter_inappwebview.HeadlessInAppWebView(
+      webViewEnvironment: webViewEnvironment,
+      initialUrlRequest: flutter_inappwebview.URLRequest(
+        url: webUri,
+        headers: headers,
+      ),
+      onLoadStop: (controller, loadedUrl) async {
+        try {
+          String? jsResult;
+          for (final script in scripts) {
+            final res = await controller.evaluateJavascript(source: script);
+            if (res != null) {
+              jsResult = res.toString();
+            }
+          }
+
+          final finalUrl =
+              (await controller.getUrl())?.toString() ??
+              loadedUrl?.toString() ??
+              url;
+          final html = await controller.getHtml() ?? '';
+
+          final cookieManager = flutter_inappwebview.CookieManager.instance(
+            webViewEnvironment: webViewEnvironment,
+          );
+          final cookies = await cookieManager.getCookies(
+            url: flutter_inappwebview.WebUri(finalUrl),
+            webViewController: controller,
+          );
+
+          final ua =
+              await controller.evaluateJavascript(
+                source: "navigator.userAgent",
+              ) ??
+              "";
+          if (ua is String && ua.isNotEmpty) {
+            await MClient.setCookie(finalUrl, ua, controller);
+          }
+
+          final cookieList =
+              cookies
+                  .map(
+                    (c) => {
+                      'name': c.name,
+                      'value': c.value,
+                      'domain': c.domain,
+                      'path': c.path,
+                      'expiresDate': c.expiresDate,
+                    },
+                  )
+                  .toList();
+
+          if (!completer.isCompleted) {
+            completer.complete({
+              'success': true,
+              'url': finalUrl,
+              'html': html,
+              'cookies': cookieList,
+              'jsResult': jsResult,
+            });
+          }
+        } catch (e) {
+          if (!completer.isCompleted) {
+            completer.complete({
+              'success': false,
+              'error': e.toString(),
+            });
+          }
+        }
+      },
+      onReceivedError: (controller, req, error) {
+        if (req.isForMainFrame ?? true) {
+          if (!completer.isCompleted) {
+            completer.complete({
+              'success': false,
+              'error': error.description,
+            });
+          }
+        }
+      },
+    );
+
+    await headlessWebView.run();
+
+    final result = await completer.future;
+    timer.cancel();
+    try {
+      await headlessWebView.dispose();
+    } catch (_) {}
+
+    request.response
+      ..headers.contentType = ContentType.json
+      ..write(jsonEncode(result))
+      ..close();
+  } catch (e) {
+    request.response
+      ..statusCode = HttpStatus.internalServerError
+      ..headers.contentType = ContentType.json
+      ..write(jsonEncode({'success': false, 'error': e.toString()}))
       ..close();
   }
 }
