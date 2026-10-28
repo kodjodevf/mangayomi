@@ -13,7 +13,7 @@ import 'package:mangayomi/modules/more/settings/sync/widgets/sync_listile.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/log/logger.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:mangayomi/services/external_browser.dart';
 
 class SyncScreen extends ConsumerWidget {
   static const serverUrl = "https://github.com/Schnitzel5/mangayomi-server";
@@ -170,10 +170,7 @@ class SyncScreen extends ConsumerWidget {
                       title: l10n.get_sync_server,
                       subtitle: serverUrl,
                       onTap: () async {
-                        if (!await launchUrl(
-                          Uri.parse(serverUrl),
-                          mode: LaunchMode.externalApplication,
-                        )) {
+                        if (!await ExternalBrowser.open(serverUrl)) {
                           AppLogger.log(
                             'Could not launch $serverUrl',
                             logLevel: LogLevel.error,

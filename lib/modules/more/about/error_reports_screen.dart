@@ -7,7 +7,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/services/crash_report_issue.dart';
 import 'package:mangayomi/utils/device_description.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:mangayomi/services/external_browser.dart';
 
 /// The errors the app caught, and the one button that matters: report it.
 class ErrorReportsScreen extends ConsumerStatefulWidget {
@@ -180,7 +180,7 @@ class _ReportTile extends StatelessWidget {
       device: await deviceDescription(),
       logs: recentErrorsText(CrashReports.reports),
     );
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+    if (!await ExternalBrowser.open(url.toString())) {
       await Clipboard.setData(ClipboardData(text: url.toString()));
     }
   }

@@ -20,7 +20,7 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:mangayomi/services/external_browser.dart';
 
 class ExtensionDetail extends ConsumerStatefulWidget {
   final Source source;
@@ -48,7 +48,7 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
     }
   }();
   Future<void> _launchInBrowser(Uri url) async {
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+    if (!await ExternalBrowser.open(url.toString())) {
       throw 'Could not launch $url';
     }
   }
