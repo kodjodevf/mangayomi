@@ -2305,6 +2305,18 @@ abstract class AppLocalizations {
   /// **'Use a floating capsule instead of the standard attached navigation bar.'**
   String get floating_navigation_bar_description;
 
+  /// No description provided for @show_updates_badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Show badge on Updates icon'**
+  String get show_updates_badge;
+
+  /// No description provided for @show_updates_badge_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Count the chapters found since you last opened Updates.'**
+  String get show_updates_badge_description;
+
   /// No description provided for @full_screen_player.
   ///
   /// In en, this message translates to:

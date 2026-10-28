@@ -178,6 +178,12 @@ final settingsIndex = <SettingsEntry>[
     route: '/appearance',
   ),
   SettingsEntry(
+    title: (l) => l.show_updates_badge,
+    subtitle: (l) => l.show_updates_badge_description,
+    section: (l) => l.appearance,
+    route: '/appearance',
+  ),
+  SettingsEntry(
     title: (l) => l.reorder_navigation,
     subtitle: (l) => l.reorder_navigation_description,
     section: (l) => l.appearance,

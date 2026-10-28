@@ -1257,6 +1257,13 @@ class AppLocalizationsIt extends AppLocalizations {
       'Una capsula fluttuante al posto della barra di navigazione fissa.';
 
   @override
+  String get show_updates_badge => 'Show badge on Updates icon';
+
+  @override
+  String get show_updates_badge_description =>
+      'Count the chapters found since you last opened Updates.';
+
+  @override
   String get full_screen_player => 'Usa schermo intero';
 
   @override
