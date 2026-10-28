@@ -1231,6 +1231,13 @@ class AppLocalizationsJa extends AppLocalizations {
       '固定のナビゲーションバーの代わりに、浮かぶカプセルを使います。';
 
   @override
+  String get show_updates_badge => 'Show badge on Updates icon';
+
+  @override
+  String get show_updates_badge_description =>
+      'Count the chapters found since you last opened Updates.';
+
+  @override
   String get full_screen_player => 'フルスクリーンを使用';
 
   @override

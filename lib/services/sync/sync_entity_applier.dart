@@ -401,5 +401,6 @@ Settings _preserveDeviceLocalSettings(Settings incoming, Settings current) {
     ..askDownloadDestination = current.askDownloadDestination
     ..androidProxyServer = current.androidProxyServer
     ..jrePath = current.jrePath
-    ..extensionServerPath = current.extensionServerPath;
+    ..extensionServerPath = current.extensionServerPath
+    ..updatesLastSeenAt = current.updatesLastSeenAt;
 }

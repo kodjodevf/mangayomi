@@ -134,6 +134,21 @@ class CustomExtendedNetworkImageProvider
   static final Map<String, DateTime> _failedUntil = {};
   static const Duration _failureMemo = Duration(minutes: 2);
 
+  /// Normalizes loopback proxy URLs (`http://127.0.0.1:<port>/image/<token>`)
+  /// by stripping the dynamic port so deterministic proxy tokens hit the same
+  /// disk cache entry across app restarts.
+  static String normalizeCacheUrl(String rawUrl) {
+    final uri = Uri.tryParse(rawUrl);
+    if (uri != null &&
+        (uri.host == '127.0.0.1' ||
+            uri.host == 'localhost' ||
+            uri.host == '::1') &&
+        uri.path.startsWith('/image/')) {
+      return 'http://127.0.0.1${uri.path}${uri.hasQuery ? '?${uri.query}' : ''}';
+    }
+    return rawUrl;
+  }
+
   /// Decode Base64 or URL-encoded data URI (e.g. data:image/gif;base64,...)
   static Uint8List? tryDecodeDataUri(String url) {
     if (!url.startsWith('data:')) return null;
@@ -279,7 +294,7 @@ class CustomExtendedNetworkImageProvider
     ImageConfiguration configuration = ImageConfiguration.empty,
     bool includeLive = true,
   }) async {
-    final String md5Key = cacheKey ?? keyToMd5(url);
+    final String md5Key = cacheKey ?? keyToMd5(normalizeCacheUrl(url));
     try {
       final Directory cacheImagesDirectory = await StorageProvider()
           .createCacheDirectory(imageCacheFolderName);
@@ -328,7 +343,7 @@ class CustomExtendedNetworkImageProvider
       }
     }
 
-    final String md5Key = cacheKey ?? keyToMd5(key.url);
+    final String md5Key = cacheKey ?? keyToMd5(normalizeCacheUrl(key.url));
     final failedUntil = _failedUntil[md5Key];
     if (failedUntil != null) {
       if (DateTime.now().isBefore(failedUntil)) {
@@ -654,7 +669,7 @@ class CustomExtendedNetworkImageProvider
       return tryDecodeDataUri(url);
     }
 
-    final String uId = cacheKey ?? keyToMd5(url);
+    final String uId = cacheKey ?? keyToMd5(normalizeCacheUrl(url));
 
     if (cache) {
       return await _loadCache(this, chunkEvents, uId);

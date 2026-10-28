@@ -1244,6 +1244,13 @@ class AppLocalizationsTh extends AppLocalizations {
       'ใช้แคปซูลลอยแทนแถบนำทางแบบติดขอบ';
 
   @override
+  String get show_updates_badge => 'Show badge on Updates icon';
+
+  @override
+  String get show_updates_badge_description =>
+      'Count the chapters found since you last opened Updates.';
+
+  @override
   String get full_screen_player => 'ใช้โหมดเต็มหน้าจอ';
 
   @override

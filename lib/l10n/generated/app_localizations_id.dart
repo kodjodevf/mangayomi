@@ -1248,6 +1248,13 @@ class AppLocalizationsId extends AppLocalizations {
       'Gunakan kapsul mengambang alih-alih bilah navigasi yang menempel.';
 
   @override
+  String get show_updates_badge => 'Show badge on Updates icon';
+
+  @override
+  String get show_updates_badge_description =>
+      'Count the chapters found since you last opened Updates.';
+
+  @override
   String get full_screen_player => 'Gunakan Layar Penuh';
 
   @override

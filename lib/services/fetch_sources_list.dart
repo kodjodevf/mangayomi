@@ -15,7 +15,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/error_toast.dart';
 
-Future<void> fetchSourcesList({
+Future<bool> fetchSourcesList({
   int? id,
   required bool refresh,
   required String androidProxyServer,
@@ -25,7 +25,7 @@ Future<void> fetchSourcesList({
 }) async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final url = repo?.jsonUrl;
-  if (url == null) return;
+  if (url == null) return false;
 
   if (repo != null &&
       (repo.name == null ||
@@ -131,8 +131,10 @@ Future<void> fetchSourcesList({
       orElse: () => Source(),
     );
     if (matchingSource.id != null && matchingSource.sourceCodeUrl!.isNotEmpty) {
-      await _updateSource(matchingSource, androidProxyServer, repo, itemType);
+      await updateSource(matchingSource, androidProxyServer, repo, itemType);
+      return true;
     }
+    return false;
   } else {
     for (var source in sourceList) {
       final existingSource = await sourceRepository.findByIdAsync(source.id!);
@@ -145,19 +147,23 @@ Future<void> fetchSourcesList({
           compareVersions(existingSource.version!, source.version!) < 0;
       if (!shouldUpdate) continue;
       if (autoUpdateExtensions) {
-        await _updateSource(source, androidProxyServer, repo, itemType);
+        await updateSource(source, androidProxyServer, repo, itemType);
       } else {
         await sourceRepository.save(
-          existingSource..versionLast = source.version,
+          existingSource
+            ..versionLast = source.version
+            ..sourceCodeUrl = source.sourceCodeUrl,
         );
       }
     }
+    if (repo != null) {
+      await checkIfSourceIsObsolete(sourceList, repo, itemType);
+    }
+    return true;
   }
-
-  checkIfSourceIsObsolete(sourceList, repo!, itemType);
 }
 
-Future<void> _updateSource(
+Future<void> updateSource(
   Source source,
   String androidProxyServer,
   Repo? repo,
@@ -240,7 +246,7 @@ Future<void> _updateSource(
     ..additionalParams = source.additionalParams ?? ""
     ..isObsolete = false
     ..notes = source.notes
-    ..repo = repo
+    ..repo = repo ?? existing?.repo
     ..updatedAt = DateTime.now().millisecondsSinceEpoch;
 
   await sourceRepository.save(updatedSource);
@@ -363,10 +369,12 @@ Future<Map<String, String>> fetchHeadersDalvik(
         "sourceId": source.id?.toString(),
       }),
     );
-    final data = jsonDecode(res.body) as List;
+    if (res.statusCode != 200) return {};
+    final data = jsonDecode(res.body);
+    if (data is! List) return {};
     final Map<String, String> headers = {};
     for (var i = 0; i + 1 < data.length; i += 2) {
-      headers[data[i]] = data[i + 1];
+      headers[data[i].toString()] = data[i + 1].toString();
     }
     return headers;
   } catch (error, stackTrace) {
@@ -391,6 +399,7 @@ Future<bool> fetchSupportLatestDalvik(
         "sourceId": source.id?.toString(),
       }),
     );
+    if (res.statusCode != 200) return false;
     return res.body.trim() == "true";
   } catch (error, stackTrace) {
     recordError(error, stack: stackTrace, source: 'fetch_sources_list');
@@ -414,7 +423,9 @@ Future<FilterList?> fetchFilterListDalvik(
         "sourceId": source.id?.toString(),
       }),
     );
-    final data = jsonDecode(res.body) as List;
+    if (res.statusCode != 200) return null;
+    final data = jsonDecode(res.body);
+    if (data is! List) return null;
 
     return FilterList(filtersFromJson(data));
   } catch (error, stackTrace) {
@@ -425,6 +436,7 @@ Future<FilterList?> fetchFilterListDalvik(
 
 List<dynamic> filtersFromJson(List<dynamic> json) {
   return json.expand((e) sync* {
+    if (e is! Map) return;
     if (e['name'] is String &&
         e['state'] is Map<String, dynamic> &&
         e['values'] is List) {
@@ -513,8 +525,11 @@ Future<List<SourcePreference>?> fetchPreferencesDalvik(
         "sourceId": source.id?.toString(),
       }),
     );
-    final data = jsonDecode(res.body) as List;
+    if (res.statusCode != 200) return null;
+    final data = jsonDecode(res.body);
+    if (data is! List) return null;
     return data
+        .whereType<Map<String, dynamic>>()
         .map(
           (e) => SourcePreference.fromJson(e)
             ..id = null

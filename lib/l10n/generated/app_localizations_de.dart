@@ -1251,6 +1251,13 @@ class AppLocalizationsDe extends AppLocalizations {
       'Eine schwebende Kapsel statt der fest angedockten Navigationsleiste.';
 
   @override
+  String get show_updates_badge => 'Show badge on Updates icon';
+
+  @override
+  String get show_updates_badge_description =>
+      'Count the chapters found since you last opened Updates.';
+
+  @override
   String get full_screen_player => 'Vollbildmodus aktivieren';
 
   @override

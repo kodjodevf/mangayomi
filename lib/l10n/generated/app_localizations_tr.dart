@@ -1244,6 +1244,13 @@ class AppLocalizationsTr extends AppLocalizations {
       'Sabit gezinme çubuğu yerine yüzen bir kapsül kullan.';
 
   @override
+  String get show_updates_badge => 'Show badge on Updates icon';
+
+  @override
+  String get show_updates_badge_description =>
+      'Count the chapters found since you last opened Updates.';
+
+  @override
   String get full_screen_player => 'Tam ekran kullan';
 
   @override

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:http_interceptor/http_interceptor.dart';
@@ -14,6 +15,7 @@ import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/http/cf_proxy_store.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/utils/constant.dart';
 
 import '../../models/manga.dart';
 import '../interface.dart';
@@ -261,42 +263,68 @@ class MihonExtensionService implements ExtensionService {
       "sourceId": source.id?.toString(),
     });
     final data = jsonDecode(res.body) as List;
-    return data.map((e) {
+    final videos = <Video>[];
+    for (final e in data) {
+      if (e is! Map) continue;
+      final videoUrl = (e['videoUrl'] as String?)?.trim() ?? '';
+      final rawUrl = (e['url'] as String?)?.trim() ?? '';
+      final effectiveUrl = (videoUrl.isNotEmpty && videoUrl != 'null')
+          ? videoUrl
+          : rawUrl;
+      if (effectiveUrl.isEmpty || effectiveUrl == 'null') continue;
+      final originalUrl = (rawUrl.isNotEmpty && rawUrl != 'null')
+          ? rawUrl
+          : effectiveUrl;
+      final rawQuality = (e['quality'] as String?)?.trim() ?? '';
+      final rawTitle = (e['videoTitle'] as String?)?.trim() ?? '';
+      final quality = rawQuality.isNotEmpty
+          ? rawQuality
+          : (rawTitle.isNotEmpty ? rawTitle : 'Default');
+
       final tempHeaders =
           e['headers']?['namesAndValues\$okhttp'] as List<dynamic>?;
       final Map<String, String> headers = {};
       if (tempHeaders != null) {
         for (var i = 0; i + 1 < tempHeaders.length; i += 2) {
-          headers[tempHeaders[i]] = tempHeaders[i + 1];
+          headers[tempHeaders[i].toString()] = tempHeaders[i + 1].toString();
         }
+      } else if (e['headers'] is Map) {
+        (e['headers'] as Map).forEach((k, v) {
+          if (k != null && v != null && k != 'namesAndValues\$okhttp') {
+            headers[k.toString()] = v.toString();
+          }
+        });
       }
-      return Video(
-        e['videoUrl'],
-        e['quality'],
-        e['url'],
-        headers: headers,
-        audios:
-            (e['audioTracks'] as List?)
-                ?.map(
-                  (e) => Track(
-                    file: e['file'] ?? e['url'],
-                    label: e['label'] ?? e['lang'],
-                  ),
-                )
-                .toList() ??
-            [],
-        subtitles:
-            (e['subtitleTracks'] as List?)
-                ?.map(
-                  (e) => Track(
-                    file: e['file'] ?? e['url'],
-                    label: e['label'] ?? e['lang'],
-                  ),
-                )
-                .toList() ??
-            [],
+      videos.add(
+        Video(
+          effectiveUrl,
+          quality,
+          originalUrl,
+          headers: headers,
+          audios:
+              (e['audioTracks'] as List?)
+                  ?.map(
+                    (e) => Track(
+                      file: e['file'] ?? e['url'],
+                      label: e['label'] ?? e['lang'],
+                    ),
+                  )
+                  .toList() ??
+              [],
+          subtitles:
+              (e['subtitleTracks'] as List?)
+                  ?.map(
+                    (e) => Track(
+                      file: e['file'] ?? e['url'],
+                      label: e['label'] ?? e['lang'],
+                    ),
+                  )
+                  .toList() ??
+              [],
+        ),
       );
-    }).toList();
+    }
+    return videos;
   }
 
   @override
@@ -360,11 +388,14 @@ class MihonExtensionService implements ExtensionService {
   }
 
   Map<String, String> getCookie() {
-    final userAgent = settingsRepository.current.userAgent;
+    final rawUa = settingsRepository.current.userAgent?.trim();
+    final userAgent =
+        (rawUa != null && rawUa.isNotEmpty) ? rawUa : defaultUserAgent;
     final cfProxyUrl = CfProxyStore.url.trim();
     return {
-      ...MClient.getCookiesPref(source.baseUrl!),
-      'user-agent': ?userAgent,
+      if (source.baseUrl != null && source.baseUrl!.isNotEmpty)
+        ...MClient.getCookiesPref(source.baseUrl!),
+      'user-agent': userAgent,
       // Which source of the extension this call is for. The id sent alongside
       // it is a Dart hashCode of the original one (see ExtensionStoreService),
       // which the server cannot reproduce on the JVM, so an extension holding
@@ -374,6 +405,8 @@ class MihonExtensionService implements ExtensionService {
       // which is better placed than the retry below: it owns the request and
       // its cookie jar. Servers that don't support it ignore the header.
       if (cfProxyUrl.isNotEmpty) 'cf-proxy-url': cfProxyUrl,
+      if (!Platform.isLinux && cfPort > 0)
+        'x-mangayomi-webview-port': cfPort.toString(),
     };
   }
 
@@ -393,13 +426,29 @@ class MihonExtensionService implements ExtensionService {
         // solveWithCfProxy persisted the clearance cookies + user-agent, and
         // getCookie() reads them back, so the retry carries them.
         res = await _postDalvik(body);
+      } else if (!Platform.isLinux && cfPort > 0 && source.baseUrl != null) {
+        try {
+          final resolveRes = await client.post(
+            Uri.parse('http://127.0.0.1:$cfPort/resolve_cf'),
+            body: jsonEncode({'url': source.baseUrl!}),
+          );
+          if (resolveRes.statusCode == 200) {
+            final data = jsonDecode(resolveRes.body) as Map<String, dynamic>;
+            if (data['result'] == true) {
+              res = await _postDalvik(body);
+            }
+          }
+        } catch (_) {}
       }
     }
     hasError(res);
     return res;
   }
 
-  Future<Response> _postDalvik(Map<String, dynamic> body) {
+  Future<Response> _postDalvik(Map<String, dynamic> body) async {
+    if (!Platform.isLinux && cfPort == 0) {
+      await webviewServer();
+    }
     return client.post(
       Uri.parse("$androidProxyServer/dalvik"),
       body: jsonEncode(body),

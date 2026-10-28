@@ -1248,6 +1248,13 @@ class AppLocalizationsHi extends AppLocalizations {
       'सामान्य जुड़े हुए नेविगेशन बार की जगह एक तैरता कैप्सूल इस्तेमाल करें।';
 
   @override
+  String get show_updates_badge => 'Show badge on Updates icon';
+
+  @override
+  String get show_updates_badge_description =>
+      'Count the chapters found since you last opened Updates.';
+
+  @override
   String get full_screen_player => 'पूर्ण स्क्रीन का उपयोग करें';
 
   @override

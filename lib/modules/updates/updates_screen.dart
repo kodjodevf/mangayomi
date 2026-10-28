@@ -10,6 +10,7 @@ import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/updates/providers/updates_last_seen_provider.dart';
 import 'package:mangayomi/modules/updates/widgets/series_updates.dart';
 import 'package:mangayomi/modules/updates/widgets/update_chapter_list_tile_widget.dart';
 import 'package:mangayomi/modules/updates/update_errors_screen.dart';
@@ -17,6 +18,7 @@ import 'package:mangayomi/services/update_errors_provider.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/widgets/library_update_runner.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/modules/widgets/entry_badge_chip.dart';
@@ -38,6 +40,29 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
 
   @override
   String? get navRoute => '/updates';
+
+  @override
+  void initState() {
+    super.initState();
+    // The shell keeps a visited tab mounted, so initState and dispose do not
+    // mark entering and leaving Updates: the route does. Either one clears the
+    // nav badge, as in Mihon, so what was found while here is not new later.
+    ref.listenManual<String?>(routerCurrentLocationStateProvider, (
+      previous,
+      next,
+    ) {
+      if (isUpdatesLocation(previous) || isUpdatesLocation(next)) {
+        ref.read(updatesLastSeenStateProvider.notifier).markSeen();
+      }
+    });
+    // Already on Updates when first built (opened straight onto it).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted &&
+          isUpdatesLocation(ref.read(routerCurrentLocationStateProvider))) {
+        ref.read(updatesLastSeenStateProvider.notifier).markSeen();
+      }
+    });
+  }
 
   @override
   Widget buildTab(ItemType type) {

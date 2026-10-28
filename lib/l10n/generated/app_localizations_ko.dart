@@ -1226,6 +1226,13 @@ class AppLocalizationsKo extends AppLocalizations {
       '고정된 내비게이션 바 대신 떠 있는 캡슐을 사용합니다.';
 
   @override
+  String get show_updates_badge => 'Show badge on Updates icon';
+
+  @override
+  String get show_updates_badge_description =>
+      'Count the chapters found since you last opened Updates.';
+
+  @override
   String get full_screen_player => '전체 화면 사용';
 
   @override

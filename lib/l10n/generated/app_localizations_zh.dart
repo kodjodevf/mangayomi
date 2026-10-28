@@ -1215,6 +1215,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get floating_navigation_bar_description => '使用悬浮胶囊代替固定的导航栏。';
 
   @override
+  String get show_updates_badge => 'Show badge on Updates icon';
+
+  @override
+  String get show_updates_badge_description =>
+      'Count the chapters found since you last opened Updates.';
+
+  @override
   String get full_screen_player => '使用全屏';
 
   @override
