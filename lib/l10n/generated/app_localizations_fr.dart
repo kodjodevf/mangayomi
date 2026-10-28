@@ -3880,6 +3880,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get invert_selection => 'Inverser la sélection';
 
   @override
+  String get select_between => 'Select between';
+
+  @override
   String get show_password => 'Afficher le mot de passe';
 
   @override

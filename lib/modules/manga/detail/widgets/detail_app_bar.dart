@@ -93,6 +93,29 @@ class DetailAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   icon: const Icon(Symbols.select_all_rounded),
                 ),
                 IconButton(
+                  tooltip: context.l10n.select_between,
+                  onPressed: () {
+                    final start = chapters.indexWhere(
+                      (chapter) => chapterList.contains(chapter),
+                    );
+                    final end = chapters.lastIndexWhere(
+                      (chapter) => chapterList.contains(chapter),
+                    );
+
+                    if (start < 0 || end <= start) return;
+
+                    for (var i = start + 1; i < end; i++) {
+                      final chapter = chapters[i];
+                      if (!chapterList.contains(chapter)) {
+                        ref
+                            .read(chaptersListStateProvider.notifier)
+                            .selectAll(chapter);
+                      }
+                    }
+                  },
+                  icon: const Icon(Symbols.expand_rounded),
+                ),
+                IconButton(
                   tooltip: context.l10n.invert_selection,
                   onPressed: () {
                     if (chapters.length == chapterList.length) {

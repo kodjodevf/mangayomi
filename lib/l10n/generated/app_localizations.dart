@@ -6871,6 +6871,12 @@ abstract class AppLocalizations {
   /// **'Invert selection'**
   String get invert_selection;
 
+  /// No description provided for @select_between.
+  ///
+  /// In en, this message translates to:
+  /// **'Select between'**
+  String get select_between;
+
   /// No description provided for @show_password.
   ///
   /// In en, this message translates to:

@@ -3833,6 +3833,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get invert_selection => 'Balik pilihan';
 
   @override
+  String get select_between => 'Select between';
+
+  @override
   String get show_password => 'Tampilkan kata sandi';
 
   @override

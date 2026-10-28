@@ -343,6 +343,27 @@ class _SelectionAppBar extends ConsumerWidget {
             icon: const Icon(Symbols.select_all_rounded),
           ),
           IconButton(
+            tooltip: context.l10n.select_between,
+            onPressed: () {
+              final start = data.indexWhere(
+                (manga) => mangaIdsList.contains(manga.id),
+              );
+              final end = data.lastIndexWhere(
+                (manga) => mangaIdsList.contains(manga.id),
+              );
+
+              if (start < 0 || end <= start) return;
+
+              for (var i = start + 1; i < end; i++) {
+                final manga = data[i];
+                if (!mangaIdsList.contains(manga.id)) {
+                  ref.read(mangasListStateProvider.notifier).selectAll(manga);
+                }
+              }
+            },
+            icon: const Icon(Symbols.expand_rounded),
+          ),
+          IconButton(
             tooltip: context.l10n.invert_selection,
             onPressed: () {
               if (data.length == mangaIdsList.length) {

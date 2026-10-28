@@ -1534,6 +1534,7 @@
   "pin": "Pin",
   "go_forward": "Go forward",
   "invert_selection": "Invert selection",
+  "select_between": "Select between",
   "show_password": "Show password",
   "hide_password": "Hide password",
   "always_on_top": "Always on top",

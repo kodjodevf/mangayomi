@@ -3820,6 +3820,9 @@ class AppLocalizationsAs extends AppLocalizations {
   String get invert_selection => 'বাছনি ওলোটাওক';
 
   @override
+  String get select_between => 'Select between';
+
+  @override
   String get show_password => 'পাছৱৰ্ড দেখুৱাওক';
 
   @override

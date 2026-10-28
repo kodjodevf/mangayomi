@@ -3822,6 +3822,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invert_selection => 'عكس التحديد';
 
   @override
+  String get select_between => 'Select between';
+
+  @override
   String get show_password => 'إظهار كلمة المرور';
 
   @override

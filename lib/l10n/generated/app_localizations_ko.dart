@@ -3750,6 +3750,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get invert_selection => '선택 반전';
 
   @override
+  String get select_between => 'Select between';
+
+  @override
   String get show_password => '비밀번호 표시';
 
   @override

@@ -3681,6 +3681,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get invert_selection => '反选';
 
   @override
+  String get select_between => 'Select between';
+
+  @override
   String get show_password => '显示密码';
 
   @override

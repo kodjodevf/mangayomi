@@ -3857,6 +3857,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get invert_selection => 'Auswahl umkehren';
 
   @override
+  String get select_between => 'Select between';
+
+  @override
   String get show_password => 'Passwort anzeigen';
 
   @override
