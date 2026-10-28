@@ -261,42 +261,60 @@ class MihonExtensionService implements ExtensionService {
       "sourceId": source.id?.toString(),
     });
     final data = jsonDecode(res.body) as List;
-    return data.map((e) {
+    final videos = <Video>[];
+    for (final e in data) {
+      if (e is! Map) continue;
+      final videoUrl = (e['videoUrl'] as String?)?.trim() ?? '';
+      final rawUrl = (e['url'] as String?)?.trim() ?? '';
+      final effectiveUrl =
+          (videoUrl.isNotEmpty && videoUrl != 'null') ? videoUrl : rawUrl;
+      if (effectiveUrl.isEmpty || effectiveUrl == 'null') continue;
+      final originalUrl =
+          (rawUrl.isNotEmpty && rawUrl != 'null') ? rawUrl : effectiveUrl;
+      final rawQuality = (e['quality'] as String?)?.trim() ?? '';
+      final rawTitle = (e['videoTitle'] as String?)?.trim() ?? '';
+      final quality = rawQuality.isNotEmpty
+          ? rawQuality
+          : (rawTitle.isNotEmpty ? rawTitle : 'Default');
+
       final tempHeaders =
           e['headers']?['namesAndValues\$okhttp'] as List<dynamic>?;
       final Map<String, String> headers = {};
       if (tempHeaders != null) {
         for (var i = 0; i + 1 < tempHeaders.length; i += 2) {
-          headers[tempHeaders[i]] = tempHeaders[i + 1];
+          headers[tempHeaders[i].toString()] = tempHeaders[i + 1].toString();
         }
       }
-      return Video(
-        e['videoUrl'],
-        e['quality'],
-        e['url'],
-        headers: headers,
-        audios:
-            (e['audioTracks'] as List?)
-                ?.map(
-                  (e) => Track(
-                    file: e['file'] ?? e['url'],
-                    label: e['label'] ?? e['lang'],
-                  ),
-                )
-                .toList() ??
-            [],
-        subtitles:
-            (e['subtitleTracks'] as List?)
-                ?.map(
-                  (e) => Track(
-                    file: e['file'] ?? e['url'],
-                    label: e['label'] ?? e['lang'],
-                  ),
-                )
-                .toList() ??
-            [],
+      videos.add(
+        Video(
+          effectiveUrl,
+          quality,
+          originalUrl,
+          headers: headers,
+          audios:
+              (e['audioTracks'] as List?)
+                  ?.map(
+                    (e) => Track(
+                      file: e['file'] ?? e['url'],
+                      label: e['label'] ?? e['lang'],
+                    ),
+                  )
+                  .toList() ??
+              [],
+          subtitles:
+              (e['subtitleTracks'] as List?)
+                  ?.map(
+                    (e) => Track(
+                      file: e['file'] ?? e['url'],
+                      label: e['label'] ?? e['lang'],
+                    ),
+                  )
+                  .toList() ??
+              [],
+        ),
       );
-    }).toList();
+    }
+    return videos;
   }
 
   @override

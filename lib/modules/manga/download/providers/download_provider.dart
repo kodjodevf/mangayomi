@@ -303,11 +303,17 @@ Future<void> downloadChapter(
                 .where(
                   (element) =>
                       element.originalUrl.endsWith(".m3u8") ||
-                      element.originalUrl.endsWith(".m3u"),
+                      element.originalUrl.endsWith(".m3u") ||
+                      element.url.endsWith(".m3u8") ||
+                      element.url.endsWith(".m3u"),
                 )
                 .toList();
             final nonM3u8Urls = value.$1
-                .where((element) => element.originalUrl.isMediaVideo())
+                .where(
+                  (element) =>
+                      element.originalUrl.isMediaVideo() ||
+                      element.url.isMediaVideo(),
+                )
                 .toList();
             nonM3U8File = nonM3u8Urls.isNotEmpty;
             hasM3U8File = nonM3U8File ? false : m3u8Urls.isNotEmpty;
