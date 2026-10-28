@@ -266,11 +266,13 @@ class MihonExtensionService implements ExtensionService {
       if (e is! Map) continue;
       final videoUrl = (e['videoUrl'] as String?)?.trim() ?? '';
       final rawUrl = (e['url'] as String?)?.trim() ?? '';
-      final effectiveUrl =
-          (videoUrl.isNotEmpty && videoUrl != 'null') ? videoUrl : rawUrl;
+      final effectiveUrl = (videoUrl.isNotEmpty && videoUrl != 'null')
+          ? videoUrl
+          : rawUrl;
       if (effectiveUrl.isEmpty || effectiveUrl == 'null') continue;
-      final originalUrl =
-          (rawUrl.isNotEmpty && rawUrl != 'null') ? rawUrl : effectiveUrl;
+      final originalUrl = (rawUrl.isNotEmpty && rawUrl != 'null')
+          ? rawUrl
+          : effectiveUrl;
       final rawQuality = (e['quality'] as String?)?.trim() ?? '';
       final rawTitle = (e['videoTitle'] as String?)?.trim() ?? '';
       final quality = rawQuality.isNotEmpty
@@ -381,7 +383,8 @@ class MihonExtensionService implements ExtensionService {
     final userAgent = settingsRepository.current.userAgent;
     final cfProxyUrl = CfProxyStore.url.trim();
     return {
-      ...MClient.getCookiesPref(source.baseUrl!),
+      if (source.baseUrl != null && source.baseUrl!.isNotEmpty)
+        ...MClient.getCookiesPref(source.baseUrl!),
       'user-agent': ?userAgent,
       // Which source of the extension this call is for. The id sent alongside
       // it is a Dart hashCode of the original one (see ExtensionStoreService),
