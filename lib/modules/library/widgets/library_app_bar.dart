@@ -140,6 +140,7 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
           itemType: itemType,
           mangaIdsList: mangaIdsList,
           data: data,
+          entries: entries,
         ),
         error: (error, _) => ErrorText(error),
         loading: () => const ProgressCenter(),
@@ -305,11 +306,13 @@ class _SelectionAppBar extends ConsumerWidget {
   final ItemType itemType;
   final Set<int> mangaIdsList;
   final List<Manga> data;
+  final List<Manga> entries;
 
   const _SelectionAppBar({
     required this.itemType,
     required this.mangaIdsList,
     required this.data,
+    required this.entries,
   });
 
   @override
@@ -345,17 +348,17 @@ class _SelectionAppBar extends ConsumerWidget {
           IconButton(
             tooltip: context.l10n.select_between,
             onPressed: () {
-              final start = data.indexWhere(
+              final start = entries.indexWhere(
                 (manga) => mangaIdsList.contains(manga.id),
               );
-              final end = data.lastIndexWhere(
+              final end = entries.lastIndexWhere(
                 (manga) => mangaIdsList.contains(manga.id),
               );
 
               if (start < 0 || end <= start) return;
 
               for (var i = start + 1; i < end; i++) {
-                final manga = data[i];
+                final manga = entries[i];
                 if (!mangaIdsList.contains(manga.id)) {
                   ref.read(mangasListStateProvider.notifier).selectAll(manga);
                 }
