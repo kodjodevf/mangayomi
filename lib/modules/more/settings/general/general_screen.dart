@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/services/discord_rpc.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/memory_probe_provider.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
@@ -32,6 +35,9 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
   @override
   void initState() {
     super.initState();
+    // The browser list is cached across the app for the cost of every external
+    // link; clear it here so a browser installed since the last visit shows.
+    ExternalBrowser.refreshAvailable();
     final algorithmWeights = ref.read(algorithmWeightsStateProvider);
     _genre = algorithmWeights.genre!;
     _setting = algorithmWeights.setting!;
@@ -251,6 +257,27 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
           ShioriSettingsGroup(
             title: l10n.other,
             children: [
+              // Linux only: url_launcher can only reach the OS default handler,
+              // so this is the one platform where a named browser is possible.
+              // Re-scan on open so a browser installed since the last visit
+              // shows up in the list.
+              if (Platform.isLinux)
+                ShioriValueRow<String>(
+                  title: l10n.external_browser,
+                  value: ExternalBrowser.savedId,
+                  description: ExternalBrowser.available().isEmpty
+                      ? l10n.no_browsers_detected
+                      : null,
+                  options: [
+                    ShioriChoice('', l10n.system_default),
+                    for (final browser in ExternalBrowser.available())
+                      ShioriChoice(browser.id, browser.name),
+                  ],
+                  onChanged: (id) {
+                    ExternalBrowser.save(id);
+                    setState(() {});
+                  },
+                ),
               ShioriSwitchRow(
                 title: l10n.show_nav_double_tap_tooltip,
                 subtitle: l10n.show_nav_double_tap_tooltip_subtitle,

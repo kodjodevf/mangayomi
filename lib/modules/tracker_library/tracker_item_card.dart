@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shiori/shiori.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track_search.dart';
@@ -119,9 +119,7 @@ class TrackerItemCard extends StatelessWidget {
                 ),
               if ((track.trackingUrl ?? '').isNotEmpty)
                 ShioriButton.quiet(
-                  onPressed: () => InAppBrowser.openWithSystemBrowser(
-                    url: WebUri(track.trackingUrl!),
-                  ),
+                  onPressed: () => ExternalBrowser.open(track.trackingUrl!),
                   label: l10n.open_in_browser,
                   icon: Symbols.public_rounded,
                 ),

@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:intl/intl.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -53,11 +53,12 @@ class MyAnimeList extends _$MyAnimeList
     final loginUrl = _authUrl();
 
     try {
-      final uri = await FlutterWebAuth2.authenticate(
-        url: loginUrl,
+      final uri = await ExternalBrowser.openOAuth(
+        loginUrl,
+        port: 43824,
         callbackUrlScheme: callbackUrlScheme,
       );
-      final code = Uri.parse(uri).queryParameters['code'];
+      final code = uri?.queryParameters['code'];
       if (code == null) return null;
 
       final oAuthData = await _getOAuth(code);

@@ -40,7 +40,7 @@ import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/system_ui.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/router/push_router.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:mangayomi/modules/reader_common/mixins/reader_auto_scroll.dart';
@@ -702,13 +702,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                   ? '${source.baseUrl}/${chapter.url!}'
                   : chapter.url!;
               if (Platform.isLinux) {
-                final uri = Uri.parse(url);
-                await launchUrl(
-                  uri,
-                  mode: LaunchMode.inAppBrowserView,
-                ).catchError(
-                  (_) => launchUrl(uri, mode: LaunchMode.externalApplication),
-                );
+                // The chosen browser, or the system default: the reader cannot
+                // show a page on Linux, so the link leaves the app.
+                await ExternalBrowser.open(url);
               } else {
                 context.push(
                   '/mangawebview',
