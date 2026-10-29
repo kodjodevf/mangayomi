@@ -3746,6 +3746,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get invert_selection => '選択を反転';
 
   @override
+  String get select_between => 'Select between';
+
+  @override
   String get show_password => 'パスワードを表示';
 
   @override

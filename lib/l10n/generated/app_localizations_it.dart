@@ -3872,6 +3872,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get invert_selection => 'Inverti selezione';
 
   @override
+  String get select_between => 'Select between';
+
+  @override
   String get show_password => 'Mostra password';
 
   @override

@@ -3868,6 +3868,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get invert_selection => 'Inverter seleção';
 
   @override
+  String get select_between => 'Select between';
+
+  @override
   String get show_password => 'Mostrar senha';
 
   @override

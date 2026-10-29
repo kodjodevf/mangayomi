@@ -3833,6 +3833,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get invert_selection => 'चयन उलटें';
 
   @override
+  String get select_between => 'Select between';
+
+  @override
   String get show_password => 'पासवर्ड दिखाएँ';
 
   @override
