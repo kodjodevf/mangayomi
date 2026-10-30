@@ -127,6 +127,8 @@ class GetIsolateService {
                 final serviceType = message['serviceType'] as String?;
                 final useLoggerValue = message['useLogger'] as bool?;
                 cfPort = message['cfPort'] as int;
+                webviewBridgeToken =
+                    message['webviewBridgeToken'] as String? ?? '';
                 if (useLoggerValue != null) {
                   useLogger = useLoggerValue;
                 }
@@ -275,6 +277,7 @@ class GetIsolateService {
         'responsePort': responsePort.sendPort,
         'useLogger': ?useLogger,
         'cfPort': cfPort,
+        'webviewBridgeToken': webviewBridgeToken,
       });
     } catch (e) {
       timer.cancel();
