@@ -7,6 +7,7 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:mangayomi/eval/model/m_source.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
@@ -21,6 +22,7 @@ import 'package:mangayomi/services/http/doh/doh_resolver.dart';
 import 'package:mangayomi/services/http/doh/doh_providers.dart';
 import 'package:mangayomi/services/http/doh/doh_custom_store.dart';
 import 'package:mangayomi/services/http/cf_proxy_store.dart';
+import 'package:mangayomi/services/remote_webview/remote_webview_host.dart';
 import 'package:mangayomi/utils/localized_message.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/error_toast.dart';
@@ -550,23 +552,38 @@ Future<bool> solveWithCfProxy(String proxyUrl, String targetUrl) async {
 }
 
 int cfPort = 0;
+
+/// Secret the extension server presents to drive WebViews over
+/// [RemoteWebViewHost.path]; regenerated every time the server starts.
+String webviewBridgeToken = '';
 HttpServer? _cfServer;
+
+String _newWebviewBridgeToken() {
+  final random = Random.secure();
+  return List.generate(
+    32,
+    (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0'),
+  ).join();
+}
 
 /// Cloudflare Resolution Webview Server
 Future<void> webviewServer() async {
   try {
     _cfServer = await HttpServer.bind(InternetAddress.loopbackIPv4, cfPort);
     cfPort = _cfServer!.port;
+    webviewBridgeToken = _newWebviewBridgeToken();
     _cfServer!.listen(
       (HttpRequest request) {
-        if (request.method == 'POST' && request.uri.path == '/resolve_cf') {
+        if (request.uri.path == RemoteWebViewHost.path) {
+          unawaited(
+            RemoteWebViewHost.accept(request, token: webviewBridgeToken),
+          );
+        } else if (request.method == 'POST' &&
+            request.uri.path == '/resolve_cf') {
           _handleResolveCf(request);
         } else if (request.method == 'POST' &&
             request.uri.path == '/evaluateJavascriptViaWebview') {
           _evaluateJavascriptViaWebview(request);
-        } else if (request.method == 'POST' &&
-            request.uri.path == '/bridge_webview') {
-          _handleBridgeWebview(request);
         } else {
           request.response
             ..statusCode = HttpStatus.notFound
@@ -603,6 +620,7 @@ Future<void> stopwebviewServer() async {
   } finally {
     _cfServer = null;
     cfPort = 0;
+    webviewBridgeToken = '';
   }
 }
 
@@ -770,231 +788,6 @@ Future<void> _evaluateJavascriptViaWebview(HttpRequest request) async {
     request.response
       ..statusCode = HttpStatus.badRequest
       ..write(jsonEncode({'error': 'Invalid JSON'}))
-      ..close();
-  }
-}
-
-Future<void> _handleBridgeWebview(HttpRequest request) async {
-  try {
-    final body = await utf8.decoder.bind(request).join();
-    final data = jsonDecode(body) as Map<String, dynamic>;
-    final url = data['url'] as String?;
-
-    if (url == null || url.isEmpty) {
-      request.response
-        ..statusCode = HttpStatus.badRequest
-        ..headers.contentType = ContentType.json
-        ..write(jsonEncode({'success': false, 'error': 'Missing url parameter'}))
-        ..close();
-      return;
-    }
-
-    final headers =
-        (data['headers'] as Map<String, dynamic>?)?.map(
-          (key, value) => MapEntry(key, value.toString()),
-        ) ??
-        {};
-    final scripts =
-        (data['scripts'] as List<dynamic>?)
-            ?.map((e) => e.toString())
-            .toList() ??
-        [];
-    final time = data['time'] as int? ?? 20;
-
-    final webUri = flutter_inappwebview.WebUri(url);
-    flutter_inappwebview.HeadlessInAppWebView? headlessWebView;
-    final completer = Completer<Map<String, dynamic>>();
-    final resources = <String>{};
-    final videoRegex = RegExp(
-      r'.*\.(mp4|m3u8|mpd)(\?.*)?$',
-      caseSensitive: false,
-    );
-
-    Timer? timer;
-    timer = Timer(Duration(seconds: time), () {
-      if (!completer.isCompleted) {
-        completer.complete({
-          'success': false,
-          'error': 'Timeout after $time seconds',
-          'resources': resources.toList(),
-        });
-      }
-    });
-
-    Future<void> finish(
-      flutter_inappwebview.InAppWebViewController controller,
-      Uri currentUri,
-    ) async {
-      try {
-        String? jsResult;
-        for (final script in scripts) {
-          final res = await controller.evaluateJavascript(source: script);
-          if (res != null) {
-            jsResult = res.toString();
-          }
-        }
-
-        final finalUrl =
-            (await controller.getUrl())?.toString() ?? currentUri.toString();
-        final html = await controller.getHtml() ?? '';
-
-        // Extract video / source / iframe urls from DOM
-        try {
-          final domVideos = await controller.evaluateJavascript(
-            source: """
-            (function() {
-              const urls = [];
-              document.querySelectorAll('video, video source, iframe').forEach(e => {
-                const s = e.src || e.getAttribute('data-src') || '';
-                if (s) urls.push(s);
-              });
-              return urls;
-            })()
-          """,
-          );
-          if (domVideos is List) {
-            for (final v in domVideos) {
-              if (v is String && v.isNotEmpty) {
-                resources.add(v);
-              }
-            }
-          }
-        } catch (_) {}
-
-        // Scan html for media links
-        final matches = RegExp(
-          r"""https?://[^\s"'<>]+\.(?:m3u8|mp4|mpd)[^\s"'<>]*""",
-          caseSensitive: false,
-        ).allMatches(html);
-        for (final m in matches) {
-          final matchUrl = m.group(0);
-          if (matchUrl != null) resources.add(matchUrl);
-        }
-
-        final cookieManager = flutter_inappwebview.CookieManager.instance(
-          webViewEnvironment: webViewEnvironment,
-        );
-        final cookies = await cookieManager.getCookies(
-          url: flutter_inappwebview.WebUri(finalUrl),
-          webViewController: controller,
-        );
-
-        final ua =
-            await controller.evaluateJavascript(
-              source: "navigator.userAgent",
-            ) ??
-            "";
-        if (ua is String && ua.isNotEmpty) {
-          await MClient.setCookie(finalUrl, ua, controller);
-        }
-
-        final cookieList =
-            cookies
-                .map(
-                  (c) => {
-                    'name': c.name,
-                    'value': c.value,
-                    'domain': c.domain,
-                    'path': c.path,
-                    'expiresDate': c.expiresDate,
-                  },
-                )
-                .toList();
-
-        if (!completer.isCompleted) {
-          completer.complete({
-            'success': true,
-            'url': finalUrl,
-            'html': html,
-            'cookies': cookieList,
-            'resources': resources.toList(),
-            'jsResult': jsResult,
-          });
-        }
-      } catch (e) {
-        if (!completer.isCompleted) {
-          completer.complete({
-            'success': false,
-            'error': e.toString(),
-            'resources': resources.toList(),
-          });
-        }
-      }
-    }
-
-    headlessWebView = flutter_inappwebview.HeadlessInAppWebView(
-      webViewEnvironment: webViewEnvironment,
-      initialSettings: flutter_inappwebview.InAppWebViewSettings(
-        useOnLoadResource: true,
-        useShouldInterceptRequest: true,
-        javaScriptEnabled: true,
-        mediaPlaybackRequiresUserGesture: false,
-        allowsInlineMediaPlayback: true,
-      ),
-      initialUrlRequest: flutter_inappwebview.URLRequest(
-        url: webUri,
-        headers: headers,
-      ),
-      onLoadResource: (controller, resource) async {
-        final resUrl = resource.url?.toString();
-        if (resUrl != null && resUrl.isNotEmpty) {
-          resources.add(resUrl);
-          if (videoRegex.hasMatch(resUrl)) {
-            Future.delayed(const Duration(milliseconds: 600), () async {
-              if (!completer.isCompleted) {
-                await finish(controller, webUri);
-              }
-            });
-          }
-        }
-      },
-      shouldInterceptRequest: (controller, req) async {
-        final reqUrl = req.url.toString();
-        if (reqUrl.isNotEmpty) {
-          resources.add(reqUrl);
-          if (videoRegex.hasMatch(reqUrl)) {
-            Future.delayed(const Duration(milliseconds: 600), () async {
-              if (!completer.isCompleted) {
-                await finish(controller, webUri);
-              }
-            });
-          }
-        }
-        return null;
-      },
-      onLoadStop: (controller, loadedUrl) async {
-        await finish(controller, loadedUrl ?? webUri);
-      },
-      onReceivedError: (controller, req, error) {
-        if (req.isForMainFrame ?? true) {
-          if (!completer.isCompleted) {
-            completer.complete({
-              'success': false,
-              'error': error.description,
-              'resources': resources.toList(),
-            });
-          }
-        }
-      },
-    );
-
-    await headlessWebView.run();
-
-    final result = await completer.future;
-    timer.cancel();
-    try {
-      await headlessWebView.dispose();
-    } catch (_) {}
-
-    request.response
-      ..headers.contentType = ContentType.json
-      ..write(jsonEncode(result))
-      ..close();
-  } catch (e) {
-    request.response
-      ..statusCode = HttpStatus.internalServerError
-      ..headers.contentType = ContentType.json
-      ..write(jsonEncode({'success': false, 'error': e.toString()}))
       ..close();
   }
 }

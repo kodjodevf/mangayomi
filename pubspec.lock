@@ -1547,6 +1547,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  remote_webview_interceptor:
+    dependency: "direct main"
+    description:
+      path: "packages/remote_webview_interceptor"
+      relative: true
+    source: path
+    version: "1.0.0"
   riverpod:
     dependency: transitive
     description:

@@ -405,8 +405,12 @@ class MihonExtensionService implements ExtensionService {
       // which is better placed than the retry below: it owns the request and
       // its cookie jar. Servers that don't support it ignore the header.
       if (cfProxyUrl.isNotEmpty) 'cf-proxy-url': cfProxyUrl,
-      if (!Platform.isLinux && cfPort > 0)
+      // Where the server reaches this app's WebViews, and the secret it must
+      // present: extension WebViews then run here as real WebViews.
+      if (!Platform.isLinux && cfPort > 0) ...{
         'x-mangayomi-webview-port': cfPort.toString(),
+        'x-mangayomi-webview-token': webviewBridgeToken,
+      },
     };
   }
 
