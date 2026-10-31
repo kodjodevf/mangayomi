@@ -1694,6 +1694,8 @@
   "shortcut_zoom_in": "Zoom in",
   "shortcut_zoom_out": "Zoom out",
   "shortcut_zoom_reset": "Fit the page",
+  "shortcut_wheel_zoom": "Zoom with the mouse",
+  "mouse_wheel": "Wheel",
   "shortcut_leave": "Leave the reader",
   "shortcut_show": "Show these shortcuts",
   "color_red": "Red",

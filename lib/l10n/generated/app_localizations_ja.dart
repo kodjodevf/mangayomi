@@ -4242,6 +4242,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get shortcut_zoom_reset => 'ページに合わせる';
 
   @override
+  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+
+  @override
+  String get mouse_wheel => 'Wheel';
+
+  @override
   String get shortcut_leave => 'リーダーを終了';
 
   @override

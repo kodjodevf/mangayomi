@@ -7737,6 +7737,18 @@ abstract class AppLocalizations {
   /// **'Fit the page'**
   String get shortcut_zoom_reset;
 
+  /// No description provided for @shortcut_wheel_zoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom with the mouse'**
+  String get shortcut_wheel_zoom;
+
+  /// No description provided for @mouse_wheel.
+  ///
+  /// In en, this message translates to:
+  /// **'Wheel'**
+  String get mouse_wheel;
+
   /// No description provided for @shortcut_leave.
   ///
   /// In en, this message translates to:

@@ -4414,6 +4414,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get shortcut_zoom_reset => 'Ajuster la page';
 
   @override
+  String get shortcut_wheel_zoom => 'Zoomer à la souris';
+
+  @override
+  String get mouse_wheel => 'Molette';
+
+  @override
   String get shortcut_leave => 'Quitter le lecteur';
 
   @override

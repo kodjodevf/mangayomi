@@ -4181,6 +4181,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get shortcut_zoom_reset => '适应页面';
 
   @override
+  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+
+  @override
+  String get mouse_wheel => 'Wheel';
+
+  @override
   String get shortcut_leave => '退出阅读器';
 
   @override

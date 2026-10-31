@@ -107,4 +107,12 @@ extension SubsamplingPan on SubsamplingScaleImageViewController {
       duration: ShioriMotion.standard,
     );
   }
+
+  /// Moves the image by [delta] on screen, as a mouse wheel scrolls it;
+  /// kept within the image's edges.
+  void panBy(ui.Offset delta) {
+    final s = _state;
+    if (s == null || !s._isInitialized) return;
+    setScaleAndTranslation(s._scale, s._vTranslate - delta);
+  }
 }
