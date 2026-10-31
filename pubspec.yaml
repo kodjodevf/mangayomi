@@ -139,7 +139,7 @@ dev_dependencies:
   isar_community_generator: ^3.4.1
   flutter_lints: ^6.0.0
   freezed: ^4.0.3
-  inno_bundle: ^0.9.0
+  inno_bundle: ^0.12.0
   protoc_plugin: ^23.0.0
 
 flutter:

@@ -893,10 +893,10 @@ packages:
     dependency: "direct dev"
     description:
       name: inno_bundle
-      sha256: "544ca69ce64c5b06b346f328170ae407ca99605beab23ccc779b39acf6ba1c9a"
+      sha256: "236e6c245275854a5b2c6b8b7e1cb199edc9f00040ae1c6e29b237891c9bc977"
       url: "https://pub.dev"
     source: hosted
-    version: "0.9.0"
+    version: "0.12.0"
   intl:
     dependency: "direct main"
     description:

@@ -270,12 +270,17 @@ jobs:
       - name: flutter pub get
         run: flutter pub get
 
-      - name: Enable inno_bundle
-        run: dart pub global activate inno_bundle
+      # Built here rather than by inno_bundle, which always adds --obfuscate
+      # and --split-debug-info: a Windows crash report then carried addresses
+      # only, with nothing kept to read them back. The other platforms are not
+      # obfuscated, and the code is open, so there was nothing to hide.
+      - name: build windows app
+        run: flutter build windows --release --verbose
 
+      # The installer, from the app built above. inno_bundle is the project's
+      # own dev dependency, at the version in pubspec.lock.
       - name: build windows exe
-        run: |
-          dart run inno_bundle:build --release
+        run: dart run inno_bundle --no-app
 
       - name: build windows zip
         shell: pwsh
