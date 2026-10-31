@@ -1648,6 +1648,8 @@
   "shortcut_zoom_in": "Zoomer",
   "shortcut_zoom_out": "Dézoomer",
   "shortcut_zoom_reset": "Ajuster la page",
+  "shortcut_wheel_zoom": "Zoomer à la souris",
+  "mouse_wheel": "Molette",
   "shortcut_leave": "Quitter le lecteur",
   "shortcut_show": "Afficher ces raccourcis",
   "color_red": "Rouge",

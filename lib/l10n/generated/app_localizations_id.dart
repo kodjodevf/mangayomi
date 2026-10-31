@@ -4352,6 +4352,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get shortcut_zoom_reset => 'Paskan halaman';
 
   @override
+  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+
+  @override
+  String get mouse_wheel => 'Wheel';
+
+  @override
   String get shortcut_leave => 'Keluar dari pembaca';
 
   @override

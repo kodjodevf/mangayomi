@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
@@ -171,5 +173,10 @@ Future<void> showReaderShortcuts(
       bindings: bindings,
     ))
       (readerShortcutLabel(shortcut, l10n), keys),
+    if (zoom)
+      (
+        l10n.shortcut_wheel_zoom,
+        [Platform.isMacOS ? '⌘' : 'Ctrl', l10n.mouse_wheel],
+      ),
   ]);
 }

@@ -104,11 +104,14 @@ void main() {
     expect(find.text(l10n.keyboard_shortcuts), findsOneWidget);
     expect(find.text(l10n.shortcut_zoom_in), findsOneWidget);
     expect(find.text('Space'), findsOneWidget);
+    // Ctrl and the wheel zoom too (#529).
+    expect(find.text(l10n.shortcut_wheel_zoom), findsOneWidget);
     await tester.tap(find.text(MaterialLocalizations.of(host).okButtonLabel));
     await tester.pumpAndSettle();
 
     showReaderShortcuts(host, zoom: false);
     await tester.pumpAndSettle();
     expect(find.text(l10n.shortcut_zoom_in), findsNothing);
+    expect(find.text(l10n.shortcut_wheel_zoom), findsNothing);
   });
 }

@@ -73,6 +73,7 @@ import 'package:mangayomi/modules/widgets/memory_overlay.dart';
 import 'package:mangayomi/modules/widgets/app_ui_scale.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_ui_scale_state_provider.dart';
 import 'package:mangayomi/utils/error_toast.dart';
+import 'package:mangayomi/utils/startup_error_hint.dart';
 export 'package:mangayomi/services/discord_rpc.dart' show discordRpc;
 
 void main(List<String> args) async {
@@ -206,6 +207,13 @@ class _StartupErrorApp extends StatelessWidget {
                   'Failed to start Mangayomi',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
+                if (startupErrorHint(error) case final hint?) ...[
+                  const SizedBox(height: 12),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 520),
+                    child: Text(hint, textAlign: TextAlign.center),
+                  ),
+                ],
                 const SizedBox(height: 8),
                 SelectableText(
                   error,

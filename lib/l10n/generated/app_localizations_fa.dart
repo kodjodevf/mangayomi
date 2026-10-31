@@ -4368,6 +4368,12 @@ class AppLocalizationsFa extends AppLocalizations {
   String get shortcut_zoom_reset => 'تطبیق با صفحه';
 
   @override
+  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+
+  @override
+  String get mouse_wheel => 'Wheel';
+
+  @override
   String get shortcut_leave => 'خروج از خواننده';
 
   @override

@@ -4322,6 +4322,12 @@ class AppLocalizationsTh extends AppLocalizations {
   String get shortcut_zoom_reset => 'พอดีหน้า';
 
   @override
+  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+
+  @override
+  String get mouse_wheel => 'Wheel';
+
+  @override
   String get shortcut_leave => 'ออกจากตัวอ่าน';
 
   @override

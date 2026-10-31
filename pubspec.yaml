@@ -173,8 +173,10 @@ flutter_launcher_icons:
     # The largest Windows takes: 48, the default, blurred the icon at every
     # size above it, and the installer needs one of at least 256.
     icon_size: 256
+  # macOS icons sit on the system's grid, with a margin and a shadow, which
+  # this generator does not draw: they come from tool/macos_app_icon.swift.
   macos:
-    generate: true
+    generate: false
     image_path: "assets/app_icons/icon-red.png"
 inno_bundle:
   id: 6CB26FFA-E72B-42C3-91E8-594940031CA2

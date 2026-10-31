@@ -4252,6 +4252,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get shortcut_zoom_reset => '페이지에 맞추기';
 
   @override
+  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+
+  @override
+  String get mouse_wheel => 'Wheel';
+
+  @override
   String get shortcut_leave => '리더 나가기';
 
   @override
