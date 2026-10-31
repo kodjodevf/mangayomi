@@ -9,6 +9,7 @@
  [![GitHub downloads](https://img.shields.io/github/downloads/kodjodevf/mangayomi/total?label=downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](https://github.com/kodjodevf/mangayomi/releases)
 ![star](https://img.shields.io/github/stars/kodjodevf/mangayomi)
  [![Discord server](https://img.shields.io/discord/1157628512077893666.svg?label=&labelColor=6A7EC2&color=7389D8&logo=discord&logoColor=FFFFFF)](https://discord.com/invite/EjfBuYahsP) 
+ [![Plumber Score](https://score.getplumber.io/github.com/kodjodevf/mangayomi.svg)](https://score.getplumber.io/github.com/kodjodevf/mangayomi)
 
 
 Mangayomi is an open-source Flutter app for reading manga, novels, and watching animes across multiple platforms.
