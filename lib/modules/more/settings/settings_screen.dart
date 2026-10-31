@@ -62,7 +62,7 @@ class SettingsScreen extends StatelessWidget {
             ),
             // The readers and the player follow the libraries shown: one
             // that is hidden takes its settings with it. The anime-only TV
-            // layout shows none of them, as before.
+            // layout drops the readers and keeps the player (#1069).
             Consumer(
               builder: (context, ref, _) {
                 final animeOnly = ref.watch(animeOnlyTvModeProvider);
@@ -84,7 +84,7 @@ class SettingsScreen extends StatelessWidget {
                         icon: Symbols.menu_book_rounded,
                         onTap: () => context.push('/novelReaderMode'),
                       ),
-                    if (!animeOnly && !hiddenItems.contains("/AnimeLibrary"))
+                    if (!hiddenItems.contains("/AnimeLibrary"))
                       ListTileWidget(
                         title: l10n.player,
                         subtitle: l10n.settings_player_summary,
