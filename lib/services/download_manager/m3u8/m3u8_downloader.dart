@@ -12,6 +12,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
+import 'package:mangayomi/services/download_manager/download_retry.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/ts_info.dart';
 import 'package:mangayomi/services/download_manager/download_isolate_pool.dart';
@@ -71,6 +72,9 @@ class M3u8Downloader {
         if (attempts >= 3) {
           throw M3u8DownloaderException('Operation failed after 3 attempts', e);
         }
+        // Not at once: a server that refused was refused again a moment
+        // later.
+        await Future.delayed(retryDelay(attempts));
       }
     }
   }

@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:isolate';
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
@@ -9,6 +10,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
+import 'package:mangayomi/services/download_manager/download_retry.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/ts_info.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
@@ -581,12 +583,17 @@ Future<void> _downloadFile(
 ) async {
   try {
     if (itemType != ItemType.anime) {
-      final response = await _withRetry(
-        () => client
+      final response = await _withRetry(() async {
+        final response = await client
             .get(Uri.parse(pageUrl.url), headers: pageUrl.headers)
-            .timeout(const Duration(seconds: 30)),
-        3,
-      );
+            .timeout(const Duration(seconds: 30));
+        final limited = RateLimitedException.fromResponse(
+          response.statusCode,
+          response.headers['retry-after'],
+        );
+        if (limited != null) throw limited;
+        return response;
+      }, 3);
       if (response.statusCode != 200) {
         throw DownloadPoolException(
           'Failed to download file: ${pageUrl.fileName!}',
@@ -617,6 +624,12 @@ Future<void> _downloadFile(
         // streaming request (e.g. AnimeGG). Rejecting 206 here caused 3
         // retries → silent stall.
         if (response.statusCode < 200 || response.statusCode >= 300) {
+          await response.stream.listen((_) {}).cancel();
+          final limited = RateLimitedException.fromResponse(
+            response.statusCode,
+            response.headers['retry-after'],
+          );
+          if (limited != null) throw limited;
           throw DownloadPoolException(
             'Failed to download file: ${pageUrl.fileName!} '
             '(status ${response.statusCode})',
@@ -739,6 +752,11 @@ Future<void> _downloadSegment(
             .timeout(const Duration(seconds: 30));
         if (response.statusCode != 200 && response.statusCode != 206) {
           await response.stream.listen((_) {}).cancel();
+          final limited = RateLimitedException.fromResponse(
+            response.statusCode,
+            response.headers['retry-after'],
+          );
+          if (limited != null) throw limited;
           throw DownloadPoolException(
             'Failed to download segment: ${ts.name} (status ${response.statusCode})',
           );
@@ -805,6 +823,12 @@ Uint8List _aesDecrypt(
 }
 
 /// Helper for retry
+/// Runs [operation] until it succeeds, waiting longer after each failure.
+///
+/// The attempts used to follow each other at once, so a server answering
+/// 429 got all three within a second and the download failed (#1087). A
+/// server asking to slow down gets [rateLimitedAttempts] and the wait it
+/// asked for.
 Future<T> _withRetry<T>(Future<T> Function() operation, int maxRetries) async {
   int attempts = 0;
   while (true) {
@@ -812,12 +836,19 @@ Future<T> _withRetry<T>(Future<T> Function() operation, int maxRetries) async {
       attempts++;
       return await operation();
     } catch (e) {
-      if (attempts >= maxRetries) {
+      final limited = e is RateLimitedException ? e : null;
+      final allowed = limited != null
+          ? max(maxRetries, rateLimitedAttempts)
+          : maxRetries;
+      if (attempts >= allowed) {
         throw DownloadPoolException(
-          'Operation failed after $maxRetries attempts',
+          'Operation failed after $attempts attempts',
           e,
         );
       }
+      await Future.delayed(
+        retryDelay(attempts, retryAfter: limited?.retryAfter),
+      );
     }
   }
 }
