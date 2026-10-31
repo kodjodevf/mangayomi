@@ -51,14 +51,26 @@ mixin AnimeMpvBridgeMixin<T extends riv.ConsumerStatefulWidget>
 
   /// Sends the subtitle style to mpv, which applies it to the subtitles on
   /// screen at once.
+  ///
+  /// When [overrideChanged], the subtitle track on screen is selected again:
+  /// an ASS track styled by the override kept that style once the override
+  /// was turned off, until the track was loaded anew.
   Future<void> applySubtitleSettingsToMpv(
-    PlayerSubtitleSettings settings,
-  ) async {
+    PlayerSubtitleSettings settings, {
+    bool overrideChanged = false,
+  }) async {
     if (!mpvUseLibass) return;
     try {
       final nativePlayer = mpvBridgePlayer.platform as NativePlayer;
       for (final MapEntry(:key, :value) in mpvSubtitleStyle(settings).entries) {
         await nativePlayer.setProperty(key, value);
+      }
+      if (overrideChanged) {
+        final sid = await nativePlayer.getProperty('sid');
+        if (sid.isNotEmpty && sid != 'no' && sid != 'auto') {
+          await nativePlayer.setProperty('sid', 'no');
+          await nativePlayer.setProperty('sid', sid);
+        }
       }
     } catch (e, s) {
       recordError(e, stack: s, source: 'mpv_subtitle_style');

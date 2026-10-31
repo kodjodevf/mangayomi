@@ -637,6 +637,12 @@ final settingsIndex = <SettingsEntry>[
     route: '/playerMode',
   ),
   SettingsEntry(
+    title: (l) => l.subtitles_on_by_default,
+    subtitle: (l) => l.subtitles_on_by_default_info,
+    section: (l) => l.player,
+    route: '/playerMode',
+  ),
+  SettingsEntry(
     title: (l) => l.use_libass,
     subtitle: (l) => l.use_libass_info,
     section: (l) => l.player,

@@ -3465,6 +3465,18 @@ abstract class AppLocalizations {
   /// **'Edit code'**
   String get edit_code;
 
+  /// No description provided for @subtitles_on_by_default.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn subtitles on'**
+  String get subtitles_on_by_default;
+
+  /// No description provided for @subtitles_on_by_default_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Off, episodes start without subtitles until you pick a track.'**
+  String get subtitles_on_by_default_info;
+
   /// No description provided for @use_libass.
   ///
   /// In en, this message translates to:

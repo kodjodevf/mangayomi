@@ -313,6 +313,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool get isLocalForTracks => widget.isLocal;
   @override
   String get defaultSubtitleLanguage => widget.defaultSubtitle;
+
+  @override
+  bool get subtitlesOnByDefault => ref.read(subtitlesOnByDefaultStateProvider);
   @override
   String get preferredAudioLanguagesCsv => audioPreferredLang;
   @override
@@ -452,7 +455,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   final ValueNotifier<bool> _showFitLabel = ValueNotifier(false);
   final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
   final ValueNotifier<Duration?> _tempPosition = ValueNotifier(null);
-  final ValueNotifier<BoxFit> _fit = ValueNotifier(BoxFit.contain);
+  late final ValueNotifier<BoxFit> _fit = ValueNotifier(
+    ref.read(playerVideoFitStateProvider),
+  );
   final ValueNotifier<List<(String, int)>> _chapterMarks = ValueNotifier([]);
   final ValueNotifier<int?> _currentChapterMark = ValueNotifier(null);
   final ValueNotifier<String> _selectedShader = ValueNotifier("");
@@ -635,6 +640,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   void initState() {
     super.initState();
     _rememberVolume = ref.read(rememberPlayerVolumeStateProvider);
+    // Kept for the next episode, whichever control changed it.
+    _fit.addListener(
+      () => ref.read(playerVideoFitStateProvider.notifier).set(_fit.value),
+    );
     _watchStopwatch.start();
     _controller = VideoController(
       _player,
@@ -745,7 +754,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         previous,
         next,
       ) {
-        unawaited(applySubtitleSettingsToMpv(next));
+        unawaited(
+          applySubtitleSettingsToMpv(
+            next,
+            overrideChanged:
+                previous != null &&
+                previous.overrideAssSubtitles != next.overrideAssSubtitles,
+          ),
+        );
       });
     }
     WidgetsBinding.instance.addObserver(this);

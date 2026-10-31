@@ -5,6 +5,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_double_page_mixin.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_memory_management.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_zoom_control.dart';
+import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart';
 import 'package:mangayomi/modules/manga/reader/services/page_navigation_service.dart';
 import 'package:mangayomi/modules/manga/reader/utils/reader_motion.dart';
 import 'package:mangayomi/providers/reader_state_provider.dart';
@@ -131,6 +132,15 @@ mixin ReaderInputAndModeMixin<T extends ConsumerStatefulWidget>
             return;
           }
         }
+      }
+      // At the end of a row, the row below (or above) before the page turns,
+      // so the part of a tall page under the screen is not skipped.
+      if (forward ? controller.canPanDown() : controller.canPanUp()) {
+        controller.panToRow(
+          down: forward,
+          rightToLeft: isReverseHorizontalForInput,
+        );
+        return;
       }
     }
 

@@ -22,6 +22,9 @@ mixin AnimeTrackSelectionMixin<T extends riv.ConsumerStatefulWidget>
   vid.Video get firstVideoForTracks;
   bool get isLocalForTracks;
   String get defaultSubtitleLanguage;
+
+  /// Off, an episode starts without subtitles until one is picked.
+  bool get subtitlesOnByDefault;
   String get preferredAudioLanguagesCsv;
   ValueNotifier<VideoPrefs?> get selectedVideoPrefs;
   Future<void> openMediaFromTrackSelection(VideoPrefs prefs);
@@ -42,6 +45,8 @@ mixin AnimeTrackSelectionMixin<T extends riv.ConsumerStatefulWidget>
       try {
         unawaited(setSubtitleTrack(activeSubtitleTrack!));
       } catch (_) {}
+    } else if (!subtitlesOnByDefault) {
+      unawaited(setSubtitleTrack(SubtitleTrack.no()));
     } else if (firstVideoForTracks.subtitles?.isNotEmpty ?? false) {
       try {
         final preferredSource = findPreferredSourceSubtitleTrack(

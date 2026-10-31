@@ -1893,6 +1893,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get edit_code => 'Editar código';
 
   @override
+  String get subtitles_on_by_default => 'Turn subtitles on';
+
+  @override
+  String get subtitles_on_by_default_info =>
+      'Off, episodes start without subtitles until you pick a track.';
+
+  @override
   String get use_libass => 'Habilitar libass';
 
   @override

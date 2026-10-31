@@ -1876,6 +1876,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get edit_code => 'कोड संपादित करें';
 
   @override
+  String get subtitles_on_by_default => 'Turn subtitles on';
+
+  @override
+  String get subtitles_on_by_default_info =>
+      'Off, episodes start without subtitles until you pick a track.';
+
+  @override
   String get use_libass => 'libass सक्षम करें';
 
   @override
