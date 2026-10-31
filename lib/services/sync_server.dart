@@ -5,6 +5,7 @@
 // sequences those three pieces and turns their results into UI-facing state
 // (toasts, progress, invalidated providers).
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
@@ -28,7 +29,6 @@ import 'package:mangayomi/services/sync/sync_api_client.dart';
 import 'package:mangayomi/services/sync/sync_change_collector.dart';
 import 'package:mangayomi/services/sync/sync_entity_applier.dart';
 import 'package:mangayomi/utils/client_id.dart';
-import 'package:mangayomi/utils/platform_utils.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
@@ -45,6 +45,23 @@ const _maxRowsPerEntity = 5000;
 // a redirect_uri are checked server-side (see isAllowedRedirectUri in the
 // sync-server repo), not the port, so this can be anything not already in use.
 const _desktopOAuthCallbackPort = 48765;
+
+/// Where the sync server sends the browser back after login: a loopback
+/// server catches it on Windows and Linux, the app's own scheme everywhere
+/// else. flutter_web_auth_2 takes a loopback address only on Windows and
+/// Linux; macOS, counted as a desktop here, rejected it as a scheme (#1062).
+/// The trackers already split it this way.
+({String redirectUri, String callbackUrlScheme}) syncOAuthCallback({
+  required bool loopback,
+}) => loopback
+    ? (
+        redirectUri: 'http://localhost:$_desktopOAuthCallbackPort/callback',
+        callbackUrlScheme: 'http://localhost:$_desktopOAuthCallbackPort',
+      )
+    : (
+        redirectUri: 'mangayomi://oauth-callback',
+        callbackUrlScheme: 'mangayomi',
+      );
 
 @riverpod
 class SyncServer extends _$SyncServer {
@@ -71,12 +88,9 @@ class SyncServer extends _$SyncServer {
       final verifier = _generatePkceVerifier();
       final challenge = _codeChallengeFromVerifier(verifier);
       final state = _generatePkceVerifier();
-      final redirectUri = isDesktop
-          ? 'http://localhost:$_desktopOAuthCallbackPort/callback'
-          : 'mangayomi://oauth-callback';
-      final callbackUrlScheme = isDesktop
-          ? 'http://localhost:$_desktopOAuthCallbackPort'
-          : 'mangayomi';
+      final (:redirectUri, :callbackUrlScheme) = syncOAuthCallback(
+        loopback: Platform.isWindows || Platform.isLinux,
+      );
 
       final authorizeUrl = Uri.parse('$server/api/oauth/authorize').replace(
         queryParameters: {

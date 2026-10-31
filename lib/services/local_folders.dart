@@ -71,10 +71,29 @@ String getLocalVirtualPath(LocalFolder folder, String entityPath) {
       folderPath.isEmpty) {
     return normalizePath(entityPath);
   }
-  final relative = p.relative(entityPath, from: folderPath);
+  final relative = _relativeWithin(entityPath, folderPath);
   if (relative == '.') return folderName;
   return p.posix.join(folderName, normalizePath(relative));
 }
+
+/// [path] relative to [folder].
+///
+/// On Apple systems /var and /tmp are links to /private/var and /private/tmp,
+/// and a listing or a picker can hand either form. Compared as they came, a
+/// file inside the folder climbed out of it to the root and back down, and
+/// that path, stored, could not be opened (#1029).
+String _relativeWithin(String path, String folder) {
+  final relative = p.relative(path, from: folder);
+  if (!p.split(relative).contains('..')) return relative;
+  final retried = p.relative(
+    _withoutPrivate(path),
+    from: _withoutPrivate(folder),
+  );
+  return p.split(retried).contains('..') ? relative : retried;
+}
+
+String _withoutPrivate(String path) =>
+    path.startsWith('/private/') ? path.substring('/private'.length) : path;
 
 String localVirtualPathFromStoredPath(
   String? storedPath,
