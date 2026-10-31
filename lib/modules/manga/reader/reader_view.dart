@@ -1048,24 +1048,6 @@ class _MangaChapterPageGalleryState
                     ),
                   ),
                 ),
-                // Zoomed in with the bars away: the way back to the whole
-                // page, rather than a double tap or a pinch to guess at.
-                if (isCurrentPageZoomed && !_isView)
-                  Positioned(
-                    left: ShioriSpace.s12,
-                    bottom:
-                        MediaQuery.paddingOf(context).bottom + ShioriSpace.s12,
-                    child: TextButton.icon(
-                      onPressed: zoomReset,
-                      style: TextButton.styleFrom(
-                        backgroundColor: ShioriScrim.underText,
-                        foregroundColor: Colors.white,
-                        shape: const StadiumBorder(),
-                      ),
-                      icon: const Icon(Symbols.fit_screen_rounded),
-                      label: Text(context.l10n.shortcut_zoom_reset),
-                    ),
-                  ),
                 ReaderAutoScrollButton(
                   isContinuousMode: readerMode.isContinuous,
                   isUiVisible: _isView,
