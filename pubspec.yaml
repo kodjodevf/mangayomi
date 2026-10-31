@@ -139,7 +139,7 @@ dev_dependencies:
   isar_community_generator: ^3.4.1
   flutter_lints: ^6.0.0
   freezed: ^4.0.3
-  inno_bundle: ^0.9.0
+  inno_bundle: ^0.12.0
   protoc_plugin: ^23.0.0
 
 flutter:
@@ -170,6 +170,9 @@ flutter_launcher_icons:
   windows:
     generate: true
     image_path: "assets/app_icons/icon-red.png"
+    # The largest Windows takes: 48, the default, blurred the icon at every
+    # size above it, and the installer needs one of at least 256.
+    icon_size: 256
   macos:
     generate: true
     image_path: "assets/app_icons/icon-red.png"
@@ -180,6 +183,8 @@ inno_bundle:
   url: https://github.com/kodjodevf/mangayomi/
   support_url: https://github.com/kodjodevf/mangayomi/
   updates_url: https://github.com/kodjodevf/mangayomi/releases/
+  # The app's own icon: without it the installer showed inno_bundle's.
+  installer_icon: windows/runner/resources/app_icon.ico
   languages:
     - english
     - french

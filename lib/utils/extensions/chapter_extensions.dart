@@ -141,15 +141,9 @@ extension ChapterExtension on Chapter {
             }
           }
         }
-        ref
-            .read(
-              trackStateProvider(
-                track: track,
-                itemType: manga.itemType,
-                widgetRef: ref,
-              ).notifier,
-            )
-            .updateManga();
+        // Not on this ref: the reader or player it may belong to can close
+        // before the tracker answers.
+        ref.read(trackerSyncProvider.notifier).update(track, manga.itemType);
       }
     }
   }

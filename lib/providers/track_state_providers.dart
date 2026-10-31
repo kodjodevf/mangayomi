@@ -12,6 +12,26 @@ import 'package:mangayomi/services/trackers/trakt_tv.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'track_state_providers.g.dart';
 
+/// Sends what was read or watched to the trackers, on a Ref that lives as
+/// long as the app. A tracker answers over the network, by when the reader or
+/// player that asked may have closed: its Ref, which the answer used to be
+/// written through, was gone by then (#1079).
+@Riverpod(keepAlive: true)
+class TrackerSync extends _$TrackerSync {
+  @override
+  void build() {}
+
+  Future<void> update(Track track, ItemType itemType) => ref
+      .read(
+        trackStateProvider(
+          track: track,
+          itemType: itemType,
+          widgetRef: ref,
+        ).notifier,
+      )
+      .updateManga();
+}
+
 @riverpod
 class TrackState extends _$TrackState {
   @override
