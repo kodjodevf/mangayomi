@@ -4503,4 +4503,14 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get no_browsers_detected => 'No browsers detected';
+
+  @override
+  String get on_this_device => 'On this device';
+
+  @override
+  String get local_tracking => 'Track on this device';
+
+  @override
+  String get local_tracking_desc =>
+      'Keep status, progress, score and dates for each series here, without an account. Nothing is sent anywhere. Turning it off keeps what it holds.';
 }

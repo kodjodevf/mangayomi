@@ -12,6 +12,7 @@ import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/trackers/anilist.dart';
 import 'package:mangayomi/services/trackers/kitsu.dart';
+import 'package:mangayomi/services/trackers/local_tracker.dart';
 import 'package:mangayomi/services/trackers/myanimelist.dart';
 import 'package:mangayomi/services/trackers/simkl.dart';
 import 'package:mangayomi/services/trackers/trakt_tv.dart';
@@ -118,6 +119,28 @@ class TrackScreen extends ConsumerWidget {
                       },
                       id: TrackerProviders.trakt.syncId,
                       entries: entries,
+                    ),
+                  ],
+                ),
+                ShioriSettingsGroup(
+                  title: l10n.on_this_device,
+                  children: [
+                    ShioriSwitchRow(
+                      title: l10n.local_tracking,
+                      subtitle: l10n.local_tracking_desc,
+                      value: entries.any(
+                        (e) => e.syncId == TrackerProviders.local.syncId,
+                      ),
+                      onChanged: (on) {
+                        final local = ref.read(
+                          localTrackerProvider(
+                            syncId: TrackerProviders.local.syncId,
+                            itemType: null,
+                            widgetRef: ref,
+                          ).notifier,
+                        );
+                        on ? local.enable() : local.disable();
+                      },
                     ),
                   ],
                 ),

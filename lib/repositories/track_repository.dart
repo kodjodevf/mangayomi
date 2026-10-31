@@ -97,6 +97,20 @@ class TrackRepository {
       ? const []
       : isar.tracks.where().mangaIdEqualToAnyItemType(mangaId).findAllSync();
 
+  /// What the tracker [syncId] holds for [itemType].
+  List<Track> getBySyncIdAndItemType(int syncId, ItemType itemType) => isar
+      .tracks
+      .filter()
+      .syncIdEqualTo(syncId)
+      .itemTypeEqualTo(itemType)
+      .findAllSync();
+
+  /// The series the tracker [syncId] holds an entry for.
+  Set<int> mangaIdsBySyncId(int syncId) => {
+    for (final track in isar.tracks.where().syncIdEqualTo(syncId).findAllSync())
+      ?track.mangaId,
+  };
+
   List<Track> getAll() => isar.tracks.filter().idIsNotNull().findAllSync();
 
   /// How many entries are tracked on the tracker [syncId].

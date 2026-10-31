@@ -4671,4 +4671,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get no_browsers_detected => 'No browsers detected';
+
+  @override
+  String get on_this_device => 'Sur cet appareil';
+
+  @override
+  String get local_tracking => 'Suivre sur cet appareil';
+
+  @override
+  String get local_tracking_desc =>
+      'Garde ici le statut, la progression, la note et les dates de chaque série, sans compte. Rien n\'est envoyé nulle part. Le désactiver conserve ce qu\'il contient.';
 }

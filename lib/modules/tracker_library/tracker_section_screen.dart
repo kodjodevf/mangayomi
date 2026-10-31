@@ -43,9 +43,15 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
             setState(() {
               _trackIndex = {
                 for (final t in tracks)
-                  if (t.mediaId != null) t.mediaId!: t,
+                  // Media ids are each tracker's own: the same number on
+                  // another tracker is another series.
+                  if (t.mediaId != null && t.syncId == widget.section.syncId)
+                    t.mediaId!: t,
               };
             });
+            // Read from the device: a change to an entry moves it between
+            // shelves at once.
+            if (!widget.section.cache) _fetchData();
           }
         });
   }
@@ -133,7 +139,9 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
     try {
       _errorMessage = "";
       _tracks = await widget.section.func() ?? [];
-      await trackerLibraryCacheRepository.put(key, _tracks);
+      if (widget.section.cache) {
+        await trackerLibraryCacheRepository.put(key, _tracks);
+      }
       if (mounted) {
         setState(() => _isLoading = false);
       }
@@ -148,7 +156,7 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
   }
 
   Future<bool> _checkCache(String key) async {
-    if (widget.section.isSearch) return false;
+    if (widget.section.isSearch || !widget.section.cache) return false;
     final cached = await trackerLibraryCacheRepository.get(key);
     if (cached == null) return false;
     _errorMessage = "";

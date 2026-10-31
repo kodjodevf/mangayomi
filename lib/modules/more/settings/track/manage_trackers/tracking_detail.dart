@@ -150,7 +150,12 @@ class TrackingWidget extends StatelessWidget {
       stream: trackRepository.watchByMediaIdAndItemType(mediaId, itemType),
       builder: (context, snapshot) {
         List<Track>? trackRes = [];
-        List<Track> res = snapshot.data ?? [];
+        // Media ids are each tracker's own: the same number on another
+        // tracker is another series.
+        final res = [
+          for (final t in snapshot.data ?? <Track>[])
+            if (t.syncId == syncId) t,
+        ];
         for (var track in res) {
           if (!trackRes
               .map((e) => e.mediaId)

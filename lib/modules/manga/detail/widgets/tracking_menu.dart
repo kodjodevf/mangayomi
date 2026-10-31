@@ -14,7 +14,8 @@ import 'package:super_sliver_list/super_sliver_list.dart';
 
 /// Opens the tracker list bottom sheet for [manga]. [entries] is the set of
 /// logged-in tracker services. Each row shows the current tracking state
-/// ([TrackerWidget]) or an "add tracker" tile that runs a search. Shared by the
+/// ([TrackerWidget]) or an "add tracker" tile that runs a search, or, for the
+/// local tracker, adds the series as it is. Shared by the
 /// classic manga detail and the TV anime detail so both behave identically.
 void openTrackingMenu({
   required BuildContext context,
@@ -58,6 +59,19 @@ void openTrackingMenu({
                       : TrackListile(
                           text: l10nLocalizations(context)!.add_tracker,
                           onTap: () async {
+                            final syncId = entries[index].syncId!;
+                            if (syncId == TrackerProviders.local.syncId) {
+                              await ref
+                                  .read(
+                                    trackStateProvider(
+                                      track: null,
+                                      itemType: manga.itemType,
+                                      widgetRef: ref,
+                                    ).notifier,
+                                  )
+                                  .trackLocally(manga);
+                              return;
+                            }
                             final trackSearch =
                                 await trackersSearchDraggableMenu(
                                   context,

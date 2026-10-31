@@ -114,8 +114,20 @@ class MangaRepository {
       .idProperty()
       .watch(fireImmediately: true);
 
-  List<Manga> getNonFavorites() =>
-      isar.mangas.filter().favoriteEqualTo(false).findAllSync();
+  /// What is in the database without being in the library, but for what
+  /// the local tracker holds: that is kept on purpose, and is all the local
+  /// tracker has to point at.
+  List<Manga> getNonFavorites() {
+    final tracked = trackRepository.mangaIdsBySyncId(
+      TrackerProviders.local.syncId,
+    );
+    return isar.mangas
+        .filter()
+        .favoriteEqualTo(false)
+        .findAllSync()
+        .where((manga) => !tracked.contains(manga.id))
+        .toList();
+  }
 
   List<Manga> getByItemTypeNames(Iterable<ItemType?> itemTypes) => isar.mangas
       .filter()

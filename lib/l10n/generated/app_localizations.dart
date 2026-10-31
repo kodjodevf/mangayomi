@@ -8204,6 +8204,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No browsers detected'**
   String get no_browsers_detected;
+
+  /// No description provided for @on_this_device.
+  ///
+  /// In en, this message translates to:
+  /// **'On this device'**
+  String get on_this_device;
+
+  /// No description provided for @local_tracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Track on this device'**
+  String get local_tracking;
+
+  /// No description provided for @local_tracking_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep status, progress, score and dates for each series here, without an account. Nothing is sent anywhere. Turning it off keeps what it holds.'**
+  String get local_tracking_desc;
 }
 
 class _AppLocalizationsDelegate

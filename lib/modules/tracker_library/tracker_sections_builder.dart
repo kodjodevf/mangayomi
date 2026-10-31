@@ -1,12 +1,16 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_section.dart';
+import 'package:mangayomi/services/trackers/local_tracker.dart';
+import 'package:mangayomi/utils/constant.dart';
 
 /// Builds the list of library sections for the given tracker provider and item type.
 List<TrackLibrarySection> buildTrackerSections({
+  required BuildContext context,
   required WidgetRef ref,
   required TrackerProviders trackerProvider,
   required ItemType itemType,
@@ -19,6 +23,7 @@ List<TrackLibrarySection> buildTrackerSections({
     3 => _sectionsKitsu(ref, syncId, itemType),
     4 => _sectionsSimkl(ref, syncId, itemType),
     5 => _sectionsTrakt(ref, syncId, itemType),
+    6 => _sectionsLocal(context, ref, syncId, itemType),
     _ => <TrackLibrarySection>[],
   };
 
@@ -31,11 +36,38 @@ List<TrackLibrarySection> buildTrackerSections({
         func: _fetchSearch(ref, syncId, searchQuery, itemType),
         itemType: itemType,
         isSearch: true,
+        cache: syncId != TrackerProviders.local.syncId,
       ),
     );
   }
 
   return sections;
+}
+
+/// One shelf per status, in the order the tracking sheet lists them.
+List<TrackLibrarySection> _sectionsLocal(
+  BuildContext context,
+  WidgetRef ref,
+  int syncId,
+  ItemType itemType,
+) {
+  final local = ref.read(
+    localTrackerProvider(
+      syncId: syncId,
+      itemType: itemType,
+      widgetRef: ref,
+    ).notifier,
+  );
+  return [
+    for (final status in localTrackStatuses(itemType != ItemType.anime))
+      TrackLibrarySection(
+        name: getTrackStatus(status, context),
+        syncId: syncId,
+        func: () async => local.byStatus(status),
+        itemType: itemType,
+        cache: false,
+      ),
+  ];
 }
 
 List<TrackLibrarySection> _sectionsTrakt(

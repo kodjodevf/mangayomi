@@ -91,7 +91,11 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                     topRight: Radius.circular(ShioriShape.sheet),
                     topLeft: Radius.circular(ShioriShape.sheet),
                   ),
-                  onPressed: !widget.hide
+                  // The local tracker's entry is the series itself: there
+                  // is no other match to pick.
+                  onPressed:
+                      !widget.hide &&
+                          widget.syncId != TrackerProviders.local.syncId
                       ? () async {
                           final trackSearch = await trackersSearchDraggableMenu(
                             context,
