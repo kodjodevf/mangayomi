@@ -20,6 +20,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import 'package:shiori/shiori.dart';
 
 /// The nav destination for each library, so a library the user does not read
@@ -111,7 +112,11 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   /// Updates and History behind one Activity tab. Starts on the app's own
   /// setting, which is on for a new install.
   late bool _mergeLibraries = ref.read(navGroupingProvider);
-  ItemType _repoType = ItemType.manga;
+
+  /// The library the repository is filed under: the first one read. A
+  /// television skips the library step that used to set it, and left it on
+  /// manga, so an anime repository added there went missing (#1069).
+  late ItemType _repoType = _chosen.first;
 
   bool _adding = false;
   String? _error;
@@ -335,9 +340,11 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
         _addedFor = _repoType;
         _controller.clear();
       });
-    } catch (e) {
+    } catch (e, stack) {
       // Whatever went wrong, the user's move is the same: check the address
-      // or the connection. A raw exception under a text field is noise.
+      // or the connection. A raw exception under a text field is noise, but
+      // it is recorded.
+      recordError(e, stack: stack, source: 'onboarding repository');
       setState(() => _error = l10n.onboarding_repo_failed);
     } finally {
       if (mounted) setState(() => _adding = false);
