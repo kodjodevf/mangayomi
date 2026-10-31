@@ -32,12 +32,10 @@ Future<void> fetchItemSourcesList(
         return;
       }
 
-      // If updating or if the source is not yet stored locally, query ONLY the target repository if known:
-      final targetRepo = existingSource?.repo;
-      final repos = ref.watch(extensionsRepoStateProvider(itemType));
-      final reposToQuery = targetRepo != null
-          ? repos.where((r) => r.jsonUrl == targetRepo.jsonUrl).toList()
-          : repos;
+      final reposToQuery = reposInUpdateOrder(
+        ref.watch(extensionsRepoStateProvider(itemType)),
+        existingSource?.repo,
+      );
 
       for (Repo repo in reposToQuery) {
         try {

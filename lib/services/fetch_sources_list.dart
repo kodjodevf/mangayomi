@@ -131,6 +131,8 @@ Future<bool> fetchSourcesList({
       orElse: () => Source(),
     );
     if (matchingSource.id != null && matchingSource.sourceCodeUrl!.isNotEmpty) {
+      final installed = await sourceRepository.findByIdAsync(id);
+      if (!isInstallCandidate(installed, matchingSource)) return false;
       await updateSource(matchingSource, androidProxyServer, repo, itemType);
       return true;
     }
@@ -322,6 +324,29 @@ Future<void> checkIfSourceIsObsolete(
   if (toDelete.isNotEmpty) {
     await sourceRepository.deleteAll(toDelete);
   }
+}
+
+/// The repositories to ask, in order, when installing or updating one source:
+/// the one it was installed from first, since that is usually where its
+/// update is, then the rest. Another repository can carry a newer build of
+/// the same source (a fork with a fix), and asking only the original one
+/// reinstalled the old version and dropped the update.
+List<Repo> reposInUpdateOrder(List<Repo> repos, Repo? installedFrom) {
+  if (installedFrom == null) return repos;
+  bool isOrigin(Repo r) => r.jsonUrl == installedFrom.jsonUrl;
+  return [...repos.where(isOrigin), ...repos.where((r) => !isOrigin(r))];
+}
+
+/// Whether [candidate], found in a repository, should be installed over
+/// [installed]. A source that isn't installed takes whatever version is
+/// offered. An installed one only takes a newer version, so a repository
+/// offering the same or an older build is passed over for the next one.
+bool isInstallCandidate(Source? installed, Source candidate) {
+  final isInstalled =
+      (installed?.isAdded ?? false) &&
+      (installed?.sourceCode?.isNotEmpty ?? false);
+  if (!isInstalled) return true;
+  return compareVersions(installed!.version ?? '', candidate.version ?? '') < 0;
 }
 
 int compareVersions(String version1, String version2) {
