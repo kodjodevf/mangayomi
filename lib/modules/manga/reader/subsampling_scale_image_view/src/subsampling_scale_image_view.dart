@@ -16,6 +16,7 @@ import 'subsampling_image_resolver.dart';
 import 'subsampling_types.dart';
 import 'tiling_engine.dart';
 import '../../u_chap_data_preload.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import '../../utils/reader_motion.dart';
 
 export 'subsampling_types.dart';
@@ -786,7 +787,11 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
 
     if (outSize == null || outSize[0] == 0 || outSize[1] == 0) {
       try {
-        final convertedPath = await convertLegacyIosAvifToPng(path);
+        // What the native decoder cannot read on this system, as a PNG
+        // decoded by Flutter.
+        final convertedPath =
+            await convertLegacyIosAvifToPng(path) ??
+            await convertLinuxJpegToPng(path);
         if (!mounted || _resolvedFilePath != path) return;
         if (convertedPath != null) {
           path = convertedPath;
@@ -797,11 +802,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
           );
         }
       } catch (e, st) {
-        if (kDebugMode) {
-          debugPrint(
-            'SubsamplingScaleImageView: Failed to decode AVIF: $e\n$st',
-          );
-        }
+        recordError(e, stack: st, source: 'reader image conversion');
       }
     }
 

@@ -1243,29 +1243,29 @@ static fn_jpeg_read_scanlines p_jpeg_read_scanlines = NULL;
 static fn_jpeg_finish_decompress p_jpeg_finish_decompress = NULL;
 static fn_jpeg_destroy_decompress p_jpeg_destroy_decompress = NULL;
 
+// The decompress struct is laid out by the headers this file was built
+// with, and libjpeg refuses a struct of another version's size: a build made
+// on Ubuntu (libjpeg 8) that loaded the libjpeg 6.2 of Fedora, Arch or
+// openSUSE failed on every JPEG (#1071). Only the library of the same
+// version is loaded; without it, the reader falls back to Flutter's decoder.
+static const char* libjpeg_soname() {
+#if JPEG_LIB_VERSION >= 90
+    return "libjpeg.so.9";
+#elif JPEG_LIB_VERSION >= 80
+    return "libjpeg.so.8";
+#elif JPEG_LIB_VERSION >= 70
+    return "libjpeg.so.7";
+#else
+    return "libjpeg.so.62";
+#endif
+}
+
 static bool load_libjpeg_symbols() {
     if (p_jpeg_CreateDecompress) return true;
 
-    static const struct {
-        const char* name;
-        int version;
-    } candidates[] = {
-        { "libjpeg.so.62", 62 },  // Fedora, RHEL, CentOS, Arch, openSUSE
-        { "libjpeg.so.8",  80 },  // Ubuntu, Debian
-        { "libjpeg.so",    JPEG_LIB_VERSION },  // Generic symlink
-        { NULL, 0 }
-    };
-
-    for (int i = 0; candidates[i].name != NULL; i++) {
-        void* handle = dlopen(candidates[i].name, RTLD_LAZY | RTLD_LOCAL);
-        if (handle) {
-            s_libjpeg_handle = handle;
-            s_libjpeg_version = candidates[i].version;
-            break;
-        }
-    }
-
+    s_libjpeg_handle = dlopen(libjpeg_soname(), RTLD_LAZY | RTLD_LOCAL);
     if (!s_libjpeg_handle) return false;
+    s_libjpeg_version = JPEG_LIB_VERSION;
 
     p_jpeg_std_error = (fn_jpeg_std_error)dlsym(s_libjpeg_handle, "jpeg_std_error");
     p_jpeg_CreateDecompress = (fn_jpeg_CreateDecompress)dlsym(s_libjpeg_handle, "jpeg_CreateDecompress");
