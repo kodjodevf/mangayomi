@@ -74,10 +74,7 @@ class _ModeBar extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(ShioriSpace.s8),
-              child: Text(
-                label,
-                style: TextStyle(color: onFill),
-              ),
+              child: Text(label, style: TextStyle(color: onFill)),
             ),
           ],
         ),

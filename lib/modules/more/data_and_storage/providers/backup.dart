@@ -93,10 +93,7 @@ Future<String> writeMangayomiBackupZip({
   Map<String, dynamic> datas = {};
   datas.addAll({"version": "2"});
   if (list.contains(0)) {
-    final res = mangaRepository
-        .getFavorites()
-        .map((e) => e.toJson())
-        .toList();
+    final res = mangaRepository.getFavorites().map((e) => e.toJson()).toList();
     datas.addAll({"manga": res});
   }
   if (list.contains(1)) {

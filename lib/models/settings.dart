@@ -193,6 +193,12 @@ class Settings {
 
   int? defaultSkipIntroLength;
 
+  /// The player's fit (a [BoxFit] name), kept from one episode to the next.
+  String? playerVideoFit;
+
+  /// Whether a subtitle track is turned on when an episode starts.
+  bool? subtitlesOnByDefault;
+
   int? defaultDoubleTapToSkipLength;
 
   double? defaultPlayBackSpeed;
@@ -630,6 +636,8 @@ class Settings {
     this.autoScrollPages,
     this.markEpisodeAsSeenType = 85,
     this.defaultSkipIntroLength = 85,
+    this.playerVideoFit,
+    this.subtitlesOnByDefault = true,
     this.defaultDoubleTapToSkipLength = 10,
     this.defaultPlayBackSpeed = 1.0,
     this.fullScreenPlayer = false,
@@ -955,6 +963,8 @@ class Settings {
     usePageTapZones = json['usePageTapZones'];
     markEpisodeAsSeenType = json['markEpisodeAsSeenType'];
     defaultSkipIntroLength = json['defaultSkipIntroLength'];
+    playerVideoFit = json['playerVideoFit'];
+    subtitlesOnByDefault = json['subtitlesOnByDefault'];
     defaultDoubleTapToSkipLength = json['defaultDoubleTapToSkipLength'];
     defaultPlayBackSpeed = json['defaultPlayBackSpeed'] is double
         ? json['defaultPlayBackSpeed']
@@ -1290,6 +1300,8 @@ class Settings {
     'usePageTapZones': usePageTapZones,
     'markEpisodeAsSeenType': markEpisodeAsSeenType,
     'defaultSkipIntroLength': defaultSkipIntroLength,
+    'playerVideoFit': playerVideoFit,
+    'subtitlesOnByDefault': subtitlesOnByDefault,
     'defaultDoubleTapToSkipLength': defaultDoubleTapToSkipLength,
     'defaultPlayBackSpeed': defaultPlayBackSpeed,
     'fullScreenPlayer': fullScreenPlayer,

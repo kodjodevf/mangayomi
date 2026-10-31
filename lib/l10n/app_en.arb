@@ -725,6 +725,8 @@
   "n_per_row": "{n} per row",
   "horizontal_continious": "Horizontal continuous",
   "edit_code": "Edit code",
+  "subtitles_on_by_default": "Turn subtitles on",
+  "subtitles_on_by_default_info": "Off, episodes start without subtitles until you pick a track.",
   "use_libass": "Enable libass",
   "use_libass_info": "Use libass based subtitle rendering for native backend.",
   "libass_not_disable_message": "Disable `use libass` in player settings to be able to customize the subtitles.",

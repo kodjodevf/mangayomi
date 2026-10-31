@@ -342,6 +342,8 @@
   "n_per_row": "{n} par ligne",
   "horizontal_continious": "Horizontal continu",
   "edit_code": "Modifier le code",
+  "subtitles_on_by_default": "Activer les sous-titres",
+  "subtitles_on_by_default_info": "Désactivé, les épisodes démarrent sans sous-titres tant que vous n'en choisissez pas.",
   "use_libass": "Activer libass",
   "use_libass_info": "Utilisez le rendu des sous-titres basé sur libass pour le backend natif.",
   "libass_not_disable_message": "Désactivez `use libass` dans les paramètres du lecteur pour pouvoir personnaliser les sous-titres.",

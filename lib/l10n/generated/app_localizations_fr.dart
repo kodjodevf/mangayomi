@@ -1894,6 +1894,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get edit_code => 'Modifier le code';
 
   @override
+  String get subtitles_on_by_default => 'Activer les sous-titres';
+
+  @override
+  String get subtitles_on_by_default_info =>
+      'Désactivé, les épisodes démarrent sans sous-titres tant que vous n\'en choisissez pas.';
+
+  @override
   String get use_libass => 'Activer libass';
 
   @override

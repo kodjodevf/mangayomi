@@ -150,9 +150,9 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
           await MClient.setCookie(widget.url, ua, null, cookie: cookie);
           // location.href is the main frame's URL; the plugin's URL requests
           // also include iframes (ads, captchas).
-          final url =
-              await _desktopWebview!.evaluateJavaScript("location.href")
-                  as String?;
+          final url = await _desktopWebview!.evaluateJavaScript(
+            "location.href",
+          ) as String?;
           if (mounted && url != null && url != 'about:blank' && url != _url) {
             setState(() => _url = url);
           }
