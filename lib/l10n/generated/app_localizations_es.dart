@@ -4664,6 +4664,24 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get local_tracking_desc =>
       'Keep status, progress, score and dates for each series here, without an account. Nothing is sent anywhere. Turning it off keeps what it holds.';
+
+  @override
+  String get track_add_one => 'One more';
+
+  @override
+  String get track_change_match => 'Change match';
+
+  @override
+  String get track_remove => 'Stop tracking';
+
+  @override
+  String get track_remove_local_msg =>
+      'Its status, progress, score and dates are deleted from this device.';
+
+  @override
+  String track_remove_online_msg(String tracker) {
+    return 'The entry stays on $tracker: only its link to this series is removed here.';
+  }
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

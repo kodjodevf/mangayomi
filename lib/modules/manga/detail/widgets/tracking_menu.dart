@@ -104,9 +104,7 @@ void openTrackingMenu({
                 },
               );
             },
-            separatorBuilder: (BuildContext context, int index) {
-              return const Divider();
-            },
+            separatorBuilder: (_, _) => const SizedBox(height: ShioriSpace.s8),
           ),
         );
       },

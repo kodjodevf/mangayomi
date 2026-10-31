@@ -8222,6 +8222,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Keep status, progress, score and dates for each series here, without an account. Nothing is sent anywhere. Turning it off keeps what it holds.'**
   String get local_tracking_desc;
+
+  /// No description provided for @track_add_one.
+  ///
+  /// In en, this message translates to:
+  /// **'One more'**
+  String get track_add_one;
+
+  /// No description provided for @track_change_match.
+  ///
+  /// In en, this message translates to:
+  /// **'Change match'**
+  String get track_change_match;
+
+  /// No description provided for @track_remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop tracking'**
+  String get track_remove;
+
+  /// No description provided for @track_remove_local_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Its status, progress, score and dates are deleted from this device.'**
+  String get track_remove_local_msg;
+
+  /// No description provided for @track_remove_online_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'The entry stays on {tracker}: only its link to this series is removed here.'**
+  String track_remove_online_msg(String tracker);
 }
 
 class _AppLocalizationsDelegate
