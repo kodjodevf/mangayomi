@@ -29,6 +29,7 @@ import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.
 import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
 import 'package:mangayomi/modules/library/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
+import 'package:mangayomi/modules/widgets/restore_bottom_padding.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/library/widgets/active_filter_chips.dart';
 import 'package:mangayomi/modules/library/widgets/continue_shelf.dart';
@@ -250,150 +251,158 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 
     final searchQuery = _textEditingController.text;
 
+    // The selection bar below always fills bottomNavigationBar, so this
+    // Scaffold takes the floating navigation bar's height out of its body's
+    // padding and the grid's last row ended up underneath the bar.
+    final navBarInset = MediaQuery.paddingOf(context).bottom;
     return Scaffold(
-      body: mangaAll.when(
-        data: (man) {
-          return categories.when(
-            data: (data) {
-              final isNotFiltering = ref.watch(
-                mangasFilterResultStateProvider(
-                  itemType: widget.itemType,
-                  mangaList: man,
-                  settings: settings,
-                ),
-              );
-              final sourceFilterIds = ref
-                  .watch(
-                    mangaFilterSourceStateProvider(
-                      mangaList: man,
-                      itemType: widget.itemType,
-                      settings: settings,
-                    ),
-                  )
-                  .$2;
-
-              // Common body params
-              Widget bodyForCategory({
-                int? categoryId,
-                bool withoutCategories = false,
-              }) {
-                return LibraryBody(
-                  itemType: widget.itemType,
-                  categoryId: categoryId,
-                  withoutCategories: withoutCategories,
-                  downloadFilterType: downloadFilterType,
-                  unreadFilterType: unreadFilterType,
-                  startedFilterType: startedFilterType,
-                  bookmarkedFilterType: bookmarkedFilterType,
-                  completedFilterType: completedFilterType,
-                  trackingFilterType: trackingFilterType,
-                  reverse: reverse,
-                  downloadedChapter: downloadedChapter,
-                  continueReaderBtn: continueReaderBtn,
-                  localSource: localSource,
-                  language: language,
-                  displayType: displayType,
-                  settings: settings,
-                  downloadedOnly: downloadedOnly,
-                  searchQuery: searchQuery,
-                  ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
-                  sourceIds: sourceFilterIds,
+      body: RestoreBottomPadding(
+        bottom: navBarInset,
+        child: mangaAll.when(
+          data: (man) {
+            return categories.when(
+              data: (data) {
+                final isNotFiltering = ref.watch(
+                  mangasFilterResultStateProvider(
+                    itemType: widget.itemType,
+                    mangaList: man,
+                    settings: settings,
+                  ),
                 );
-              }
+                final sourceFilterIds = ref
+                    .watch(
+                      mangaFilterSourceStateProvider(
+                        mangaList: man,
+                        itemType: widget.itemType,
+                        settings: settings,
+                      ),
+                    )
+                    .$2;
 
-              Widget badgeForCategory(int categoryId) {
-                return CategoryBadge(
-                  itemType: widget.itemType,
-                  categoryId: categoryId,
-                  downloadFilterType: downloadFilterType,
-                  unreadFilterType: unreadFilterType,
-                  startedFilterType: startedFilterType,
-                  bookmarkedFilterType: bookmarkedFilterType,
-                  completedFilterType: completedFilterType,
-                  trackingFilterType: trackingFilterType,
-                  settings: settings,
-                  downloadedOnly: downloadedOnly,
-                  searchQuery: searchQuery,
-                  ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
-                  sourceIds: sourceFilterIds,
+                // Common body params
+                Widget bodyForCategory({
+                  int? categoryId,
+                  bool withoutCategories = false,
+                }) {
+                  return LibraryBody(
+                    itemType: widget.itemType,
+                    categoryId: categoryId,
+                    withoutCategories: withoutCategories,
+                    downloadFilterType: downloadFilterType,
+                    unreadFilterType: unreadFilterType,
+                    startedFilterType: startedFilterType,
+                    bookmarkedFilterType: bookmarkedFilterType,
+                    completedFilterType: completedFilterType,
+                    trackingFilterType: trackingFilterType,
+                    reverse: reverse,
+                    downloadedChapter: downloadedChapter,
+                    continueReaderBtn: continueReaderBtn,
+                    localSource: localSource,
+                    language: language,
+                    displayType: displayType,
+                    settings: settings,
+                    downloadedOnly: downloadedOnly,
+                    searchQuery: searchQuery,
+                    ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
+                    sourceIds: sourceFilterIds,
+                  );
+                }
+
+                Widget badgeForCategory(int categoryId) {
+                  return CategoryBadge(
+                    itemType: widget.itemType,
+                    categoryId: categoryId,
+                    downloadFilterType: downloadFilterType,
+                    unreadFilterType: unreadFilterType,
+                    startedFilterType: startedFilterType,
+                    bookmarkedFilterType: bookmarkedFilterType,
+                    completedFilterType: completedFilterType,
+                    trackingFilterType: trackingFilterType,
+                    settings: settings,
+                    downloadedOnly: downloadedOnly,
+                    searchQuery: searchQuery,
+                    ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
+                    sourceIds: sourceFilterIds,
+                  );
+                }
+
+                final withoutCategory = man
+                    .where((m) => m.categories == null || m.categories!.isEmpty)
+                    .toList();
+                // Get the number of items for the app bar
+                final numberOfItemsList = ref.watch(
+                  filteredLibraryMangaProvider(
+                    data: man,
+                    downloadFilterType: downloadFilterType,
+                    unreadFilterType: unreadFilterType,
+                    startedFilterType: startedFilterType,
+                    bookmarkedFilterType: bookmarkedFilterType,
+                    completedFilterType: completedFilterType,
+                    trackingFilterType: trackingFilterType,
+                    sortType: sortType,
+                    downloadedOnly: downloadedOnly,
+                    searchQuery: searchQuery,
+                    ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
+                    sourceIds: sourceFilterIds,
+                    settings: settings,
+                  ),
                 );
-              }
 
-              final withoutCategory = man
-                  .where((m) => m.categories == null || m.categories!.isEmpty)
-                  .toList();
-              // Get the number of items for the app bar
-              final numberOfItemsList = ref.watch(
-                filteredLibraryMangaProvider(
-                  data: man,
-                  downloadFilterType: downloadFilterType,
-                  unreadFilterType: unreadFilterType,
-                  startedFilterType: startedFilterType,
-                  bookmarkedFilterType: bookmarkedFilterType,
-                  completedFilterType: completedFilterType,
-                  trackingFilterType: trackingFilterType,
-                  sortType: sortType,
-                  downloadedOnly: downloadedOnly,
-                  searchQuery: searchQuery,
-                  ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
-                  sourceIds: sourceFilterIds,
-                  settings: settings,
-                ),
-              );
+                if (data.isNotEmpty && showCategoryTabs) {
+                  return _buildWithCategories(
+                    data: data,
+                    withoutCategory: withoutCategory,
+                    man: man,
+                    settings: settings,
+                    showNumbersOfItems: showNumbersOfItems,
+                    isNotFiltering: isNotFiltering,
+                    numberOfItems: numberOfItemsList.length,
+                    bodyForCategory: bodyForCategory,
+                    badgeForCategory: badgeForCategory,
+                    downloadFilterType: downloadFilterType,
+                    downloadedOnly: downloadedOnly,
+                  );
+                }
 
-              if (data.isNotEmpty && showCategoryTabs) {
-                return _buildWithCategories(
-                  data: data,
-                  withoutCategory: withoutCategory,
-                  man: man,
-                  settings: settings,
-                  showNumbersOfItems: showNumbersOfItems,
-                  isNotFiltering: isNotFiltering,
-                  numberOfItems: numberOfItemsList.length,
-                  bodyForCategory: bodyForCategory,
-                  badgeForCategory: badgeForCategory,
-                  downloadFilterType: downloadFilterType,
-                  downloadedOnly: downloadedOnly,
+                return Scaffold(
+                  appBar: LibraryAppBar(
+                    itemType: widget.itemType,
+                    isNotFiltering: isNotFiltering,
+                    showNumbersOfItems: showNumbersOfItems,
+                    numberOfItems: numberOfItemsList.length,
+                    entries: man,
+                    isCategory: false,
+                    categoryId: null,
+                    settings: settings,
+                    isSearch: _isSearch,
+                    ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
+                    textEditingController: _textEditingController,
+                    onSearchToggle: () =>
+                        setState(() => _isSearch = !_isSearch),
+                    onSearchClear: () {
+                      _searchDebounce?.cancel();
+                      _searchDebounce = Timer(
+                        const Duration(milliseconds: 300),
+                        () {
+                          if (mounted) setState(() {});
+                        },
+                      );
+                    },
+                    onIgnoreFiltersChanged: (val) =>
+                        setState(() => _ignoreFiltersOnSearch = val),
+                    vsync: this,
+                    headerCollapsed: _headerCollapsed,
+                  ),
+                  body: _withLibraryHeader(bodyForCategory()),
                 );
-              }
-
-              return Scaffold(
-                appBar: LibraryAppBar(
-                  itemType: widget.itemType,
-                  isNotFiltering: isNotFiltering,
-                  showNumbersOfItems: showNumbersOfItems,
-                  numberOfItems: numberOfItemsList.length,
-                  entries: man,
-                  isCategory: false,
-                  categoryId: null,
-                  settings: settings,
-                  isSearch: _isSearch,
-                  ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
-                  textEditingController: _textEditingController,
-                  onSearchToggle: () => setState(() => _isSearch = !_isSearch),
-                  onSearchClear: () {
-                    _searchDebounce?.cancel();
-                    _searchDebounce = Timer(
-                      const Duration(milliseconds: 300),
-                      () {
-                        if (mounted) setState(() {});
-                      },
-                    );
-                  },
-                  onIgnoreFiltersChanged: (val) =>
-                      setState(() => _ignoreFiltersOnSearch = val),
-                  vsync: this,
-                  headerCollapsed: _headerCollapsed,
-                ),
-                body: _withLibraryHeader(bodyForCategory()),
-              );
-            },
-            error: (error, _) => ErrorText(error),
-            loading: _loadingLibrary,
-          );
-        },
-        error: (error, _) => ErrorText(error),
-        loading: _loadingLibrary,
+              },
+              error: (error, _) => ErrorText(error),
+              loading: _loadingLibrary,
+            );
+          },
+          error: (error, _) => ErrorText(error),
+          loading: _loadingLibrary,
+        ),
       ),
       bottomNavigationBar: _buildBottomBar(),
     );
