@@ -15,6 +15,7 @@ import 'package:mangayomi/modules/anime/utils/video_prefs.dart';
 import 'package:mangayomi/modules/anime/widgets/audio_section_widget.dart';
 import 'package:mangayomi/modules/anime/widgets/player_settings_sections.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_section_widget.dart';
+import 'package:mangayomi/modules/anime/utils/video_filters.dart';
 import 'package:mangayomi/modules/anime/widgets/video_filters_section.dart';
 import 'package:mangayomi/modules/anime/widgets/unified_settings_sheet.dart';
 import 'package:mangayomi/modules/reader_common/key_bindings.dart';
@@ -37,6 +38,7 @@ mixin AnimePlayerSettingsMixin<T extends riv.ConsumerStatefulWidget>
   ValueNotifier<double> get settingsPlaybackSpeed;
   ValueNotifier<BoxFit> get settingsFit;
   ValueNotifier<bool> get settingsAutoplayNext;
+  bool get settingsSoftwareVideoOutput;
   Future<void> settingsSetPlaybackSpeed(double speed);
   Future<void> settingsShareScreenshot(
     BuildContext sheetContext,
@@ -207,6 +209,9 @@ mixin AnimePlayerSettingsMixin<T extends riv.ConsumerStatefulWidget>
         icon: Symbols.tune_rounded,
         group: context.l10n.group_playback,
         contentBuilder: (context) => VideoFiltersSection(
+          available: availableVideoFilters(
+            softwareOutput: settingsSoftwareVideoOutput,
+          ),
           onApply: (filter, value) => (trackPlayer.platform as NativePlayer)
               .setProperty(filter.mpvProperty, '$value'),
         ),
