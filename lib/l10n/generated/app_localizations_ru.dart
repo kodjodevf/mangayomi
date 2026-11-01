@@ -1263,11 +1263,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Плавающая капсула вместо обычной закреплённой панели навигации.';
 
   @override
-  String get show_updates_badge => 'Show badge on Updates icon';
+  String get show_updates_badge => 'Показывать значок на иконке обновлений';
 
   @override
   String get show_updates_badge_description =>
-      'Count the chapters found since you last opened Updates.';
+      'Считает главы, найденные с момента последнего открытия раздела обновлений.';
 
   @override
   String get full_screen_player => 'Использовать полноэкранный режим';
@@ -1899,11 +1899,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get edit_code => 'Редактировать код';
 
   @override
-  String get subtitles_on_by_default => 'Turn subtitles on';
+  String get subtitles_on_by_default => 'Включать субтитры';
 
   @override
   String get subtitles_on_by_default_info =>
-      'Off, episodes start without subtitles until you pick a track.';
+      'Если выключено, эпизоды начинаются без субтитров, пока вы не выберете дорожку.';
 
   @override
   String get use_libass => 'Включить libass';
@@ -1917,11 +1917,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Отключите `use libass` в настройках плеера, чтобы иметь возможность настраивать субтитры.';
 
   @override
-  String get override_ass_subtitles => 'Переопределить субтитры ASS';
+  String get override_ass_subtitles => 'Использовать мой стиль субтитров';
 
   @override
   String get override_ass_subtitles_info =>
-      'Применить собственный стиль к субтитрам ASS/SSA';
+      'Применяет ваш размер и цвета ко всем субтитрам, включая ASS. Если выключено, субтитры используют стиль по умолчанию';
 
   @override
   String get torrent_stream => 'Торрент-стрим';
@@ -3886,7 +3886,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get invert_selection => 'Инвертировать выбор';
 
   @override
-  String get select_between => 'Select between';
+  String get select_between => 'Выбрать между';
 
   @override
   String get show_password => 'Показать пароль';
@@ -4392,10 +4392,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get shortcut_zoom_reset => 'Вписать страницу';
 
   @override
-  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+  String get shortcut_wheel_zoom => 'Масштаб мышью';
 
   @override
-  String get mouse_wheel => 'Wheel';
+  String get mouse_wheel => 'Колесо';
 
   @override
   String get shortcut_leave => 'Выйти из читалки';
@@ -4647,49 +4647,49 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get external_browser => 'Open external links with';
+  String get external_browser => 'Открывать внешние ссылки в';
 
   @override
-  String get system_default => 'System default';
+  String get system_default => 'Системный по умолчанию';
 
   @override
-  String get no_browsers_detected => 'No browsers detected';
+  String get no_browsers_detected => 'Браузеры не найдены';
 
   @override
-  String get on_this_device => 'On this device';
+  String get on_this_device => 'На этом устройстве';
 
   @override
-  String get local_tracking => 'Track on this device';
+  String get local_tracking => 'Отслеживать на этом устройстве';
 
   @override
   String get local_tracking_desc =>
-      'Keep status, progress, score and dates for each series here, without an account. Nothing is sent anywhere. Turning it off keeps what it holds.';
+      'Хранит здесь статус, прогресс, оценку и даты каждой серии без учётной записи. Ничего никуда не отправляется. При отключении сохранённые данные остаются.';
 
   @override
-  String get track_add_one => 'One more';
+  String get track_add_one => 'Ещё один';
 
   @override
-  String get track_change_match => 'Change match';
+  String get track_change_match => 'Изменить совпадение';
 
   @override
-  String get track_remove => 'Stop tracking';
+  String get track_remove => 'Прекратить отслеживание';
 
   @override
   String get track_remove_local_msg =>
-      'Its status, progress, score and dates are deleted from this device.';
+      'Статус, прогресс, оценка и даты будут удалены с этого устройства.';
 
   @override
   String track_remove_online_msg(String tracker) {
-    return 'The entry stays on $tracker: only its link to this series is removed here.';
+    return 'Запись останется на $tracker: здесь удаляется только её связь с этой серией.';
   }
 
   @override
   String update_from_repo(String repo) {
-    return 'From $repo';
+    return 'Из $repo';
   }
 
   @override
-  String get update_from_other_repo => 'Update from another repository?';
+  String get update_from_other_repo => 'Обновить из другого репозитория?';
 
   @override
   String update_from_other_repo_msg(
@@ -4698,16 +4698,17 @@ class AppLocalizationsRu extends AppLocalizations {
     String version,
     String other,
   ) {
-    return '$name was installed from $origin. Version $version comes from $other: once it is installed, $name takes its updates from $other. Only go ahead if you trust that repository.';
+    return '$name установлено из $origin. Версия $version поступает из $other: после установки $name будет получать обновления из $other. Продолжайте, только если доверяете этому репозиторию.';
   }
 
   @override
-  String get update_all_foreign => 'Some updates come from another repository';
+  String get update_all_foreign =>
+      'Некоторые обновления поступают из другого репозитория';
 
   @override
   String get update_all_foreign_msg =>
-      'Once updated, these extensions take their updates from the new repository. Only include them if you trust it.';
+      'После обновления эти расширения будут получать обновления из нового репозитория. Включайте их, только если доверяете ему.';
 
   @override
-  String get update_all_skip_foreign => 'Only from their own repository';
+  String get update_all_skip_foreign => 'Только из собственного репозитория';
 }

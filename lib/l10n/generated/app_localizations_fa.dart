@@ -1885,11 +1885,11 @@ class AppLocalizationsFa extends AppLocalizations {
   String get edit_code => 'ویرایش کد';
 
   @override
-  String get subtitles_on_by_default => 'Turn subtitles on';
+  String get subtitles_on_by_default => 'روشن کردن زیرنویس';
 
   @override
   String get subtitles_on_by_default_info =>
-      'Off, episodes start without subtitles until you pick a track.';
+      'اگر خاموش باشد، قسمت‌ها تا زمانی که یک تراک انتخاب کنید بدون زیرنویس شروع می‌شوند.';
 
   @override
   String get use_libass => 'فعال‌سازی libass';
@@ -1903,11 +1903,11 @@ class AppLocalizationsFa extends AppLocalizations {
       'برای امکان سفارشی‌سازی زیرنویس‌ها، «فعال‌سازی libass» را در تنظیمات پخش‌کننده غیرفعال کنید.';
 
   @override
-  String get override_ass_subtitles => 'جایگزینی استایل زیرنویس‌های ASS';
+  String get override_ass_subtitles => 'استفاده از سبک زیرنویس من';
 
   @override
   String get override_ass_subtitles_info =>
-      'اعمال سبک‌دهی سفارشی به زیرنویس‌های ASS/SSA';
+      'اندازه و رنگ‌های شما را روی همهٔ زیرنویس‌ها، از جمله ASS، اعمال می‌کند. اگر خاموش باشد، زیرنویس‌ها از سبک پیش‌فرض استفاده می‌کنند';
 
   @override
   String get torrent_stream => 'پخش تورنت';
@@ -4368,10 +4368,10 @@ class AppLocalizationsFa extends AppLocalizations {
   String get shortcut_zoom_reset => 'تطبیق با صفحه';
 
   @override
-  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+  String get shortcut_wheel_zoom => 'بزرگ‌نمایی با ماوس';
 
   @override
-  String get mouse_wheel => 'Wheel';
+  String get mouse_wheel => 'چرخ ماوس';
 
   @override
   String get shortcut_leave => 'خروج از خواننده';
@@ -4631,40 +4631,40 @@ class AppLocalizationsFa extends AppLocalizations {
   String get no_browsers_detected => 'هیچ مرورگری یافت نشد';
 
   @override
-  String get on_this_device => 'On this device';
+  String get on_this_device => 'روی این دستگاه';
 
   @override
-  String get local_tracking => 'Track on this device';
+  String get local_tracking => 'پیگیری روی این دستگاه';
 
   @override
   String get local_tracking_desc =>
-      'Keep status, progress, score and dates for each series here, without an account. Nothing is sent anywhere. Turning it off keeps what it holds.';
+      'وضعیت، پیشرفت، امتیاز و تاریخ‌های هر مجموعه را بدون حساب کاربری اینجا نگه می‌دارد. چیزی به جایی ارسال نمی‌شود. با خاموش کردن، داده‌های ذخیره‌شده باقی می‌مانند.';
 
   @override
-  String get track_add_one => 'One more';
+  String get track_add_one => 'یکی بیشتر';
 
   @override
-  String get track_change_match => 'Change match';
+  String get track_change_match => 'تغییر تطبیق';
 
   @override
-  String get track_remove => 'Stop tracking';
+  String get track_remove => 'توقف پیگیری';
 
   @override
   String get track_remove_local_msg =>
-      'Its status, progress, score and dates are deleted from this device.';
+      'وضعیت، پیشرفت، امتیاز و تاریخ‌ها از این دستگاه حذف می‌شوند.';
 
   @override
   String track_remove_online_msg(String tracker) {
-    return 'The entry stays on $tracker: only its link to this series is removed here.';
+    return 'مورد در $tracker باقی می‌ماند: اینجا فقط پیوند آن با این مجموعه حذف می‌شود.';
   }
 
   @override
   String update_from_repo(String repo) {
-    return 'From $repo';
+    return 'از $repo';
   }
 
   @override
-  String get update_from_other_repo => 'Update from another repository?';
+  String get update_from_other_repo => 'به‌روزرسانی از مخزن دیگر؟';
 
   @override
   String update_from_other_repo_msg(
@@ -4673,16 +4673,16 @@ class AppLocalizationsFa extends AppLocalizations {
     String version,
     String other,
   ) {
-    return '$name was installed from $origin. Version $version comes from $other: once it is installed, $name takes its updates from $other. Only go ahead if you trust that repository.';
+    return '$name از $origin نصب شده است. نسخهٔ $version از $other می‌آید: پس از نصب، $name به‌روزرسانی‌ها را از $other می‌گیرد. فقط اگر به آن مخزن اعتماد دارید ادامه دهید.';
   }
 
   @override
-  String get update_all_foreign => 'Some updates come from another repository';
+  String get update_all_foreign => 'برخی به‌روزرسانی‌ها از مخزن دیگری می‌آیند';
 
   @override
   String get update_all_foreign_msg =>
-      'Once updated, these extensions take their updates from the new repository. Only include them if you trust it.';
+      'پس از به‌روزرسانی، این افزونه‌ها به‌روزرسانی‌ها را از مخزن جدید می‌گیرند. فقط اگر به آن اعتماد دارید آن‌ها را شامل کنید.';
 
   @override
-  String get update_all_skip_foreign => 'Only from their own repository';
+  String get update_all_skip_foreign => 'فقط از مخزن خودشان';
 }

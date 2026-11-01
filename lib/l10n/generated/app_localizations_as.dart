@@ -1248,11 +1248,11 @@ class AppLocalizationsAs extends AppLocalizations {
       'সাধাৰণ লাগি থকা নেভিগেচন বাৰৰ সলনি এটা ভাহি থকা কেপচুল ব্যৱহাৰ কৰক।';
 
   @override
-  String get show_updates_badge => 'Show badge on Updates icon';
+  String get show_updates_badge => 'আপডেট আইকনত বেজ দেখুৱাওক';
 
   @override
   String get show_updates_badge_description =>
-      'Count the chapters found since you last opened Updates.';
+      'আপুনি শেষবাৰ আপডেট খোলাৰ পিছত পোৱা অধ্যায়সমূহ গণনা কৰে।';
 
   @override
   String get full_screen_player => 'সম্পূৰ্ণ স্ক্ৰীন ব্যৱহাৰ কৰক';
@@ -1872,11 +1872,11 @@ class AppLocalizationsAs extends AppLocalizations {
   String get edit_code => 'ক\'ড সম্পাদনা কৰক';
 
   @override
-  String get subtitles_on_by_default => 'Turn subtitles on';
+  String get subtitles_on_by_default => 'চাবটাইটেল অন কৰক';
 
   @override
   String get subtitles_on_by_default_info =>
-      'Off, episodes start without subtitles until you pick a track.';
+      'বন্ধ থাকিলে, আপুনি এটা ট্ৰেক বাছনি নকৰালৈকে পৰ্বসমূহ চাবটাইটেল অবিহনে আৰম্ভ হয়।';
 
   @override
   String get use_libass => 'libass সক্ষম কৰক';
@@ -1890,11 +1890,11 @@ class AppLocalizationsAs extends AppLocalizations {
       'উপশিৰোনামসমূহ কাষ্টমাইজ কৰিবলৈ সক্ষম হ\'বলৈ প্লেয়াৰ ছেটিংছত `libass ব্যৱহাৰ কৰক` নিষ্ক্ৰিয় কৰক।';
 
   @override
-  String get override_ass_subtitles => 'ASS চাবটাইটেল অভাৰৰাইড কৰক';
+  String get override_ass_subtitles => 'মোৰ চাবটাইটেল শৈলী ব্যৱহাৰ কৰক';
 
   @override
   String get override_ass_subtitles_info =>
-      'ASS/SSA চাবটাইটেলত স্বনিৰ্বাচিত শৈলী প্ৰয়োগ কৰক';
+      'আপোনাৰ আকাৰ আৰু ৰং ASSকে ধৰি সকলো চাবটাইটেলত প্ৰয়োগ কৰে। বন্ধ থাকিলে চাবটাইটেলে ডিফল্ট শৈলী ব্যৱহাৰ কৰে';
 
   @override
   String get torrent_stream => 'টৰেণ্ট ষ্ট্ৰীম';
@@ -3834,7 +3834,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get invert_selection => 'বাছনি ওলোটাওক';
 
   @override
-  String get select_between => 'Select between';
+  String get select_between => 'মাজৰখিনি বাছনি কৰক';
 
   @override
   String get show_password => 'পাছৱৰ্ড দেখুৱাওক';
@@ -4338,10 +4338,10 @@ class AppLocalizationsAs extends AppLocalizations {
   String get shortcut_zoom_reset => 'পৃষ্ঠা খাপ খুৱাওক';
 
   @override
-  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+  String get shortcut_wheel_zoom => 'মাউছেৰে জুম কৰক';
 
   @override
-  String get mouse_wheel => 'Wheel';
+  String get mouse_wheel => 'হুইল';
 
   @override
   String get shortcut_leave => 'পঢ়োতাৰ পৰা ওলাওক';
@@ -4591,49 +4591,49 @@ class AppLocalizationsAs extends AppLocalizations {
   }
 
   @override
-  String get external_browser => 'Open external links with';
+  String get external_browser => 'বাহ্যিক লিংক ইয়াৰে খোলক';
 
   @override
-  String get system_default => 'System default';
+  String get system_default => 'ছিষ্টেম ডিফল্ট';
 
   @override
-  String get no_browsers_detected => 'No browsers detected';
+  String get no_browsers_detected => 'কোনো ব্ৰাউজাৰ পোৱা নগ\'ল';
 
   @override
-  String get on_this_device => 'On this device';
+  String get on_this_device => 'এই ডিভাইচত';
 
   @override
-  String get local_tracking => 'Track on this device';
+  String get local_tracking => 'এই ডিভাইচত ট্ৰেক কৰক';
 
   @override
   String get local_tracking_desc =>
-      'Keep status, progress, score and dates for each series here, without an account. Nothing is sent anywhere. Turning it off keeps what it holds.';
+      'একাউণ্ট অবিহনে প্ৰতিটো ছিৰিজৰ স্থিতি, অগ্ৰগতি, স্ক\'ৰ আৰু তাৰিখ ইয়াতে ৰাখে। একো ক\'তো পঠিওৱা নহয়। বন্ধ কৰিলেও সংৰক্ষিত তথ্য থাকি যায়।';
 
   @override
-  String get track_add_one => 'One more';
+  String get track_add_one => 'আৰু এটা';
 
   @override
-  String get track_change_match => 'Change match';
+  String get track_change_match => 'মিল সলনি কৰক';
 
   @override
-  String get track_remove => 'Stop tracking';
+  String get track_remove => 'ট্ৰেক কৰা বন্ধ কৰক';
 
   @override
   String get track_remove_local_msg =>
-      'Its status, progress, score and dates are deleted from this device.';
+      'ইয়াৰ স্থিতি, অগ্ৰগতি, স্ক\'ৰ আৰু তাৰিখ এই ডিভাইচৰ পৰা মচি পেলোৱা হ\'ব।';
 
   @override
   String track_remove_online_msg(String tracker) {
-    return 'The entry stays on $tracker: only its link to this series is removed here.';
+    return 'প্ৰৱেশটো $trackerত থাকি যায়: ইয়াত কেৱল এই ছিৰিজৰ সৈতে থকা সংযোগ আঁতৰোৱা হয়।';
   }
 
   @override
   String update_from_repo(String repo) {
-    return 'From $repo';
+    return '$repoৰ পৰা';
   }
 
   @override
-  String get update_from_other_repo => 'Update from another repository?';
+  String get update_from_other_repo => 'আন এটা ৰিপজিটৰীৰ পৰা আপডেট কৰিবনে?';
 
   @override
   String update_from_other_repo_msg(
@@ -4642,16 +4642,16 @@ class AppLocalizationsAs extends AppLocalizations {
     String version,
     String other,
   ) {
-    return '$name was installed from $origin. Version $version comes from $other: once it is installed, $name takes its updates from $other. Only go ahead if you trust that repository.';
+    return '$name $originৰ পৰা ইনষ্টল কৰা হৈছিল। সংস্কৰণ $version $otherৰ পৰা আহিছে: ইনষ্টল কৰাৰ পিছত $nameএ $otherৰ পৰা আপডেট ল\'ব। সেই ৰিপজিটৰীত বিশ্বাস থাকিলেহে আগবাঢ়ক।';
   }
 
   @override
-  String get update_all_foreign => 'Some updates come from another repository';
+  String get update_all_foreign => 'কিছুমান আপডেট আন এটা ৰিপজিটৰীৰ পৰা আহিছে';
 
   @override
   String get update_all_foreign_msg =>
-      'Once updated, these extensions take their updates from the new repository. Only include them if you trust it.';
+      'আপডেট হোৱাৰ পিছত এই এক্সটেনচনসমূহে নতুন ৰিপজিটৰীৰ পৰা আপডেট ল\'ব। বিশ্বাস থাকিলেহে সেইবোৰ অন্তৰ্ভুক্ত কৰক।';
 
   @override
-  String get update_all_skip_foreign => 'Only from their own repository';
+  String get update_all_skip_foreign => 'কেৱল নিজৰ ৰিপজিটৰীৰ পৰা';
 }

@@ -1257,11 +1257,12 @@ class AppLocalizationsFr extends AppLocalizations {
       'Une capsule flottante à la place de la barre de navigation fixée en bas.';
 
   @override
-  String get show_updates_badge => 'Show badge on Updates icon';
+  String get show_updates_badge =>
+      'Afficher un badge sur l\'icône Mises à jour';
 
   @override
   String get show_updates_badge_description =>
-      'Count the chapters found since you last opened Updates.';
+      'Compte les chapitres trouvés depuis votre dernière ouverture de Mises à jour.';
 
   @override
   String get full_screen_player => 'Utiliser le mode plein écran';
@@ -3893,7 +3894,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get invert_selection => 'Inverser la sélection';
 
   @override
-  String get select_between => 'Select between';
+  String get select_between => 'Sélectionner l\'intervalle';
 
   @override
   String get show_password => 'Afficher le mot de passe';
@@ -4669,13 +4670,13 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get external_browser => 'Open external links with';
+  String get external_browser => 'Ouvrir les liens externes avec';
 
   @override
-  String get system_default => 'System default';
+  String get system_default => 'Par défaut du système';
 
   @override
-  String get no_browsers_detected => 'No browsers detected';
+  String get no_browsers_detected => 'Aucun navigateur détecté';
 
   @override
   String get on_this_device => 'Sur cet appareil';

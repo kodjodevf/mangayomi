@@ -1248,11 +1248,11 @@ class AppLocalizationsHi extends AppLocalizations {
       'सामान्य जुड़े हुए नेविगेशन बार की जगह एक तैरता कैप्सूल इस्तेमाल करें।';
 
   @override
-  String get show_updates_badge => 'Show badge on Updates icon';
+  String get show_updates_badge => 'अपडेट आइकन पर बैज दिखाएँ';
 
   @override
   String get show_updates_badge_description =>
-      'Count the chapters found since you last opened Updates.';
+      'पिछली बार अपडेट खोलने के बाद मिले अध्यायों की गिनती करता है।';
 
   @override
   String get full_screen_player => 'पूर्ण स्क्रीन का उपयोग करें';
@@ -1876,11 +1876,11 @@ class AppLocalizationsHi extends AppLocalizations {
   String get edit_code => 'कोड संपादित करें';
 
   @override
-  String get subtitles_on_by_default => 'Turn subtitles on';
+  String get subtitles_on_by_default => 'उपशीर्षक चालू करें';
 
   @override
   String get subtitles_on_by_default_info =>
-      'Off, episodes start without subtitles until you pick a track.';
+      'बंद होने पर, ट्रैक चुनने तक एपिसोड बिना उपशीर्षक के शुरू होते हैं।';
 
   @override
   String get use_libass => 'libass सक्षम करें';
@@ -1894,11 +1894,11 @@ class AppLocalizationsHi extends AppLocalizations {
       'उपशीर्षकों को अनुकूलित करने में सक्षम होने के लिए प्लेयर सेटिंग्स में `libass उपयोग करें` को अक्षम करें।';
 
   @override
-  String get override_ass_subtitles => 'ASS उपशीर्षक ओवरराइड करें';
+  String get override_ass_subtitles => 'मेरी उपशीर्षक शैली का उपयोग करें';
 
   @override
   String get override_ass_subtitles_info =>
-      'ASS/SSA उपशीर्षक पर कस्टम स्टाइलिंग लागू करें';
+      'आपका आकार और रंग ASS सहित सभी उपशीर्षकों पर लागू करता है। बंद होने पर उपशीर्षक अपनी डिफ़ॉल्ट शैली का उपयोग करते हैं';
 
   @override
   String get torrent_stream => 'टॉरेंट स्ट्रीम';
@@ -3840,7 +3840,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get invert_selection => 'चयन उलटें';
 
   @override
-  String get select_between => 'Select between';
+  String get select_between => 'बीच में चुनें';
 
   @override
   String get show_password => 'पासवर्ड दिखाएँ';
@@ -4342,10 +4342,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get shortcut_zoom_reset => 'पेज फ़िट करें';
 
   @override
-  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+  String get shortcut_wheel_zoom => 'माउस से ज़ूम करें';
 
   @override
-  String get mouse_wheel => 'Wheel';
+  String get mouse_wheel => 'व्हील';
 
   @override
   String get shortcut_leave => 'रीडर छोड़ें';
@@ -4596,49 +4596,49 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get external_browser => 'Open external links with';
+  String get external_browser => 'बाहरी लिंक इससे खोलें';
 
   @override
-  String get system_default => 'System default';
+  String get system_default => 'सिस्टम डिफ़ॉल्ट';
 
   @override
-  String get no_browsers_detected => 'No browsers detected';
+  String get no_browsers_detected => 'कोई ब्राउज़र नहीं मिला';
 
   @override
-  String get on_this_device => 'On this device';
+  String get on_this_device => 'इस डिवाइस पर';
 
   @override
-  String get local_tracking => 'Track on this device';
+  String get local_tracking => 'इस डिवाइस पर ट्रैक करें';
 
   @override
   String get local_tracking_desc =>
-      'Keep status, progress, score and dates for each series here, without an account. Nothing is sent anywhere. Turning it off keeps what it holds.';
+      'बिना खाते के हर सीरीज़ की स्थिति, प्रगति, स्कोर और तिथियाँ यहीं रखता है। कुछ भी कहीं नहीं भेजा जाता। बंद करने पर सहेजी गई जानकारी बनी रहती है।';
 
   @override
-  String get track_add_one => 'One more';
+  String get track_add_one => 'एक और';
 
   @override
-  String get track_change_match => 'Change match';
+  String get track_change_match => 'मिलान बदलें';
 
   @override
-  String get track_remove => 'Stop tracking';
+  String get track_remove => 'ट्रैक करना बंद करें';
 
   @override
   String get track_remove_local_msg =>
-      'Its status, progress, score and dates are deleted from this device.';
+      'इसकी स्थिति, प्रगति, स्कोर और तिथियाँ इस डिवाइस से हटा दी जाएँगी।';
 
   @override
   String track_remove_online_msg(String tracker) {
-    return 'The entry stays on $tracker: only its link to this series is removed here.';
+    return 'प्रविष्टि $tracker पर बनी रहती है: यहाँ केवल इस सीरीज़ से उसका लिंक हटाया जाता है।';
   }
 
   @override
   String update_from_repo(String repo) {
-    return 'From $repo';
+    return '$repo से';
   }
 
   @override
-  String get update_from_other_repo => 'Update from another repository?';
+  String get update_from_other_repo => 'किसी दूसरी रिपॉज़िटरी से अपडेट करें?';
 
   @override
   String update_from_other_repo_msg(
@@ -4647,16 +4647,16 @@ class AppLocalizationsHi extends AppLocalizations {
     String version,
     String other,
   ) {
-    return '$name was installed from $origin. Version $version comes from $other: once it is installed, $name takes its updates from $other. Only go ahead if you trust that repository.';
+    return '$name को $origin से इंस्टॉल किया गया था। संस्करण $version $other से आता है: इंस्टॉल होने के बाद $name अपने अपडेट $other से लेगा। केवल तभी आगे बढ़ें जब आपको उस रिपॉज़िटरी पर भरोसा हो।';
   }
 
   @override
-  String get update_all_foreign => 'Some updates come from another repository';
+  String get update_all_foreign => 'कुछ अपडेट किसी दूसरी रिपॉज़िटरी से आते हैं';
 
   @override
   String get update_all_foreign_msg =>
-      'Once updated, these extensions take their updates from the new repository. Only include them if you trust it.';
+      'अपडेट होने के बाद ये एक्सटेंशन अपने अपडेट नई रिपॉज़िटरी से लेंगे। इन्हें तभी शामिल करें जब आपको उस पर भरोसा हो।';
 
   @override
-  String get update_all_skip_foreign => 'Only from their own repository';
+  String get update_all_skip_foreign => 'केवल अपनी रिपॉज़िटरी से';
 }

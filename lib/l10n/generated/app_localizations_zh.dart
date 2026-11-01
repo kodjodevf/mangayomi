@@ -1215,11 +1215,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get floating_navigation_bar_description => '使用悬浮胶囊代替固定的导航栏。';
 
   @override
-  String get show_updates_badge => 'Show badge on Updates icon';
+  String get show_updates_badge => '在“更新”图标上显示角标';
 
   @override
-  String get show_updates_badge_description =>
-      'Count the chapters found since you last opened Updates.';
+  String get show_updates_badge_description => '统计自上次打开“更新”以来发现的章节数。';
 
   @override
   String get full_screen_player => '使用全屏';
@@ -1821,11 +1820,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get edit_code => '编辑代码';
 
   @override
-  String get subtitles_on_by_default => 'Turn subtitles on';
+  String get subtitles_on_by_default => '开启字幕';
 
   @override
-  String get subtitles_on_by_default_info =>
-      'Off, episodes start without subtitles until you pick a track.';
+  String get subtitles_on_by_default_info => '关闭时，剧集开始时没有字幕，直到你选择字幕轨道。';
 
   @override
   String get use_libass => '启用 libass';
@@ -1837,10 +1835,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get libass_not_disable_message => '在播放器设置中禁用 `use libass` 以便自定义字幕。';
 
   @override
-  String get override_ass_subtitles => '覆盖 ASS 字幕样式';
+  String get override_ass_subtitles => '使用我的字幕样式';
 
   @override
-  String get override_ass_subtitles_info => '将自定义样式应用到 ASS/SSA 字幕';
+  String get override_ass_subtitles_info =>
+      '将你的大小和颜色应用到所有字幕，包括 ASS。关闭时，字幕使用默认样式';
 
   @override
   String get torrent_stream => '种子流';
@@ -3695,7 +3694,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get invert_selection => '反选';
 
   @override
-  String get select_between => 'Select between';
+  String get select_between => '选择之间的内容';
 
   @override
   String get show_password => '显示密码';
@@ -4181,10 +4180,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get shortcut_zoom_reset => '适应页面';
 
   @override
-  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+  String get shortcut_wheel_zoom => '用鼠标缩放';
 
   @override
-  String get mouse_wheel => 'Wheel';
+  String get mouse_wheel => '滚轮';
 
   @override
   String get shortcut_leave => '退出阅读器';
@@ -4430,49 +4429,48 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get external_browser => 'Open external links with';
+  String get external_browser => '打开外部链接的方式';
 
   @override
-  String get system_default => 'System default';
+  String get system_default => '系统默认';
 
   @override
-  String get no_browsers_detected => 'No browsers detected';
+  String get no_browsers_detected => '未检测到浏览器';
 
   @override
-  String get on_this_device => 'On this device';
+  String get on_this_device => '在此设备上';
 
   @override
-  String get local_tracking => 'Track on this device';
+  String get local_tracking => '在此设备上追踪';
 
   @override
   String get local_tracking_desc =>
-      'Keep status, progress, score and dates for each series here, without an account. Nothing is sent anywhere. Turning it off keeps what it holds.';
+      '无需账号，在此保存每部作品的状态、进度、评分和日期。不会发送任何内容。关闭后，已保存的内容仍会保留。';
 
   @override
-  String get track_add_one => 'One more';
+  String get track_add_one => '再加一个';
 
   @override
-  String get track_change_match => 'Change match';
+  String get track_change_match => '更改匹配';
 
   @override
-  String get track_remove => 'Stop tracking';
+  String get track_remove => '停止追踪';
 
   @override
-  String get track_remove_local_msg =>
-      'Its status, progress, score and dates are deleted from this device.';
+  String get track_remove_local_msg => '其状态、进度、评分和日期将从此设备删除。';
 
   @override
   String track_remove_online_msg(String tracker) {
-    return 'The entry stays on $tracker: only its link to this series is removed here.';
+    return '该条目仍保留在 $tracker 上：这里只移除它与此作品的关联。';
   }
 
   @override
   String update_from_repo(String repo) {
-    return 'From $repo';
+    return '来自 $repo';
   }
 
   @override
-  String get update_from_other_repo => 'Update from another repository?';
+  String get update_from_other_repo => '要从其他存储库更新吗？';
 
   @override
   String update_from_other_repo_msg(
@@ -4481,16 +4479,15 @@ class AppLocalizationsZh extends AppLocalizations {
     String version,
     String other,
   ) {
-    return '$name was installed from $origin. Version $version comes from $other: once it is installed, $name takes its updates from $other. Only go ahead if you trust that repository.';
+    return '$name 是从 $origin 安装的。版本 $version 来自 $other：安装后，$name 将从 $other 获取更新。请仅在信任该存储库时继续。';
   }
 
   @override
-  String get update_all_foreign => 'Some updates come from another repository';
+  String get update_all_foreign => '部分更新来自其他存储库';
 
   @override
-  String get update_all_foreign_msg =>
-      'Once updated, these extensions take their updates from the new repository. Only include them if you trust it.';
+  String get update_all_foreign_msg => '更新后，这些扩展将从新存储库获取更新。请仅在信任它时才包含。';
 
   @override
-  String get update_all_skip_foreign => 'Only from their own repository';
+  String get update_all_skip_foreign => '仅来自其原有存储库';
 }

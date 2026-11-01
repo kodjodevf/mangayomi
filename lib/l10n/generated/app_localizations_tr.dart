@@ -1244,11 +1244,11 @@ class AppLocalizationsTr extends AppLocalizations {
       'Sabit gezinme çubuğu yerine yüzen bir kapsül kullan.';
 
   @override
-  String get show_updates_badge => 'Show badge on Updates icon';
+  String get show_updates_badge => 'Güncellemeler simgesinde rozet göster';
 
   @override
   String get show_updates_badge_description =>
-      'Count the chapters found since you last opened Updates.';
+      'Güncellemeler\'i son açışınızdan beri bulunan bölümleri sayar.';
 
   @override
   String get full_screen_player => 'Tam ekran kullan';
@@ -1879,11 +1879,11 @@ class AppLocalizationsTr extends AppLocalizations {
   String get edit_code => 'Kodu düzenle';
 
   @override
-  String get subtitles_on_by_default => 'Turn subtitles on';
+  String get subtitles_on_by_default => 'Altyazıları aç';
 
   @override
   String get subtitles_on_by_default_info =>
-      'Off, episodes start without subtitles until you pick a track.';
+      'Kapalıyken bölümler, siz bir parça seçene kadar altyazısız başlar.';
 
   @override
   String get use_libass => 'libass\'ı etkinleştir';
@@ -1897,11 +1897,11 @@ class AppLocalizationsTr extends AppLocalizations {
       'Altyazıları özelleştirmek için oyuncu ayarlarında `libass kullan` seçeneğini devre dışı bırakın.';
 
   @override
-  String get override_ass_subtitles => 'ASS altyazılarını geçersiz kıl';
+  String get override_ass_subtitles => 'Kendi altyazı stilimi kullan';
 
   @override
   String get override_ass_subtitles_info =>
-      'ASS/SSA altyazılarına özel stil uygula';
+      'Boyutunuzu ve renklerinizi ASS dahil tüm altyazılara uygular. Kapalıyken altyazılar varsayılan stillerini kullanır';
 
   @override
   String get torrent_stream => 'Torrent Akışı';
@@ -3847,7 +3847,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get invert_selection => 'Seçimi tersine çevir';
 
   @override
-  String get select_between => 'Select between';
+  String get select_between => 'Arasında seç';
 
   @override
   String get show_password => 'Şifreyi göster';
@@ -4352,10 +4352,10 @@ class AppLocalizationsTr extends AppLocalizations {
   String get shortcut_zoom_reset => 'Sayfaya sığdır';
 
   @override
-  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+  String get shortcut_wheel_zoom => 'Fare ile yakınlaştır';
 
   @override
-  String get mouse_wheel => 'Wheel';
+  String get mouse_wheel => 'Tekerlek';
 
   @override
   String get shortcut_leave => 'Okuyucudan çık';
@@ -4606,49 +4606,49 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get external_browser => 'Open external links with';
+  String get external_browser => 'Harici bağlantıları şununla aç';
 
   @override
-  String get system_default => 'System default';
+  String get system_default => 'Sistem varsayılanı';
 
   @override
-  String get no_browsers_detected => 'No browsers detected';
+  String get no_browsers_detected => 'Tarayıcı algılanmadı';
 
   @override
-  String get on_this_device => 'On this device';
+  String get on_this_device => 'Bu cihazda';
 
   @override
-  String get local_tracking => 'Track on this device';
+  String get local_tracking => 'Bu cihazda takip et';
 
   @override
   String get local_tracking_desc =>
-      'Keep status, progress, score and dates for each series here, without an account. Nothing is sent anywhere. Turning it off keeps what it holds.';
+      'Her serinin durumunu, ilerlemesini, puanını ve tarihlerini hesap olmadan burada tutar. Hiçbir şey gönderilmez. Kapatmak kayıtlı verileri silmez.';
 
   @override
-  String get track_add_one => 'One more';
+  String get track_add_one => 'Bir tane daha';
 
   @override
-  String get track_change_match => 'Change match';
+  String get track_change_match => 'Eşleşmeyi değiştir';
 
   @override
-  String get track_remove => 'Stop tracking';
+  String get track_remove => 'Takibi bırak';
 
   @override
   String get track_remove_local_msg =>
-      'Its status, progress, score and dates are deleted from this device.';
+      'Durumu, ilerlemesi, puanı ve tarihleri bu cihazdan silinir.';
 
   @override
   String track_remove_online_msg(String tracker) {
-    return 'The entry stays on $tracker: only its link to this series is removed here.';
+    return 'Kayıt $tracker üzerinde kalır: burada yalnızca bu seriyle bağlantısı kaldırılır.';
   }
 
   @override
   String update_from_repo(String repo) {
-    return 'From $repo';
+    return 'Kaynak: $repo';
   }
 
   @override
-  String get update_from_other_repo => 'Update from another repository?';
+  String get update_from_other_repo => 'Başka bir depodan güncellensin mi?';
 
   @override
   String update_from_other_repo_msg(
@@ -4657,16 +4657,17 @@ class AppLocalizationsTr extends AppLocalizations {
     String version,
     String other,
   ) {
-    return '$name was installed from $origin. Version $version comes from $other: once it is installed, $name takes its updates from $other. Only go ahead if you trust that repository.';
+    return '$name, $origin deposundan yüklendi. $version sürümü $other deposundan geliyor: yüklendikten sonra $name güncellemelerini $other deposundan alır. Yalnızca bu depoya güveniyorsanız devam edin.';
   }
 
   @override
-  String get update_all_foreign => 'Some updates come from another repository';
+  String get update_all_foreign =>
+      'Bazı güncellemeler başka bir depodan geliyor';
 
   @override
   String get update_all_foreign_msg =>
-      'Once updated, these extensions take their updates from the new repository. Only include them if you trust it.';
+      'Güncellendikten sonra bu eklentiler güncellemelerini yeni depodan alır. Yalnızca ona güveniyorsanız dahil edin.';
 
   @override
-  String get update_all_skip_foreign => 'Only from their own repository';
+  String get update_all_skip_foreign => 'Yalnızca kendi deposundan';
 }

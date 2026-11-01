@@ -1750,5 +1750,11 @@
   "update_from_other_repo_msg": "{name} a été installée depuis {origin}. La version {version} vient de {other} : une fois installée, {name} prendra ses mises à jour sur {other}. Ne continuez que si vous faites confiance à ce dépôt.",
   "update_all_foreign": "Certaines mises à jour viennent d'un autre dépôt",
   "update_all_foreign_msg": "Une fois mises à jour, ces extensions prendront leurs mises à jour sur le nouveau dépôt. Ne les incluez que si vous lui faites confiance.",
-  "update_all_skip_foreign": "Seulement depuis leur dépôt"
+  "update_all_skip_foreign": "Seulement depuis leur dépôt",
+  "show_updates_badge": "Afficher un badge sur l'icône Mises à jour",
+  "show_updates_badge_description": "Compte les chapitres trouvés depuis votre dernière ouverture de Mises à jour.",
+  "select_between": "Sélectionner l'intervalle",
+  "external_browser": "Ouvrir les liens externes avec",
+  "system_default": "Par défaut du système",
+  "no_browsers_detected": "Aucun navigateur détecté"
 }
