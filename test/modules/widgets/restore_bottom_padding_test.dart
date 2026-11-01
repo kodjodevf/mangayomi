@@ -59,9 +59,6 @@ void main() {
   testWidgets('with no bar below there is nothing to give back', (
     tester,
   ) async {
-    expect(
-      await _bodyBottomPadding(tester, navBarHeight: 0, restore: true),
-      0,
-    );
+    expect(await _bodyBottomPadding(tester, navBarHeight: 0, restore: true), 0);
   });
 }
