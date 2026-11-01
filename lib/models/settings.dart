@@ -351,6 +351,14 @@ class Settings {
   /// preference: kept on this device and out of sync.
   int? updatesLastSeenAt;
 
+  /// The category tab each library was last left on, by category id, so the
+  /// library reopens there. Null is the first tab (Default when there is
+  /// one). App state rather than a preference: kept on this device and out
+  /// of sync.
+  int? libraryLastCategoryIdMangas;
+  int? libraryLastCategoryIdAnime;
+  int? libraryLastCategoryIdNovel;
+
   /// Lets the chosen palette colour the surfaces (backgrounds, cards, bars)
   /// as well as the accent, the way the app looked before Shiori.
   ///
@@ -705,6 +713,9 @@ class Settings {
     this.useFloatingNavigationBar = false,
     this.showUpdatesBadge = true,
     this.updatesLastSeenAt,
+    this.libraryLastCategoryIdMangas,
+    this.libraryLastCategoryIdAnime,
+    this.libraryLastCategoryIdNovel,
     this.tintSurfacesWithPalette = false,
     this.groupNavDestinations = true,
     this.showContinueShelf = true,
@@ -1083,6 +1094,9 @@ class Settings {
     useFloatingNavigationBar = json['useFloatingNavigationBar'] ?? false;
     showUpdatesBadge = json['showUpdatesBadge'] ?? true;
     updatesLastSeenAt = json['updatesLastSeenAt'];
+    libraryLastCategoryIdMangas = json['libraryLastCategoryIdMangas'];
+    libraryLastCategoryIdAnime = json['libraryLastCategoryIdAnime'];
+    libraryLastCategoryIdNovel = json['libraryLastCategoryIdNovel'];
     tintSurfacesWithPalette = json['tintSurfacesWithPalette'] ?? false;
     groupNavDestinations = json['groupNavDestinations'] ?? true;
     showContinueShelf = json['showContinueShelf'] ?? true;
@@ -1372,6 +1386,9 @@ class Settings {
     'useFloatingNavigationBar': useFloatingNavigationBar,
     'showUpdatesBadge': showUpdatesBadge,
     'updatesLastSeenAt': updatesLastSeenAt,
+    'libraryLastCategoryIdMangas': libraryLastCategoryIdMangas,
+    'libraryLastCategoryIdAnime': libraryLastCategoryIdAnime,
+    'libraryLastCategoryIdNovel': libraryLastCategoryIdNovel,
     'tintSurfacesWithPalette': tintSurfacesWithPalette,
     'groupNavDestinations': groupNavDestinations,
     'showContinueShelf': showContinueShelf,

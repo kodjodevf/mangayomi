@@ -33,6 +33,8 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/library/widgets/active_filter_chips.dart';
 import 'package:mangayomi/modules/library/widgets/continue_shelf.dart';
 import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
+import 'package:mangayomi/modules/library/utils/last_category.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:shiori/shiori.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -68,6 +70,18 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   int _tabIndex = 0;
   Timer? _searchDebounce;
 
+  /// The category of the selected tab (null for Default), which the tab is
+  /// found by when the tabs change. Starts as the one the library was last
+  /// left on, so it reopens there.
+  int? _selectedCategoryId;
+
+  /// The category each tab shows, in order (null for Default).
+  List<int?> _tabCategoryIds = const [];
+
+  /// Saves the selected category when the app is sent to the background,
+  /// the last moment it reliably runs before the system may close it.
+  late final AppLifecycleListener _lifecycleListener;
+
   @override
   void initState() {
     super.initState();
@@ -75,10 +89,33 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       _isSearch = true;
       _textEditingController.text = widget.presetInput!;
     }
+    final settings = settingsRepository.currentOrNull;
+    _selectedCategoryId = settings == null
+        ? null
+        : lastLibraryCategoryId(settings, widget.itemType);
+    _lifecycleListener = AppLifecycleListener(onHide: _saveSelectedCategory);
+  }
+
+  /// Saved here rather than on every tab change: writing a setting rebuilds
+  /// the library, which would make each swipe between categories stutter.
+  void _saveSelectedCategory() {
+    final settings = settingsRepository.currentOrNull;
+    if (settings == null) return;
+    if (lastLibraryCategoryId(settings, widget.itemType) ==
+        _selectedCategoryId) {
+      return;
+    }
+    final itemType = widget.itemType;
+    final categoryId = _selectedCategoryId;
+    settingsRepository.updateLocalState(
+      (s) => setLastLibraryCategoryId(s, itemType, categoryId),
+    );
   }
 
   @override
   void dispose() {
+    _saveSelectedCategory();
+    _lifecycleListener.dispose();
     _textEditingController.dispose();
     tabBarController?.dispose();
     // Anything waiting for the end of a frame that will now never come.
@@ -385,11 +422,21 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       return bodyForCategory();
     }
 
+    _tabCategoryIds = [
+      if (withoutCategory.isNotEmpty) null,
+      for (final category in entr) category.id,
+    ];
+
     // Manage TabController
     if (tabCount > 0 &&
         (tabBarController == null || tabBarController!.length != tabCount)) {
-      int newTabIndex = _tabIndex;
-      if (newTabIndex >= tabCount) newTabIndex = tabCount - 1;
+      // Back on the selected category's tab, wherever it now sits: the first
+      // build may come before the series load and the Default tab appears.
+      final newTabIndex = libraryTabIndexFor(
+        _tabCategoryIds,
+        _selectedCategoryId,
+        fallback: _tabIndex,
+      );
       // Retire the old one after this frame rather than here. Disposing a
       // TabController sets its animation to null, and the TabBar built in the
       // previous frame is still holding this one: its _IndicatorPainter reads
@@ -404,8 +451,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       );
       _tabIndex = newTabIndex;
       tabBarController!.addListener(() {
-        if (_tabIndex != tabBarController!.index) {
-          setState(() => _tabIndex = tabBarController!.index);
+        final index = tabBarController!.index;
+        if (_tabIndex != index) {
+          setState(() {
+            _tabIndex = index;
+            if (index < _tabCategoryIds.length) {
+              _selectedCategoryId = _tabCategoryIds[index];
+            }
+          });
         }
       });
     }
