@@ -96,6 +96,11 @@ TrackStatus toTrackStatus(TrackStatus status, ItemType itemType, int syncId) {
       "Simkl",
       const Color.fromRGBO(8, 8, 8, 1),
     ),
+    6 => (
+      "assets/trackers_icons/tracker_local.png",
+      "Local",
+      const Color.fromRGBO(190, 22, 36, 1),
+    ),
     _ => (
       "assets/trackers_icons/tracker_trakt.webp",
       "Trakt",

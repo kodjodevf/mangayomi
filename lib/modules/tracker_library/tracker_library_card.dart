@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/widgets/in_library_badge.dart';
 import 'package:mangayomi/modules/widgets/entry_badge_chip.dart';
 import 'package:shiori/shiori.dart';
@@ -24,9 +25,14 @@ class TrackerLibraryImageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasData = libraryTrack?.mangaId != null;
+    // A local entry is a series already on the device: it opens there, with
+    // nothing to add.
+    final isLocal = track.syncId == TrackerProviders.local.syncId;
+    final hasData = !isLocal && libraryTrack?.mangaId != null;
     return GestureDetector(
-      onTap: () => _showCard(context, libraryTrack?.mangaId),
+      onTap: () => isLocal
+          ? context.push('/manga-reader/detail', extra: track.mediaId)
+          : _showCard(context, libraryTrack?.mangaId),
       child: Padding(
         padding: const EdgeInsets.only(left: ShioriSpace.s12),
         child: Stack(
@@ -49,7 +55,9 @@ class TrackerLibraryImageCard extends StatelessWidget {
                           top: ShioriSpace.s4,
                           end: ShioriSpace.s4,
                           child: EntryBadgeChip(
-                            label: '★ ${track.score ?? "?"}',
+                            label: isLocal
+                                ? _progress(track)
+                                : '★ ${track.score ?? "?"}',
                           ),
                         ),
                       ],
@@ -92,4 +100,11 @@ class TrackerLibraryImageCard extends StatelessWidget {
       mangaId: mangaId,
     );
   }
+}
+
+/// How far a local entry has got: the count read, over the total when known.
+String _progress(TrackSearch track) {
+  final read = track.lastChapterRead ?? 0;
+  final total = track.totalChapter ?? 0;
+  return total > 0 ? '$read/$total' : '$read';
 }

@@ -70,9 +70,11 @@ void showMangaCoverViewer(
                     child: StreamBuilder(
                       stream: trackRepository.watchAllWithSyncId(),
                       builder: (context, snapshot) {
-                        List<TrackPreference>? entries = snapshot.hasData
-                            ? snapshot.data!
-                            : [];
+                        // The local tracker has no covers of its own.
+                        final entries = [
+                          for (final e in snapshot.data ?? <TrackPreference>[])
+                            if (e.syncId != TrackerProviders.local.syncId) e,
+                        ];
                         if (entries.isEmpty) {
                           return Container();
                         }

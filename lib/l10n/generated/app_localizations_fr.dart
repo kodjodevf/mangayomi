@@ -4677,4 +4677,32 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get no_browsers_detected => 'No browsers detected';
+
+  @override
+  String get on_this_device => 'Sur cet appareil';
+
+  @override
+  String get local_tracking => 'Suivre sur cet appareil';
+
+  @override
+  String get local_tracking_desc =>
+      'Garde ici le statut, la progression, la note et les dates de chaque série, sans compte. Rien n\'est envoyé nulle part. Le désactiver conserve ce qu\'il contient.';
+
+  @override
+  String get track_add_one => 'Un de plus';
+
+  @override
+  String get track_change_match => 'Changer la correspondance';
+
+  @override
+  String get track_remove => 'Arrêter le suivi';
+
+  @override
+  String get track_remove_local_msg =>
+      'Son statut, sa progression, sa note et ses dates sont supprimés de cet appareil.';
+
+  @override
+  String track_remove_online_msg(String tracker) {
+    return 'L\'entrée reste sur $tracker : seul son lien avec cette série est retiré ici.';
+  }
 }

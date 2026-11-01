@@ -1736,5 +1736,13 @@
   "settings_keyboard_shortcuts_summary": "Réattribuer les touches du lecteur et du player",
   "shortcut_reset_all": "Réinitialiser tous les raccourcis",
   "shortcut_press_key": "Appuyez sur une touche…",
-  "shortcut_key_in_use": "Déjà utilisée par : {action}"
+  "shortcut_key_in_use": "Déjà utilisée par : {action}",
+  "on_this_device": "Sur cet appareil",
+  "local_tracking": "Suivre sur cet appareil",
+  "local_tracking_desc": "Garde ici le statut, la progression, la note et les dates de chaque série, sans compte. Rien n'est envoyé nulle part. Le désactiver conserve ce qu'il contient.",
+  "track_add_one": "Un de plus",
+  "track_change_match": "Changer la correspondance",
+  "track_remove": "Arrêter le suivi",
+  "track_remove_local_msg": "Son statut, sa progression, sa note et ses dates sont supprimés de cet appareil.",
+  "track_remove_online_msg": "L'entrée reste sur {tracker} : seul son lien avec cette série est retiré ici."
 }

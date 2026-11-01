@@ -57,6 +57,15 @@ void showTrackerSwitchProviderDialog(
                 showManga: showManga,
                 showAnime: showAnime,
               ),
+              _buildListTile(
+                ctx,
+                ref,
+                l10n,
+                TrackerProviders.local.syncId,
+                preferences: preferences,
+                showManga: showManga,
+                showAnime: showAnime,
+              ),
               if (showAnime || !showManga) ...[
                 _buildListTile(
                   ctx,
