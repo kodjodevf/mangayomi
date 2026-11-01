@@ -4631,4 +4631,32 @@ class AppLocalizationsHi extends AppLocalizations {
   String track_remove_online_msg(String tracker) {
     return 'The entry stays on $tracker: only its link to this series is removed here.';
   }
+
+  @override
+  String update_from_repo(String repo) {
+    return 'From $repo';
+  }
+
+  @override
+  String get update_from_other_repo => 'Update from another repository?';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name was installed from $origin. Version $version comes from $other: once it is installed, $name takes its updates from $other. Only go ahead if you trust that repository.';
+  }
+
+  @override
+  String get update_all_foreign => 'Some updates come from another repository';
+
+  @override
+  String get update_all_foreign_msg =>
+      'Once updated, these extensions take their updates from the new repository. Only include them if you trust it.';
+
+  @override
+  String get update_all_skip_foreign => 'Only from their own repository';
 }
