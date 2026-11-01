@@ -102,6 +102,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
       appBar: AppBar(
         backgroundColor: onImage ? Colors.transparent : null,
         titleSpacing: 0,
+        centerTitle: false,
         title: ChapterBarTitle(chapter: episode, onImage: onImage),
         leading: IconButton(
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
