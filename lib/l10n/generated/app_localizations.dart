@@ -7050,7 +7050,7 @@ abstract class AppLocalizations {
   /// No description provided for @show_continue_shelf.
   ///
   /// In en, this message translates to:
-  /// **'Show what you are reading'**
+  /// **'Show the Continue row'**
   String get show_continue_shelf;
 
   /// No description provided for @show_continue_shelf_subtitle.
