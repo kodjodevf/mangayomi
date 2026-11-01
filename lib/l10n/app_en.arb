@@ -1563,7 +1563,7 @@
   "group_nav_destinations_subtitle": "One Library tab with a switcher for manga, anime and novels, and one Activity tab for updates and history",
   "search_all_sources": "Search every source",
   "continue_reading": "Continue",
-  "show_continue_shelf": "Show what you are reading",
+  "show_continue_shelf": "Show the Continue row",
   "show_continue_shelf_subtitle": "A row of the series in progress at the top of the library",
   "excluded": "Excluded",
   "remove_filter": "Remove filter",

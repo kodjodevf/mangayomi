@@ -35,6 +35,9 @@ const _deviceLocalSettingsKeys = {
   'jrePath',
   'extensionServerPath',
   'updatesLastSeenAt',
+  'libraryLastCategoryIdMangas',
+  'libraryLastCategoryIdAnime',
+  'libraryLastCategoryIdNovel',
 };
 
 class ChangedRows {

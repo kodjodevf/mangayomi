@@ -3917,7 +3917,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continue_reading => 'Continue';
 
   @override
-  String get show_continue_shelf => 'Show what you are reading';
+  String get show_continue_shelf => 'Show the Continue row';
 
   @override
   String get show_continue_shelf_subtitle =>
