@@ -178,6 +178,12 @@ final settingsIndex = <SettingsEntry>[
     route: '/appearance',
   ),
   SettingsEntry(
+    title: (l) => l.show_updates_badge,
+    subtitle: (l) => l.show_updates_badge_description,
+    section: (l) => l.appearance,
+    route: '/appearance',
+  ),
+  SettingsEntry(
     title: (l) => l.reorder_navigation,
     subtitle: (l) => l.reorder_navigation_description,
     section: (l) => l.appearance,
@@ -633,6 +639,12 @@ final settingsIndex = <SettingsEntry>[
   SettingsEntry(
     title: (l) => l.default_playback_speed_length,
     subtitle: null,
+    section: (l) => l.player,
+    route: '/playerMode',
+  ),
+  SettingsEntry(
+    title: (l) => l.subtitles_on_by_default,
+    subtitle: (l) => l.subtitles_on_by_default_info,
     section: (l) => l.player,
     route: '/playerMode',
   ),

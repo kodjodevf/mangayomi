@@ -54,12 +54,28 @@ class _PlayerDecoderScreenState extends ConsumerState<PlayerDecoderScreen> {
                   ShioriChoice(
                     'videotoolbox',
                     'videotoolbox',
-                    subtitle: 'iOS 9.0+',
+                    subtitle: 'iOS, macOS',
                   ),
                   ShioriChoice(
                     'videotoolbox-copy',
                     'videotoolbox-copy',
-                    subtitle: 'iOS 9.0+',
+                    subtitle: 'iOS, macOS',
+                  ),
+                  ShioriChoice(
+                    'vaapi',
+                    'vaapi',
+                    subtitle: 'Linux (AMD, Intel)',
+                  ),
+                  ShioriChoice(
+                    'vaapi-copy',
+                    'vaapi-copy',
+                    subtitle: 'Linux (AMD, Intel)',
+                  ),
+                  ShioriChoice('vdpau', 'vdpau', subtitle: 'Linux (NVIDIA)'),
+                  ShioriChoice(
+                    'vdpau-copy',
+                    'vdpau-copy',
+                    subtitle: 'Linux (NVIDIA)',
                   ),
                   ShioriChoice('nvdec', 'nvdec', subtitle: 'CUDA'),
                   ShioriChoice('nvdec-copy', 'nvdec-copy', subtitle: 'CUDA'),

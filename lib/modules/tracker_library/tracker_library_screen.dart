@@ -79,6 +79,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         : (lastLocation.$2 ? ItemType.manga : ItemType.anime);
 
     _sections = buildTrackerSections(
+      context: context,
       ref: ref,
       trackerProvider: trackerProvider,
       itemType: itemType,

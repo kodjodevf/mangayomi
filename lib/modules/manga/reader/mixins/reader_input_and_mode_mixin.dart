@@ -1,10 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_double_page_mixin.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_memory_management.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/reader_zoom_control.dart';
+import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart';
 import 'package:mangayomi/modules/manga/reader/services/page_navigation_service.dart';
 import 'package:mangayomi/modules/manga/reader/utils/reader_motion.dart';
 import 'package:mangayomi/providers/reader_state_provider.dart';
@@ -132,6 +134,15 @@ mixin ReaderInputAndModeMixin<T extends ConsumerStatefulWidget>
           }
         }
       }
+      // At the end of a row, the row below (or above) before the page turns,
+      // so the part of a tall page under the screen is not skipped.
+      if (forward ? controller.canPanDown() : controller.canPanUp()) {
+        controller.panToRow(
+          down: forward,
+          rightToLeft: isReverseHorizontalForInput,
+        );
+        return;
+      }
     }
 
     if (forward) {
@@ -177,8 +188,21 @@ mixin ReaderInputAndModeMixin<T extends ConsumerStatefulWidget>
     });
   }
 
+  /// The mouse wheel: with Ctrl (or ⌘) held it zooms, up to zoom in as in
+  /// a browser (#529); over a zoomed page it moves the page; otherwise it
+  /// turns the page.
   void onPointerSignal(PointerSignalEvent event) {
-    if (event is! PointerScrollEvent || isCurrentPageZoomed) return;
+    if (event is! PointerScrollEvent) return;
+    final keys = HardwareKeyboard.instance;
+    if (keys.isControlPressed || keys.isMetaPressed) {
+      final dy = event.scrollDelta.dy;
+      if (dy != 0) zoomBy(dy < 0 ? 1.2 : 1 / 1.2);
+      return;
+    }
+    if (isCurrentPageZoomed) {
+      _scrollZoomedPage(event.scrollDelta);
+      return;
+    }
     final delta = event.scrollDelta.dy.abs() >= event.scrollDelta.dx.abs()
         ? event.scrollDelta.dy
         : event.scrollDelta.dx;
@@ -189,5 +213,19 @@ mixin ReaderInputAndModeMixin<T extends ConsumerStatefulWidget>
     }
     _lastWheelTurn = now;
     handlePageNavigation(forward: delta > 0);
+  }
+
+  /// Moves the zoomed page on show by a wheel's [delta]: the single page
+  /// through its image view, a double spread through its photo view.
+  void _scrollZoomedPage(Offset delta) {
+    final curIdx = currentDoublePageViewIndex;
+    if (curIdx == null) return;
+    final spread = doublePageControllers[curIdx];
+    if (spread != null) {
+      spread.position = spread.position - delta;
+      return;
+    }
+    final page = pageControllers[pageViewToActualIndex(curIdx)];
+    if (page != null && page.isReady) page.panBy(delta);
   }
 }

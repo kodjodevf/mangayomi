@@ -609,6 +609,22 @@ void main() {
       expect(hidden, isNot(contains('/AnimeLibrary')));
     });
 
+    testWidgets('files the repository under anime, the library it reads', (
+      tester,
+    ) async {
+      // The library step that picked the repository's type is skipped here,
+      // and the type stayed on manga: the repository vanished (#1069).
+      _StubRepoState.saved.clear();
+      await pump(tester);
+      await tester.enterText(find.byType(TextField), _goodUrl);
+      await tester.pump();
+      await tester.tap(find.widgetWithText(ShioriButton, 'Add repository'));
+      await tester.pumpAndSettle();
+
+      expect(_StubRepoState.saved.keys, [ItemType.anime]);
+      expect(_StubRepoState.saved[ItemType.anime]!.single.jsonUrl, _goodUrl);
+    });
+
     testWidgets('the url field takes focus, so OK opens the keyboard', (
       tester,
     ) async {
@@ -647,13 +663,19 @@ void main() {
 }
 
 class _StubRepoState extends ExtensionsRepoState {
+  /// What each library's list was last set to.
+  static final saved = <ItemType, List<Repo>>{};
+
   @override
   List<Repo> build(ItemType itemType) => const [];
 
   // Without this the real one writes to Isar, throws, and the screen reports
   // the add as failed.
   @override
-  Future<void> set(List<Repo> value) async => state = value;
+  Future<void> set(List<Repo> value) async {
+    saved[itemType] = value;
+    state = value;
+  }
 }
 
 class _StubLocalFolders extends LocalFoldersState {

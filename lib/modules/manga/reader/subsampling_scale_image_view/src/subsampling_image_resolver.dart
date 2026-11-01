@@ -65,6 +65,67 @@ Future<String?> convertLegacyIosAvifToPng(String path) async {
   return target.path;
 }
 
+/// Whether [bytes] start like a JPEG: the start-of-image marker followed by
+/// another marker.
+bool isJpegImage(Uint8List bytes) =>
+    bytes.length >= 3 &&
+    bytes[0] == 0xFF &&
+    bytes[1] == 0xD8 &&
+    bytes[2] == 0xFF;
+
+/// [bytes] decoded by Flutter and encoded as PNG.
+Future<Uint8List> decodeWithFlutterToPng(Uint8List bytes) async {
+  final codec = await ui.instantiateImageCodec(bytes);
+  try {
+    final frame = await codec.getNextFrame();
+    try {
+      final png = await frame.image.toByteData(format: ui.ImageByteFormat.png);
+      if (png == null) throw StateError('Could not encode the image as PNG');
+      return png.buffer.asUint8List();
+    } finally {
+      frame.image.dispose();
+    }
+  } finally {
+    codec.dispose();
+  }
+}
+
+/// A JPEG the native decoder could not read, as a PNG Flutter decoded, on
+/// Linux.
+///
+/// The native decoder reads JPEG through the system's libjpeg, which must be
+/// the version the app was built against: a build made on Ubuntu (libjpeg 8)
+/// cannot use the libjpeg 6.2 of Fedora, Arch or openSUSE, and every JPEG
+/// failed there (#1071). PNG it reads through libpng, which has no such
+/// split.
+Future<String?> convertLinuxJpegToPng(String path) async {
+  if (!Platform.isLinux) return null;
+
+  final source = File(path);
+  final reader = await source.open();
+  late final Uint8List header;
+  try {
+    header = await reader.read(3);
+  } finally {
+    await reader.close();
+  }
+  if (!isJpegImage(header)) return null;
+
+  final stat = await source.stat();
+  final key = md5HashString(
+    '$path:${stat.size}:${stat.modified.millisecondsSinceEpoch}',
+  );
+  // Decoding is deferred into bytesProvider so it only runs on a cache miss
+  final target = await cacheImageBytesToTempFile(
+    tempDir: await getTemporaryDirectory(),
+    baseName: 'ssiv_jpeg_$key',
+    extension: '.png',
+    bytesProvider: () async =>
+        decodeWithFlutterToPng(await source.readAsBytes()),
+  );
+  return target.path;
+}
+
 /// Attempts fast-path file resolution for [provider] (FileImage, duck-typed `.file`,
 /// memory bytes, or already-cached network image).
 /// Returns `(resolvedPath, networkUrl, cacheFolderName)`.

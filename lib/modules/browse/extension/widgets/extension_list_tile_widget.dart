@@ -9,7 +9,9 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/widgets/tv_row_button.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/extension_update.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -39,6 +41,11 @@ class _ExtensionListTileWidgetState
       widget.source.sourceCode != null && widget.source.sourceCode!.isNotEmpty;
 
   Future<void> _handleSourceFetch() async {
+    if (_updateAvailable &&
+        isForeignUpdate(widget.source) &&
+        !await _confirmForeignUpdate()) {
+      return;
+    }
     setState(() => _isLoading = true);
 
     try {
@@ -50,9 +57,30 @@ class _ExtensionListTileWidgetState
 
       ref.invalidate(provider);
       await ref.read(provider.future);
+    } catch (e, stack) {
+      toastError(e, stack: stack, source: 'extension install');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  /// An update another repository offers moves the extension over to it:
+  /// any repository can list an extension under the same id, so the reader
+  /// says whether this one is to be trusted with it.
+  Future<bool> _confirmForeignUpdate() {
+    final source = widget.source;
+    final name = source.name ?? '';
+    return showShioriConfirm(
+      context,
+      title: context.l10n.update_from_other_repo,
+      message: context.l10n.update_from_other_repo_msg(
+        name,
+        repoLabel(source.repo, source.updateRepo),
+        source.versionLast ?? '',
+        repoLabel(source.updateRepo, source.repo),
+      ),
+      confirmLabel: context.l10n.update,
+    );
   }
 
   /// The row's primary tap: open the extension when it is installed, otherwise
@@ -116,6 +144,13 @@ class _ExtensionListTileWidgetState
           ),
           if (widget.source.isNsfw ?? false)
             EntryBadgeChip(label: 'NSFW', tone: tokens.color.error),
+          if (_updateAvailable && isForeignUpdate(widget.source))
+            EntryBadgeChip(
+              label: context.l10n.update_from_repo(
+                repoLabel(widget.source.updateRepo, widget.source.repo),
+              ),
+              tone: tokens.color.newChapter,
+            ),
           if (widget.source.isObsolete ?? false)
             EntryBadgeChip(
               label: context.l10n.obsolete.toUpperCase(),

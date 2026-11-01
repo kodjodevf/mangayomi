@@ -39,6 +39,9 @@ PODS:
   - OrderedSet (6.0.3)
   - package_info_plus (0.0.1):
     - FlutterMacOS
+  - remote_webview_interceptor (1.0.0):
+    - Flutter
+    - FlutterMacOS
   - rust_lib_mangayomi (0.0.1):
     - FlutterMacOS
   - screen_retriever_macos (0.0.1):
@@ -78,6 +81,7 @@ DEPENDENCIES:
   - media_kit_libs_macos_video (from `Flutter/ephemeral/.symlinks/plugins/media_kit_libs_macos_video/macos`)
   - media_kit_video (from `Flutter/ephemeral/.symlinks/plugins/media_kit_video/macos`)
   - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
+  - remote_webview_interceptor (from `Flutter/ephemeral/.symlinks/plugins/remote_webview_interceptor/darwin`)
   - rust_lib_mangayomi (from `Flutter/ephemeral/.symlinks/plugins/rust_lib_mangayomi/macos`)
   - screen_retriever_macos (from `Flutter/ephemeral/.symlinks/plugins/screen_retriever_macos/macos`)
   - share_plus (from `Flutter/ephemeral/.symlinks/plugins/share_plus/macos`)
@@ -129,6 +133,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/media_kit_video/macos
   package_info_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos
+  remote_webview_interceptor:
+    :path: Flutter/ephemeral/.symlinks/plugins/remote_webview_interceptor/darwin
   rust_lib_mangayomi:
     :path: Flutter/ephemeral/.symlinks/plugins/rust_lib_mangayomi/macos
   screen_retriever_macos:
@@ -168,6 +174,7 @@ SPEC CHECKSUMS:
   media_kit_video: fa6564e3799a0a28bff39442334817088b7ca758
   OrderedSet: e539b66b644ff081c73a262d24ad552a69be3a94
   package_info_plus: f0052d280d17aa382b932f399edf32507174e870
+  remote_webview_interceptor: 47be69add566bc79f0a637c97504f6e2f7ce62f7
   rust_lib_mangayomi: 4cbf39f5d158ad8eb0f17fd8e52d88514d435cd8
   screen_retriever_macos: c5508cc3c66ff0d4db650480cf0ab691e220d933
   share_plus: 510bf0af1a42cd602274b4629920c9649c52f4cc

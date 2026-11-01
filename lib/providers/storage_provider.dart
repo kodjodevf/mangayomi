@@ -6,6 +6,7 @@ import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/custom_button.dart';
@@ -54,12 +55,7 @@ class StorageProvider {
 
   Future<bool> requestPermission() async {
     if (!Platform.isAndroid) return true;
-    Permission permission = Permission.manageExternalStorage;
-    if (await permission.isGranted) return true;
-    if (await permission.request().isGranted) {
-      return true;
-    }
-    return false;
+    return askPermission(Permission.manageExternalStorage);
   }
 
   Future<void> deleteBtDirectory() async {
@@ -427,5 +423,20 @@ end""",
     }
 
     return isar;
+  }
+}
+
+/// Whether [permission] is granted, asking for it when it is not.
+///
+/// A device without the screen that grants it throws when asked: Google TV
+/// has none for all files access, and opening an episode crashed there
+/// (#1069). That is recorded and answers no, as a refusal does.
+Future<bool> askPermission(Permission permission) async {
+  try {
+    if (await permission.isGranted) return true;
+    return (await permission.request()).isGranted;
+  } catch (e, stack) {
+    recordError(e, stack: stack, source: 'permission ${permission.toString()}');
+    return false;
   }
 }

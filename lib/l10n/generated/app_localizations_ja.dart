@@ -1859,6 +1859,13 @@ class AppLocalizationsJa extends AppLocalizations {
       '固定のナビゲーションバーの代わりに、浮かぶカプセルを使います。';
 
   @override
+  String get show_updates_badge => 'アップデートのアイコンにバッジを表示';
+
+  @override
+  String get show_updates_badge_description =>
+      '前回アップデートを開いてから見つかったチャプターの数を表示します。';
+
+  @override
   String get full_screen_player => 'フルスクリーンを使用';
 
   @override
@@ -2465,6 +2472,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get edit_code => 'コードを編集';
 
   @override
+  String get subtitles_on_by_default => '字幕をオンにする';
+
+  @override
+  String get subtitles_on_by_default_info => 'オフの場合、トラックを選ぶまで字幕なしでエピソードを開始します。';
+
+  @override
   String get use_libass => 'libassを有効化';
 
   @override
@@ -2475,10 +2488,11 @@ class AppLocalizationsJa extends AppLocalizations {
       '字幕をカスタマイズできるようにするには、プレーヤー設定で「libassを使用」を無効にしてください。';
 
   @override
-  String get override_ass_subtitles => 'ASS字幕をオーバーライド';
+  String get override_ass_subtitles => '自分の字幕スタイルを使用';
 
   @override
-  String get override_ass_subtitles_info => 'ASS/SSA字幕にカスタムスタイルを適用';
+  String get override_ass_subtitles_info =>
+      'サイズと色を ASS を含むすべての字幕に適用します。オフの場合、字幕はデフォルトのスタイルを使用します';
 
   @override
   String get torrent_stream => 'トレントストリーム';
@@ -4367,6 +4381,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get invert_selection => '選択を反転';
 
   @override
+  String get select_between => '範囲を選択';
+
+  @override
   String get show_password => 'パスワードを表示';
 
   @override
@@ -4710,6 +4727,52 @@ class AppLocalizationsJa extends AppLocalizations {
   String get update_write_failed => 'APK ファイルを書き込めませんでした。';
 
   @override
+  String get update_later => '後で';
+
+  @override
+  String get update_installed_version => 'インストール済み';
+
+  @override
+  String get update_new_version => '新しいバージョン';
+
+  @override
+  String update_published(String date) {
+    return '公開日: $date';
+  }
+
+  @override
+  String get update_pre_release => 'プレリリース';
+
+  @override
+  String get update_notes_features => '新機能';
+
+  @override
+  String get update_notes_fixes => '修正';
+
+  @override
+  String get update_notes_other => '改善';
+
+  @override
+  String get update_hint_install =>
+      'アプリがアップデートをダウンロードし、その後 Android がインストールの確認を求めます。ライブラリはそのまま残ります。';
+
+  @override
+  String get update_hint_browser =>
+      'リリースページがブラウザで開きます。お使いのシステム用のファイルをダウンロードしてインストールしてください。';
+
+  @override
+  String get update_downloading => 'ダウンロード中…';
+
+  @override
+  String get update_installing => 'インストーラーを開いています…';
+
+  @override
+  String get update_install_failed => 'インストーラーを開けませんでした。';
+
+  @override
+  String get update_browser_failed => 'ブラウザを開けませんでした。';
+
+  @override
   String get deselect_all => 'すべて選択解除';
 
   @override
@@ -4851,6 +4914,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get shortcut_zoom_reset => 'ページに合わせる';
+
+  @override
+  String get shortcut_wheel_zoom => 'マウスでズーム';
+
+  @override
+  String get mouse_wheel => 'ホイール';
 
   @override
   String get shortcut_leave => 'リーダーを終了';
@@ -5094,4 +5163,68 @@ class AppLocalizationsJa extends AppLocalizations {
   String shortcut_key_in_use(String action) {
     return 'すでに使用中: $action';
   }
+
+  @override
+  String get external_browser => '外部リンクを開くアプリ';
+
+  @override
+  String get system_default => 'システムのデフォルト';
+
+  @override
+  String get no_browsers_detected => 'ブラウザが見つかりません';
+
+  @override
+  String get on_this_device => 'このデバイス上';
+
+  @override
+  String get local_tracking => 'このデバイスで記録';
+
+  @override
+  String get local_tracking_desc =>
+      'アカウントなしで、各シリーズのステータス、進捗、スコア、日付をここに保存します。何も送信されません。オフにしても保存済みの内容は残ります。';
+
+  @override
+  String get track_add_one => '1つ追加';
+
+  @override
+  String get track_change_match => '一致を変更';
+
+  @override
+  String get track_remove => '記録をやめる';
+
+  @override
+  String get track_remove_local_msg => 'ステータス、進捗、スコア、日付がこのデバイスから削除されます。';
+
+  @override
+  String track_remove_online_msg(String tracker) {
+    return 'エントリは $tracker に残ります。ここではこのシリーズとのリンクのみ削除されます。';
+  }
+
+  @override
+  String update_from_repo(String repo) {
+    return '$repo から';
+  }
+
+  @override
+  String get update_from_other_repo => '別のリポジトリからアップデートしますか？';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name は $origin からインストールされました。バージョン $version は $other のものです。インストールすると、$name は $other からアップデートを受け取ります。そのリポジトリを信頼できる場合のみ続行してください。';
+  }
+
+  @override
+  String get update_all_foreign => '一部のアップデートは別のリポジトリのものです';
+
+  @override
+  String get update_all_foreign_msg =>
+      'アップデート後、これらの拡張機能は新しいリポジトリからアップデートを受け取ります。信頼できる場合のみ含めてください。';
+
+  @override
+  String get update_all_skip_foreign => '元のリポジトリからのみ';
 }

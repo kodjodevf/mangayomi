@@ -1874,6 +1874,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Use a floating capsule instead of the standard attached navigation bar.';
 
   @override
+  String get show_updates_badge => 'Show badge on Updates icon';
+
+  @override
+  String get show_updates_badge_description =>
+      'Count the chapters found since you last opened Updates.';
+
+  @override
   String get full_screen_player => 'Use fullscreen';
 
   @override
@@ -2498,6 +2505,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get edit_code => 'Edit code';
 
   @override
+  String get subtitles_on_by_default => 'Turn subtitles on';
+
+  @override
+  String get subtitles_on_by_default_info =>
+      'Off, episodes start without subtitles until you pick a track.';
+
+  @override
   String get use_libass => 'Enable libass';
 
   @override
@@ -2509,11 +2523,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Disable `use libass` in player settings to be able to customize the subtitles.';
 
   @override
-  String get override_ass_subtitles => 'Override ASS subtitles';
+  String get override_ass_subtitles => 'Use my subtitle style';
 
   @override
   String get override_ass_subtitles_info =>
-      'Apply custom styling to ASS/SSA subtitles';
+      'Applies your size and colours to every subtitle, ASS included. When off, subtitles use their default style';
 
   @override
   String get torrent_stream => 'Torrent stream';
@@ -4455,6 +4469,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invert_selection => 'Invert selection';
 
   @override
+  String get select_between => 'Select between';
+
+  @override
   String get show_password => 'Show password';
 
   @override
@@ -4811,6 +4828,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get update_write_failed => 'Couldn\'t write the APK file.';
 
   @override
+  String get update_later => 'Later';
+
+  @override
+  String get update_installed_version => 'Installed';
+
+  @override
+  String get update_new_version => 'New version';
+
+  @override
+  String update_published(String date) {
+    return 'Published on $date';
+  }
+
+  @override
+  String get update_pre_release => 'Pre-release';
+
+  @override
+  String get update_notes_features => 'New';
+
+  @override
+  String get update_notes_fixes => 'Fixes';
+
+  @override
+  String get update_notes_other => 'Improvements';
+
+  @override
+  String get update_hint_install =>
+      'The app downloads the update, then Android asks you to confirm the installation. Your library stays as it is.';
+
+  @override
+  String get update_hint_browser =>
+      'The release page opens in your browser: download the file for your system from there, then install it.';
+
+  @override
+  String get update_downloading => 'Downloading…';
+
+  @override
+  String get update_installing => 'Opening the installer…';
+
+  @override
+  String get update_install_failed => 'Couldn\'t open the installer.';
+
+  @override
+  String get update_browser_failed => 'Couldn\'t open the browser.';
+
+  @override
   String get deselect_all => 'Deselect all';
 
   @override
@@ -4956,6 +5019,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shortcut_zoom_reset => 'Fit the page';
+
+  @override
+  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+
+  @override
+  String get mouse_wheel => 'Wheel';
 
   @override
   String get shortcut_leave => 'Leave the reader';
@@ -5203,4 +5272,69 @@ class AppLocalizationsEn extends AppLocalizations {
   String shortcut_key_in_use(String action) {
     return 'Already used by: $action';
   }
+
+  @override
+  String get external_browser => 'Open external links with';
+
+  @override
+  String get system_default => 'System default';
+
+  @override
+  String get no_browsers_detected => 'No browsers detected';
+
+  @override
+  String get on_this_device => 'On this device';
+
+  @override
+  String get local_tracking => 'Track on this device';
+
+  @override
+  String get local_tracking_desc =>
+      'Keep status, progress, score and dates for each series here, without an account. Nothing is sent anywhere. Turning it off keeps what it holds.';
+
+  @override
+  String get track_add_one => 'One more';
+
+  @override
+  String get track_change_match => 'Change match';
+
+  @override
+  String get track_remove => 'Stop tracking';
+
+  @override
+  String get track_remove_local_msg =>
+      'Its status, progress, score and dates are deleted from this device.';
+
+  @override
+  String track_remove_online_msg(String tracker) {
+    return 'The entry stays on $tracker: only its link to this series is removed here.';
+  }
+
+  @override
+  String update_from_repo(String repo) {
+    return 'From $repo';
+  }
+
+  @override
+  String get update_from_other_repo => 'Update from another repository?';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name was installed from $origin. Version $version comes from $other: once it is installed, $name takes its updates from $other. Only go ahead if you trust that repository.';
+  }
+
+  @override
+  String get update_all_foreign => 'Some updates come from another repository';
+
+  @override
+  String get update_all_foreign_msg =>
+      'Once updated, these extensions take their updates from the new repository. Only include them if you trust it.';
+
+  @override
+  String get update_all_skip_foreign => 'Only from their own repository';
 }

@@ -1,0 +1,24 @@
+name: remote_webview_interceptor
+description: >-
+  Gives WKWebView a shouldInterceptRequest, so the extension WebViews Mangayomi
+  hosts on iOS and macOS can answer their own page's requests like on Android.
+publish_to: none
+version: 1.0.0
+
+environment:
+  sdk: ^3.13.5
+  flutter: ">=3.32.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      ios:
+        pluginClass: RemoteWebViewInterceptorPlugin
+        sharedDarwinSource: true
+      macos:
+        pluginClass: RemoteWebViewInterceptorPlugin
+        sharedDarwinSource: true

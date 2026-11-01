@@ -8,13 +8,23 @@ part of 'fetch_item_sources.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Reads the extension repositories of [itemType], or acts on the one
+/// extension [id]: installs it, or installs the update the last read found
+/// for it, from where it was found.
 
 @ProviderFor(fetchItemSourcesList)
 final fetchItemSourcesListProvider = FetchItemSourcesListFamily._();
 
+/// Reads the extension repositories of [itemType], or acts on the one
+/// extension [id]: installs it, or installs the update the last read found
+/// for it, from where it was found.
+
 final class FetchItemSourcesListProvider
     extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
+  /// Reads the extension repositories of [itemType], or acts on the one
+  /// extension [id]: installs it, or installs the update the last read found
+  /// for it, from where it was found.
   FetchItemSourcesListProvider._({
     required FetchItemSourcesListFamily super.from,
     required ({int? id, bool reFresh, ItemType itemType}) super.argument,
@@ -65,7 +75,11 @@ final class FetchItemSourcesListProvider
 }
 
 String _$fetchItemSourcesListHash() =>
-    r'9296f418845ccbb8ece140870b38000361befe28';
+    r'd1cc82483e4bdbf95a4f3327e343a84753e2fa81';
+
+/// Reads the extension repositories of [itemType], or acts on the one
+/// extension [id]: installs it, or installs the update the last read found
+/// for it, from where it was found.
 
 final class FetchItemSourcesListFamily extends $Family
     with
@@ -81,6 +95,10 @@ final class FetchItemSourcesListFamily extends $Family
         $allTransitiveDependencies: null,
         isAutoDispose: false,
       );
+
+  /// Reads the extension repositories of [itemType], or acts on the one
+  /// extension [id]: installs it, or installs the update the last read found
+  /// for it, from where it was found.
 
   FetchItemSourcesListProvider call({
     int? id,

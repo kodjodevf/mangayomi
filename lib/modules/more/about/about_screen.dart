@@ -20,7 +20,7 @@ import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/share.dart';
 import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:mangayomi/services/external_browser.dart';
 
 class AboutScreen extends ConsumerWidget {
   const AboutScreen({super.key});
@@ -155,10 +155,7 @@ class AboutScreen extends ConsumerWidget {
       botToast(l10n.new_update_available, second: 2);
       await Future.delayed(const Duration(seconds: 1));
       if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (_) => DownloadFileScreen(updateAvailable: updateInfo),
-        );
+        showUpdateDialog(context, updateInfo);
       }
     } catch (_) {
       botToast(l10n.no_new_updates_available, second: 2);
@@ -186,7 +183,7 @@ class AboutScreen extends ConsumerWidget {
 }
 
 Future<void> _launchInBrowser(Uri url) async {
-  if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+  if (!await ExternalBrowser.open(url.toString())) {
     throw 'Could not launch $url';
   }
 }

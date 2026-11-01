@@ -1876,6 +1876,13 @@ class AppLocalizationsHi extends AppLocalizations {
       'सामान्य जुड़े हुए नेविगेशन बार की जगह एक तैरता कैप्सूल इस्तेमाल करें।';
 
   @override
+  String get show_updates_badge => 'अपडेट आइकन पर बैज दिखाएँ';
+
+  @override
+  String get show_updates_badge_description =>
+      'पिछली बार अपडेट खोलने के बाद मिले अध्यायों की गिनती करता है।';
+
+  @override
   String get full_screen_player => 'पूर्ण स्क्रीन का उपयोग करें';
 
   @override
@@ -2497,6 +2504,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get edit_code => 'कोड संपादित करें';
 
   @override
+  String get subtitles_on_by_default => 'उपशीर्षक चालू करें';
+
+  @override
+  String get subtitles_on_by_default_info =>
+      'बंद होने पर, ट्रैक चुनने तक एपिसोड बिना उपशीर्षक के शुरू होते हैं।';
+
+  @override
   String get use_libass => 'libass सक्षम करें';
 
   @override
@@ -2508,11 +2522,11 @@ class AppLocalizationsHi extends AppLocalizations {
       'उपशीर्षकों को अनुकूलित करने में सक्षम होने के लिए प्लेयर सेटिंग्स में `libass उपयोग करें` को अक्षम करें।';
 
   @override
-  String get override_ass_subtitles => 'ASS उपशीर्षक ओवरराइड करें';
+  String get override_ass_subtitles => 'मेरी उपशीर्षक शैली का उपयोग करें';
 
   @override
   String get override_ass_subtitles_info =>
-      'ASS/SSA उपशीर्षक पर कस्टम स्टाइलिंग लागू करें';
+      'आपका आकार और रंग ASS सहित सभी उपशीर्षकों पर लागू करता है। बंद होने पर उपशीर्षक अपनी डिफ़ॉल्ट शैली का उपयोग करते हैं';
 
   @override
   String get torrent_stream => 'टॉरेंट स्ट्रीम';
@@ -4454,6 +4468,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get invert_selection => 'चयन उलटें';
 
   @override
+  String get select_between => 'बीच में चुनें';
+
+  @override
   String get show_password => 'पासवर्ड दिखाएँ';
 
   @override
@@ -4807,6 +4824,52 @@ class AppLocalizationsHi extends AppLocalizations {
   String get update_write_failed => 'APK फ़ाइल लिखी नहीं जा सकी।';
 
   @override
+  String get update_later => 'बाद में';
+
+  @override
+  String get update_installed_version => 'इंस्टॉल की गई';
+
+  @override
+  String get update_new_version => 'नया संस्करण';
+
+  @override
+  String update_published(String date) {
+    return '$date को प्रकाशित';
+  }
+
+  @override
+  String get update_pre_release => 'प्री-रिलीज़';
+
+  @override
+  String get update_notes_features => 'नया';
+
+  @override
+  String get update_notes_fixes => 'सुधार';
+
+  @override
+  String get update_notes_other => 'बेहतरी';
+
+  @override
+  String get update_hint_install =>
+      'ऐप अपडेट डाउनलोड करता है, फिर Android आपसे इंस्टॉलेशन की पुष्टि करने को कहता है। आपकी लाइब्रेरी जैसी है वैसी ही रहती है।';
+
+  @override
+  String get update_hint_browser =>
+      'रिलीज़ पेज आपके ब्राउज़र में खुलता है: वहाँ से अपने सिस्टम की फ़ाइल डाउनलोड करके इंस्टॉल करें।';
+
+  @override
+  String get update_downloading => 'डाउनलोड हो रहा है…';
+
+  @override
+  String get update_installing => 'इंस्टॉलर खोला जा रहा है…';
+
+  @override
+  String get update_install_failed => 'इंस्टॉलर नहीं खुल सका।';
+
+  @override
+  String get update_browser_failed => 'ब्राउज़र नहीं खुल सका।';
+
+  @override
   String get deselect_all => 'सारा चयन हटाएँ';
 
   @override
@@ -4951,6 +5014,12 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get shortcut_zoom_reset => 'पेज फ़िट करें';
+
+  @override
+  String get shortcut_wheel_zoom => 'माउस से ज़ूम करें';
+
+  @override
+  String get mouse_wheel => 'व्हील';
 
   @override
   String get shortcut_leave => 'रीडर छोड़ें';
@@ -5199,4 +5268,69 @@ class AppLocalizationsHi extends AppLocalizations {
   String shortcut_key_in_use(String action) {
     return 'पहले से उपयोग में: $action';
   }
+
+  @override
+  String get external_browser => 'बाहरी लिंक इससे खोलें';
+
+  @override
+  String get system_default => 'सिस्टम डिफ़ॉल्ट';
+
+  @override
+  String get no_browsers_detected => 'कोई ब्राउज़र नहीं मिला';
+
+  @override
+  String get on_this_device => 'इस डिवाइस पर';
+
+  @override
+  String get local_tracking => 'इस डिवाइस पर ट्रैक करें';
+
+  @override
+  String get local_tracking_desc =>
+      'बिना खाते के हर सीरीज़ की स्थिति, प्रगति, स्कोर और तिथियाँ यहीं रखता है। कुछ भी कहीं नहीं भेजा जाता। बंद करने पर सहेजी गई जानकारी बनी रहती है।';
+
+  @override
+  String get track_add_one => 'एक और';
+
+  @override
+  String get track_change_match => 'मिलान बदलें';
+
+  @override
+  String get track_remove => 'ट्रैक करना बंद करें';
+
+  @override
+  String get track_remove_local_msg =>
+      'इसकी स्थिति, प्रगति, स्कोर और तिथियाँ इस डिवाइस से हटा दी जाएँगी।';
+
+  @override
+  String track_remove_online_msg(String tracker) {
+    return 'प्रविष्टि $tracker पर बनी रहती है: यहाँ केवल इस सीरीज़ से उसका लिंक हटाया जाता है।';
+  }
+
+  @override
+  String update_from_repo(String repo) {
+    return '$repo से';
+  }
+
+  @override
+  String get update_from_other_repo => 'किसी दूसरी रिपॉज़िटरी से अपडेट करें?';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name को $origin से इंस्टॉल किया गया था। संस्करण $version $other से आता है: इंस्टॉल होने के बाद $name अपने अपडेट $other से लेगा। केवल तभी आगे बढ़ें जब आपको उस रिपॉज़िटरी पर भरोसा हो।';
+  }
+
+  @override
+  String get update_all_foreign => 'कुछ अपडेट किसी दूसरी रिपॉज़िटरी से आते हैं';
+
+  @override
+  String get update_all_foreign_msg =>
+      'अपडेट होने के बाद ये एक्सटेंशन अपने अपडेट नई रिपॉज़िटरी से लेंगे। इन्हें तभी शामिल करें जब आपको उस पर भरोसा हो।';
+
+  @override
+  String get update_all_skip_foreign => 'केवल अपनी रिपॉज़िटरी से';
 }

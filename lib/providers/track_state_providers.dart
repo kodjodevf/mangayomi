@@ -6,11 +6,32 @@ import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/services/trackers/anilist.dart';
 import 'package:mangayomi/services/trackers/base_tracker.dart';
 import 'package:mangayomi/services/trackers/kitsu.dart';
+import 'package:mangayomi/services/trackers/local_tracker.dart';
 import 'package:mangayomi/services/trackers/myanimelist.dart';
 import 'package:mangayomi/services/trackers/simkl.dart';
 import 'package:mangayomi/services/trackers/trakt_tv.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'track_state_providers.g.dart';
+
+/// Sends what was read or watched to the trackers, on a Ref that lives as
+/// long as the app. A tracker answers over the network, by when the reader or
+/// player that asked may have closed: its Ref, which the answer used to be
+/// written through, was gone by then (#1079).
+@Riverpod(keepAlive: true)
+class TrackerSync extends _$TrackerSync {
+  @override
+  void build() {}
+
+  Future<void> update(Track track, ItemType itemType) => ref
+      .read(
+        trackStateProvider(
+          track: track,
+          itemType: itemType,
+          widgetRef: ref,
+        ).notifier,
+      )
+      .updateManga();
+}
 
 @riverpod
 class TrackState extends _$TrackState {
@@ -55,6 +76,13 @@ class TrackState extends _$TrackState {
       ),
       5 => widgetRef.read(
         traktTvProvider(
+          syncId: syncId,
+          itemType: itemType,
+          widgetRef: widgetRef,
+        ).notifier,
+      ),
+      6 => widgetRef.read(
+        localTrackerProvider(
           syncId: syncId,
           itemType: itemType,
           widgetRef: widgetRef,
@@ -152,6 +180,13 @@ class TrackState extends _$TrackState {
       findManga = await tracker.findLibItem(newTrack, _isManga);
     }
     writeBack(findManga!);
+  }
+
+  /// Starts tracking [manga] on the local tracker: there is nothing to
+  /// search for, the entry is the series itself.
+  Future<void> trackLocally(Manga manga) async {
+    final track = newLocalTrack(manga, await manga.chapters.count());
+    writeBack(await getNotifier(track.syncId!).update(track, _isManga));
   }
 
   List<TrackStatus> getStatusList() {

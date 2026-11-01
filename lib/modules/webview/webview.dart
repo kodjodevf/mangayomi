@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/error_toast.dart';
@@ -149,9 +150,9 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
           await MClient.setCookie(widget.url, ua, null, cookie: cookie);
           // location.href is the main frame's URL; the plugin's URL requests
           // also include iframes (ads, captchas).
-          final url =
-              await _desktopWebview!.evaluateJavaScript("location.href")
-                  as String?;
+          final url = await _desktopWebview!.evaluateJavaScript(
+            "location.href",
+          ) as String?;
           if (mounted && url != null && url != 'about:blank' && url != _url) {
             setState(() => _url = url);
           }
@@ -347,12 +348,10 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                         ShioriMenuItem(
                           label: l10n.open_in_browser,
                           icon: Symbols.open_in_browser_rounded,
-                          // flutter_inappwebview has no Linux support.
+                          // flutter_inappwebview has no Linux support, so Linux
+                          // opens the page in the browser the user chose.
                           onSelected: () => Platform.isLinux
-                              ? launchUrl(
-                                  Uri.parse(_url),
-                                  mode: LaunchMode.externalApplication,
-                                )
+                              ? ExternalBrowser.open(_url)
                               : InAppBrowser.openWithSystemBrowser(
                                   url: WebUri(_url),
                                 ),

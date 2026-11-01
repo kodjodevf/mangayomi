@@ -182,10 +182,20 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
         proxyServer: proxyServer,
       );
       final videos = <Video>[];
+      final qualityCounts = <String, int>{};
       for (final video in list) {
-        if (!videos.any((element) => element.quality == video.quality)) {
-          videos.add(video);
+        if (video.url.isEmpty) continue;
+        if (videos.any(
+          (element) =>
+              element.url == video.url && element.quality == video.quality,
+        )) {
+          continue;
         }
+        final baseQuality = video.quality.isEmpty ? 'Default' : video.quality;
+        final count = (qualityCounts[baseQuality] ?? 0) + 1;
+        qualityCounts[baseQuality] = count;
+        video.quality = count > 1 ? '$baseQuality ($count)' : baseQuality;
+        videos.add(video);
       }
       return videos;
     }, hasUsableResult: (videos) => videos.isNotEmpty);

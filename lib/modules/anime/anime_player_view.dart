@@ -58,6 +58,7 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:mangayomi/modules/anime/utils/always_on_top.dart';
 import 'package:mangayomi/modules/anime/utils/mpv_subtitle_options.dart';
 import 'package:mangayomi/modules/reader_common/mixins/chapter_controller_mixin.dart';
+import 'package:mangayomi/modules/anime/widgets/video_filters_section.dart';
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final int episodeId;
@@ -103,6 +104,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
       appBar: AppBar(
         backgroundColor: onImage ? Colors.transparent : null,
         titleSpacing: 0,
+        centerTitle: false,
         title: ChapterBarTitle(chapter: episode, onImage: onImage),
         leading: IconButton(
           tooltip: MaterialLocalizations.of(context).backButtonTooltip,
@@ -277,6 +279,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   @override
   bool get mpvUseLibass => useLibass;
   @override
+  bool get settingsSoftwareVideoOutput => softwareVideoOutput;
+  @override
   bool get mpvUseMpvConfig => useMpvConfig;
   @override
   AnimeStreamController get mpvStreamController => _streamController;
@@ -314,6 +318,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool get isLocalForTracks => widget.isLocal;
   @override
   String get defaultSubtitleLanguage => widget.defaultSubtitle;
+
+  @override
+  bool get subtitlesOnByDefault => ref.read(subtitlesOnByDefaultStateProvider);
   @override
   String get preferredAudioLanguagesCsv => audioPreferredLang;
   @override
@@ -427,6 +434,13 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   );
   late final hwdecMode = ref.read(hwdecModeStateProvider());
   late final enableHardwareAccel = ref.read(enableHardwareAccelStateProvider);
+  late final softwareVideoOutput = isSoftwareVideoOutput(
+    isAndroid: Platform.isAndroid,
+    hardwareAcceleration: shouldUseHardwareAcceleratedVideoOutput(
+      userEnabled: enableHardwareAccel,
+      isWindows: Platform.isWindows,
+    ),
+  );
   late final VideoController _controller;
   late final _streamController = ref.read(
     animeStreamControllerProvider(episode: widget.episode).notifier,
@@ -453,7 +467,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   final ValueNotifier<bool> _showFitLabel = ValueNotifier(false);
   final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
   final ValueNotifier<Duration?> _tempPosition = ValueNotifier(null);
-  final ValueNotifier<BoxFit> _fit = ValueNotifier(BoxFit.contain);
+  late final ValueNotifier<BoxFit> _fit = ValueNotifier(
+    ref.read(playerVideoFitStateProvider),
+  );
   final ValueNotifier<List<(String, int)>> _chapterMarks = ValueNotifier([]);
   final ValueNotifier<int?> _currentChapterMark = ValueNotifier(null);
   final ValueNotifier<String> _selectedShader = ValueNotifier("");
@@ -637,6 +653,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     super.initState();
     beginReadingSession();
     _rememberVolume = ref.read(rememberPlayerVolumeStateProvider);
+    // Kept for the next episode, whichever control changed it.
+    _fit.addListener(
+      () => ref.read(playerVideoFitStateProvider.notifier).set(_fit.value),
+    );
     _watchStopwatch.start();
     _controller = VideoController(
       _player,
@@ -984,6 +1004,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     }
   }
 
+  /// [controls] above the layer that adjusts a software output's picture.
+  Widget _overVideoFilters(Widget controls) => softwareVideoOutput
+      ? Stack(
+          fit: StackFit.expand,
+          children: [const SoftwareVideoFilterLayer(), controls],
+        )
+      : controls;
+
   Widget _videoPlayer(BuildContext context) {
     final fit = _fit.value;
     _resize(fit);
@@ -1007,44 +1035,46 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
             // at its true aspect ratio rather than cropping to the narrower slot.
             fit: docked ? BoxFit.contain : fit,
             key: _key,
-            controls: (state) => (isTv && ref.read(tvPlayerStyleProvider))
-                ? (_tvSettingsOpen ? const SizedBox.shrink() : tvControls())
-                : (isDesktop || isTv)
-                ? DesktopControllerWidget(
-                    videoController: _controller,
-                    topButtonBarWidget: topButtonBar(context),
-                    videoStatekey: _key,
-                    bottomButtonBarWidget: desktopBottomButtonBar(context),
-                    streamController: _streamController,
-                    seekToWidget: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: ShioriSpace.s12,
+            controls: (state) => _overVideoFilters(
+              (isTv && ref.read(tvPlayerStyleProvider))
+                  ? (_tvSettingsOpen ? const SizedBox.shrink() : tvControls())
+                  : (isDesktop || isTv)
+                  ? DesktopControllerWidget(
+                      videoController: _controller,
+                      topButtonBarWidget: topButtonBar(context),
+                      videoStatekey: _key,
+                      bottomButtonBarWidget: desktopBottomButtonBar(context),
+                      streamController: _streamController,
+                      seekToWidget: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: ShioriSpace.s12,
+                        ),
+                        child: Row(children: [seekToWidget()]),
                       ),
-                      child: Row(children: [seekToWidget()]),
+                      tempDuration: (value) {
+                        _tempPosition.value = value;
+                      },
+                      doubleSpeed: (value) {
+                        _isDoubleSpeed.value = value ?? false;
+                      },
+                      defaultSkipIntroLength: skipIntroLength,
+                      desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
+                      chapterMarks: _chapterMarks,
+                      revealControls: _revealControls,
+                      skipRanges: _skipRanges,
+                    )
+                  : MobileControllerWidget(
+                      videoController: _controller,
+                      topButtonBarWidget: topButtonBar(context),
+                      videoStatekey: _key,
+                      bottomButtonBarWidget: mobileBottomButtonBar(context),
+                      streamController: _streamController,
+                      revealControls: _revealControls,
+                      chapterMarks: _chapterMarks,
+                      isLocked: _isLocked,
+                      skipRanges: _skipRanges,
                     ),
-                    tempDuration: (value) {
-                      _tempPosition.value = value;
-                    },
-                    doubleSpeed: (value) {
-                      _isDoubleSpeed.value = value ?? false;
-                    },
-                    defaultSkipIntroLength: skipIntroLength,
-                    desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
-                    chapterMarks: _chapterMarks,
-                    revealControls: _revealControls,
-                    skipRanges: _skipRanges,
-                  )
-                : MobileControllerWidget(
-                    videoController: _controller,
-                    topButtonBarWidget: topButtonBar(context),
-                    videoStatekey: _key,
-                    bottomButtonBarWidget: mobileBottomButtonBar(context),
-                    streamController: _streamController,
-                    revealControls: _revealControls,
-                    chapterMarks: _chapterMarks,
-                    isLocked: _isLocked,
-                    skipRanges: _skipRanges,
-                  ),
+            ),
             controller: _controller,
             // When docked left for the settings panel, fill the (narrower) slot
             // the Row gives us rather than forcing full-screen width.

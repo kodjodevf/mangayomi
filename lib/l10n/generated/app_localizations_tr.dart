@@ -1872,6 +1872,13 @@ class AppLocalizationsTr extends AppLocalizations {
       'Sabit gezinme çubuğu yerine yüzen bir kapsül kullan.';
 
   @override
+  String get show_updates_badge => 'Güncellemeler simgesinde rozet göster';
+
+  @override
+  String get show_updates_badge_description =>
+      'Güncellemeler\'i son açışınızdan beri bulunan bölümleri sayar.';
+
+  @override
   String get full_screen_player => 'Tam ekran kullan';
 
   @override
@@ -2500,6 +2507,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get edit_code => 'Kodu düzenle';
 
   @override
+  String get subtitles_on_by_default => 'Altyazıları aç';
+
+  @override
+  String get subtitles_on_by_default_info =>
+      'Kapalıyken bölümler, siz bir parça seçene kadar altyazısız başlar.';
+
+  @override
   String get use_libass => 'libass\'ı etkinleştir';
 
   @override
@@ -2511,11 +2525,11 @@ class AppLocalizationsTr extends AppLocalizations {
       'Altyazıları özelleştirmek için oyuncu ayarlarında `libass kullan` seçeneğini devre dışı bırakın.';
 
   @override
-  String get override_ass_subtitles => 'ASS altyazılarını geçersiz kıl';
+  String get override_ass_subtitles => 'Kendi altyazı stilimi kullan';
 
   @override
   String get override_ass_subtitles_info =>
-      'ASS/SSA altyazılarına özel stil uygula';
+      'Boyutunuzu ve renklerinizi ASS dahil tüm altyazılara uygular. Kapalıyken altyazılar varsayılan stillerini kullanır';
 
   @override
   String get torrent_stream => 'Torrent Akışı';
@@ -4461,6 +4475,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get invert_selection => 'Seçimi tersine çevir';
 
   @override
+  String get select_between => 'Arasında seç';
+
+  @override
   String get show_password => 'Şifreyi göster';
 
   @override
@@ -4817,6 +4834,52 @@ class AppLocalizationsTr extends AppLocalizations {
   String get update_write_failed => 'APK dosyası yazılamadı.';
 
   @override
+  String get update_later => 'Daha sonra';
+
+  @override
+  String get update_installed_version => 'Yüklü';
+
+  @override
+  String get update_new_version => 'Yeni sürüm';
+
+  @override
+  String update_published(String date) {
+    return 'Yayın tarihi: $date';
+  }
+
+  @override
+  String get update_pre_release => 'Ön sürüm';
+
+  @override
+  String get update_notes_features => 'Yenilikler';
+
+  @override
+  String get update_notes_fixes => 'Düzeltmeler';
+
+  @override
+  String get update_notes_other => 'İyileştirmeler';
+
+  @override
+  String get update_hint_install =>
+      'Uygulama güncellemeyi indirir, ardından Android kurulumu onaylamanızı ister. Kitaplığınız olduğu gibi kalır.';
+
+  @override
+  String get update_hint_browser =>
+      'Sürüm sayfası tarayıcınızda açılır: sisteminize uygun dosyayı oradan indirip kurun.';
+
+  @override
+  String get update_downloading => 'İndiriliyor…';
+
+  @override
+  String get update_installing => 'Yükleyici açılıyor…';
+
+  @override
+  String get update_install_failed => 'Yükleyici açılamadı.';
+
+  @override
+  String get update_browser_failed => 'Tarayıcı açılamadı.';
+
+  @override
   String get deselect_all => 'Tüm seçimi kaldır';
 
   @override
@@ -4961,6 +5024,12 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get shortcut_zoom_reset => 'Sayfaya sığdır';
+
+  @override
+  String get shortcut_wheel_zoom => 'Fare ile yakınlaştır';
+
+  @override
+  String get mouse_wheel => 'Tekerlek';
 
   @override
   String get shortcut_leave => 'Okuyucudan çık';
@@ -5209,4 +5278,70 @@ class AppLocalizationsTr extends AppLocalizations {
   String shortcut_key_in_use(String action) {
     return 'Zaten kullanılıyor: $action';
   }
+
+  @override
+  String get external_browser => 'Harici bağlantıları şununla aç';
+
+  @override
+  String get system_default => 'Sistem varsayılanı';
+
+  @override
+  String get no_browsers_detected => 'Tarayıcı algılanmadı';
+
+  @override
+  String get on_this_device => 'Bu cihazda';
+
+  @override
+  String get local_tracking => 'Bu cihazda takip et';
+
+  @override
+  String get local_tracking_desc =>
+      'Her serinin durumunu, ilerlemesini, puanını ve tarihlerini hesap olmadan burada tutar. Hiçbir şey gönderilmez. Kapatmak kayıtlı verileri silmez.';
+
+  @override
+  String get track_add_one => 'Bir tane daha';
+
+  @override
+  String get track_change_match => 'Eşleşmeyi değiştir';
+
+  @override
+  String get track_remove => 'Takibi bırak';
+
+  @override
+  String get track_remove_local_msg =>
+      'Durumu, ilerlemesi, puanı ve tarihleri bu cihazdan silinir.';
+
+  @override
+  String track_remove_online_msg(String tracker) {
+    return 'Kayıt $tracker üzerinde kalır: burada yalnızca bu seriyle bağlantısı kaldırılır.';
+  }
+
+  @override
+  String update_from_repo(String repo) {
+    return 'Kaynak: $repo';
+  }
+
+  @override
+  String get update_from_other_repo => 'Başka bir depodan güncellensin mi?';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name, $origin deposundan yüklendi. $version sürümü $other deposundan geliyor: yüklendikten sonra $name güncellemelerini $other deposundan alır. Yalnızca bu depoya güveniyorsanız devam edin.';
+  }
+
+  @override
+  String get update_all_foreign =>
+      'Bazı güncellemeler başka bir depodan geliyor';
+
+  @override
+  String get update_all_foreign_msg =>
+      'Güncellendikten sonra bu eklentiler güncellemelerini yeni depodan alır. Yalnızca ona güveniyorsanız dahil edin.';
+
+  @override
+  String get update_all_skip_foreign => 'Yalnızca kendi deposundan';
 }

@@ -8,6 +8,7 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_
 import 'package:mangayomi/modules/more/settings/appearance/providers/tint_surfaces_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/reader_state_provider.dart';
+import 'package:mangayomi/providers/show_updates_badge_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
@@ -22,6 +23,7 @@ void invalidateCommonRestoreState(Ref ref) {
   ref.invalidate(pureBlackDarkModeStateProvider);
   ref.invalidate(tintSurfacesStateProvider);
   ref.invalidate(floatingNavigationBarStateProvider);
+  ref.invalidate(showUpdatesBadgeStateProvider);
   ref.invalidate(l10nLocaleStateProvider);
   ref.invalidate(navigationOrderStateProvider);
   ref.invalidate(hideItemsStateProvider);

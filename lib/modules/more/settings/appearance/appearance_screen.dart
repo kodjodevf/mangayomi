@@ -8,6 +8,7 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/tint_surfac
 import 'package:mangayomi/modules/more/settings/appearance/widgets/follow_system_theme_button.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/statistics_recap_state_provider.dart';
+import 'package:mangayomi/providers/show_updates_badge_state_provider.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/date_format_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
@@ -136,6 +137,14 @@ class AppearanceScreen extends ConsumerWidget {
                       .read(floatingNavigationBarStateProvider.notifier)
                       .set(v),
                 ),
+              ShioriSwitchRow(
+                icon: Symbols.new_releases_rounded,
+                title: l10n.show_updates_badge,
+                subtitle: l10n.show_updates_badge_description,
+                value: ref.watch(showUpdatesBadgeStateProvider),
+                onChanged: (v) =>
+                    ref.read(showUpdatesBadgeStateProvider.notifier).set(v),
+              ),
               ShioriSettingRow(
                 icon: Symbols.reorder_rounded,
                 title: l10n.reorder_navigation,

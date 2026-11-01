@@ -1872,6 +1872,13 @@ class AppLocalizationsTh extends AppLocalizations {
       'ใช้แคปซูลลอยแทนแถบนำทางแบบติดขอบ';
 
   @override
+  String get show_updates_badge => 'แสดงป้ายบนไอคอนอัปเดต';
+
+  @override
+  String get show_updates_badge_description =>
+      'นับตอนที่พบตั้งแต่คุณเปิดหน้าอัปเดตครั้งล่าสุด';
+
+  @override
   String get full_screen_player => 'ใช้โหมดเต็มหน้าจอ';
 
   @override
@@ -2493,6 +2500,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get edit_code => 'แก้ไขโค้ด';
 
   @override
+  String get subtitles_on_by_default => 'เปิดคำบรรยาย';
+
+  @override
+  String get subtitles_on_by_default_info =>
+      'เมื่อปิด ตอนต่าง ๆ จะเริ่มโดยไม่มีคำบรรยายจนกว่าคุณจะเลือกแทร็ก';
+
+  @override
   String get use_libass => 'เปิดใช้งาน libass';
 
   @override
@@ -2504,11 +2518,11 @@ class AppLocalizationsTh extends AppLocalizations {
       'ปิดการใช้งาน `ใช้ libass` ในการตั้งค่าเพลเยอร์เพื่อให้สามารถปรับแต่งคำบรรยายได้';
 
   @override
-  String get override_ass_subtitles => 'แทนที่คำบรรยาย ASS';
+  String get override_ass_subtitles => 'ใช้สไตล์คำบรรยายของฉัน';
 
   @override
   String get override_ass_subtitles_info =>
-      'ใช้สไตล์ที่กำหนดเองกับคำบรรยาย ASS/SSA';
+      'ใช้ขนาดและสีของคุณกับคำบรรยายทั้งหมด รวมถึง ASS เมื่อปิด คำบรรยายจะใช้สไตล์เริ่มต้น';
 
   @override
   String get torrent_stream => 'สตรีมทอเรนต์';
@@ -4436,6 +4450,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get invert_selection => 'กลับการเลือก';
 
   @override
+  String get select_between => 'เลือกระหว่าง';
+
+  @override
   String get show_password => 'แสดงรหัสผ่าน';
 
   @override
@@ -4788,6 +4805,52 @@ class AppLocalizationsTh extends AppLocalizations {
   String get update_write_failed => 'ไม่สามารถเขียนไฟล์ APK ได้';
 
   @override
+  String get update_later => 'ภายหลัง';
+
+  @override
+  String get update_installed_version => 'ที่ติดตั้งอยู่';
+
+  @override
+  String get update_new_version => 'เวอร์ชันใหม่';
+
+  @override
+  String update_published(String date) {
+    return 'เผยแพร่เมื่อ $date';
+  }
+
+  @override
+  String get update_pre_release => 'รุ่นทดลอง';
+
+  @override
+  String get update_notes_features => 'มาใหม่';
+
+  @override
+  String get update_notes_fixes => 'การแก้ไข';
+
+  @override
+  String get update_notes_other => 'การปรับปรุง';
+
+  @override
+  String get update_hint_install =>
+      'แอปจะดาวน์โหลดอัปเดต จากนั้น Android จะขอให้คุณยืนยันการติดตั้ง คลังของคุณจะยังคงเดิม';
+
+  @override
+  String get update_hint_browser =>
+      'หน้าของรุ่นจะเปิดในเบราว์เซอร์: ดาวน์โหลดไฟล์สำหรับระบบของคุณจากที่นั่น แล้วติดตั้ง';
+
+  @override
+  String get update_downloading => 'กำลังดาวน์โหลด…';
+
+  @override
+  String get update_installing => 'กำลังเปิดตัวติดตั้ง…';
+
+  @override
+  String get update_install_failed => 'ไม่สามารถเปิดตัวติดตั้งได้';
+
+  @override
+  String get update_browser_failed => 'ไม่สามารถเปิดเบราว์เซอร์ได้';
+
+  @override
   String get deselect_all => 'ยกเลิกการเลือกทั้งหมด';
 
   @override
@@ -4931,6 +4994,12 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get shortcut_zoom_reset => 'พอดีหน้า';
+
+  @override
+  String get shortcut_wheel_zoom => 'ซูมด้วยเมาส์';
+
+  @override
+  String get mouse_wheel => 'ล้อเลื่อน';
 
   @override
   String get shortcut_leave => 'ออกจากตัวอ่าน';
@@ -5178,4 +5247,69 @@ class AppLocalizationsTh extends AppLocalizations {
   String shortcut_key_in_use(String action) {
     return 'ถูกใช้แล้วโดย: $action';
   }
+
+  @override
+  String get external_browser => 'เปิดลิงก์ภายนอกด้วย';
+
+  @override
+  String get system_default => 'ค่าเริ่มต้นของระบบ';
+
+  @override
+  String get no_browsers_detected => 'ไม่พบเบราว์เซอร์';
+
+  @override
+  String get on_this_device => 'ในอุปกรณ์นี้';
+
+  @override
+  String get local_tracking => 'ติดตามในอุปกรณ์นี้';
+
+  @override
+  String get local_tracking_desc =>
+      'เก็บสถานะ ความคืบหน้า คะแนน และวันที่ของแต่ละเรื่องไว้ที่นี่โดยไม่ต้องมีบัญชี ไม่มีการส่งข้อมูลไปที่ใด เมื่อปิด ข้อมูลที่บันทึกไว้จะยังคงอยู่';
+
+  @override
+  String get track_add_one => 'อีกหนึ่ง';
+
+  @override
+  String get track_change_match => 'เปลี่ยนรายการที่ตรงกัน';
+
+  @override
+  String get track_remove => 'หยุดติดตาม';
+
+  @override
+  String get track_remove_local_msg =>
+      'สถานะ ความคืบหน้า คะแนน และวันที่จะถูกลบออกจากอุปกรณ์นี้';
+
+  @override
+  String track_remove_online_msg(String tracker) {
+    return 'รายการยังคงอยู่บน $tracker ที่นี่จะลบเฉพาะการเชื่อมโยงกับเรื่องนี้';
+  }
+
+  @override
+  String update_from_repo(String repo) {
+    return 'จาก $repo';
+  }
+
+  @override
+  String get update_from_other_repo => 'อัปเดตจากที่เก็บอื่นหรือไม่';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name ติดตั้งจาก $origin เวอร์ชัน $version มาจาก $other เมื่อติดตั้งแล้ว $name จะรับการอัปเดตจาก $other ดำเนินการต่อเฉพาะเมื่อคุณเชื่อถือที่เก็บนั้น';
+  }
+
+  @override
+  String get update_all_foreign => 'การอัปเดตบางรายการมาจากที่เก็บอื่น';
+
+  @override
+  String get update_all_foreign_msg =>
+      'เมื่ออัปเดตแล้ว ส่วนขยายเหล่านี้จะรับการอัปเดตจากที่เก็บใหม่ รวมไว้เฉพาะเมื่อคุณเชื่อถือ';
+
+  @override
+  String get update_all_skip_foreign => 'เฉพาะจากที่เก็บเดิมของตัวเอง';
 }

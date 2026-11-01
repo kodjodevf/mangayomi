@@ -8,11 +8,16 @@ class TrackLibrarySection {
   int syncId;
   bool isSearch;
 
+  /// Whether what [func] answered is kept and shown again next time. Off for
+  /// what is read from the device, which is current already.
+  bool cache;
+
   TrackLibrarySection({
     required this.name,
     required this.func,
     required this.syncId,
     this.itemType = ItemType.manga,
     this.isSearch = false,
+    this.cache = true,
   });
 }

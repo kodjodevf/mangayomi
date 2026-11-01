@@ -754,3 +754,121 @@ abstract class _$RememberPlayerBrightnessState extends $Notifier<bool> {
     return element.handleCreate(ref, build);
   }
 }
+
+/// The player's fit, kept from one episode to the next (#996).
+
+@ProviderFor(PlayerVideoFitState)
+final playerVideoFitStateProvider = PlayerVideoFitStateProvider._();
+
+/// The player's fit, kept from one episode to the next (#996).
+final class PlayerVideoFitStateProvider
+    extends $NotifierProvider<PlayerVideoFitState, BoxFit> {
+  /// The player's fit, kept from one episode to the next (#996).
+  PlayerVideoFitStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'playerVideoFitStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$playerVideoFitStateHash();
+
+  @$internal
+  @override
+  PlayerVideoFitState create() => PlayerVideoFitState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BoxFit value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BoxFit>(value),
+    );
+  }
+}
+
+String _$playerVideoFitStateHash() =>
+    r'6bd228dc5387da9ab38b52ad79b600839abf23ff';
+
+/// The player's fit, kept from one episode to the next (#996).
+
+abstract class _$PlayerVideoFitState extends $Notifier<BoxFit> {
+  BoxFit build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<BoxFit, BoxFit>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<BoxFit, BoxFit>,
+              BoxFit,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// Whether a subtitle track is turned on when an episode starts (#615).
+
+@ProviderFor(SubtitlesOnByDefaultState)
+final subtitlesOnByDefaultStateProvider = SubtitlesOnByDefaultStateProvider._();
+
+/// Whether a subtitle track is turned on when an episode starts (#615).
+final class SubtitlesOnByDefaultStateProvider
+    extends $NotifierProvider<SubtitlesOnByDefaultState, bool> {
+  /// Whether a subtitle track is turned on when an episode starts (#615).
+  SubtitlesOnByDefaultStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'subtitlesOnByDefaultStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$subtitlesOnByDefaultStateHash();
+
+  @$internal
+  @override
+  SubtitlesOnByDefaultState create() => SubtitlesOnByDefaultState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$subtitlesOnByDefaultStateHash() =>
+    r'e92b98b986361f0e95963d43ea2673eac52f0c6e';
+
+/// Whether a subtitle track is turned on when an episode starts (#615).
+
+abstract class _$SubtitlesOnByDefaultState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

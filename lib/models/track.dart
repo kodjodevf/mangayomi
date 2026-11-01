@@ -123,7 +123,10 @@ enum TrackerProviders {
   anilist(syncId: 2, name: "AL"),
   kitsu(syncId: 3, name: "Kitsu"),
   simkl(syncId: 4, name: "Simkl"),
-  trakt(syncId: 5, name: "Trakt");
+  trakt(syncId: 5, name: "Trakt"),
+
+  /// Kept on this device only: no account, no network.
+  local(syncId: 6, name: "Local");
 
   const TrackerProviders({required this.syncId, required this.name});
 

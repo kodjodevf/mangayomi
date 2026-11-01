@@ -19,18 +19,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.4.0
+        with:
+          persist-credentials: false
 
       - name: setup flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.23.0
         with:
           channel: "stable"
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: Setup Java toolchain (Only Android target)
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v4.9.1
         with:
           distribution: "temurin"
           java-version: "17"
@@ -61,7 +65,7 @@ jobs:
           mv app-x86_64-release.apk Mangayomi-${{ github.ref_name }}-android-x86_64.apk
 
       - name: upload artifact android apks
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: Mangayomi-${{ github.ref_name }}-android
           path: "build/app/outputs/flutter-apk/Mangayomi-*.apk"
@@ -77,18 +81,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.4.0
+        with:
+          persist-credentials: false
 
       - name: setup flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.23.0
         with:
           channel: "stable"
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: Setup Java toolchain (Only Android target)
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v4.9.1
         with:
           distribution: "temurin"
           java-version: "17"
@@ -134,7 +142,7 @@ jobs:
           mv app-x86_64-release.apk Mangayomi-${{ github.ref_name }}-android-tv-x86_64.apk
 
       - name: upload artifact android tv apks
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: Mangayomi-${{ github.ref_name }}-android-tv
           path: "build/app/outputs/flutter-apk/Mangayomi-*android-tv*.apk"
@@ -145,21 +153,24 @@ jobs:
     runs-on: macos-26
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.4.0
+        with:
+          persist-credentials: false
 
       - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.23.0
         with:
           channel: "stable"
           architecture: x64
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: stable
           targets: aarch64-apple-ios,x86_64-apple-ios
 
       - name: Setup Rust cache
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@v2.9.3
         with:
           workspaces: rust
           cache-on-failure: true
@@ -193,7 +204,7 @@ jobs:
           zip -r Mangayomi-${{ github.ref_name }}-ios.ipa Payload
 
       - name: Upload artifact iOS IPA
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: Mangayomi-${{ github.ref_name }}-ios
           path: "build/ios/iphoneos/Mangayomi-*.ipa"
@@ -204,15 +215,19 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: checkout branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.4.0
+        with:
+          persist-credentials: false
 
       - name: setup flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.23.0
         with:
           channel: "stable"
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: flutter pub get
         run: flutter pub get
@@ -227,7 +242,7 @@ jobs:
           create-dmg --volname Mangayomi-${{ github.ref_name }}-macos --window-pos 200 120 --window-size 800 450 --icon-size 100 --app-drop-link 600 185 Mangayomi-${{ github.ref_name }}-macos.dmg build/macos/Build/Products/Release/Mangayomi.app
 
       - name: upload artifact macos dmg
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: Mangayomi-${{ github.ref_name }}-macos
           path: "/Users/runner/work/mangayomi/mangayomi/*.dmg"
@@ -238,25 +253,34 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.4.0
+        with:
+          persist-credentials: false
 
       - name: setup flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.23.0
         with:
           channel: "stable"
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: flutter pub get
         run: flutter pub get
 
-      - name: Enable inno_bundle
-        run: dart pub global activate inno_bundle
+      # Built here rather than by inno_bundle, which always adds --obfuscate
+      # and --split-debug-info: a Windows crash report then carried addresses
+      # only, with nothing kept to read them back. The other platforms are not
+      # obfuscated, and the code is open, so there was nothing to hide.
+      - name: build windows app
+        run: flutter build windows --release --verbose
 
+      # The installer, from the app built above. inno_bundle is the project's
+      # own dev dependency, at the version in pubspec.lock.
       - name: build windows exe
-        run: |
-          dart run inno_bundle:build --release
+        run: dart run inno_bundle --no-app
 
       - name: build windows zip
         shell: pwsh
@@ -277,7 +301,7 @@ jobs:
           Move-Item -Path $tempZip -Destination "dist/Mangayomi-${{ github.ref_name }}-windows.zip" -Force
 
       - name: upload artifact windows exe_zip
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: Mangayomi-${{ github.ref_name }}-windows-zip
           path: dist/Mangayomi-*
@@ -289,7 +313,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.4.0
+        with:
+          persist-credentials: false
 
       - name: Install dependencies
         run: |
@@ -299,12 +325,14 @@ jobs:
           chmod +x /usr/local/bin/linuxdeploy
 
       - name: setup flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.23.0
         with:
           channel: "stable"
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: flutter pub get
         run: flutter pub get
@@ -313,7 +341,7 @@ jobs:
         run: flutter build linux --release --verbose
 
       - name: Zip
-        uses: thedoctor0/zip-release@main
+        uses: thedoctor0/zip-release@0.7.6
         with:
           type: "zip"
           filename: Mangayomi-${{ github.ref_name }}-linux.zip
@@ -431,7 +459,7 @@ jobs:
           mv rpm_build/RPMS/x86_64/*.rpm build/linux/x64/release/Mangayomi-${{ github.ref_name }}-linux.rpm
 
       - name: upload artifact linux zip
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: Mangayomi-${{ github.ref_name }}-linux-zip
           path: |
@@ -445,7 +473,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.4.0
+        with:
+          persist-credentials: false
 
       - name: Install dependencies
         run: |
@@ -453,12 +483,14 @@ jobs:
           sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev libfuse2 libjpeg-dev libpng-dev libavif-dev libsecret-1-dev
 
       - name: setup flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.23.0
         with:
           channel: "stable"
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
 
       - name: flutter pub get
         run: flutter pub get
@@ -486,7 +518,7 @@ jobs:
           fakeroot dpkg-deb -b extracted_deb dist/Mangayomi-${{ github.ref_name }}-linux.deb
 
       - name: upload artifact linux deb
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: Mangayomi-${{ github.ref_name }}-linux-deb
           path: dist/Mangayomi-*.deb
@@ -505,7 +537,7 @@ jobs:
       - build-and-release-linux-deb
     steps:
       - name: Download all build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4.3.0
         with:
           pattern: Mangayomi-*
           merge-multiple: true
@@ -517,12 +549,15 @@ jobs:
           find release-assets -mindepth 1 -type d -empty -delete
 
       - name: Publish GitHub Release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1.21.0
         with:
           artifacts: "release-assets/*"
           generateReleaseNotes: true
           allowUpdates: true
 
   ios-source-build:
+    permissions:
+      # The called workflow pushes the regenerated source list.
+      contents: write
     needs: publish-release
     uses: ./.github/workflows/update_sideloading_source.yml

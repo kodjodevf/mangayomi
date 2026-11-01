@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/updates/providers/updates_last_seen_provider.dart';
+import 'package:mangayomi/providers/show_updates_badge_state_provider.dart';
 import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/providers/reader_state_provider.dart';
@@ -53,6 +55,8 @@ class ExtensionBadgeWidget extends ConsumerWidget {
   }
 }
 
+/// The chapters found since Updates was last opened, as Mihon counts them.
+/// Opening or leaving Updates clears it; reading a chapter takes it off.
 class UpdatesBadgeWidget extends ConsumerWidget {
   const UpdatesBadgeWidget({super.key, required this.icon, required this.ref});
 
@@ -61,7 +65,9 @@ class UpdatesBadgeWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (!ref.watch(showUpdatesBadgeStateProvider)) return icon;
     final hideItems = ref.watch(hideItemsStateProvider);
+    final lastSeenAt = ref.watch(updatesLastSeenStateProvider);
 
     return StreamBuilder(
       stream: updateRepository.watchUnreadExcludingHiddenItemTypes(
@@ -70,11 +76,10 @@ class UpdatesBadgeWidget extends ConsumerWidget {
         hideNovel: hideItems.contains("/NovelLibrary"),
       ),
       builder: (context, snapshot) {
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return icon;
-        }
+        final count = countNewUpdates(snapshot.data ?? const [], lastSeenAt);
+        if (count == 0) return icon;
 
-        return Badge(label: Text("${snapshot.data!.length}"), child: icon);
+        return Badge(label: Text("$count"), child: icon);
       },
     );
   }

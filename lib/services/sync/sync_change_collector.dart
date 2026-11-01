@@ -34,6 +34,7 @@ const _deviceLocalSettingsKeys = {
   'androidProxyServer',
   'jrePath',
   'extensionServerPath',
+  'updatesLastSeenAt',
 };
 
 class ChangedRows {

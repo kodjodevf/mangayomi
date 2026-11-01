@@ -5,8 +5,8 @@ import 'package:mangayomi/modules/more/settings/browse/extension_server/android_
 import 'package:mangayomi/modules/more/settings/browse/extension_server/extension_server_utils.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:shiori/shiori.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 /// Shiori settings group for configuring the Android proxy server address and downloading it.
 class AndroidProxyGroup extends ConsumerWidget {
@@ -21,10 +21,7 @@ class AndroidProxyGroup extends ConsumerWidget {
 
   Future<void> _openMExtensionServerRelease(BuildContext context) async {
     final l10n = l10nLocalizations(context)!;
-    if (!await launchUrl(
-      Uri.parse(mExtensionServerReleaseUrl),
-      mode: LaunchMode.externalApplication,
-    )) {
+    if (!await ExternalBrowser.open(mExtensionServerReleaseUrl)) {
       botToast(l10n.could_not_launch_apk_bridge_page);
     }
   }

@@ -1876,6 +1876,13 @@ class AppLocalizationsId extends AppLocalizations {
       'Gunakan kapsul mengambang alih-alih bilah navigasi yang menempel.';
 
   @override
+  String get show_updates_badge => 'Tampilkan lencana pada ikon Pembaruan';
+
+  @override
+  String get show_updates_badge_description =>
+      'Menghitung bab yang ditemukan sejak terakhir kali Anda membuka Pembaruan.';
+
+  @override
   String get full_screen_player => 'Gunakan Layar Penuh';
 
   @override
@@ -2498,6 +2505,13 @@ class AppLocalizationsId extends AppLocalizations {
   String get edit_code => 'Kode Edit';
 
   @override
+  String get subtitles_on_by_default => 'Aktifkan teks film';
+
+  @override
+  String get subtitles_on_by_default_info =>
+      'Jika nonaktif, episode dimulai tanpa teks film sampai Anda memilih trek.';
+
+  @override
   String get use_libass => 'Aktifkan libass';
 
   @override
@@ -2509,11 +2523,11 @@ class AppLocalizationsId extends AppLocalizations {
       'Nonaktifkan `gunakan libass` di pengaturan pemutar untuk dapat menyesuaikan subtitle.';
 
   @override
-  String get override_ass_subtitles => 'Ganti teks film ASS';
+  String get override_ass_subtitles => 'Gunakan gaya teks film saya';
 
   @override
   String get override_ass_subtitles_info =>
-      'Terapkan gaya khusus ke teks film ASS/SSA';
+      'Menerapkan ukuran dan warna Anda ke semua teks film, termasuk ASS. Jika nonaktif, teks film memakai gaya bawaannya';
 
   @override
   String get torrent_stream => 'Aliran Torrent';
@@ -4461,6 +4475,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get invert_selection => 'Balik pilihan';
 
   @override
+  String get select_between => 'Pilih di antara';
+
+  @override
   String get show_password => 'Tampilkan kata sandi';
 
   @override
@@ -4817,6 +4834,52 @@ class AppLocalizationsId extends AppLocalizations {
   String get update_write_failed => 'Tidak dapat menulis berkas APK.';
 
   @override
+  String get update_later => 'Nanti';
+
+  @override
+  String get update_installed_version => 'Terpasang';
+
+  @override
+  String get update_new_version => 'Versi baru';
+
+  @override
+  String update_published(String date) {
+    return 'Dirilis pada $date';
+  }
+
+  @override
+  String get update_pre_release => 'Pra-rilis';
+
+  @override
+  String get update_notes_features => 'Baru';
+
+  @override
+  String get update_notes_fixes => 'Perbaikan';
+
+  @override
+  String get update_notes_other => 'Peningkatan';
+
+  @override
+  String get update_hint_install =>
+      'Aplikasi mengunduh pembaruan, lalu Android meminta Anda mengonfirmasi pemasangan. Pustaka Anda tetap seperti semula.';
+
+  @override
+  String get update_hint_browser =>
+      'Halaman rilis terbuka di peramban: unduh berkas untuk sistem Anda dari sana, lalu pasang.';
+
+  @override
+  String get update_downloading => 'Mengunduh…';
+
+  @override
+  String get update_installing => 'Membuka pemasang…';
+
+  @override
+  String get update_install_failed => 'Tidak dapat membuka pemasang.';
+
+  @override
+  String get update_browser_failed => 'Tidak dapat membuka peramban.';
+
+  @override
   String get deselect_all => 'Batalkan semua pilihan';
 
   @override
@@ -4961,6 +5024,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get shortcut_zoom_reset => 'Paskan halaman';
+
+  @override
+  String get shortcut_wheel_zoom => 'Perbesar dengan tetikus';
+
+  @override
+  String get mouse_wheel => 'Roda';
 
   @override
   String get shortcut_leave => 'Keluar dari pembaca';
@@ -5209,4 +5278,70 @@ class AppLocalizationsId extends AppLocalizations {
   String shortcut_key_in_use(String action) {
     return 'Sudah dipakai oleh: $action';
   }
+
+  @override
+  String get external_browser => 'Buka tautan eksternal dengan';
+
+  @override
+  String get system_default => 'Bawaan sistem';
+
+  @override
+  String get no_browsers_detected => 'Tidak ada peramban yang terdeteksi';
+
+  @override
+  String get on_this_device => 'Di perangkat ini';
+
+  @override
+  String get local_tracking => 'Lacak di perangkat ini';
+
+  @override
+  String get local_tracking_desc =>
+      'Simpan status, progres, skor, dan tanggal setiap seri di sini, tanpa akun. Tidak ada yang dikirim. Menonaktifkannya tetap menyimpan datanya.';
+
+  @override
+  String get track_add_one => 'Tambah satu';
+
+  @override
+  String get track_change_match => 'Ubah kecocokan';
+
+  @override
+  String get track_remove => 'Berhenti melacak';
+
+  @override
+  String get track_remove_local_msg =>
+      'Status, progres, skor, dan tanggalnya dihapus dari perangkat ini.';
+
+  @override
+  String track_remove_online_msg(String tracker) {
+    return 'Entri tetap ada di $tracker: hanya tautannya ke seri ini yang dihapus di sini.';
+  }
+
+  @override
+  String update_from_repo(String repo) {
+    return 'Dari $repo';
+  }
+
+  @override
+  String get update_from_other_repo => 'Perbarui dari repositori lain?';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name dipasang dari $origin. Versi $version berasal dari $other: setelah dipasang, $name menerima pembaruan dari $other. Lanjutkan hanya jika Anda memercayai repositori tersebut.';
+  }
+
+  @override
+  String get update_all_foreign =>
+      'Beberapa pembaruan berasal dari repositori lain';
+
+  @override
+  String get update_all_foreign_msg =>
+      'Setelah diperbarui, ekstensi ini menerima pembaruan dari repositori baru. Sertakan hanya jika Anda memercayainya.';
+
+  @override
+  String get update_all_skip_foreign => 'Hanya dari repositorinya sendiri';
 }

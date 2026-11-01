@@ -10,8 +10,14 @@ import 'package:shiori/shiori.dart';
 /// [VideoFilter], applied to the video as it moves through [onApply] and
 /// kept for the next episodes.
 class VideoFiltersSection extends ConsumerWidget {
-  const VideoFiltersSection({super.key, required this.onApply});
+  const VideoFiltersSection({
+    super.key,
+    required this.available,
+    required this.onApply,
+  });
 
+  /// The adjustments this player's output can show; the others are left out.
+  final List<VideoFilter> available;
   final void Function(VideoFilter filter, int value) onApply;
 
   static String label(AppLocalizations l10n, VideoFilter filter) =>
@@ -34,7 +40,7 @@ class VideoFiltersSection extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          for (final filter in VideoFilter.values)
+          for (final filter in available)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s16),
               child: Row(
@@ -78,7 +84,7 @@ class VideoFiltersSection extends ConsumerWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: ShioriSpace.s8),
               child: TextButton(
-                onPressed: filters.values.every((v) => v == 0)
+                onPressed: available.every((filter) => filters[filter] == 0)
                     ? null
                     : () {
                         notifier.reset();
@@ -91,6 +97,29 @@ class VideoFiltersSection extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Applies the picture adjustments over whatever was painted beneath it, for
+/// a software output, where mpv leaves them out. Sits between the video and
+/// its controls, so the controls keep their colours.
+class SoftwareVideoFilterLayer extends ConsumerWidget {
+  const SoftwareVideoFilterLayer({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final matrix = softwareVideoFilterMatrix(
+      ref.watch(videoFiltersStateProvider),
+    );
+    if (matrix == null) return const SizedBox.shrink();
+    return IgnorePointer(
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ColorFilter.matrix(matrix),
+          child: const SizedBox.expand(),
+        ),
       ),
     );
   }

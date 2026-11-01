@@ -8,6 +8,74 @@ part of 'track_state_providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Sends what was read or watched to the trackers, on a Ref that lives as
+/// long as the app. A tracker answers over the network, by when the reader or
+/// player that asked may have closed: its Ref, which the answer used to be
+/// written through, was gone by then (#1079).
+
+@ProviderFor(TrackerSync)
+final trackerSyncProvider = TrackerSyncProvider._();
+
+/// Sends what was read or watched to the trackers, on a Ref that lives as
+/// long as the app. A tracker answers over the network, by when the reader or
+/// player that asked may have closed: its Ref, which the answer used to be
+/// written through, was gone by then (#1079).
+final class TrackerSyncProvider extends $NotifierProvider<TrackerSync, void> {
+  /// Sends what was read or watched to the trackers, on a Ref that lives as
+  /// long as the app. A tracker answers over the network, by when the reader or
+  /// player that asked may have closed: its Ref, which the answer used to be
+  /// written through, was gone by then (#1079).
+  TrackerSyncProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'trackerSyncProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$trackerSyncHash();
+
+  @$internal
+  @override
+  TrackerSync create() => TrackerSync();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(void value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<void>(value),
+    );
+  }
+}
+
+String _$trackerSyncHash() => r'b81f3abc4ac9a85dd96fcd2cccb495504c5c5ae5';
+
+/// Sends what was read or watched to the trackers, on a Ref that lives as
+/// long as the app. A tracker answers over the network, by when the reader or
+/// player that asked may have closed: its Ref, which the answer used to be
+/// written through, was gone by then (#1079).
+
+abstract class _$TrackerSync extends $Notifier<void> {
+  void build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<void, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
 
 @ProviderFor(TrackState)
 final trackStateProvider = TrackStateFamily._();
@@ -58,7 +126,7 @@ final class TrackStateProvider extends $NotifierProvider<TrackState, Track> {
   }
 }
 
-String _$trackStateHash() => r'6ccbb16e1e167c37a44883ed4944313401dddac4';
+String _$trackStateHash() => r'dc1855833de899f805d7df2537fe71a115c9bc25';
 
 final class TrackStateFamily extends $Family
     with

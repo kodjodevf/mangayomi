@@ -1876,6 +1876,13 @@ class AppLocalizationsAs extends AppLocalizations {
       'সাধাৰণ লাগি থকা নেভিগেচন বাৰৰ সলনি এটা ভাহি থকা কেপচুল ব্যৱহাৰ কৰক।';
 
   @override
+  String get show_updates_badge => 'আপডেট আইকনত বেজ দেখুৱাওক';
+
+  @override
+  String get show_updates_badge_description =>
+      'আপুনি শেষবাৰ আপডেট খোলাৰ পিছত পোৱা অধ্যায়সমূহ গণনা কৰে।';
+
+  @override
   String get full_screen_player => 'সম্পূৰ্ণ স্ক্ৰীন ব্যৱহাৰ কৰক';
 
   @override
@@ -2493,6 +2500,13 @@ class AppLocalizationsAs extends AppLocalizations {
   String get edit_code => 'ক\'ড সম্পাদনা কৰক';
 
   @override
+  String get subtitles_on_by_default => 'চাবটাইটেল অন কৰক';
+
+  @override
+  String get subtitles_on_by_default_info =>
+      'বন্ধ থাকিলে, আপুনি এটা ট্ৰেক বাছনি নকৰালৈকে পৰ্বসমূহ চাবটাইটেল অবিহনে আৰম্ভ হয়।';
+
+  @override
   String get use_libass => 'libass সক্ষম কৰক';
 
   @override
@@ -2504,11 +2518,11 @@ class AppLocalizationsAs extends AppLocalizations {
       'উপশিৰোনামসমূহ কাষ্টমাইজ কৰিবলৈ সক্ষম হ\'বলৈ প্লেয়াৰ ছেটিংছত `libass ব্যৱহাৰ কৰক` নিষ্ক্ৰিয় কৰক।';
 
   @override
-  String get override_ass_subtitles => 'ASS চাবটাইটেল অভাৰৰাইড কৰক';
+  String get override_ass_subtitles => 'মোৰ চাবটাইটেল শৈলী ব্যৱহাৰ কৰক';
 
   @override
   String get override_ass_subtitles_info =>
-      'ASS/SSA চাবটাইটেলত স্বনিৰ্বাচিত শৈলী প্ৰয়োগ কৰক';
+      'আপোনাৰ আকাৰ আৰু ৰং ASSকে ধৰি সকলো চাবটাইটেলত প্ৰয়োগ কৰে। বন্ধ থাকিলে চাবটাইটেলে ডিফল্ট শৈলী ব্যৱহাৰ কৰে';
 
   @override
   String get torrent_stream => 'টৰেণ্ট ষ্ট্ৰীম';
@@ -4448,6 +4462,9 @@ class AppLocalizationsAs extends AppLocalizations {
   String get invert_selection => 'বাছনি ওলোটাওক';
 
   @override
+  String get select_between => 'মাজৰখিনি বাছনি কৰক';
+
+  @override
   String get show_password => 'পাছৱৰ্ড দেখুৱাওক';
 
   @override
@@ -4802,6 +4819,52 @@ class AppLocalizationsAs extends AppLocalizations {
   String get update_write_failed => 'APK ফাইল লিখিব পৰা নগ\'ল।';
 
   @override
+  String get update_later => 'পিছত';
+
+  @override
+  String get update_installed_version => 'ইনষ্টল কৰা';
+
+  @override
+  String get update_new_version => 'নতুন সংস্কৰণ';
+
+  @override
+  String update_published(String date) {
+    return '$dateত প্ৰকাশিত';
+  }
+
+  @override
+  String get update_pre_release => 'প্ৰাক-মুক্তি';
+
+  @override
+  String get update_notes_features => 'নতুন';
+
+  @override
+  String get update_notes_fixes => 'সংশোধন';
+
+  @override
+  String get update_notes_other => 'উন্নতি';
+
+  @override
+  String get update_hint_install =>
+      'এপটোৱে আপডেট ডাউনলোড কৰে, তাৰ পিছত Android এ ইনষ্টলেচন নিশ্চিত কৰিবলৈ ক\'ব। আপোনাৰ লাইব্ৰেৰী একে থাকিব।';
+
+  @override
+  String get update_hint_browser =>
+      'মুক্তিৰ পৃষ্ঠাটো আপোনাৰ ব্ৰাউজাৰত খোল খাব: তাৰ পৰা আপোনাৰ ছিষ্টেমৰ ফাইলটো ডাউনলোড কৰি ইনষ্টল কৰক।';
+
+  @override
+  String get update_downloading => 'ডাউনলোড হৈ আছে…';
+
+  @override
+  String get update_installing => 'ইনষ্টলাৰ খোলা হৈছে…';
+
+  @override
+  String get update_install_failed => 'ইনষ্টলাৰ খুলিব পৰা নগ\'ল।';
+
+  @override
+  String get update_browser_failed => 'ব্ৰাউজাৰ খুলিব পৰা নগ\'ল।';
+
+  @override
   String get deselect_all => 'সকলো বাছনি আঁতৰাওক';
 
   @override
@@ -4947,6 +5010,12 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get shortcut_zoom_reset => 'পৃষ্ঠা খাপ খুৱাওক';
+
+  @override
+  String get shortcut_wheel_zoom => 'মাউছেৰে জুম কৰক';
+
+  @override
+  String get mouse_wheel => 'হুইল';
 
   @override
   String get shortcut_leave => 'পঢ়োতাৰ পৰা ওলাওক';
@@ -5194,4 +5263,69 @@ class AppLocalizationsAs extends AppLocalizations {
   String shortcut_key_in_use(String action) {
     return 'ইতিমধ্যে ব্যৱহৃত: $action';
   }
+
+  @override
+  String get external_browser => 'বাহ্যিক লিংক ইয়াৰে খোলক';
+
+  @override
+  String get system_default => 'ছিষ্টেম ডিফল্ট';
+
+  @override
+  String get no_browsers_detected => 'কোনো ব্ৰাউজাৰ পোৱা নগ\'ল';
+
+  @override
+  String get on_this_device => 'এই ডিভাইচত';
+
+  @override
+  String get local_tracking => 'এই ডিভাইচত ট্ৰেক কৰক';
+
+  @override
+  String get local_tracking_desc =>
+      'একাউণ্ট অবিহনে প্ৰতিটো ছিৰিজৰ স্থিতি, অগ্ৰগতি, স্ক\'ৰ আৰু তাৰিখ ইয়াতে ৰাখে। একো ক\'তো পঠিওৱা নহয়। বন্ধ কৰিলেও সংৰক্ষিত তথ্য থাকি যায়।';
+
+  @override
+  String get track_add_one => 'আৰু এটা';
+
+  @override
+  String get track_change_match => 'মিল সলনি কৰক';
+
+  @override
+  String get track_remove => 'ট্ৰেক কৰা বন্ধ কৰক';
+
+  @override
+  String get track_remove_local_msg =>
+      'ইয়াৰ স্থিতি, অগ্ৰগতি, স্ক\'ৰ আৰু তাৰিখ এই ডিভাইচৰ পৰা মচি পেলোৱা হ\'ব।';
+
+  @override
+  String track_remove_online_msg(String tracker) {
+    return 'প্ৰৱেশটো $trackerত থাকি যায়: ইয়াত কেৱল এই ছিৰিজৰ সৈতে থকা সংযোগ আঁতৰোৱা হয়।';
+  }
+
+  @override
+  String update_from_repo(String repo) {
+    return '$repoৰ পৰা';
+  }
+
+  @override
+  String get update_from_other_repo => 'আন এটা ৰিপজিটৰীৰ পৰা আপডেট কৰিবনে?';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name $originৰ পৰা ইনষ্টল কৰা হৈছিল। সংস্কৰণ $version $otherৰ পৰা আহিছে: ইনষ্টল কৰাৰ পিছত $nameএ $otherৰ পৰা আপডেট ল\'ব। সেই ৰিপজিটৰীত বিশ্বাস থাকিলেহে আগবাঢ়ক।';
+  }
+
+  @override
+  String get update_all_foreign => 'কিছুমান আপডেট আন এটা ৰিপজিটৰীৰ পৰা আহিছে';
+
+  @override
+  String get update_all_foreign_msg =>
+      'আপডেট হোৱাৰ পিছত এই এক্সটেনচনসমূহে নতুন ৰিপজিটৰীৰ পৰা আপডেট ল\'ব। বিশ্বাস থাকিলেহে সেইবোৰ অন্তৰ্ভুক্ত কৰক।';
+
+  @override
+  String get update_all_skip_foreign => 'কেৱল নিজৰ ৰিপজিটৰীৰ পৰা';
 }

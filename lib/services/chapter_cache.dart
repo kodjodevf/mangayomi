@@ -22,6 +22,15 @@ class ChapterCache {
 
   static const String cacheFolderName = 'chapter_disk_cache';
 
+  static bool _isLoopbackProxyUrl(String url) {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return false;
+    return (uri.host == '127.0.0.1' ||
+            uri.host == 'localhost' ||
+            uri.host == '::1') &&
+        uri.path.startsWith('/image/');
+  }
+
   @visibleForTesting
   Directory? customCacheDir;
 
@@ -80,6 +89,13 @@ class ChapterCache {
         }
       }
 
+      if (pageUrls.any((p) => _isLoopbackProxyUrl(p.url))) {
+        try {
+          await file.delete();
+        } catch (_) {}
+        return null;
+      }
+
       return pageUrls.isNotEmpty ? pageUrls : null;
     } catch (e) {
       if (kDebugMode) {
@@ -92,8 +108,12 @@ class ChapterCache {
   /// Writes [pages] for [chapter] to the disk cache.
   Future<void> putPageListToCache(Chapter chapter, List<PageUrl> pages) async {
     try {
-      // Do not cache empty or placeholder page lists
-      if (pages.isEmpty || pages.every((p) => p.url.isEmpty)) return;
+      // Do not cache empty, placeholder, or transient loopback proxy page lists
+      if (pages.isEmpty ||
+          pages.every((p) => p.url.isEmpty) ||
+          pages.any((p) => _isLoopbackProxyUrl(p.url))) {
+        return;
+      }
 
       final file = await _getCacheFile(chapter);
       final data = {

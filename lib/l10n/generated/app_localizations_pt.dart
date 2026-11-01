@@ -1880,6 +1880,13 @@ class AppLocalizationsPt extends AppLocalizations {
       'Uma cápsula flutuante em vez da barra de navegação fixa.';
 
   @override
+  String get show_updates_badge => 'Mostrar emblema no ícone de Atualizações';
+
+  @override
+  String get show_updates_badge_description =>
+      'Conta os capítulos encontrados desde a última vez que abriu Atualizações.';
+
+  @override
   String get full_screen_player => 'Usar tela cheia';
 
   @override
@@ -2508,6 +2515,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get edit_code => 'Editar código';
 
   @override
+  String get subtitles_on_by_default => 'Ativar legendas';
+
+  @override
+  String get subtitles_on_by_default_info =>
+      'Se desativado, os episódios começam sem legendas até escolher uma faixa.';
+
+  @override
   String get use_libass => 'Ativar libass';
 
   @override
@@ -2519,11 +2533,11 @@ class AppLocalizationsPt extends AppLocalizations {
       'Desative `use libass` nas configurações do player para poder personalizar as legendas.';
 
   @override
-  String get override_ass_subtitles => 'Substituir legendas ASS';
+  String get override_ass_subtitles => 'Usar o meu estilo de legendas';
 
   @override
   String get override_ass_subtitles_info =>
-      'Aplicar estilo personalizado às legendas ASS/SSA';
+      'Aplica o seu tamanho e cores a todas as legendas, incluindo ASS. Se desativado, as legendas usam o estilo predefinido';
 
   @override
   String get torrent_stream => 'Stream de Torrent';
@@ -4489,6 +4503,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get invert_selection => 'Inverter seleção';
 
   @override
+  String get select_between => 'Selecionar entre';
+
+  @override
   String get show_password => 'Mostrar senha';
 
   @override
@@ -4848,6 +4865,52 @@ class AppLocalizationsPt extends AppLocalizations {
   String get update_write_failed => 'Não foi possível gravar o arquivo APK.';
 
   @override
+  String get update_later => 'Mais tarde';
+
+  @override
+  String get update_installed_version => 'Instalada';
+
+  @override
+  String get update_new_version => 'Nova versão';
+
+  @override
+  String update_published(String date) {
+    return 'Publicada em $date';
+  }
+
+  @override
+  String get update_pre_release => 'Pré-lançamento';
+
+  @override
+  String get update_notes_features => 'Novidades';
+
+  @override
+  String get update_notes_fixes => 'Correções';
+
+  @override
+  String get update_notes_other => 'Melhorias';
+
+  @override
+  String get update_hint_install =>
+      'A aplicação transfere a atualização e depois o Android pede-lhe para confirmar a instalação. A sua biblioteca fica como está.';
+
+  @override
+  String get update_hint_browser =>
+      'A página da versão abre-se no navegador: transfira aí o ficheiro para o seu sistema e depois instale-o.';
+
+  @override
+  String get update_downloading => 'A transferir…';
+
+  @override
+  String get update_installing => 'A abrir o instalador…';
+
+  @override
+  String get update_install_failed => 'Não foi possível abrir o instalador.';
+
+  @override
+  String get update_browser_failed => 'Não foi possível abrir o navegador.';
+
+  @override
   String get deselect_all => 'Desmarcar tudo';
 
   @override
@@ -4993,6 +5056,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get shortcut_zoom_reset => 'Ajustar a página';
+
+  @override
+  String get shortcut_wheel_zoom => 'Zoom com o rato';
+
+  @override
+  String get mouse_wheel => 'Roda';
 
   @override
   String get shortcut_leave => 'Sair do leitor';
@@ -5241,6 +5310,73 @@ class AppLocalizationsPt extends AppLocalizations {
   String shortcut_key_in_use(String action) {
     return 'Já usada por: $action';
   }
+
+  @override
+  String get external_browser => 'Abrir ligações externas com';
+
+  @override
+  String get system_default => 'Predefinição do sistema';
+
+  @override
+  String get no_browsers_detected => 'Nenhum navegador detetado';
+
+  @override
+  String get on_this_device => 'Neste dispositivo';
+
+  @override
+  String get local_tracking => 'Acompanhar neste dispositivo';
+
+  @override
+  String get local_tracking_desc =>
+      'Guarda aqui o estado, o progresso, a pontuação e as datas de cada série, sem conta. Nada é enviado. Ao desativar, o que está guardado é mantido.';
+
+  @override
+  String get track_add_one => 'Mais um';
+
+  @override
+  String get track_change_match => 'Alterar correspondência';
+
+  @override
+  String get track_remove => 'Deixar de acompanhar';
+
+  @override
+  String get track_remove_local_msg =>
+      'O estado, o progresso, a pontuação e as datas serão eliminados deste dispositivo.';
+
+  @override
+  String track_remove_online_msg(String tracker) {
+    return 'A entrada permanece em $tracker: aqui apenas é removida a ligação a esta série.';
+  }
+
+  @override
+  String update_from_repo(String repo) {
+    return 'De $repo';
+  }
+
+  @override
+  String get update_from_other_repo =>
+      'Atualizar a partir de outro repositório?';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name foi instalada a partir de $origin. A versão $version vem de $other: depois de instalada, $name recebe as atualizações de $other. Continue apenas se confiar nesse repositório.';
+  }
+
+  @override
+  String get update_all_foreign =>
+      'Algumas atualizações vêm de outro repositório';
+
+  @override
+  String get update_all_foreign_msg =>
+      'Depois de atualizadas, estas extensões recebem as atualizações do novo repositório. Inclua-as apenas se confiar nele.';
+
+  @override
+  String get update_all_skip_foreign => 'Apenas do próprio repositório';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -6490,6 +6626,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Usar uma cápsula flutuante em vez da barra de navegação padrão fixa.';
 
   @override
+  String get show_updates_badge => 'Mostrar selo no ícone de Atualizações';
+
+  @override
+  String get show_updates_badge_description =>
+      'Conta os capítulos encontrados desde a última vez que você abriu Atualizações.';
+
+  @override
   String get full_screen_player => 'Usar tela cheia';
 
   @override
@@ -7119,6 +7262,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get edit_code => 'Editar código';
 
   @override
+  String get subtitles_on_by_default => 'Ativar legendas';
+
+  @override
+  String get subtitles_on_by_default_info =>
+      'Se desativado, os episódios começam sem legendas até você escolher uma faixa.';
+
+  @override
   String get use_libass => 'Ativar libass';
 
   @override
@@ -7130,11 +7280,11 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Desative `usar libass` nas configurações do player para poder personalizar as legendas.';
 
   @override
-  String get override_ass_subtitles => 'Substituir legendas ASS';
+  String get override_ass_subtitles => 'Usar meu estilo de legendas';
 
   @override
   String get override_ass_subtitles_info =>
-      'Aplicar estilo personalizado às legendas ASS/SSA';
+      'Aplica seu tamanho e cores a todas as legendas, incluindo ASS. Se desativado, as legendas usam o estilo padrão';
 
   @override
   String get torrent_stream => 'Transmissão de Torrent';
@@ -9100,6 +9250,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get invert_selection => 'Inverter seleção';
 
   @override
+  String get select_between => 'Selecionar entre';
+
+  @override
   String get show_password => 'Mostrar senha';
 
   @override
@@ -9461,6 +9614,52 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get update_write_failed => 'Não foi possível gravar o arquivo APK.';
 
   @override
+  String get update_later => 'Mais tarde';
+
+  @override
+  String get update_installed_version => 'Instalada';
+
+  @override
+  String get update_new_version => 'Nova versão';
+
+  @override
+  String update_published(String date) {
+    return 'Publicada em $date';
+  }
+
+  @override
+  String get update_pre_release => 'Pré-lançamento';
+
+  @override
+  String get update_notes_features => 'Novidades';
+
+  @override
+  String get update_notes_fixes => 'Correções';
+
+  @override
+  String get update_notes_other => 'Melhorias';
+
+  @override
+  String get update_hint_install =>
+      'O app baixa a atualização e depois o Android pede para você confirmar a instalação. Sua biblioteca continua como está.';
+
+  @override
+  String get update_hint_browser =>
+      'A página da versão abre no navegador: baixe lá o arquivo para o seu sistema e depois instale-o.';
+
+  @override
+  String get update_downloading => 'Baixando…';
+
+  @override
+  String get update_installing => 'Abrindo o instalador…';
+
+  @override
+  String get update_install_failed => 'Não foi possível abrir o instalador.';
+
+  @override
+  String get update_browser_failed => 'Não foi possível abrir o navegador.';
+
+  @override
   String get deselect_all => 'Desmarcar tudo';
 
   @override
@@ -9607,6 +9806,12 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get shortcut_zoom_reset => 'Ajustar à página';
+
+  @override
+  String get shortcut_wheel_zoom => 'Zoom com o mouse';
+
+  @override
+  String get mouse_wheel => 'Roda';
 
   @override
   String get shortcut_leave => 'Sair do leitor';
@@ -9858,4 +10063,70 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String shortcut_key_in_use(String action) {
     return 'Já usada por: $action';
   }
+
+  @override
+  String get external_browser => 'Abrir links externos com';
+
+  @override
+  String get system_default => 'Padrão do sistema';
+
+  @override
+  String get no_browsers_detected => 'Nenhum navegador detectado';
+
+  @override
+  String get on_this_device => 'Neste dispositivo';
+
+  @override
+  String get local_tracking => 'Acompanhar neste dispositivo';
+
+  @override
+  String get local_tracking_desc =>
+      'Guarda aqui o status, o progresso, a nota e as datas de cada série, sem conta. Nada é enviado. Ao desativar, o que está guardado é mantido.';
+
+  @override
+  String get track_add_one => 'Mais um';
+
+  @override
+  String get track_change_match => 'Alterar correspondência';
+
+  @override
+  String get track_remove => 'Parar de acompanhar';
+
+  @override
+  String get track_remove_local_msg =>
+      'O status, o progresso, a nota e as datas serão excluídos deste dispositivo.';
+
+  @override
+  String track_remove_online_msg(String tracker) {
+    return 'A entrada continua em $tracker: aqui só é removido o vínculo com esta série.';
+  }
+
+  @override
+  String update_from_repo(String repo) {
+    return 'De $repo';
+  }
+
+  @override
+  String get update_from_other_repo => 'Atualizar de outro repositório?';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name foi instalada de $origin. A versão $version vem de $other: depois de instalada, $name recebe as atualizações de $other. Continue só se você confia nesse repositório.';
+  }
+
+  @override
+  String get update_all_foreign =>
+      'Algumas atualizações vêm de outro repositório';
+
+  @override
+  String get update_all_foreign_msg =>
+      'Depois de atualizadas, essas extensões recebem as atualizações do novo repositório. Inclua-as só se você confia nele.';
+
+  @override
+  String get update_all_skip_foreign => 'Só do próprio repositório';
 }

@@ -12,7 +12,7 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/utils/error_toast.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:mangayomi/services/external_browser.dart';
 
 /// How many sources each repository offers, by its index URL; follows the
 /// sources as a refresh adds or drops some.
@@ -42,7 +42,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
   bool isRefreshing = false;
 
   Future<void> _launchInBrowser(Uri url) async {
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+    if (!await ExternalBrowser.open(url.toString())) {
       throw 'Could not launch $url';
     }
   }

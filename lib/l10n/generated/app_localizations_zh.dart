@@ -1843,6 +1843,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get floating_navigation_bar_description => '使用悬浮胶囊代替固定的导航栏。';
 
   @override
+  String get show_updates_badge => '在“更新”图标上显示角标';
+
+  @override
+  String get show_updates_badge_description => '统计自上次打开“更新”以来发现的章节数。';
+
+  @override
   String get full_screen_player => '使用全屏';
 
   @override
@@ -2442,6 +2448,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get edit_code => '编辑代码';
 
   @override
+  String get subtitles_on_by_default => '开启字幕';
+
+  @override
+  String get subtitles_on_by_default_info => '关闭时，剧集开始时没有字幕，直到你选择字幕轨道。';
+
+  @override
   String get use_libass => '启用 libass';
 
   @override
@@ -2451,10 +2463,11 @@ class AppLocalizationsZh extends AppLocalizations {
   String get libass_not_disable_message => '在播放器设置中禁用 `use libass` 以便自定义字幕。';
 
   @override
-  String get override_ass_subtitles => '覆盖 ASS 字幕样式';
+  String get override_ass_subtitles => '使用我的字幕样式';
 
   @override
-  String get override_ass_subtitles_info => '将自定义样式应用到 ASS/SSA 字幕';
+  String get override_ass_subtitles_info =>
+      '将你的大小和颜色应用到所有字幕，包括 ASS。关闭时，字幕使用默认样式';
 
   @override
   String get torrent_stream => '种子流';
@@ -4309,6 +4322,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get invert_selection => '反选';
 
   @override
+  String get select_between => '选择之间的内容';
+
+  @override
   String get show_password => '显示密码';
 
   @override
@@ -4652,6 +4668,50 @@ class AppLocalizationsZh extends AppLocalizations {
   String get update_write_failed => '无法写入 APK 文件。';
 
   @override
+  String get update_later => '稍后';
+
+  @override
+  String get update_installed_version => '已安装';
+
+  @override
+  String get update_new_version => '新版本';
+
+  @override
+  String update_published(String date) {
+    return '发布于 $date';
+  }
+
+  @override
+  String get update_pre_release => '预发布版';
+
+  @override
+  String get update_notes_features => '新功能';
+
+  @override
+  String get update_notes_fixes => '修复';
+
+  @override
+  String get update_notes_other => '改进';
+
+  @override
+  String get update_hint_install => '应用会下载更新，然后 Android 会请你确认安装。你的书库不会改变。';
+
+  @override
+  String get update_hint_browser => '发布页面将在浏览器中打开：请从那里下载适合你系统的文件，然后安装。';
+
+  @override
+  String get update_downloading => '正在下载…';
+
+  @override
+  String get update_installing => '正在打开安装程序…';
+
+  @override
+  String get update_install_failed => '无法打开安装程序。';
+
+  @override
+  String get update_browser_failed => '无法打开浏览器。';
+
+  @override
   String get deselect_all => '取消全选';
 
   @override
@@ -4790,6 +4850,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get shortcut_zoom_reset => '适应页面';
+
+  @override
+  String get shortcut_wheel_zoom => '用鼠标缩放';
+
+  @override
+  String get mouse_wheel => '滚轮';
 
   @override
   String get shortcut_leave => '退出阅读器';
@@ -5033,4 +5099,67 @@ class AppLocalizationsZh extends AppLocalizations {
   String shortcut_key_in_use(String action) {
     return '已被占用：$action';
   }
+
+  @override
+  String get external_browser => '打开外部链接的方式';
+
+  @override
+  String get system_default => '系统默认';
+
+  @override
+  String get no_browsers_detected => '未检测到浏览器';
+
+  @override
+  String get on_this_device => '在此设备上';
+
+  @override
+  String get local_tracking => '在此设备上追踪';
+
+  @override
+  String get local_tracking_desc =>
+      '无需账号，在此保存每部作品的状态、进度、评分和日期。不会发送任何内容。关闭后，已保存的内容仍会保留。';
+
+  @override
+  String get track_add_one => '再加一个';
+
+  @override
+  String get track_change_match => '更改匹配';
+
+  @override
+  String get track_remove => '停止追踪';
+
+  @override
+  String get track_remove_local_msg => '其状态、进度、评分和日期将从此设备删除。';
+
+  @override
+  String track_remove_online_msg(String tracker) {
+    return '该条目仍保留在 $tracker 上：这里只移除它与此作品的关联。';
+  }
+
+  @override
+  String update_from_repo(String repo) {
+    return '来自 $repo';
+  }
+
+  @override
+  String get update_from_other_repo => '要从其他存储库更新吗？';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name 是从 $origin 安装的。版本 $version 来自 $other：安装后，$name 将从 $other 获取更新。请仅在信任该存储库时继续。';
+  }
+
+  @override
+  String get update_all_foreign => '部分更新来自其他存储库';
+
+  @override
+  String get update_all_foreign_msg => '更新后，这些扩展将从新存储库获取更新。请仅在信任它时才包含。';
+
+  @override
+  String get update_all_skip_foreign => '仅来自其原有存储库';
 }

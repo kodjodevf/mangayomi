@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_qjs/quickjs/ffi.dart';
-import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:mangayomi/services/external_browser.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
@@ -66,11 +66,12 @@ class Simkl extends _$Simkl implements BaseTracker {
     final loginUrl = _authUrl();
 
     try {
-      final uri = await FlutterWebAuth2.authenticate(
-        url: "$loginUrl&redirect_uri=$_redirectUri",
+      final uri = await ExternalBrowser.openOAuth(
+        "$loginUrl&redirect_uri=$_redirectUri",
+        port: 43824,
         callbackUrlScheme: callbackUrlScheme,
       );
-      final code = Uri.parse(uri).queryParameters['code'];
+      final code = uri?.queryParameters['code'];
       if (code == null) return null;
 
       final oAuthData = await _getOAuth(code);

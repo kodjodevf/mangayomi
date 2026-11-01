@@ -787,10 +787,22 @@ void main() {
       expect(tester.takeException(), isNull);
       final bar = tester.widget<TabBar>(find.byType(TabBar));
       expect(bar.indicator, isNull);
+      final tabTheme = Theme.of(tester.element(find.byType(TabBar)))
+          .tabBarTheme;
+      expect(tabTheme.indicator, isA<ShioriTabIndicator>());
+      expect(tabTheme.splashFactory, isA<ShioriTabSplashFactory>());
       expect(
-        Theme.of(tester.element(find.byType(TabBar))).tabBarTheme.indicator,
-        isA<ShioriTabIndicator>(),
+        tabTheme.overlayColor?.resolve({WidgetState.pressed}),
+        Colors.transparent,
       );
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.text('Extensions')),
+      );
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(tester.takeException(), isNull);
+      await gesture.up();
+      await tester.pumpAndSettle();
     });
   });
 

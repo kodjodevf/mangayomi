@@ -18,6 +18,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   @override
   Widget build(BuildContext context) {
     final defaultSubtitleLang = ref.watch(defaultSubtitleLangStateProvider);
+    final subtitlesOnByDefault = ref.watch(subtitlesOnByDefaultStateProvider);
     final markEpisodeAsSeenType = ref.watch(markEpisodeAsSeenTypeStateProvider);
     final defaultSkipIntroLength = ref.watch(
       defaultSkipIntroLengthStateProvider,
@@ -109,6 +110,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                 onChanged: (v) => ref
                     .read(defaultSubtitleLangStateProvider.notifier)
                     .setLocale(v),
+              ),
+              ShioriSwitchRow(
+                title: l10n.subtitles_on_by_default,
+                subtitle: l10n.subtitles_on_by_default_info,
+                value: subtitlesOnByDefault,
+                onChanged: (v) =>
+                    ref.read(subtitlesOnByDefaultStateProvider.notifier).set(v),
               ),
               ShioriSwitchRow(
                 title: l10n.use_libass,

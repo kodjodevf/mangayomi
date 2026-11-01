@@ -72,6 +72,7 @@ import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/more/settings/settings_screen.dart';
 import 'package:mangayomi/modules/more/settings/security/security_screen.dart';
 import 'package:mangayomi/core/navigation/app_navigator.dart';
+import 'package:mangayomi/router/missing_extra_page.dart';
 import 'package:mangayomi/services/crash_route_observer.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 export 'package:mangayomi/core/navigation/app_navigator.dart' show navigatorKey;
@@ -92,10 +93,10 @@ const _shellBranchRoutes = [
 @riverpod
 GoRouter router(Ref ref) {
   final router = RouterNotifier();
-  final hiddenItems = ref.read(hideItemsStateProvider);
-  final initLocation = ref
-      .read(navigationOrderStateProvider)
-      .firstWhere((e) => !hiddenItems.contains(e), orElse: () => '/more');
+  final initLocation = homeLocation(
+    ref.read(navigationOrderStateProvider),
+    ref.read(hideItemsStateProvider),
+  );
 
   return GoRouter(
     observers: [BotToastNavigatorObserver(), CrashRouteObserver()],
@@ -107,6 +108,11 @@ GoRouter router(Ref ref) {
     onException: (context, state, router) => router.go(initLocation),
   );
 }
+
+/// Where the app opens: the first destination of the navigation bar that is
+/// not hidden.
+String homeLocation(List<String> order, List<String> hidden) =>
+    order.firstWhere((e) => !hidden.contains(e), orElse: () => '/more');
 
 @riverpod
 class RouterCurrentLocationState extends _$RouterCurrentLocationState {
@@ -401,11 +407,28 @@ class RouterNotifier extends ChangeNotifier {
       // once.
       pageBuilder: (context, state) => transitionPage(
         key: state.pageKey,
-        child: builder != null ? builder(state.extra as T) : child!,
+        child: builder == null
+            ? child!
+            : routeChild<T>(
+                route: name ?? path ?? '/',
+                builder: builder,
+                extra: state.extra,
+              ),
       ),
     );
   }
 }
+
+/// The page of a route that shows [extra] as a [T], or [MissingExtraPage]
+/// when it got something else: go_router can rebuild a page it has lost the
+/// extra of, and the cast used to crash there (#997).
+Widget routeChild<T>({
+  required String route,
+  required Widget Function(T extra) builder,
+  required Object? extra,
+}) => extra is T
+    ? builder(extra)
+    : MissingExtraPage(route: route, expected: T, extra: extra);
 
 /// A page that moves as the theme says: Shiori's page transition (Mihon's
 /// shared axis) everywhere but Apple, which keeps Cupertino's and its edge

@@ -10,15 +10,21 @@ import 'package:shiori/shiori.dart';
 
 import 'coordinate_transformer.dart';
 import 'page_pan_forwarding.dart';
+import 'row_pan.dart';
 import 'ffi_image_decoder.dart';
 import 'subsampling_image_painter.dart';
 import 'subsampling_image_resolver.dart';
 import 'subsampling_types.dart';
 import 'tiling_engine.dart';
 import '../../u_chap_data_preload.dart';
+
+import 'package:mangayomi/utils/error_toast.dart';
+
 import '../../utils/reader_motion.dart';
 
 export 'subsampling_types.dart';
+
+part 'subsampling_pan.dart';
 
 // ─── Controller ───────────────────────────────────────────────────────────────
 
@@ -100,60 +106,6 @@ class SubsamplingScaleImageViewController extends ChangeNotifier {
     Duration duration = ShioriMotion.enter,
   }) {
     _state?._animateScaleAndTranslation(targetScale, targetTranslate, duration);
-  }
-
-  /// Checks if the image can be panned to the left.
-  bool canPanLeft() {
-    final s = _state;
-    if (s == null || !s._isInitialized) return false;
-    final left = max(0.0, -s._vTranslate.dx);
-    return left > 1.0;
-  }
-
-  /// Checks if the image can be panned to the right.
-  bool canPanRight() {
-    final s = _state;
-    if (s == null || !s._isInitialized) return false;
-    final transformer = CoordinateTransformer(
-      scale: s._scale,
-      vTranslate: s._vTranslate,
-      rotation: s.widget.rotation,
-      sWidth: s._sWidth,
-      sHeight: s._sHeight,
-    );
-    final double imageWidth = transformer.effectiveSWidth * s._scale;
-    final right = max(0.0, (imageWidth + s._vTranslate.dx) - s._viewSize.width);
-    return right > 1.0;
-  }
-
-  /// Pans the image to the left by one screen width.
-  void panLeft() {
-    final s = _state;
-    if (s == null || !s._isInitialized) return;
-    final currentCenter = center;
-    if (currentCenter == null) return;
-    final dx = s._viewSize.width / s._scale;
-    final targetCenter = ui.Offset(currentCenter.dx - dx, currentCenter.dy);
-    animateScaleAndCenter(
-      s._scale,
-      targetCenter,
-      duration: ShioriMotion.standard,
-    );
-  }
-
-  /// Pans the image to the right by one screen width.
-  void panRight() {
-    final s = _state;
-    if (s == null || !s._isInitialized) return;
-    final currentCenter = center;
-    if (currentCenter == null) return;
-    final dx = s._viewSize.width / s._scale;
-    final targetCenter = ui.Offset(currentCenter.dx + dx, currentCenter.dy);
-    animateScaleAndCenter(
-      s._scale,
-      targetCenter,
-      duration: ShioriMotion.standard,
-    );
   }
 
   // ── Coordinate Conversion ────────────────────────────────────────────────
@@ -786,7 +738,11 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
 
     if (outSize == null || outSize[0] == 0 || outSize[1] == 0) {
       try {
-        final convertedPath = await convertLegacyIosAvifToPng(path);
+        // What the native decoder cannot read on this system, as a PNG
+        // decoded by Flutter.
+        final convertedPath =
+            await convertLegacyIosAvifToPng(path) ??
+            await convertLinuxJpegToPng(path);
         if (!mounted || _resolvedFilePath != path) return;
         if (convertedPath != null) {
           path = convertedPath;
@@ -797,11 +753,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
           );
         }
       } catch (e, st) {
-        if (kDebugMode) {
-          debugPrint(
-            'SubsamplingScaleImageView: Failed to decode AVIF: $e\n$st',
-          );
-        }
+        recordError(e, stack: st, source: 'reader image conversion');
       }
     }
 

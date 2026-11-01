@@ -10,6 +10,7 @@ import 'app_localizations_as.dart';
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fa.dart';
 import 'app_localizations_fr.dart';
 import 'app_localizations_hi.dart';
 import 'app_localizations_id.dart';
@@ -114,6 +115,7 @@ abstract class AppLocalizations {
     Locale('en'),
     Locale('es'),
     Locale('es', '419'),
+    Locale('fa'),
     Locale('fr'),
     Locale('hi'),
     Locale('id'),
@@ -3109,6 +3111,18 @@ abstract class AppLocalizations {
   /// **'Use a floating capsule instead of the standard attached navigation bar.'**
   String get floating_navigation_bar_description;
 
+  /// No description provided for @show_updates_badge.
+  ///
+  /// In en, this message translates to:
+  /// **'Show badge on Updates icon'**
+  String get show_updates_badge;
+
+  /// No description provided for @show_updates_badge_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Count the chapters found since you last opened Updates.'**
+  String get show_updates_badge_description;
+
   /// No description provided for @full_screen_player.
   ///
   /// In en, this message translates to:
@@ -4255,6 +4269,18 @@ abstract class AppLocalizations {
   /// **'Edit code'**
   String get edit_code;
 
+  /// No description provided for @subtitles_on_by_default.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn subtitles on'**
+  String get subtitles_on_by_default;
+
+  /// No description provided for @subtitles_on_by_default_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Off, episodes start without subtitles until you pick a track.'**
+  String get subtitles_on_by_default_info;
+
   /// No description provided for @use_libass.
   ///
   /// In en, this message translates to:
@@ -4276,13 +4302,13 @@ abstract class AppLocalizations {
   /// No description provided for @override_ass_subtitles.
   ///
   /// In en, this message translates to:
-  /// **'Override ASS subtitles'**
+  /// **'Use my subtitle style'**
   String get override_ass_subtitles;
 
   /// No description provided for @override_ass_subtitles_info.
   ///
   /// In en, this message translates to:
-  /// **'Apply custom styling to ASS/SSA subtitles'**
+  /// **'Applies your size and colours to every subtitle, ASS included. When off, subtitles use their default style'**
   String get override_ass_subtitles_info;
 
   /// No description provided for @torrent_stream.
@@ -7675,6 +7701,12 @@ abstract class AppLocalizations {
   /// **'Invert selection'**
   String get invert_selection;
 
+  /// No description provided for @select_between.
+  ///
+  /// In en, this message translates to:
+  /// **'Select between'**
+  String get select_between;
+
   /// No description provided for @show_password.
   ///
   /// In en, this message translates to:
@@ -8287,6 +8319,90 @@ abstract class AppLocalizations {
   /// **'Couldn\'t write the APK file.'**
   String get update_write_failed;
 
+  /// No description provided for @update_later.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get update_later;
+
+  /// No description provided for @update_installed_version.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get update_installed_version;
+
+  /// No description provided for @update_new_version.
+  ///
+  /// In en, this message translates to:
+  /// **'New version'**
+  String get update_new_version;
+
+  /// No description provided for @update_published.
+  ///
+  /// In en, this message translates to:
+  /// **'Published on {date}'**
+  String update_published(String date);
+
+  /// No description provided for @update_pre_release.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-release'**
+  String get update_pre_release;
+
+  /// No description provided for @update_notes_features.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get update_notes_features;
+
+  /// No description provided for @update_notes_fixes.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixes'**
+  String get update_notes_fixes;
+
+  /// No description provided for @update_notes_other.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvements'**
+  String get update_notes_other;
+
+  /// No description provided for @update_hint_install.
+  ///
+  /// In en, this message translates to:
+  /// **'The app downloads the update, then Android asks you to confirm the installation. Your library stays as it is.'**
+  String get update_hint_install;
+
+  /// No description provided for @update_hint_browser.
+  ///
+  /// In en, this message translates to:
+  /// **'The release page opens in your browser: download the file for your system from there, then install it.'**
+  String get update_hint_browser;
+
+  /// No description provided for @update_downloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading…'**
+  String get update_downloading;
+
+  /// No description provided for @update_installing.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening the installer…'**
+  String get update_installing;
+
+  /// No description provided for @update_install_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the installer.'**
+  String get update_install_failed;
+
+  /// No description provided for @update_browser_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the browser.'**
+  String get update_browser_failed;
+
   /// No description provided for @deselect_all.
   ///
   /// In en, this message translates to:
@@ -8508,6 +8624,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Fit the page'**
   String get shortcut_zoom_reset;
+
+  /// No description provided for @shortcut_wheel_zoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom with the mouse'**
+  String get shortcut_wheel_zoom;
+
+  /// No description provided for @mouse_wheel.
+  ///
+  /// In en, this message translates to:
+  /// **'Wheel'**
+  String get mouse_wheel;
 
   /// No description provided for @shortcut_leave.
   ///
@@ -8958,6 +9086,113 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Already used by: {action}'**
   String shortcut_key_in_use(String action);
+
+  /// No description provided for @external_browser.
+  ///
+  /// In en, this message translates to:
+  /// **'Open external links with'**
+  String get external_browser;
+
+  /// No description provided for @system_default.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get system_default;
+
+  /// No description provided for @no_browsers_detected.
+  ///
+  /// In en, this message translates to:
+  /// **'No browsers detected'**
+  String get no_browsers_detected;
+
+  /// No description provided for @on_this_device.
+  ///
+  /// In en, this message translates to:
+  /// **'On this device'**
+  String get on_this_device;
+
+  /// No description provided for @local_tracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Track on this device'**
+  String get local_tracking;
+
+  /// No description provided for @local_tracking_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep status, progress, score and dates for each series here, without an account. Nothing is sent anywhere. Turning it off keeps what it holds.'**
+  String get local_tracking_desc;
+
+  /// No description provided for @track_add_one.
+  ///
+  /// In en, this message translates to:
+  /// **'One more'**
+  String get track_add_one;
+
+  /// No description provided for @track_change_match.
+  ///
+  /// In en, this message translates to:
+  /// **'Change match'**
+  String get track_change_match;
+
+  /// No description provided for @track_remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop tracking'**
+  String get track_remove;
+
+  /// No description provided for @track_remove_local_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Its status, progress, score and dates are deleted from this device.'**
+  String get track_remove_local_msg;
+
+  /// No description provided for @track_remove_online_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'The entry stays on {tracker}: only its link to this series is removed here.'**
+  String track_remove_online_msg(String tracker);
+
+  /// No description provided for @update_from_repo.
+  ///
+  /// In en, this message translates to:
+  /// **'From {repo}'**
+  String update_from_repo(String repo);
+
+  /// No description provided for @update_from_other_repo.
+  ///
+  /// In en, this message translates to:
+  /// **'Update from another repository?'**
+  String get update_from_other_repo;
+
+  /// No description provided for @update_from_other_repo_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was installed from {origin}. Version {version} comes from {other}: once it is installed, {name} takes its updates from {other}. Only go ahead if you trust that repository.'**
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  );
+
+  /// No description provided for @update_all_foreign.
+  ///
+  /// In en, this message translates to:
+  /// **'Some updates come from another repository'**
+  String get update_all_foreign;
+
+  /// No description provided for @update_all_foreign_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Once updated, these extensions take their updates from the new repository. Only include them if you trust it.'**
+  String get update_all_foreign_msg;
+
+  /// No description provided for @update_all_skip_foreign.
+  ///
+  /// In en, this message translates to:
+  /// **'Only from their own repository'**
+  String get update_all_skip_foreign;
 }
 
 class _AppLocalizationsDelegate
@@ -8976,6 +9211,7 @@ class _AppLocalizationsDelegate
     'de',
     'en',
     'es',
+    'fa',
     'fr',
     'hi',
     'id',
@@ -9026,6 +9262,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'fa':
+      return AppLocalizationsFa();
     case 'fr':
       return AppLocalizationsFr();
     case 'hi':
