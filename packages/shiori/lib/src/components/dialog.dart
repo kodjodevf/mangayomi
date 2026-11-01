@@ -80,6 +80,8 @@ class ShioriDialog extends StatelessWidget {
         ShioriSpace.s16,
         ShioriSpace.s16,
       ),
+      // Actions too wide for one line stack, and would otherwise touch.
+      actionsOverflowButtonSpacing: ShioriSpace.s8,
       actions: actions,
     );
   }

@@ -1794,5 +1794,13 @@
   "track_remove": "Stop tracking",
   "track_remove_local_msg": "Its status, progress, score and dates are deleted from this device.",
   "track_remove_online_msg": "The entry stays on {tracker}: only its link to this series is removed here.",
-  "@track_remove_online_msg": {"placeholders": {"tracker": {"type": "String"}}}
+  "@track_remove_online_msg": {"placeholders": {"tracker": {"type": "String"}}},
+  "update_from_repo": "From {repo}",
+  "@update_from_repo": {"placeholders": {"repo": {"type": "String"}}},
+  "update_from_other_repo": "Update from another repository?",
+  "update_from_other_repo_msg": "{name} was installed from {origin}. Version {version} comes from {other}: once it is installed, {name} takes its updates from {other}. Only go ahead if you trust that repository.",
+  "@update_from_other_repo_msg": {"placeholders": {"name": {"type": "String"}, "origin": {"type": "String"}, "version": {"type": "String"}, "other": {"type": "String"}}},
+  "update_all_foreign": "Some updates come from another repository",
+  "update_all_foreign_msg": "Once updated, these extensions take their updates from the new repository. Only include them if you trust it.",
+  "update_all_skip_foreign": "Only from their own repository"
 }

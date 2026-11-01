@@ -11,27 +11,25 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/isolate_service.dart';
 import 'package:mangayomi/services/extension_store_service.dart';
+import 'package:mangayomi/services/extension_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/error_toast.dart';
 
-Future<bool> fetchSourcesList({
-  int? id,
-  required bool refresh,
-  required String androidProxyServer,
-  required bool autoUpdateExtensions,
+/// The extensions [repo] lists for [itemType] that this version of the app
+/// can run.
+Future<List<Source>> fetchRepoSources({
+  required Repo repo,
   required ItemType itemType,
-  required Repo? repo,
 }) async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
-  final url = repo?.jsonUrl;
-  if (url == null) return false;
+  final url = repo.jsonUrl;
+  if (url == null) return [];
 
-  if (repo != null &&
-      (repo.name == null ||
-          repo.name!.isEmpty ||
-          repo.name == '.dist' ||
-          repo.name == 'dist')) {
+  if (repo.name == null ||
+      repo.name!.isEmpty ||
+      repo.name == '.dist' ||
+      repo.name == 'dist') {
     final uri = Uri.tryParse(url);
     if (uri != null &&
         uri.host == 'raw.githubusercontent.com' &&
@@ -119,48 +117,162 @@ Future<bool> fetchSourcesList({
     } catch (e, st) {
       // A failure here drops sources from the list with no sign of why.
       AppLogger.log(
-        'fetchSourcesList: filtering sources failed: $e\n$st',
+        'fetchRepoSources: filtering sources failed: $e\n$st',
         logLevel: LogLevel.error,
       );
     }
   }
 
-  if (id != null) {
-    final matchingSource = sourceList.firstWhere(
-      (source) => source.id == id,
-      orElse: () => Source(),
-    );
-    if (matchingSource.id != null && matchingSource.sourceCodeUrl!.isNotEmpty) {
-      await updateSource(matchingSource, androidProxyServer, repo, itemType);
-      return true;
+  return sourceList;
+}
+
+/// Takes in what [repo] lists: an extension seen for the first time is
+/// added, and one it no longer lists is marked obsolete.
+Future<void> recordRepoSources(
+  List<Source> sourceList,
+  Repo repo,
+  ItemType itemType,
+) async {
+  for (final source in sourceList) {
+    if (await sourceRepository.findByIdAsync(source.id!) == null) {
+      await _addNewSource(source, repo, itemType);
     }
-    return false;
-  } else {
-    for (var source in sourceList) {
-      final existingSource = await sourceRepository.findByIdAsync(source.id!);
-      if (existingSource == null) {
-        await _addNewSource(source, repo, itemType);
-        continue;
-      }
-      final shouldUpdate =
-          existingSource.isAdded! &&
-          compareVersions(existingSource.version!, source.version!) < 0;
-      if (!shouldUpdate) continue;
-      if (autoUpdateExtensions) {
-        await updateSource(source, androidProxyServer, repo, itemType);
-      } else {
+  }
+  await checkIfSourceIsObsolete(sourceList, repo, itemType);
+}
+
+/// Points extensions installed from an address [repos] no longer has at the
+/// repository it moved to. Only the old address itself is believed: it names
+/// its replacement ([resolveIndexUrl], by default following its index's
+/// redirect), which a repository merely wearing the same name cannot do.
+Future<void> followMovedRepos({
+  required List<Repo> repos,
+  required Map<int, List<ExtensionOffer>> offers,
+  required ItemType itemType,
+  Future<String?> Function(String url)? resolveIndexUrl,
+}) async {
+  final installed = sourceRepository.getAddedByItemType(itemType);
+  final resolve = resolveIndexUrl ?? _resolveIndexUrl;
+  for (final url in movedOriginCandidates(installed, repos, offers)) {
+    final resolved = await resolve(url);
+    if (resolved == null) continue;
+    final current = repos
+        .where((r) => isSameRepo(r, Repo(jsonUrl: resolved)))
+        .firstOrNull;
+    if (current == null) continue;
+    for (final source in installed) {
+      if (source.repo?.jsonUrl != url) continue;
+      await sourceRepository.save(source..repo = current);
+    }
+  }
+}
+
+Future<String?> _resolveIndexUrl(String url) async {
+  final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
+  return (await ExtensionStoreService.fetchStore(url, http))?.indexUrl;
+}
+
+/// Sets each installed extension's update from what the repositories offer
+/// ([offers], by extension id), as [chooseUpdate] picks it, and installs it
+/// straight away under [autoUpdate] when it comes from the extension's own
+/// repository. One from another repository waits for the reader.
+///
+/// [readRepos] are the indexes that were read: an update is only taken back
+/// once the repository it came from was read and no longer has it, not
+/// because that repository could not be reached this time.
+Future<void> applyExtensionUpdates({
+  required Map<int, List<ExtensionOffer>> offers,
+  required Set<String> readRepos,
+  required bool autoUpdate,
+  required String androidProxyServer,
+  required ItemType itemType,
+}) async {
+  for (final installed in sourceRepository.getAddedByItemType(itemType)) {
+    if (installed.isLocal ?? false) continue;
+    final offer = chooseUpdate(installed, offers[installed.id] ?? const []);
+    if (offer == null) {
+      final from = (installed.updateRepo ?? installed.repo)?.jsonUrl;
+      final pending =
+          installed.updateRepo != null ||
+          compareVersions(
+                installed.version ?? '',
+                installed.versionLast ?? '',
+              ) <
+              0;
+      if (pending && (from == null || readRepos.contains(from))) {
         await sourceRepository.save(
-          existingSource
-            ..versionLast = source.version
-            ..sourceCodeUrl = source.sourceCodeUrl,
+          installed
+            ..versionLast = installed.version
+            ..updateRepo = null,
         );
       }
+      continue;
     }
-    if (repo != null) {
-      await checkIfSourceIsObsolete(sourceList, repo, itemType);
+    final foreign =
+        installed.repo != null && !isSameRepo(offer.repo, installed.repo);
+    if (autoUpdate && !foreign) {
+      await updateSource(
+        offer.listing,
+        androidProxyServer,
+        offer.repo,
+        itemType,
+      );
+      continue;
     }
+    if (installed.versionLast == offer.listing.version &&
+        isSameRepo(installed.updateRepo, offer.repo)) {
+      continue;
+    }
+    await sourceRepository.save(
+      installed
+        ..versionLast = offer.listing.version
+        ..updateRepo = offer.repo,
+    );
+  }
+}
+
+/// Updates or reinstalls the installed [installed] from the repository its
+/// update was found in ([reposForUpdate]), installing exactly that
+/// repository's build. Says whether anything was installed; when the
+/// repository no longer has anything newer, the update is taken back.
+Future<bool> installExtensionUpdate({
+  required Source installed,
+  required List<Repo> repos,
+  required String androidProxyServer,
+  required ItemType itemType,
+}) async {
+  final anyVersion = (installed.sourceCode ?? '').isEmpty;
+  final toAsk = reposForUpdate(repos, installed, anyVersion: anyVersion);
+  Object? failure;
+  StackTrace? failureStack;
+  for (final repo in toAsk) {
+    final List<Source> listed;
+    try {
+      listed = await fetchRepoSources(repo: repo, itemType: itemType);
+    } catch (e, st) {
+      failure = e;
+      failureStack = st;
+      continue;
+    }
+    final listing = listed.where((s) => s.id == installed.id).firstOrNull;
+    if (listing == null || (listing.sourceCodeUrl ?? '').isEmpty) continue;
+    final newer =
+        compareVersions(installed.version ?? '', listing.version ?? '') < 0;
+    if (!anyVersion && !newer) continue;
+    await updateSource(listing, androidProxyServer, repo, itemType);
     return true;
   }
+  // Nothing reached: the update may still be there, so it stays offered and
+  // the reason is told.
+  if (failure != null) {
+    Error.throwWithStackTrace(failure, failureStack!);
+  }
+  await sourceRepository.save(
+    installed
+      ..versionLast = installed.version
+      ..updateRepo = null,
+  );
+  return false;
 }
 
 Future<void> updateSource(

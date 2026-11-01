@@ -8264,6 +8264,47 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The entry stays on {tracker}: only its link to this series is removed here.'**
   String track_remove_online_msg(String tracker);
+
+  /// No description provided for @update_from_repo.
+  ///
+  /// In en, this message translates to:
+  /// **'From {repo}'**
+  String update_from_repo(String repo);
+
+  /// No description provided for @update_from_other_repo.
+  ///
+  /// In en, this message translates to:
+  /// **'Update from another repository?'**
+  String get update_from_other_repo;
+
+  /// No description provided for @update_from_other_repo_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was installed from {origin}. Version {version} comes from {other}: once it is installed, {name} takes its updates from {other}. Only go ahead if you trust that repository.'**
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  );
+
+  /// No description provided for @update_all_foreign.
+  ///
+  /// In en, this message translates to:
+  /// **'Some updates come from another repository'**
+  String get update_all_foreign;
+
+  /// No description provided for @update_all_foreign_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Once updated, these extensions take their updates from the new repository. Only include them if you trust it.'**
+  String get update_all_foreign_msg;
+
+  /// No description provided for @update_all_skip_foreign.
+  ///
+  /// In en, this message translates to:
+  /// **'Only from their own repository'**
+  String get update_all_skip_foreign;
 }
 
 class _AppLocalizationsDelegate

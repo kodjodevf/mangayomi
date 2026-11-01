@@ -4705,4 +4705,33 @@ class AppLocalizationsFr extends AppLocalizations {
   String track_remove_online_msg(String tracker) {
     return 'L\'entrée reste sur $tracker : seul son lien avec cette série est retiré ici.';
   }
+
+  @override
+  String update_from_repo(String repo) {
+    return 'Depuis $repo';
+  }
+
+  @override
+  String get update_from_other_repo => 'Mettre à jour depuis un autre dépôt ?';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name a été installée depuis $origin. La version $version vient de $other : une fois installée, $name prendra ses mises à jour sur $other. Ne continuez que si vous faites confiance à ce dépôt.';
+  }
+
+  @override
+  String get update_all_foreign =>
+      'Certaines mises à jour viennent d\'un autre dépôt';
+
+  @override
+  String get update_all_foreign_msg =>
+      'Une fois mises à jour, ces extensions prendront leurs mises à jour sur le nouveau dépôt. Ne les incluez que si vous lui faites confiance.';
+
+  @override
+  String get update_all_skip_foreign => 'Seulement depuis leur dépôt';
 }
