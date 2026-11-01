@@ -4040,6 +4040,50 @@ class AppLocalizationsZh extends AppLocalizations {
   String get update_write_failed => '无法写入 APK 文件。';
 
   @override
+  String get update_later => '稍后';
+
+  @override
+  String get update_installed_version => '已安装';
+
+  @override
+  String get update_new_version => '新版本';
+
+  @override
+  String update_published(String date) {
+    return '发布于 $date';
+  }
+
+  @override
+  String get update_pre_release => '预发布版';
+
+  @override
+  String get update_notes_features => '新功能';
+
+  @override
+  String get update_notes_fixes => '修复';
+
+  @override
+  String get update_notes_other => '改进';
+
+  @override
+  String get update_hint_install => '应用会下载更新，然后 Android 会请你确认安装。你的书库不会改变。';
+
+  @override
+  String get update_hint_browser => '发布页面将在浏览器中打开：请从那里下载适合你系统的文件，然后安装。';
+
+  @override
+  String get update_downloading => '正在下载…';
+
+  @override
+  String get update_installing => '正在打开安装程序…';
+
+  @override
+  String get update_install_failed => '无法打开安装程序。';
+
+  @override
+  String get update_browser_failed => '无法打开浏览器。';
+
+  @override
   String get deselect_all => '取消全选';
 
   @override

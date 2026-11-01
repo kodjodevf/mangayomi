@@ -4237,6 +4237,52 @@ class AppLocalizationsPt extends AppLocalizations {
   String get update_write_failed => 'Não foi possível gravar o arquivo APK.';
 
   @override
+  String get update_later => 'Mais tarde';
+
+  @override
+  String get update_installed_version => 'Instalada';
+
+  @override
+  String get update_new_version => 'Nova versão';
+
+  @override
+  String update_published(String date) {
+    return 'Publicada em $date';
+  }
+
+  @override
+  String get update_pre_release => 'Pré-lançamento';
+
+  @override
+  String get update_notes_features => 'Novidades';
+
+  @override
+  String get update_notes_fixes => 'Correções';
+
+  @override
+  String get update_notes_other => 'Melhorias';
+
+  @override
+  String get update_hint_install =>
+      'A aplicação transfere a atualização e depois o Android pede-lhe para confirmar a instalação. A sua biblioteca fica como está.';
+
+  @override
+  String get update_hint_browser =>
+      'A página da versão abre-se no navegador: transfira aí o ficheiro para o seu sistema e depois instale-o.';
+
+  @override
+  String get update_downloading => 'A transferir…';
+
+  @override
+  String get update_installing => 'A abrir o instalador…';
+
+  @override
+  String get update_install_failed => 'Não foi possível abrir o instalador.';
+
+  @override
+  String get update_browser_failed => 'Não foi possível abrir o navegador.';
+
+  @override
   String get deselect_all => 'Desmarcar tudo';
 
   @override
@@ -8938,6 +8984,52 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get update_write_failed => 'Não foi possível gravar o arquivo APK.';
+
+  @override
+  String get update_later => 'Mais tarde';
+
+  @override
+  String get update_installed_version => 'Instalada';
+
+  @override
+  String get update_new_version => 'Nova versão';
+
+  @override
+  String update_published(String date) {
+    return 'Publicada em $date';
+  }
+
+  @override
+  String get update_pre_release => 'Pré-lançamento';
+
+  @override
+  String get update_notes_features => 'Novidades';
+
+  @override
+  String get update_notes_fixes => 'Correções';
+
+  @override
+  String get update_notes_other => 'Melhorias';
+
+  @override
+  String get update_hint_install =>
+      'O app baixa a atualização e depois o Android pede para você confirmar a instalação. Sua biblioteca continua como está.';
+
+  @override
+  String get update_hint_browser =>
+      'A página da versão abre no navegador: baixe lá o arquivo para o seu sistema e depois instale-o.';
+
+  @override
+  String get update_downloading => 'Baixando…';
+
+  @override
+  String get update_installing => 'Abrindo o instalador…';
+
+  @override
+  String get update_install_failed => 'Não foi possível abrir o instalador.';
+
+  @override
+  String get update_browser_failed => 'Não foi possível abrir o navegador.';
 
   @override
   String get deselect_all => 'Desmarcar tudo';

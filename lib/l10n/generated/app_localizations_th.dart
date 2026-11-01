@@ -4177,6 +4177,52 @@ class AppLocalizationsTh extends AppLocalizations {
   String get update_write_failed => 'ไม่สามารถเขียนไฟล์ APK ได้';
 
   @override
+  String get update_later => 'ภายหลัง';
+
+  @override
+  String get update_installed_version => 'ที่ติดตั้งอยู่';
+
+  @override
+  String get update_new_version => 'เวอร์ชันใหม่';
+
+  @override
+  String update_published(String date) {
+    return 'เผยแพร่เมื่อ $date';
+  }
+
+  @override
+  String get update_pre_release => 'รุ่นทดลอง';
+
+  @override
+  String get update_notes_features => 'มาใหม่';
+
+  @override
+  String get update_notes_fixes => 'การแก้ไข';
+
+  @override
+  String get update_notes_other => 'การปรับปรุง';
+
+  @override
+  String get update_hint_install =>
+      'แอปจะดาวน์โหลดอัปเดต จากนั้น Android จะขอให้คุณยืนยันการติดตั้ง คลังของคุณจะยังคงเดิม';
+
+  @override
+  String get update_hint_browser =>
+      'หน้าของรุ่นจะเปิดในเบราว์เซอร์: ดาวน์โหลดไฟล์สำหรับระบบของคุณจากที่นั่น แล้วติดตั้ง';
+
+  @override
+  String get update_downloading => 'กำลังดาวน์โหลด…';
+
+  @override
+  String get update_installing => 'กำลังเปิดตัวติดตั้ง…';
+
+  @override
+  String get update_install_failed => 'ไม่สามารถเปิดตัวติดตั้งได้';
+
+  @override
+  String get update_browser_failed => 'ไม่สามารถเปิดเบราว์เซอร์ได้';
+
+  @override
   String get deselect_all => 'ยกเลิกการเลือกทั้งหมด';
 
   @override

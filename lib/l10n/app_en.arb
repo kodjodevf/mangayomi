@@ -1653,6 +1653,27 @@
   "@update_download_failed": {"placeholders": {"error": {"type": "String"}}},
   "update_network_error": "Network error while downloading.",
   "update_write_failed": "Couldn't write the APK file.",
+  "update_later": "Later",
+  "update_installed_version": "Installed",
+  "update_new_version": "New version",
+  "update_published": "Published on {date}",
+  "@update_published": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "update_pre_release": "Pre-release",
+  "update_notes_features": "New",
+  "update_notes_fixes": "Fixes",
+  "update_notes_other": "Improvements",
+  "update_hint_install": "The app downloads the update, then Android asks you to confirm the installation. Your library stays as it is.",
+  "update_hint_browser": "The release page opens in your browser: download the file for your system from there, then install it.",
+  "update_downloading": "Downloading…",
+  "update_installing": "Opening the installer…",
+  "update_install_failed": "Couldn't open the installer.",
+  "update_browser_failed": "Couldn't open the browser.",
   "deselect_all": "Deselect all",
   "update_failed_count": "{count, plural, =1{1 entry couldn't be updated} other{{count} entries couldn't be updated}}",
   "@update_failed_count": {"placeholders": {"count": {"type": "int"}}},

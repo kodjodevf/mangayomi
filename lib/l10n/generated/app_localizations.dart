@@ -7515,6 +7515,90 @@ abstract class AppLocalizations {
   /// **'Couldn\'t write the APK file.'**
   String get update_write_failed;
 
+  /// No description provided for @update_later.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get update_later;
+
+  /// No description provided for @update_installed_version.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get update_installed_version;
+
+  /// No description provided for @update_new_version.
+  ///
+  /// In en, this message translates to:
+  /// **'New version'**
+  String get update_new_version;
+
+  /// No description provided for @update_published.
+  ///
+  /// In en, this message translates to:
+  /// **'Published on {date}'**
+  String update_published(String date);
+
+  /// No description provided for @update_pre_release.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-release'**
+  String get update_pre_release;
+
+  /// No description provided for @update_notes_features.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get update_notes_features;
+
+  /// No description provided for @update_notes_fixes.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixes'**
+  String get update_notes_fixes;
+
+  /// No description provided for @update_notes_other.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvements'**
+  String get update_notes_other;
+
+  /// No description provided for @update_hint_install.
+  ///
+  /// In en, this message translates to:
+  /// **'The app downloads the update, then Android asks you to confirm the installation. Your library stays as it is.'**
+  String get update_hint_install;
+
+  /// No description provided for @update_hint_browser.
+  ///
+  /// In en, this message translates to:
+  /// **'The release page opens in your browser: download the file for your system from there, then install it.'**
+  String get update_hint_browser;
+
+  /// No description provided for @update_downloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading…'**
+  String get update_downloading;
+
+  /// No description provided for @update_installing.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening the installer…'**
+  String get update_installing;
+
+  /// No description provided for @update_install_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the installer.'**
+  String get update_install_failed;
+
+  /// No description provided for @update_browser_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the browser.'**
+  String get update_browser_failed;
+
   /// No description provided for @deselect_all.
   ///
   /// In en, this message translates to:

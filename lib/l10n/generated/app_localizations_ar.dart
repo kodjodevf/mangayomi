@@ -4189,6 +4189,52 @@ class AppLocalizationsAr extends AppLocalizations {
   String get update_write_failed => 'تعذّرت كتابة ملف APK.';
 
   @override
+  String get update_later => 'لاحقًا';
+
+  @override
+  String get update_installed_version => 'المثبّت';
+
+  @override
+  String get update_new_version => 'الإصدار الجديد';
+
+  @override
+  String update_published(String date) {
+    return 'نُشر في $date';
+  }
+
+  @override
+  String get update_pre_release => 'إصدار تجريبي';
+
+  @override
+  String get update_notes_features => 'الجديد';
+
+  @override
+  String get update_notes_fixes => 'الإصلاحات';
+
+  @override
+  String get update_notes_other => 'التحسينات';
+
+  @override
+  String get update_hint_install =>
+      'يقوم التطبيق بتنزيل التحديث، ثم يطلب منك Android تأكيد التثبيت. تبقى مكتبتك كما هي.';
+
+  @override
+  String get update_hint_browser =>
+      'تُفتح صفحة الإصدار في المتصفح: نزّل منها ملف نظامك ثم ثبّته.';
+
+  @override
+  String get update_downloading => 'جارٍ التنزيل…';
+
+  @override
+  String get update_installing => 'جارٍ فتح أداة التثبيت…';
+
+  @override
+  String get update_install_failed => 'تعذّر فتح أداة التثبيت.';
+
+  @override
+  String get update_browser_failed => 'تعذّر فتح المتصفح.';
+
+  @override
   String get deselect_all => 'إلغاء تحديد الكل';
 
   @override

@@ -4247,6 +4247,52 @@ class AppLocalizationsRu extends AppLocalizations {
   String get update_write_failed => 'Не удалось записать файл APK.';
 
   @override
+  String get update_later => 'Позже';
+
+  @override
+  String get update_installed_version => 'Установлена';
+
+  @override
+  String get update_new_version => 'Новая версия';
+
+  @override
+  String update_published(String date) {
+    return 'Опубликована $date';
+  }
+
+  @override
+  String get update_pre_release => 'Предварительная версия';
+
+  @override
+  String get update_notes_features => 'Новое';
+
+  @override
+  String get update_notes_fixes => 'Исправления';
+
+  @override
+  String get update_notes_other => 'Улучшения';
+
+  @override
+  String get update_hint_install =>
+      'Приложение скачает обновление, затем Android попросит подтвердить установку. Ваша библиотека останется без изменений.';
+
+  @override
+  String get update_hint_browser =>
+      'Страница версии откроется в браузере: скачайте там файл для вашей системы и установите его.';
+
+  @override
+  String get update_downloading => 'Скачивание…';
+
+  @override
+  String get update_installing => 'Открытие установщика…';
+
+  @override
+  String get update_install_failed => 'Не удалось открыть установщик.';
+
+  @override
+  String get update_browser_failed => 'Не удалось открыть браузер.';
+
+  @override
   String get deselect_all => 'Снять выделение';
 
   @override

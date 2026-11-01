@@ -4206,6 +4206,52 @@ class AppLocalizationsTr extends AppLocalizations {
   String get update_write_failed => 'APK dosyası yazılamadı.';
 
   @override
+  String get update_later => 'Daha sonra';
+
+  @override
+  String get update_installed_version => 'Yüklü';
+
+  @override
+  String get update_new_version => 'Yeni sürüm';
+
+  @override
+  String update_published(String date) {
+    return 'Yayın tarihi: $date';
+  }
+
+  @override
+  String get update_pre_release => 'Ön sürüm';
+
+  @override
+  String get update_notes_features => 'Yenilikler';
+
+  @override
+  String get update_notes_fixes => 'Düzeltmeler';
+
+  @override
+  String get update_notes_other => 'İyileştirmeler';
+
+  @override
+  String get update_hint_install =>
+      'Uygulama güncellemeyi indirir, ardından Android kurulumu onaylamanızı ister. Kitaplığınız olduğu gibi kalır.';
+
+  @override
+  String get update_hint_browser =>
+      'Sürüm sayfası tarayıcınızda açılır: sisteminize uygun dosyayı oradan indirip kurun.';
+
+  @override
+  String get update_downloading => 'İndiriliyor…';
+
+  @override
+  String get update_installing => 'Yükleyici açılıyor…';
+
+  @override
+  String get update_install_failed => 'Yükleyici açılamadı.';
+
+  @override
+  String get update_browser_failed => 'Tarayıcı açılamadı.';
+
+  @override
   String get deselect_all => 'Tüm seçimi kaldır';
 
   @override

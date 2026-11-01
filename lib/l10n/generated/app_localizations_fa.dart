@@ -4221,6 +4221,52 @@ class AppLocalizationsFa extends AppLocalizations {
   String get update_write_failed => 'امکان نوشتن فایل APK وجود نداشت.';
 
   @override
+  String get update_later => 'بعداً';
+
+  @override
+  String get update_installed_version => 'نصب‌شده';
+
+  @override
+  String get update_new_version => 'نسخه جدید';
+
+  @override
+  String update_published(String date) {
+    return 'منتشرشده در $date';
+  }
+
+  @override
+  String get update_pre_release => 'پیش‌انتشار';
+
+  @override
+  String get update_notes_features => 'تازه‌ها';
+
+  @override
+  String get update_notes_fixes => 'رفع اشکال‌ها';
+
+  @override
+  String get update_notes_other => 'بهبودها';
+
+  @override
+  String get update_hint_install =>
+      'برنامه به‌روزرسانی را دانلود می‌کند، سپس Android از شما می‌خواهد نصب را تأیید کنید. کتابخانه شما تغییری نمی‌کند.';
+
+  @override
+  String get update_hint_browser =>
+      'صفحه انتشار در مرورگر باز می‌شود: فایل مناسب سیستم خود را از آنجا دانلود و نصب کنید.';
+
+  @override
+  String get update_downloading => 'در حال دانلود…';
+
+  @override
+  String get update_installing => 'در حال باز کردن نصب‌کننده…';
+
+  @override
+  String get update_install_failed => 'نصب‌کننده باز نشد.';
+
+  @override
+  String get update_browser_failed => 'مرورگر باز نشد.';
+
+  @override
   String get deselect_all => 'لغو انتخاب همه';
 
   @override

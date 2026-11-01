@@ -4196,6 +4196,52 @@ class AppLocalizationsHi extends AppLocalizations {
   String get update_write_failed => 'APK फ़ाइल लिखी नहीं जा सकी।';
 
   @override
+  String get update_later => 'बाद में';
+
+  @override
+  String get update_installed_version => 'इंस्टॉल की गई';
+
+  @override
+  String get update_new_version => 'नया संस्करण';
+
+  @override
+  String update_published(String date) {
+    return '$date को प्रकाशित';
+  }
+
+  @override
+  String get update_pre_release => 'प्री-रिलीज़';
+
+  @override
+  String get update_notes_features => 'नया';
+
+  @override
+  String get update_notes_fixes => 'सुधार';
+
+  @override
+  String get update_notes_other => 'बेहतरी';
+
+  @override
+  String get update_hint_install =>
+      'ऐप अपडेट डाउनलोड करता है, फिर Android आपसे इंस्टॉलेशन की पुष्टि करने को कहता है। आपकी लाइब्रेरी जैसी है वैसी ही रहती है।';
+
+  @override
+  String get update_hint_browser =>
+      'रिलीज़ पेज आपके ब्राउज़र में खुलता है: वहाँ से अपने सिस्टम की फ़ाइल डाउनलोड करके इंस्टॉल करें।';
+
+  @override
+  String get update_downloading => 'डाउनलोड हो रहा है…';
+
+  @override
+  String get update_installing => 'इंस्टॉलर खोला जा रहा है…';
+
+  @override
+  String get update_install_failed => 'इंस्टॉलर नहीं खुल सका।';
+
+  @override
+  String get update_browser_failed => 'ब्राउज़र नहीं खुल सका।';
+
+  @override
   String get deselect_all => 'सारा चयन हटाएँ';
 
   @override

@@ -4111,6 +4111,52 @@ class AppLocalizationsKo extends AppLocalizations {
   String get update_write_failed => 'APK 파일을 쓸 수 없습니다.';
 
   @override
+  String get update_later => '나중에';
+
+  @override
+  String get update_installed_version => '설치됨';
+
+  @override
+  String get update_new_version => '새 버전';
+
+  @override
+  String update_published(String date) {
+    return '$date에 게시됨';
+  }
+
+  @override
+  String get update_pre_release => '사전 릴리스';
+
+  @override
+  String get update_notes_features => '새로운 기능';
+
+  @override
+  String get update_notes_fixes => '수정 사항';
+
+  @override
+  String get update_notes_other => '개선 사항';
+
+  @override
+  String get update_hint_install =>
+      '앱이 업데이트를 다운로드한 다음 Android에서 설치를 확인하도록 요청합니다. 라이브러리는 그대로 유지됩니다.';
+
+  @override
+  String get update_hint_browser =>
+      '릴리스 페이지가 브라우저에서 열립니다. 사용 중인 시스템용 파일을 다운로드해 설치하세요.';
+
+  @override
+  String get update_downloading => '다운로드 중…';
+
+  @override
+  String get update_installing => '설치 프로그램을 여는 중…';
+
+  @override
+  String get update_install_failed => '설치 프로그램을 열 수 없습니다.';
+
+  @override
+  String get update_browser_failed => '브라우저를 열 수 없습니다.';
+
+  @override
   String get deselect_all => '모두 선택 해제';
 
   @override

@@ -4265,6 +4265,52 @@ class AppLocalizationsFr extends AppLocalizations {
       'Erreur lors de l\'écriture du fichier APK.';
 
   @override
+  String get update_later => 'Plus tard';
+
+  @override
+  String get update_installed_version => 'Installée';
+
+  @override
+  String get update_new_version => 'Nouvelle version';
+
+  @override
+  String update_published(String date) {
+    return 'Publiée le $date';
+  }
+
+  @override
+  String get update_pre_release => 'Pré-version';
+
+  @override
+  String get update_notes_features => 'Nouveautés';
+
+  @override
+  String get update_notes_fixes => 'Corrections';
+
+  @override
+  String get update_notes_other => 'Améliorations';
+
+  @override
+  String get update_hint_install =>
+      'L\'application télécharge la mise à jour, puis Android vous demande de confirmer l\'installation. Votre bibliothèque reste intacte.';
+
+  @override
+  String get update_hint_browser =>
+      'La page de la version s\'ouvre dans votre navigateur : téléchargez-y le fichier pour votre système, puis installez-le.';
+
+  @override
+  String get update_downloading => 'Téléchargement…';
+
+  @override
+  String get update_installing => 'Ouverture de l\'installateur…';
+
+  @override
+  String get update_install_failed => 'Impossible d\'ouvrir l\'installateur.';
+
+  @override
+  String get update_browser_failed => 'Impossible d\'ouvrir le navigateur.';
+
+  @override
   String get deselect_all => 'Tout désélectionner';
 
   @override

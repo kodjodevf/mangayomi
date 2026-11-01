@@ -4200,6 +4200,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String get update_write_failed => 'Couldn\'t write the APK file.';
 
   @override
+  String get update_later => 'Later';
+
+  @override
+  String get update_installed_version => 'Installed';
+
+  @override
+  String get update_new_version => 'New version';
+
+  @override
+  String update_published(String date) {
+    return 'Published on $date';
+  }
+
+  @override
+  String get update_pre_release => 'Pre-release';
+
+  @override
+  String get update_notes_features => 'New';
+
+  @override
+  String get update_notes_fixes => 'Fixes';
+
+  @override
+  String get update_notes_other => 'Improvements';
+
+  @override
+  String get update_hint_install =>
+      'The app downloads the update, then Android asks you to confirm the installation. Your library stays as it is.';
+
+  @override
+  String get update_hint_browser =>
+      'The release page opens in your browser: download the file for your system from there, then install it.';
+
+  @override
+  String get update_downloading => 'Downloading…';
+
+  @override
+  String get update_installing => 'Opening the installer…';
+
+  @override
+  String get update_install_failed => 'Couldn\'t open the installer.';
+
+  @override
+  String get update_browser_failed => 'Couldn\'t open the browser.';
+
+  @override
   String get deselect_all => 'Deselect all';
 
   @override

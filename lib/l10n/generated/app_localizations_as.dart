@@ -4191,6 +4191,52 @@ class AppLocalizationsAs extends AppLocalizations {
   String get update_write_failed => 'APK ফাইল লিখিব পৰা নগ\'ল।';
 
   @override
+  String get update_later => 'পিছত';
+
+  @override
+  String get update_installed_version => 'ইনষ্টল কৰা';
+
+  @override
+  String get update_new_version => 'নতুন সংস্কৰণ';
+
+  @override
+  String update_published(String date) {
+    return '$dateত প্ৰকাশিত';
+  }
+
+  @override
+  String get update_pre_release => 'প্ৰাক-মুক্তি';
+
+  @override
+  String get update_notes_features => 'নতুন';
+
+  @override
+  String get update_notes_fixes => 'সংশোধন';
+
+  @override
+  String get update_notes_other => 'উন্নতি';
+
+  @override
+  String get update_hint_install =>
+      'এপটোৱে আপডেট ডাউনলোড কৰে, তাৰ পিছত Android এ ইনষ্টলেচন নিশ্চিত কৰিবলৈ ক\'ব। আপোনাৰ লাইব্ৰেৰী একে থাকিব।';
+
+  @override
+  String get update_hint_browser =>
+      'মুক্তিৰ পৃষ্ঠাটো আপোনাৰ ব্ৰাউজাৰত খোল খাব: তাৰ পৰা আপোনাৰ ছিষ্টেমৰ ফাইলটো ডাউনলোড কৰি ইনষ্টল কৰক।';
+
+  @override
+  String get update_downloading => 'ডাউনলোড হৈ আছে…';
+
+  @override
+  String get update_installing => 'ইনষ্টলাৰ খোলা হৈছে…';
+
+  @override
+  String get update_install_failed => 'ইনষ্টলাৰ খুলিব পৰা নগ\'ল।';
+
+  @override
+  String get update_browser_failed => 'ব্ৰাউজাৰ খুলিব পৰা নগ\'ল।';
+
+  @override
   String get deselect_all => 'সকলো বাছনি আঁতৰাওক';
 
   @override

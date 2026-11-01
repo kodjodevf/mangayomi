@@ -4206,6 +4206,52 @@ class AppLocalizationsId extends AppLocalizations {
   String get update_write_failed => 'Tidak dapat menulis berkas APK.';
 
   @override
+  String get update_later => 'Nanti';
+
+  @override
+  String get update_installed_version => 'Terpasang';
+
+  @override
+  String get update_new_version => 'Versi baru';
+
+  @override
+  String update_published(String date) {
+    return 'Dirilis pada $date';
+  }
+
+  @override
+  String get update_pre_release => 'Pra-rilis';
+
+  @override
+  String get update_notes_features => 'Baru';
+
+  @override
+  String get update_notes_fixes => 'Perbaikan';
+
+  @override
+  String get update_notes_other => 'Peningkatan';
+
+  @override
+  String get update_hint_install =>
+      'Aplikasi mengunduh pembaruan, lalu Android meminta Anda mengonfirmasi pemasangan. Pustaka Anda tetap seperti semula.';
+
+  @override
+  String get update_hint_browser =>
+      'Halaman rilis terbuka di peramban: unduh berkas untuk sistem Anda dari sana, lalu pasang.';
+
+  @override
+  String get update_downloading => 'Mengunduh…';
+
+  @override
+  String get update_installing => 'Membuka pemasang…';
+
+  @override
+  String get update_install_failed => 'Tidak dapat membuka pemasang.';
+
+  @override
+  String get update_browser_failed => 'Tidak dapat membuka peramban.';
+
+  @override
   String get deselect_all => 'Batalkan semua pilihan';
 
   @override

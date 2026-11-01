@@ -155,10 +155,7 @@ class AboutScreen extends ConsumerWidget {
       botToast(l10n.new_update_available, second: 2);
       await Future.delayed(const Duration(seconds: 1));
       if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (_) => DownloadFileScreen(updateAvailable: updateInfo),
-        );
+        showUpdateDialog(context, updateInfo);
       }
     } catch (_) {
       botToast(l10n.no_new_updates_available, second: 2);

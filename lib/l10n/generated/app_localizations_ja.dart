@@ -4099,6 +4099,52 @@ class AppLocalizationsJa extends AppLocalizations {
   String get update_write_failed => 'APK ファイルを書き込めませんでした。';
 
   @override
+  String get update_later => '後で';
+
+  @override
+  String get update_installed_version => 'インストール済み';
+
+  @override
+  String get update_new_version => '新しいバージョン';
+
+  @override
+  String update_published(String date) {
+    return '公開日: $date';
+  }
+
+  @override
+  String get update_pre_release => 'プレリリース';
+
+  @override
+  String get update_notes_features => '新機能';
+
+  @override
+  String get update_notes_fixes => '修正';
+
+  @override
+  String get update_notes_other => '改善';
+
+  @override
+  String get update_hint_install =>
+      'アプリがアップデートをダウンロードし、その後 Android がインストールの確認を求めます。ライブラリはそのまま残ります。';
+
+  @override
+  String get update_hint_browser =>
+      'リリースページがブラウザで開きます。お使いのシステム用のファイルをダウンロードしてインストールしてください。';
+
+  @override
+  String get update_downloading => 'ダウンロード中…';
+
+  @override
+  String get update_installing => 'インストーラーを開いています…';
+
+  @override
+  String get update_install_failed => 'インストーラーを開けませんでした。';
+
+  @override
+  String get update_browser_failed => 'ブラウザを開けませんでした。';
+
+  @override
   String get deselect_all => 'すべて選択解除';
 
   @override

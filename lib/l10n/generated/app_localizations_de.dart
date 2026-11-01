@@ -4235,6 +4235,54 @@ class AppLocalizationsDe extends AppLocalizations {
       'Die APK-Datei konnte nicht geschrieben werden.';
 
   @override
+  String get update_later => 'Später';
+
+  @override
+  String get update_installed_version => 'Installiert';
+
+  @override
+  String get update_new_version => 'Neue Version';
+
+  @override
+  String update_published(String date) {
+    return 'Veröffentlicht am $date';
+  }
+
+  @override
+  String get update_pre_release => 'Vorabversion';
+
+  @override
+  String get update_notes_features => 'Neu';
+
+  @override
+  String get update_notes_fixes => 'Fehlerbehebungen';
+
+  @override
+  String get update_notes_other => 'Verbesserungen';
+
+  @override
+  String get update_hint_install =>
+      'Die App lädt das Update herunter, dann bittet Android dich, die Installation zu bestätigen. Deine Bibliothek bleibt unverändert.';
+
+  @override
+  String get update_hint_browser =>
+      'Die Versionsseite öffnet sich im Browser: Lade dort die Datei für dein System herunter und installiere sie.';
+
+  @override
+  String get update_downloading => 'Wird heruntergeladen…';
+
+  @override
+  String get update_installing => 'Installationsprogramm wird geöffnet…';
+
+  @override
+  String get update_install_failed =>
+      'Das Installationsprogramm konnte nicht geöffnet werden.';
+
+  @override
+  String get update_browser_failed =>
+      'Der Browser konnte nicht geöffnet werden.';
+
+  @override
   String get deselect_all => 'Auswahl aufheben';
 
   @override
