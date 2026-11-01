@@ -337,6 +337,9 @@ class AppearanceSectionWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // With libass, the style below only applies while the switch is on.
+    final styleInUse =
+        !useLibass || ref.watch(overrideAssSubtitlesStateProvider);
     // FontSettingWidget/ColorSettingWidget style themselves from the ambient
     // Theme - they used to open inside their own draggable menu.
     // Forced dark here so they stay legible against this sheet's dark ground
@@ -373,7 +376,18 @@ class AppearanceSectionWidget extends ConsumerWidget {
               color: Colors.white.withValues(alpha: Alphas.tint),
             ),
           ],
-          SubtitleAppearanceWidget(hasSubtitleTrack: hasSubtitleTrack),
+          ExcludeFocus(
+            excluding: !styleInUse,
+            child: IgnorePointer(
+              ignoring: !styleInUse,
+              child: Opacity(
+                opacity: styleInUse ? 1 : Alphas.disabled,
+                child: SubtitleAppearanceWidget(
+                  hasSubtitleTrack: hasSubtitleTrack,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

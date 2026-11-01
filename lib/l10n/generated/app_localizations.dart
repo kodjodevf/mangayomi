@@ -3498,13 +3498,13 @@ abstract class AppLocalizations {
   /// No description provided for @override_ass_subtitles.
   ///
   /// In en, this message translates to:
-  /// **'Override ASS subtitles'**
+  /// **'Use my subtitle style'**
   String get override_ass_subtitles;
 
   /// No description provided for @override_ass_subtitles_info.
   ///
   /// In en, this message translates to:
-  /// **'Apply custom styling to ASS/SSA subtitles'**
+  /// **'Applies your size and colours to every subtitle, ASS included. When off, subtitles use their default style'**
   String get override_ass_subtitles_info;
 
   /// No description provided for @torrent_stream.

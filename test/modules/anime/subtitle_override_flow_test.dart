@@ -52,7 +52,7 @@ void main() {
     notifier.setOverrideAss(false);
     notifier.setOverrideAss(true);
 
-    expect(sent, ['force', 'scale', 'force']);
+    expect(sent, ['force', 'yes', 'force']);
     expect(container.read(overrideAssSubtitlesStateProvider), isTrue);
   });
 }
