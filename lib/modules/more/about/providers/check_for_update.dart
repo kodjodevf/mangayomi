@@ -126,7 +126,7 @@ Future<UpdateInfo?> _fetchLatestRelease() async {
     final cleanVersion = tagName
         .trim()
         .replaceFirst(RegExp(r'^[vV]'), '')
-        .split(RegExp(r'[-+]'))
+        .split('+')
         .first;
     if (cleanVersion.isEmpty) return null;
 

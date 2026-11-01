@@ -436,20 +436,14 @@ Future<void> checkIfSourceIsObsolete(
   }
 }
 
+/// Compares two versions, a pre-release such as `1.0.0-beta.1` coming before
+/// `1.0.0` and `-beta.2` after `-beta.1`. Build metadata (`+127`) is ignored.
 int compareVersions(String version1, String version2) {
-  final clean1 = version1
-      .trim()
-      .replaceFirst(RegExp(r'^[vV]'), '')
-      .split(RegExp(r'[-+]'))
-      .first;
-  final clean2 = version2
-      .trim()
-      .replaceFirst(RegExp(r'^[vV]'), '')
-      .split(RegExp(r'[-+]'))
-      .first;
+  final (core1, preRelease1) = _splitVersion(version1);
+  final (core2, preRelease2) = _splitVersion(version2);
 
-  final v1Parts = clean1.split('.');
-  final v2Parts = clean2.split('.');
+  final v1Parts = core1.split('.');
+  final v2Parts = core2.split('.');
   final maxLength = v1Parts.length > v2Parts.length
       ? v1Parts.length
       : v2Parts.length;
@@ -462,7 +456,50 @@ int compareVersions(String version1, String version2) {
     if (comparison != 0) return comparison;
   }
 
-  return 0;
+  return _comparePreReleases(preRelease1, preRelease2);
+}
+
+(String, String) _splitVersion(String version) {
+  final clean = version
+      .trim()
+      .replaceFirst(RegExp(r'^[vV]'), '')
+      .split('+')
+      .first;
+  final dash = clean.indexOf('-');
+  if (dash == -1) return (clean, '');
+  return (clean.substring(0, dash), clean.substring(dash + 1).toLowerCase());
+}
+
+int _comparePreReleases(String preRelease1, String preRelease2) {
+  if (preRelease1 == preRelease2) return 0;
+  // The final version comes after all of its pre-releases.
+  if (preRelease1.isEmpty) return 1;
+  if (preRelease2.isEmpty) return -1;
+
+  final v1Parts = preRelease1.split('.');
+  final v2Parts = preRelease2.split('.');
+  final minLength = v1Parts.length < v2Parts.length
+      ? v1Parts.length
+      : v2Parts.length;
+
+  for (var i = 0; i < minLength; i++) {
+    final v1Value = int.tryParse(v1Parts[i]);
+    final v2Value = int.tryParse(v2Parts[i]);
+
+    final int comparison;
+    if (v1Value != null && v2Value != null) {
+      comparison = v1Value.compareTo(v2Value);
+    } else if (v1Value != null) {
+      comparison = -1;
+    } else if (v2Value != null) {
+      comparison = 1;
+    } else {
+      comparison = v1Parts[i].compareTo(v2Parts[i]).sign;
+    }
+    if (comparison != 0) return comparison;
+  }
+
+  return v1Parts.length.compareTo(v2Parts.length);
 }
 
 Future<Map<String, String>> fetchHeadersDalvik(
