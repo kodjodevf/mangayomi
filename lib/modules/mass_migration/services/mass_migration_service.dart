@@ -11,6 +11,7 @@ import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.da
 import 'package:mangayomi/repositories/chapter_repository.dart';
 import 'package:mangayomi/repositories/history_repository.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
+import 'package:mangayomi/repositories/reading_log_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/services/get_detail.dart';
@@ -53,6 +54,7 @@ class _MigrationSnapshot {
     required this.sourceTitle,
     this.historyChapter,
     this.historyDate,
+    this.readingTimeSeconds = 0,
   });
 
   final List<Chapter> chaptersProgress;
@@ -65,6 +67,7 @@ class _MigrationSnapshot {
   /// Chapter number of the last thing read, as [ChapterRecognition] sees it.
   final double? historyChapter;
   final String? historyDate;
+  final int readingTimeSeconds;
 }
 
 Future<_MigrationSnapshot> _captureMigrationSnapshot({
@@ -73,6 +76,7 @@ Future<_MigrationSnapshot> _captureMigrationSnapshot({
 }) async {
   double? historyChapter;
   String? historyDate;
+  var readingTimeSeconds = 0;
   final chaptersProgress = <Chapter>[];
   final sourceTitle = oldManga.name ?? '';
 
@@ -85,6 +89,10 @@ Future<_MigrationSnapshot> _captureMigrationSnapshot({
       histories.lastOrNull?.chapter.value?.name,
     );
     historyDate = histories.lastOrNull?.date;
+    readingTimeSeconds = histories.fold(
+      0,
+      (sum, h) => sum + (h.readingTimeSeconds ?? 0),
+    );
     for (final history in histories) {
       historyRepository.deleteSync(history.id!);
       ref
@@ -120,6 +128,7 @@ Future<_MigrationSnapshot> _captureMigrationSnapshot({
     sourceTitle: sourceTitle,
     historyChapter: historyChapter,
     historyDate: historyDate,
+    readingTimeSeconds: readingTimeSeconds,
   );
 }
 
@@ -227,10 +236,12 @@ Future<void> _restoreMigrationProgress({
     }
 
     final updatedChapters = <Chapter>[];
+    final chapterRemap = <int, int>{};
     for (final oldChapter in snapshot.chaptersProgress) {
       final number = _chapterNumber(snapshot.sourceTitle, oldChapter.name);
       final chapter = number == null ? null : byNumber[number];
       if (chapter != null) {
+        chapterRemap[oldChapter.id!] = chapter.id!;
         chapter.isBookmarked = oldChapter.isBookmarked;
         chapter.lastPageRead = oldChapter.lastPageRead;
         chapter.isRead = oldChapter.isRead;
@@ -253,9 +264,16 @@ Future<void> _restoreMigrationProgress({
               DateTime.now().millisecondsSinceEpoch.toString(),
           itemType: oldManga.itemType,
           chapterId: historyChapter.id,
+          readingTimeSeconds: snapshot.readingTimeSeconds,
         )..chapter.value = historyChapter,
       );
     }
+    // The series keeps its id; only its chapters were recreated.
+    readingLogRepository.moveMangaSync(
+      oldManga.id!,
+      oldManga.id!,
+      chapterRemap,
+    );
   });
 }
 

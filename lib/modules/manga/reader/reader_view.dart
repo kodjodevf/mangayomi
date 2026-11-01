@@ -55,6 +55,7 @@ import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:mangayomi/modules/reader_common/mixins/reader_auto_scroll.dart';
+import 'package:mangayomi/modules/reader_common/mixins/chapter_controller_mixin.dart';
 
 class MangaReaderView extends ConsumerWidget {
   final int chapterId;
@@ -282,9 +283,7 @@ class _MangaChapterPageGalleryState
     releaseReaderOrientation();
     applyReaderScreenBrightness(-1);
     _readingStopwatch.stop();
-    _readerController.setHistoryUpdate(
-      elapsedSeconds: _readingStopwatch.elapsed.inSeconds,
-    );
+    _flushReadingTime(_readerController);
     _rebuildDetail.close();
 
     disposePrefetchMixin();
@@ -339,6 +338,7 @@ class _MangaChapterPageGalleryState
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       _readingStopwatch.stop();
+      _flushReadingTime(_readerController);
       if (keepOn) {
         WakelockPlus.disable();
       }
@@ -466,6 +466,7 @@ class _MangaChapterPageGalleryState
   @override
   void initState() {
     super.initState();
+    beginReadingSession();
     _readingStopwatch.start();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -1213,6 +1214,16 @@ class _MangaChapterPageGalleryState
     await handleEvictionsAndPrefetch();
   }
 
+  /// Hands the reading time measured so far to [controller]'s chapter and
+  /// starts counting again, so each chapter gets its own time and an app the
+  /// system kills in the background loses at most what came after the last
+  /// save.
+  void _flushReadingTime(ReaderController controller) {
+    final seconds = _readingStopwatch.elapsed.inSeconds;
+    _readingStopwatch.reset();
+    controller.setHistoryUpdate(elapsedSeconds: seconds);
+  }
+
   /// Updates the active chapter when the user scrolls or swipes into a page
   /// belonging to a different chapter.
   void _updateChapterIfNeeded(int actualIndex) {
@@ -1222,6 +1233,7 @@ class _MangaChapterPageGalleryState
     if (!mounted) return;
 
     final previousController = _readerController;
+    _flushReadingTime(previousController);
 
     setState(() {
       _readerController = ref.read(

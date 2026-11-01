@@ -6,6 +6,7 @@ import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart' as app;
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
+import 'package:mangayomi/models/reading_log.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -30,6 +31,7 @@ void main() {
         MangaSchema,
         ChapterSchema,
         HistorySchema,
+        ReadingLogSchema,
         SettingsSchema,
         SourceSchema,
         TrackSchema,
