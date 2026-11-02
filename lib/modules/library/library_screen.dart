@@ -46,12 +46,19 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 /// - [showDeleteMangaDialog] — bulk delete dialog
 /// - [showImportLocalDialog] — import local files dialog
 /// - [filteredLibraryMangaProvider] — cached filter+sort (S8)
+/// A search for the library's tab to open on.
+class LibrarySearch {
+  final String query;
+
+  const LibrarySearch(this.query);
+}
+
 class LibraryScreen extends ConsumerStatefulWidget {
   final ItemType itemType;
-  final String? presetInput;
+  final LibrarySearch? search;
   const LibraryScreen({
     required this.itemType,
-    required this.presetInput,
+    required this.search,
     super.key,
   });
 
@@ -71,9 +78,21 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   @override
   void initState() {
     super.initState();
-    if (widget.presetInput != null) {
-      _isSearch = true;
-      _textEditingController.text = widget.presetInput!;
+    if (widget.search != null) _openSearch(widget.search!);
+  }
+
+  void _openSearch(LibrarySearch search) {
+    _isSearch = true;
+    _textEditingController.text = search.query;
+  }
+
+  @override
+  void didUpdateWidget(LibraryScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // The tab stays mounted; each request is a new one, even for the same text.
+    final search = widget.search;
+    if (search != null && !identical(search, oldWidget.search)) {
+      _openSearch(search);
     }
   }
 

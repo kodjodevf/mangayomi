@@ -192,24 +192,24 @@ class RouterNotifier extends ChangeNotifier {
       },
       branches: [
         _branch(
-          _genericRoute<String?>(
+          _genericRoute<LibrarySearch?>(
             name: "MangaLibrary",
-            builder: (id) =>
-                LibraryScreen(itemType: ItemType.manga, presetInput: id),
+            builder: (search) =>
+                LibraryScreen(itemType: ItemType.manga, search: search),
           ),
         ),
         _branch(
-          _genericRoute<String?>(
+          _genericRoute<LibrarySearch?>(
             name: "AnimeLibrary",
-            builder: (id) =>
-                LibraryScreen(itemType: ItemType.anime, presetInput: id),
+            builder: (search) =>
+                LibraryScreen(itemType: ItemType.anime, search: search),
           ),
         ),
         _branch(
-          _genericRoute<String?>(
+          _genericRoute<LibrarySearch?>(
             name: "NovelLibrary",
-            builder: (id) =>
-                LibraryScreen(itemType: ItemType.novel, presetInput: id),
+            builder: (search) =>
+                LibraryScreen(itemType: ItemType.novel, search: search),
           ),
         ),
         _branch(
