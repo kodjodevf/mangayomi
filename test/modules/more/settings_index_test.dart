@@ -66,4 +66,10 @@ void main() {
   test('an empty query finds nothing', () {
     expect(searchSettings('   ', en), isEmpty);
   });
+
+  test('the app font can be found in Appearance', () {
+    final hits = searchSettings('font', en);
+
+    expect(hits.any((e) => e.route == '/appearance'), isTrue);
+  });
 }
