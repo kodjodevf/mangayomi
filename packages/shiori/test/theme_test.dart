@@ -352,4 +352,56 @@ void main() {
     ).extension<ShioriTokens>()!.text;
     expect(tv.body.fontSize, greaterThan(ShioriType.reference.body.fontSize!));
   });
+
+  group('a chosen font', () {
+    final data = FlexColor.schemesList[2];
+
+    for (final tint in [false, true]) {
+      for (final brightness in Brightness.values) {
+        test('reaches every text style: ${brightness.name}, tinted: $tint', () {
+          final theme = buildShioriTheme(
+            brightness: brightness,
+            colors: brightness == Brightness.light ? data.light : data.dark,
+            tintSurfaces: tint,
+            blendLevel: 10,
+            density: ShioriDensity.phone,
+            fontFamily: 'Chosen',
+          );
+          final t = theme.extension<ShioriTokens>()!.text;
+
+          expect(theme.textTheme.bodyMedium!.fontFamily, 'Chosen');
+          expect(theme.appBarTheme.titleTextStyle!.fontFamily, 'Chosen');
+          for (final style in [
+            t.screenTitle,
+            t.seriesTitle,
+            t.section,
+            t.card,
+            t.body,
+            t.row,
+            t.meta,
+            t.badge,
+            t.overline,
+          ]) {
+            expect(style.fontFamily, 'Chosen');
+          }
+        });
+      }
+    }
+
+    test('survives a change of density', () {
+      final tokens = ShioriTokens(
+        color: ShioriColors.fromScheme(build(Brightness.dark).colorScheme),
+        density: ShioriDensity.phone,
+        fontFamily: 'Chosen',
+      ).copyWith(density: ShioriDensity.tv);
+
+      expect(tokens.text.body.fontFamily, 'Chosen');
+    });
+
+    test('falls back to the Shiori face when none is chosen', () {
+      final t = build(Brightness.dark).extension<ShioriTokens>()!.text;
+
+      expect(t.body.fontFamily, shioriFontFamily);
+    });
+  });
 }

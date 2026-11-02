@@ -83,7 +83,7 @@ ThemeData buildShioriTheme({
             useMaterial3: true,
             fontFamily: resolvedFontFamily,
           );
-    return _withTokens(theme, density);
+    return _withTokens(theme, density, resolvedFontFamily);
   }
 
   final neutrals = ShioriNeutrals.of(brightness, pureBlack: pure);
@@ -126,15 +126,19 @@ ThemeData buildShioriTheme({
           useMaterial3: true,
           fontFamily: resolvedFontFamily,
         );
-  return _withTokens(theme, density);
+  return _withTokens(theme, density, resolvedFontFamily);
 }
 
-ThemeData _withTokens(ThemeData theme, ShioriDensity density) {
+ThemeData _withTokens(
+  ThemeData theme,
+  ShioriDensity density,
+  String fontFamily,
+) {
   final colors = ShioriColors.fromScheme(
     theme.colorScheme,
     ground: theme.scaffoldBackgroundColor,
   );
-  final text = ShioriType.scaled(density.typeScale);
+  final text = ShioriType.scaled(density.typeScale, fontFamily: fontFamily);
   return theme.copyWith(
     textTheme: _materialTextTheme(theme.textTheme, text),
     // App bars title a screen in the section size: the screen's own large
@@ -213,7 +217,7 @@ ThemeData _withTokens(ThemeData theme, ShioriDensity density) {
     ),
     extensions: [
       ...theme.extensions.values,
-      ShioriTokens(color: colors, density: density),
+      ShioriTokens(color: colors, density: density, fontFamily: fontFamily),
     ],
   );
 }

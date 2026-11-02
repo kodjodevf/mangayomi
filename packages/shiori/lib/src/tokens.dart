@@ -346,8 +346,9 @@ class ShioriType {
     required this.overline,
   });
 
-  /// The scale at [ShioriDensity.typeScale].
-  factory ShioriType.scaled(double scale) {
+  /// The scale at [ShioriDensity.typeScale], set in [fontFamily] if provided,
+  /// otherwise [shioriFontFamily].
+  factory ShioriType.scaled(double scale, {String? fontFamily}) {
     TextStyle s(
       double size,
       FontWeight weight, {
@@ -355,7 +356,7 @@ class ShioriType {
       double? height,
       bool tabular = false,
     }) => TextStyle(
-      fontFamily: shioriFontFamily,
+      fontFamily: fontFamily ?? shioriFontFamily,
       fontSize: size * scale,
       fontWeight: weight,
       letterSpacing: tracking * size * scale,
@@ -530,8 +531,8 @@ enum ShioriDensity {
 /// `context.shiori`.
 @immutable
 class ShioriTokens extends ThemeExtension<ShioriTokens> {
-  ShioriTokens({required this.color, required this.density})
-    : text = ShioriType.scaled(density.typeScale);
+  ShioriTokens({required this.color, required this.density, String? fontFamily})
+    : text = ShioriType.scaled(density.typeScale, fontFamily: fontFamily);
 
   const ShioriTokens._(this.color, this.text, this.density);
 
@@ -546,7 +547,12 @@ class ShioriTokens extends ThemeExtension<ShioriTokens> {
   ShioriTokens copyWith({ShioriColors? color, ShioriDensity? density}) =>
       ShioriTokens._(
         color ?? this.color,
-        density == null ? text : ShioriType.scaled(density.typeScale),
+        density == null
+            ? text
+            : ShioriType.scaled(
+                density.typeScale,
+                fontFamily: text.body.fontFamily,
+              ),
         density ?? this.density,
       );
 

@@ -25,6 +25,7 @@ import 'package:mangayomi/modules/novel/mixins/novel_pagination_tts_mixin.dart';
 import 'package:mangayomi/modules/novel/tts/novel_tts_service.dart';
 import 'package:mangayomi/modules/novel/tts/tts_player_bar.dart';
 import 'package:mangayomi/modules/novel/tts/tts_settings_tab.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/novel/utils/novel_reader_fonts.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_bottom_bar.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_general_settings_tab.dart';
@@ -402,11 +403,15 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                               final customTextColor = ref.watch(
                                 novelReaderTextColorStateProvider,
                               );
-                              // "Default" returns null, which causes the
-                              // render to use the system default font.
-                              final fontFamily = resolveNovelFontFamily(
-                                ref.watch(novelFontFamilyStateProvider),
-                              );
+                              // "Default" is the font the user picked in
+                              // Appearance.
+                              final fontFamily =
+                                  resolveNovelFontFamily(
+                                    ref.watch(novelFontFamilyStateProvider),
+                                  ) ??
+                                  ref.watch(
+                                    appFontFamilyProvider.select((t) => t.$2),
+                                  );
 
                               if (!scrollRestoreScheduled &&
                                   _readerMode.isContinuous) {

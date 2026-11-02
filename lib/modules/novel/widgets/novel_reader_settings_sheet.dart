@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/novel/utils/novel_reader_fonts.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_settings_controls.dart';
@@ -299,7 +300,14 @@ class _ReaderSettingsTabState extends ConsumerState<ReaderSettingsTab> {
                       vertical: 2,
                     ),
                     labelStyle: context.shiori.text.meta,
-                    label: Text(option.label),
+                    label: Text(
+                      option.key == null
+                          ? ref.watch(
+                                  appFontFamilyProvider.select((t) => t.$1),
+                                ) ??
+                                context.l10n.default0
+                          : option.label,
+                    ),
                     selected: fontFamilyKey == option.key,
                     onSelected: (_) {
                       ref
