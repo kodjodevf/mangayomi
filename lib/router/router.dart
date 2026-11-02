@@ -228,6 +228,10 @@ class RouterNotifier extends ChangeNotifier {
       name: "mangaHome",
       builder: (id) => MangaHomeScreen(source: id.$1!, isLatest: id.$2),
     ),
+    _genericRoute<(Source?, String)>(
+      name: "mangaHomeGenre",
+      builder: (id) => MangaHomeScreen(source: id.$1!, genre: id.$2),
+    ),
     _genericRoute<int>(
       path: "/manga-reader/detail",
       builder: (id) => MangaReaderDetail(mangaId: id),

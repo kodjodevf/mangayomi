@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/browse/widgets/source_code_error_banner.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
@@ -43,11 +44,16 @@ class MangaHomeScreen extends ConsumerStatefulWidget {
   final bool isSearch;
   final bool isLatest;
   final String query;
+
+  /// A genre to browse: picked in the source's filters when it has that one,
+  /// searched for as text otherwise.
+  final String? genre;
   const MangaHomeScreen({
     required this.source,
     this.query = "",
     this.isSearch = false,
     this.isLatest = false,
+    this.genre,
     super.key,
   });
 
@@ -130,6 +136,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   @override
   void initState() {
     super.initState();
+    _openOnGenre();
     _scrollController.addListener(_onScroll);
     _mangaStreamSub = mangaRepository
         .watchBySourceAndLang(source.name, source.lang)
@@ -223,6 +230,19 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
       ref.invalidate(getLatestUpdatesProvider(source: source, page: 1));
     } else if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
       ref.invalidate(getPopularProvider(source: source, page: 1));
+    }
+  }
+
+  void _openOnGenre() {
+    final genre = widget.genre;
+    if (genre == null) return;
+    _selectedIndex = 2;
+    if (selectGenreFilter(filters, genre)) {
+      _isFiltering = true;
+    } else {
+      _isSearch = true;
+      _query = genre;
+      _textEditingController.text = genre;
     }
   }
 
