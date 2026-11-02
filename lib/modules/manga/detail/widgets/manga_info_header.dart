@@ -9,6 +9,8 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/library/library_screen.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/modules/main_view/nav_groups.dart';
+import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/detail_explore_sheet.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/detail_genre_chip.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/detail_header_action.dart';
@@ -299,19 +301,12 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
   }
 
   void _selectGenre(int index, int value, AppLocalizations l10n) {
+    final genre = widget.manga.genre![index];
     if (value == 0) {
-      final genre = widget.manga.genre![index];
-      switch (widget.manga.itemType) {
-        case ItemType.manga:
-          context.pushReplacement('/MangaLibrary', extra: genre);
-          break;
-        case ItemType.anime:
-          context.pushReplacement('/AnimeLibrary', extra: genre);
-          break;
-        case ItemType.novel:
-          context.pushReplacement('/NovelLibrary', extra: genre);
-          break;
-      }
+      context.go(
+        libraryRouteFor(widget.manga.itemType),
+        extra: LibrarySearch(genre),
+      );
       return;
     }
 
@@ -324,7 +319,10 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
       botToast(l10n.source_not_added);
       return;
     }
-    context.pushReplacement('/mangaHome', extra: (source, false));
+    // This page stays under the next one, whose bars the selection would take.
+    ref.read(isLongPressedStateProvider.notifier).update(false);
+    ref.read(chaptersListStateProvider.notifier).clear();
+    context.push('/mangaHomeGenre', extra: (source, genre));
   }
 
   Widget _coverCard() {

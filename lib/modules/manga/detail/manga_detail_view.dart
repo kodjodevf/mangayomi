@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/chapter_selection_reset_scope.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_quick_filters.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -145,13 +146,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     final chapters = ref.watch(
       getChaptersStreamProvider(mangaId: widget.manga!.id!),
     );
-    return PopScope(
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) return;
-        // Reset chapter selection so the top/bottom bars don't bleed into the library screen
-        ref.read(isLongPressedStateProvider.notifier).update(false);
-        ref.read(chaptersListStateProvider.notifier).clear();
-      },
+    return ChapterSelectionResetScope(
       child: chapters.when(
         data: (_) {
           List<Chapter> chapters = widget.manga!.getSortedFilteredChapters();

@@ -150,6 +150,8 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
     return AppBar(
       elevation: 0,
       backgroundColor: Colors.transparent,
+      // The search field has its own back button.
+      automaticallyImplyLeading: !isSearch,
       title: isSearch
           ? null
           : Row(
@@ -187,7 +189,10 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
         isSearch
             ? SeachFormTextField(
                 onChanged: (_) => onSearchClear(),
-                onPressed: onSearchToggle,
+                onPressed: () {
+                  textEditingController.clear();
+                  onSearchToggle();
+                },
                 controller: textEditingController,
                 onSuffixPressed: () {
                   textEditingController.clear();
