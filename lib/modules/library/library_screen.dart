@@ -332,6 +332,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   showNumbersOfItems: showNumbersOfItems,
                   isNotFiltering: isNotFiltering,
                   numberOfItems: numberOfItemsList.length,
+                  visibleEntries: numberOfItemsList,
                   bodyForCategory: bodyForCategory,
                   badgeForCategory: badgeForCategory,
                   downloadFilterType: downloadFilterType,
@@ -345,7 +346,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   isNotFiltering: isNotFiltering,
                   showNumbersOfItems: showNumbersOfItems,
                   numberOfItems: numberOfItemsList.length,
-                  entries: man,
+                  entries: numberOfItemsList,
                   isCategory: false,
                   categoryId: null,
                   settings: settings,
@@ -389,6 +390,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     required bool showNumbersOfItems,
     required bool isNotFiltering,
     required int numberOfItems,
+    required List<Manga> visibleEntries,
     required Widget Function({int? categoryId, bool withoutCategories})
     bodyForCategory,
     required Widget Function(int categoryId) badgeForCategory,
@@ -429,6 +431,17 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       });
     }
 
+    final currentCategoryId = withoutCategory.isNotEmpty && _tabIndex == 0
+        ? null
+        : entr[withoutCategory.isNotEmpty ? _tabIndex - 1 : _tabIndex].id!;
+
+    final tabEntries = visibleEntries.where((m) {
+      if (currentCategoryId == null) {
+        return m.categories == null || m.categories!.isEmpty;
+      }
+      return m.categories?.contains(currentCategoryId) ?? false;
+    }).toList();
+
     return DefaultTabController(
       length: entr.length,
       child: Scaffold(
@@ -437,12 +450,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           isNotFiltering: isNotFiltering,
           showNumbersOfItems: showNumbersOfItems,
           numberOfItems: numberOfItems,
-          entries: man,
+          entries: tabEntries,
           isCategory: true,
-          categoryId: withoutCategory.isNotEmpty && _tabIndex == 0
-              ? null
-              : entr[withoutCategory.isNotEmpty ? _tabIndex - 1 : _tabIndex]
-                    .id!,
+          categoryId: currentCategoryId,
           settings: settings,
           isSearch: _isSearch,
           ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
