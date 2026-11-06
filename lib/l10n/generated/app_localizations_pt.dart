@@ -10,6 +10,35 @@ class AppLocalizationsPt extends AppLocalizations {
   AppLocalizationsPt([String locale = 'pt']) : super(locale);
 
   @override
+  String get discover_title => 'Descobrir';
+
+  @override
+  String get discover_trending => 'Em alta';
+
+  @override
+  String get discover_popular => 'Populares';
+
+  @override
+  String get discover_attribution =>
+      'Rankings da comunidade AniList. A disponibilidade depende das fontes instaladas.';
+
+  @override
+  String get discover_search => 'Buscar nas fontes instaladas';
+
+  @override
+  String get discover_no_description => 'Sinopse indisponível.';
+
+  @override
+  String get discover_empty => 'Nenhuma obra nesta seleção.';
+
+  @override
+  String get discover_unavailable => 'Não foi possível carregar esta vitrine.';
+
+  @override
+  String get discover_hidden =>
+      'Ative mangás, animes ou novels nas Configurações para descobrir obras.';
+
+  @override
   String get library => 'Biblioteca';
 
   @override

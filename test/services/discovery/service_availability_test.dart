@@ -62,6 +62,18 @@ void main() {
       expect(ServiceAvailability.isAvailable(DiscoveryService.anilist), true);
     });
 
+    test('an enforced retry deadline still expires', () {
+      ServiceAvailability.markDown(
+        DiscoveryService.anilist,
+        'rate limited',
+        cooldown: Duration.zero,
+        enforceCooldown: true,
+      );
+      expect(ServiceAvailability.isAvailable(DiscoveryService.anilist), isTrue);
+      ServiceAvailability.markUp(DiscoveryService.anilist);
+      expect(ServiceAvailability.outage(DiscoveryService.anilist), isNull);
+    });
+
     test('one service being down says nothing about the other', () {
       ServiceAvailability.markDown(DiscoveryService.anilist, 'disabled');
 
