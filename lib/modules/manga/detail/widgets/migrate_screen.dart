@@ -18,8 +18,10 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/services/fetch_gate.dart';
 import 'package:mangayomi/services/get_detail.dart';
 import 'package:mangayomi/services/search.dart';
+import 'package:mangayomi/services/source_code_errors.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
@@ -43,6 +45,9 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
       ref.read(onlyIncludePinnedSourceStateProvider)
       ? sourceRepository.getPinnedByItemType(widget.manga.itemType)
       : sourceRepository.getAddedByItemType(widget.manga.itemType);
+  // A few sources search at a time, as in the global search: searching all of
+  // them at once flooded the isolate pool and froze slower devices.
+  final _fetchGate = FetchGate(3);
   // Set once the first source row with results has taken the TV autofocus, so
   // no other row steals it afterwards.
   bool _autofocusClaimed = false;
@@ -111,10 +116,13 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
               itemBuilder: (context, index) {
                 final source = sourceList[index];
                 return MigrationSourceSearchScreen(
-                  key: ValueKey(query),
+                  // Keyed per source as well as per query: siblings can't
+                  // share a key.
+                  key: ValueKey('$query#${source.id}'),
                   query: query,
                   manga: widget.manga,
                   source: source,
+                  fetchGate: _fetchGate,
                   trackSearch: widget.trackSearch,
                   isFirst: index == 0,
                   claimAutofocus: isTv ? _claimAutofocus : null,
@@ -138,6 +146,7 @@ class MigrationSourceSearchScreen extends ConsumerStatefulWidget {
   final TrackSearch? trackSearch;
 
   final Source source;
+  final FetchGate fetchGate;
   // Whether this is the first source row (gets first shot at claiming the TV
   // autofocus so the highlight lands at the top when it has results).
   final bool isFirst;
@@ -150,6 +159,7 @@ class MigrationSourceSearchScreen extends ConsumerStatefulWidget {
     required this.query,
     required this.manga,
     required this.source,
+    required this.fetchGate,
     this.trackSearch,
     this.isFirst = false,
     this.claimAutofocus,
@@ -161,7 +171,13 @@ class MigrationSourceSearchScreen extends ConsumerStatefulWidget {
 }
 
 class _MigrationSourceSearchScreenState
-    extends ConsumerState<MigrationSourceSearchScreen> {
+    extends ConsumerState<MigrationSourceSearchScreen>
+    with AutomaticKeepAliveClientMixin<MigrationSourceSearchScreen> {
+  // Kept when scrolled away: the list disposed the row, and scrolling back
+  // searched the source again, failing sources included.
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     super.initState();
@@ -173,6 +189,13 @@ class _MigrationSourceSearchScreenState
   bool _autofocusFirst = false;
   MPages? pages;
   Future<void> _init() async {
+    await widget.fetchGate.acquire();
+    // A new query replaces every row, and the ones still queued for the old
+    // one have nothing left to show.
+    if (!mounted) {
+      widget.fetchGate.release();
+      return;
+    }
     try {
       _errorMessage = "";
       pages = await ref.read(
@@ -208,11 +231,14 @@ class _MigrationSourceSearchScreenState
           _isLoading = false;
         });
       }
+    } finally {
+      widget.fetchGate.release();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final l10n = l10nLocalizations(context)!;
 
     // IntrinsicHeight instead of a fixed pixel height: sizes to the actual
@@ -326,88 +352,110 @@ class _MigrationMangaGlobalImageCardState
     );
   }
 
+  /// Opens at once and loads the title's chapters inside.
+  ///
+  /// It used to wait for them before opening, so a slow source looked like a
+  /// tap that did nothing, and a failing one never opened it at all.
   void _showMigrateDialog(BuildContext context, dynamic l10n) {
-    ref
-        .watch(
-          getDetailProvider(
-            url: widget.manga.link!,
-            source: widget.source,
-          ).future,
-        )
-        .then((preview) {
-          if (context.mounted) {
-            showDialog(
-              context: context,
-              builder: (ctx) {
-                return ShioriDialog(
-                  title: widget.trackSearch == null
-                      ? l10n.migrate_confirm
-                      : l10n.track_library_add_confirm,
-                  content: preview.chapters != null
-                      ? SizedBox(
-                          height: ctx.height(0.5),
-                          width: ctx.width(1),
-                          child: CustomScrollView(
-                            slivers: [
-                              SliverPadding(
-                                padding: const EdgeInsets.all(0),
-                                sliver: SuperSliverList.builder(
-                                  itemCount: preview.chapters!.length,
-                                  itemBuilder: (context, index) {
-                                    final chapter = preview.chapters![index];
-                                    final date =
-                                        chapter.dateUpload?.isNotEmpty ?? false
-                                        ? dateFormat(
-                                            chapter.dateUpload!,
-                                            ref: ref,
-                                            context: context,
-                                          )
-                                        : '';
-                                    return ShioriListRow(
-                                      title: chapter.name!,
-                                      subtitle: [
-                                        if (date.isNotEmpty) date,
-                                        if (chapter.scanlator?.isNotEmpty ??
-                                            false)
-                                          chapter.scanlator!,
-                                      ].join(' · '),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Text(l10n.n_chapters(0)),
-                  actions: [
-                    ShioriButton.quiet(
-                      label: l10n.cancel,
-                      onPressed: () => Navigator.pop(ctx),
-                    ),
-                    Consumer(
-                      builder: (context, ref, child) => ShioriButton(
-                        label: widget.trackSearch == null
-                            ? l10n.migrate
-                            : l10n.add,
-                        onPressed: () async {
-                          if (widget.trackSearch == null) {
-                            await _migrateManga(preview);
-                            if (ctx.mounted) {
-                              Navigator.pop(ctx);
-                              Navigator.pop(ctx);
-                            }
-                          } else {
-                            await _addTrackManga(context);
-                          }
-                        },
-                      ),
-                    ),
-                  ],
+    final detail = getDetailProvider(
+      url: widget.manga.link!,
+      source: widget.source,
+    );
+    showDialog(
+      context: context,
+      builder: (ctx) => Consumer(
+        builder: (context, ref, child) {
+          final preview = ref.watch(detail);
+          ref.listen(detail, (_, next) {
+            if (next case AsyncError(:final error, :final stackTrace)) {
+              SourceCodeErrors.report(
+                widget.source,
+                'Detail',
+                error,
+                stackTrace,
+              );
+            }
+          });
+          return ShioriDialog(
+            title: widget.trackSearch == null
+                ? l10n.migrate_confirm
+                : l10n.track_library_add_confirm,
+            content: switch (preview) {
+              AsyncData(value: final preview) => _chapterList(ctx, preview),
+              AsyncError(:final error) => ErrorState(
+                compact: true,
+                detail: error.toString(),
+                onRetry: () => ref.invalidate(detail),
+              ),
+              _ => const SizedBox(
+                height: 120,
+                child: Center(child: ShioriLoading.inline()),
+              ),
+            },
+            actions: [
+              ShioriButton.quiet(
+                label: l10n.cancel,
+                onPressed: () => Navigator.pop(ctx),
+              ),
+              ShioriButton(
+                label: widget.trackSearch == null ? l10n.migrate : l10n.add,
+                onPressed: switch (preview) {
+                  AsyncData(value: final preview) => () async {
+                    if (widget.trackSearch == null) {
+                      await _migrateManga(preview);
+                      if (ctx.mounted) {
+                        Navigator.pop(ctx);
+                        Navigator.pop(ctx);
+                      }
+                    } else {
+                      await _addTrackManga(context);
+                    }
+                  },
+                  _ => null,
+                },
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _chapterList(BuildContext ctx, MManga preview) {
+    final l10n = l10nLocalizations(ctx)!;
+    if (preview.chapters == null) return Text(l10n.n_chapters(0));
+    return SizedBox(
+      height: ctx.height(0.5),
+      width: ctx.width(1),
+      child: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.all(0),
+            sliver: SuperSliverList.builder(
+              itemCount: preview.chapters!.length,
+              itemBuilder: (context, index) {
+                final chapter = preview.chapters![index];
+                final date = chapter.dateUpload?.isNotEmpty ?? false
+                    ? dateFormat(
+                        chapter.dateUpload!,
+                        ref: ref,
+                        context: context,
+                      )
+                    : '';
+                return ShioriListRow(
+                  title: chapter.name!,
+                  subtitle: [
+                    if (date.isNotEmpty) date,
+                    if (chapter.scanlator?.isNotEmpty ?? false)
+                      chapter.scanlator!,
+                  ].join(' · '),
                 );
               },
-            );
-          }
-        });
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _addTrackManga(BuildContext context) async {
