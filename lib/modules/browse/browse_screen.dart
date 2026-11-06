@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:mangayomi/modules/browse/discover/discover_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/widgets/collapsing_header.dart';
 import 'package:mangayomi/modules/widgets/side_swipe_detector.dart';
@@ -203,6 +204,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
           : Row(
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (!isExtensionTab) DiscoverButton(itemType: tabType),
                 if (isExtensionTab && ref.watch(developerModeStateProvider))
                   IconButton(
                     tooltip: context.l10n.add,

@@ -98,6 +98,16 @@ Future<Map<String, dynamic>?> _executeGraphQL(
         )
         .timeout(_anilistTimeout);
 
+    if (res.statusCode == 429) {
+      final seconds = (int.tryParse(res.headers['retry-after'] ?? '') ?? 60)
+          .clamp(1, 86400);
+      throw ServiceAvailability.markDown(
+        DiscoveryService.anilist,
+        'rate limit (HTTP 429). Retry after $seconds seconds.',
+        cooldown: Duration(seconds: seconds),
+        enforceCooldown: true,
+      );
+    }
     final decoded = _decodeOrNull(res.body);
     final refusal = anilistRefusal(res.statusCode, decoded);
     if (refusal != null) {
@@ -273,6 +283,40 @@ $_mediaFields
           .toList() ??
       <DiscoveryRelation>[];
   return (DiscoveryMedia.fromJson(media), relations);
+}
+
+/// Public discovery shelves, independent of tracker accounts.
+Future<List<DiscoveryMedia>> fetchDiscoveryFeed({
+  required ItemType itemType,
+  bool popular = false,
+  bool includeAdult = false,
+}) async {
+  final type = _mediaTypeOf(itemType);
+  final formatFilter = switch (itemType) {
+    ItemType.anime => '',
+    ItemType.novel => ', format_in: [NOVEL]',
+    ItemType.manga => ', format_not_in: [NOVEL]',
+  };
+  final adultFilter = includeAdult ? '' : ', isAdult: false';
+  final query =
+      '''
+    query(\$sort: [MediaSort]) {
+      Page(page: 1, perPage: 12) {
+        media(type: $type$formatFilter$adultFilter, sort: \$sort) {
+$_mediaFields
+        }
+      }
+    }''';
+  final data = await _executeGraphQL(query, {
+    'sort': [popular ? 'POPULARITY_DESC' : 'TRENDING_DESC'],
+  });
+  final media = data?['Page']?['media'];
+  if (media is! List) {
+    throw const FormatException('AniList returned no catalog data');
+  }
+  return media
+      .map((item) => DiscoveryMedia.fromJson(item as Map<String, dynamic>))
+      .toList();
 }
 
 class DiscoveryMedia {

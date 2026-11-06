@@ -10,6 +10,35 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
+  String get discover_title => 'Discover';
+
+  @override
+  String get discover_trending => 'Trending';
+
+  @override
+  String get discover_popular => 'Popular';
+
+  @override
+  String get discover_attribution =>
+      'Rankings from the AniList community. Availability depends on your installed sources.';
+
+  @override
+  String get discover_search => 'Search installed sources';
+
+  @override
+  String get discover_no_description => 'No synopsis available.';
+
+  @override
+  String get discover_empty => 'No titles in this selection.';
+
+  @override
+  String get discover_unavailable => 'Could not load this shelf.';
+
+  @override
+  String get discover_hidden =>
+      'Enable manga, anime or novels in Settings to discover titles.';
+
+  @override
   String get library => 'Bibliothèque';
 
   @override

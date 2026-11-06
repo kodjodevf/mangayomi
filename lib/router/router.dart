@@ -48,6 +48,7 @@ import 'package:mangayomi/modules/more/settings/track/manage_trackers/manage_tra
 import 'package:mangayomi/modules/more/settings/track/manage_trackers/tracking_detail.dart';
 import 'package:mangayomi/modules/webview/webview.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
+import 'package:mangayomi/modules/browse/discover/discover_screen.dart';
 import 'package:mangayomi/modules/browse/extension/extension_lang.dart';
 import 'package:mangayomi/modules/browse/global_search/global_search_screen.dart';
 import 'package:mangayomi/modules/main_view/main_screen.dart';
@@ -262,6 +263,10 @@ class RouterNotifier extends ChangeNotifier {
     _genericRoute<Source>(
       name: "extension_detail",
       builder: (source) => ExtensionDetail(source: source),
+    ),
+    _genericRoute<ItemType>(
+      name: "discover",
+      builder: (type) => DiscoverRoute(initialType: type),
     ),
     _genericRoute<(String?, ItemType)>(
       name: "globalSearch",

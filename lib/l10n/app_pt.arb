@@ -1,4 +1,13 @@
 {
+  "discover_title": "Descobrir",
+  "discover_trending": "Em alta",
+  "discover_popular": "Populares",
+  "discover_attribution": "Rankings da comunidade AniList. A disponibilidade depende das fontes instaladas.",
+  "discover_search": "Buscar nas fontes instaladas",
+  "discover_no_description": "Sinopse indisponível.",
+  "discover_empty": "Nenhuma obra nesta seleção.",
+  "discover_unavailable": "Não foi possível carregar esta vitrine.",
+  "discover_hidden": "Ative mangás, animes ou novels nas Configurações para descobrir obras.",
   "@@locale": "pt",
   "open_source_licenses": "Licenças de código aberto",
   "open_source_licenses_subtitle": "Os pacotes com que o Mangayomi é construído e as respetivas licenças",
