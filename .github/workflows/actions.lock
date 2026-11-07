@@ -9,6 +9,9 @@ workflows:
         - 'actions/upload-artifact@v4.6.2'
         - 'dtolnay/rust-toolchain@master'
         - 'subosito/flutter-action@v2.23.0'
+    '.github/workflows/plumber.yml':
+        - 'actions/checkout@v4.4.0'
+        - 'getplumber/plumber@v0.7.16'
     '.github/workflows/release.yml':
         - 'actions/checkout@v4.4.0'
         - 'actions/download-artifact@v4.3.0'
@@ -48,6 +51,11 @@ dependencies:
         commit: 'sha1-7f4fc3e22c37d6ff65e88745f38bd3157c663f7c'
         owner_id: 44036562
         repo_id: 192625525
+    'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9':
+        ref: 'v7.0.2'
+        commit: 'sha1-cf430e030ddbb5b0abf93d22962f4752f3646cd9'
+        owner_id: 44036562
+        repo_id: 192625955
     'actions/upload-artifact@v4.6.2':
         ref: 'v4.6.2'
         commit: 'sha1-ea165f8d65b6e75b540449e92b4886f43607fa02'
@@ -58,6 +66,19 @@ dependencies:
         commit: 'sha1-683b588c487a69d01f6c6ddf40f036ff682cc2c8'
         owner_id: 1940490
         repo_id: 260749683
+    'getplumber/plumber@v0.7.16':
+        ref: 'v0.7.16'
+        commit: 'sha1-e9ad2dc6d6faa2dfd84395aac18e461284062640'
+        owner_id: 255179076
+        repo_id: 1137327132
+        uses:
+            - 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9'
+            - 'github/codeql-action@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee'
+    'github/codeql-action@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee':
+        ref: 'v4.39.0'
+        commit: 'sha1-6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee'
+        owner_id: 9919
+        repo_id: 259445878
     'ncipollo/release-action@v1.21.0':
         ref: 'v1.21.0'
         commit: 'sha1-339a81892b84b4eeb0f6e744e4574d79d0d9b8dd'

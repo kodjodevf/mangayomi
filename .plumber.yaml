@@ -1,0 +1,25 @@
+# Plumber overlay: inherits every control from the CLI's built-in
+# baseline, only the differences for this repository are written here.
+# Run 'plumber config resolve' to see the full effective config.
+extends: plumber:default
+version: '2.0'
+
+github:
+  controls:
+    githubActionMustComeFromAuthorizedSources:
+      # Keep the curated default list and trust the actions this
+      # repository uses on top of it, all locked in actions.lock.
+      includePlumberDefaults: true
+      trustedGithubActions:
+        - Swatinem/rust-cache
+        - dtolnay/rust-toolchain
+        - ncipollo/release-action
+        - subosito/flutter-action
+        - thedoctor0/zip-release
+
+    # The Rust toolchain action installs Rust through rustup's own
+    # installer, which the control flags as an unverified download.
+    # It is the standard way to get a toolchain in CI, locked to its
+    # commit in actions.lock, so the check is off here.
+    actionsMustNotExecuteMutableRemoteCode:
+      enabled: false
