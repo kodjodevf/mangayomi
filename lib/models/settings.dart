@@ -248,6 +248,8 @@ class Settings {
   @enumerated
   late DisplayType mangaHomeDisplayType;
 
+  String? appFontFamily;
+
   int? mangaGridSize;
 
   int? animeGridSize;
@@ -668,6 +670,7 @@ class Settings {
     this.colorFilterBlendMode = ColorFilterBlendMode.none,
     this.playerSubtitleSettings,
     this.mangaHomeDisplayType = DisplayType.comfortableGrid,
+    this.appFontFamily,
     this.mangaGridSize,
     this.animeGridSize,
     this.disableSectionType = SectionType.all,
@@ -1007,6 +1010,7 @@ class Settings {
     mangaHomeDisplayType =
         DisplayType.values[json['mangaHomeDisplayType'] ??
             DisplayType.comfortableGrid.index];
+    appFontFamily = json['appFontFamily'];
     mangaGridSize = json['mangaGridSize'];
     animeGridSize = json['animeGridSize'];
     disableSectionType =
@@ -1340,6 +1344,7 @@ class Settings {
     if (playerSubtitleSettings != null)
       'playerSubtitleSettings': playerSubtitleSettings!.toJson(),
     'mangaHomeDisplayType': mangaHomeDisplayType.index,
+    'appFontFamily': appFontFamily,
     'mangaGridSize': mangaGridSize,
     'animeGridSize': animeGridSize,
     'disableSectionType': disableSectionType.index,

@@ -1257,11 +1257,12 @@ class AppLocalizationsFr extends AppLocalizations {
       'Une capsule flottante à la place de la barre de navigation fixée en bas.';
 
   @override
-  String get show_updates_badge => 'Show badge on Updates icon';
+  String get show_updates_badge =>
+      'Afficher un badge sur l\'icône Mises à jour';
 
   @override
   String get show_updates_badge_description =>
-      'Count the chapters found since you last opened Updates.';
+      'Compte les chapitres trouvés depuis votre dernière ouverture de Mises à jour.';
 
   @override
   String get full_screen_player => 'Utiliser le mode plein écran';
@@ -1912,12 +1913,11 @@ class AppLocalizationsFr extends AppLocalizations {
       'Désactivez `use libass` dans les paramètres du lecteur pour pouvoir personnaliser les sous-titres.';
 
   @override
-  String get override_ass_subtitles =>
-      'Forcer le style sur les sous-titres ASS';
+  String get override_ass_subtitles => 'Utiliser mon style de sous-titres';
 
   @override
   String get override_ass_subtitles_info =>
-      'Appliquer le style personnalisé aux sous-titres ASS/SSA';
+      'Applique votre taille et vos couleurs à tous les sous-titres, ASS compris. Désactivé, les sous-titres gardent leur style par défaut';
 
   @override
   String get torrent_stream => 'Flux Torrent';
@@ -3894,7 +3894,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get invert_selection => 'Inverser la sélection';
 
   @override
-  String get select_between => 'Select between';
+  String get select_between => 'Sélectionner l\'intervalle';
 
   @override
   String get show_password => 'Afficher le mot de passe';
@@ -4263,6 +4263,52 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get update_write_failed =>
       'Erreur lors de l\'écriture du fichier APK.';
+
+  @override
+  String get update_later => 'Plus tard';
+
+  @override
+  String get update_installed_version => 'Installée';
+
+  @override
+  String get update_new_version => 'Nouvelle version';
+
+  @override
+  String update_published(String date) {
+    return 'Publiée le $date';
+  }
+
+  @override
+  String get update_pre_release => 'Pré-version';
+
+  @override
+  String get update_notes_features => 'Nouveautés';
+
+  @override
+  String get update_notes_fixes => 'Corrections';
+
+  @override
+  String get update_notes_other => 'Améliorations';
+
+  @override
+  String get update_hint_install =>
+      'L\'application télécharge la mise à jour, puis Android vous demande de confirmer l\'installation. Votre bibliothèque reste intacte.';
+
+  @override
+  String get update_hint_browser =>
+      'La page de la version s\'ouvre dans votre navigateur : téléchargez-y le fichier pour votre système, puis installez-le.';
+
+  @override
+  String get update_downloading => 'Téléchargement…';
+
+  @override
+  String get update_installing => 'Ouverture de l\'installateur…';
+
+  @override
+  String get update_install_failed => 'Impossible d\'ouvrir l\'installateur.';
+
+  @override
+  String get update_browser_failed => 'Impossible d\'ouvrir le navigateur.';
 
   @override
   String get deselect_all => 'Tout désélectionner';
@@ -4670,13 +4716,13 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get external_browser => 'Open external links with';
+  String get external_browser => 'Ouvrir les liens externes avec';
 
   @override
-  String get system_default => 'System default';
+  String get system_default => 'Par défaut du système';
 
   @override
-  String get no_browsers_detected => 'No browsers detected';
+  String get no_browsers_detected => 'Aucun navigateur détecté';
 
   @override
   String get on_this_device => 'Sur cet appareil';
@@ -4705,4 +4751,33 @@ class AppLocalizationsFr extends AppLocalizations {
   String track_remove_online_msg(String tracker) {
     return 'L\'entrée reste sur $tracker : seul son lien avec cette série est retiré ici.';
   }
+
+  @override
+  String update_from_repo(String repo) {
+    return 'Depuis $repo';
+  }
+
+  @override
+  String get update_from_other_repo => 'Mettre à jour depuis un autre dépôt ?';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name a été installée depuis $origin. La version $version vient de $other : une fois installée, $name prendra ses mises à jour sur $other. Ne continuez que si vous faites confiance à ce dépôt.';
+  }
+
+  @override
+  String get update_all_foreign =>
+      'Certaines mises à jour viennent d\'un autre dépôt';
+
+  @override
+  String get update_all_foreign_msg =>
+      'Une fois mises à jour, ces extensions prendront leurs mises à jour sur le nouveau dépôt. Ne les incluez que si vous lui faites confiance.';
+
+  @override
+  String get update_all_skip_foreign => 'Seulement depuis leur dépôt';
 }

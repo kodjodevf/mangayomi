@@ -1226,11 +1226,11 @@ class AppLocalizationsKo extends AppLocalizations {
       '고정된 내비게이션 바 대신 떠 있는 캡슐을 사용합니다.';
 
   @override
-  String get show_updates_badge => 'Show badge on Updates icon';
+  String get show_updates_badge => '업데이트 아이콘에 배지 표시';
 
   @override
   String get show_updates_badge_description =>
-      'Count the chapters found since you last opened Updates.';
+      '업데이트를 마지막으로 연 이후 발견된 챕터 수를 표시합니다.';
 
   @override
   String get full_screen_player => '전체 화면 사용';
@@ -1838,11 +1838,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get edit_code => '코드 편집';
 
   @override
-  String get subtitles_on_by_default => 'Turn subtitles on';
+  String get subtitles_on_by_default => '자막 켜기';
 
   @override
   String get subtitles_on_by_default_info =>
-      'Off, episodes start without subtitles until you pick a track.';
+      '끄면 트랙을 선택할 때까지 자막 없이 에피소드가 시작됩니다.';
 
   @override
   String get use_libass => 'libass 활성화';
@@ -1855,10 +1855,11 @@ class AppLocalizationsKo extends AppLocalizations {
       '자막을 사용자 지정하려면 플레이어 설정에서 `libass 사용`을 비활성화하세요.';
 
   @override
-  String get override_ass_subtitles => 'ASS 자막 재정의';
+  String get override_ass_subtitles => '내 자막 스타일 사용';
 
   @override
-  String get override_ass_subtitles_info => 'ASS/SSA 자막에 사용자 지정 스타일 적용';
+  String get override_ass_subtitles_info =>
+      '크기와 색상을 ASS를 포함한 모든 자막에 적용합니다. 끄면 자막에 기본 스타일이 사용됩니다';
 
   @override
   String get torrent_stream => '토렌트 스트림';
@@ -3764,7 +3765,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get invert_selection => '선택 반전';
 
   @override
-  String get select_between => 'Select between';
+  String get select_between => '사이 선택';
 
   @override
   String get show_password => '비밀번호 표시';
@@ -4110,6 +4111,52 @@ class AppLocalizationsKo extends AppLocalizations {
   String get update_write_failed => 'APK 파일을 쓸 수 없습니다.';
 
   @override
+  String get update_later => '나중에';
+
+  @override
+  String get update_installed_version => '설치됨';
+
+  @override
+  String get update_new_version => '새 버전';
+
+  @override
+  String update_published(String date) {
+    return '$date에 게시됨';
+  }
+
+  @override
+  String get update_pre_release => '사전 릴리스';
+
+  @override
+  String get update_notes_features => '새로운 기능';
+
+  @override
+  String get update_notes_fixes => '수정 사항';
+
+  @override
+  String get update_notes_other => '개선 사항';
+
+  @override
+  String get update_hint_install =>
+      '앱이 업데이트를 다운로드한 다음 Android에서 설치를 확인하도록 요청합니다. 라이브러리는 그대로 유지됩니다.';
+
+  @override
+  String get update_hint_browser =>
+      '릴리스 페이지가 브라우저에서 열립니다. 사용 중인 시스템용 파일을 다운로드해 설치하세요.';
+
+  @override
+  String get update_downloading => '다운로드 중…';
+
+  @override
+  String get update_installing => '설치 프로그램을 여는 중…';
+
+  @override
+  String get update_install_failed => '설치 프로그램을 열 수 없습니다.';
+
+  @override
+  String get update_browser_failed => '브라우저를 열 수 없습니다.';
+
+  @override
   String get deselect_all => '모두 선택 해제';
 
   @override
@@ -4252,10 +4299,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get shortcut_zoom_reset => '페이지에 맞추기';
 
   @override
-  String get shortcut_wheel_zoom => 'Zoom with the mouse';
+  String get shortcut_wheel_zoom => '마우스로 확대/축소';
 
   @override
-  String get mouse_wheel => 'Wheel';
+  String get mouse_wheel => '휠';
 
   @override
   String get shortcut_leave => '리더 나가기';
@@ -4502,39 +4549,66 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get external_browser => 'Open external links with';
+  String get external_browser => '외부 링크 열기';
 
   @override
-  String get system_default => 'System default';
+  String get system_default => '시스템 기본값';
 
   @override
-  String get no_browsers_detected => 'No browsers detected';
+  String get no_browsers_detected => '브라우저를 찾을 수 없음';
 
   @override
-  String get on_this_device => 'On this device';
+  String get on_this_device => '이 기기에서';
 
   @override
-  String get local_tracking => 'Track on this device';
+  String get local_tracking => '이 기기에서 추적';
 
   @override
   String get local_tracking_desc =>
-      'Keep status, progress, score and dates for each series here, without an account. Nothing is sent anywhere. Turning it off keeps what it holds.';
+      '계정 없이 각 시리즈의 상태, 진행도, 점수, 날짜를 여기에 보관합니다. 아무것도 전송되지 않습니다. 꺼도 저장된 내용은 유지됩니다.';
 
   @override
-  String get track_add_one => 'One more';
+  String get track_add_one => '하나 더';
 
   @override
-  String get track_change_match => 'Change match';
+  String get track_change_match => '일치 항목 변경';
 
   @override
-  String get track_remove => 'Stop tracking';
+  String get track_remove => '추적 중단';
 
   @override
-  String get track_remove_local_msg =>
-      'Its status, progress, score and dates are deleted from this device.';
+  String get track_remove_local_msg => '상태, 진행도, 점수, 날짜가 이 기기에서 삭제됩니다.';
 
   @override
   String track_remove_online_msg(String tracker) {
-    return 'The entry stays on $tracker: only its link to this series is removed here.';
+    return '항목은 $tracker에 남아 있으며, 여기서는 이 시리즈와의 연결만 제거됩니다.';
   }
+
+  @override
+  String update_from_repo(String repo) {
+    return '$repo에서';
+  }
+
+  @override
+  String get update_from_other_repo => '다른 저장소에서 업데이트할까요?';
+
+  @override
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  ) {
+    return '$name은(는) $origin에서 설치되었습니다. 버전 $version은(는) $other에서 제공됩니다. 설치하면 $name은(는) $other에서 업데이트를 받습니다. 해당 저장소를 신뢰하는 경우에만 계속하세요.';
+  }
+
+  @override
+  String get update_all_foreign => '일부 업데이트는 다른 저장소에서 제공됩니다';
+
+  @override
+  String get update_all_foreign_msg =>
+      '업데이트 후 이 확장 프로그램은 새 저장소에서 업데이트를 받습니다. 신뢰하는 경우에만 포함하세요.';
+
+  @override
+  String get update_all_skip_foreign => '원래 저장소에서만';
 }

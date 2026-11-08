@@ -3498,13 +3498,13 @@ abstract class AppLocalizations {
   /// No description provided for @override_ass_subtitles.
   ///
   /// In en, this message translates to:
-  /// **'Override ASS subtitles'**
+  /// **'Use my subtitle style'**
   String get override_ass_subtitles;
 
   /// No description provided for @override_ass_subtitles_info.
   ///
   /// In en, this message translates to:
-  /// **'Apply custom styling to ASS/SSA subtitles'**
+  /// **'Applies your size and colours to every subtitle, ASS included. When off, subtitles use their default style'**
   String get override_ass_subtitles_info;
 
   /// No description provided for @torrent_stream.
@@ -7515,6 +7515,90 @@ abstract class AppLocalizations {
   /// **'Couldn\'t write the APK file.'**
   String get update_write_failed;
 
+  /// No description provided for @update_later.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get update_later;
+
+  /// No description provided for @update_installed_version.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get update_installed_version;
+
+  /// No description provided for @update_new_version.
+  ///
+  /// In en, this message translates to:
+  /// **'New version'**
+  String get update_new_version;
+
+  /// No description provided for @update_published.
+  ///
+  /// In en, this message translates to:
+  /// **'Published on {date}'**
+  String update_published(String date);
+
+  /// No description provided for @update_pre_release.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-release'**
+  String get update_pre_release;
+
+  /// No description provided for @update_notes_features.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get update_notes_features;
+
+  /// No description provided for @update_notes_fixes.
+  ///
+  /// In en, this message translates to:
+  /// **'Fixes'**
+  String get update_notes_fixes;
+
+  /// No description provided for @update_notes_other.
+  ///
+  /// In en, this message translates to:
+  /// **'Improvements'**
+  String get update_notes_other;
+
+  /// No description provided for @update_hint_install.
+  ///
+  /// In en, this message translates to:
+  /// **'The app downloads the update, then Android asks you to confirm the installation. Your library stays as it is.'**
+  String get update_hint_install;
+
+  /// No description provided for @update_hint_browser.
+  ///
+  /// In en, this message translates to:
+  /// **'The release page opens in your browser: download the file for your system from there, then install it.'**
+  String get update_hint_browser;
+
+  /// No description provided for @update_downloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading…'**
+  String get update_downloading;
+
+  /// No description provided for @update_installing.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening the installer…'**
+  String get update_installing;
+
+  /// No description provided for @update_install_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the installer.'**
+  String get update_install_failed;
+
+  /// No description provided for @update_browser_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open the browser.'**
+  String get update_browser_failed;
+
   /// No description provided for @deselect_all.
   ///
   /// In en, this message translates to:
@@ -8264,6 +8348,47 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The entry stays on {tracker}: only its link to this series is removed here.'**
   String track_remove_online_msg(String tracker);
+
+  /// No description provided for @update_from_repo.
+  ///
+  /// In en, this message translates to:
+  /// **'From {repo}'**
+  String update_from_repo(String repo);
+
+  /// No description provided for @update_from_other_repo.
+  ///
+  /// In en, this message translates to:
+  /// **'Update from another repository?'**
+  String get update_from_other_repo;
+
+  /// No description provided for @update_from_other_repo_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was installed from {origin}. Version {version} comes from {other}: once it is installed, {name} takes its updates from {other}. Only go ahead if you trust that repository.'**
+  String update_from_other_repo_msg(
+    String name,
+    String origin,
+    String version,
+    String other,
+  );
+
+  /// No description provided for @update_all_foreign.
+  ///
+  /// In en, this message translates to:
+  /// **'Some updates come from another repository'**
+  String get update_all_foreign;
+
+  /// No description provided for @update_all_foreign_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Once updated, these extensions take their updates from the new repository. Only include them if you trust it.'**
+  String get update_all_foreign_msg;
+
+  /// No description provided for @update_all_skip_foreign.
+  ///
+  /// In en, this message translates to:
+  /// **'Only from their own repository'**
+  String get update_all_skip_foreign;
 }
 
 class _AppLocalizationsDelegate

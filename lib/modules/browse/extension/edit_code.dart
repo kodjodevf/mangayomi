@@ -14,6 +14,7 @@ import 'package:mangayomi/repositories/source_repository.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/home/widget/filter_widget.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_code_selection_toolbar.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_filter_list.dart';
@@ -285,8 +286,9 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
     final filterList = source != null
         ? getFilterList(source: source!)
         : <dynamic>[];
+    final appFontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$2));
     final tokens = context.shiori;
-    final editor = _editor(context);
+    final editor = _editor(context, appFontFamily);
     final runPanel = _runPanel(context, filterList);
     final console = _console(context);
     return Scaffold(
@@ -414,7 +416,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
     );
   }
 
-  Widget _editor(BuildContext context) {
+  Widget _editor(BuildContext context, String? appFontFamily) {
     return CodeEditor(
       toolbarController:
           defaultTargetPlatform == TargetPlatform.iOS ||
@@ -423,6 +425,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
           : null,
       style: CodeEditorStyle(
         fontSize: 15,
+        fontFamily: appFontFamily,
         codeTheme: CodeHighlightTheme(
           languages: {
             'dart': CodeHighlightThemeMode(mode: langDart),

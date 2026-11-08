@@ -730,8 +730,8 @@
   "use_libass": "Enable libass",
   "use_libass_info": "Use libass based subtitle rendering for native backend.",
   "libass_not_disable_message": "Disable `use libass` in player settings to be able to customize the subtitles.",
-  "override_ass_subtitles": "Override ASS subtitles",
-  "override_ass_subtitles_info": "Apply custom styling to ASS/SSA subtitles",
+  "override_ass_subtitles": "Use my subtitle style",
+  "override_ass_subtitles_info": "Applies your size and colours to every subtitle, ASS included. When off, subtitles use their default style",
   "torrent_stream": "Torrent stream",
   "add_torrent": "Add torrent",
   "enter_torrent_hint_text": "Enter magnet or torrent file url",
@@ -1653,6 +1653,27 @@
   "@update_download_failed": {"placeholders": {"error": {"type": "String"}}},
   "update_network_error": "Network error while downloading.",
   "update_write_failed": "Couldn't write the APK file.",
+  "update_later": "Later",
+  "update_installed_version": "Installed",
+  "update_new_version": "New version",
+  "update_published": "Published on {date}",
+  "@update_published": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "update_pre_release": "Pre-release",
+  "update_notes_features": "New",
+  "update_notes_fixes": "Fixes",
+  "update_notes_other": "Improvements",
+  "update_hint_install": "The app downloads the update, then Android asks you to confirm the installation. Your library stays as it is.",
+  "update_hint_browser": "The release page opens in your browser: download the file for your system from there, then install it.",
+  "update_downloading": "Downloading…",
+  "update_installing": "Opening the installer…",
+  "update_install_failed": "Couldn't open the installer.",
+  "update_browser_failed": "Couldn't open the browser.",
   "deselect_all": "Deselect all",
   "update_failed_count": "{count, plural, =1{1 entry couldn't be updated} other{{count} entries couldn't be updated}}",
   "@update_failed_count": {"placeholders": {"count": {"type": "int"}}},
@@ -1794,5 +1815,13 @@
   "track_remove": "Stop tracking",
   "track_remove_local_msg": "Its status, progress, score and dates are deleted from this device.",
   "track_remove_online_msg": "The entry stays on {tracker}: only its link to this series is removed here.",
-  "@track_remove_online_msg": {"placeholders": {"tracker": {"type": "String"}}}
+  "@track_remove_online_msg": {"placeholders": {"tracker": {"type": "String"}}},
+  "update_from_repo": "From {repo}",
+  "@update_from_repo": {"placeholders": {"repo": {"type": "String"}}},
+  "update_from_other_repo": "Update from another repository?",
+  "update_from_other_repo_msg": "{name} was installed from {origin}. Version {version} comes from {other}: once it is installed, {name} takes its updates from {other}. Only go ahead if you trust that repository.",
+  "@update_from_other_repo_msg": {"placeholders": {"name": {"type": "String"}, "origin": {"type": "String"}, "version": {"type": "String"}, "other": {"type": "String"}}},
+  "update_all_foreign": "Some updates come from another repository",
+  "update_all_foreign_msg": "Once updated, these extensions take their updates from the new repository. Only include them if you trust it.",
+  "update_all_skip_foreign": "Only from their own repository"
 }

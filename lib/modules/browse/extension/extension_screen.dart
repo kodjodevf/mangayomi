@@ -9,6 +9,9 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extensions_provider.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/modules/browse/extension/widgets/foreign_updates_dialog.dart';
+import 'package:mangayomi/services/extension_update.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_list_tile_widget.dart';
@@ -55,6 +58,40 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
     );
     ref.invalidate(provider);
     return ref.read(provider.future);
+  }
+
+  /// Updates [entries], asking first, once for all of them, about those
+  /// whose update comes from another repository. One that fails doesn't stop
+  /// the others, and says so.
+  Future<void> _updateAll(
+    List<Source> entries,
+    void Function(VoidCallback) setRowState,
+  ) async {
+    final foreign = entries.where(isForeignUpdate).toList();
+    var toUpdate = entries;
+    if (foreign.isNotEmpty) {
+      final choice = await showForeignUpdatesDialog(
+        context,
+        foreign: foreign,
+        hasOthers: foreign.length < entries.length,
+      );
+      if (choice == null || !mounted) return;
+      if (choice == ForeignUpdatesChoice.skipThem) {
+        toUpdate = entries.where((s) => !isForeignUpdate(s)).toList();
+      }
+    }
+    setRowState(() => isUpdating = true);
+    try {
+      for (final source in toUpdate) {
+        try {
+          await _updateSource(source);
+        } catch (e, stack) {
+          toastError(e, stack: stack, source: 'extension update all');
+        }
+      }
+    } finally {
+      if (mounted) setRowState(() => isUpdating = false);
+    }
   }
 
   @override
@@ -191,46 +228,18 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
           // The group's label as the other groups', with Update all as its
           // action, as Download all heads a day of updates: a full button
           // stood taller than the label and pushed into the row above.
-          return Row(
-            children: [
-              Expanded(
-                child: ShioriSectionHeader(
-                  overline: true,
-                  title: l10n.update_pending,
-                  padding: const EdgeInsets.fromLTRB(
-                    ShioriSpace.s16,
-                    ShioriSpace.s16,
-                    ShioriSpace.s8,
-                    ShioriSpace.s4,
-                  ),
-                  actionLabel: isUpdating ? null : l10n.update_all,
-                  onAction: isUpdating
-                      ? null
-                      : () async {
-                          setState(() => isUpdating = true);
-                          try {
-                            for (var source in updateEntries) {
-                              await _updateSource(source);
-                            }
-                          } finally {
-                            if (context.mounted) {
-                              setState(() => isUpdating = false);
-                            }
-                          }
-                        },
-                ),
-              ),
-              if (isUpdating)
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    0,
-                    ShioriSpace.s12,
-                    ShioriSpace.s16,
-                    0,
-                  ),
-                  child: ShioriLoading.inline(),
-                ),
-            ],
+          return ShioriSectionHeader(
+            overline: true,
+            title: l10n.update_pending,
+            padding: const EdgeInsets.fromLTRB(
+              ShioriSpace.s16,
+              ShioriSpace.s16,
+              ShioriSpace.s8,
+              ShioriSpace.s4,
+            ),
+            actionLabel: l10n.update_all,
+            actionBusy: isUpdating,
+            onAction: () => _updateAll(updateEntries, setState),
           );
         },
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../tokens.dart';
+import 'loading.dart';
 
 /// The heading of a group inside a screen: "Chapters · 127",
 /// "CONTINUE READING".
@@ -12,6 +13,7 @@ class ShioriSectionHeader extends StatelessWidget {
     this.overline = false,
     this.actionLabel,
     this.onAction,
+    this.actionBusy = false,
     this.padding = const EdgeInsets.fromLTRB(
       ShioriSpace.s16,
       ShioriSpace.s16,
@@ -32,6 +34,10 @@ class ShioriSectionHeader extends StatelessWidget {
   /// An action at the end of the row ("Show all"), shown with [onAction].
   final String? actionLabel;
   final VoidCallback? onAction;
+
+  /// The action is under way: a spinner takes the label's place, in the same
+  /// button, so it sits on the same margin and the header keeps its height.
+  final bool actionBusy;
   final EdgeInsetsGeometry padding;
 
   @override
@@ -41,7 +47,7 @@ class ShioriSectionHeader extends StatelessWidget {
         ? tokens.groupLabel
         : tokens.text.section.copyWith(color: tokens.color.fg);
     final text = overline ? title.toUpperCase() : title;
-    final hasAction = actionLabel != null && onAction != null;
+    final hasAction = actionBusy || (actionLabel != null && onAction != null);
     // The action keeps a full tap target, taller than the label; the room it
     // takes over the label comes out of the padding, so a header with an
     // action sits where one without it does instead of pushing the list down.
@@ -86,14 +92,19 @@ class ShioriSectionHeader extends StatelessWidget {
           ),
           if (hasAction)
             TextButton(
-              onPressed: onAction,
+              onPressed: actionBusy ? null : onAction,
               style: TextButton.styleFrom(
+                // Narrower than the button's minimum, a spinner would float
+                // inside the margin the label ends on.
+                alignment: AlignmentDirectional.centerEnd,
                 foregroundColor: tokens.color.accentInk,
                 textStyle: tokens.text.meta.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              child: Text(actionLabel!),
+              child: actionBusy
+                  ? const ShioriLoading.inline()
+                  : Text(actionLabel!),
             ),
         ],
       ),

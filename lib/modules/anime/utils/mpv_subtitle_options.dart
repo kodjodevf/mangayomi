@@ -7,10 +7,26 @@ String toMpvColor(int a, int r, int g, int b) {
   return '#${hex.toRadixString(16).padLeft(8, '0').toUpperCase()}';
 }
 
-/// The libass subtitle style the user picked, as mpv properties. Applied
-/// once at player creation and again whenever the settings change.
+/// mpv's own defaults for the options [mpvSubtitleStyle] sets, sent rather
+/// than left out: a value sent earlier stays in mpv until replaced.
+const _mpvDefaultSubtitleStyle = {
+  "sub-font-size": "55",
+  "sub-bold": "no",
+  "sub-italic": "no",
+  "sub-color": "#FFFFFFFF",
+  "sub-border-color": "#FF000000",
+  "sub-back-color": "#00000000",
+  "sub-ass-override": "yes",
+  "sub-ass-justify": "no",
+};
+
+/// The libass subtitle style as mpv properties: the one the user picked,
+/// forced over every subtitle, or mpv's defaults when they turned it off.
+/// Applied once at player creation and again whenever the settings change.
 Map<String, String> mpvSubtitleStyle(PlayerSubtitleSettings settings) {
-  final overrideAss = settings.overrideAssSubtitles ?? false;
+  if (!(settings.overrideAssSubtitles ?? false)) {
+    return _mpvDefaultSubtitleStyle;
+  }
   return {
     "sub-font-size": "${settings.fontSize ?? 45}",
     "sub-bold": (settings.useBold ?? true) ? "yes" : "no",
@@ -33,9 +49,8 @@ Map<String, String> mpvSubtitleStyle(PlayerSubtitleSettings settings) {
       settings.backgroundColorG ?? 0,
       settings.backgroundColorB ?? 0,
     ),
-    "sub-ass-override": overrideAss ? "force" : "scale",
-    // Set either way: left at yes, it outlived the override it came with.
-    "sub-ass-justify": overrideAss ? "yes" : "no",
+    "sub-ass-override": "force",
+    "sub-ass-justify": "yes",
   };
 }
 

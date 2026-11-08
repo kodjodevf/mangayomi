@@ -244,7 +244,8 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
                 .toSet()
                 .toList();
             final mangaById = {
-              for (final m in mangaRepository.getAllByIds(mangaIds)) m?.id!: m!,
+              for (final m in mangaRepository.getAllByIds(mangaIds).nonNulls)
+                m.id!: m,
             };
 
             // Both maps above skip an entry that no longer resolves, and the

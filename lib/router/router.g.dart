@@ -48,7 +48,7 @@ final class RouterProvider
   }
 }
 
-String _$routerHash() => r'54af74f86c7abb8c9bc8aa855e4348363c0566a7';
+String _$routerHash() => r'6daf693ca79d1b1e8e8c4dbd65ee7c19f9d1fbc9';
 
 @ProviderFor(RouterCurrentLocationState)
 final routerCurrentLocationStateProvider =

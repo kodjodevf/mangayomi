@@ -49,12 +49,19 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 /// - [showDeleteMangaDialog] — bulk delete dialog
 /// - [showImportLocalDialog] — import local files dialog
 /// - [filteredLibraryMangaProvider] — cached filter+sort (S8)
+/// A search for the library's tab to open on.
+class LibrarySearch {
+  final String query;
+
+  const LibrarySearch(this.query);
+}
+
 class LibraryScreen extends ConsumerStatefulWidget {
   final ItemType itemType;
-  final String? presetInput;
+  final LibrarySearch? search;
   const LibraryScreen({
     required this.itemType,
-    required this.presetInput,
+    required this.search,
     super.key,
   });
 
@@ -86,15 +93,27 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   @override
   void initState() {
     super.initState();
-    if (widget.presetInput != null) {
-      _isSearch = true;
-      _textEditingController.text = widget.presetInput!;
-    }
+    if (widget.search != null) _openSearch(widget.search!);
     final settings = settingsRepository.currentOrNull;
     _selectedCategoryId = settings == null
         ? null
         : lastLibraryCategoryId(settings, widget.itemType);
     _lifecycleListener = AppLifecycleListener(onHide: _saveSelectedCategory);
+  }
+
+  void _openSearch(LibrarySearch search) {
+    _isSearch = true;
+    _textEditingController.text = search.query;
+  }
+
+  @override
+  void didUpdateWidget(LibraryScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // The tab stays mounted; each request is a new one, even for the same text.
+    final search = widget.search;
+    if (search != null && !identical(search, oldWidget.search)) {
+      _openSearch(search);
+    }
   }
 
   /// Saved here rather than on every tab change: writing a setting rebuilds
@@ -357,6 +376,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     showNumbersOfItems: showNumbersOfItems,
                     isNotFiltering: isNotFiltering,
                     numberOfItems: numberOfItemsList.length,
+                    visibleEntries: numberOfItemsList,
                     bodyForCategory: bodyForCategory,
                     badgeForCategory: badgeForCategory,
                     downloadFilterType: downloadFilterType,
@@ -370,7 +390,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     isNotFiltering: isNotFiltering,
                     showNumbersOfItems: showNumbersOfItems,
                     numberOfItems: numberOfItemsList.length,
-                    entries: man,
+                    entries: numberOfItemsList,
                     isCategory: false,
                     categoryId: null,
                     settings: settings,
@@ -416,6 +436,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     required bool showNumbersOfItems,
     required bool isNotFiltering,
     required int numberOfItems,
+    required List<Manga> visibleEntries,
     required Widget Function({int? categoryId, bool withoutCategories})
     bodyForCategory,
     required Widget Function(int categoryId) badgeForCategory,
@@ -472,6 +493,17 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       });
     }
 
+    final currentCategoryId = withoutCategory.isNotEmpty && _tabIndex == 0
+        ? null
+        : entr[withoutCategory.isNotEmpty ? _tabIndex - 1 : _tabIndex].id!;
+
+    final tabEntries = visibleEntries.where((m) {
+      if (currentCategoryId == null) {
+        return m.categories == null || m.categories!.isEmpty;
+      }
+      return m.categories?.contains(currentCategoryId) ?? false;
+    }).toList();
+
     return DefaultTabController(
       length: entr.length,
       child: Scaffold(
@@ -480,12 +512,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           isNotFiltering: isNotFiltering,
           showNumbersOfItems: showNumbersOfItems,
           numberOfItems: numberOfItems,
-          entries: man,
+          entries: tabEntries,
           isCategory: true,
-          categoryId: withoutCategory.isNotEmpty && _tabIndex == 0
-              ? null
-              : entr[withoutCategory.isNotEmpty ? _tabIndex - 1 : _tabIndex]
-                    .id!,
+          categoryId: currentCategoryId,
           settings: settings,
           isSearch: _isSearch,
           ignoreFiltersOnSearch: _ignoreFiltersOnSearch,

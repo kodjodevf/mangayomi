@@ -158,7 +158,8 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
             .toSet()
             .toList();
         final chapterById = {
-          for (final c in chapterRepository.getAllByIds(chapterIds)) c?.id!: c!,
+          for (final c in chapterRepository.getAllByIds(chapterIds).nonNulls)
+            c.id!: c,
         };
         final mangaIds = chapterById.values
             .map((c) => c.mangaId)
@@ -166,7 +167,8 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
             .toSet()
             .toList();
         final mangaById = {
-          for (final m in mangaRepository.getAllByIds(mangaIds)) m?.id!: m!,
+          for (final m in mangaRepository.getAllByIds(mangaIds).nonNulls)
+            m.id!: m,
         };
         final entries = allEntries.where((e) {
           if (_pendingRemoval.contains(e.id)) return false;

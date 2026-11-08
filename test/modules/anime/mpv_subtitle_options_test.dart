@@ -8,42 +8,57 @@ void main() {
     expect(toMpvColor(0, 0, 0, 0), '#00000000');
   });
 
-  test('unset settings fall back to the default style', () {
-    // A row saved before these fields existed reads every one back as null.
-    final style = mpvSubtitleStyle(PlayerSubtitleSettings.fromJson({}));
+  const mpvDefaults = {
+    'sub-font-size': '55',
+    'sub-bold': 'no',
+    'sub-italic': 'no',
+    'sub-color': '#FFFFFFFF',
+    'sub-border-color': '#FF000000',
+    'sub-back-color': '#00000000',
+    'sub-ass-override': 'yes',
+    'sub-ass-justify': 'no',
+  };
 
-    expect(style, {
-      'sub-font-size': '45',
-      'sub-bold': 'yes',
-      'sub-italic': 'no',
-      'sub-color': '#FFFFFFFF',
-      'sub-border-color': '#FF000000',
-      'sub-back-color': '#00000000',
-      'sub-ass-override': 'scale',
-      'sub-ass-justify': 'no',
-    });
-  });
-
-  test('overriding ASS styles also justifies them', () {
+  test('with the switch off, mpv gets its defaults, whatever was picked', () {
     final style = mpvSubtitleStyle(
-      PlayerSubtitleSettings(overrideAssSubtitles: true),
+      PlayerSubtitleSettings(
+        overrideAssSubtitles: false,
+        fontSize: 80,
+        useItalic: true,
+        textColorR: 0,
+      ),
     );
 
+    expect(style, mpvDefaults);
+  });
+
+  test('unset settings count as the switch off', () {
+    // A row saved before these fields existed reads every one back as null.
+    expect(mpvSubtitleStyle(PlayerSubtitleSettings.fromJson({})), mpvDefaults);
+  });
+
+  test('with the switch on, the picked style is forced', () {
+    final style = mpvSubtitleStyle(
+      PlayerSubtitleSettings(overrideAssSubtitles: true, fontSize: 80),
+    );
+
+    expect(style['sub-font-size'], '80');
     expect(style['sub-ass-override'], 'force');
     expect(style['sub-ass-justify'], 'yes');
   });
 
-  test('switching the ASS override off also stops justifying them', () {
-    final style = mpvSubtitleStyle(
-      PlayerSubtitleSettings(overrideAssSubtitles: false),
+  test('both states set the same options, so neither outlives the other', () {
+    expect(
+      mpvSubtitleStyle(PlayerSubtitleSettings(overrideAssSubtitles: true)).keys
+          .toSet(),
+      mpvDefaults.keys.toSet(),
     );
-
-    expect(style['sub-ass-override'], 'scale');
-    expect(style['sub-ass-justify'], 'no');
   });
 
   test('the initial options add the fixed layout to the style', () {
-    final options = mpvInitialSubtitleOptions(PlayerSubtitleSettings());
+    final options = mpvInitialSubtitleOptions(
+      PlayerSubtitleSettings(overrideAssSubtitles: true),
+    );
 
     expect(options, containsPair('sub-border-size', '3'));
     expect(options, containsPair('sub-pos', '100'));

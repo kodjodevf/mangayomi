@@ -16,6 +16,7 @@ import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/services/fetch_gate.dart';
 import 'package:mangayomi/services/get_popular.dart';
 import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/utils/cached_network.dart';
@@ -38,36 +39,6 @@ class GlobalSearchScreen extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<GlobalSearchScreen> createState() => _GlobalSearchScreenState();
-}
-
-/// Caps how many source rows fetch at once.
-///
-/// Every row used to call getPopular/search in initState, so opening the
-/// screen fired one isolate evaluation per installed source simultaneously —
-/// the more extensions installed, the worse the stall. Gating it to a
-/// handful in flight keeps the device's isolate pool from being flooded
-/// while still finishing the full scan in the background.
-class FetchGate {
-  FetchGate(this._maxConcurrent);
-  final int _maxConcurrent;
-  int _active = 0;
-  final _waiting = <Completer<void>>[];
-
-  Future<void> acquire() async {
-    if (_active < _maxConcurrent) {
-      _active++;
-      return;
-    }
-    final completer = Completer<void>();
-    _waiting.add(completer);
-    await completer.future;
-    _active++;
-  }
-
-  void release() {
-    _active--;
-    if (_waiting.isNotEmpty) _waiting.removeAt(0).complete();
-  }
 }
 
 class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
@@ -325,6 +296,12 @@ class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
     // Throttled: with many sources installed, letting every row fire its
     // isolate call the moment it's built is what made this screen laggy.
     await widget.fetchGate.acquire();
+    // A new query replaces every row, and the ones still queued for the old
+    // one have nothing left to show.
+    if (!mounted) {
+      widget.fetchGate.release();
+      return;
+    }
     try {
       _errorMessage = "";
       // No query: same "Popular" request the source's own tab makes, so an

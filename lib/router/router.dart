@@ -192,24 +192,24 @@ class RouterNotifier extends ChangeNotifier {
       },
       branches: [
         _branch(
-          _genericRoute<String?>(
+          _genericRoute<LibrarySearch?>(
             name: "MangaLibrary",
-            builder: (id) =>
-                LibraryScreen(itemType: ItemType.manga, presetInput: id),
+            builder: (search) =>
+                LibraryScreen(itemType: ItemType.manga, search: search),
           ),
         ),
         _branch(
-          _genericRoute<String?>(
+          _genericRoute<LibrarySearch?>(
             name: "AnimeLibrary",
-            builder: (id) =>
-                LibraryScreen(itemType: ItemType.anime, presetInput: id),
+            builder: (search) =>
+                LibraryScreen(itemType: ItemType.anime, search: search),
           ),
         ),
         _branch(
-          _genericRoute<String?>(
+          _genericRoute<LibrarySearch?>(
             name: "NovelLibrary",
-            builder: (id) =>
-                LibraryScreen(itemType: ItemType.novel, presetInput: id),
+            builder: (search) =>
+                LibraryScreen(itemType: ItemType.novel, search: search),
           ),
         ),
         _branch(
@@ -227,6 +227,10 @@ class RouterNotifier extends ChangeNotifier {
     _genericRoute<(Source?, bool)>(
       name: "mangaHome",
       builder: (id) => MangaHomeScreen(source: id.$1!, isLatest: id.$2),
+    ),
+    _genericRoute<(Source?, String)>(
+      name: "mangaHomeGenre",
+      builder: (id) => MangaHomeScreen(source: id.$1!, genre: id.$2),
     ),
     _genericRoute<int>(
       path: "/manga-reader/detail",

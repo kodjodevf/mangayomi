@@ -150,6 +150,7 @@ class MangaReaderView extends ConsumerWidget {
       backgroundColor: context.shiori.color.ink0,
       appBar: AppBar(
         titleSpacing: 0,
+        centerTitle: false,
         title: ChapterBarTitle(chapter: chapter),
         // scaffoldWith is only the loading / error / no-pages states, whose
         // bodies have nothing focusable. Without this the d-pad has no starting

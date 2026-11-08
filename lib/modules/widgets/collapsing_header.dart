@@ -72,7 +72,8 @@ class CollapsibleHeaderPart extends StatelessWidget {
 /// A screen title that changes when its header folds away: the group's name
 /// ("Activity") gives way to what is being shown ("Updates"). The old words
 /// rise and fade as the new ones rise into place, so the change reads as one
-/// movement rather than a swap.
+/// movement rather than a swap. Its width moves with them, so what follows it
+/// in a row keeps up instead of jumping once the old words are gone.
 class CollapsingTitle extends StatelessWidget {
   const CollapsingTitle(this.text, {super.key, this.style});
 
@@ -81,35 +82,54 @@ class CollapsingTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: ShioriMotion.of(context, ShioriMotion.standard),
-      switchInCurve: ShioriMotion.enterCurve,
-      switchOutCurve: ShioriMotion.exitCurve,
-      layoutBuilder: (current, previous) => Stack(
-        alignment: AlignmentDirectional.centerStart,
-        children: [...previous, ?current],
-      ),
-      transitionBuilder: (child, animation) {
-        // In from below; out upward, since the outgoing animation runs in
-        // reverse.
-        final incoming = child.key == ValueKey(text);
-        return FadeTransition(
-          opacity: animation,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: Offset(0, incoming ? 0.4 : -0.4),
-              end: Offset.zero,
-            ).animate(animation),
-            child: child,
-          ),
-        );
-      },
-      child: Text(
-        text,
-        key: ValueKey(text),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: style,
+    final duration = ShioriMotion.of(context, ShioriMotion.standard);
+    return AnimatedSize(
+      duration: duration,
+      curve: ShioriMotion.standardCurve,
+      alignment: AlignmentDirectional.centerStart,
+      clipBehavior: Clip.none,
+      child: AnimatedSwitcher(
+        duration: duration,
+        switchInCurve: ShioriMotion.enterCurve,
+        switchOutCurve: ShioriMotion.exitCurve,
+        // Only the new words take room: the old ones keep their own width while
+        // they fade, over whatever comes next.
+        layoutBuilder: (current, previous) => Stack(
+          clipBehavior: Clip.none,
+          alignment: AlignmentDirectional.centerStart,
+          children: [
+            for (final child in previous)
+              PositionedDirectional(
+                start: 0,
+                top: 0,
+                bottom: 0,
+                child: Center(widthFactor: 1, child: child),
+              ),
+            ?current,
+          ],
+        ),
+        transitionBuilder: (child, animation) {
+          // In from below; out upward, since the outgoing animation runs in
+          // reverse.
+          final incoming = child.key == ValueKey(text);
+          return FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: Offset(0, incoming ? 0.4 : -0.4),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            ),
+          );
+        },
+        child: Text(
+          text,
+          key: ValueKey(text),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: style,
+        ),
       ),
     );
   }

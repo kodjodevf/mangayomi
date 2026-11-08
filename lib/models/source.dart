@@ -84,6 +84,11 @@ class Source {
 
   Repo? repo;
 
+  /// Where the update in [versionLast] comes from, when there is one. It is
+  /// [repo] unless only another repository offers a newer build, which is
+  /// then installed only once the reader agrees to it.
+  Repo? updateRepo;
+
   int? updatedAt;
 
   Source({
@@ -161,6 +166,9 @@ class Source {
         SourceCodeLanguage.values[json['sourceCodeLanguage'] ?? 0];
     notes = json['notes'] ?? "";
     repo = json['repo'] != null ? Repo.fromJson(json['repo']) : null;
+    updateRepo = json['updateRepo'] != null
+        ? Repo.fromJson(json['updateRepo'])
+        : null;
     updatedAt = json['updatedAt'];
   }
 
@@ -198,6 +206,7 @@ class Source {
     'isLocal': isLocal,
     'notes': notes,
     'repo': repo?.toJson(),
+    'updateRepo': updateRepo?.toJson(),
     'updatedAt': updatedAt ?? 0,
   };
 

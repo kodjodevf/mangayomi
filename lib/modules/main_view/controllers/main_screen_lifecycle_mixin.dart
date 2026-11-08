@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
@@ -101,10 +100,7 @@ mixin MainScreenLifecycleMixin<T extends ConsumerStatefulWidget>
       ) {
         next.whenData((updateInfo) {
           if (updateInfo != null && mounted) {
-            showDialog(
-              context: context,
-              builder: (_) => DownloadFileScreen(updateAvailable: updateInfo),
-            );
+            showUpdateDialog(context, updateInfo);
           }
         });
       });
