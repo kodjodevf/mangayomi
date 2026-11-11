@@ -39,6 +39,26 @@ class Synching extends _$Synching {
     ref.invalidateSelf();
   }
 
+  /// Records a finished sync: `since` (the server's syncedAt watermark) and
+  /// `lastSync` in ONE write, awaited before the provider is invalidated.
+  ///
+  /// Calling setSince() then setLastSync() back to back loses `since`:
+  /// save() only queues the Isar write (DbWriteQueue runs it on a later
+  /// microtask), and invalidateSelf() marks the provider dirty, so the very
+  /// next `state` read in setLastSync() rebuilds synchronously from Isar
+  /// (Riverpod flush()) and gets the row as it still is on disk - with the
+  /// OLD since. That stale object is then saved with lastSync set, and its
+  /// write lands after the first one, overwriting since with the old value.
+  /// Net effect: since never advances and every sync is a full sync.
+  Future<void> setSynced({required int since, required int lastSync}) async {
+    await syncPreferenceRepository.save(
+      state
+        ..since = since
+        ..lastSync = lastSync,
+    );
+    ref.invalidateSelf();
+  }
+
   void setServer(String? server) {
     syncPreferenceRepository.save(state..server = server);
     ref.invalidateSelf();

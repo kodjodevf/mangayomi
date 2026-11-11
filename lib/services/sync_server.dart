@@ -290,8 +290,12 @@ class SyncServer extends _$SyncServer {
       if (chunkIndex >= chunks.length && !hasMore) {
         final syncedAt = response['syncedAt'] as int?;
         if (syncedAt != null) {
-          notifier.setSince(syncedAt);
-          notifier.setLastSync(DateTime.now().millisecondsSinceEpoch);
+          // One awaited write for both: see Synching.setSynced for why two
+          // back-to-back setters here silently lost `since`.
+          await notifier.setSynced(
+            since: syncedAt,
+            lastSync: DateTime.now().millisecondsSinceEpoch,
+          );
           await changed?.clearUploaded(notifier);
         }
         return true;
