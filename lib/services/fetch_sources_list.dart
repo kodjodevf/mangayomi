@@ -583,6 +583,12 @@ Future<FilterList?> fetchFilterListDalvik(
   }
 }
 
+SelectFilterOption? _selectOption(dynamic e) {
+  final value = e is Map ? e['value'] : e;
+  if (value == null) return null;
+  return SelectFilterOption('$value', '$value', null);
+}
+
 List<dynamic> filtersFromJson(List<dynamic> json) {
   return json.expand((e) sync* {
     if (e is! Map) return;
@@ -592,9 +598,14 @@ List<dynamic> filtersFromJson(List<dynamic> json) {
       yield SortFilter(
         "${e['name']}Filter",
         e['name'],
-        SortState(e['state']['index'], e['state']['ascending'], null),
+        SortState(
+          e['state']['index'] is int ? e['state']['index'] : 0,
+          e['state']['ascending'] == true,
+          null,
+        ),
         (e['values'] as List)
-            .map((e) => SelectFilterOption(e, e, null))
+            .map(_selectOption)
+            .whereType<SelectFilterOption>()
             .toList(),
         null,
       );
@@ -607,15 +618,21 @@ List<dynamic> filtersFromJson(List<dynamic> json) {
         e['state'],
         e['vals'] is List
             ? (e['vals'] as List)
-                  .map((e) => SelectFilterOption(e['first'], e['second'], null))
+                  .map(
+                    (e) => e is Map && e['first'] != null
+                        ? SelectFilterOption(
+                            '${e['first']}',
+                            '${e['second'] ?? e['first']}',
+                            null,
+                          )
+                        : null,
+                  )
+                  .whereType<SelectFilterOption>()
                   .toList()
             : e['values'] is List
             ? (e['values'] as List)
-                  .map(
-                    (e) => (e is Map)
-                        ? SelectFilterOption(e['value'], e['value'], null)
-                        : SelectFilterOption(e, e, null),
-                  )
+                  .map(_selectOption)
+                  .whereType<SelectFilterOption>()
                   .toList()
             : [],
         "SelectFilter",
@@ -628,7 +645,8 @@ List<dynamic> filtersFromJson(List<dynamic> json) {
         null,
         state: e['state'],
       );
-    } else if (e['included'] is bool &&
+    } else if (e['name'] is String &&
+        e['included'] is bool &&
         e['ignored'] is bool &&
         e['excluded'] is bool) {
       yield TriStateFilter(
@@ -636,7 +654,7 @@ List<dynamic> filtersFromJson(List<dynamic> json) {
         e['name'],
         e['id'] ?? e['name'],
         null,
-        state: e['state'],
+        state: e['state'] is int ? e['state'] : 0,
       );
     } else if (e['name'] is String && e['state'] is List) {
       yield GroupFilter(
