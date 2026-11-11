@@ -17,12 +17,18 @@ import 'package:mangayomi/utils/log/logger.dart';
 /// In a debug build or with developer mode on, the error is also printed as
 /// it is, tokens included: the log file is redacted, the console is where a
 /// developer needs the real request.
+///
+/// [detail] says what the error was about (an extension name, say). It goes on
+/// a line after the error so the fingerprint, built from the first line, does
+/// not change.
 void recordError(
   Object error, {
   StackTrace? stack,
   required String source,
+  String? detail,
   LogLevel level = LogLevel.error,
 }) {
+  if (detail != null) error = '$error\n$detail';
   CrashReports.record(source: source, error: error, stack: stack);
   if (kDebugMode || _developerMode()) {
     debugPrint('[$source] $error${stack == null ? '' : '\n$stack'}');

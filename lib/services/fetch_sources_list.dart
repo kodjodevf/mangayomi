@@ -527,7 +527,12 @@ Future<Map<String, String>> fetchHeadersDalvik(
     }
     return headers;
   } catch (error, stackTrace) {
-    recordError(error, stack: stackTrace, source: 'fetch_sources_list');
+    recordError(
+      error,
+      stack: stackTrace,
+      source: 'fetch_sources_list',
+      detail: _describeSource(source),
+    );
     return {};
   }
 }
@@ -551,7 +556,12 @@ Future<bool> fetchSupportLatestDalvik(
     if (res.statusCode != 200) return false;
     return res.body.trim() == "true";
   } catch (error, stackTrace) {
-    recordError(error, stack: stackTrace, source: 'fetch_sources_list');
+    recordError(
+      error,
+      stack: stackTrace,
+      source: 'fetch_sources_list',
+      detail: _describeSource(source),
+    );
     return false;
   }
 }
@@ -578,10 +588,18 @@ Future<FilterList?> fetchFilterListDalvik(
 
     return FilterList(filtersFromJson(data));
   } catch (error, stackTrace) {
-    recordError(error, stack: stackTrace, source: 'fetch_sources_list');
+    recordError(
+      error,
+      stack: stackTrace,
+      source: 'fetch_sources_list',
+      detail: _describeSource(source),
+    );
     return null;
   }
 }
+
+String _describeSource(Source source) =>
+    'Source: ${source.name} (${source.lang}, ${source.sourceCodeLanguage.name})';
 
 SelectFilterOption? _selectOption(dynamic e) {
   final value = e is Map ? e['value'] : e;
@@ -704,7 +722,12 @@ Future<List<SourcePreference>?> fetchPreferencesDalvik(
         )
         .toList();
   } catch (error, stackTrace) {
-    recordError(error, stack: stackTrace, source: 'fetch_sources_list');
+    recordError(
+      error,
+      stack: stackTrace,
+      source: 'fetch_sources_list',
+      detail: _describeSource(source),
+    );
     return null;
   }
 }
