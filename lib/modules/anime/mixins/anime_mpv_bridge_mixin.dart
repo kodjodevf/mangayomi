@@ -6,7 +6,7 @@ import 'dart:math';
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/utils/error_toast.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:flutter/services.dart';

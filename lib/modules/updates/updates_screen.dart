@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/repositories/download_repository.dart';

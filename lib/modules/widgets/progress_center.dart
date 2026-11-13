@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 
 /// The app's loading indicator, centred: [ShioriLoading]. Kept as a name for

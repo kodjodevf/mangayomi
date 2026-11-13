@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/widgets/floating_nav/floating_nav_item.dart';
 import 'package:mangayomi/modules/widgets/floating_nav/glass_edge.dart';
 import 'package:shiori/shiori.dart';

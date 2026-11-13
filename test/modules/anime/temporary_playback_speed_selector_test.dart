@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:mangayomi/l10n/l10n_delegates.dart';
 import 'package:mangayomi/modules/anime/widgets/temporary_playback_speed_selector.dart';
 
 void main() {
@@ -90,7 +91,7 @@ Widget _testApp({
   TextScaler textScaler = TextScaler.noScaling,
 }) {
   return MaterialApp(
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    localizationsDelegates: appLocalizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     home: MediaQuery(
       data: MediaQueryData(

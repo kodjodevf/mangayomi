@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/mass_migration/models/mass_migration_models.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';

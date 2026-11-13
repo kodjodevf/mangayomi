@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/widgets/in_library_badge.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/browse/sources/widgets/source_list_tile.dart';

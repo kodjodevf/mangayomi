@@ -3,7 +3,7 @@ import 'dart:ffi';
 import 'dart:ui' as ui;
 
 import 'package:ffi/ffi.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_page_states.dart';

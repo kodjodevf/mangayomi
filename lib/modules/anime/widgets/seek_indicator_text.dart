@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/anime/widgets/player_overlay_surface.dart';
 import 'package:shiori/shiori.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';

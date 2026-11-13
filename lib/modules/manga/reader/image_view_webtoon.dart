@@ -1,5 +1,5 @@
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/manga/reader/utils/reader_motion.dart';
 import 'package:mangayomi/modules/manga/reader/utils/webtoon_scroll_physics.dart';
 import 'package:shiori/shiori.dart';

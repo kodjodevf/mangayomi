@@ -10,10 +10,10 @@ list(APPEND FLUTTER_PLUGIN_LIST
   isar_community_flutter_libs
   m_extension_server
   media_kit_libs_linux
-  media_kit_video
   screen_retriever_linux
   url_launcher_linux
   volume_controller
+  media_kit_video
   window_manager
   window_to_front
 )

@@ -1,9 +1,10 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:mangayomi/l10n/l10n_delegates.dart';
 import 'package:mangayomi/modules/main_view/nav_groups.dart';
 import 'package:mangayomi/modules/main_view/widgets/nav_group_switcher.dart';
 import 'package:shiori/shiori.dart';
@@ -38,7 +39,7 @@ Widget _app({required bool grouped, required List<String> visible}) {
     ],
     child: MaterialApp.router(
       routerConfig: router,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       locale: const Locale('en'),
       theme: buildShioriTheme(

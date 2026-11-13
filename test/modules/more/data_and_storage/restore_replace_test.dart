@@ -4,12 +4,13 @@ import 'dart:convert';
 import 'package:archive/archive.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:fixnum/fixnum.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:mangayomi/l10n/l10n_delegates.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/backup_password_fallback.dart';
 import 'package:mangayomi/models/category.dart';
@@ -74,7 +75,7 @@ Future<(BuildContext, WidgetRef)> _pumpShell(WidgetTester tester) async {
       child: MaterialApp(
         builder: BotToastInit(),
         navigatorObservers: [BotToastNavigatorObserver()],
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         home: Consumer(
           builder: (context, ref, _) {

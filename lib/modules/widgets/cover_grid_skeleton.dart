@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
 import 'package:shiori/shiori.dart';
 

@@ -7,7 +7,7 @@ import 'package:archive/archive.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -36,6 +36,8 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:mangayomi/l10n/l10n_delegates.dart';
+import 'package:mangayomi/utils/legacy_material.dart';
 import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/services/http/m_client.dart';
@@ -415,7 +417,7 @@ class _MyAppState extends ConsumerState<MyApp>
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
       locale: locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: appLocalizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
         Widget content = child ?? const SizedBox.shrink();
@@ -467,7 +469,11 @@ class _MyAppState extends ConsumerState<MyApp>
           scale: ref.watch(appUiScaleStateProvider),
           child: content,
         );
-        final base = BotToastInit()(context, scaledChild);
+        // bot_toast draws its toasts on the old built-in Material library,
+        // as do a few other packages under it.
+        final base = LegacyMaterialBridge(
+          child: BotToastInit()(context, scaledChild),
+        );
         final withBackHandler = !isMobile
             ? _MouseBackButtonHandler(router: router, child: base)
             : base;

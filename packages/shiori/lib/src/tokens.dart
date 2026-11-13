@@ -6,7 +6,7 @@
 // contexts. Values that depend on the theme or the device (colour, type,
 // density) travel in [ShioriTokens], a ThemeExtension read with
 // `context.shiori`.
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'alphas.dart';
 

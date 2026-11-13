@@ -1,5 +1,5 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/router/router.dart';
@@ -65,11 +65,13 @@ void main() {
     expect(fades.any((o) => o > 0 && o < 1), isTrue);
   });
 
-  testWidgets('a route left to go_router has no transition, hence the '
+  testWidgets('a route left to go_router moves on its own default, hence the '
       'explicit page builders', (tester) async {
-    // go_router looks for a MaterialApp above it, does not find this one,
-    // and falls back to a page with no transition. If this ever starts to
-    // move, the explicit page builders in router.dart can go.
+    // go_router finds the material_ui MaterialApp and builds a MaterialPage,
+    // with the platform's transition rather than the theme's. Before
+    // material_ui it found no MaterialApp and did not move at all. Either way
+    // the explicit page builders in router.dart are what give every page the
+    // same transition.
     final fades = await _fadesMidway(
       tester,
       GoRoute(
@@ -78,6 +80,6 @@ void main() {
       ),
     );
 
-    expect(fades, isEmpty);
+    expect(fades, isNotEmpty);
   });
 }

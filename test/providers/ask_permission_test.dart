@@ -7,10 +7,7 @@ const _channel = MethodChannel('flutter.baseflow.com/permissions/methods');
 
 /// Answers the permission plugin: [status] for a check, [onRequest] for a
 /// request.
-void _answer({
-  required int status,
-  required Object? Function() onRequest,
-}) {
+void _answer({required int status, required Object? Function() onRequest}) {
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       .setMockMethodCallHandler(_channel, (call) async {
         return switch (call.method) {

@@ -9,9 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flex_color_scheme: ^8.3.1
+  flex_color_scheme: ^9.0.0
+  material_ui: ^1.11.0
   material_symbols_icons: ^4.2960.0
 
+  cupertino_ui: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

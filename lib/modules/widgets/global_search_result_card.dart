@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/widgets/in_library_badge.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter/services.dart';

@@ -389,8 +389,9 @@ class MihonExtensionService implements ExtensionService {
 
   Map<String, String> getCookie() {
     final rawUa = settingsRepository.current.userAgent?.trim();
-    final userAgent =
-        (rawUa != null && rawUa.isNotEmpty) ? rawUa : defaultUserAgent;
+    final userAgent = (rawUa != null && rawUa.isNotEmpty)
+        ? rawUa
+        : defaultUserAgent;
     final cfProxyUrl = CfProxyStore.url.trim();
     return {
       if (source.baseUrl != null && source.baseUrl!.isNotEmpty)

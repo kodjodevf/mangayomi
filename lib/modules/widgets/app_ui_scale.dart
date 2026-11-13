@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 /// Normalizes the TV UI to a fixed reference width so it looks the same on every

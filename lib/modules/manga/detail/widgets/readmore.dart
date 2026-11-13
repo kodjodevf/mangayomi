@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/expandable_text.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
