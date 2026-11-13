@@ -46,11 +46,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2.23.0
+      # Only Dart is needed, and Flutter has no Linux arm64 release.
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1.7.2
         with:
-          channel: stable
-          cache: true
+          sdk: stable
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@master
