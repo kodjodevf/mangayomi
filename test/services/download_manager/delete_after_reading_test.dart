@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/services/download_manager/delete_after_reading.dart';
@@ -85,5 +87,37 @@ void main() {
       )?.id,
       4,
     );
+  });
+
+  group('PendingDownloadDeletions', () {
+    tearDown(() => PendingDownloadDeletions.flush((_) async {}));
+
+    test('deletes nothing until flushed, then each chapter once', () async {
+      final list = chapters(read: 4);
+      final deleted = <int>[];
+      PendingDownloadDeletions.add(list[2]);
+      PendingDownloadDeletions.add(list[3]);
+      PendingDownloadDeletions.add(list[2]);
+      expect(deleted, isEmpty);
+
+      await PendingDownloadDeletions.flush((c) async => deleted.add(c.id!));
+      expect(deleted, [3, 4]);
+
+      await PendingDownloadDeletions.flush((c) async => deleted.add(c.id!));
+      expect(deleted, [3, 4]);
+    });
+
+    test('one failed deletion does not keep the others', () async {
+      final list = chapters(read: 4);
+      final deleted = <int>[];
+      PendingDownloadDeletions.add(list[0]);
+      PendingDownloadDeletions.add(list[1]);
+      await PendingDownloadDeletions.flush((c) async {
+        if (c.id == 1) throw const FileSystemException('busy');
+        deleted.add(c.id!);
+      });
+      expect(deleted, [2]);
+      expect(PendingDownloadDeletions.chapters, isEmpty);
+    });
   });
 }

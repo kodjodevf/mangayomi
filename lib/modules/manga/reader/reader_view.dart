@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:mangayomi/modules/reader_common/key_bindings.dart';
+import 'package:mangayomi/services/download_manager/delete_after_reading.dart';
 import 'package:mangayomi/modules/manga/reader/utils/download_ahead.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -318,6 +319,8 @@ class _MangaChapterPageGalleryState
       unawaited(discordRpc?.endReaderSession(discordReaderSession));
     }
     _saveCurrentPage(pageViewToActualIndexSync(_currentIndex ?? 0));
+    // After the save above, which may be what marks this chapter read.
+    unawaited(PendingDownloadDeletions.flush());
     // Releases this reader's own decoded pages. The budget itself is shared
     // with the reader replacing this one on a chapter switch, so clearing it
     // here would throw away images the new reader just decoded.
