@@ -1,5 +1,5 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 import 'package:widgetbook/widgetbook.dart';
 
@@ -54,8 +54,9 @@ class ShioriCatalogue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Widgetbook.material(
+    return Widgetbook(
       initialRoute: initialRoute,
+      appBuilder: _materialUiApp,
       addons: [
         ThemeAddon<ThemeData>(
           themes: [
@@ -78,6 +79,17 @@ class ShioriCatalogue extends StatelessWidget {
       directories: catalogue,
     );
   }
+}
+
+/// Shows the use cases in a material_ui app, as Shiori's components are built
+/// on it. `Widgetbook.material` would wrap them in the old built-in Material
+/// library, whose theme and strings they can't read.
+Widget _materialUiApp(BuildContext context, Widget child) {
+  return MaterialApp(
+    debugShowCheckedModeBanner: false,
+    localizationsDelegates: GlobalMaterialLocalizations.delegates,
+    home: Material(child: child),
+  );
 }
 
 /// Every use case, by folder and component.

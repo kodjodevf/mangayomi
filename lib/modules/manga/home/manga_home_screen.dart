@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/browse/widgets/source_code_error_banner.dart';

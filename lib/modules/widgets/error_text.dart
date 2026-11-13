@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
 
 /// An error where a screen has nothing to offer but the cause: the shared

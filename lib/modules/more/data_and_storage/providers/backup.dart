@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:archive/archive_io.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/backup_compression.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';

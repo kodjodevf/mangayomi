@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile_player_controls_layout.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile_seek_indicator.dart';

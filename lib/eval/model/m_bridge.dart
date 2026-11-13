@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:shiori/shiori.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:html/dom.dart' hide Text;
 import 'package:intl/date_symbol_data_local.dart';

@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_track_shape.dart';
 import 'package:media_kit/media_kit.dart';

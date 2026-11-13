@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
 
 /// A TV tab row that stays centered when it fits and scrolls when it does not.

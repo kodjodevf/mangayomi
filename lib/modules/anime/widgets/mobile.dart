@@ -18,7 +18,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:mangayomi/services/screen_brightness.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';

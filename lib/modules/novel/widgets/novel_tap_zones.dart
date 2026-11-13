@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Invisible tap-zone overlays for the novel reader (left/center/right and
 /// top/bottom regions) that trigger page/scroll steps or toggle UI chrome.

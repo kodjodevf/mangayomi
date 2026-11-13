@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:mangayomi/l10n/l10n_delegates.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:shiori/shiori.dart';
 
@@ -8,7 +9,7 @@ void main() {
   Future<void> pump(WidgetTester tester, int type, {VoidCallback? onTap}) =>
       tester.pumpWidget(
         MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: ListTileChapterFilter(

@@ -1,5 +1,5 @@
 // shiori-file: a developer overlay drawn over any screen in fixed colours
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/utils/memory_probe.dart';
 import 'package:mangayomi/utils/platform_utils.dart';

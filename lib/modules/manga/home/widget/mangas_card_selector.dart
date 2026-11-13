@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/utils/platform_utils.dart';

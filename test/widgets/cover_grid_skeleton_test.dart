@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/modules/widgets/cover_grid_skeleton.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';

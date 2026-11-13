@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/calendar/widgets/calendar_indicator.dart';

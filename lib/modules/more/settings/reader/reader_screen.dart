@@ -1,5 +1,5 @@
 import 'package:mangayomi/utils/platform_utils.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_switches.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_mode_glyph.dart';
 import 'package:shiori/shiori.dart';

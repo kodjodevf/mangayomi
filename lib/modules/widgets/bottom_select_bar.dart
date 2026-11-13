@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 
 /// Bar, that appears at the bottom of the screen when long-pressing (selecting)

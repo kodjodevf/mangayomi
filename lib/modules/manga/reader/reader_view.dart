@@ -13,7 +13,7 @@ import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart'
 import 'package:mangayomi/modules/reader_common/utils/reader_orientation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/reader_common/reader_chapter_navigation.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/reader_common/providers/chapter_display.dart';

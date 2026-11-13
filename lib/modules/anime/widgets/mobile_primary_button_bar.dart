@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';

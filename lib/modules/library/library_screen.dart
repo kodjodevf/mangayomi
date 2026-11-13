@@ -2,7 +2,7 @@
 
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/widgets/collapsing_header.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/modules/main_view/nav_groups.dart';

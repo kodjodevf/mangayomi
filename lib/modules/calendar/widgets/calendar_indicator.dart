@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 const _indicatorScale = 12;
 const _indicatorAlphaMultiplier = 0.3;

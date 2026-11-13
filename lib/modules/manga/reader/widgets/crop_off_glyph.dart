@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_mode_glyph.dart';
 
 /// Material Symbols Rounded `crop`, struck through: cropping off.

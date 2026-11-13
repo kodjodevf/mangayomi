@@ -14,12 +14,12 @@ list(APPEND FLUTTER_PLUGIN_LIST
   local_auth_windows
   m_extension_server
   media_kit_libs_windows_video
-  media_kit_video
   permission_handler_windows
   screen_retriever_windows
-  share_plus
   url_launcher_windows
+  share_plus
   volume_controller
+  media_kit_video
   window_manager
   window_to_front
 )

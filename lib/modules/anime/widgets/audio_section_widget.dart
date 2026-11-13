@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/anime/utils/audio_track_label.dart';
 import 'package:mangayomi/modules/anime/utils/video_prefs.dart';

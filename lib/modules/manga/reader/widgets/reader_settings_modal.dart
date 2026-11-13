@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/reader_common/key_bindings.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_switches.dart';
 import 'package:go_router/go_router.dart';

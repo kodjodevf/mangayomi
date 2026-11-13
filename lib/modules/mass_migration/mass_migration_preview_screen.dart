@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/modules/mass_migration/mass_migration_destination_screen.dart';
 import 'package:mangayomi/modules/mass_migration/models/mass_migration_models.dart';

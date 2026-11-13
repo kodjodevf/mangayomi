@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_chapter.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:mangayomi/l10n/l10n_delegates.dart';
 import 'package:mangayomi/main.dart' as app;
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
@@ -65,7 +66,7 @@ void main() {
           }),
         ],
         child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          localizationsDelegates: appLocalizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           home: Scaffold(
             body: MigrationMangaGlobalImageCard(
