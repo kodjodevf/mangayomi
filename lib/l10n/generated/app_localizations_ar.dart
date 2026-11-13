@@ -4697,4 +4697,152 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get update_all_skip_foreign => 'من مستودعها فقط';
+
+  @override
+  String get device_sync => 'Sync between your devices';
+
+  @override
+  String get device_sync_summary =>
+      'No server needed: one of your devices hosts, the others pair with it';
+
+  @override
+  String get device_sync_host_section => 'This device as host';
+
+  @override
+  String get device_sync_host => 'Host sync on this device';
+
+  @override
+  String get device_sync_host_info =>
+      'Your other devices sync with this one over your local network or Tailscale, encrypted, and only once paired. Keep the app open on this device so they can sync.';
+
+  @override
+  String device_sync_host_running(String port) {
+    return 'Listening on port $port';
+  }
+
+  @override
+  String device_sync_host_failed(String error) {
+    return 'Couldn\'t start the host: $error';
+  }
+
+  @override
+  String get device_sync_add_device => 'Add a device';
+
+  @override
+  String get device_sync_paired_devices => 'Paired devices';
+
+  @override
+  String get device_sync_no_paired => 'No device paired yet';
+
+  @override
+  String device_sync_paired_on(String date) {
+    return 'Paired on $date';
+  }
+
+  @override
+  String device_sync_forget_title(String name) {
+    return 'Remove $name?';
+  }
+
+  @override
+  String get device_sync_forget_message =>
+      'This device stops accepting it at once. It can pair again later with a new QR code.';
+
+  @override
+  String get device_sync_join_section => 'Join a host';
+
+  @override
+  String get device_sync_join_info =>
+      'Pair with the device that hosts sync. Its QR code is under Add a device on that device.';
+
+  @override
+  String get device_sync_scan => 'Scan the host\'s QR code';
+
+  @override
+  String get device_sync_paste => 'Paste a pairing link';
+
+  @override
+  String get device_sync_link => 'Pairing link';
+
+  @override
+  String get device_sync_link_invalid => 'This isn\'t a pairing link';
+
+  @override
+  String get device_sync_pair => 'Pair';
+
+  @override
+  String get device_sync_pairing => 'Pairing… accept this device on the host';
+
+  @override
+  String get device_sync_paired => 'Paired with the host';
+
+  @override
+  String get device_sync_wrong_code =>
+      'Wrong code. Show a new QR code on the host and try again.';
+
+  @override
+  String get device_sync_refused =>
+      'The host turned this device down, or the code expired.';
+
+  @override
+  String get device_sync_unreachable =>
+      'Couldn\'t reach the host. Both devices need to be on the same network.';
+
+  @override
+  String get device_sync_invite_info =>
+      'On the other device, open Settings → Sync → Sync between your devices and scan this code, or paste the link. It works once, for 5 minutes.';
+
+  @override
+  String get device_sync_copy_link => 'Copy link';
+
+  @override
+  String get device_sync_link_copied => 'Link copied';
+
+  @override
+  String get device_sync_no_network =>
+      'This device isn\'t on a local network, so no other device can reach it.';
+
+  @override
+  String get device_sync_allow_title => 'Allow this device?';
+
+  @override
+  String device_sync_allow_message(String name) {
+    return '\"$name\" wants to sync with this device. Allow it only if it\'s yours.';
+  }
+
+  @override
+  String get device_sync_allow => 'Allow';
+
+  @override
+  String get device_sync_deny => 'Deny';
+
+  @override
+  String get device_sync_switch_title => 'Change what this device syncs with?';
+
+  @override
+  String device_sync_switch_message(String server) {
+    return 'This device stops syncing with $server. Nothing is deleted, here or there.';
+  }
+
+  @override
+  String device_sync_with_host(String server) {
+    return 'Synced with the host at $server';
+  }
+
+  @override
+  String get device_sync_with_this_device => 'Synced with this device\'s host';
+
+  @override
+  String get device_sync_leave => 'Stop syncing with the host';
+
+  @override
+  String get device_sync_stop_host_title => 'Stop hosting?';
+
+  @override
+  String get device_sync_stop_host_message =>
+      'Your other devices can\'t sync until it\'s back on. What the host stored stays on this device.';
+
+  @override
+  String get device_sync_scan_hint =>
+      'Point the camera at the QR code on the host';
 }

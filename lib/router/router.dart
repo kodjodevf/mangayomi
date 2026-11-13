@@ -42,6 +42,7 @@ import 'package:mangayomi/modules/updates/updates_screen.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
 import 'package:mangayomi/modules/more/settings/player/player_screen.dart';
+import 'package:mangayomi/modules/more/settings/sync/device_sync/device_sync_screen.dart';
 import 'package:mangayomi/modules/more/settings/sync/sync.dart';
 import 'package:mangayomi/modules/more/settings/track/track.dart';
 import 'package:mangayomi/modules/more/settings/track/manage_trackers/manage_trackers.dart';
@@ -272,6 +273,7 @@ class RouterNotifier extends ChangeNotifier {
     _genericRoute(name: "openSourceLicenses", child: const LicensesScreen()),
     _genericRoute(name: "track", child: const TrackScreen()),
     _genericRoute(name: "sync", child: const SyncScreen()),
+    _genericRoute(name: "deviceSync", child: const DeviceSyncScreen()),
     _genericRoute<ItemType>(
       name: "sourceFilter",
       builder: (itemType) => SourcesFilterScreen(itemType: itemType),

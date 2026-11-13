@@ -1,0 +1,18 @@
+name: mangayomi_sync
+description: >-
+  Mangayomi's sync protocol: the engine a host or sync server answers
+  devices with, its request checks, and pairing invites. Pure Dart, shared by
+  the app and the sync server.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.5
+
+dependencies:
+  # Only for lib/testing.dart, the suite every store runs.
+  matcher: ^0.12.17
+
+dev_dependencies:
+  test: ^1.26.0
+  lints: ^6.0.0

@@ -8,6 +8,7 @@ import 'package:mangayomi/modules/more/data_and_storage/providers/auto_backup.da
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/services/discord_rpc.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
+import 'package:mangayomi/services/sync_host/sync_host_controller.dart';
 import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -18,6 +19,9 @@ mixin MainScreenLifecycleMixin<T extends ConsumerStatefulWidget>
 
   void initLifecycleServices() {
     _initializeTimers();
+    if (ref.read(synchingProvider(syncId: 1)).hostEnabled) {
+      ref.read(syncHostControllerProvider.notifier).start();
+    }
     _initializeProviders();
     discordRpc?.connect(ref);
   }
@@ -36,9 +40,7 @@ mixin MainScreenLifecycleMixin<T extends ConsumerStatefulWidget>
 
     final syncPrefs = ref.read(synchingProvider(syncId: 1));
     final freq = syncPrefs.autoSyncFrequency;
-    if (syncPrefs.syncOn &&
-        freq > 0 &&
-        (syncPrefs.authToken?.isNotEmpty ?? false)) {
+    if (syncPrefs.syncOn && freq > 0 && syncPrefs.isConnected) {
       _syncTimer = Timer.periodic(Duration(seconds: freq), _onSyncTimerTick);
     }
   }

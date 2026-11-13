@@ -15,18 +15,91 @@ class Synching extends _$Synching {
   }
 
   void login(String server, String email, String authToken) {
+    final fromHost =
+        state.hostFingerprint != null ||
+        state.server == SyncPreference.thisDeviceHost;
     syncPreferenceRepository.save(
       state
         ..server = server
         ..email = email
-        ..authToken = authToken,
+        ..authToken = authToken
+        ..hostFingerprint = null
+        ..hostAddresses = null,
     );
+    // What the host sent says nothing of what the server has.
+    if (fromHost) _startOver();
     ref.invalidateSelf();
   }
 
   void logout() {
     syncPreferenceRepository.save(state..authToken = null);
     ref.invalidateSelf();
+  }
+
+  /// Syncs from now on with the host at [server], whose certificate has
+  /// [fingerprint], from the start: it has nothing this device sent yet.
+  /// [addresses] are the others it may be reached at.
+  Future<void> useHost(
+    String server,
+    String fingerprint, {
+    List<String> addresses = const [],
+  }) async {
+    _startOver();
+    await syncPreferenceRepository.save(
+      state
+        ..server = server
+        ..hostFingerprint = fingerprint
+        ..hostAddresses = addresses.isEmpty ? null : addresses
+        ..authToken = null
+        ..email = null,
+    );
+    ref.invalidateSelf();
+  }
+
+  /// Syncs from now on with the host this device runs, from the start.
+  Future<void> useThisDeviceAsHost() async {
+    _startOver();
+    await syncPreferenceRepository.save(
+      state
+        ..server = SyncPreference.thisDeviceHost
+        ..hostFingerprint = null
+        ..hostAddresses = null
+        ..authToken = null
+        ..email = null,
+    );
+    ref.invalidateSelf();
+  }
+
+  Future<void> setHostEnabled(bool value) async {
+    await syncPreferenceRepository.save(state..hostEnabled = value);
+    ref.invalidateSelf();
+  }
+
+  /// Stops syncing with a host, this device's or another's.
+  Future<void> leaveHost() async {
+    await syncPreferenceRepository.save(
+      state
+        ..server = null
+        ..hostFingerprint = null
+        ..hostAddresses = null,
+    );
+    ref.invalidateSelf();
+  }
+
+  /// The host answered at [address], one of its others: tried first from
+  /// now on. Nothing else changes, it is the same host.
+  Future<void> rememberHostAddress(String address) async {
+    if (state.server == address || state.hostFingerprint == null) return;
+    await syncPreferenceRepository.save(state..server = address);
+    ref.invalidateSelf();
+  }
+
+  /// The next sync sends everything and takes everything.
+  void _startOver() {
+    state
+      ..since = 0
+      ..sessionToken = null
+      ..lastSync = null;
   }
 
   void setSince(int timestamp) {

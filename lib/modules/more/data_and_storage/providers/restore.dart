@@ -158,9 +158,7 @@ Future<void> _uploadToSyncServerIfConnected(
 ) async {
   try {
     final syncPreference = ref.read(synchingProvider(syncId: 1));
-    final connected =
-        (syncPreference.authToken?.isNotEmpty ?? false) &&
-        (syncPreference.server?.isNotEmpty ?? false);
+    final connected = syncPreference.isConnected;
     if (!connected) return;
     botToast(l10n.restore_sync_uploading);
     // silent: true suppresses startSync's own generic "Starting/Finished"

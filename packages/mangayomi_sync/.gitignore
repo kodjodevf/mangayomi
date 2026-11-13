@@ -1,0 +1,3 @@
+.dart_tool/
+# A library: the apps that use it pin their own versions.
+pubspec.lock

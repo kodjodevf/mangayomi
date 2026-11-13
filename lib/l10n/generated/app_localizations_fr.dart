@@ -4780,4 +4780,154 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get update_all_skip_foreign => 'Seulement depuis leur dépôt';
+
+  @override
+  String get device_sync => 'Synchroniser entre vos appareils';
+
+  @override
+  String get device_sync_summary =>
+      'Sans serveur : un de vos appareils sert d\'hôte, les autres s\'y appairent';
+
+  @override
+  String get device_sync_host_section => 'Cet appareil comme hôte';
+
+  @override
+  String get device_sync_host => 'Héberger la synchro sur cet appareil';
+
+  @override
+  String get device_sync_host_info =>
+      'Vos autres appareils se synchronisent avec celui-ci sur votre réseau local ou Tailscale, de façon chiffrée, et seulement une fois appairés. Gardez l\'application ouverte sur cet appareil pour qu\'ils puissent se synchroniser.';
+
+  @override
+  String device_sync_host_running(String port) {
+    return 'À l\'écoute sur le port $port';
+  }
+
+  @override
+  String device_sync_host_failed(String error) {
+    return 'Impossible de démarrer l\'hôte : $error';
+  }
+
+  @override
+  String get device_sync_add_device => 'Ajouter un appareil';
+
+  @override
+  String get device_sync_paired_devices => 'Appareils appairés';
+
+  @override
+  String get device_sync_no_paired => 'Aucun appareil appairé';
+
+  @override
+  String device_sync_paired_on(String date) {
+    return 'Appairé le $date';
+  }
+
+  @override
+  String device_sync_forget_title(String name) {
+    return 'Retirer $name ?';
+  }
+
+  @override
+  String get device_sync_forget_message =>
+      'Cet appareil cesse aussitôt de l\'accepter. Il pourra s\'appairer de nouveau avec un nouveau QR code.';
+
+  @override
+  String get device_sync_join_section => 'Rejoindre un hôte';
+
+  @override
+  String get device_sync_join_info =>
+      'Appairez-vous avec l\'appareil qui héberge la synchro. Son QR code se trouve sous Ajouter un appareil sur cet appareil.';
+
+  @override
+  String get device_sync_scan => 'Scanner le QR code de l\'hôte';
+
+  @override
+  String get device_sync_paste => 'Coller un lien d\'appairage';
+
+  @override
+  String get device_sync_link => 'Lien d\'appairage';
+
+  @override
+  String get device_sync_link_invalid => 'Ce n\'est pas un lien d\'appairage';
+
+  @override
+  String get device_sync_pair => 'Appairer';
+
+  @override
+  String get device_sync_pairing =>
+      'Appairage… acceptez cet appareil sur l\'hôte';
+
+  @override
+  String get device_sync_paired => 'Appairé avec l\'hôte';
+
+  @override
+  String get device_sync_wrong_code =>
+      'Code incorrect. Affichez un nouveau QR code sur l\'hôte et réessayez.';
+
+  @override
+  String get device_sync_refused =>
+      'L\'hôte a refusé cet appareil, ou le code a expiré.';
+
+  @override
+  String get device_sync_unreachable =>
+      'Impossible de joindre l\'hôte. Les deux appareils doivent être sur le même réseau.';
+
+  @override
+  String get device_sync_invite_info =>
+      'Sur l\'autre appareil, ouvrez Paramètres → Synchronisation → Synchroniser entre vos appareils et scannez ce code, ou collez le lien. Il fonctionne une fois, pendant 5 minutes.';
+
+  @override
+  String get device_sync_copy_link => 'Copier le lien';
+
+  @override
+  String get device_sync_link_copied => 'Lien copié';
+
+  @override
+  String get device_sync_no_network =>
+      'Cet appareil n\'est sur aucun réseau local : aucun autre appareil ne peut le joindre.';
+
+  @override
+  String get device_sync_allow_title => 'Autoriser cet appareil ?';
+
+  @override
+  String device_sync_allow_message(String name) {
+    return '« $name » veut se synchroniser avec cet appareil. N\'acceptez que s\'il vous appartient.';
+  }
+
+  @override
+  String get device_sync_allow => 'Autoriser';
+
+  @override
+  String get device_sync_deny => 'Refuser';
+
+  @override
+  String get device_sync_switch_title =>
+      'Changer la cible de synchronisation ?';
+
+  @override
+  String device_sync_switch_message(String server) {
+    return 'Cet appareil cesse de se synchroniser avec $server. Rien n\'est supprimé, ni ici ni là-bas.';
+  }
+
+  @override
+  String device_sync_with_host(String server) {
+    return 'Synchronisé avec l\'hôte $server';
+  }
+
+  @override
+  String get device_sync_with_this_device =>
+      'Synchronisé avec l\'hôte de cet appareil';
+
+  @override
+  String get device_sync_leave => 'Arrêter la synchro avec l\'hôte';
+
+  @override
+  String get device_sync_stop_host_title => 'Arrêter d\'héberger ?';
+
+  @override
+  String get device_sync_stop_host_message =>
+      'Vos autres appareils ne pourront plus se synchroniser tant qu\'il est arrêté. Ce que l\'hôte a stocké reste sur cet appareil.';
+
+  @override
+  String get device_sync_scan_hint => 'Visez le QR code affiché sur l\'hôte';
 }

@@ -28,15 +28,30 @@ const SyncPreferenceSchema = CollectionSchema(
       type: IsarType.long,
     ),
     r'email': PropertySchema(id: 2, name: r'email', type: IsarType.string),
-    r'lastSync': PropertySchema(id: 3, name: r'lastSync', type: IsarType.long),
-    r'server': PropertySchema(id: 4, name: r'server', type: IsarType.string),
-    r'sessionToken': PropertySchema(
+    r'hostAddresses': PropertySchema(
+      id: 3,
+      name: r'hostAddresses',
+      type: IsarType.stringList,
+    ),
+    r'hostEnabled': PropertySchema(
+      id: 4,
+      name: r'hostEnabled',
+      type: IsarType.bool,
+    ),
+    r'hostFingerprint': PropertySchema(
       id: 5,
+      name: r'hostFingerprint',
+      type: IsarType.string,
+    ),
+    r'lastSync': PropertySchema(id: 6, name: r'lastSync', type: IsarType.long),
+    r'server': PropertySchema(id: 7, name: r'server', type: IsarType.string),
+    r'sessionToken': PropertySchema(
+      id: 8,
       name: r'sessionToken',
       type: IsarType.string,
     ),
-    r'since': PropertySchema(id: 6, name: r'since', type: IsarType.long),
-    r'syncOn': PropertySchema(id: 7, name: r'syncOn', type: IsarType.bool),
+    r'since': PropertySchema(id: 9, name: r'since', type: IsarType.long),
+    r'syncOn': PropertySchema(id: 10, name: r'syncOn', type: IsarType.bool),
   },
 
   estimateSize: _syncPreferenceEstimateSize,
@@ -73,6 +88,24 @@ int _syncPreferenceEstimateSize(
     }
   }
   {
+    final list = object.hostAddresses;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += value.length * 3;
+        }
+      }
+    }
+  }
+  {
+    final value = object.hostFingerprint;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.server;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -96,11 +129,14 @@ void _syncPreferenceSerialize(
   writer.writeString(offsets[0], object.authToken);
   writer.writeLong(offsets[1], object.autoSyncFrequency);
   writer.writeString(offsets[2], object.email);
-  writer.writeLong(offsets[3], object.lastSync);
-  writer.writeString(offsets[4], object.server);
-  writer.writeString(offsets[5], object.sessionToken);
-  writer.writeLong(offsets[6], object.since);
-  writer.writeBool(offsets[7], object.syncOn);
+  writer.writeStringList(offsets[3], object.hostAddresses);
+  writer.writeBool(offsets[4], object.hostEnabled);
+  writer.writeString(offsets[5], object.hostFingerprint);
+  writer.writeLong(offsets[6], object.lastSync);
+  writer.writeString(offsets[7], object.server);
+  writer.writeString(offsets[8], object.sessionToken);
+  writer.writeLong(offsets[9], object.since);
+  writer.writeBool(offsets[10], object.syncOn);
 }
 
 SyncPreference _syncPreferenceDeserialize(
@@ -113,12 +149,15 @@ SyncPreference _syncPreferenceDeserialize(
     authToken: reader.readStringOrNull(offsets[0]),
     autoSyncFrequency: reader.readLongOrNull(offsets[1]) ?? 0,
     email: reader.readStringOrNull(offsets[2]),
-    lastSync: reader.readLongOrNull(offsets[3]),
-    server: reader.readStringOrNull(offsets[4]),
-    sessionToken: reader.readStringOrNull(offsets[5]),
-    since: reader.readLongOrNull(offsets[6]),
+    hostAddresses: reader.readStringList(offsets[3]),
+    hostEnabled: reader.readBoolOrNull(offsets[4]) ?? false,
+    hostFingerprint: reader.readStringOrNull(offsets[5]),
+    lastSync: reader.readLongOrNull(offsets[6]),
+    server: reader.readStringOrNull(offsets[7]),
+    sessionToken: reader.readStringOrNull(offsets[8]),
+    since: reader.readLongOrNull(offsets[9]),
     syncId: id,
-    syncOn: reader.readBoolOrNull(offsets[7]) ?? false,
+    syncOn: reader.readBoolOrNull(offsets[10]) ?? false,
   );
   return object;
 }
@@ -137,14 +176,20 @@ P _syncPreferenceDeserializeProp<P>(
     case 2:
       return (reader.readStringOrNull(offset)) as P;
     case 3:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringList(offset)) as P;
     case 4:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 5:
       return (reader.readStringOrNull(offset)) as P;
     case 6:
       return (reader.readLongOrNull(offset)) as P;
     case 7:
+      return (reader.readStringOrNull(offset)) as P;
+    case 8:
+      return (reader.readStringOrNull(offset)) as P;
+    case 9:
+      return (reader.readLongOrNull(offset)) as P;
+    case 10:
       return (reader.readBoolOrNull(offset) ?? false) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -619,6 +664,386 @@ extension SyncPreferenceQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.greaterThan(property: r'email', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'hostAddresses'),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'hostAddresses'),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesElementEqualTo(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'hostAddresses',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'hostAddresses',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'hostAddresses',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'hostAddresses',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesElementStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'hostAddresses',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesElementEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'hostAddresses',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesElementContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'hostAddresses',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesElementMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'hostAddresses',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'hostAddresses', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'hostAddresses', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'hostAddresses', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'hostAddresses', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'hostAddresses', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'hostAddresses', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'hostAddresses', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostAddressesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'hostAddresses',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostEnabledEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'hostEnabled', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostFingerprintIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'hostFingerprint'),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostFingerprintIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'hostFingerprint'),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostFingerprintEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'hostFingerprint',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostFingerprintGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'hostFingerprint',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostFingerprintLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'hostFingerprint',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostFingerprintBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'hostFingerprint',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostFingerprintStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'hostFingerprint',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostFingerprintEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'hostFingerprint',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostFingerprintContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'hostFingerprint',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostFingerprintMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'hostFingerprint',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostFingerprintIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'hostFingerprint', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+  hostFingerprintIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'hostFingerprint', value: ''),
       );
     });
   }
@@ -1217,6 +1642,34 @@ extension SyncPreferenceQuerySortBy
     });
   }
 
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+  sortByHostEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hostEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+  sortByHostEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hostEnabled', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+  sortByHostFingerprint() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hostFingerprint', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+  sortByHostFingerprintDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hostFingerprint', Sort.desc);
+    });
+  }
+
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy> sortByLastSync() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastSync', Sort.asc);
@@ -1324,6 +1777,34 @@ extension SyncPreferenceQuerySortThenBy
     });
   }
 
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+  thenByHostEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hostEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+  thenByHostEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hostEnabled', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+  thenByHostFingerprint() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hostFingerprint', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+  thenByHostFingerprintDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'hostFingerprint', Sort.desc);
+    });
+  }
+
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy> thenByLastSync() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastSync', Sort.asc);
@@ -1428,6 +1909,30 @@ extension SyncPreferenceQueryWhereDistinct
     });
   }
 
+  QueryBuilder<SyncPreference, SyncPreference, QDistinct>
+  distinctByHostAddresses() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hostAddresses');
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QDistinct>
+  distinctByHostEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'hostEnabled');
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QDistinct>
+  distinctByHostFingerprint({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(
+        r'hostFingerprint',
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
   QueryBuilder<SyncPreference, SyncPreference, QDistinct> distinctByLastSync() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'lastSync');
@@ -1486,6 +1991,26 @@ extension SyncPreferenceQueryProperty
   QueryBuilder<SyncPreference, String?, QQueryOperations> emailProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'email');
+    });
+  }
+
+  QueryBuilder<SyncPreference, List<String>?, QQueryOperations>
+  hostAddressesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hostAddresses');
+    });
+  }
+
+  QueryBuilder<SyncPreference, bool, QQueryOperations> hostEnabledProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hostEnabled');
+    });
+  }
+
+  QueryBuilder<SyncPreference, String?, QQueryOperations>
+  hostFingerprintProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'hostFingerprint');
     });
   }
 

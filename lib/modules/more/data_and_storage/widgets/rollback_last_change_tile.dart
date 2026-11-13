@@ -66,9 +66,7 @@ Future<void> offerLibraryRollback(
 
   bool? syncAfterRestore;
   final syncPreference = ref.read(synchingProvider(syncId: 1));
-  final hasServer =
-      (syncPreference.authToken?.isNotEmpty ?? false) &&
-      (syncPreference.server?.isNotEmpty ?? false);
+  final hasServer = syncPreference.isConnected;
   if (hasServer) {
     syncAfterRestore = await confirmSyncAfterRestore(
       context,

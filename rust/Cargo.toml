@@ -30,6 +30,12 @@ anyhow = "1.0.104"
 # Pinned to what reqwest 0.13 already resolves, so the build has one rustls.
 rustls = { version = "0.23", default-features = false, features = ["std", "tls12", "aws-lc-rs"] }
 webpki-roots = "1"
+# The sync host: device identities, a mutual-TLS server and a pinned client,
+# shared with the sync server.
+mangayomi_sync_host = { path = "sync_host" }
+
+[workspace]
+members = [".", "sync_host"]
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }

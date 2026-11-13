@@ -19,9 +19,7 @@ import 'package:shiori/shiori.dart';
 /// whether sync is currently on or off) and, if so, whether it's on.
 (bool hasServer, bool syncOn) _syncState(WidgetRef ref) {
   final syncPreference = ref.read(synchingProvider(syncId: 1));
-  final hasServer =
-      (syncPreference.authToken?.isNotEmpty ?? false) &&
-      (syncPreference.server?.isNotEmpty ?? false);
+  final hasServer = syncPreference.isConnected;
   return (hasServer, syncPreference.syncOn);
 }
 

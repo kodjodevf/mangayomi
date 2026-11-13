@@ -18,6 +18,7 @@ import isar_community_flutter_libs
 import local_auth_darwin
 import m_extension_server
 import media_kit_libs_macos_video
+import mobile_scanner
 import package_info_plus
 import remote_webview_interceptor
 import screen_retriever_macos
@@ -45,6 +46,7 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   LocalAuthPlugin.register(with: registry.registrar(forPlugin: "LocalAuthPlugin"))
   MExtensionServerPlugin.register(with: registry.registrar(forPlugin: "MExtensionServerPlugin"))
   MediaKitLibsMacosVideoPlugin.register(with: registry.registrar(forPlugin: "MediaKitLibsMacosVideoPlugin"))
+  MobileScannerPlugin.register(with: registry.registrar(forPlugin: "MobileScannerPlugin"))
   FPPPackageInfoPlusPlugin.register(with: registry.registrar(forPlugin: "FPPPackageInfoPlusPlugin"))
   RemoteWebViewInterceptorPlugin.register(with: registry.registrar(forPlugin: "RemoteWebViewInterceptorPlugin"))
   ScreenRetrieverMacosPlugin.register(with: registry.registrar(forPlugin: "ScreenRetrieverMacosPlugin"))

@@ -8,7 +8,9 @@ import 'package:mangayomi/modules/more/settings/sync/providers/sync_connection_s
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_progress_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/utils/date.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/sync_preference.dart';
+import 'package:mangayomi/modules/more/settings/sync/device_sync/join_host.dart';
 import 'package:mangayomi/modules/more/settings/sync/widgets/sync_listile.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/sync_server.dart';
@@ -43,7 +45,10 @@ class SyncScreen extends ConsumerWidget {
             SyncPreference syncPreference = snapshot.data?.isNotEmpty ?? false
                 ? snapshot.data?.first ?? SyncPreference()
                 : SyncPreference();
-            final bool isLogged = syncPreference.authToken?.isNotEmpty ?? false;
+            final bool isLogged = syncPreference.isConnected;
+            final bool withHost =
+                syncPreference.hostFingerprint != null ||
+                syncPreference.server == SyncPreference.thisDeviceHost;
             final connectionStatus = ref.watch(
               syncConnectionStateProvider(syncId: 1),
             );
@@ -63,11 +68,21 @@ class SyncScreen extends ConsumerWidget {
                 ShioriSettingsGroup(
                   title: l10n.services,
                   children: [
-                    SyncListile(
-                      onTap: () =>
-                          _showDialogLogin(context, ref, syncPreference),
-                      id: 1,
-                      preference: syncPreference,
+                    if (!withHost)
+                      SyncListile(
+                        onTap: () =>
+                            _showDialogLogin(context, ref, syncPreference),
+                        id: 1,
+                        preference: syncPreference,
+                      ),
+                    ShioriSettingRow(
+                      icon: Symbols.devices_rounded,
+                      title: l10n.device_sync,
+                      subtitle: withHost
+                          ? syncTargetLabel(context, syncPreference)
+                          : l10n.device_sync_summary,
+                      trailing: const Icon(Symbols.chevron_forward_rounded),
+                      onTap: () => context.push('/deviceSync'),
                     ),
                     if (isLogged)
                       _connectionStatusTile(context, ref, connectionStatus),
@@ -267,70 +282,90 @@ class SyncScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     SyncPreference syncPreference,
-  ) async {
-    final serverController = TextEditingController(text: syncPreference.server);
-    String server = syncPreference.server ?? "";
-    String errorMessage = "";
-    bool isLoading = false;
-    final l10n = l10nLocalizations(context)!;
-    await showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          Future<void> login() async {
-            setState(() {
-              isLoading = true;
-              errorMessage = "";
-            });
-            final res = await ref
-                .read(syncServerProvider(syncId: 1).notifier)
-                .login(l10n, server);
-            if (!res.$1) {
-              setState(() {
-                isLoading = false;
-                errorMessage = res.$2;
-              });
-            } else if (context.mounted) {
-              Navigator.pop(context);
-            }
-          }
+  ) => showDialog(
+    context: context,
+    builder: (_) => _LoginDialog(initialServer: syncPreference.server ?? ''),
+  );
+}
 
-          final canLogin = !isLoading && server.trim().isNotEmpty;
-          return ShioriDialog(
-            title: l10n.login_into("SyncServer"),
-            content: TextField(
-              controller: serverController,
-              autofocus: !isTv,
-              keyboardType: TextInputType.url,
-              onChanged: (value) => setState(() => server = value),
-              onSubmitted: (_) => canLogin ? login() : null,
-              decoration: InputDecoration(
-                labelText: l10n.sync_server,
-                errorText: errorMessage.isEmpty ? null : errorMessage,
-                errorMaxLines: 3,
-              ),
-            ),
-            actions: [
-              ShioriButton.quiet(
-                label: l10n.cancel,
-                onPressed: () => Navigator.pop(context),
-              ),
-              if (isLoading)
-                const Padding(
-                  padding: EdgeInsets.all(ShioriSpace.s8),
-                  child: ShioriLoading.inline(),
-                )
-              else
-                ShioriButton(
-                  icon: Symbols.open_in_browser_rounded,
-                  label: l10n.sync_login_browser,
-                  onPressed: canLogin ? login : null,
-                ),
-            ],
-          );
-        },
+/// Owns its text controller, so the controller outlives the dialog's
+/// closing animation, which still reads it.
+class _LoginDialog extends ConsumerStatefulWidget {
+  const _LoginDialog({required this.initialServer});
+
+  final String initialServer;
+
+  @override
+  ConsumerState<_LoginDialog> createState() => _LoginDialogState();
+}
+
+class _LoginDialogState extends ConsumerState<_LoginDialog> {
+  late final _server = TextEditingController(text: widget.initialServer);
+  String _error = '';
+  bool _loading = false;
+
+  @override
+  void dispose() {
+    _server.dispose();
+    super.dispose();
+  }
+
+  bool get _canLogin => !_loading && _server.text.trim().isNotEmpty;
+
+  Future<void> _login() async {
+    final l10n = l10nLocalizations(context)!;
+    setState(() {
+      _loading = true;
+      _error = '';
+    });
+    final res = await ref
+        .read(syncServerProvider(syncId: 1).notifier)
+        .login(l10n, _server.text);
+    if (!mounted) return;
+    if (!res.$1) {
+      setState(() {
+        _loading = false;
+        _error = res.$2;
+      });
+    } else {
+      Navigator.pop(context);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
+    return ShioriDialog(
+      title: l10n.login_into("SyncServer"),
+      content: TextField(
+        controller: _server,
+        autofocus: !isTv,
+        keyboardType: TextInputType.url,
+        onChanged: (_) => setState(() {}),
+        onSubmitted: (_) => _canLogin ? _login() : null,
+        decoration: InputDecoration(
+          labelText: l10n.sync_server,
+          errorText: _error.isEmpty ? null : _error,
+          errorMaxLines: 3,
+        ),
       ),
+      actions: [
+        ShioriButton.quiet(
+          label: l10n.cancel,
+          onPressed: () => Navigator.pop(context),
+        ),
+        if (_loading)
+          const Padding(
+            padding: EdgeInsets.all(ShioriSpace.s8),
+            child: ShioriLoading.inline(),
+          )
+        else
+          ShioriButton(
+            icon: Symbols.open_in_browser_rounded,
+            label: l10n.sync_login_browser,
+            onPressed: _canLogin ? _login : null,
+          ),
+      ],
     );
-    serverController.dispose();
   }
 }
