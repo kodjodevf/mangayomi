@@ -46,64 +46,66 @@ class MassMigrationResolvedItemCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // The two titles side by side, each under its cover: beside both
+            // covers, a long title was left a column a few letters wide.
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                MassMigrationCover(
-                  libraryItem: item.sourceItem,
-                  source: sourceGroup.source,
-                ),
-                const SizedBox(width: ShioriSpace.s12),
-                const Icon(Symbols.arrow_forward_rounded, fill: 1),
-                const SizedBox(width: ShioriSpace.s12),
-                MassMigrationCover(
-                  remoteItem: item.selectedCandidate,
-                  source: destinationSource,
-                ),
-                const SizedBox(width: ShioriSpace.s12),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
+                  child: _Side(
+                    cover: MassMigrationCover(
+                      libraryItem: item.sourceItem,
+                      source: sourceGroup.source,
+                    ),
+                    title:
                         item.sourceItem.name ??
-                            l10n.mass_migration_unknown_title,
-                        style: context.shiori.text.section.copyWith(
-                          color: context.shiori.color.fg,
-                        ),
-                      ),
-                      const SizedBox(height: ShioriSpace.s8),
-                      Text(
-                        item.hasMatch
-                            ? (item.selectedCandidate?.name ??
-                                  l10n.mass_migration_unknown_match)
-                            : l10n.mass_migration_no_destination_match,
-                        style: context.shiori.text.row.copyWith(
-                          color: item.hasMatch
-                              ? context.shiori.color.fg
-                              : context.shiori.color.fgMuted,
-                        ),
-                      ),
-                      const SizedBox(height: ShioriSpace.s8),
-                      Text(
-                        [
-                          l10n.mass_migration_source_chapter_count(
-                            item.sourceItem.chapters.length,
-                          ),
-                          l10n.mass_migration_destination_chapter_count(
-                            destinationChapterNames.length,
-                          ),
-                          if ((item.searchResult.usedQuery ?? '').isNotEmpty)
-                            l10n.mass_migration_query(
-                              item.searchResult.usedQuery!,
-                            ),
-                        ].join(' · '),
-                        style: context.shiori.caption,
-                      ),
-                    ],
+                        l10n.mass_migration_unknown_title,
+                    sourceName: sourceGroup.sourceName,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 44,
+                    left: ShioriSpace.s8,
+                    right: ShioriSpace.s8,
+                  ),
+                  child: Icon(
+                    Symbols.arrow_forward_rounded,
+                    fill: 1,
+                    color: context.shiori.color.fgMuted,
+                  ),
+                ),
+                Expanded(
+                  child: _Side(
+                    cover: MassMigrationCover(
+                      remoteItem: item.selectedCandidate,
+                      source: destinationSource,
+                    ),
+                    title: item.hasMatch
+                        ? (item.selectedCandidate?.name ??
+                              l10n.mass_migration_unknown_match)
+                        : l10n.mass_migration_no_destination_match,
+                    muted: !item.hasMatch,
+                    sourceName: destinationSource.name,
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: ShioriSpace.s12),
+            Text(
+              [
+                l10n.mass_migration_source_chapter_count(
+                  item.sourceItem.chapters.length,
+                ),
+                l10n.mass_migration_destination_chapter_count(
+                  destinationChapterNames.length,
+                ),
+                if ((item.searchResult.usedQuery ?? '').isNotEmpty)
+                  l10n.mass_migration_query(item.searchResult.usedQuery!),
+              ].join(' · '),
+              style: context.shiori.caption,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
             if ((item.errorMessage ?? '').isNotEmpty) ...[
               const SizedBox(height: ShioriSpace.s8),
@@ -115,37 +117,27 @@ class MassMigrationResolvedItemCard extends StatelessWidget {
               ),
             ],
             const SizedBox(height: ShioriSpace.s12),
-            Row(
-              children: [
-                if (item.canMigrate)
-                  Flexible(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 260),
-                      child: ShioriSegmentedControl<bool>(
-                        segments: [
-                          ShioriSegment(
-                            value: false,
-                            label: l10n.mass_migration_skip,
-                          ),
-                          ShioriSegment(value: true, label: l10n.migrate),
-                        ],
-                        selected: item.shouldMigrate,
-                        onSelected: onShouldMigrateChanged,
-                      ),
-                    ),
-                  ),
-                const Spacer(),
-                if (item.searchResult.candidates.length > 1)
-                  ShioriButton.quiet(
-                    onPressed: isLoadingCandidate
-                        ? null
-                        : onPickAnotherCandidate,
-                    label: isLoadingCandidate
-                        ? l10n.mass_migration_loading
-                        : l10n.mass_migration_choose_another_result,
-                  ),
-              ],
-            ),
+            // The choice gets a line of its own: sharing one with a spacer and
+            // the other button squeezed it down to a blank pill.
+            if (item.canMigrate)
+              ShioriSegmentedControl<bool>(
+                segments: [
+                  ShioriSegment(value: false, label: l10n.mass_migration_skip),
+                  ShioriSegment(value: true, label: l10n.migrate),
+                ],
+                selected: item.shouldMigrate,
+                onSelected: onShouldMigrateChanged,
+              ),
+            if (item.searchResult.candidates.length > 1)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: ShioriButton.quiet(
+                  onPressed: isLoadingCandidate ? null : onPickAnotherCandidate,
+                  label: isLoadingCandidate
+                      ? l10n.mass_migration_loading
+                      : l10n.mass_migration_choose_another_result,
+                ),
+              ),
             const SizedBox(height: ShioriSpace.s8),
             MassMigrationChapterSection(
               title: l10n.mass_migration_source_chapters,
@@ -158,6 +150,50 @@ class MassMigrationResolvedItemCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// One side of the migration: a cover, its title and the source it is on.
+class _Side extends StatelessWidget {
+  const _Side({
+    required this.cover,
+    required this.title,
+    required this.sourceName,
+    this.muted = false,
+  });
+
+  final Widget cover;
+  final String title;
+  final String? sourceName;
+  final bool muted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        cover,
+        const SizedBox(height: ShioriSpace.s8),
+        Text(
+          title,
+          style: context.shiori.text.row.copyWith(
+            color: muted
+                ? context.shiori.color.fgMuted
+                : context.shiori.color.fg,
+            fontWeight: FontWeight.w600,
+          ),
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+        ),
+        if ((sourceName ?? '').isNotEmpty)
+          Text(
+            sourceName!,
+            style: context.shiori.caption,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+      ],
     );
   }
 }
