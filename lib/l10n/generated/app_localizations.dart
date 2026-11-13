@@ -130,6 +130,60 @@ abstract class AppLocalizations {
     Locale('zh'),
   ];
 
+  /// No description provided for @discover_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover'**
+  String get discover_title;
+
+  /// No description provided for @discover_trending.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending'**
+  String get discover_trending;
+
+  /// No description provided for @discover_popular.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular'**
+  String get discover_popular;
+
+  /// No description provided for @discover_attribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Rankings from the AniList community. Availability depends on your installed sources.'**
+  String get discover_attribution;
+
+  /// No description provided for @discover_search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search installed sources'**
+  String get discover_search;
+
+  /// No description provided for @discover_no_description.
+  ///
+  /// In en, this message translates to:
+  /// **'No synopsis available.'**
+  String get discover_no_description;
+
+  /// No description provided for @discover_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No titles in this selection.'**
+  String get discover_empty;
+
+  /// No description provided for @discover_unavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load this shelf.'**
+  String get discover_unavailable;
+
+  /// No description provided for @discover_hidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable manga, anime or novels in Settings to discover titles.'**
+  String get discover_hidden;
+
   /// No description provided for @library.
   ///
   /// In en, this message translates to:

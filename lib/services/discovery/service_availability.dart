@@ -17,13 +17,21 @@ enum DiscoveryService {
 /// between "Request timed out" and "AniList has temporarily disabled their
 /// API".
 class DiscoveryUnavailable implements Exception {
-  DiscoveryUnavailable(this.service, this.reason, {this.retryAfter});
+  DiscoveryUnavailable(
+    this.service,
+    this.reason, {
+    this.retryAfter,
+    this.enforceCooldown = false,
+  });
 
   final DiscoveryService service;
   final String reason;
 
   /// When the service may be worth asking again.
   final DateTime? retryAfter;
+
+  /// An explicit retry deadline that concurrent answers must not clear.
+  final bool enforceCooldown;
 
   @override
   String toString() => '${service.label} is unavailable: $reason';
@@ -62,18 +70,32 @@ class ServiceAvailability {
     DiscoveryService service,
     String reason, {
     Duration? cooldown,
+    bool enforceCooldown = false,
   }) {
-    final outage = DiscoveryUnavailable(
+    final previous = outage(service);
+    final retryAfter = DateTime.now().add(cooldown ?? _cooldown);
+    // An in-flight response must not replace a mandatory wait with a shorter
+    // one. A longer refusal inherits the protection against late successes.
+    if (previous != null &&
+        previous.enforceCooldown &&
+        previous.retryAfter?.isAfter(retryAfter) == true) {
+      return previous;
+    }
+    final recorded = DiscoveryUnavailable(
       service,
       reason,
-      retryAfter: DateTime.now().add(cooldown ?? _cooldown),
+      retryAfter: retryAfter,
+      enforceCooldown: enforceCooldown || (previous?.enforceCooldown ?? false),
     );
-    _down[service] = outage;
-    return outage;
+    _down[service] = recorded;
+    return recorded;
   }
 
-  /// Records that [service] answered, clearing any refusal.
-  static void markUp(DiscoveryService service) => _down.remove(service);
+  /// Clears an ordinary refusal, but never an unexpired explicit retry deadline.
+  static void markUp(DiscoveryService service) {
+    if (outage(service)?.enforceCooldown ?? false) return;
+    _down.remove(service);
+  }
 
   static void clearForTest() => _down.clear();
 }

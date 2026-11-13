@@ -1,4 +1,13 @@
 {
+  "discover_title": "Discover",
+  "discover_trending": "Trending",
+  "discover_popular": "Popular",
+  "discover_attribution": "Rankings from the AniList community. Availability depends on your installed sources.",
+  "discover_search": "Search installed sources",
+  "discover_no_description": "No synopsis available.",
+  "discover_empty": "No titles in this selection.",
+  "discover_unavailable": "Could not load this shelf.",
+  "discover_hidden": "Enable manga, anime or novels in Settings to discover titles.",
   "@@locale": "en",
   "library": "Library",
   "updates": "Updates",
