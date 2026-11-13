@@ -7,6 +7,7 @@ import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/modules/widgets/entry_badge_chip.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
+import 'package:mangayomi/modules/manga/download/providers/download_gate.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/download_manager/download_queue_order.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
@@ -98,13 +99,30 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
               ],
             ),
             actions: [
-              // Starts every download in the queue again, failed ones
-              // included. It was a floating button labelled with the
-              // screen's own name, which said nothing of what it did.
-              IconButton(
-                tooltip: l10n.resume_all_downloads,
-                onPressed: () => _resumeAll(entries),
-                icon: const Icon(Symbols.play_arrow_rounded, fill: 1),
+              // Pause while downloads run; otherwise start every download
+              // in the queue again, failed ones included, from the top.
+              ListenableBuilder(
+                listenable: Listenable.merge([
+                  downloadsPaused,
+                  scheduledDownloads,
+                ]),
+                builder: (context, _) {
+                  final running =
+                      !downloadsPaused.value &&
+                      scheduledDownloads.value.isNotEmpty;
+                  return IconButton(
+                    tooltip: running ? l10n.pause : l10n.resume_all_downloads,
+                    onPressed: running
+                        ? pauseDownloads
+                        : () => _resumeAll(entries),
+                    icon: Icon(
+                      running
+                          ? Symbols.pause_rounded
+                          : Symbols.play_arrow_rounded,
+                      fill: 1,
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -139,8 +157,7 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
       }
     }
     if (!mounted) return;
-    ref.invalidate(processDownloadsProvider());
-    ref.read(processDownloadsProvider());
+    resumeDownloads(ref);
   }
 
   Widget _buildRow(
