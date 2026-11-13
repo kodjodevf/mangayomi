@@ -95,7 +95,8 @@ class LibraryListViewWidget extends StatelessWidget {
                         EntryBadgeChip(label: entry.lang!.toUpperCase()),
                     ],
                   ),
-                  if (continueReaderBtn) ContinueReaderButton(entry: entry),
+                  if (continueReaderBtn)
+                    ContinueReaderButton(entry: entry, settings: settings),
                 ],
               ),
             );
