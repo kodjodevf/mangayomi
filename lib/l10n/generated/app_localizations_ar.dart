@@ -1465,6 +1465,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cancel_all_for_this_series => 'إلغاء الكل لهذه السلسلة';
 
   @override
+  String get move_to_top => 'نقل إلى الأعلى';
+
+  @override
+  String get move_series_to_top => 'نقل السلسلة إلى الأعلى';
+
+  @override
+  String get move_to_bottom => 'نقل إلى الأسفل';
+
+  @override
+  String get move_series_to_bottom => 'نقل السلسلة إلى الأسفل';
+
+  @override
   String get login => 'تسجيل الدخول';
 
   @override

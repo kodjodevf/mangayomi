@@ -1456,6 +1456,18 @@ class AppLocalizationsAs extends AppLocalizations {
   String get cancel_all_for_this_series => 'এই শৃংখলাৰ সকলো বাতিল কৰক';
 
   @override
+  String get move_to_top => 'ওপৰলৈ নিয়ক';
+
+  @override
+  String get move_series_to_top => 'শৃংখলাটো ওপৰলৈ নিয়ক';
+
+  @override
+  String get move_to_bottom => 'তললৈ নিয়ক';
+
+  @override
+  String get move_series_to_bottom => 'শৃংখলাটো তললৈ নিয়ক';
+
+  @override
   String get login => 'লগইন';
 
   @override

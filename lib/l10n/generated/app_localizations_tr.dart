@@ -1455,6 +1455,18 @@ class AppLocalizationsTr extends AppLocalizations {
   String get cancel_all_for_this_series => 'Bu Seri İçin Tümünü İptal Et';
 
   @override
+  String get move_to_top => 'En Üste Taşı';
+
+  @override
+  String get move_series_to_top => 'Seriyi En Üste Taşı';
+
+  @override
+  String get move_to_bottom => 'En Alta Taşı';
+
+  @override
+  String get move_series_to_bottom => 'Seriyi En Alta Taşı';
+
+  @override
   String get login => 'Giriş Yap';
 
   @override

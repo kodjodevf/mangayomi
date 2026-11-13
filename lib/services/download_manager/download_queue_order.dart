@@ -14,9 +14,8 @@ class DownloadQueueOrder {
       settingsRepository.current.downloadQueueOrder ?? const [];
 
   /// Persists [ids] as the new priority order.
-  static void setOrder(List<int> ids) {
-    settingsRepository.update((s) => s.downloadQueueOrder = ids);
-  }
+  static Future<void> setOrder(List<int> ids) =>
+      settingsRepository.update((s) => s.downloadQueueOrder = ids);
 
   /// The position of each download in the queue, smallest first: its place
   /// in the saved manual order, then, for the rest, its id. Ids grow with
@@ -28,6 +27,18 @@ class DownloadQueueOrder {
     final ord = order;
     final rank = <int, int>{for (var i = 0; i < ord.length; i++) ord[i]: i};
     return (id) => rank[id] ?? ord.length + id;
+  }
+
+  /// [ids] with the ones [moved] picks taken to the top or the bottom,
+  /// keeping their order among themselves, and the rest theirs.
+  static List<int> move(
+    List<int> ids,
+    bool Function(int id) moved, {
+    required bool toTop,
+  }) {
+    final group = ids.where(moved).toList();
+    final rest = ids.where((id) => !moved(id)).toList();
+    return toTop ? [...group, ...rest] : [...rest, ...group];
   }
 
   /// Returns [items] in queue order (see [positions]).

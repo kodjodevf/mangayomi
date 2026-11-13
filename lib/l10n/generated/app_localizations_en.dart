@@ -1460,6 +1460,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel_all_for_this_series => 'Cancel all for this series';
 
   @override
+  String get move_to_top => 'Move to top';
+
+  @override
+  String get move_series_to_top => 'Move series to top';
+
+  @override
+  String get move_to_bottom => 'Move to bottom';
+
+  @override
+  String get move_series_to_bottom => 'Move series to bottom';
+
+  @override
   String get login => 'Login';
 
   @override

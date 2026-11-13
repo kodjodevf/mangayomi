@@ -139,4 +139,22 @@ void main() {
     );
     DownloadGate.instance.release('source');
   });
+
+  test('moves a download or a whole series to the top or the bottom', () {
+    // Series A: 1, 3, 5. Series B: 2, 4.
+    final ids = [1, 2, 3, 4, 5];
+    bool seriesA(int id) => id.isOdd;
+    expect(DownloadQueueOrder.move(ids, (id) => id == 4, toTop: true), [
+      4, 1, 2, 3, 5, //
+    ]);
+    expect(DownloadQueueOrder.move(ids, (id) => id == 1, toTop: false), [
+      2, 3, 4, 5, 1, //
+    ]);
+    expect(DownloadQueueOrder.move(ids, seriesA, toTop: true), [
+      1, 3, 5, 2, 4, //
+    ]);
+    expect(DownloadQueueOrder.move(ids, seriesA, toTop: false), [
+      2, 4, 1, 3, 5, //
+    ]);
+  });
 }

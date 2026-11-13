@@ -1433,6 +1433,18 @@ class AppLocalizationsKo extends AppLocalizations {
   String get cancel_all_for_this_series => '이 시리즈 모두 취소';
 
   @override
+  String get move_to_top => '맨 위로 이동';
+
+  @override
+  String get move_series_to_top => '시리즈를 맨 위로 이동';
+
+  @override
+  String get move_to_bottom => '맨 아래로 이동';
+
+  @override
+  String get move_series_to_bottom => '시리즈를 맨 아래로 이동';
+
+  @override
   String get login => '로그인';
 
   @override

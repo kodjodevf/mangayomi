@@ -1470,6 +1470,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cancel_all_for_this_series => 'Tout annuler pour cette serie';
 
   @override
+  String get move_to_top => 'Déplacer en haut';
+
+  @override
+  String get move_series_to_top => 'Déplacer la série en haut';
+
+  @override
+  String get move_to_bottom => 'Déplacer en bas';
+
+  @override
+  String get move_series_to_bottom => 'Déplacer la série en bas';
+
+  @override
   String get login => 'Connexion';
 
   @override

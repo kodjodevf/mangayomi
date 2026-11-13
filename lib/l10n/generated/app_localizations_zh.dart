@@ -1420,6 +1420,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cancel_all_for_this_series => '为此系列取消所有';
 
   @override
+  String get move_to_top => '移到顶部';
+
+  @override
+  String get move_series_to_top => '将系列移到顶部';
+
+  @override
+  String get move_to_bottom => '移到底部';
+
+  @override
+  String get move_series_to_bottom => '将系列移到底部';
+
+  @override
   String get login => '登录';
 
   @override
