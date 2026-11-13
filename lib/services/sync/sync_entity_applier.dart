@@ -402,5 +402,8 @@ Settings _preserveDeviceLocalSettings(Settings incoming, Settings current) {
     ..androidProxyServer = current.androidProxyServer
     ..jrePath = current.jrePath
     ..extensionServerPath = current.extensionServerPath
-    ..updatesLastSeenAt = current.updatesLastSeenAt;
+    ..updatesLastSeenAt = current.updatesLastSeenAt
+    ..libraryLastCategoryIdMangas = current.libraryLastCategoryIdMangas
+    ..libraryLastCategoryIdAnime = current.libraryLastCategoryIdAnime
+    ..libraryLastCategoryIdNovel = current.libraryLastCategoryIdNovel;
 }
