@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:shiori/shiori.dart';

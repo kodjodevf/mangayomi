@@ -5,7 +5,7 @@ publish_to: "none"
 version: 0.9.95+128
 
 environment:
-  sdk: ^3.13.7
+  sdk: ^3.14.0
 
 dependencies:
   flutter:
@@ -18,7 +18,8 @@ dependencies:
   html: 0.15.7
   collection: ^1.19.1
   font_awesome_flutter: ^11.0.0
-  flex_color_scheme: ^8.3.1
+  flex_color_scheme: ^9.0.0
+  material_ui: ^1.11.0
   shiori:
     path: packages/shiori
   remote_webview_interceptor:
@@ -111,7 +112,7 @@ dependencies:
   code_assets: ^2.0.0
   hooks: ^2.2.0
   native_toolchain_c: ^0.19.4
-  cupertino_ui: ^1.0.2
+  cupertino_ui: ^1.1.6
   image: ^4.10.1
   flutter_foreground_task: ^9.2.2
 

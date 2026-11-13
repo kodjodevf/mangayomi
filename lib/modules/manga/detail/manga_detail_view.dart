@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_selection_reset_scope.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_quick_filters.dart';
 import 'package:shiori/shiori.dart';

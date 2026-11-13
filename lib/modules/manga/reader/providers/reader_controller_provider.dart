@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/providers/reader_state_provider.dart';

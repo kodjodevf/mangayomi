@@ -7,7 +7,8 @@ environment:
   sdk: ^3.13.5
 
 dependencies:
-  flex_color_scheme: ^8.4.0
+  flex_color_scheme: ^9.0.0
+  material_ui: ^1.11.0
   flutter:
     sdk: flutter
   shiori:

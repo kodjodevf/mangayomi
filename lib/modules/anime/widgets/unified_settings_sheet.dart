@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 
 import 'package:mangayomi/modules/widgets/settings/settings_drilldown.dart';

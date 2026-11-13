@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 
 /// Material Design 3 Slider Track Shape with support for buffer progress and chapter mark ticks.

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/widgets/floating_nav_bar.dart';
 
 /// One navigation item: sharing the bar evenly, or hugging its own content.

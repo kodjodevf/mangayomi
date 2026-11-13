@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Material motion's LinearOutSlowIn, for what fades in.
 const Curve _linearOutSlowIn = Cubic(0, 0, 0.2, 1);
