@@ -1,0 +1,4 @@
+.dart_tool/
+build/
+native/target/
+dist/
