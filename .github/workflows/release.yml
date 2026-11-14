@@ -419,8 +419,10 @@ jobs:
           mkdir -p rpm_build/SOURCES/usr/share/icons
           cp -rL linux/packaging/icons/* rpm_build/SOURCES/usr/share/icons
           cp linux/mangayomi.desktop rpm_build/SOURCES/
-          # RPM Spec File
+          # RPM Spec File. No debuginfo package: the release bundle has no
+          # debug info to split out, and the runner has no eu-strip for it.
           cat <<EOF > rpm_build/SPECS/mangayomi.spec
+          %global debug_package %{nil}
           Name: mangayomi
           Version: ${VERSION}
           Release: 1%{?dist}
