@@ -32,6 +32,16 @@ class DownloadRepository {
       .map((d) => d.id!)
       .toList();
 
+  /// The ids of the chapters downloaded in full (a download's id is its
+  /// chapter's).
+  Future<Set<int>> getDownloadedChapterIds() async =>
+      (await isar.downloads
+              .where()
+              .isDownloadEqualTo(true)
+              .idProperty()
+              .findAll())
+          .toSet();
+
   Future<int> countDownloadedByFavoriteItemType(ItemType itemType) => isar
       .downloads
       .filter()

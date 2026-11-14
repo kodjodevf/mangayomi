@@ -85,6 +85,12 @@ class ChapterRepository {
       ? Future.value(0)
       : isar.chapters.where().mangaIdIsReadEqualTo(mangaId, false).count();
 
+  Future<List<int>> getUnreadIdsByMangaId(int mangaId) => isar.chapters
+      .where()
+      .mangaIdIsReadEqualTo(mangaId, false)
+      .idProperty()
+      .findAll();
+
   Future<int> countByFavoriteItemType(ItemType itemType) => isar.chapters
       .filter()
       .manga((q) => q.favoriteEqualTo(true).itemTypeEqualTo(itemType))

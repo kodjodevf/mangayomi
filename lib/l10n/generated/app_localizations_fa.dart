@@ -2166,6 +2166,9 @@ class AppLocalizationsFa extends AppLocalizations {
   String get you_have_finished_reading => 'خواندن را به پایان رساندید';
 
   @override
+  String get read_next => 'Read next';
+
+  @override
   String get return_to_the_list_of_chapters => 'بازگشت به فهرست فصل‌ها';
 
   @override

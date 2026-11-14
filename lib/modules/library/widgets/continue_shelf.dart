@@ -78,6 +78,35 @@ List<ContinueEntry> continueEntries(
   return out;
 }
 
+/// The height of a [ShioriCoverTile] [coverWidth] wide: the cover, then two
+/// lines of title and one of subtitle under it, measured in the fonts and
+/// text size they are drawn in. An estimate from the font sizes alone fell a
+/// few pixels short of a two-line title. Each style is merged into the
+/// ambient one, as Text does, so the measure uses the theme's font family.
+double coverTileHeight(BuildContext context, double coverWidth) {
+  final text = context.shiori.text;
+  final scaler = MediaQuery.textScalerOf(context);
+  final ambient = DefaultTextStyle.of(context).style;
+  double linesOf(TextStyle style, int count) {
+    final painter = TextPainter(
+      text: TextSpan(
+        text: List.filled(count, 'Hg').join('\n'),
+        style: ambient.merge(style),
+      ),
+      textDirection: TextDirection.ltr,
+      textScaler: scaler,
+    )..layout();
+    final height = painter.height;
+    painter.dispose();
+    return height;
+  }
+
+  return coverWidth / coverAspect +
+      ShioriSpace.s4 +
+      linesOf(text.card, 2) +
+      linesOf(text.meta, 1);
+}
+
 /// "Continue" at the top of a library: the series in progress for this
 /// media, one tap from the reader. Renders nothing when there is none.
 class ContinueShelf extends ConsumerWidget {
@@ -116,34 +145,7 @@ class ContinueShelf extends ConsumerWidget {
     );
     if (entries == null || entries.isEmpty) return const SizedBox.shrink();
 
-    final tokens = context.shiori;
-    final text = tokens.text;
-    // A cover, then two lines of title and one of chapter under it,
-    // measured in the fonts and text size they are drawn in: an estimate
-    // from the font sizes alone fell a few pixels short of a two-line title.
-    // Each style is merged into the ambient one, as Text does, so the
-    // measure uses the theme's font family and not the default one.
-    final scaler = MediaQuery.textScalerOf(context);
-    final ambient = DefaultTextStyle.of(context).style;
-    double linesOf(TextStyle style, int count) {
-      final painter = TextPainter(
-        text: TextSpan(
-          text: List.filled(count, 'Hg').join('\n'),
-          style: ambient.merge(style),
-        ),
-        textDirection: TextDirection.ltr,
-        textScaler: scaler,
-      )..layout();
-      final height = painter.height;
-      painter.dispose();
-      return height;
-    }
-
-    final tileHeight =
-        _coverWidth / coverAspect +
-        ShioriSpace.s4 +
-        linesOf(text.card, 2) +
-        linesOf(text.meta, 1);
+    final tileHeight = coverTileHeight(context, _coverWidth);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
