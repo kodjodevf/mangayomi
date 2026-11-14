@@ -165,31 +165,50 @@ void main() {
 
   test('devices paired before a restart still sync', () async {
     final dir = Directory.systemTemp.createTempSync('mangayomi-server-');
-    addTearDown(() => dir.deleteSync(recursive: true));
     await server.stop();
     database.close();
 
     final identity = await generateIdentity();
-    database = ServerDatabase.open('${dir.path}/sync.db');
-    server = await SyncServer.start(
-      database: database,
-      identity: identity,
-      address: '127.0.0.1',
-      port: 0,
-    );
-    final phone = await paired('Phone');
-    await server.stop();
-    database.close();
+    try {
+      database = ServerDatabase.open('${dir.path}/sync.db');
+      server = await SyncServer.start(
+        database: database,
+        identity: identity,
+        address: '127.0.0.1',
+        port: 0,
+      );
+      final phone = await paired('Phone');
+      await server.stop();
+      database.close();
 
-    database = ServerDatabase.open('${dir.path}/sync.db');
-    server = await SyncServer.start(
-      database: database,
-      identity: identity,
-      address: '127.0.0.1',
-      port: 0,
-    );
-    final again = TestPeer(phone.identity, server.port, identity.fingerprint);
-    peers.add(again);
-    expect((await again.sync({'since': 0})).$1, 200);
+      database = ServerDatabase.open('${dir.path}/sync.db');
+      server = await SyncServer.start(
+        database: database,
+        identity: identity,
+        address: '127.0.0.1',
+        port: 0,
+      );
+      final again = TestPeer(phone.identity, server.port, identity.fingerprint);
+      peers.add(again);
+      expect((await again.sync({'since': 0})).$1, 200);
+    } finally {
+      // Windows keeps an open database from being deleted, and tearDown
+      // only runs after this test's own clean-ups: close it here, and leave
+      // tearDown a server of its own to stop.
+      for (final peer in peers) {
+        peer.close();
+      }
+      peers.clear();
+      await server.stop();
+      database.close();
+      dir.deleteSync(recursive: true);
+      database = ServerDatabase.open(':memory:');
+      server = await SyncServer.start(
+        database: database,
+        identity: identity,
+        address: '127.0.0.1',
+        port: 0,
+      );
+    }
   });
 }

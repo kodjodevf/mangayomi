@@ -36,6 +36,16 @@ Future<void> main() async {
   final exe = Platform.isWindows ? '.exe' : '';
   File(p.join(staged.path, 'bin', 'mangayomi_sync_server$exe'))
       .renameSync(p.join(staged.path, 'bin', 'mangayomi-sync-server$exe'));
+  // On Linux the executable is a launcher that loads the compiled code from
+  // lib/libdartaot<its name>.so: give that library the new name too, keeping
+  // the old one for a launcher that looks it up by its build name.
+  final aot = File(
+    p.join(staged.path, 'lib', 'libdartaotmangayomi_sync_server.so'),
+  );
+  if (aot.existsSync()) {
+    Link(p.join(staged.path, 'lib', 'libdartaotmangayomi-sync-server.so'))
+        .createSync('libdartaotmangayomi_sync_server.so');
+  }
 
   final native = switch (os) {
     'windows' => 'mangayomi_sync_server_native.dll',
@@ -55,18 +65,28 @@ Future<void> main() async {
     p.join(staged.path, 'bin', 'mangayomi-sync-server$exe'),
     ['--data-dir', data.path, 'serve', '--port', '0', '--no-admin'],
   );
-  server.stdout.drain<void>();
+  final output = <String>[];
+  server.stdout
+      .transform(const SystemEncoding().decoder)
+      .transform(const LineSplitter())
+      .listen(output.add);
   final listening = server.stderr
       .transform(const SystemEncoding().decoder)
       .transform(const LineSplitter())
+      .map((line) {
+        output.add(line);
+        return line;
+      })
       .any((line) => line.contains('Listening on'))
       .timeout(const Duration(seconds: 30), onTimeout: () => false);
   final ok = await listening;
   server.kill();
-  await server.exitCode;
+  final code = await server.exitCode;
   data.deleteSync(recursive: true);
   if (!ok) {
-    stderr.writeln('The packaged server did not start.');
+    stderr
+      ..writeln('The packaged server did not start (exit code $code):')
+      ..writeAll(output.map((line) => '  $line\n'));
     exit(1);
   }
 
