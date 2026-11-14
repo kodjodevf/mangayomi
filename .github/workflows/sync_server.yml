@@ -123,3 +123,19 @@ jobs:
           # Not the app's latest release: that stays the app.
           makeLatest: false
           allowUpdates: true
+
+      # The app links to this one, at a link that never changes: it is made
+      # again from each new version. Its tag does not match sync-server-v*,
+      # so it does not start this workflow.
+      - name: Publish as the latest server
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ github.ref_name }}
+        run: |
+          gh release delete sync-server --cleanup-tag --yes || true
+          gh release create sync-server release-assets/* \
+            --target "$GITHUB_SHA" \
+            --title "Sync server (latest)" \
+            --latest=false \
+            --notes "The latest sync server, now $VERSION. Download the archive for your system. How to run it: https://github.com/$GH_REPO/blob/main/server/README.md"

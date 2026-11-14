@@ -11,7 +11,9 @@ accepted, and a device only trusts this server.
 
 ## Run it
 
-Download the archive for your system from the releases, unpack it, and run:
+Download the archive for your system from the
+[latest release](https://github.com/kodjodevf/mangayomi/releases/tag/sync-server),
+unpack it, and run:
 
 ```sh
 ./bin/mangayomi-sync-server serve

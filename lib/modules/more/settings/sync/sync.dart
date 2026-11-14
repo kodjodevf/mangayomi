@@ -18,7 +18,10 @@ import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/services/external_browser.dart';
 
 class SyncScreen extends ConsumerWidget {
-  static const serverUrl = "https://github.com/Schnitzel5/mangayomi-server";
+  /// The latest sync server, a release the server's workflow makes again
+  /// from each version. Not `releases/latest`: that is the app's.
+  static const serverUrl =
+      "https://github.com/kodjodevf/mangayomi/releases/tag/sync-server";
 
   const SyncScreen({super.key});
 
