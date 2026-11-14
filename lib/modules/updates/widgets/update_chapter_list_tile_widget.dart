@@ -104,7 +104,7 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
     // download, as Settings › Reader says.
     return ChapterSwipe(
       chapter: chapter,
-      child: _row(
+      builder: (context) => _row(
         context,
         ref,
         openDetail: true,
