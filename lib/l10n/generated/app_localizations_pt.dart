@@ -3970,6 +3970,9 @@ class AppLocalizationsPt extends AppLocalizations {
       'Uma fileira das séries em andamento no topo da biblioteca';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => 'Excluído';
 
   @override

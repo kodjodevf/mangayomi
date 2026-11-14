@@ -1569,6 +1569,7 @@
   "continue_reading": "Continue",
   "show_continue_shelf": "Show the Continue row",
   "show_continue_shelf_subtitle": "A row of the series in progress at the top of the library",
+  "show_active_filters": "Show active filters",
   "excluded": "Excluded",
   "remove_filter": "Remove filter",
   "current_chapter": "Current chapter",

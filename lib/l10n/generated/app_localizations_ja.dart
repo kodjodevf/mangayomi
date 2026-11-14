@@ -3847,6 +3847,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get show_continue_shelf_subtitle => 'ライブラリの上部に読みかけのシリーズを並べます';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => '除外';
 
   @override

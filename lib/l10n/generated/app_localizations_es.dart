@@ -3982,6 +3982,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Una fila de las series en curso arriba de la biblioteca';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => 'Excluido';
 
   @override

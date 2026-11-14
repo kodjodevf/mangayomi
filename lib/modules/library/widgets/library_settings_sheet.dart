@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mangayomi/modules/library/widgets/active_filter_chips.dart';
 import 'package:mangayomi/modules/library/widgets/continue_shelf.dart';
 import 'package:shiori/shiori.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -486,6 +487,18 @@ class _DisplayTab extends ConsumerWidget {
                       onTap: () => ref
                           .read(continueShelfProvider.notifier)
                           .set(!showShelf),
+                    );
+                  },
+                ),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final showChips = ref.watch(activeFilterChipsProvider);
+                    return ListTileChapterFilter(
+                      label: l10n.show_active_filters,
+                      type: showChips ? 1 : 0,
+                      onTap: () => ref
+                          .read(activeFilterChipsProvider.notifier)
+                          .set(!showChips),
                     );
                   },
                 ),

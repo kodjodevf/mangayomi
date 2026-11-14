@@ -3981,6 +3981,9 @@ class AppLocalizationsRu extends AppLocalizations {
       'Ряд начатых серий вверху библиотеки';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => 'Исключено';
 
   @override

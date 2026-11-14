@@ -3929,6 +3929,9 @@ class AppLocalizationsAs extends AppLocalizations {
       'লাইব্ৰেৰীৰ ওপৰত চলি থকা ছিৰিজৰ এটা শাৰী';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => 'বাদ দিয়া';
 
   @override

@@ -3954,6 +3954,9 @@ class AppLocalizationsFa extends AppLocalizations {
       'یک ردیف از مجموعه‌های در حال خواندن در بالای کتابخانه';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => 'مستثنی‌شده';
 
   @override

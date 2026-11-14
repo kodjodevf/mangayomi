@@ -3942,6 +3942,9 @@ class AppLocalizationsId extends AppLocalizations {
       'Satu baris seri yang sedang berjalan di atas pustaka';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => 'Dikecualikan';
 
   @override

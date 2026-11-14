@@ -378,6 +378,10 @@ class Settings {
   /// library saved before the option existed, means on.
   bool? showContinueShelf;
 
+  /// Whether a library lists the filters that are on as chips above its
+  /// grid. Null, for a library saved before the option existed, means on.
+  bool? showActiveFilterChips;
+
   /// Whether the video player's gesture guide has been shown once already.
   bool? playerGestureHintSeen;
 
@@ -722,6 +726,7 @@ class Settings {
     this.tintSurfacesWithPalette = false,
     this.groupNavDestinations = true,
     this.showContinueShelf = true,
+    this.showActiveFilterChips = true,
     this.playerGestureHintSeen = false,
     this.chapterNumberDisplayMangaIds = const [],
     this.volumeKeysPaging = false,
@@ -1104,6 +1109,7 @@ class Settings {
     tintSurfacesWithPalette = json['tintSurfacesWithPalette'] ?? false;
     groupNavDestinations = json['groupNavDestinations'] ?? true;
     showContinueShelf = json['showContinueShelf'] ?? true;
+    showActiveFilterChips = json['showActiveFilterChips'] ?? true;
     playerGestureHintSeen = json['playerGestureHintSeen'] ?? false;
     chapterNumberDisplayMangaIds =
         (json['chapterNumberDisplayMangaIds'] as List?)?.cast<int>() ?? [];
@@ -1397,6 +1403,7 @@ class Settings {
     'tintSurfacesWithPalette': tintSurfacesWithPalette,
     'groupNavDestinations': groupNavDestinations,
     'showContinueShelf': showContinueShelf,
+    'showActiveFilterChips': showActiveFilterChips,
     'playerGestureHintSeen': playerGestureHintSeen,
     'chapterNumberDisplayMangaIds': chapterNumberDisplayMangaIds,
     'volumeKeysPaging': volumeKeysPaging,

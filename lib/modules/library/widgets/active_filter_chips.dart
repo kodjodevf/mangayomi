@@ -4,13 +4,29 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:shiori/shiori.dart';
+
+/// Whether libraries list their active filters as chips.
+class ActiveFilterChipsState extends Notifier<bool> {
+  @override
+  bool build() => settingsRepository.current.showActiveFilterChips ?? true;
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.showActiveFilterChips = value);
+  }
+}
+
+final activeFilterChipsProvider =
+    NotifierProvider<ActiveFilterChipsState, bool>(ActiveFilterChipsState.new);
 
 /// The library's active filters, said out loud: one chip per filter that is
 /// on, a check when it includes, a no-entry sign when it excludes, and a
 /// cross that turns it off. A library that looks short is never a mystery.
 ///
-/// Renders nothing while no filter is on.
+/// Renders nothing while no filter is on, or when Display › Show active
+/// filters is off.
 class ActiveFilterChips extends ConsumerWidget {
   const ActiveFilterChips({
     super.key,
@@ -23,6 +39,7 @@ class ActiveFilterChips extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (!ref.watch(activeFilterChipsProvider)) return const SizedBox.shrink();
     final l10n = context.l10n;
     final anime = itemType == ItemType.anime;
 

@@ -3935,6 +3935,9 @@ class AppLocalizationsHi extends AppLocalizations {
       'लाइब्रेरी के ऊपर चल रही सीरीज़ की एक पंक्ति';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => 'शामिल नहीं';
 
   @override

@@ -3931,6 +3931,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get show_continue_shelf_subtitle => 'صف للسلاسل الجارية أعلى المكتبة';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => 'مستبعد';
 
   @override

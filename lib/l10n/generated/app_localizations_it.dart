@@ -3974,6 +3974,9 @@ class AppLocalizationsIt extends AppLocalizations {
       'Una riga delle serie in corso in cima alla libreria';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => 'Escluso';
 
   @override
