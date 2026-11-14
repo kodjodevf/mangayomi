@@ -54,7 +54,7 @@ flowchart TD
   - When a repository mutation needs to record a sync delta, it calls `changedPartRepository.recordIfSyncOn(...)` directly within the data layer.
 
 #### 2B. Domain & Infrastructure Services (`lib/services/`, `lib/eval/`)
-- **Responsibility:** Extension runtime execution (`lib/eval/`), HTTP/WebView networking (`lib/services/http/`), background library updates, chapter/video extraction, local archive scanning, tracker OAuth/API clients (`lib/services/trackers/`), and sync engines (`lib/services/sync/`).
+- **Responsibility:** Extension runtime execution (`lib/eval/`), HTTP/WebView networking (`lib/services/http/`), background library updates, chapter/video extraction, local archive scanning, tracker OAuth/API clients (`lib/services/trackers/`), and sync engines (`lib/services/sync/`, `lib/services/sync_host/`; see [docs/sync.md](../sync.md)).
 - **Contract:**
   - May depend on `lib/models/`, `lib/repositories/`, `lib/utils/`, `lib/eval/`, and shared application providers in `lib/providers/`.
   - May use Riverpod `Ref` (inside `@riverpod` functions/notifiers), **never** `WidgetRef` (which belongs exclusively to Flutter `ConsumerWidget` / `ConsumerStatefulWidget`).

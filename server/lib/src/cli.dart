@@ -303,8 +303,8 @@ class _Pair extends _Command {
       stdout
         ..writeln()
         ..writeln(
-          'In Mangayomi: Settings → Sync → Device sync → Join, then scan '
-          'this code or paste the link:',
+          'In Mangayomi: Settings → Sync → Sync between your devices, then '
+          "Scan the host's QR code, or Paste a pairing link with this link:",
         )
         ..writeln(link)
         ..writeln()
