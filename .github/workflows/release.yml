@@ -151,6 +151,11 @@ jobs:
     permissions:
       contents: write
     runs-on: macos-26
+    env:
+      # Rust 1.100 makes Xcode 26.6's linker crash on the release build
+      # (Segmentation fault: 11); 1.99.1 links. Cargokit builds with this
+      # one too. Move up once a newer Rust or Xcode links again.
+      CARGOKIT_TOOLCHAIN: "1.99.1"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.4.0
@@ -166,7 +171,7 @@ jobs:
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: stable
+          toolchain: ${{ env.CARGOKIT_TOOLCHAIN }}
           targets: aarch64-apple-ios,x86_64-apple-ios
 
       - name: Setup Rust cache
