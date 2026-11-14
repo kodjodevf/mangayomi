@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -14,26 +16,37 @@ import 'package:shiori/shiori.dart';
 /// The swipe actions on a chapter row, wherever the row is: a series'
 /// chapter list or Updates. Each direction does what Settings › Reader ›
 /// Chapter swipe actions says (bookmark, read, download) and snaps back.
-class ChapterSwipe extends ConsumerWidget {
+class ChapterSwipe extends ConsumerStatefulWidget {
   const ChapterSwipe({
     super.key,
     required this.chapter,
-    required this.child,
+    required this.builder,
     this.enabled = true,
   });
 
   final Chapter chapter;
-  final Widget child;
+
+  /// The row. It is built again as soon as a swipe changes [chapter], so a
+  /// chapter marked read dims at once rather than when the list reloads from
+  /// the database.
+  final WidgetBuilder builder;
 
   /// Off while selecting, where a swipe would fight the selection.
   final bool enabled;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ChapterSwipe> createState() => _ChapterSwipeState();
+}
+
+class _ChapterSwipeState extends ConsumerState<ChapterSwipe> {
+  Chapter get chapter => widget.chapter;
+
+  @override
+  Widget build(BuildContext context) {
     final start = ref.watch(chapterSwipeStartActionStateProvider);
     final end = ref.watch(chapterSwipeEndActionStateProvider);
     const off = ChapterSwipeAction.disabled;
-    final direction = !enabled || (start == off && end == off)
+    final direction = !widget.enabled || (start == off && end == off)
         ? DismissDirection.none
         : start == off
         ? DismissDirection.endToStart
@@ -46,12 +59,16 @@ class ChapterSwipe extends ConsumerWidget {
       confirmDismiss: (direction) async {
         final action = direction == DismissDirection.startToEnd ? start : end;
         selectionHaptic();
-        await performChapterSwipeAction(action, chapter, ref);
+        // Read and bookmark change the chapter before it is saved, so the row
+        // shows the change now; the row snaps back without waiting for the
+        // save either.
+        unawaited(performChapterSwipeAction(action, chapter, ref));
+        if (mounted) setState(() {});
         return false; // Don't dismiss, snap back
       },
       background: _background(context, start, Alignment.centerLeft),
       secondaryBackground: _background(context, end, Alignment.centerRight),
-      child: child,
+      child: Builder(builder: widget.builder),
     );
   }
 
