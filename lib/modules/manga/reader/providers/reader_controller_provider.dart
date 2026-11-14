@@ -209,14 +209,17 @@ class ReaderController extends _$ReaderController
         if (isRead) {
           chapter.updateTrackChapterRead(ref);
           if (ref.read(deleteDownloadAfterReadingStateProvider)) {
-            chapterToDeleteAfterReading(
+            // Not now: the reader still shows this chapter, and may still
+            // show the earlier ones it keeps loaded.
+            final target = chapterToDeleteAfterReading(
               getManga().getChapterListForReading(),
               chapter,
               slot: ref.read(deleteAfterReadingSlotStateProvider),
               deleteBookmarked: ref.read(
                 deleteBookmarkedAfterReadingStateProvider,
               ),
-            )?.deleteDownloadedFiles();
+            );
+            if (target != null) PendingDownloadDeletions.add(target);
           }
         }
       }
