@@ -3917,6 +3917,9 @@ class AppLocalizationsTh extends AppLocalizations {
       'แถวของเรื่องที่กำลังอ่านอยู่ด้านบนของคลัง';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => 'ยกเว้น';
 
   @override

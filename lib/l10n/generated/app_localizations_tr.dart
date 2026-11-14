@@ -3942,6 +3942,9 @@ class AppLocalizationsTr extends AppLocalizations {
       'Kütüphanenin üstünde devam eden seriler satırı';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => 'Hariç';
 
   @override

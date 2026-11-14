@@ -3967,6 +3967,9 @@ class AppLocalizationsDe extends AppLocalizations {
       'Eine Reihe der laufenden Serien oben in der Bibliothek';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => 'Ausgeschlossen';
 
   @override

@@ -3859,6 +3859,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get show_continue_shelf_subtitle => '라이브러리 위쪽에 읽던 시리즈를 한 줄로 표시';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => '제외됨';
 
   @override

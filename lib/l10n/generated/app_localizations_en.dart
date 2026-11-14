@@ -3936,6 +3936,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'A row of the series in progress at the top of the library';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => 'Excluded';
 
   @override

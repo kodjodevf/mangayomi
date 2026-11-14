@@ -3788,6 +3788,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get show_continue_shelf_subtitle => '在书库顶部显示一行进行中的系列';
 
   @override
+  String get show_active_filters => 'Show active filters';
+
+  @override
   String get excluded => '已排除';
 
   @override

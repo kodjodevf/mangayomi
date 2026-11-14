@@ -7083,6 +7083,12 @@ abstract class AppLocalizations {
   /// **'A row of the series in progress at the top of the library'**
   String get show_continue_shelf_subtitle;
 
+  /// No description provided for @show_active_filters.
+  ///
+  /// In en, this message translates to:
+  /// **'Show active filters'**
+  String get show_active_filters;
+
   /// No description provided for @excluded.
   ///
   /// In en, this message translates to:
