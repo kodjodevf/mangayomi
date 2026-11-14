@@ -5,7 +5,7 @@ PODS:
     - Flutter
   - device_info_plus (0.0.1):
     - Flutter
-  - external_path (2.0.1):
+  - external_path (3.0.0):
     - Flutter
   - file_picker_darwin (1.0.0):
     - Flutter
@@ -14,6 +14,8 @@ PODS:
   - flutter_avif_ios (0.0.1):
     - Flutter
   - flutter_discord_rpc_fork (0.0.1):
+    - Flutter
+  - flutter_foreground_task (0.0.1):
     - Flutter
   - flutter_inappwebview_ios (0.0.1):
     - Flutter
@@ -29,7 +31,7 @@ PODS:
     - FlutterMacOS
   - flutter_tts (0.0.1):
     - Flutter
-  - flutter_web_auth_2 (3.0.0):
+  - flutter_web_auth_2 (6.0.0):
     - Flutter
   - InternalCollectionsUtilities (1.1.1)
   - isar_community_flutter_libs (1.0.0):
@@ -43,14 +45,23 @@ PODS:
     - Flutter
   - media_kit_video (0.0.1):
     - Flutter
+  - mobile_scanner (7.0.0):
+    - Flutter
+    - FlutterMacOS
   - package_info_plus (0.4.5):
     - Flutter
   - permission_handler_apple (9.4.8):
     - Flutter
+  - remote_webview_interceptor (1.0.0):
+    - Flutter
+    - FlutterMacOS
   - rust_lib_mangayomi (0.0.1):
     - Flutter
   - share_plus (0.0.1):
     - Flutter
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - swift-collections (1.1.1):
     - swift-collections/BitCollections (= 1.1.1)
     - swift-collections/DequeModule (= 1.1.1)
@@ -83,6 +94,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_avif_ios (from `.symlinks/plugins/flutter_avif_ios/ios`)
   - flutter_discord_rpc_fork (from `.symlinks/plugins/flutter_discord_rpc_fork/ios`)
+  - flutter_foreground_task (from `.symlinks/plugins/flutter_foreground_task/ios`)
   - flutter_inappwebview_ios (from `.symlinks/plugins/flutter_inappwebview_ios/ios`)
   - flutter_qjs (from `.symlinks/plugins/flutter_qjs/ios`)
   - flutter_secure_storage_darwin (from `.symlinks/plugins/flutter_secure_storage_darwin/darwin`)
@@ -93,10 +105,13 @@ DEPENDENCIES:
   - m_extension_server (from `.symlinks/plugins/m_extension_server/ios`)
   - media_kit_libs_ios_video (from `.symlinks/plugins/media_kit_libs_ios_video/ios`)
   - media_kit_video (from `.symlinks/plugins/media_kit_video/ios`)
+  - mobile_scanner (from `.symlinks/plugins/mobile_scanner/darwin`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
+  - remote_webview_interceptor (from `.symlinks/plugins/remote_webview_interceptor/darwin`)
   - rust_lib_mangayomi (from `.symlinks/plugins/rust_lib_mangayomi/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - volume_controller (from `.symlinks/plugins/volume_controller/ios`)
   - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
@@ -123,6 +138,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_avif_ios/ios"
   flutter_discord_rpc_fork:
     :path: ".symlinks/plugins/flutter_discord_rpc_fork/ios"
+  flutter_foreground_task:
+    :path: ".symlinks/plugins/flutter_foreground_task/ios"
   flutter_inappwebview_ios:
     :path: ".symlinks/plugins/flutter_inappwebview_ios/ios"
   flutter_qjs:
@@ -143,14 +160,20 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/media_kit_libs_ios_video/ios"
   media_kit_video:
     :path: ".symlinks/plugins/media_kit_video/ios"
+  mobile_scanner:
+    :path: ".symlinks/plugins/mobile_scanner/darwin"
   package_info_plus:
     :path: ".symlinks/plugins/package_info_plus/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
+  remote_webview_interceptor:
+    :path: ".symlinks/plugins/remote_webview_interceptor/darwin"
   rust_lib_mangayomi:
     :path: ".symlinks/plugins/rust_lib_mangayomi/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   volume_controller:
@@ -162,26 +185,30 @@ SPEC CHECKSUMS:
   app_links: a754cbec3c255bd4bbb4d236ecc06f28cd9a7ce8
   connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
-  external_path: fd37c654b69a1336e33a2403f48383ae6100e443
+  external_path: 9b40745085c3a7fedec0977ce2761c9ac0e1e64d
   file_picker_darwin: 4c2b9a50ea44cb3b071381ea0cf48591bdd80251
   Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
   flutter_avif_ios: 2553d2aafda56339cf924e943da89ad3f40af2dd
   flutter_discord_rpc_fork: 970cf2beca17870caf8645556de01ae2b8587bb6
+  flutter_foreground_task: a159d2c2173b33699ddb3e6c2a067045d7cebb89
   flutter_inappwebview_ios: 9cde7869829d54b4110df350f3eedd192c5a4aea
   flutter_qjs: 24afb6e1b95cb2e5ffd8b9053eb7618459c42837
   flutter_secure_storage_darwin: 46e401699982ee74142909676535e0f6a7321e58
   flutter_tts: 35ac3c7d42412733e795ea96ad2d7e05d0a75113
-  flutter_web_auth_2: 3464a7c16dc6480b6194fc89913bae6e82f28405
+  flutter_web_auth_2: 879fc9621f1d303eb0fd710f85bae788ef5c26b6
   InternalCollectionsUtilities: af3f471602c4a67cbcb0bee0a80f6f55a33ae453
   isar_community_flutter_libs: bede843185a61a05ff364a05c9b23209523f7e0d
   local_auth_darwin: c3ee6cce0a8d56be34c8ccb66ba31f7f180aaebb
   m_extension_server: 8460f14761883af48772290c5f818659b844d4c3
   media_kit_libs_ios_video: 5a18affdb97d1f5d466dc79988b13eff6c5e2854
   media_kit_video: 1746e198cb697d1ffb734b1d05ec429d1fcd1474
+  mobile_scanner: 9157936403f5a0644ca3779a38ff8404c5434a93
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   permission_handler_apple: 92d754bbaa7361d436db2d6c3c1c2a0fdcec462e
+  remote_webview_interceptor: 47be69add566bc79f0a637c97504f6e2f7ce62f7
   rust_lib_mangayomi: 360a904274b47351a0f7c26d3ce5aa6392bb8db3
   share_plus: eccd7beb7cea61271aeed1800e8ccb2b952c0c7f
+  shared_preferences_foundation: a7c3904f2dedb3701dd1903cb152ef5e7df92422
   swift-collections: ba248ecaf44ef500b27d5cf94d304218c89892ff
   url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
   volume_controller: b2f529b1dc3496fe900df1baef358aadce59a827
