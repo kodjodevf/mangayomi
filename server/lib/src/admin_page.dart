@@ -56,6 +56,12 @@ button:disabled { opacity: .5; cursor: default; }
 .pending { border: 1px solid var(--accent); border-radius: 10px; padding: 12px; margin-top: 12px; }
 .error { color: var(--danger); }
 .empty { color: var(--muted); }
+code { font-family: ui-monospace, Menlo, monospace; font-size: 13px; }
+pre {
+  font: 13px ui-monospace, Menlo, monospace; background: var(--bg);
+  border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+  overflow-x: auto; margin: 8px 0;
+}
 </style>
 </head>
 <body>
@@ -64,6 +70,18 @@ button:disabled { opacity: .5; cursor: default; }
   <p class="sub" id="fingerprint">Connecting…</p>
   <p class="error" id="error" hidden></p>
 
+  <section class="card" id="locked" hidden>
+    <h2>Open this page with its link</h2>
+    <p id="locked-reason"></p>
+    <p>On the machine the server runs on, run:</p>
+    <pre>mangayomi-sync-server admin</pre>
+    <p class="muted">It prints a link with a token in it, such as
+    <code>http://127.0.0.1:53320/#token=…</code>. Open that link in a browser
+    on the same machine. The token changes each time the server starts, so
+    run the command again after a restart.</p>
+  </section>
+
+  <div id="console">
   <section class="card">
     <div class="stats">
       <div class="stat"><b id="devices-count">–</b><span>Devices</span></div>
@@ -76,8 +94,10 @@ button:disabled { opacity: .5; cursor: default; }
   <section class="card">
     <h2>Add a device</h2>
     <div id="pairing-closed">
-      <p class="muted">In Mangayomi, open Settings → Sync → Device sync, and
-      scan the code shown here, or paste the link.</p>
+      <p class="muted">In Mangayomi on the device to add, open
+      Settings → Sync → Sync between your devices. Under Join a host, choose
+      Scan the host's QR code and scan the code shown here, or Paste a pairing
+      link and paste its link.</p>
       <button class="primary" id="open-pairing">Show a pairing code</button>
     </div>
     <div id="pairing-open" hidden>
@@ -101,6 +121,7 @@ button:disabled { opacity: .5; cursor: default; }
     <h2>Devices</h2>
     <div id="devices"></div>
   </section>
+  </div>
 </main>
 <script>
 (() => {
@@ -117,20 +138,40 @@ button:disabled { opacity: .5; cursor: default; }
     $('error').textContent = message;
     $('error').hidden = !message;
   };
+  // Without a token that works, nothing on the page can: show how to get
+  // one instead of controls that do nothing.
+  let timer = null;
+  const lock = (reason) => {
+    try { sessionStorage.removeItem('token'); } catch (_) {}
+    if (timer) clearInterval(timer);
+    showError('');
+    $('fingerprint').textContent = 'Not connected';
+    $('locked-reason').textContent = reason;
+    $('locked').hidden = false;
+    $('console').hidden = true;
+  };
   if (!token) {
-    showError('Open this page with the link `mangayomi-sync-server admin` prints.');
+    lock('This page needs the token from its link, and this address has none.');
     return;
   }
 
+  class Locked extends Error {}
   async function api(method, path) {
     const response = await fetch('/api' + path, {
       method, headers: { authorization: 'Bearer ' + token },
     });
+    if (response.status === 401) throw new Locked();
     const type = response.headers.get('content-type') || '';
     const body = type.includes('json') ? await response.json() : await response.text();
     if (!response.ok) throw new Error(body.error || response.statusText);
     return body;
   }
+  const lockIfLocked = (error) => {
+    if (!(error instanceof Locked)) return false;
+    lock('The token in this link is not the server\'s: it changes each time ' +
+      'the server starts.');
+    return true;
+  };
 
   const time = (ms) => ms ? new Date(ms).toLocaleString() : 'never';
   let shownLink = null;
@@ -141,7 +182,9 @@ button:disabled { opacity: .5; cursor: default; }
       status = await api('GET', '/status');
       showError('');
     } catch (error) {
-      showError('Cannot reach the server: ' + error.message);
+      if (lockIfLocked(error)) return;
+      showError('Cannot reach the server: ' + error.message +
+        '. Is it still running?');
       return;
     }
     $('fingerprint').textContent = 'Version ' + status.version +
@@ -163,8 +206,14 @@ button:disabled { opacity: .5; cursor: default; }
         (left % 60) + ' s, for one device.';
       if (shownLink !== pairing.link) {
         shownLink = pairing.link;
-        const svg = await api('GET', '/pairing/qr.svg');
-        $('qr').src = 'data:image/svg+xml;base64,' + btoa(svg);
+        try {
+          const svg = await api('GET', '/pairing/qr.svg');
+          $('qr').src = 'data:image/svg+xml;base64,' + btoa(svg);
+        } catch (error) {
+          if (lockIfLocked(error)) return;
+          shownLink = null;
+          showError('Could not load the QR code: ' + error.message);
+        }
       }
     } else {
       shownLink = null;
@@ -226,7 +275,12 @@ button:disabled { opacity: .5; cursor: default; }
   }
 
   async function run(action) {
-    try { await action(); } catch (error) { showError(error.message); }
+    try {
+      await action();
+    } catch (error) {
+      if (lockIfLocked(error)) return;
+      showError(error.message);
+    }
     await refresh();
   }
   const answer = (id, verdict) => run(() => api('POST', '/pairing/' + id + '/' + verdict));
@@ -239,7 +293,7 @@ button:disabled { opacity: .5; cursor: default; }
   };
 
   refresh();
-  setInterval(refresh, 2000);
+  timer = setInterval(refresh, 2000);
 })();
 </script>
 </body>
