@@ -241,6 +241,14 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                   model.dateAdded = 0;
                   await mangaRepository.save(model);
                 },
+                // As in Mihon: a tap takes it out, a long press keeps it and
+                // changes its categories.
+                onLongPress: () => showCategorySelectionDialog(
+                  context: context,
+                  ref: ref,
+                  itemType: widget.manga.itemType,
+                  singleManga: widget.manga,
+                ),
               )
             : DetailHeaderAction(
                 icon: Symbols.favorite_rounded,
