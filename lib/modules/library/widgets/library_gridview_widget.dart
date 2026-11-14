@@ -126,7 +126,10 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                         PositionedDirectional(
                           bottom: ShioriSpace.s8,
                           end: ShioriSpace.s8,
-                          child: ContinueReaderButton(entry: entry),
+                          child: ContinueReaderButton(
+                            entry: entry,
+                            settings: widget.settings,
+                          ),
                         ),
 
                       // ── Bottom-left: Source ──
