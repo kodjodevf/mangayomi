@@ -21,6 +21,7 @@ import 'package:mangayomi/modules/more/settings/general/providers/general_state_
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
+import 'package:mangayomi/services/download_manager/download_isolate_pool.dart';
 import 'package:mangayomi/services/download_manager/download_queue_order.dart';
 import 'package:mangayomi/services/download_manager/m_downloader.dart';
 import 'package:mangayomi/services/get_video_list.dart';
@@ -37,6 +38,7 @@ import 'package:mangayomi/utils/localized_message.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:path/path.dart' as p;
+import 'package:flutter_riverpod/flutter_riverpod.dart' show WidgetRef;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'download_provider.g.dart';
 
@@ -87,8 +89,8 @@ Future<void> downloadChapter(
     );
     acquired = true;
     // Cancelled while it waited for a slot in the gate? Its record was deleted,
-    // so don't resurrect it.
-    if (isDownloadCancelled(chapter)) {
+    // so don't resurrect it. Paused in the meantime? It stays queued.
+    if (isDownloadCancelled(chapter) || downloadsPaused.value) {
       keepAlive.close();
       return;
     }
@@ -396,8 +398,9 @@ Future<void> downloadChapter(
       return;
     }
 
-    // Cancelled during the (up to 45s) prep wait? Bail before writing files.
-    if (isDownloadCancelled(chapter)) {
+    // Cancelled or paused during the (up to 45s) prep wait? Bail before
+    // writing files.
+    if (isDownloadCancelled(chapter) || downloadsPaused.value) {
       keepAlive.close();
       return;
     }
@@ -564,11 +567,15 @@ Future<void> downloadChapter(
     await ref.read(scanLocalLibraryProvider.future);
     keepAlive.close();
   } catch (e) {
-    // Surface the failure instead of swallowing it — a silent catch here is
-    // exactly how "downloads just don't start" stays invisible.
-    if (!isDownloadCancelled(chapter)) botToast("Download failed: $e");
     await progressWrites.catchError((Object _) {});
-    await markDownloadFailed(chapter);
+    // Stopped by a pause: not a failure. The record stays queued, so the
+    // download starts again when the queue is resumed.
+    if (e is! DownloadsPausedException && !downloadsPaused.value) {
+      // Surface the failure instead of swallowing it — a silent catch here
+      // is exactly how "downloads just don't start" stays invisible.
+      if (!isDownloadCancelled(chapter)) botToast("Download failed: $e");
+      await markDownloadFailed(chapter);
+    }
     if (callback != null) callback();
     keepAlive.close();
   } finally {
@@ -577,6 +584,27 @@ Future<void> downloadChapter(
     unscheduleDownload(chapter.id);
     keepAlive.close();
   }
+}
+
+/// Pauses the download queue: no download starts, and the running ones stop
+/// where they are and stay queued. Downloads asked for while it is paused
+/// join the queue and wait; only [resumeDownloads] starts it again.
+void pauseDownloads() {
+  if (downloadsPaused.value) return;
+  downloadsPaused.value = true;
+  DownloadGate.instance.pause();
+  for (final id in scheduledDownloads.value) {
+    DownloadIsolatePool.instance.cancelTask('$id');
+    DownloadIsolatePool.instance.cancelTask('m3u8_$id');
+  }
+}
+
+/// Resumes the queue after [pauseDownloads]: every queued download starts
+/// again, from the top of the list.
+void resumeDownloads(WidgetRef ref) {
+  downloadsPaused.value = false;
+  ref.invalidate(processDownloadsProvider());
+  ref.read(processDownloadsProvider());
 }
 
 @riverpod

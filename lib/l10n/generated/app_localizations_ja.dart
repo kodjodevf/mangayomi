@@ -1438,6 +1438,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get cancel_all_for_this_series => 'このシリーズのすべてをキャンセル';
 
   @override
+  String get move_to_top => '一番上へ移動';
+
+  @override
+  String get move_series_to_top => 'シリーズを一番上へ移動';
+
+  @override
+  String get move_to_bottom => '一番下へ移動';
+
+  @override
+  String get move_series_to_bottom => 'シリーズを一番下へ移動';
+
+  @override
   String get login => 'ログイン';
 
   @override

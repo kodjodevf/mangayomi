@@ -1473,6 +1473,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cancel_all_for_this_series => 'Отменить все для этой серии';
 
   @override
+  String get move_to_top => 'Переместить в начало';
+
+  @override
+  String get move_series_to_top => 'Переместить серию в начало';
+
+  @override
+  String get move_to_bottom => 'Переместить в конец';
+
+  @override
+  String get move_series_to_bottom => 'Переместить серию в конец';
+
+  @override
   String get login => 'Вход';
 
   @override

@@ -1461,6 +1461,18 @@ class AppLocalizationsFa extends AppLocalizations {
   String get cancel_all_for_this_series => 'لغو همه برای این مجموعه';
 
   @override
+  String get move_to_top => 'انتقال به بالا';
+
+  @override
+  String get move_series_to_top => 'انتقال مجموعه به بالا';
+
+  @override
+  String get move_to_bottom => 'انتقال به پایین';
+
+  @override
+  String get move_series_to_bottom => 'انتقال مجموعه به پایین';
+
+  @override
   String get login => 'ورود';
 
   @override

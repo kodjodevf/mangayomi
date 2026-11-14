@@ -7,6 +7,7 @@ import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/modules/widgets/entry_badge_chip.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
+import 'package:mangayomi/modules/manga/download/providers/download_gate.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/download_manager/download_queue_order.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
@@ -98,13 +99,30 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
               ],
             ),
             actions: [
-              // Starts every download in the queue again, failed ones
-              // included. It was a floating button labelled with the
-              // screen's own name, which said nothing of what it did.
-              IconButton(
-                tooltip: l10n.resume_all_downloads,
-                onPressed: () => _resumeAll(entries),
-                icon: const Icon(Symbols.play_arrow_rounded, fill: 1),
+              // Pause while downloads run; otherwise start every download
+              // in the queue again, failed ones included, from the top.
+              ListenableBuilder(
+                listenable: Listenable.merge([
+                  downloadsPaused,
+                  scheduledDownloads,
+                ]),
+                builder: (context, _) {
+                  final running =
+                      !downloadsPaused.value &&
+                      scheduledDownloads.value.isNotEmpty;
+                  return IconButton(
+                    tooltip: running ? l10n.pause : l10n.resume_all_downloads,
+                    onPressed: running
+                        ? pauseDownloads
+                        : () => _resumeAll(entries),
+                    icon: Icon(
+                      running
+                          ? Symbols.pause_rounded
+                          : Symbols.play_arrow_rounded,
+                      fill: 1,
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -118,8 +136,12 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
               final ids = entries.map((e) => e.id!).toList();
               final moved = ids.removeAt(oldIndex);
               ids.insert(newIndex, moved);
-              DownloadQueueOrder.setOrder(ids);
+              // Rebuilt at once so the row stays where it was dropped, and
+              // again once the order is saved, which the list is sorted by.
               setState(() {});
+              DownloadQueueOrder.setOrder(ids).then((_) {
+                if (mounted) setState(() {});
+              });
             },
             itemBuilder: (context, index) {
               final element = entries[index];
@@ -139,8 +161,7 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
       }
     }
     if (!mounted) return;
-    ref.invalidate(processDownloadsProvider());
-    ref.read(processDownloadsProvider());
+    resumeDownloads(ref);
   }
 
   Widget _buildRow(
@@ -241,14 +262,13 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
                         context,
                         title: element.chapter.value?.manga.value?.name ?? '',
                         options: [
-                          TvMenuOption(l10n.cancel),
-                          TvMenuOption(l10n.cancel_all_for_this_series),
+                          for (final action in _QueueAction.values)
+                            TvMenuOption(action.label(l10n)),
                         ],
                       );
                       if (picked != null && context.mounted) {
-                        await _onDownloadAction(
-                          context,
-                          picked == 0 ? 'Cancel' : 'CancelAll',
+                        _onDownloadAction(
+                          _QueueAction.values[picked],
                           element,
                           entries,
                         );
@@ -259,27 +279,17 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
                     tooltip: MaterialLocalizations.of(context)
                         .moreButtonTooltip,
                     items: [
-                      ShioriMenuItem(
-                        label: l10n.cancel,
-                        icon: Symbols.close_rounded,
-                        onSelected: () => _onDownloadAction(
-                          context,
-                          'Cancel',
-                          element,
-                          entries,
+                      for (final action in _QueueAction.values) ...[
+                        // Moves first, then the cancels, set apart.
+                        if (action == _QueueAction.cancel) null,
+                        ShioriMenuItem(
+                          label: action.label(l10n),
+                          icon: action.icon,
+                          destructive: action == _QueueAction.cancelAll,
+                          onSelected: () =>
+                              _onDownloadAction(action, element, entries),
                         ),
-                      ),
-                      ShioriMenuItem(
-                        label: l10n.cancel_all_for_this_series,
-                        icon: Symbols.cancel_rounded,
-                        destructive: true,
-                        onSelected: () => _onDownloadAction(
-                          context,
-                          'CancelAll',
-                          element,
-                          entries,
-                        ),
-                      ),
+                      ],
                     ],
                   ),
           ),
@@ -290,35 +300,74 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
 
   /// The per-download actions, shared by the popup menu off-TV and the centred
   /// TV menu.
-  Future<void> _onDownloadAction(
-    BuildContext context,
-    String value,
+  void _onDownloadAction(
+    _QueueAction action,
     Download element,
     List<Download> entries,
-  ) async {
-    if (value == 'Cancel') {
-      if (element.chapter.value != null) {
-        element.chapter.value!.cancelDownloads(element.id!);
-      } else {
-        // Orphaned download: just delete the record.
-        downloadRepository.delete(element.id!);
-      }
-    } else if (value == 'CancelAll') {
-      final a = entries
-          .where(
-            (e) =>
-                '${e.chapter.value?.manga.value?.name}' ==
-                    '${element.chapter.value?.manga.value?.name}' &&
-                '${e.chapter.value?.manga.value?.source}' ==
-                    '${element.chapter.value?.manga.value?.source}',
-          )
-          .map((e) => (e.id, e.chapter.value?.id))
-          .toList();
-      for (var ids in a) {
-        final (downloadId, chapterId) = ids;
-        final chapter = chapterRepository.findByIdSync(chapterId!);
-        chapter?.cancelDownloads(downloadId!);
-      }
+  ) {
+    final mangaId = element.chapter.value?.mangaId;
+    bool inSeries(Download e) =>
+        mangaId != null && e.chapter.value?.mangaId == mangaId;
+    switch (action) {
+      case _QueueAction.moveToTop:
+      case _QueueAction.moveToBottom:
+      case _QueueAction.moveSeriesToTop:
+      case _QueueAction.moveSeriesToBottom:
+        final series =
+            action == _QueueAction.moveSeriesToTop ||
+            action == _QueueAction.moveSeriesToBottom;
+        final seriesIds = {
+          for (final e in entries)
+            if (inSeries(e)) e.id!,
+        };
+        // The gate re-reads this order before each start, so the downloads
+        // still waiting follow it at once.
+        DownloadQueueOrder.setOrder(
+          DownloadQueueOrder.move(
+            [for (final e in entries) e.id!],
+            series ? seriesIds.contains : (id) => id == element.id,
+            toTop:
+                action == _QueueAction.moveToTop ||
+                action == _QueueAction.moveSeriesToTop,
+          ),
+        ).then((_) {
+          if (mounted) setState(() {});
+        });
+      case _QueueAction.cancel:
+        if (element.chapter.value != null) {
+          element.chapter.value!.cancelDownloads(element.id!);
+        } else {
+          // Orphaned download: just delete the record.
+          downloadRepository.delete(element.id!);
+        }
+      case _QueueAction.cancelAll:
+        for (final e in entries.where(inSeries).toList()) {
+          final chapter = chapterRepository.findByIdSync(e.chapter.value!.id!);
+          chapter?.cancelDownloads(e.id!);
+        }
     }
   }
+}
+
+/// What a queued download's menu offers, in menu order.
+enum _QueueAction {
+  moveToTop(Symbols.vertical_align_top_rounded),
+  moveSeriesToTop(Symbols.keyboard_double_arrow_up_rounded),
+  moveToBottom(Symbols.vertical_align_bottom_rounded),
+  moveSeriesToBottom(Symbols.keyboard_double_arrow_down_rounded),
+  cancel(Symbols.close_rounded),
+  cancelAll(Symbols.cancel_rounded);
+
+  const _QueueAction(this.icon);
+
+  final IconData icon;
+
+  String label(AppLocalizations l10n) => switch (this) {
+    moveToTop => l10n.move_to_top,
+    moveSeriesToTop => l10n.move_series_to_top,
+    moveToBottom => l10n.move_to_bottom,
+    moveSeriesToBottom => l10n.move_series_to_bottom,
+    cancel => l10n.cancel,
+    cancelAll => l10n.cancel_all_for_this_series,
+  };
 }

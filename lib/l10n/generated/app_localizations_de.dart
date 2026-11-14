@@ -1463,6 +1463,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get cancel_all_for_this_series => 'Alle für diese Serie abbrechen';
 
   @override
+  String get move_to_top => 'Nach oben verschieben';
+
+  @override
+  String get move_series_to_top => 'Serie nach oben verschieben';
+
+  @override
+  String get move_to_bottom => 'Nach unten verschieben';
+
+  @override
+  String get move_series_to_bottom => 'Serie nach unten verschieben';
+
+  @override
   String get login => 'Anmelden';
 
   @override

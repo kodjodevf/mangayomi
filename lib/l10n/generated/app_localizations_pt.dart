@@ -1463,6 +1463,18 @@ class AppLocalizationsPt extends AppLocalizations {
   String get cancel_all_for_this_series => 'Cancelar tudo para esta série';
 
   @override
+  String get move_to_top => 'Mover para o topo';
+
+  @override
+  String get move_series_to_top => 'Mover série para o topo';
+
+  @override
+  String get move_to_bottom => 'Mover para o fim';
+
+  @override
+  String get move_series_to_bottom => 'Mover série para o fim';
+
+  @override
   String get login => 'Entrar';
 
   @override
@@ -6207,6 +6219,18 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get cancel_all_for_this_series => 'Cancelar tudo para esta série';
+
+  @override
+  String get move_to_top => 'Mover para o topo';
+
+  @override
+  String get move_series_to_top => 'Mover série para o topo';
+
+  @override
+  String get move_to_bottom => 'Mover para o final';
+
+  @override
+  String get move_series_to_bottom => 'Mover série para o final';
 
   @override
   String get login => 'Entrar';

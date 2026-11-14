@@ -1457,6 +1457,18 @@ class AppLocalizationsId extends AppLocalizations {
   String get cancel_all_for_this_series => 'Batalkan semua untuk seri ini';
 
   @override
+  String get move_to_top => 'Pindahkan ke atas';
+
+  @override
+  String get move_series_to_top => 'Pindahkan seri ke atas';
+
+  @override
+  String get move_to_bottom => 'Pindahkan ke bawah';
+
+  @override
+  String get move_series_to_bottom => 'Pindahkan seri ke bawah';
+
+  @override
   String get login => 'Masuk';
 
   @override

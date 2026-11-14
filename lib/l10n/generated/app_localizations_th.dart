@@ -1453,6 +1453,18 @@ class AppLocalizationsTh extends AppLocalizations {
   String get cancel_all_for_this_series => 'ยกเลิกซีรี่ย์ทั้งหมดนี้';
 
   @override
+  String get move_to_top => 'ย้ายไปบนสุด';
+
+  @override
+  String get move_series_to_top => 'ย้ายซีรีส์ไปบนสุด';
+
+  @override
+  String get move_to_bottom => 'ย้ายไปล่างสุด';
+
+  @override
+  String get move_series_to_bottom => 'ย้ายซีรีส์ไปล่างสุด';
+
+  @override
   String get login => 'เข้าสู่ระบบ';
 
   @override

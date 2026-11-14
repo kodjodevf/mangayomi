@@ -18,6 +18,20 @@ final _scheduledDownloadIds = <int>{};
 /// are not in it until they are started again.
 final scheduledDownloads = ValueNotifier<Set<int>>(const {});
 
+/// Whether the download queue is paused. While it is, the gate turns every
+/// download away with [DownloadsPausedException], and downloads stopped by the
+/// pause stay queued instead of failing, to start again from the top of the
+/// queue on resume.
+final downloadsPaused = ValueNotifier<bool>(false);
+
+/// Thrown by [DownloadGate.acquire] while the queue is paused.
+class DownloadsPausedException implements Exception {
+  const DownloadsPausedException();
+
+  @override
+  String toString() => 'Downloads are paused';
+}
+
 bool isDownloadScheduled(int? id) => _scheduledDownloadIds.contains(id);
 
 /// Claims [id] for scheduling. Returns false if it was already scheduled,
@@ -115,6 +129,9 @@ class DownloadGate {
     required int maxConcurrent,
     required int delaySeconds,
   }) {
+    if (downloadsPaused.value) {
+      return Future.error(const DownloadsPausedException());
+    }
     _maxConcurrent = maxConcurrent < 1 ? 1 : maxConcurrent;
     _delaySeconds = delaySeconds;
     final completer = Completer<void>();
@@ -129,28 +146,28 @@ class DownloadGate {
     _dispatch();
   }
 
-  /// Reorder the waiting list by the user's saved manual order (#514), re-read
-  /// each dispatch so dragging a chapter up takes effect on what's still
-  /// waiting. Ids not in the saved order keep their current relative order,
-  /// after the ranked ones, so a plain queue behaves exactly as before.
-  void _reorderWaiters() {
-    final order = DownloadQueueOrder.order;
-    if (order.isEmpty || _waiters.length < 2) return;
-    final rank = <int, int>{};
-    for (var j = 0; j < order.length; j++) {
-      rank[order[j]] = j;
+  /// Turns away every download still waiting for a slot, as the queue is
+  /// paused. They stay queued and start again, in queue order, on resume.
+  void pause() {
+    final waiting = [..._waiters];
+    _waiters.clear();
+    for (final waiter in waiting) {
+      if (!waiter.completer.isCompleted) {
+        waiter.completer.completeError(const DownloadsPausedException());
+      }
     }
-    final decorated = [
-      for (var j = 0; j < _waiters.length; j++) (pos: j, w: _waiters[j]),
-    ];
-    decorated.sort((a, b) {
-      final ra = rank[a.w.id] ?? (order.length + a.pos);
-      final rb = rank[b.w.id] ?? (order.length + b.pos);
-      return ra.compareTo(rb);
-    });
-    _waiters
-      ..clear()
-      ..addAll(decorated.map((e) => e.w));
+  }
+
+  /// Sort the waiting list into queue order (see
+  /// [DownloadQueueOrder.positions]), re-read each dispatch so dragging a
+  /// chapter up takes effect on what's still waiting. It is the order the
+  /// queue screen lists, so the download at the top goes first whenever it
+  /// reached the gate: a retried or resumed chapter no longer waits behind
+  /// the ones listed below it.
+  void _reorderWaiters() {
+    if (_waiters.length < 2) return;
+    final position = DownloadQueueOrder.positions();
+    _waiters.sort((a, b) => position(a.id).compareTo(position(b.id)));
   }
 
   void _dispatch() {

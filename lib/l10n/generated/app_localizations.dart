@@ -2685,6 +2685,30 @@ abstract class AppLocalizations {
   /// **'Cancel all for this series'**
   String get cancel_all_for_this_series;
 
+  /// No description provided for @move_to_top.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to top'**
+  String get move_to_top;
+
+  /// No description provided for @move_series_to_top.
+  ///
+  /// In en, this message translates to:
+  /// **'Move series to top'**
+  String get move_series_to_top;
+
+  /// No description provided for @move_to_bottom.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to bottom'**
+  String get move_to_bottom;
+
+  /// No description provided for @move_series_to_bottom.
+  ///
+  /// In en, this message translates to:
+  /// **'Move series to bottom'**
+  String get move_series_to_bottom;
+
   /// No description provided for @login.
   ///
   /// In en, this message translates to:
