@@ -3963,6 +3963,12 @@ abstract class AppLocalizations {
   /// **'You have finished reading'**
   String get you_have_finished_reading;
 
+  /// No description provided for @read_next.
+  ///
+  /// In en, this message translates to:
+  /// **'Read next'**
+  String get read_next;
+
   /// No description provided for @return_to_the_list_of_chapters.
   ///
   /// In en, this message translates to:

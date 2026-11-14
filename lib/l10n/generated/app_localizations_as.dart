@@ -2150,6 +2150,9 @@ class AppLocalizationsAs extends AppLocalizations {
   String get you_have_finished_reading => 'আপুনি পঢ়া শেষ কৰিলে';
 
   @override
+  String get read_next => 'Read next';
+
+  @override
   String get return_to_the_list_of_chapters =>
       'অধ্যায়সমূহৰ তালিকালৈ উভতি যাওক';
 

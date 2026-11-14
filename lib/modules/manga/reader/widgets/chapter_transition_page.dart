@@ -3,6 +3,7 @@ import 'package:mangayomi/modules/reader_common/reader_chapter_navigation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/reader_common/providers/chapter_display.dart';
 import 'package:mangayomi/router/push_router.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/read_next_shelf.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_interactive_region.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:shiori/shiori.dart';
@@ -39,11 +40,21 @@ class ChapterTransitionPage extends ConsumerWidget {
     // Rebuilt when the series switches between titles and numbers; the
     // names below read the choice.
     ref.watch(chapterNumberDisplayProvider);
+    final page = readerMode.isVertical
+        ? _buildVerticalScaffold(context)
+        : _buildHorizontalScaffold(context);
+    final mangaId = currentChapter.mangaId;
     return Container(
       color: context.shiori.color.ink0,
-      child: readerMode.isVertical
-          ? _buildVerticalScaffold(context)
-          : _buildHorizontalScaffold(context),
+      // At the end of a series, what to read next fills the space under it.
+      child: nextChapter != null || mangaId == null
+          ? page
+          : Column(
+              children: [
+                Expanded(child: page),
+                ReadNextShelf(mangaId: mangaId),
+              ],
+            ),
     );
   }
 
