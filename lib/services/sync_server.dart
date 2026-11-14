@@ -28,6 +28,11 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/sync/sync_api_client.dart';
 import 'package:mangayomi/services/sync/sync_change_collector.dart';
 import 'package:mangayomi/services/sync/sync_entity_applier.dart';
+import 'package:mangayomi/services/sync/sync_transport.dart';
+import 'package:mangayomi/services/sync_host/sync_host_providers.dart';
+import 'package:mangayomi/services/sync_host/sync_secrets.dart';
+import 'package:mangayomi/models/sync_preference.dart';
+import 'package:mangayomi/src/rust/api/sync_host.dart';
 import 'package:mangayomi/utils/client_id.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -68,6 +73,9 @@ class SyncServer extends _$SyncServer {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final _entityApplier = const SyncEntityApplier();
   late final _apiClient = SyncApiClient(http);
+
+  /// Where this sync's requests go; set when it starts.
+  late SyncTransport _transport;
 
   @override
   void build({required int syncId}) {
@@ -191,7 +199,8 @@ class SyncServer extends _$SyncServer {
     progress.begin();
     BackgroundWork.begin(BackgroundWorkKind.sync);
     try {
-      if (!await _apiClient.checkVersion(_getServer())) {
+      _transport = await _openTransport();
+      if (!await _transport.checkVersion()) {
         if (!silent && l10n != null) {
           botToast(l10n.sync_failed, second: 5);
         }
@@ -366,7 +375,34 @@ class SyncServer extends _$SyncServer {
   // ------------------------------------------------------------------
 
   Future<Map<String, dynamic>?> _postSync(Map<String, dynamic> body) =>
-      _apiClient.postSync(_getServer(), _getAccessToken(), body);
+      _transport.postSync(body);
+
+  Future<SyncTransport> _openTransport() async {
+    final prefs = ref.read(synchingProvider(syncId: syncId));
+    if (prefs.server == SyncPreference.thisDeviceHost) {
+      return LocalSyncTransport(await ref.read(syncHostEngineProvider.future));
+    }
+    final hostFingerprint = prefs.hostFingerprint;
+    if (hostFingerprint != null && prefs.peerAddresses.isNotEmpty) {
+      final identity = await SyncSecrets().identity();
+      return PeerSyncTransport.trying(
+        prefs.peerAddresses,
+        (address) => SyncPeerClient(
+          identity: identity,
+          baseUrl: address,
+          hostFingerprint: hostFingerprint,
+          timeoutSeconds: 120,
+        ),
+        onReached: (address) {
+          if (!ref.mounted) return;
+          ref
+              .read(synchingProvider(syncId: syncId).notifier)
+              .rememberHostAddress(address);
+        },
+      );
+    }
+    return HttpSyncTransport(_apiClient, _getServer(), _getAccessToken());
+  }
 
   String _getAccessToken() {
     if (!ref.mounted) return "";
@@ -414,8 +450,7 @@ Future<void> autoSyncIfDue(dynamic ref, {int syncId = 1}) async {
 
   final syncPrefs = ref.read(synchingProvider(syncId: syncId));
   if (!syncPrefs.syncOn) return;
-  final authToken = syncPrefs.authToken;
-  if (authToken == null || authToken.isEmpty) return;
+  if (!syncPrefs.isConnected) return;
 
   final autoSyncFrequency = syncPrefs.autoSyncFrequency;
   if (autoSyncFrequency <= 0) return;

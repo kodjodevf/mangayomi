@@ -1,4 +1,4 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mangayomi/services/secure_storage.dart';
 import 'package:mangayomi/repositories/backup_password_repository.dart';
 
 /// Thrown by [BackupPasswordStorage.save] when the OS-backed secure storage
@@ -23,7 +23,7 @@ class SecureStorageUnavailableException implements Exception {
 class BackupPasswordStorage {
   BackupPasswordStorage._();
 
-  static const _secureStorage = FlutterSecureStorage();
+  static const _secureStorage = secureStorage;
   static const _key = 'backup_encryption_password';
 
   /// Saves [password] to secure OS storage.

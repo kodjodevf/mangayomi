@@ -18,6 +18,9 @@ analyzer:
     # Shiori and its catalogue are their own packages, analysed (and tested)
     # from their own directories.
     - packages/**
+    # The sync server is its own package too, analysed and tested by its own
+    # workflow.
+    - server/**
     # Written by `flutter gen-l10n`, which still lists the delegates of
     # flutter_localizations; the app takes material_ui's instead
     # (lib/l10n/l10n_delegates.dart).

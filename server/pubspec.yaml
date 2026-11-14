@@ -1,0 +1,23 @@
+name: mangayomi_sync_server
+description: >-
+  A sync server for Mangayomi: devices pair with it as they would with a
+  device that hosts sync, and sync through it from anywhere it is reachable.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.13.5
+
+dependencies:
+  mangayomi_sync:
+    path: ../packages/mangayomi_sync
+  flutter_rust_bridge: 2.13.0
+  args: ^2.7.0
+  path: ^1.9.0
+  sqlite3: ^3.9.1
+  qr: ^4.0.1
+
+dev_dependencies:
+  test: ^1.26.0
+  lints: ^6.0.0
+  crypto: ^3.0.8

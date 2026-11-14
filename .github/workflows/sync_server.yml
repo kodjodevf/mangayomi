@@ -1,0 +1,125 @@
+name: Sync server
+
+# Tests the sync server and its shared sync package on every change to
+# them, and packs the server for each platform. A tag sync-server-v* also
+# publishes the archives as a release.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "server/**"
+      - "packages/mangayomi_sync/**"
+      - "rust/sync_host/**"
+      - ".github/workflows/sync_server.yml"
+  push:
+    tags:
+      - sync-server-v*
+  workflow_dispatch:
+
+concurrency:
+  group: sync-server-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Package (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux-x64
+            os: ubuntu-latest
+          - name: linux-arm64
+            os: ubuntu-24.04-arm
+          - name: macos-arm64
+            os: macos-latest
+          - name: windows-x64
+            os: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.4.0
+        with:
+          persist-credentials: false
+
+      # Only Dart is needed, and Flutter has no Linux arm64 release.
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1.7.2
+        with:
+          sdk: stable
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2.9.3
+        with:
+          workspaces: server/native
+
+      # The TLS library assembles its Windows code with NASM.
+      - name: Install NASM
+        if: runner.os == 'Windows'
+        run: choco install nasm -y --no-progress
+
+      - name: Test the sync package
+        working-directory: packages/mangayomi_sync
+        run: |
+          dart pub get
+          dart analyze --fatal-infos
+          dart test
+
+      - name: Test the host crate
+        working-directory: rust
+        run: cargo test -p mangayomi_sync_host
+
+      - name: Package
+        working-directory: server
+        run: |
+          dart pub get
+          dart analyze --fatal-infos
+          dart run tool/package.dart
+
+      # After packaging, which built the native library the tests load.
+      - name: Test the server
+        working-directory: server
+        run: dart test
+
+      - name: Upload
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: mangayomi-sync-server-${{ matrix.name }}
+          path: |
+            server/dist/*.tar.gz
+            server/dist/*.zip
+          if-no-files-found: error
+
+  release:
+    name: Release
+    if: startsWith(github.ref, 'refs/tags/sync-server-v')
+    needs: package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download
+        uses: actions/download-artifact@v4.3.0
+        with:
+          pattern: mangayomi-sync-server-*
+          merge-multiple: true
+          path: release-assets
+
+      - name: Publish
+        uses: ncipollo/release-action@v1.21.0
+        with:
+          artifacts: "release-assets/*"
+          name: Sync server ${{ github.ref_name }}
+          generateReleaseNotes: true
+          # Not the app's latest release: that stays the app.
+          makeLatest: false
+          allowUpdates: true

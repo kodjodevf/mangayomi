@@ -1,0 +1,16 @@
+[package]
+name = "mangayomi_sync_server_native"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+flutter_rust_bridge = "=2.13.0"
+mangayomi_sync_host = { path = "../../rust/sync_host" }
+anyhow = "1.0.104"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
