@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/sync_preference.dart';
@@ -9,9 +8,11 @@ import 'package:mangayomi/modules/more/settings/sync/device_sync/pairing_scanner
 import 'package:mangayomi/modules/more/widgets/dialog_actions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/sync_providers.dart';
-import 'package:mangayomi_sync/mangayomi_sync.dart';
 import 'package:mangayomi/services/sync_host/peer_pairing.dart';
 import 'package:mangayomi/services/sync_server.dart';
+import 'package:mangayomi/utils/error_toast.dart';
+import 'package:mangayomi_sync/mangayomi_sync.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:shiori/shiori.dart';
 
 /// Whether this device has a camera to scan an invite with.
@@ -131,7 +132,16 @@ Future<void> joinHost(
   }
 
   showBusyDialog(context, l10n.device_sync_pairing);
-  final result = await pairWithHost(invite);
+  final ({PeerPairingOutcome outcome, String? server}) result;
+  try {
+    result = await pairWithHost(invite);
+  } catch (error, stack) {
+    // This device's identity could not be read or made (no secure storage,
+    // say): close the busy dialog rather than leave it up for good.
+    if (context.mounted) Navigator.of(context, rootNavigator: true).pop();
+    toastError(error, stack: stack, source: 'sync_pairing');
+    return;
+  }
   if (!context.mounted) return;
   Navigator.of(context, rootNavigator: true).pop();
 

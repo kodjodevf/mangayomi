@@ -4,8 +4,8 @@
 // pair: there is no plain-text fallback for a private key.
 import 'dart:convert';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mangayomi_sync/mangayomi_sync.dart';
+import 'package:mangayomi/services/secure_storage.dart';
 import 'package:mangayomi/src/rust/api/sync_host.dart';
 
 /// Where the secrets go: the OS secure storage, or a map in tests.
@@ -18,7 +18,7 @@ abstract interface class SecretStore {
 class SecureSecretStore implements SecretStore {
   const SecureSecretStore();
 
-  static const _storage = FlutterSecureStorage();
+  static const _storage = secureStorage;
 
   @override
   Future<String?> read(String key) => _storage.read(key: key);
