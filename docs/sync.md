@@ -170,10 +170,21 @@ a device cannot store anything else, and refuses a request with more than
 | Status | Meaning |
 | --- | --- |
 | 200 | Applied |
-| 400 | Refused by validation; nothing was stored |
+| 400 | Refused by validation; nothing was stored. The body says where: `{"error": "manga[39].link"}` |
 | 403 | Not paired, or removed |
 | 413 | Body over the limit |
 | 503 | The handler did not answer in time |
+
+Every field has a length limit, in `packages/mangayomi_sync/lib/src/validation.dart`.
+One value over its limit refuses the whole request, so the app fits each row
+first with `fitSyncRow`:
+
+- Text that is only shown (names, descriptions, genres) is shortened.
+- An optional address (cover, thumbnail, tracking link) is left out.
+- A value that identifies something (a manga's `link`, a chapter's `url`, its
+  `source`) cannot be shortened without breaking it. Those limits are high
+  (65536 characters), since sources put their own data in links. A row still
+  over one is not sent, and the app names it to the user.
 
 ### Rules
 

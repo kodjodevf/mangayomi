@@ -135,14 +135,22 @@ void main() {
     // The host device itself, syncing with its own host.
     final local = await LocalSyncTransport(SyncEngine(IsarSyncStore(db)))
         .postSync({});
-    expect((local!['manga'] as List).single['name'], 'Title');
+    expect((local['manga'] as List).single['name'], 'Title');
 
-    // An invalid request is refused, not a crash of the host.
-    expect(await transport.postSync({'manga': 'x'}), isNull);
+    // An invalid request is refused, not a crash of the host, and the
+    // device hears what was wrong with it.
+    await expectLater(
+      transport.postSync({'manga': 'x'}),
+      throwsA(
+        isA<SyncRefused>()
+            .having((e) => e.status, 'status', 400)
+            .having((e) => e.reason, 'reason', 'manga'),
+      ),
+    );
 
     // Refused at once, on the connection already open as on a new one.
     await host.forget(deviceIdentity.fingerprint);
-    expect(await transport.postSync({}), isNull);
+    await expectLater(transport.postSync({}), throwsA(isA<SyncRefused>()));
     await expectLater(
       PeerSyncTransport(
         SyncPeerClient(
@@ -237,6 +245,6 @@ void main() {
         timeoutSeconds: 10,
       ),
     ).postSync({});
-    expect(response?['hasMore'], isFalse);
+    expect(response['hasMore'], isFalse);
   }, skip: skip);
 }

@@ -28,6 +28,12 @@ const maxRowsPerEntity = 5000;
 const _maxSafeInteger = 9007199254740991;
 const _maxCategoriesPerManga = 200;
 
+/// Longest link or address. A source may put a lot in a manga's link (JSON
+/// of its own, say), and that link is how it finds the manga again: it can
+/// never be cut, so the limit is far above any address in use. The size of
+/// a whole request is limited apart.
+const _maxLink = 65536;
+
 const _itemTypes = {'MANGA', 'ANIME', 'NOVEL'};
 const _statuses = {
   'ONGOING',
@@ -63,6 +69,19 @@ enum _Kind {
   webUrl,
 }
 
+/// What [fitSyncRow] does with a value over its field's limit.
+enum _Fit {
+  /// Nothing: the row cannot be sent. For values that identify something
+  /// or hold a state, which a shorter value would change.
+  refuse,
+
+  /// Shortens it. For text that is only shown.
+  clip,
+
+  /// Leaves it out. For an optional address, such as a cover.
+  drop,
+}
+
 class _Field {
   const _Field(
     this.name,
@@ -70,6 +89,7 @@ class _Field {
     this.required = false,
     this.nullable = true,
     this.max = 0,
+    this.fit = _Fit.refuse,
   });
 
   final String name;
@@ -79,6 +99,14 @@ class _Field {
 
   /// Longest text, or most entries in a list.
   final int max;
+
+  final _Fit fit;
+
+  bool fits(String text) =>
+      text.length <= max &&
+      (kind != _Kind.webUrl ||
+          text.isEmpty ||
+          RegExp(r'^https?://').hasMatch(text));
 }
 
 const _clientId = _Field(
@@ -109,7 +137,14 @@ const _itemType = _Field(
 const _fields = <String, List<_Field>>{
   'categories': [
     _clientId,
-    _Field('name', _Kind.text, required: true, nullable: false, max: 200),
+    _Field(
+      'name',
+      _Kind.text,
+      required: true,
+      nullable: false,
+      max: 200,
+      fit: _Fit.clip,
+    ),
     _Field('forItemType', _Kind.itemType, required: true, nullable: false),
     _Field('pos', _Kind.integer),
     _Field('hide', _Kind.boolean, nullable: false),
@@ -120,41 +155,42 @@ const _fields = <String, List<_Field>>{
     _clientId,
     _Field('source', _Kind.text, max: 200),
     _Field('sourceId', _Kind.integer),
-    _Field('link', _Kind.text, max: 2000),
+    _Field('link', _Kind.text, max: _maxLink),
     _itemType,
-    _Field('name', _Kind.text, max: 500),
-    _Field('imageUrl', _Kind.text, max: 2000),
-    _Field('description', _Kind.text, max: 10000),
-    _Field('author', _Kind.text, max: 500),
-    _Field('artist', _Kind.text, max: 500),
+    _Field('name', _Kind.text, max: 500, fit: _Fit.clip),
+    _Field('imageUrl', _Kind.text, max: _maxLink, fit: _Fit.drop),
+    _Field('description', _Kind.text, max: 10000, fit: _Fit.clip),
+    _Field('author', _Kind.text, max: 500, fit: _Fit.clip),
+    _Field('artist', _Kind.text, max: 500, fit: _Fit.clip),
     _Field('status', _Kind.status, nullable: false),
-    _Field('genre', _Kind.texts, nullable: false, max: 100),
+    _Field('genre', _Kind.texts, nullable: false, max: 100, fit: _Fit.clip),
     _Field('lang', _Kind.text, max: 20),
     _Field('lastUpdate', _Kind.number),
     _Field('favorite', _Kind.boolean, nullable: false),
     _Field('dateAdded', _Kind.number),
     _Field('lastRead', _Kind.number),
     _Field('isLocalArchive', _Kind.boolean, nullable: false),
-    _Field('customCoverFromTracker', _Kind.text, max: 2000),
+    _Field('customCoverFromTracker', _Kind.text, max: _maxLink, fit: _Fit.drop),
     _Field('smartUpdateDays', _Kind.integer),
     _Field(
       'categoryClientIds',
       _Kind.clientIds,
       nullable: false,
       max: _maxCategoriesPerManga,
+      fit: _Fit.clip,
     ),
     _updatedAt,
   ],
   'chapters': [
     _clientId,
     _mangaClientId,
-    _Field('name', _Kind.text, max: 500),
-    _Field('url', _Kind.text, max: 2000),
-    _Field('scanlator', _Kind.text, max: 200),
+    _Field('name', _Kind.text, max: 500, fit: _Fit.clip),
+    _Field('url', _Kind.text, max: _maxLink),
+    _Field('scanlator', _Kind.text, max: 200, fit: _Fit.clip),
     _Field('dateUpload', _Kind.number),
     _Field('isFiller', _Kind.boolean, nullable: false),
-    _Field('thumbnailUrl', _Kind.text, max: 2000),
-    _Field('description', _Kind.text, max: 5000),
+    _Field('thumbnailUrl', _Kind.text, max: _maxLink, fit: _Fit.drop),
+    _Field('description', _Kind.text, max: 5000, fit: _Fit.clip),
     _Field('downloadSize', _Kind.integer),
     _Field('duration', _Kind.integer),
     _Field('isRead', _Kind.boolean, nullable: false),
@@ -168,14 +204,14 @@ const _fields = <String, List<_Field>>{
     _Field('syncId', _Kind.integer),
     _Field('mediaId', _Kind.integer),
     _Field('libraryId', _Kind.integer),
-    _Field('title', _Kind.text, max: 500),
+    _Field('title', _Kind.text, max: 500, fit: _Fit.clip),
     _Field('lastChapterRead', _Kind.number),
     _Field('totalChapter', _Kind.integer),
     _Field('score', _Kind.number),
     _Field('status', _Kind.trackStatus, nullable: false),
     _Field('startedReadingDate', _Kind.number),
     _Field('finishedReadingDate', _Kind.number),
-    _Field('trackingUrl', _Kind.webUrl, max: 2000),
+    _Field('trackingUrl', _Kind.webUrl, max: _maxLink, fit: _Fit.drop),
     _itemType,
     _updatedAt,
   ],
@@ -191,7 +227,7 @@ const _fields = <String, List<_Field>>{
   'updates': [
     _clientId,
     _mangaClientId,
-    _Field('chapterName', _Kind.text, max: 500),
+    _Field('chapterName', _Kind.text, max: 500, fit: _Fit.clip),
     _Field('date', _Kind.number),
     _updatedAt,
   ],
@@ -335,7 +371,7 @@ Map<String, dynamic> _row(Object? value, List<_Field> fields, String at) {
 }
 
 Object _value(Object value, _Field field, String at) {
-  bool fits(String text) => text.length <= field.max;
+  final fits = field.fits;
   switch (field.kind) {
     case _Kind.clientId:
       return _checkClientId(value, at);
@@ -351,11 +387,7 @@ Object _value(Object value, _Field field, String at) {
     case _Kind.text:
       if (value is String && fits(value)) return value;
     case _Kind.webUrl:
-      if (value is String &&
-          fits(value) &&
-          (value.isEmpty || RegExp(r'^https?://').hasMatch(value))) {
-        return value;
-      }
+      if (value is String && fits(value)) return value;
     case _Kind.itemType:
       if (_itemTypes.contains(value)) return value;
     case _Kind.status:
@@ -372,4 +404,55 @@ Object _value(Object value, _Field field, String at) {
       }
   }
   throw SyncRequestInvalid(at);
+}
+
+/// [row] of [entity] made to pass [validateSyncRequest], for a device to
+/// send: text that is only shown is shortened, an optional address over its
+/// limit left out. A value that cannot change without changing what it
+/// means, a manga's link say, cannot be made to fit: then `row` is null and
+/// `tooLong` names its field.
+///
+/// Only lengths are fitted: the rest of a row is the device's to get right.
+({Map<String, dynamic>? row, String? tooLong}) fitSyncRow(
+  String entity,
+  Map<String, dynamic> row,
+) {
+  final fields = _fields[entity];
+  if (fields == null) throw ArgumentError.value(entity, 'entity');
+  Map<String, dynamic>? fitted;
+  Map<String, dynamic> edit() => fitted ??= Map.of(row);
+  for (final field in fields) {
+    final value = row[field.name];
+    switch ((field.kind, value)) {
+      case (_Kind.text || _Kind.webUrl, final String text)
+          when !field.fits(text):
+        switch (field.fit) {
+          case _Fit.refuse:
+            return (row: null, tooLong: field.name);
+          case _Fit.clip:
+            edit()[field.name] = _clip(text, field.max);
+          case _Fit.drop:
+            edit()[field.name] = null;
+        }
+      case (_Kind.texts, final List texts)
+          when texts.any((e) => e is String && e.length > field.max):
+        edit()[field.name] = [
+          for (final e in texts) e is String ? _clip(e, field.max) : e,
+        ];
+      case (_Kind.clientIds, final List ids) when ids.length > field.max:
+        edit()[field.name] = ids.sublist(0, field.max);
+      default:
+    }
+  }
+  return (row: fitted ?? row, tooLong: null);
+}
+
+/// [text] cut to [max] code units, never between the two halves of a
+/// character outside the basic plane.
+String _clip(String text, int max) {
+  if (text.length <= max) return text;
+  var end = max;
+  final last = text.codeUnitAt(end - 1);
+  if (last >= 0xD800 && last <= 0xDBFF) end -= 1;
+  return text.substring(0, end);
 }

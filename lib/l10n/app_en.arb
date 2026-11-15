@@ -1876,5 +1876,9 @@
   "device_sync_leave": "Stop syncing with the host",
   "device_sync_stop_host_title": "Stop hosting?",
   "device_sync_stop_host_message": "Your other devices can't sync until it's back on. What the host stored stays on this device.",
-  "device_sync_scan_hint": "Point the camera at the QR code on the host"
+  "device_sync_scan_hint": "Point the camera at the QR code on the host",
+  "sync_refused": "The sync was refused because of {what}. Update Mangayomi and the sync server, then try again.",
+  "@sync_refused": {"placeholders": {"what": {"type": "String"}}},
+  "sync_rows_not_sent": "These items are too long to sync and were left out: {items}",
+  "@sync_rows_not_sent": {"placeholders": {"items": {"type": "String"}}}
 }

@@ -39,6 +39,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/providers/tint_surfaces_state_provider.dart';
 import 'package:mangayomi/utils/error_toast.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 part 'sync_server.g.dart';
 
 /// Matches the server's SYNC.maxRowsPerEntity. A changed-row batch larger
@@ -214,6 +215,7 @@ class SyncServer extends _$SyncServer {
       if (!ref.mounted) return false;
 
       final notifier = ref.read(synchingProvider(syncId: syncId).notifier);
+      _unsent = const [];
       final ok = upload
           ? await _forceUpload(notifier)
           : download
@@ -229,13 +231,41 @@ class SyncServer extends _$SyncServer {
       if (ref.mounted) {
         ref.invalidate(synchingProvider(syncId: syncId));
       }
+      if (_unsent.isNotEmpty) {
+        // The rest synced; these never will until they change. Kept where
+        // they can be found even after a sync no one watched.
+        final unsent = _unsent.join(', ');
+        final error = 'Rows too long to sync were left out: $unsent';
+        if (silent || l10n == null) {
+          recordError(error, source: 'sync', level: LogLevel.warning);
+        } else {
+          toastError(
+            error,
+            source: 'sync',
+            message: l10n.sync_rows_not_sent(unsent),
+          );
+          return true;
+        }
+      }
       if (!silent && l10n != null) {
         botToast(l10n.sync_finished, second: 2);
       }
       return true;
-    } catch (error) {
-      if (!silent) {
-        botToast(error.toString(), second: 5);
+    } catch (error, stack) {
+      if (silent) {
+        recordError(error, stack: stack, source: 'sync');
+      } else {
+        toastError(
+          error,
+          stack: stack,
+          source: 'sync',
+          message:
+              error is _SyncRefusedOf &&
+                  error.refused.invalidRequest &&
+                  l10n != null
+              ? l10n.sync_refused(error.what)
+              : null,
+        );
       }
       return false;
     } finally {
@@ -286,8 +316,13 @@ class SyncServer extends _$SyncServer {
       };
       if (hasChunk) chunkIndex += 1;
 
-      final response = await _postSync(body);
-      if (response == null) return false;
+      final Map<String, dynamic> response;
+      try {
+        response = await _postSync(body);
+      } on SyncRefused catch (refused, stack) {
+        // Told with the row it names: only this request holds it.
+        Error.throwWithStackTrace(_SyncRefusedOf(refused, body), stack);
+      }
       if (hasChunk) progress.addDone(1);
       _trackDownloadProgress(progress, response);
 
@@ -307,6 +342,7 @@ class SyncServer extends _$SyncServer {
           );
           await changed?.clearUploaded(notifier);
         }
+        _unsent = changed?.unsent ?? const [];
         return true;
       }
     }
@@ -374,8 +410,11 @@ class SyncServer extends _$SyncServer {
   // Wire transport
   // ------------------------------------------------------------------
 
-  Future<Map<String, dynamic>?> _postSync(Map<String, dynamic> body) =>
+  Future<Map<String, dynamic>> _postSync(Map<String, dynamic> body) =>
       _transport.postSync(body);
+
+  /// What the last sync left out of its upload: see [ChangedRows.unsent].
+  List<UnsentSyncRow> _unsent = const [];
 
   Future<SyncTransport> _openTransport() async {
     final prefs = ref.read(synchingProvider(syncId: syncId));
@@ -466,4 +505,18 @@ Future<void> autoSyncIfDue(dynamic ref, {int syncId = 1}) async {
   await ref
       .read(syncServerProvider(syncId: syncId).notifier)
       .startSync(null, true);
+}
+
+/// A refusal told with the row of the request it names.
+class _SyncRefusedOf implements Exception {
+  _SyncRefusedOf(this.refused, Map<String, dynamic> body)
+    : what = refused.describe(body);
+
+  final SyncRefused refused;
+
+  /// The row and field refused, such as `"Title" (link)`.
+  final String what;
+
+  @override
+  String toString() => '$refused: $what';
 }

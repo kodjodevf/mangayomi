@@ -4927,6 +4927,16 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get device_sync_scan_hint =>
       'Point the camera at the QR code on the host';
+
+  @override
+  String sync_refused(String what) {
+    return 'The sync was refused because of $what. Update Mangayomi and the sync server, then try again.';
+  }
+
+  @override
+  String sync_rows_not_sent(String items) {
+    return 'These items are too long to sync and were left out: $items';
+  }
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
