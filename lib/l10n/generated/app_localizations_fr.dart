@@ -4945,4 +4945,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get device_sync_scan_hint => 'Visez le QR code affiché sur l\'hôte';
+
+  @override
+  String sync_refused(String what) {
+    return 'La synchronisation a été refusée à cause de $what. Mettez à jour Mangayomi et le serveur de synchronisation, puis réessayez.';
+  }
+
+  @override
+  String sync_rows_not_sent(String items) {
+    return 'Ces éléments sont trop longs pour être synchronisés et ont été laissés de côté : $items';
+  }
 }

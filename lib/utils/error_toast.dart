@@ -58,15 +58,19 @@ bool _developerMode() {
 /// interpreter frames covering the whole display and saying nothing anyone can
 /// act on. The stack is worth keeping, just not there: it goes to
 /// [CrashReports] and the log, and the toast offers a way through to it.
+///
+/// [message] replaces the error's own first line on screen, for an error
+/// the app can say better in the reader's language.
 void toastError(
   Object error, {
   StackTrace? stack,
   String source = 'caught',
   int seconds = 6,
+  String? message,
 }) {
   recordError(error, stack: stack, source: source);
   botToast(
-    errorToastMessage(error),
+    message ?? errorToastMessage(error),
     tone: ShioriToastTone.error,
     second: seconds,
     maxLines: 3,

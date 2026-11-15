@@ -1815,5 +1815,7 @@
   "device_sync_leave": "Arrêter la synchro avec l'hôte",
   "device_sync_stop_host_title": "Arrêter d'héberger ?",
   "device_sync_stop_host_message": "Vos autres appareils ne pourront plus se synchroniser tant qu'il est arrêté. Ce que l'hôte a stocké reste sur cet appareil.",
-  "device_sync_scan_hint": "Visez le QR code affiché sur l'hôte"
+  "device_sync_scan_hint": "Visez le QR code affiché sur l'hôte",
+  "sync_refused": "La synchronisation a été refusée à cause de {what}. Mettez à jour Mangayomi et le serveur de synchronisation, puis réessayez.",
+  "sync_rows_not_sent": "Ces éléments sont trop longs pour être synchronisés et ont été laissés de côté : {items}"
 }

@@ -8665,6 +8665,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Point the camera at the QR code on the host'**
   String get device_sync_scan_hint;
+
+  /// No description provided for @sync_refused.
+  ///
+  /// In en, this message translates to:
+  /// **'The sync was refused because of {what}. Update Mangayomi and the sync server, then try again.'**
+  String sync_refused(String what);
+
+  /// No description provided for @sync_rows_not_sent.
+  ///
+  /// In en, this message translates to:
+  /// **'These items are too long to sync and were left out: {items}'**
+  String sync_rows_not_sent(String items);
 }
 
 class _AppLocalizationsDelegate

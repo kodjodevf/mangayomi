@@ -68,7 +68,7 @@ class SyncConnectionState extends _$SyncConnectionState {
     try {
       if (addresses.isEmpty) throw StateError('No host address');
       final identity = await SyncSecrets().identity();
-      final response = await PeerSyncTransport.trying(
+      await PeerSyncTransport.trying(
         addresses,
         (address) => SyncPeerClient(
           identity: identity,
@@ -77,9 +77,9 @@ class SyncConnectionState extends _$SyncConnectionState {
           timeoutSeconds: 6,
         ),
       ).postSync({'since': _maxSafeInteger});
-      result = response != null
-          ? SyncConnectionStatus.connected
-          : SyncConnectionStatus.unauthorized;
+      result = SyncConnectionStatus.connected;
+    } on SyncRefused {
+      result = SyncConnectionStatus.unauthorized;
     } catch (_) {
       // Unreachable is the answer here, shown as such: not an error.
       result = SyncConnectionStatus.unreachable;

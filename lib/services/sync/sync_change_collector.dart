@@ -3,6 +3,8 @@
 // local rows -> wire, instead of wire -> local rows.
 import 'dart:math';
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
+
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -21,6 +23,7 @@ import 'package:mangayomi/repositories/settings_repository.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/repositories/update_repository.dart';
 import 'package:mangayomi/services/sync/sync_wire_types.dart';
+import 'package:mangayomi_sync/mangayomi_sync.dart';
 
 // Local reader-only settings that make no sense on another device (paths,
 // device-specific proxy/JRE locations). Stripped before upload, and
@@ -51,6 +54,10 @@ class ChangedRows {
   final Map<String, dynamic>? settings;
   final List<ActionType> _deletionActionsToClear;
 
+  /// Local rows left out of the upload: a value the other end would refuse,
+  /// and that cannot be shortened without changing what it means.
+  final List<UnsentSyncRow> unsent;
+
   ChangedRows._({
     required this.categories,
     required this.manga,
@@ -61,7 +68,48 @@ class ChangedRows {
     required this.deleted,
     required this.settings,
     required this._deletionActionsToClear,
+    required this.unsent,
   });
+
+  /// The rows made to fit what the other end takes (see [fitSyncRow]). A
+  /// row that cannot fit is left out and listed in [unsent]: one such row
+  /// would otherwise have every sync of this device refused.
+  @visibleForTesting
+  factory ChangedRows.fromRows({
+    required List<Map<String, dynamic>> categories,
+    required List<Map<String, dynamic>> manga,
+    required List<Map<String, dynamic>> chapters,
+    required List<Map<String, dynamic>> tracks,
+    required List<Map<String, dynamic>> histories,
+    required List<Map<String, dynamic>> updates,
+    required Map<String, dynamic>? deleted,
+    required Map<String, dynamic>? settings,
+    required List<ActionType> deletionActionsToClear,
+  }) {
+    final unsent = <UnsentSyncRow>[];
+    List<Map<String, dynamic>> fit(
+      String entity,
+      List<Map<String, dynamic>> rows,
+    ) => [
+      for (final row in rows)
+        if (fitSyncRow(entity, row) case (row: final fitted?, tooLong: _))
+          fitted
+        else
+          ?_noteUnsent(unsent, entity, row),
+    ];
+    return ChangedRows._(
+      categories: fit('categories', categories),
+      manga: fit('manga', manga),
+      chapters: fit('chapters', chapters),
+      tracks: fit('tracks', tracks),
+      histories: fit('histories', histories),
+      updates: fit('updates', updates),
+      deleted: deleted,
+      settings: settings,
+      deletionActionsToClear: deletionActionsToClear,
+      unsent: unsent,
+    );
+  }
 
   /// Normal incremental sync: rows changed since `since`, every entity,
   /// plus pending local deletions.
@@ -90,7 +138,7 @@ class ChangedRows {
       settingsWire = _settingsToWire(current);
     }
 
-    return ChangedRows._(
+    return ChangedRows.fromRows(
       categories: categoryRepository
           .getChangedSince(since)
           .map(_categoryToWire)
@@ -134,7 +182,7 @@ class ChangedRows {
       settingsRepository.current,
       forcedUpdatedAt: forcedUpdatedAt,
     );
-    return ChangedRows._(
+    return ChangedRows.fromRows(
       categories: categoryRepository.getAll().map(_categoryToWire).toList(),
       manga: mangaRepository
           .getAll()
@@ -218,6 +266,42 @@ class ChangedRows {
     if (_deletionActionsToClear.isEmpty) return;
     await notifier.clearChangedParts(_deletionActionsToClear, true);
   }
+}
+
+/// A local row left out of an upload, for telling the user which one.
+class UnsentSyncRow {
+  const UnsentSyncRow(this.entity, this.name, this.field);
+
+  final String entity;
+
+  /// The row's name or title, when it has one.
+  final String? name;
+
+  /// The field over its limit.
+  final String field;
+
+  @override
+  String toString() {
+    final name = this.name;
+    return name == null || name.isEmpty ? '$entity.$field' : '"$name" ($field)';
+  }
+}
+
+/// Lists [row] in [unsent], and gives null: nothing to send for it.
+Map<String, dynamic>? _noteUnsent(
+  List<UnsentSyncRow> unsent,
+  String entity,
+  Map<String, dynamic> row,
+) {
+  final name = row['name'] ?? row['title'] ?? row['chapterName'];
+  unsent.add(
+    UnsentSyncRow(
+      entity,
+      name is String ? name : null,
+      fitSyncRow(entity, row).tooLong!,
+    ),
+  );
+  return null;
 }
 
 Map<String, dynamic> _categoryToWire(Category c) => {
