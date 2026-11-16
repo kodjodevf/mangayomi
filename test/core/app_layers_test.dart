@@ -55,7 +55,10 @@ void main() {
           valueListenable: locked,
           builder: (_, isLocked, _) => AppLayers(
             app: child!,
-            covers: [if (isLocked) const ColoredBox(color: Colors.black)],
+            covers: [
+              if (isLocked)
+                const ColoredBox(key: ValueKey('lock'), color: Colors.black),
+            ],
           ),
         ),
       ),

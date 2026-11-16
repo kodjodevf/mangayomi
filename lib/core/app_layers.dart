@@ -12,10 +12,23 @@ class AppLayers extends StatelessWidget {
 
   final Widget app;
 
-  /// Bottom to top.
+  /// Bottom to top, each with a key of its own: a cover then keeps its
+  /// state as others come and go around it. The lock screen must, as the
+  /// secure-screen cover comes up over it while the user authenticates.
   final List<Widget> covers;
 
   @override
-  Widget build(BuildContext context) =>
-      Stack(fit: StackFit.expand, children: [app, ...covers]);
+  Widget build(BuildContext context) {
+    assert(
+      covers.every((cover) => cover.key != null),
+      'Every cover needs a key',
+    );
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        KeyedSubtree(key: const ValueKey(AppLayers), child: app),
+        ...covers,
+      ],
+    );
+  }
 }

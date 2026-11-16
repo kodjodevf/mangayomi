@@ -486,18 +486,22 @@ class _MyAppState extends ConsumerState<MyApp>
         return AppLayers(
           app: withBackHandler,
           covers: [
-            if (locked) const AppLockScreen(),
+            if (locked) const AppLockScreen(key: ValueKey(AppLockScreen)),
             // Above the lock screen, because a measurement is not worth
             // taking if navigating away ends it.
             if (ref.watch(memoryOverlayVisibleProvider))
               MemoryOverlay(
+                key: const ValueKey(MemoryOverlay),
                 probe: ref.read(memoryProbeProvider),
                 onClose: () =>
                     ref.read(memoryOverlayVisibleProvider.notifier).set(false),
               ),
             // Over everything, so the app switcher shows none of it.
             if (_obscured && ref.watch(secureScreenOnProvider))
-              ColoredBox(color: Theme.of(context).scaffoldBackgroundColor),
+              ColoredBox(
+                key: const ValueKey('secure screen cover'),
+                color: Theme.of(context).scaffoldBackgroundColor,
+              ),
           ],
         );
       },
