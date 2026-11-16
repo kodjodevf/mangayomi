@@ -34,6 +34,10 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final bool showNumbersOfItems;
   final int numberOfItems;
   final List<Manga> entries;
+
+  /// Every entry of this library, before any filter or tab: what the
+  /// filter sheet offers to filter by, and what its filters apply to.
+  final List<Manga> libraryEntries;
   final bool isCategory;
   final int? categoryId;
   final Settings settings;
@@ -56,6 +60,7 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
     required this.showNumbersOfItems,
     required this.numberOfItems,
     required this.entries,
+    required this.libraryEntries,
     required this.isCategory,
     required this.categoryId,
     required this.settings,
@@ -235,7 +240,7 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
               vsync: vsync,
               settings: settings,
               itemType: itemType,
-              entries: entries,
+              entries: libraryEntries,
             );
           },
           tooltip: l10n.filter,

@@ -14,7 +14,9 @@ import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
-/// Shows the library filter/sort/display settings sheet.
+/// Shows the library filter/sort/display settings sheet. [entries] is the
+/// whole library of [itemType], before any filter: its extensions are the
+/// ones offered, and its filters are the ones the library screen applies.
 void showLibrarySettingsSheet({
   required BuildContext context,
   required TickerProvider vsync,
@@ -197,7 +199,9 @@ class _FilterTab extends ConsumerWidget {
                 .update();
           },
         ),
-        if (sources.$1.length > 1)
+        // Also with a single extension left while one is picked: the
+        // filter must stay there to be lifted.
+        if (sources.$1.length > 1 || sources.$2.isNotEmpty)
           ShioriSettingRow(
             icon: Symbols.filter_list_rounded,
             title: sourceFilterTitle,
