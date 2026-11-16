@@ -72,6 +72,7 @@ import 'package:flutter/services.dart' show rootBundle, LogicalKeyboardKey;
 import 'package:mangayomi/utils/window_geometry.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/memory_probe_provider.dart';
 import 'package:mangayomi/modules/widgets/memory_overlay.dart';
+import 'package:mangayomi/core/app_layers.dart';
 import 'package:mangayomi/modules/widgets/app_ui_scale.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_ui_scale_state_provider.dart';
 import 'package:mangayomi/utils/error_toast.dart';
@@ -478,44 +479,31 @@ class _MyAppState extends ConsumerState<MyApp>
             ? _MouseBackButtonHandler(router: router, child: base)
             : base;
 
-        if (_obscured && ref.watch(secureScreenOnProvider)) {
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              withBackHandler,
-              ColoredBox(color: Theme.of(context).scaffoldBackgroundColor),
-            ],
-          );
-        }
-
-        if (!Platform.isLinux) {
-          final isUnlocked = ref.watch(appUnlockedStateProvider);
-          final lockEnabled = ref.watch(appLockEnabledStateProvider);
-          if (lockEnabled && !isUnlocked) {
-            return Stack(
-              fit: StackFit.expand,
-              children: [withBackHandler, const AppLockScreen()],
-            );
-          }
-        }
-
-        // Sits above everything, including the lock screen, because a
-        // measurement is not worth taking if navigating away ends it.
-        if (ref.watch(memoryOverlayVisibleProvider)) {
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              withBackHandler,
+        final locked =
+            !Platform.isLinux &&
+            ref.watch(appLockEnabledStateProvider) &&
+            !ref.watch(appUnlockedStateProvider);
+        return AppLayers(
+          app: withBackHandler,
+          covers: [
+            if (locked) const AppLockScreen(key: ValueKey(AppLockScreen)),
+            // Above the lock screen, because a measurement is not worth
+            // taking if navigating away ends it.
+            if (ref.watch(memoryOverlayVisibleProvider))
               MemoryOverlay(
+                key: const ValueKey(MemoryOverlay),
                 probe: ref.read(memoryProbeProvider),
                 onClose: () =>
                     ref.read(memoryOverlayVisibleProvider.notifier).set(false),
               ),
-            ],
-          );
-        }
-
-        return withBackHandler;
+            // Over everything, so the app switcher shows none of it.
+            if (_obscured && ref.watch(secureScreenOnProvider))
+              ColoredBox(
+                key: const ValueKey('secure screen cover'),
+                color: Theme.of(context).scaffoldBackgroundColor,
+              ),
+          ],
+        );
       },
       routeInformationParser: router.routeInformationParser,
       routerDelegate: router.routerDelegate,
