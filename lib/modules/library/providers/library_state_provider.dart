@@ -288,7 +288,8 @@ class MangaFilterSourceState extends _$MangaFilterSourceState {
         names.add(m.source!);
       }
     }
-    return names.toList();
+    return names.toList()
+      ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
   }
 
   List<String> _getFilterSources() {

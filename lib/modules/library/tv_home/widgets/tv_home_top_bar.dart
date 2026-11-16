@@ -20,6 +20,8 @@ class TvHomeTopBar extends StatelessWidget {
   });
   final TextEditingController controller;
   final Settings settings;
+
+  /// The whole library, before any filter: see [showLibrarySettingsSheet].
   final List<Manga> entries;
   final ValueChanged<String> onChanged;
 
