@@ -1110,7 +1110,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "6c48ad82116b64384a977a179334570d0986c498"
+      resolved-ref: "95343eebc4619af0567ec612fc51f12c81074c5a"
       url: "https://github.com/kodjodevf/m_extension_server.git"
     source: git
     version: "0.1.2"
