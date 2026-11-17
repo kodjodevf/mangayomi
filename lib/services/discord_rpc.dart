@@ -4,6 +4,8 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/general_state_provider.dart';
 import 'package:mangayomi/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/utils/error_toast.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 
 DiscordRPC? discordRpc;
 
@@ -22,6 +24,12 @@ class DiscordRPC {
 
   /// Temp var
   bool rpcShowReadingWatchingProgress = false;
+
+  /// Whether the plugin is retrying to connect, every
+  /// [retryDelayInSeconds], Discord having been closed when asked. Each
+  /// connect that fails starts a loop of its own, never stopped by another:
+  /// one is enough.
+  bool _retrying = false;
 
   int _nextReaderSession = 0;
   int? _activeReaderSession;
@@ -71,12 +79,24 @@ class DiscordRPC {
         ? ref.read(rpcShowReadingWatchingProgressStateProvider) as bool
         : (settingsRepository.current.rpcShowReadingWatchingProgress ?? true);
     if (enableDiscordRpc && (!hideDiscordRpcInIncognito || !incognitoMode)) {
-      await FlutterDiscordRPC.instance.connect(
-        autoRetry: autoRetry,
-        retryDelay: Duration(seconds: retryDelayInSeconds),
-      );
+      final rpc = FlutterDiscordRPC.instance;
+      if (rpc.isConnected || _retrying) return;
+      try {
+        await rpc.connect(
+          autoRetry: autoRetry,
+          retryDelay: Duration(seconds: retryDelayInSeconds),
+        );
+      } catch (error, stack) {
+        recordError(error, stack: stack, source: 'discord_rpc');
+        return;
+      }
+      if (!rpc.isConnected) {
+        // Discord is closed: the plugin keeps trying on its own.
+        _retrying = autoRetry;
+        return;
+      }
       await Future.delayed(Duration(seconds: 3));
-      showIdleText();
+      await showIdleText();
     }
   }
 
@@ -214,12 +234,25 @@ class DiscordRPC {
   }
 
   Future<void> disconnect() async {
-    if (!FlutterDiscordRPC.instance.isConnected) return;
-    await FlutterDiscordRPC.instance.disconnect();
+    final rpc = FlutterDiscordRPC.instance;
+    // Also while retrying: disconnecting is what stops the plugin's loop.
+    if (!rpc.isConnected && !_retrying) return;
+    _retrying = false;
+    try {
+      await rpc.disconnect();
+    } catch (error, stack) {
+      // Never connected: nothing to close. The retries stop all the same.
+      recordError(
+        error,
+        stack: stack,
+        source: 'discord_rpc',
+        level: LogLevel.info,
+      );
+    }
   }
 
   Future<void> destroy() async {
-    await FlutterDiscordRPC.instance.disconnect();
+    await disconnect();
     await FlutterDiscordRPC.instance.dispose();
   }
 }
