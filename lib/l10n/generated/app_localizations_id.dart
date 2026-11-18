@@ -2157,6 +2157,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get you_have_finished_reading => 'Anda telah selesai membaca';
 
   @override
+  String get read_next => 'Read next';
+
+  @override
   String get return_to_the_list_of_chapters => 'Kembali ke daftar bab';
 
   @override

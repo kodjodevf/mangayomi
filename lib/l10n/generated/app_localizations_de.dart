@@ -2172,6 +2172,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get you_have_finished_reading => 'Du hast es fertig gelesen';
 
   @override
+  String get read_next => 'Read next';
+
+  @override
   String get return_to_the_list_of_chapters =>
       'Gehe zur Auflistung der Kapiteln';
 

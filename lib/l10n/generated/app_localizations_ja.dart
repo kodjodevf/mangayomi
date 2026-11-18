@@ -2114,6 +2114,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get you_have_finished_reading => '読了しました';
 
   @override
+  String get read_next => 'Read next';
+
+  @override
   String get return_to_the_list_of_chapters => 'チャプターリストに戻る';
 
   @override
