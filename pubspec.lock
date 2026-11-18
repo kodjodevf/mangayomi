@@ -532,7 +532,7 @@ packages:
     description:
       path: "."
       ref: update_frb
-      resolved-ref: "6b9771302cfa2893bb02fc5da8f3a3fd6b8444dc"
+      resolved-ref: b74a8ccff41ac55b21dd5956c8c46512f7c1f278
       url: "https://github.com/kodjodevf/flutter-discord-rpc.git"
     source: git
     version: "1.0.5"
