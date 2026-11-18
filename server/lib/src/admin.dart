@@ -15,7 +15,7 @@ import 'log.dart';
 import 'qr_render.dart';
 import 'sync_server.dart';
 
-const serverVersion = '0.1.0';
+const serverVersion = '0.1.2';
 
 /// Where a running server's admin API is, and the token it takes.
 class AdminAccess {

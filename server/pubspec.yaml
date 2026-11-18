@@ -3,7 +3,7 @@ description: >-
   A sync server for Mangayomi: devices pair with it as they would with a
   device that hosts sync, and sync through it from anywhere it is reachable.
 publish_to: "none"
-version: 0.1.0
+version: 0.1.2
 
 environment:
   sdk: ^3.13.5

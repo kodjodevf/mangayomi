@@ -58,6 +58,10 @@ Future<int> runCli(List<String> args) async {
   } on CliError catch (error) {
     stderr.writeln('Error: ${error.message}');
     return 1;
+  } on AdminError catch (error) {
+    // The running server refused a command: its reason, not a stack.
+    stderr.writeln('Error: the server answered: $error');
+    return 1;
   }
 }
 
@@ -289,8 +293,10 @@ class _Pair extends _Command {
   Future<int> run() async {
     final client = await requireRunningServer();
     final minutes = int.tryParse(argResults!.option('minutes')!) ?? 5;
-    final opened =
-        await client.post('/pairing?minutes=$minutes') as Map<String, dynamic>;
+    final opened = await client.post(
+      '/pairing',
+      query: {'minutes': '$minutes'},
+    ) as Map<String, dynamic>;
     final link = opened['link'] as String;
 
     final interrupted = ProcessSignal.sigint.watch().listen((_) async {
