@@ -12,7 +12,8 @@ class AdminClient {
   final _http = HttpClient()..connectionTimeout = const Duration(seconds: 3);
 
   Future<Object?> get(String path) => _call('GET', path);
-  Future<Object?> post(String path) => _call('POST', path);
+  Future<Object?> post(String path, {Map<String, String>? query}) =>
+      _call('POST', path, query: query);
   Future<Object?> delete(String path) => _call('DELETE', path);
 
   /// Whether a server answers there.
@@ -25,10 +26,19 @@ class AdminClient {
     }
   }
 
-  Future<Object?> _call(String method, String path) async {
+  /// [path] is a path only: a `?` in it would be sent as part of the path,
+  /// and miss its route. Parameters go in [query].
+  Future<Object?> _call(
+    String method,
+    String path, {
+    Map<String, String>? query,
+  }) async {
+    if (path.contains('?')) {
+      throw ArgumentError.value(path, 'path', 'Pass parameters in query');
+    }
     final request = await _http.openUrl(
       method,
-      access.base.replace(path: '/api$path'),
+      access.base.replace(path: '/api$path', queryParameters: query),
     );
     request.headers.set('authorization', 'Bearer ${access.token}');
     final response = await request.close();
@@ -52,5 +62,5 @@ class AdminError implements Exception {
   final String message;
 
   @override
-  String toString() => message;
+  String toString() => '$message (HTTP $status)';
 }

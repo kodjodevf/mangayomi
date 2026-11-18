@@ -72,6 +72,26 @@ void main() {
     expect(await raw('/'), 200);
   });
 
+  test('pairing stays open as long as asked', () async {
+    // What `pair --minutes` sends: once, its parameter went into the path,
+    // and every pair command was answered 404.
+    final opened = await client.post(
+      '/pairing',
+      query: {'minutes': '7'},
+    ) as Map<String, dynamic>;
+    final left = DateTime.fromMillisecondsSinceEpoch(opened['expiresAt'] as int)
+        .difference(DateTime.now());
+    expect(left, greaterThan(const Duration(minutes: 6)));
+    expect(left, lessThanOrEqualTo(const Duration(minutes: 7)));
+  });
+
+  test('a path with a query is refused before it is sent', () {
+    expect(
+      () => client.post('/pairing?minutes=7'),
+      throwsA(isA<ArgumentError>()),
+    );
+  });
+
   test('a device pairs through the API, then can be forgotten', () async {
     final opened = await client.post('/pairing') as Map<String, dynamic>;
     expect(opened['code'], matches(RegExp(r'^\w{4}-\w{4}-\w{4}$')));
