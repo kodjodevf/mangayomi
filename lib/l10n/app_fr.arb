@@ -412,6 +412,7 @@
   "include_sensitive_settings": "Inclure les paramètres sensibles (par ex., jetons de connexion des traceurs)",
   "create": "Créer",
   "fullscreen": "Plein écran",
+  "fullscreen_wayland_info": "Sous Wayland, non appliqué à l'ouverture : passer la fenêtre en plein écran peut figer l'application (bug de Flutter).",
   "migrate_confirm": "Migrer vers une autre source",
   "clean_database": "Nettoyer la base de données",
   "cleaned_database": "Base de données nettoyée ! {x} entrées supprimées",

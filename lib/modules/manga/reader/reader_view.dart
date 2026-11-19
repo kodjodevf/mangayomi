@@ -1183,7 +1183,7 @@ class _MangaChapterPageGalleryState
     final fullScreenReader = ref.read(fullScreenReaderStateProvider);
     if (fullScreenReader) {
       if (isDesktop) {
-        setFullScreen(value: true);
+        if (mayEnterFullScreenOnItsOwn) setFullScreen(value: true);
       } else {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
       }

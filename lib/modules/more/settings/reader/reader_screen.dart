@@ -121,6 +121,7 @@ class ReaderScreen extends ConsumerWidget {
             if (!isMobile)
               ShioriSwitchRow(
                 title: l10n.fullscreen,
+                subtitle: isLinuxWayland ? l10n.fullscreen_wayland_info : null,
                 value: fullScreenReader,
                 onChanged: (v) =>
                     ref.read(fullScreenReaderStateProvider.notifier).set(v),

@@ -160,7 +160,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
             children: [
               ShioriSwitchRow(
                 title: l10n.full_screen_player,
-                subtitle: l10n.full_screen_player_info,
+                subtitle: isLinuxWayland
+                    ? l10n.fullscreen_wayland_info
+                    : l10n.full_screen_player_info,
                 value: fullScreenPlayer,
                 onChanged: (v) =>
                     ref.read(fullScreenPlayerStateProvider.notifier).set(v),

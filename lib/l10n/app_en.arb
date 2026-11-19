@@ -682,6 +682,7 @@
   "skip_opening": "Skip opening",
   "skip_ending": "Skip ending",
   "fullscreen": "Fullscreen",
+  "fullscreen_wayland_info": "Under Wayland, not applied on opening: switching the window to fullscreen can freeze the app (a Flutter bug).",
   "update_library": "Update library",
   "updating_library": "Updating library ({cur} / {max}) - Failed: {failed}",
   "next_chapter": "Next chapter",

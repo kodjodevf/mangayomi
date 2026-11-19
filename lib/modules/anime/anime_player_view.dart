@@ -701,7 +701,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     } catch (_) {}
     if (isDesktop) {
       if (_firstTime) {
-        final globalFullscreen = ref.read(fullScreenPlayerStateProvider);
+        final globalFullscreen =
+            ref.read(fullScreenPlayerStateProvider) &&
+            mayEnterFullScreenOnItsOwn;
         // Delay fullscreen until after the first frame so the window is ready.
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setFullScreen(value: globalFullscreen);
