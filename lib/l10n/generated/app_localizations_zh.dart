@@ -1687,6 +1687,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get fullscreen => '全屏';
 
   @override
+  String get fullscreen_wayland_info =>
+      'Under Wayland, not applied on opening: switching the window to fullscreen can freeze the app (a Flutter bug).';
+
+  @override
   String get update_library => '更新库';
 
   @override

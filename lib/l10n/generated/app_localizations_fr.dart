@@ -1760,6 +1760,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get fullscreen => 'Plein écran';
 
   @override
+  String get fullscreen_wayland_info =>
+      'Sous Wayland, non appliqué à l\'ouverture : passer la fenêtre en plein écran peut figer l\'application (bug de Flutter).';
+
+  @override
   String get update_library => 'Mettre à jour la bibliothèque';
 
   @override

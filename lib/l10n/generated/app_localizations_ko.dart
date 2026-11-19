@@ -1705,6 +1705,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get fullscreen => '전체 화면';
 
   @override
+  String get fullscreen_wayland_info =>
+      'Under Wayland, not applied on opening: switching the window to fullscreen can freeze the app (a Flutter bug).';
+
+  @override
   String get update_library => '보관함 업데이트';
 
   @override

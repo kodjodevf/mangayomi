@@ -3207,6 +3207,12 @@ abstract class AppLocalizations {
   /// **'Fullscreen'**
   String get fullscreen;
 
+  /// No description provided for @fullscreen_wayland_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Under Wayland, not applied on opening: switching the window to fullscreen can freeze the app (a Flutter bug).'**
+  String get fullscreen_wayland_info;
+
   /// No description provided for @update_library.
   ///
   /// In en, this message translates to:

@@ -14,6 +14,23 @@ final bool isMobile = Platform.isAndroid || Platform.isIOS;
 /// macOS or iOS
 final bool isApple = Platform.isMacOS || Platform.isIOS;
 
+/// Linux with GTK talking to a Wayland compositor, XWayland excluded.
+final bool isLinuxWayland =
+    Platform.isLinux && isWaylandSession(Platform.environment);
+
+/// Whether GDK picks Wayland with [environment]: the first backend
+/// `GDK_BACKEND` lists when it is set, and then only with a Wayland display
+/// to connect to, or GDK falls back to X11.
+@visibleForTesting
+bool isWaylandSession(Map<String, String> environment) {
+  final backends = environment['GDK_BACKEND']?.trim() ?? '';
+  if (backends.isNotEmpty) {
+    final first = backends.split(',').first.trim();
+    if (first != 'wayland' && first != '*') return false;
+  }
+  return (environment['WAYLAND_DISPLAY'] ?? '').isNotEmpty;
+}
+
 /// Whether this device can use the floating capsule navigation bar.
 ///
 /// Everywhere touch-first plus the two desktops that already match it: Apple,

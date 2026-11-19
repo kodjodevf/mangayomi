@@ -1738,6 +1738,10 @@ class AppLocalizationsAs extends AppLocalizations {
   String get fullscreen => 'সম্পূৰ্ণ স্ক্ৰীন';
 
   @override
+  String get fullscreen_wayland_info =>
+      'Under Wayland, not applied on opening: switching the window to fullscreen can freeze the app (a Flutter bug).';
+
+  @override
   String get update_library => 'পুথিভঁৰাল আপডেট কৰক';
 
   @override

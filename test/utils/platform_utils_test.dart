@@ -86,4 +86,51 @@ void main() {
       expect(await insetFor(const Size(1920, 1080)), 64);
     });
   });
+
+  group('isWaylandSession', () {
+    test('a Wayland display with no backend asked for is Wayland', () {
+      expect(isWaylandSession({'WAYLAND_DISPLAY': 'wayland-1'}), isTrue);
+      expect(
+        isWaylandSession({'WAYLAND_DISPLAY': 'wayland-1', 'GDK_BACKEND': ''}),
+        isTrue,
+      );
+    });
+
+    test('X11 asked for first is not, Wayland display or not', () {
+      expect(
+        isWaylandSession({
+          'WAYLAND_DISPLAY': 'wayland-1',
+          'GDK_BACKEND': 'x11',
+        }),
+        isFalse,
+      );
+      expect(
+        isWaylandSession({
+          'WAYLAND_DISPLAY': 'wayland-1',
+          'GDK_BACKEND': 'x11,wayland',
+        }),
+        isFalse,
+      );
+    });
+
+    test('Wayland asked for first is, when there is a display', () {
+      expect(
+        isWaylandSession({
+          'WAYLAND_DISPLAY': 'wayland-1',
+          'GDK_BACKEND': ' wayland , x11',
+        }),
+        isTrue,
+      );
+      expect(
+        isWaylandSession({'WAYLAND_DISPLAY': 'wayland-1', 'GDK_BACKEND': '*'}),
+        isTrue,
+      );
+    });
+
+    test('without a Wayland display GDK falls back to X11', () {
+      expect(isWaylandSession({'DISPLAY': ':0'}), isFalse);
+      expect(isWaylandSession({'GDK_BACKEND': 'wayland,x11'}), isFalse);
+      expect(isWaylandSession({'WAYLAND_DISPLAY': ''}), isFalse);
+    });
+  });
 }
