@@ -251,6 +251,24 @@ class _MangaChapterPageGalleryState
   int pageViewToActualIndexSyncForPrefetch(int pageViewIndex) =>
       pageViewToActualIndexSync(pageViewIndex);
 
+  /// The paged view stays where it was, now on the page before the one read:
+  /// it is moved on once it has the pages put in.
+  @override
+  void onPagesInsertedBeforeCurrent(int count) {
+    if (_cachedReaderMode.isContinuous || isDoublePageActive) return;
+    final index = _currentIndex;
+    if (index == null) return;
+    final target = index + count;
+    _currentIndex = target;
+    _currentPageViewIndex.value = target;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _currentIndex != target) return;
+      if (_extendedController.hasClients) {
+        _extendedController.jumpToPage(target);
+      }
+    });
+  }
+
   @override
   int? get currentZoomPageViewIndex => _currentIndex;
   @override

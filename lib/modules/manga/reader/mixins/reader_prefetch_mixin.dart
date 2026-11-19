@@ -36,6 +36,10 @@ mixin ReaderPrefetchMixin<T extends ConsumerStatefulWidget>
   bool get isDoublePageActiveForPrefetch;
   int pageViewToActualIndexSyncForPrefetch(int pageViewIndex);
 
+  /// Called once [count] pages were put before the one being read, so it
+  /// can be kept in view.
+  void onPagesInsertedBeforeCurrent(int count);
+
   void disposePrefetchMixin() {
     evictionAndPrefetchDebounce?.cancel();
   }
@@ -157,8 +161,11 @@ mixin ReaderPrefetchMixin<T extends ConsumerStatefulWidget>
     }
   }
 
-  /// Warms Flutter's [ImageCache] and pre-resolves each page's
-  /// local/archive file path in reading order before the widget tree renders.
+  /// Brings the next pages' files to the disk cache, in reading order, and
+  /// notes each page's file path.
+  ///
+  /// Nothing is decoded here: a page decodes once its widget is built, which
+  /// the paged view does for the page on either side of the one read.
   Future<void> prefetchPagesInOrder() async {
     final sessionId = ++_prefetchSessionId;
     if (pages.isEmpty) return;
@@ -284,9 +291,13 @@ mixin ReaderPrefetchMixin<T extends ConsumerStatefulWidget>
           ..loadedWidth = halfWidth
           ..loadedHeight = height;
 
+    // The page before the one read is built, and so split, ahead of time:
+    // the one read is then one further on.
+    final current = currentPrefetchPageViewIndex;
     setState(() {
       preloadManager.splitPage(index, page1, page2);
     });
+    if (current != null && index < current) onPagesInsertedBeforeCurrent(1);
   }
 
   /// Replaces a very tall page, read top to bottom, with slices of it: see

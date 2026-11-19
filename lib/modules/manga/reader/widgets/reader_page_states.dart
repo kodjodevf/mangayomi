@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_interactive_region.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -9,14 +11,51 @@ import 'package:shiori/shiori.dart';
 /// It was Material's ring spinning slowly round, the share left unsaid.
 /// Drawn over the page's ground, whatever colour the reader set it to: the
 /// ring is the accent and the label carries its own scrim.
-class ReaderPageLoading extends StatelessWidget {
-  const ReaderPageLoading({super.key, required this.progress});
+///
+/// Nothing shows for the first [delay]: a page already on disk decodes in
+/// less, and the ring only flashed up and went.
+class ReaderPageLoading extends StatefulWidget {
+  const ReaderPageLoading({
+    super.key,
+    required this.progress,
+    this.delay = defaultDelay,
+  });
 
   /// From 0 to 1; 0 while the size is not known.
   final double progress;
 
+  final Duration delay;
+
+  static const defaultDelay = Duration(milliseconds: 250);
+
+  @override
+  State<ReaderPageLoading> createState() => _ReaderPageLoadingState();
+}
+
+class _ReaderPageLoadingState extends State<ReaderPageLoading> {
+  late bool _shown = widget.delay == Duration.zero;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    if (!_shown) {
+      _timer = Timer(widget.delay, () {
+        if (mounted) setState(() => _shown = true);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!_shown) return const SizedBox.shrink();
+    final progress = widget.progress;
     final tokens = context.shiori;
     final known = progress > 0 && progress.isFinite;
     return Center(
