@@ -129,7 +129,7 @@ void main(List<String> args) async {
       // the first frame.
       if (!isMobile) {
         await windowManager.ensureInitialized();
-        await WindowGeometry.restore();
+        await WindowGeometryStore.restore();
       }
       if (Platform.isWindows) {
         registerProtocolHandler("mangayomi");
@@ -537,7 +537,7 @@ class _MyAppState extends ConsumerState<MyApp>
     WidgetsBinding.instance.removeObserver(this);
     if (!isMobile) {
       windowManager.removeListener(this);
-      WindowGeometry.save();
+      unawaited(WindowGeometryStore.save());
     }
     MExtensionServerPlatform(ref).stopServer();
     _linkSubscription?.cancel();
@@ -547,24 +547,25 @@ class _MyAppState extends ConsumerState<MyApp>
     super.dispose();
   }
 
-  // Linux emits `resize`/`move` while the window is being resized or moved;
-  // Windows and macOS emit `resized`/`moved` once it settles. Handle both, or
-  // the geometry is never saved on Linux and the window size is not remembered.
+  // Linux emits `resize`/`move` at each step of a resize or move; Windows and
+  // macOS emit `resized`/`moved` once it settles. Handle both, or the geometry
+  // is never saved on Linux and the window size is not remembered.
   @override
-  void onWindowResize() => WindowGeometry.save();
+  void onWindowResize() => WindowGeometryStore.scheduleSave();
 
   @override
-  void onWindowResized() => WindowGeometry.save();
+  void onWindowResized() => WindowGeometryStore.scheduleSave();
 
   @override
-  void onWindowMove() => WindowGeometry.save();
+  void onWindowMove() => WindowGeometryStore.scheduleSave();
 
   @override
-  void onWindowMoved() => WindowGeometry.save();
+  void onWindowMoved() => WindowGeometryStore.scheduleSave();
 
   @override
-  void onWindowClose() {
-    WindowGeometry.save();
+  Future<void> onWindowClose() async {
+    // Awaited: on Linux the exit below would otherwise come first.
+    await WindowGeometryStore.save();
     // Workaround for libepoxy error when closing app; caused by media-kit
     if (Platform.isLinux) exit(0);
   }
