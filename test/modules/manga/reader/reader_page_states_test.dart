@@ -24,14 +24,48 @@ void main() {
   );
 
   testWidgets('loading says how far it has come once it knows', (tester) async {
-    await pump(tester, const ReaderPageLoading(progress: 0.42));
+    await pump(
+      tester,
+      const ReaderPageLoading(progress: 0.42, delay: Duration.zero),
+    );
     await tester.pumpAndSettle();
     expect(find.text('42 %'), findsOneWidget);
 
-    await pump(tester, const ReaderPageLoading(progress: 0));
+    await pump(
+      tester,
+      const ReaderPageLoading(progress: 0, delay: Duration.zero),
+    );
     await tester.pump();
     expect(find.byType(ShioriOverlayLabel), findsNothing);
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+
+  testWidgets('a page that loads quickly never shows the ring', (tester) async {
+    await pump(tester, const ReaderPageLoading(progress: 0));
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+    await tester.pump(
+      ReaderPageLoading.defaultDelay - const Duration(milliseconds: 1),
+    );
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+    // Loaded: the caller puts the page in its place.
+    await pump(tester, const SizedBox.shrink());
+    await tester.pump(ReaderPageLoading.defaultDelay);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets('a page that takes longer shows the ring, progress kept', (
+    tester,
+  ) async {
+    await pump(tester, const ReaderPageLoading(progress: 0));
+    await tester.pump(ReaderPageLoading.defaultDelay);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    // Bytes arriving rebuild the same ring rather than starting over.
+    await pump(tester, const ReaderPageLoading(progress: 0.5));
+    await tester.pumpAndSettle();
+    expect(find.text('50 %'), findsOneWidget);
   });
 
   testWidgets('a failed page says so on its own card, and retries', (

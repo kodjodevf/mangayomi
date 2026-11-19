@@ -176,6 +176,9 @@ class ReaderPageContent extends ConsumerWidget {
       },
       child: (pageMode == PageMode.doublePage && !isHorizontalContinuous)
           ? PageView.builder(
+              // Builds the spread on either side too, so it decodes while this
+              // one is read, as single pages do below.
+              allowImplicitScrolling: true,
               controller: extendedController,
               scrollDirection: scrollDirection,
               reverse: isReverseHorizontal,
@@ -234,6 +237,11 @@ class ReaderPageContent extends ConsumerWidget {
               onPageChanged: onPageChanged,
             )
           : PageView.builder(
+              // Builds the page on either side too. A page decodes once it is
+              // built, and the prefetch only brings its file to disk: built
+              // only as it slid into view, every page showed its loading
+              // ring, prefetched or not.
+              allowImplicitScrolling: true,
               controller: extendedController,
               scrollDirection: scrollDirection,
               reverse: isReverseHorizontal,
