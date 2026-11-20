@@ -237,6 +237,75 @@ void main() {
       expect(stored().updateRepo, _fork);
     });
 
+    group('listings of a removed repository', () {
+      Source listing(int id, Repo? repo, {bool installed = false}) =>
+          Source(id: id, version: '1.0.0', versionLast: '1.0.0')
+            ..isAdded = installed
+            ..isLocal = false
+            ..sourceCode = installed ? 'code' : ''
+            ..itemType = ItemType.manga
+            ..repo = repo;
+
+      List<int?> remaining() =>
+          isar.sources.where().findAllSync().map((s) => s.id).toList();
+
+      test('go once the repository is no longer in the list', () async {
+        isar.writeTxnSync(
+          () =>
+              isar.sources.putAllSync([listing(1, _origin), listing(2, _fork)]),
+        );
+        await removeListingsOfRemovedRepos(
+          repos: [_origin],
+          offeredIds: {1},
+          itemType: ItemType.manga,
+        );
+        expect(remaining(), [1]);
+      });
+
+      test('an installed extension stays, wherever it came from', () async {
+        isar.writeTxnSync(
+          () => isar.sources.putSync(listing(2, _fork, installed: true)),
+        );
+        await removeListingsOfRemovedRepos(
+          repos: const [],
+          offeredIds: const {},
+          itemType: ItemType.manga,
+        );
+        expect(remaining(), [2]);
+      });
+
+      test('one a current repository still offers stays', () async {
+        // Recorded with no repository, or one since renamed, but offered.
+        isar.writeTxnSync(() => isar.sources.putSync(listing(3, null)));
+        await removeListingsOfRemovedRepos(
+          repos: [_origin],
+          offeredIds: {3},
+          itemType: ItemType.manga,
+        );
+        expect(remaining(), [3]);
+      });
+
+      test('a repository that could not be read keeps its listings', () async {
+        isar.writeTxnSync(() => isar.sources.putSync(listing(4, _origin)));
+        await removeListingsOfRemovedRepos(
+          repos: [_origin],
+          offeredIds: const {},
+          itemType: ItemType.manga,
+        );
+        expect(remaining(), [4]);
+      });
+
+      test('the address is the same with a slash or capitals', () async {
+        isar.writeTxnSync(() => isar.sources.putSync(listing(5, _origin)));
+        await removeListingsOfRemovedRepos(
+          repos: [Repo(jsonUrl: 'HTTPS://origin.test/index.json/')],
+          offeredIds: const {},
+          itemType: ItemType.manga,
+        );
+        expect(remaining(), [5]);
+      });
+    });
+
     group('a repository that moved', () {
       final legacy = Repo(
         name: 'Store',
