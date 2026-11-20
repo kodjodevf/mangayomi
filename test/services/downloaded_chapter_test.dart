@@ -14,40 +14,43 @@ void main() {
       File(p.join(directory.path, name)).writeAsStringSync('');
 
   group('findChapterArchive', () {
-    test('finds the archive the downloader writes', () {
+    test('finds the archive the downloader writes', () async {
       write('Chapter 1.cbz');
       expect(
-        findChapterArchive(directory, 'Chapter 1')?.path,
+        (await findChapterArchive(directory, 'Chapter 1'))?.path,
         endsWith('Chapter 1.cbz'),
       );
     });
 
-    test('finds it when the title held a colon the downloader stripped', () {
-      // The downloader replaces forbidden characters with spaces, so this is
-      // the name on disk for a chapter called "Chapter 1: Beginnings". The
-      // reader used to rebuild the raw name and never match it.
-      write('Chapter 1  Beginnings.cbz');
-      expect(
-        findChapterArchive(directory, 'Chapter 1: Beginnings')?.path,
-        endsWith('Chapter 1  Beginnings.cbz'),
-      );
-    });
+    test(
+      'finds it when the title held a colon the downloader stripped',
+      () async {
+        // The downloader replaces forbidden characters with spaces, so this is
+        // the name on disk for a chapter called "Chapter 1: Beginnings". The
+        // reader used to rebuild the raw name and never match it.
+        write('Chapter 1  Beginnings.cbz');
+        expect(
+          (await findChapterArchive(directory, 'Chapter 1: Beginnings'))?.path,
+          endsWith('Chapter 1  Beginnings.cbz'),
+        );
+      },
+    );
 
-    test('finds it under a name with nothing to sanitise', () {
+    test('finds it under a name with nothing to sanitise', () async {
       write('Chapter 1 - 1_2.cbz');
       expect(
-        findChapterArchive(directory, 'Chapter 1 - 1_2')?.path,
+        (await findChapterArchive(directory, 'Chapter 1 - 1_2'))?.path,
         endsWith('Chapter 1 - 1_2.cbz'),
       );
     });
 
-    test('is null when nothing was downloaded', () {
-      expect(findChapterArchive(directory, 'Chapter 1'), isNull);
+    test('is null when nothing was downloaded', () async {
+      expect(await findChapterArchive(directory, 'Chapter 1'), isNull);
     });
 
-    test('does not match another chapter in the same manga folder', () {
+    test('does not match another chapter in the same manga folder', () async {
       write('Chapter 2.cbz');
-      expect(findChapterArchive(directory, 'Chapter 1'), isNull);
+      expect(await findChapterArchive(directory, 'Chapter 1'), isNull);
     });
   });
 
@@ -62,7 +65,7 @@ void main() {
         ..createSync(recursive: true);
     });
 
-    DownloadedChapter? find({bool isComplete = true}) =>
+    Future<DownloadedChapter?> find({bool isComplete = true}) =>
         findDownloadedChapterIn(
           [downloads, localFolder],
           chapterName: 'Chapter 1',
@@ -81,81 +84,111 @@ void main() {
       }
     }
 
-    test('is null when nothing was downloaded anywhere', () {
-      expect(find(), isNull);
+    test('is null when nothing was downloaded anywhere', () async {
+      expect(await find(), isNull);
     });
 
-    test('finds an archive in the downloads directory', () {
+    test('finds an archive in the downloads directory', () async {
       writeArchive(downloads);
-      expect(find()?.archive?.path, startsWith(downloads.path));
+      expect((await find())?.archive?.path, startsWith(downloads.path));
     });
 
-    test('falls back to a local folder, where older builds put it', () {
+    test('falls back to a local folder, where older builds put it', () async {
       writeArchive(localFolder);
-      expect(find()?.archive?.path, startsWith(localFolder.path));
+      expect((await find())?.archive?.path, startsWith(localFolder.path));
     });
 
-    test('prefers the downloads directory when both hold a copy', () {
+    test('prefers the downloads directory when both hold a copy', () async {
       writeArchive(downloads);
       writeArchive(localFolder);
-      expect(find()?.archive?.path, startsWith(downloads.path));
+      expect((await find())?.archive?.path, startsWith(downloads.path));
     });
 
-    test('finds a page folder and counts it', () {
+    test('finds a page folder and counts it', () async {
       writePages(downloads, 3);
-      final found = find();
+      final found = await find();
       expect(found?.pagesDirectory?.path, startsWith(downloads.path));
       expect(found?.pageCount, 3);
     });
 
-    test('finds a page folder in a local folder too', () {
+    test('finds a page folder in a local folder too', () async {
       writePages(localFolder, 2);
-      expect(find()?.pagesDirectory?.path, startsWith(localFolder.path));
+      expect(
+        (await find())?.pagesDirectory?.path,
+        startsWith(localFolder.path),
+      );
     });
 
-    test('ignores a page folder while the download is still running', () {
+    test('ignores a page folder while the download is still running', () async {
       writePages(downloads, 3);
-      expect(find(isComplete: false), isNull);
+      expect((await find(isComplete: false)), isNull);
     });
 
     test('still takes an archive while a download is running, since an archive '
-        'is only written once the download finished', () {
+        'is only written once the download finished', () async {
       writeArchive(downloads);
-      expect(find(isComplete: false)?.archive, isNotNull);
+      expect((await find(isComplete: false))?.archive, isNotNull);
     });
 
-    test('prefers the archive over a page folder beside it', () {
+    test('prefers the archive over a page folder beside it', () async {
       writeArchive(downloads);
       writePages(downloads, 3);
-      expect(find()?.archive, isNotNull);
-      expect(find()?.pagesDirectory, isNull);
+      expect((await find())?.archive, isNotNull);
+      expect((await find())?.pagesDirectory, isNull);
     });
   });
 
-  group('countDownloadedPages', () {
-    test('counts a complete chapter', () {
-      for (final name in ['001.jpg', '002.jpg', '003.jpg']) {
+  group('listDownloadedPageFiles', () {
+    Future<List<String>> names(Directory directory) async => [
+      for (final file in await listDownloadedPageFiles(directory))
+        p.basename(file.path),
+    ];
+
+    test('lists a complete chapter in reading order', () async {
+      for (final name in ['003.jpg', '001.jpg', '002.jpg']) {
         write(name);
       }
-      expect(countDownloadedPages(directory), 3);
+      expect(await names(directory), ['001.jpg', '002.jpg', '003.jpg']);
     });
 
-    test('stops at the first gap, since the reader asks by page index', () {
+    test('keeps each page under the extension it was saved with', () async {
       write('001.jpg');
-      write('002.jpg');
-      write('004.jpg');
-      expect(countDownloadedPages(directory), 2);
+      write('002.webp');
+      write('003.avif');
+      expect(await names(directory), ['001.jpg', '002.webp', '003.avif']);
     });
 
-    test('is zero for a folder holding no first page', () {
+    test(
+      'takes the first known extension when a page is there twice',
+      () async {
+        write('001.png');
+        write('001.jpg');
+        expect(await names(directory), ['001.jpg']);
+      },
+    );
+
+    test(
+      'stops at the first gap, since the reader asks by page index',
+      () async {
+        write('001.jpg');
+        write('002.jpg');
+        write('004.jpg');
+        expect(await names(directory), ['001.jpg', '002.jpg']);
+      },
+    );
+
+    test('is empty for a folder holding no first page', () async {
       write('cover.jpg');
-      expect(countDownloadedPages(directory), 0);
+      Directory(p.join(directory.path, '001.jpg.d')).createSync();
+      expect(await names(directory), isEmpty);
     });
 
-    test('is zero for a folder that was never created', () {
+    test('is empty for a folder that was never created', () async {
       expect(
-        countDownloadedPages(Directory(p.join(directory.path, 'missing'))),
-        0,
+        await listDownloadedPageFiles(
+          Directory(p.join(directory.path, 'missing')),
+        ),
+        isEmpty,
       );
     });
   });

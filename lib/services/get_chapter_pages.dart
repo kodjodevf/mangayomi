@@ -131,18 +131,22 @@ Future<GetChapterPagesModel> getChapterPages(
         }
       } else {
         // With no urls from the cache and none from the source, the folder on
-        // disk is the only thing that knows how many pages there are.
+        // disk is the only thing that knows how many pages there are. Each
+        // page on disk carries its file, found here once, so that nothing
+        // looks it up again while the reader builds the page.
+        final pageFiles = downloaded?.pageFiles ?? const <File>[];
         final pageCount = pageUrls.isNotEmpty
             ? pageUrls.length
-            : downloaded!.pageCount;
+            : pageFiles.length;
         for (var i = 0; i < pageCount; i++) {
           archiveImages.add(null);
-          chapterModel.localImagePaths.add(null);
-          if (await findDownloadedPageFileAsync(path!, i) != null) {
-            isLocaleList.add(true);
-          } else {
-            isLocaleList.add(false);
-          }
+          final file = i < pageFiles.length
+              ? pageFiles[i]
+              : path == null
+              ? null
+              : await findDownloadedPageFileAsync(path, i);
+          chapterModel.localImagePaths.add(file?.path);
+          isLocaleList.add(file != null);
         }
       }
       // The reader indexes pageUrls, isLocaleList and archiveImages together,

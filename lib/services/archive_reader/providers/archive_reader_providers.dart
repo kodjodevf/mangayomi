@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mangayomi/services/archive_reader/models/models.dart';
 import 'package:mangayomi/src/rust/api/rar.dart';
 import 'package:mangayomi/utils/downloaded_page_file.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:path/path.dart' as p;
 part 'archive_reader_providers.g.dart';
@@ -54,7 +55,7 @@ Future<List<LocalArchive>> _extractArchivesFromDirectory(
 
   try {
     final dir = Directory(directoryPath);
-    if (!dir.existsSync()) {
+    if (!await dir.exists()) {
       return archives;
     }
 
@@ -64,17 +65,24 @@ Future<List<LocalArchive>> _extractArchivesFromDirectory(
         try {
           final archive = await _extractArchive(path);
           archives.add(archive);
-        } catch (e) {
-          if (kDebugMode) {
-            debugPrint('Error extracting archive at $path: $e');
-          }
+        } catch (error, stack) {
+          // The other archives of the folder are still listed.
+          recordError(
+            error,
+            stack: stack,
+            source: 'archive_reader',
+            detail: path,
+          );
         }
       },
     );
-  } catch (e) {
-    if (kDebugMode) {
-      debugPrint('Error scanning directory $directoryPath: $e');
-    }
+  } catch (error, stack) {
+    recordError(
+      error,
+      stack: stack,
+      source: 'archive_reader',
+      detail: directoryPath,
+    );
   }
 
   return archives;
@@ -87,7 +95,7 @@ _extractArchiveMetadataFromDirectory(String directoryPath) async {
 
   try {
     final dir = Directory(directoryPath);
-    if (!dir.existsSync()) {
+    if (!await dir.exists()) {
       return metadata;
     }
 
@@ -97,17 +105,24 @@ _extractArchiveMetadataFromDirectory(String directoryPath) async {
         try {
           final data = await _extractArchiveMetadata(path);
           metadata.add(data);
-        } catch (e) {
-          if (kDebugMode) {
-            debugPrint('Error extracting metadata at $path: $e');
-          }
+        } catch (error, stack) {
+          // The other archives of the folder are still listed.
+          recordError(
+            error,
+            stack: stack,
+            source: 'archive_reader',
+            detail: path,
+          );
         }
       },
     );
-  } catch (e) {
-    if (kDebugMode) {
-      debugPrint('Error scanning directory $directoryPath: $e');
-    }
+  } catch (error, stack) {
+    recordError(
+      error,
+      stack: stack,
+      source: 'archive_reader',
+      detail: directoryPath,
+    );
   }
 
   return metadata;
@@ -119,9 +134,7 @@ Future<void> _scanDirectoryRecursive(
   required Future<void> Function(String path) onArchiveFound,
 }) async {
   try {
-    final entities = dir.listSync();
-
-    for (final entity in entities) {
+    await for (final entity in dir.list()) {
       if (entity is Directory) {
         // Recursive scan
         await _scanDirectoryRecursive(entity, onArchiveFound: onArchiveFound);
@@ -131,10 +144,13 @@ Future<void> _scanDirectoryRecursive(
         }
       }
     }
-  } catch (e) {
-    if (kDebugMode) {
-      debugPrint('Error scanning directory ${dir.path}: $e');
-    }
+  } catch (error, stack) {
+    recordError(
+      error,
+      stack: stack,
+      source: 'archive_reader',
+      detail: dir.path,
+    );
   }
 }
 
@@ -237,7 +253,7 @@ bool _isHiddenSystemFile(String path) {
 Future<LocalArchive> _extractArchive(String path) async {
   try {
     // Handle directory of images
-    if (Directory(path).existsSync()) {
+    if (await Directory(path).exists()) {
       return await _extractFromImageFolder(path);
     }
 
@@ -302,7 +318,7 @@ Future<LocalArchive> _extractFromImageFolder(String path) async {
     ..extensionType = LocalExtensionType.folder
     ..name = p.basename(path)
     ..images = images
-    ..coverImage = imageFiles.first.readAsBytesSync();
+    ..coverImage = await imageFiles.first.readAsBytes();
 }
 
 /// Extract images from an archive file
@@ -398,7 +414,7 @@ _extractMetadataFromImageFolder(String path) async {
     throw Exception('No images found in folder: $path');
   }
 
-  final cover = images.first.readAsBytesSync();
+  final cover = await images.first.readAsBytes();
   return (p.basename(path), LocalExtensionType.folder, cover, path);
 }
 

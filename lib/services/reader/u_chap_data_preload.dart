@@ -22,12 +22,12 @@ class UChapDataPreload {
   bool? isLastChapter;
   Rect? srcRect;
 
-  /// The real on-disk path of this page, for local image-folder chapters
-  /// whose pages already exist as standalone files. When set, this page
-  /// never needs to be read into memory and copied back out to a temp file -
-  /// [getLocalFilePath] returns it directly. Null for everything else
-  /// (archive-file entries, downloaded/remote pages), which have no single
-  /// real file they can point to up front.
+  /// The real on-disk path of this page, when it exists as a file of its
+  /// own: a page of a local image folder, or a downloaded page. When set, the
+  /// page is shown from it as it is, with no lookup and no copy to a temp
+  /// file - [getLocalFilePath] returns it directly. Null for everything else
+  /// (archive-file entries, remote pages), which have no single real file
+  /// they can point to up front.
   String? localImagePath;
 
   /// Cached rendered dimensions (set after image first loads)
