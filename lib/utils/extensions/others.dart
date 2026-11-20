@@ -11,9 +11,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:mangayomi/services/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/services/http/custom_extended_image_provider.dart';
-import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/downloaded_page_file.dart';
+import 'package:mangayomi/utils/error_toast.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:path/path.dart' as p;
@@ -107,7 +108,7 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
       return tempFile.path;
     }
     if (isLocale == true && directory != null && index != null) {
-      return findDownloadedPageFile(directory!, index!)?.path;
+      return (await findDownloadedPageFileAsync(directory!, index!))?.path;
     }
     if (pageUrl != null) {
       final cachedImage = await _getCachedImageFile(pageUrl!.url);
@@ -158,6 +159,8 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
               ? MemoryImage(archiveImage)
               : data.localImagePath != null
               ? FileImage(File(data.localImagePath!))
+              // Only for a page made without its file, which getChapterPages
+              // no longer does: this looks the file up on every build.
               : FileImage(
                   findDownloadedPageFile(data.directory!, data.index!) ??
                       // Nothing found under any known extension - fall back
@@ -192,22 +195,22 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
   }
 }
 
-Future<File?> _getCachedImageFile(String url, {String? cacheKey}) async {
+Future<File?> _getCachedImageFile(String url) async {
   try {
-    // Cache files are named exactly by their md5 key, so the path can be
-    // built directly — listing the whole cache directory to find one file
-    // scaled with the cache size.
-    final String key = cacheKey ?? keyToMd5(url);
-    final Directory cacheImagesDirectory = await StorageProvider()
-        .getCacheDirectory('cacheimagemanga');
-    final file = File(p.join(cacheImagesDirectory.path, key));
-    if (await file.exists()) {
-      return file;
-    }
-  } catch (_) {
+    return await CustomExtendedNetworkImageProvider.findCachedFile(
+      url,
+      'cacheimagemanga',
+    );
+  } catch (error, stack) {
+    // The page is fetched through its provider instead.
+    recordError(
+      error,
+      stack: stack,
+      source: 'page_cache_lookup',
+      level: LogLevel.warning,
+    );
     return null;
   }
-  return null;
 }
 
 /// get md5 from key

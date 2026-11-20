@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -7,6 +8,7 @@ import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/error_toast.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 
 /// Service managing the disk cache for chapter page lists
 ///
@@ -48,7 +50,7 @@ class ChapterCache {
     return dir;
   }
 
-  /// Builds a deterministic cache key for a chapter matching Mihon's model.
+  /// Builds a deterministic cache key for a chapter: its manga and its url.
   String getKey(Chapter chapter) {
     return '${chapter.mangaId}_${chapter.url}';
   }
@@ -92,15 +94,21 @@ class ChapterCache {
       if (pageUrls.any((p) => _isLoopbackProxyUrl(p.url))) {
         try {
           await file.delete();
-        } catch (_) {}
+        } catch (error, stackTrace) {
+          recordError(error, stack: stackTrace, source: 'chapter_cache');
+        }
         return null;
       }
 
       return pageUrls.isNotEmpty ? pageUrls : null;
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('ChapterCache.getPageListFromCache error: $e');
-      }
+    } catch (error, stackTrace) {
+      // The pages are asked of the source again instead.
+      recordError(
+        error,
+        stack: stackTrace,
+        source: 'chapter_cache',
+        level: LogLevel.warning,
+      );
       return null;
     }
   }
@@ -130,16 +138,16 @@ class ChapterCache {
       };
 
       await file.writeAsString(jsonEncode(data), flush: true);
-      // Evict oldest entries if total cache size exceeds 100 MB
-      await trimCache();
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('ChapterCache.putPageListToCache error: $e');
-      }
+      // Evict oldest entries if total cache size exceeds 100 MB. Not awaited:
+      // the chapter being opened waits on this write, and need not wait for
+      // every other cached chapter to be looked over.
+      unawaited(trimCache());
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'chapter_cache');
     }
   }
 
-  /// Maximum cache size on disk matching Mihon's PARAMETER_CACHE_SIZE (100 MB).
+  /// Maximum cache size on disk (100 MB).
   static const int maxCacheSizeBytes = 100 * 1024 * 1024;
 
   /// Removes the cached page list for [chapter].
@@ -161,10 +169,12 @@ class ChapterCache {
       final dir = await _getCacheDirectory();
       if (!await dir.exists()) return;
 
-      final files = dir
-          .listSync()
-          .whereType<File>()
-          .where((f) => f.path.endsWith('.json'))
+      // Asynchronously: this runs each time a chapter's pages are cached, on
+      // the thread that also draws the app, over every chapter cached so far.
+      final files = await dir
+          .list()
+          .where((entity) => entity is File && entity.path.endsWith('.json'))
+          .cast<File>()
           .toList();
 
       int currentSize = 0;
@@ -172,7 +182,7 @@ class ChapterCache {
 
       for (final file in files) {
         try {
-          final stat = file.statSync();
+          final stat = await file.stat();
           currentSize += stat.size;
           fileStats.add((file: file, size: stat.size, modified: stat.modified));
         } catch (error, stackTrace) {
@@ -194,10 +204,8 @@ class ChapterCache {
           recordError(error, stack: stackTrace, source: 'chapter_cache');
         }
       }
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('ChapterCache.trimCache error: $e');
-      }
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'chapter_cache');
     }
   }
 
@@ -207,17 +215,20 @@ class ChapterCache {
     try {
       final dir = await _getCacheDirectory();
       if (await dir.exists()) {
-        final files = dir.listSync();
-        for (final entity in files) {
+        await for (final entity in dir.list()) {
           if (entity is File && entity.path.endsWith('.json')) {
             try {
               await entity.delete();
               deletedCount++;
-            } catch (_) {}
+            } catch (error, stackTrace) {
+              recordError(error, stack: stackTrace, source: 'chapter_cache');
+            }
           }
         }
       }
-    } catch (_) {}
+    } catch (error, stackTrace) {
+      recordError(error, stack: stackTrace, source: 'chapter_cache');
+    }
     return deletedCount;
   }
 }

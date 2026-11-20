@@ -149,6 +149,25 @@ class CustomExtendedNetworkImageProvider
     return rawUrl;
   }
 
+  /// The file [url] was downloaded to by a provider caching under
+  /// [imageCacheFolderName], or null while it is not there.
+  ///
+  /// The provider's own place and name: the reader looking it up elsewhere,
+  /// or under the raw url when the provider strips a loopback proxy's port,
+  /// never found it, and so the page was decoded and encoded again.
+  static Future<File?> findCachedFile(
+    String url,
+    String? imageCacheFolderName,
+  ) async {
+    final directory = await StorageProvider().getCacheDirectory(
+      imageCacheFolderName,
+    );
+    final file = File(
+      join(directory.path, keyToMd5(normalizeCacheUrl(url.trim()))),
+    );
+    return await file.exists() ? file : null;
+  }
+
   /// Decode Base64 or URL-encoded data URI (e.g. data:image/gif;base64,...)
   static Uint8List? tryDecodeDataUri(String url) {
     if (!url.startsWith('data:')) return null;

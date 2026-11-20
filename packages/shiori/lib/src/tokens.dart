@@ -474,11 +474,23 @@ abstract final class ShioriMotion {
   static const Curve enterCurve = Cubic(0.05, 0.7, 0.1, 1);
   static const Curve exitCurve = Cubic(0.3, 0, 0.8, 0.15);
 
-  /// [duration], or nothing when the platform asks for reduced motion.
+  /// Whether the platform asks for no animation at all (Android's "Remove
+  /// animations", an accessibility service, a test).
+  static bool stillOf(BuildContext context) =>
+      MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+
+  /// Whether the platform asks for less motion: iOS "Reduce Motion", or no
+  /// animation at all. Movement is then a fade instead, as the reader asked.
+  static bool reducedOf(BuildContext context) =>
+      stillOf(context) || (MediaQuery.maybeReduceMotionOf(context) ?? false);
+
+  /// [duration], or nothing when the platform asks for less motion.
+  ///
+  /// What this times is mostly movement, so it stops for "Reduce Motion" as
+  /// well; a transition that can fade instead checks [stillOf] and
+  /// [reducedOf] itself.
   static Duration of(BuildContext context, Duration duration) =>
-      MediaQuery.maybeDisableAnimationsOf(context) ?? false
-      ? Duration.zero
-      : duration;
+      reducedOf(context) ? Duration.zero : duration;
 }
 
 /// Fixed darkening for things drawn over a cover, a page or a video, whose

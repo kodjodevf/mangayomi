@@ -7,34 +7,46 @@ import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mangayomi/utils/avif.dart';
 import 'package:mangayomi/utils/downloaded_page_file.dart';
+import 'package:mangayomi/utils/error_toast.dart';
+import 'package:mangayomi/utils/log/logger.dart';
+import 'package:mangayomi/services/http/custom_extended_image_provider.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 String md5HashString(String input) {
   return md5.convert(utf8.encode(input)).toString();
 }
 
+/// The file a network page was downloaded to, or null while it is not
+/// there.
+///
+/// Where [CustomExtendedNetworkImageProvider] writes it, then in
+/// extended_image's own cache for any other network provider. Asynchronously:
+/// this runs for each page shown, on the thread that draws the app.
 Future<File?> findCachedImageFile(String url, String? cacheFolderName) async {
   try {
-    final hash = md5HashString(url);
-    final foldersToCheck = [?cacheFolderName, 'cacheimagemanga', 'cacheimage'];
-
-    final dirs = <Directory>[];
-    try {
-      dirs.add(await getApplicationCacheDirectory());
-    } catch (_) {}
-    try {
-      dirs.add(await getTemporaryDirectory());
-    } catch (_) {}
-
-    for (final baseDir in dirs) {
-      for (final folder in foldersToCheck) {
-        final file = File('${baseDir.path}/$folder/$hash');
-        if (file.existsSync()) {
-          return file;
-        }
-      }
-    }
-  } catch (_) {}
+    final own = await CustomExtendedNetworkImageProvider.findCachedFile(
+      url,
+      cacheFolderName,
+    );
+    if (own != null) return own;
+    final other = File(
+      p.join(
+        (await getTemporaryDirectory()).path,
+        'cacheimage',
+        md5HashString(url),
+      ),
+    );
+    if (await other.exists()) return other;
+  } catch (error, stack) {
+    // The page is decoded through its provider instead.
+    recordError(
+      error,
+      stack: stack,
+      source: 'page_cache_lookup',
+      level: LogLevel.warning,
+    );
+  }
   return null;
 }
 

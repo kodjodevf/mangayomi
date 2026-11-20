@@ -5,6 +5,8 @@ version: 0.1.0
 
 environment:
   sdk: ^3.13.5
+  # MediaQuery.maybeReduceMotionOf.
+  flutter: ">=3.50.0"
 
 dependencies:
   flutter:

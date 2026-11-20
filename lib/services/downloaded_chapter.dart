@@ -7,6 +7,7 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/downloaded_page_file.dart';
+import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:path/path.dart' as p;
 
 /// Where a downloaded chapter's pages actually sit on disk.
@@ -21,17 +22,21 @@ class DownloadedChapter {
   /// The folder holding one `padIndex(i).jpg` per page.
   final Directory? pagesDirectory;
 
-  /// How many pages [pagesDirectory] holds. Zero for an [archive], whose page
-  /// count is only known once it is unpacked.
-  final int pageCount;
+  /// The pages of [pagesDirectory], in reading order: see
+  /// [listDownloadedPageFiles]. Empty for an [archive], whose pages are only
+  /// known once it is unpacked.
+  final List<File> pageFiles;
+
+  /// How many pages [pagesDirectory] holds; zero for an [archive].
+  int get pageCount => pageFiles.length;
 
   const DownloadedChapter.fromArchive(File this.archive)
     : pagesDirectory = null,
-      pageCount = 0;
+      pageFiles = const [];
 
   const DownloadedChapter.fromPages(
     Directory this.pagesDirectory, {
-    required this.pageCount,
+    required this.pageFiles,
   }) : archive = null;
 }
 
@@ -97,23 +102,23 @@ Future<DownloadedChapter?> findDownloadedChapter(Chapter chapter) async {
 /// so [chapterDirectoryName] is the basename the downloader gave it and only
 /// the parent changes. [isComplete] gates that folder and not the archive, for
 /// the reason given in [findDownloadedChapter].
-DownloadedChapter? findDownloadedChapterIn(
+Future<DownloadedChapter?> findDownloadedChapterIn(
   Iterable<Directory> mangaDirectories, {
   required String chapterName,
   required String chapterDirectoryName,
   required bool isComplete,
-}) {
+}) async {
   for (final mangaDirectory in mangaDirectories) {
-    final archive = findChapterArchive(mangaDirectory, chapterName);
+    final archive = await findChapterArchive(mangaDirectory, chapterName);
     if (archive != null) return DownloadedChapter.fromArchive(archive);
 
     if (!isComplete) continue;
     final pagesDirectory = Directory(
       p.join(mangaDirectory.path, chapterDirectoryName),
     );
-    final pageCount = countDownloadedPages(pagesDirectory);
-    if (pageCount > 0) {
-      return DownloadedChapter.fromPages(pagesDirectory, pageCount: pageCount);
+    final pageFiles = await listDownloadedPageFiles(pagesDirectory);
+    if (pageFiles.isNotEmpty) {
+      return DownloadedChapter.fromPages(pagesDirectory, pageFiles: pageFiles);
     }
   }
   return null;
@@ -126,26 +131,39 @@ DownloadedChapter? findDownloadedChapterIn(
 /// by spaces, while the reader used to rebuild the raw name. That is why a
 /// chapter whose title holds a colon never resolved locally and fell through to
 /// the network.
-File? findChapterArchive(Directory mangaDirectory, String chapterName) {
+Future<File?> findChapterArchive(
+  Directory mangaDirectory,
+  String chapterName,
+) async {
   for (final name in {
     chapterName,
     chapterName.replaceForbiddenCharacters(' '),
   }) {
     final file = File(p.join(mangaDirectory.path, '$name.cbz'));
-    if (file.existsSync()) return file;
+    if (await file.exists()) return file;
   }
   return null;
 }
 
-/// How many pages of [directory] the reader can actually address.
+/// The pages of [directory] the reader can address, in reading order: page
+/// `i` under `padIndex(i)` with any of [knownPageImageExtensions], from the
+/// first up to the first one missing.
 ///
-/// Uses [findDownloadedPageFile] so callers don’t need to assume a fixed
-/// extension. Counts from page 0 upward until the first missing page.
-int countDownloadedPages(Directory directory) {
-  if (!directory.existsSync()) return 0;
-  var count = 0;
-  while (findDownloadedPageFile(directory, count) != null) {
-    count++;
+/// The folder is listed once. Looking each page up under each extension took
+/// a file-system call apiece, on the thread that draws the app.
+Future<List<File>> listDownloadedPageFiles(Directory directory) async {
+  if (!await directory.exists()) return const [];
+  final names = <String>{
+    await for (final entity in directory.list())
+      if (entity is File) p.basename(entity.path),
+  };
+  final pages = <File>[];
+  for (var index = 0; ; index++) {
+    final base = padIndex(index);
+    final extension = knownPageImageExtensions
+        .where((extension) => names.contains('$base$extension'))
+        .firstOrNull;
+    if (extension == null) return pages;
+    pages.add(File(p.join(directory.path, '$base$extension')));
   }
-  return count;
 }
