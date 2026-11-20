@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/reader_common/providers/chapter_display.dart';
 import 'package:mangayomi/router/push_router.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_interactive_region.dart';
-import 'package:mangayomi/utils/chapter_recognition.dart';
+import 'package:mangayomi/utils/chapter_gaps.dart';
 import 'package:shiori/shiori.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -259,18 +259,17 @@ class ChapterTransitionPage extends ConsumerWidget {
 
   /// How many chapters the numbering skips between the one read and the
   /// next, or 0 when it does not or a number cannot be read.
+  /// How many chapter numbers going on to the next chapter skips that no
+  /// chapter of the series carries: the count the reader's warning gives.
   int _gap() {
     final next = nextChapter;
     if (next == null) return 0;
-    final recognition = ChapterRecognition();
-    final (_, a) = recognition.rawSeasonAndNumber(
+    return missingNumbersBetween(
       mangaName,
-      currentChapter.name ?? '',
-    );
-    final (_, b) = recognition.rawSeasonAndNumber(mangaName, next.name ?? '');
-    if (a == null || b == null || a < 0 || b < 0) return 0;
-    final missing = b.floor() - a.floor() - 1;
-    return missing > 0 ? missing : 0;
+      currentChapter,
+      next,
+      currentChapter.manga.value?.chapters ?? const <Chapter>[],
+    ).numberCount;
   }
 
   /// Opens the next chapter, as reaching the end of this page would.

@@ -878,6 +878,19 @@ class SkipDuplicateChaptersState extends _$SkipDuplicateChaptersState {
 }
 
 @riverpod
+class WarnMissingChaptersState extends _$WarnMissingChaptersState {
+  @override
+  bool build() {
+    return settingsRepository.current.warnMissingChapters ?? true;
+  }
+
+  void set(bool value) {
+    state = value;
+    settingsRepository.update((s) => s.warnMissingChapters = value);
+  }
+}
+
+@riverpod
 class SplitTallImagesState extends _$SplitTallImagesState {
   @override
   bool build() {

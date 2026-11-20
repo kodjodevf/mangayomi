@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:mangayomi/modules/reader_common/missing_chapters_warning.dart';
 import 'package:mangayomi/modules/reader_common/key_bindings.dart';
 import 'package:mangayomi/services/download_manager/delete_after_reading.dart';
 import 'package:mangayomi/modules/manga/reader/utils/download_ahead.dart';
@@ -571,17 +572,24 @@ class _MangaChapterPageGalleryState
   ///
   /// If the reader is already at the first or last chapter (depending on
   /// the direction), the method returns without navigating.
-  void _goToChapter(bool next) {
+  Future<void> _goToChapter(bool next) async {
     if (next && !_readerController.hasNextChapter) return;
     if (!next && !_readerController.hasPreviousChapter) return;
+    final chapter = next
+        ? _readerController.getNextChapter()
+        : _readerController.getPrevChapter();
+    if (next &&
+        !await confirmSkippingMissingChapters(
+          context,
+          _readerController,
+          chapter,
+        )) {
+      return;
+    }
+    if (!mounted) return;
     ReaderChapterNavigation.markNavigatingToChapter();
     try {
-      pushReplacementMangaReaderView(
-        context: context,
-        chapter: next
-            ? _readerController.getNextChapter()
-            : _readerController.getPrevChapter(),
-      );
+      pushReplacementMangaReaderView(context: context, chapter: chapter);
     } catch (_) {
       // If the replacement fails, dispose() never runs to reset this flag, so reset it here instead.
       ReaderChapterNavigation.reset();

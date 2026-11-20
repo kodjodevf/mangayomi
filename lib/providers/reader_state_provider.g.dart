@@ -3448,6 +3448,59 @@ abstract class _$SkipDuplicateChaptersState extends $Notifier<bool> {
   }
 }
 
+@ProviderFor(WarnMissingChaptersState)
+final warnMissingChaptersStateProvider = WarnMissingChaptersStateProvider._();
+
+final class WarnMissingChaptersStateProvider
+    extends $NotifierProvider<WarnMissingChaptersState, bool> {
+  WarnMissingChaptersStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'warnMissingChaptersStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$warnMissingChaptersStateHash();
+
+  @$internal
+  @override
+  WarnMissingChaptersState create() => WarnMissingChaptersState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$warnMissingChaptersStateHash() =>
+    r'a842174aaa6532e3069309e61ebe63da8c5da496';
+
+abstract class _$WarnMissingChaptersState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(SplitTallImagesState)
 final splitTallImagesStateProvider = SplitTallImagesStateProvider._();
 

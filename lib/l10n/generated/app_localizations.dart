@@ -8683,6 +8683,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'These items are too long to sync and were left out: {items}'**
   String sync_rows_not_sent(String items);
+
+  /// No description provided for @missing_chapters_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing chapters'**
+  String get missing_chapters_title;
+
+  /// No description provided for @missing_episodes_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing episodes'**
+  String get missing_episodes_title;
+
+  /// No description provided for @missing_chapters_info.
+  ///
+  /// In en, this message translates to:
+  /// **'No chapter of this series carries these numbers. The source may not have them, or may have numbered them differently.'**
+  String get missing_chapters_info;
+
+  /// No description provided for @missing_chapters_skipped.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Chapter {numbers} is missing} other{Chapters {numbers} are missing}}'**
+  String missing_chapters_skipped(int count, String numbers);
+
+  /// No description provided for @missing_chapters_skipped_message.
+  ///
+  /// In en, this message translates to:
+  /// **'The next chapter is {chapter}.'**
+  String missing_chapters_skipped_message(String chapter);
+
+  /// No description provided for @warn_missing_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Warn about missing chapters'**
+  String get warn_missing_chapters;
+
+  /// No description provided for @warn_missing_chapters_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Before going to the next chapter, say which chapter numbers it skips.'**
+  String get warn_missing_chapters_subtitle;
 }
 
 class _AppLocalizationsDelegate

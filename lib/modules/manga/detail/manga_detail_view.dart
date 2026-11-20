@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/missing_chapters_label.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_selection_reset_scope.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_quick_filters.dart';
 import 'package:shiori/shiori.dart';
@@ -301,37 +302,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                                     .fg,
                                                               ),
                                                         ),
-                                                        Builder(
-                                                          builder: (context) {
-                                                            final missing = widget
-                                                                .manga!
-                                                                .missingChapterCount();
-                                                            if (missing <= 0) {
-                                                              return const SizedBox.shrink();
-                                                            }
-                                                            return Text(
-                                                              widget.manga!.itemType !=
-                                                                      ItemType
-                                                                          .anime
-                                                                  ? l10n.missing_chapters(
-                                                                      missing,
-                                                                    )
-                                                                  : l10n.missing_episodes(
-                                                                      missing,
-                                                                    ),
-                                                              style: context
-                                                                  .shiori
-                                                                  .text
-                                                                  .meta
-                                                                  .copyWith(
-                                                                    color: context
-                                                                        .shiori
-                                                                        .color
-                                                                        .error
-                                                                        .foreground,
-                                                                  ),
-                                                            );
-                                                          },
+                                                        MissingChaptersLabel(
+                                                          manga: widget.manga!,
                                                         ),
                                                       ],
                                                     ),

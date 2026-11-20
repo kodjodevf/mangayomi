@@ -3,6 +3,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/repositories/download_repository.dart';
 import 'package:mangayomi/repositories/settings_repository.dart';
+import 'package:mangayomi/utils/chapter_gaps.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 
 /// Sort/identity keys that only bucket by season if numbering actually
@@ -266,24 +267,15 @@ extension MangaExtensions on Manga {
     return list.where((c) => sortKeys[c.id] == null).length;
   }
 
-  /// Count of whole numbers missing from the recognized chapter sequence —
-  /// e.g. chapters 1, 2, 4, 5 present means 1 (chapter 3) is missing. Decimal
-  /// extras (12.5) are floored into their whole chapter, since they aren't
-  /// part of the main numbering. Season-bucketed keys are unbucketed back to
-  /// their raw episode number first, since gaps only make sense within one
-  /// season's own numbering, not across a season * 100000 jump.
-  int missingChapterCount() {
-    final list = getFilteredChapters();
-    final mangaTitle = name ?? '';
-    final recognition = ChapterRecognition();
-    final numbers = <int>{};
-    for (final c in list) {
-      final (_, ep) = recognition.rawSeasonAndNumber(mangaTitle, c.name ?? '');
-      if (ep != null) numbers.add(ep.floor());
-    }
-    if (numbers.length < 2) return 0;
-    final lowest = numbers.reduce((a, b) => a < b ? a : b);
-    final highest = numbers.reduce((a, b) => a > b ? a : b);
-    return (highest - lowest + 1) - numbers.length;
-  }
+  /// The whole chapter numbers absent from the series, as runs: chapters
+  /// 1, 2, 4, 5 present gives 3. Decimal extras (12.5) count for their whole
+  /// chapter, as they are not part of the main numbering.
+  ///
+  /// Over every chapter, not the filtered list: a chapter hidden by a filter
+  /// still exists, and was counted as missing.
+  List<ChapterNumberRange> missingChapterRanges() =>
+      missingNumberRanges(recognizedChapterNumbers(name ?? '', chapters));
+
+  /// How many chapter numbers [missingChapterRanges] covers.
+  int missingChapterCount() => missingChapterRanges().numberCount;
 }

@@ -4959,4 +4959,37 @@ class AppLocalizationsFr extends AppLocalizations {
   String sync_rows_not_sent(String items) {
     return 'Ces éléments sont trop longs pour être synchronisés et ont été laissés de côté : $items';
   }
+
+  @override
+  String get missing_chapters_title => 'Chapitres manquants';
+
+  @override
+  String get missing_episodes_title => 'Épisodes manquants';
+
+  @override
+  String get missing_chapters_info =>
+      'Aucun chapitre de cette série ne porte ces numéros. La source ne les a peut-être pas, ou les a numérotés autrement.';
+
+  @override
+  String missing_chapters_skipped(int count, String numbers) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Les chapitres $numbers manquent',
+      one: 'Le chapitre $numbers manque',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String missing_chapters_skipped_message(String chapter) {
+    return 'Le chapitre suivant est $chapter.';
+  }
+
+  @override
+  String get warn_missing_chapters => 'Avertir des chapitres manquants';
+
+  @override
+  String get warn_missing_chapters_subtitle =>
+      'Avant de passer au chapitre suivant, dire quels numéros de chapitre il saute.';
 }

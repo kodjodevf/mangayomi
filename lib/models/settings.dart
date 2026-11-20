@@ -550,6 +550,10 @@ class Settings {
 
   bool? skipDuplicateChapters;
 
+  /// Whether going to the next chapter first says which chapter numbers it
+  /// skips.
+  bool? warnMissingChapters;
+
   int? deleteAfterReadingSlot;
 
   bool? deleteBookmarkedAfterReading;
@@ -815,6 +819,7 @@ class Settings {
     this.skipReadChapters = false,
     this.skipFilteredChapters = true,
     this.skipDuplicateChapters = true,
+    this.warnMissingChapters = true,
     this.deleteAfterReadingSlot = 0,
     this.deleteBookmarkedAfterReading = false,
     this.downloadAheadWhileReading = 0,
@@ -1210,6 +1215,7 @@ class Settings {
     skipReadChapters = json['skipReadChapters'];
     skipFilteredChapters = json['skipFilteredChapters'];
     skipDuplicateChapters = json['skipDuplicateChapters'];
+    warnMissingChapters = json['warnMissingChapters'];
     deleteAfterReadingSlot = json['deleteAfterReadingSlot'];
     deleteBookmarkedAfterReading = json['deleteBookmarkedAfterReading'];
     downloadAheadWhileReading = json['downloadAheadWhileReading'];
@@ -1493,6 +1499,7 @@ class Settings {
     'skipReadChapters': skipReadChapters,
     'skipFilteredChapters': skipFilteredChapters,
     'skipDuplicateChapters': skipDuplicateChapters,
+    'warnMissingChapters': warnMissingChapters,
     'deleteAfterReadingSlot': deleteAfterReadingSlot,
     'deleteBookmarkedAfterReading': deleteBookmarkedAfterReading,
     'downloadAheadWhileReading': downloadAheadWhileReading,

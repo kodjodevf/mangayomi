@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/router/push_router.dart';
+import 'package:mangayomi/modules/reader_common/missing_chapters_warning.dart';
 import 'package:mangayomi/modules/reader_common/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/reader_common/widgets/reader_app_bar.dart';
 import 'package:mangayomi/providers/reader_state_provider.dart';
@@ -416,11 +417,20 @@ class NovelBottomBar extends ConsumerWidget {
                                 icon: Symbols.skip_next_rounded,
                                 tooltip: context.l10n.next_chapter,
                                 onPressed: hasNextChapter
-                                    ? () {
+                                    ? () async {
+                                        final next = readerController
+                                            .getNextChapter();
+                                        if (!await confirmSkippingMissingChapters(
+                                              context,
+                                              readerController,
+                                              next,
+                                            ) ||
+                                            !context.mounted) {
+                                          return;
+                                        }
                                         pushReplacementMangaReaderView(
                                           context: context,
-                                          chapter: readerController
-                                              .getNextChapter(),
+                                          chapter: next,
                                         );
                                       }
                                     : null,
