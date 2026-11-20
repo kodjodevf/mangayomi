@@ -4941,6 +4941,39 @@ class AppLocalizationsEs extends AppLocalizations {
   String sync_rows_not_sent(String items) {
     return 'These items are too long to sync and were left out: $items';
   }
+
+  @override
+  String get missing_chapters_title => 'Missing chapters';
+
+  @override
+  String get missing_episodes_title => 'Missing episodes';
+
+  @override
+  String get missing_chapters_info =>
+      'No chapter of this series carries these numbers. The source may not have them, or may have numbered them differently.';
+
+  @override
+  String missing_chapters_skipped(int count, String numbers) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Chapters $numbers are missing',
+      one: 'Chapter $numbers is missing',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String missing_chapters_skipped_message(String chapter) {
+    return 'The next chapter is $chapter.';
+  }
+
+  @override
+  String get warn_missing_chapters => 'Warn about missing chapters';
+
+  @override
+  String get warn_missing_chapters_subtitle =>
+      'Before going to the next chapter, say which chapter numbers it skips.';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

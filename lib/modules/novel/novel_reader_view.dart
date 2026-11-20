@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mangayomi/modules/reader_common/missing_chapters_warning.dart';
 import 'package:mangayomi/modules/reader_common/key_bindings.dart';
 import 'package:mangayomi/modules/novel/utils/reading_time.dart';
 import 'package:shiori/shiori.dart';
@@ -288,15 +289,22 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   ///
   /// If the reader is already at the first or last chapter (depending on
   /// the direction), the method returns without navigating.
-  void _goToChapter(bool next) {
+  Future<void> _goToChapter(bool next) async {
     if (next && !readerController.hasNextChapter) return;
     if (!next && !readerController.hasPreviousChapter) return;
-    pushReplacementMangaReaderView(
-      context: context,
-      chapter: next
-          ? readerController.getNextChapter()
-          : readerController.getPrevChapter(),
-    );
+    final chapter = next
+        ? readerController.getNextChapter()
+        : readerController.getPrevChapter();
+    if (next &&
+        !await confirmSkippingMissingChapters(
+          context,
+          readerController,
+          chapter,
+        )) {
+      return;
+    }
+    if (!mounted) return;
+    pushReplacementMangaReaderView(context: context, chapter: chapter);
   }
 
   @override

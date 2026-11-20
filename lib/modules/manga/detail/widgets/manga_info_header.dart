@@ -11,6 +11,7 @@ import 'package:mangayomi/modules/library/library_screen.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/main_view/nav_groups.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/missing_chapters_label.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/detail_explore_sheet.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/detail_genre_chip.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/detail_header_action.dart';
@@ -26,7 +27,6 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/repositories/track_repository.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/utils.dart';
@@ -208,29 +208,7 @@ class _MangaInfoHeaderState extends ConsumerState<MangaInfoHeader> {
                                             color: context.shiori.color.fg,
                                           ),
                                     ),
-                                    Builder(
-                                      builder: (context) {
-                                        final missing = widget.manga
-                                            .missingChapterCount();
-                                        if (missing <= 0) {
-                                          return const SizedBox.shrink();
-                                        }
-                                        return Text(
-                                          widget.manga.itemType !=
-                                                  ItemType.anime
-                                              ? l10n.missing_chapters(missing)
-                                              : l10n.missing_episodes(missing),
-                                          style: context.shiori.text.meta
-                                              .copyWith(
-                                                color: context
-                                                    .shiori
-                                                    .color
-                                                    .error
-                                                    .foreground,
-                                              ),
-                                        );
-                                      },
-                                    ),
+                                    MissingChaptersLabel(manga: widget.manga),
                                   ],
                                 ),
                               ),

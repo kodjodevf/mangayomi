@@ -1362,23 +1362,28 @@ const SettingsSchema = CollectionSchema(
       name: r'volumeKeysPaging',
       type: IsarType.bool,
     ),
-    r'webtoonDisableZoomOut': PropertySchema(
+    r'warnMissingChapters': PropertySchema(
       id: 257,
+      name: r'warnMissingChapters',
+      type: IsarType.bool,
+    ),
+    r'webtoonDisableZoomOut': PropertySchema(
+      id: 258,
       name: r'webtoonDisableZoomOut',
       type: IsarType.bool,
     ),
     r'webtoonDoubleTapZoomEnabled': PropertySchema(
-      id: 258,
+      id: 259,
       name: r'webtoonDoubleTapZoomEnabled',
       type: IsarType.bool,
     ),
     r'webtoonSidePadding': PropertySchema(
-      id: 259,
+      id: 260,
       name: r'webtoonSidePadding',
       type: IsarType.long,
     ),
     r'zoomStartPosition': PropertySchema(
-      id: 260,
+      id: 261,
       name: r'zoomStartPosition',
       type: IsarType.long,
     ),
@@ -2431,10 +2436,11 @@ void _settingsSerialize(
   writer.writeLong(offsets[254], object.volumeBoostCap);
   writer.writeBool(offsets[255], object.volumeKeysInverted);
   writer.writeBool(offsets[256], object.volumeKeysPaging);
-  writer.writeBool(offsets[257], object.webtoonDisableZoomOut);
-  writer.writeBool(offsets[258], object.webtoonDoubleTapZoomEnabled);
-  writer.writeLong(offsets[259], object.webtoonSidePadding);
-  writer.writeLong(offsets[260], object.zoomStartPosition);
+  writer.writeBool(offsets[257], object.warnMissingChapters);
+  writer.writeBool(offsets[258], object.webtoonDisableZoomOut);
+  writer.writeBool(offsets[259], object.webtoonDoubleTapZoomEnabled);
+  writer.writeLong(offsets[260], object.webtoonSidePadding);
+  writer.writeLong(offsets[261], object.zoomStartPosition);
 }
 
 Settings _settingsDeserialize(
@@ -2829,10 +2835,11 @@ Settings _settingsDeserialize(
     volumeBoostCap: reader.readLongOrNull(offsets[254]),
     volumeKeysInverted: reader.readBoolOrNull(offsets[255]),
     volumeKeysPaging: reader.readBoolOrNull(offsets[256]),
-    webtoonDisableZoomOut: reader.readBoolOrNull(offsets[257]),
-    webtoonDoubleTapZoomEnabled: reader.readBoolOrNull(offsets[258]),
-    webtoonSidePadding: reader.readLongOrNull(offsets[259]),
-    zoomStartPosition: reader.readLongOrNull(offsets[260]),
+    warnMissingChapters: reader.readBoolOrNull(offsets[257]),
+    webtoonDisableZoomOut: reader.readBoolOrNull(offsets[258]),
+    webtoonDoubleTapZoomEnabled: reader.readBoolOrNull(offsets[259]),
+    webtoonSidePadding: reader.readLongOrNull(offsets[260]),
+    zoomStartPosition: reader.readLongOrNull(offsets[261]),
   );
   object.chapterFilterBookmarkedList = reader
       .readObjectList<ChapterFilterBookmarked>(
@@ -3549,8 +3556,10 @@ P _settingsDeserializeProp<P>(
     case 258:
       return (reader.readBoolOrNull(offset)) as P;
     case 259:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 260:
+      return (reader.readLongOrNull(offset)) as P;
+    case 261:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -21433,6 +21442,33 @@ extension SettingsQueryFilter
   }
 
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  warnMissingChaptersIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'warnMissingChapters'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  warnMissingChaptersIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'warnMissingChapters'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  warnMissingChaptersEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'warnMissingChapters', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
   webtoonDisableZoomOutIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -24744,6 +24780,19 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByWarnMissingChapters() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'warnMissingChapters', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+  sortByWarnMissingChaptersDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'warnMissingChapters', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByWebtoonDisableZoomOut() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'webtoonDisableZoomOut', Sort.asc);
@@ -27670,6 +27719,19 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByWarnMissingChapters() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'warnMissingChapters', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+  thenByWarnMissingChaptersDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'warnMissingChapters', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByWebtoonDisableZoomOut() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'webtoonDisableZoomOut', Sort.asc);
@@ -29299,6 +29361,12 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByVolumeKeysPaging() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'volumeKeysPaging');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByWarnMissingChapters() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'warnMissingChapters');
     });
   }
 
@@ -31032,6 +31100,13 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, bool?, QQueryOperations> volumeKeysPagingProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'volumeKeysPaging');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+  warnMissingChaptersProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'warnMissingChapters');
     });
   }
 

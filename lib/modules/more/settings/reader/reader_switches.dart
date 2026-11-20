@@ -35,6 +35,7 @@ enum ReaderSwitch {
   skipReadChapters,
   skipFilteredChapters,
   skipDuplicateChapters,
+  warnMissingChapters,
   volumeKeysPaging,
   volumeKeysInverted;
 
@@ -62,6 +63,7 @@ enum ReaderSwitch {
     skipReadChapters => l10n.skip_read_chapters,
     skipFilteredChapters => l10n.skip_filtered_chapters,
     skipDuplicateChapters => l10n.skip_duplicate_chapters,
+    warnMissingChapters => l10n.warn_missing_chapters,
     volumeKeysPaging => l10n.volume_keys_paging,
     volumeKeysInverted => l10n.volume_keys_inverted,
   };
@@ -74,6 +76,7 @@ enum ReaderSwitch {
     splitTallImages => l10n.split_tall_images_subtitle,
     skipReadChapters => l10n.skip_read_chapters_subtitle,
     skipDuplicateChapters => l10n.skip_duplicate_chapters_subtitle,
+    warnMissingChapters => l10n.warn_missing_chapters_subtitle,
     // iOS can only watch the volume, and says what that does to it.
     volumeKeysPaging => Platform.isIOS ? l10n.volume_keys_paging_ios : null,
     _ => null,
@@ -111,6 +114,7 @@ enum ReaderSwitch {
     skipReadChapters => ref.watch(skipReadChaptersStateProvider),
     skipFilteredChapters => ref.watch(skipFilteredChaptersStateProvider),
     skipDuplicateChapters => ref.watch(skipDuplicateChaptersStateProvider),
+    warnMissingChapters => ref.watch(warnMissingChaptersStateProvider),
     volumeKeysPaging => ref.watch(volumeKeysPagingStateProvider),
     volumeKeysInverted => ref.watch(volumeKeysInvertedStateProvider),
   };
@@ -163,6 +167,8 @@ enum ReaderSwitch {
         ref.read(skipFilteredChaptersStateProvider.notifier).set(value);
       case skipDuplicateChapters:
         ref.read(skipDuplicateChaptersStateProvider.notifier).set(value);
+      case warnMissingChapters:
+        ref.read(warnMissingChaptersStateProvider.notifier).set(value);
       case volumeKeysPaging:
         ref.read(volumeKeysPagingStateProvider.notifier).set(value);
       case volumeKeysInverted:
