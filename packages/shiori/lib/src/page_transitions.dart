@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
+import 'tokens.dart';
+
 /// Material motion's LinearOutSlowIn, for what fades in.
 const Curve _linearOutSlowIn = Cubic(0, 0, 0.2, 1);
 
@@ -31,7 +33,11 @@ class ShioriPageTransitionsBuilder extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) return child;
+    if (ShioriMotion.stillOf(context)) return child;
+    if (ShioriMotion.reducedOf(context)) {
+      // A fade in place of the slide.
+      return FadeTransition(opacity: animation, child: child);
+    }
     return ShioriPageTransition(
       animation: animation,
       secondaryAnimation: secondaryAnimation,
@@ -178,14 +184,16 @@ class _ShioriFadeThroughStackState extends State<ShioriFadeThroughStack>
     super.didUpdateWidget(oldWidget);
     _visited.add(widget.index);
     if (oldWidget.index != widget.index) {
-      if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) {
+      if (ShioriMotion.stillOf(context)) {
         _previous = null;
         _controller.value = 1;
       } else {
         _previous = oldWidget.index;
-        _direction =
-            widget.slideDirection?.call(oldWidget.index, widget.index).sign ??
-            0;
+        // Under "Reduce Motion" the switch fades through instead of sliding.
+        _direction = ShioriMotion.reducedOf(context)
+            ? 0
+            : widget.slideDirection?.call(oldWidget.index, widget.index).sign ??
+                  0;
         _controller.duration = _direction == 0
             ? ShioriFadeThrough.duration
             : ShioriPageTransition.duration;

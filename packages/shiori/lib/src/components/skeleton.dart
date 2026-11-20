@@ -49,7 +49,8 @@ class _ShioriSkeletonState extends State<ShioriSkeleton>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final still = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+    // A loop that only says "loading": the first motion to go.
+    final still = ShioriMotion.reducedOf(context);
     if (still) {
       _pulse.stop();
     } else if (!_pulse.isAnimating) {

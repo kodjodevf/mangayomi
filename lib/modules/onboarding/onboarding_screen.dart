@@ -179,7 +179,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   /// been asked to keep still.
   /// A single frame rather than [Duration.zero], because the implicit
   /// animations assert on a zero-length controller.
-  Duration get _motion => MediaQuery.disableAnimationsOf(context)
+  Duration get _motion => ShioriMotion.reducedOf(context)
       ? const Duration(milliseconds: 1)
       : const Duration(milliseconds: 260);
 

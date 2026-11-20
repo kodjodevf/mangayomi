@@ -17,10 +17,14 @@ Widget _host(
   Widget child, {
   ShioriDensity density = ShioriDensity.phone,
   bool disableAnimations = false,
+  bool reduceMotion = false,
 }) => MaterialApp(
   theme: _theme(density: density),
   home: MediaQuery(
-    data: MediaQueryData(disableAnimations: disableAnimations),
+    data: MediaQueryData(
+      disableAnimations: disableAnimations,
+      reduceMotion: reduceMotion,
+    ),
     child: Scaffold(body: child),
   ),
 );
@@ -199,6 +203,14 @@ void main() {
     testWidgets('holds still for reduced motion', (tester) async {
       await tester.pumpWidget(
         _host(const ShioriSkeleton.line(width: 80), disableAnimations: true),
+      );
+
+      expect(tester.hasRunningAnimations, isFalse);
+    });
+
+    testWidgets('holds still under "Reduce Motion"', (tester) async {
+      await tester.pumpWidget(
+        _host(const ShioriSkeleton.line(width: 80), reduceMotion: true),
       );
 
       expect(tester.hasRunningAnimations, isFalse);
@@ -945,38 +957,118 @@ void main() {
     expect((box.decoration as BoxDecoration).color, ShioriScrim.panel);
   });
 
-  testWidgets('a page transition steps aside under reduced motion', (
-    tester,
-  ) async {
+  group('page transition', () {
     const child = SizedBox(key: ValueKey('page'));
-    late Widget built;
-    await tester.pumpWidget(
-      MediaQuery(
-        data: const MediaQueryData(disableAnimations: true),
-        child: Builder(
-          builder: (context) {
-            built = const ShioriPageTransitionsBuilder().buildTransitions(
-              MaterialPageRoute<void>(builder: (_) => child),
-              context,
-              kAlwaysCompleteAnimation,
-              kAlwaysDismissedAnimation,
-              child,
-            );
-            return const SizedBox();
-          },
-        ),
-      ),
-    );
 
-    expect(built, same(child));
+    Future<Widget> build(WidgetTester tester, MediaQueryData data) async {
+      late Widget built;
+      await tester.pumpWidget(
+        MediaQuery(
+          data: data,
+          child: Builder(
+            builder: (context) {
+              built = const ShioriPageTransitionsBuilder().buildTransitions(
+                MaterialPageRoute<void>(builder: (_) => child),
+                context,
+                kAlwaysCompleteAnimation,
+                kAlwaysDismissedAnimation,
+                child,
+              );
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      return built;
+    }
+
+    testWidgets('slides by default', (tester) async {
+      expect(
+        await build(tester, const MediaQueryData()),
+        isA<ShioriPageTransition>(),
+      );
+    });
+
+    testWidgets('steps aside when animations are off', (tester) async {
+      expect(
+        await build(tester, const MediaQueryData(disableAnimations: true)),
+        same(child),
+      );
+    });
+
+    testWidgets('only fades under "Reduce Motion"', (tester) async {
+      final built = await build(
+        tester,
+        const MediaQueryData(reduceMotion: true),
+      );
+
+      expect(built, isA<FadeTransition>());
+      expect((built as FadeTransition).child, same(child));
+    });
+  });
+
+  group('ShioriMotion', () {
+    Future<BuildContext> contextWith(
+      WidgetTester tester,
+      MediaQueryData data,
+    ) async {
+      late BuildContext captured;
+      await tester.pumpWidget(
+        MediaQuery(
+          data: data,
+          child: Builder(
+            builder: (context) {
+              captured = context;
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      return captured;
+    }
+
+    testWidgets('keeps the duration by default', (tester) async {
+      final context = await contextWith(tester, const MediaQueryData());
+
+      expect(ShioriMotion.reducedOf(context), isFalse);
+      expect(
+        ShioriMotion.of(context, ShioriMotion.standard),
+        ShioriMotion.standard,
+      );
+    });
+
+    testWidgets('drops it under "Reduce Motion", which is not stillness', (
+      tester,
+    ) async {
+      final context = await contextWith(
+        tester,
+        const MediaQueryData(reduceMotion: true),
+      );
+
+      expect(ShioriMotion.stillOf(context), isFalse);
+      expect(ShioriMotion.reducedOf(context), isTrue);
+      expect(ShioriMotion.of(context, ShioriMotion.standard), Duration.zero);
+    });
+
+    testWidgets('no animation at all is reduced motion too', (tester) async {
+      final context = await contextWith(
+        tester,
+        const MediaQueryData(disableAnimations: true),
+      );
+
+      expect(ShioriMotion.stillOf(context), isTrue);
+      expect(ShioriMotion.reducedOf(context), isTrue);
+    });
   });
 
   group('ShioriFadeThroughStack', () {
     Widget stack(
       int index, {
       bool lazy = false,
+      bool reduceMotion = false,
       int Function(int from, int to)? slideDirection,
     }) => _host(
+      reduceMotion: reduceMotion,
       ShioriFadeThroughStack(
         index: index,
         lazy: lazy,
@@ -1072,6 +1164,24 @@ void main() {
       expect(dxOf(tester, 'b'), greaterThan(0));
       await tester.pumpAndSettle();
       expect(dxOf(tester, 'a'), 0);
+    });
+
+    testWidgets('under "Reduce Motion" a direction fades instead', (
+      tester,
+    ) async {
+      int direction(int from, int to) => to - from;
+      await tester.pumpWidget(
+        stack(0, reduceMotion: true, slideDirection: direction),
+      );
+      await tester.pumpWidget(
+        stack(1, reduceMotion: true, slideDirection: direction),
+      );
+      await tester.pump(const Duration(milliseconds: 60));
+      expect(dxOf(tester, 'a'), 0);
+      expect(dxOf(tester, 'b'), 0);
+      // Still a fade through, not a cut.
+      expect(tester.hasRunningAnimations, isTrue);
+      await tester.pumpAndSettle();
     });
   });
 }
