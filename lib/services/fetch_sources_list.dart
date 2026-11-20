@@ -141,6 +141,34 @@ Future<void> recordRepoSources(
   await checkIfSourceIsObsolete(sourceList, repo, itemType);
 }
 
+/// Removes the extensions offered by repositories no longer in [repos] and
+/// never installed: a download button for an extension nothing offers any
+/// more.
+///
+/// Removing a repository from its screen drops its listings, but a
+/// repository removed otherwise (a restored backup, a sync, a version
+/// before that) or whose address was written slightly differently left
+/// them in the extensions list for good, and refreshing never took them
+/// out. [offeredIds] are the extensions the repositories just read list: a
+/// listing one of them still offers is kept, whatever repository it was
+/// first recorded with. Installed extensions are always kept.
+Future<void> removeListingsOfRemovedRepos({
+  required List<Repo> repos,
+  required Set<int> offeredIds,
+  required ItemType itemType,
+}) async {
+  final orphans = (await sourceRepository.getNonLocalByItemType(itemType))
+      .where(
+        (s) =>
+            !(s.isAdded ?? false) &&
+            !offeredIds.contains(s.id) &&
+            !repos.any((r) => isSameRepo(r, s.repo)),
+      )
+      .map((s) => s.id!)
+      .toList();
+  if (orphans.isNotEmpty) await sourceRepository.deleteAll(orphans);
+}
+
 /// Points extensions installed from an address [repos] no longer has at the
 /// repository it moved to. Only the old address itself is believed: it names
 /// its replacement ([resolveIndexUrl], by default following its index's

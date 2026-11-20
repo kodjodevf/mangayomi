@@ -79,6 +79,11 @@ Future<void> fetchItemSourcesList(
     }
   }
   await followMovedRepos(repos: repos, offers: offers, itemType: itemType);
+  await removeListingsOfRemovedRepos(
+    repos: repos,
+    offeredIds: offers.keys.toSet(),
+    itemType: itemType,
+  );
   await applyExtensionUpdates(
     offers: offers,
     readRepos: readRepos,
