@@ -110,7 +110,8 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
         ),
       ),
       body: ListView(
-        padding: EdgeInsets.only(bottom: ShioriSpace.s24).add(tvPageInsets),
+        padding: EdgeInsets.only(bottom: ShioriSpace.s24)
+            .add(pageInsets(context)),
         children: [
           if (_showExtensionServerSection) ...[
             _intro(

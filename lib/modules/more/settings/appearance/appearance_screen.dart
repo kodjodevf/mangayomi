@@ -58,7 +58,7 @@ class AppearanceScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.appearance)),
       body: ListView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         children: [
           ShioriSettingsGroup(
             title: l10n.theme,

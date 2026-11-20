@@ -39,7 +39,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.downloads)),
       body: ListView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         children: [
           // Where downloads go and how they are kept; the screen's title
           // already names them.

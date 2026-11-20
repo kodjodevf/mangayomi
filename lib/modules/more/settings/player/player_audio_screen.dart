@@ -28,7 +28,7 @@ class _PlayerAudioScreenState extends ConsumerState<PlayerAudioScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.video_audio)),
       body: ListView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         children: [
           ShioriSettingsGroup(
             children: [

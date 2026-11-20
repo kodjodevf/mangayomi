@@ -28,7 +28,7 @@ class _PlayerAdvancedScreenState extends ConsumerState<PlayerAdvancedScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.advanced)),
       body: ListView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         children: [
           ShioriSettingsGroup(
             children: [

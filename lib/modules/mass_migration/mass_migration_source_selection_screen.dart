@@ -46,7 +46,7 @@ class MassMigrationSourceSelectionScreen extends StatelessWidget {
               compact: true,
             )
           : ListView.separated(
-              padding: tvPageInsets,
+              padding: pageInsets(context),
               itemCount: sourceGroups.length,
               separatorBuilder: (_, _) => const Divider(height: 1),
               itemBuilder: (context, index) {

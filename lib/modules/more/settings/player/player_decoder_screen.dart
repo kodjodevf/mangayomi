@@ -27,7 +27,7 @@ class _PlayerDecoderScreenState extends ConsumerState<PlayerDecoderScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.decoder)),
       body: ListView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         children: [
           ShioriSettingsGroup(
             children: [

@@ -42,7 +42,7 @@ class BrowseSScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.browse)),
       body: ListView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         children: [
           // The master "anime only" TV switch: turning it off removes all the
           // TV-only gates (shows manga & novel again across the app).

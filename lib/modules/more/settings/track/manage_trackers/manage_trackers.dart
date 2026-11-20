@@ -34,7 +34,7 @@ class ManageTrackersScreen extends StatelessWidget {
             );
           }
           return ListView(
-            padding: tvPageInsets,
+            padding: pageInsets(context),
             children: [
               for (final pref in trackers)
                 ShioriListRow(

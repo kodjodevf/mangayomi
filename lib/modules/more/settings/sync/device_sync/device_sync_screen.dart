@@ -48,7 +48,7 @@ class _DeviceSyncScreenState extends ConsumerState<DeviceSyncScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.device_sync)),
       body: SingleChildScrollView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         child: Column(
           children: [
             ShioriSettingsGroup(

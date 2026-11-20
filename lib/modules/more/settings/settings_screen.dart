@@ -32,7 +32,7 @@ class SettingsScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         child: Column(
           children: [
             ShioriSettingsGroup(

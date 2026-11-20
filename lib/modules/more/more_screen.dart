@@ -35,7 +35,7 @@ class MoreScreenState extends ConsumerState<MoreScreen> {
     });
     return Scaffold(
       body: SingleChildScrollView(
-        padding: tvPageInsets.add(pageBottomInsets(context)),
+        padding: pageInsets(context),
         child: Column(
           children: [
             SizedBox(height: MediaQuery.paddingOf(context).top),

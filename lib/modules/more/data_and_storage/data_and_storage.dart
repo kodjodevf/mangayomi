@@ -41,7 +41,7 @@ class DataAndStorage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.data_and_storage)),
       body: ListView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         children: [
           ShioriSettingsGroup(
             footer: l10n.download_location_info,

@@ -141,7 +141,8 @@ class _KeyboardShortcutsScreenState
             // Side by side where there is room, stacked on narrow windows so
             // the keys never run into the labels.
             return SingleChildScrollView(
-              padding: tvPageInsets.add(const EdgeInsets.all(ShioriSpace.s12)),
+              padding: pageInsets(context)
+                  .add(const EdgeInsets.all(ShioriSpace.s12)),
               child: constraints.maxWidth >= 900
                   ? Row(
                       crossAxisAlignment: CrossAxisAlignment.start,

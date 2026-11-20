@@ -29,7 +29,7 @@ class TrackScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.tracking)),
       body: SingleChildScrollView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         child: StreamBuilder(
           stream: trackRepository.watchAllWithSyncId(),
           builder: (context, snapshot) {

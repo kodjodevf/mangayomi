@@ -104,7 +104,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                     ? 2
                     : 1;
                 return GridView.builder(
-                  padding: tvPageInsets,
+                  padding: pageInsets(context),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: columns,
                     mainAxisExtent: _cardExtent,

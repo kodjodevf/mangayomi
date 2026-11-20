@@ -29,16 +29,16 @@ class NovelReaderScreen extends ConsumerWidget {
         body: TabBarView(
           children: [
             SingleChildScrollView(
-              padding: tvPageInsets,
+              padding: pageInsets(context),
               child: const ReaderSettingsTab(),
             ),
             SingleChildScrollView(
-              padding: tvPageInsets,
+              padding: pageInsets(context),
               child: const GeneralSettingsTab(),
             ),
             if (ttsSupported)
               SingleChildScrollView(
-                padding: tvPageInsets,
+                padding: pageInsets(context),
                 child: const TtsSettingsTab(),
               ),
           ],

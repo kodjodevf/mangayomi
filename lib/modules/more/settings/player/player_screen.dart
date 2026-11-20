@@ -40,7 +40,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.internal_player)),
       body: ListView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         children: [
           ShioriSettingsGroup(
             title: l10n.group_playback,

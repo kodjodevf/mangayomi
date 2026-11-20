@@ -34,7 +34,7 @@ class MassMigrationDestinationScreen extends ConsumerWidget {
               compact: true,
             )
           : ListView.separated(
-              padding: tvPageInsets,
+              padding: pageInsets(context),
               itemCount: sources.length,
               separatorBuilder: (_, _) => const Divider(height: 1),
               itemBuilder: (context, index) {
