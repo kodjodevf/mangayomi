@@ -1746,7 +1746,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get fullscreen_wayland_info =>
-      'Under Wayland, not applied on opening: switching the window to fullscreen can freeze the app (a Flutter bug).';
+      'Wayland altında açılışta uygulanmaz: pencereyi tam ekrana almak uygulamayı dondurabilir (bir Flutter hatası).';
 
   @override
   String get update_library => 'Kütüphaneyi güncelle';
@@ -3946,7 +3946,7 @@ class AppLocalizationsTr extends AppLocalizations {
       'Kütüphanenin üstünde devam eden seriler satırı';
 
   @override
-  String get show_active_filters => 'Show active filters';
+  String get show_active_filters => 'Etkin filtreleri göster';
 
   @override
   String get excluded => 'Hariç';
@@ -4737,193 +4737,196 @@ class AppLocalizationsTr extends AppLocalizations {
   String get update_all_skip_foreign => 'Yalnızca kendi deposundan';
 
   @override
-  String get device_sync => 'Sync between your devices';
+  String get device_sync => 'Cihazlarınız arasında senkronizasyon';
 
   @override
   String get device_sync_summary =>
-      'No server needed: one of your devices hosts, the others pair with it';
+      'Sunucu gerekmez: cihazlarınızdan biri ana cihaz olur, diğerleri onunla eşleşir';
 
   @override
-  String get device_sync_host_section => 'This device as host';
+  String get device_sync_host_section => 'Ana cihaz olarak bu cihaz';
 
   @override
-  String get device_sync_host => 'Host sync on this device';
+  String get device_sync_host => 'Senkronizasyonu bu cihazda barındır';
 
   @override
   String get device_sync_host_info =>
-      'Your other devices sync with this one over your local network or Tailscale, encrypted, and only once paired. Keep the app open on this device so they can sync.';
+      'Diğer cihazlarınız yerel ağınız veya Tailscale üzerinden, şifreli olarak ve yalnızca eşleştikten sonra bu cihazla senkronize olur. Senkronize olabilmeleri için uygulamayı bu cihazda açık tutun.';
 
   @override
   String device_sync_host_running(String port) {
-    return 'Listening on port $port';
+    return '$port numaralı bağlantı noktası dinleniyor';
   }
 
   @override
   String device_sync_host_failed(String error) {
-    return 'Couldn\'t start the host: $error';
+    return 'Ana cihaz başlatılamadı: $error';
   }
 
   @override
-  String get device_sync_add_device => 'Add a device';
+  String get device_sync_add_device => 'Cihaz ekle';
 
   @override
-  String get device_sync_paired_devices => 'Paired devices';
+  String get device_sync_paired_devices => 'Eşleşmiş cihazlar';
 
   @override
-  String get device_sync_no_paired => 'No device paired yet';
+  String get device_sync_no_paired => 'Henüz eşleşmiş cihaz yok';
 
   @override
   String device_sync_paired_on(String date) {
-    return 'Paired on $date';
+    return '$date tarihinde eşleşti';
   }
 
   @override
   String device_sync_forget_title(String name) {
-    return 'Remove $name?';
+    return '$name kaldırılsın mı?';
   }
 
   @override
   String get device_sync_forget_message =>
-      'This device stops accepting it at once. It can pair again later with a new QR code.';
+      'Bu cihaz onu hemen kabul etmeyi bırakır. Daha sonra yeni bir QR koduyla tekrar eşleşebilir.';
 
   @override
-  String get device_sync_join_section => 'Join a host';
+  String get device_sync_join_section => 'Bir ana cihaza katıl';
 
   @override
   String get device_sync_join_info =>
-      'Pair with the device that hosts sync. Its QR code is under Add a device on that device.';
+      'Senkronizasyonu barındıran cihazla eşleşin. QR kodu o cihazda Cihaz ekle bölümündedir.';
 
   @override
-  String get device_sync_scan => 'Scan the host\'s QR code';
+  String get device_sync_scan => 'Ana cihazın QR kodunu tara';
 
   @override
-  String get device_sync_paste => 'Paste a pairing link';
+  String get device_sync_paste => 'Eşleştirme bağlantısı yapıştır';
 
   @override
-  String get device_sync_link => 'Pairing link';
+  String get device_sync_link => 'Eşleştirme bağlantısı';
 
   @override
-  String get device_sync_link_invalid => 'This isn\'t a pairing link';
+  String get device_sync_link_invalid => 'Bu bir eşleştirme bağlantısı değil';
 
   @override
-  String get device_sync_pair => 'Pair';
+  String get device_sync_pair => 'Eşleştir';
 
   @override
-  String get device_sync_pairing => 'Pairing… accept this device on the host';
+  String get device_sync_pairing =>
+      'Eşleştiriliyor… bu cihazı ana cihazda onaylayın';
 
   @override
-  String get device_sync_paired => 'Paired with the host';
+  String get device_sync_paired => 'Ana cihazla eşleşti';
 
   @override
   String get device_sync_wrong_code =>
-      'Wrong code. Show a new QR code on the host and try again.';
+      'Yanlış kod. Ana cihazda yeni bir QR kodu gösterin ve tekrar deneyin.';
 
   @override
   String get device_sync_refused =>
-      'The host turned this device down, or the code expired.';
+      'Ana cihaz bu cihazı reddetti veya kodun süresi doldu.';
 
   @override
   String get device_sync_unreachable =>
-      'Couldn\'t reach the host. Both devices need to be on the same network.';
+      'Ana cihaza ulaşılamadı. İki cihazın da aynı ağda olması gerekir.';
 
   @override
   String get device_sync_invite_info =>
-      'On the other device, open Settings → Sync → Sync between your devices and scan this code, or paste the link. It works once, for 5 minutes.';
+      'Diğer cihazda Ayarlar → Senkronizasyon → Cihazlarınız arasında senkronizasyon bölümünü açın ve bu kodu tarayın ya da bağlantıyı yapıştırın. Bir kez, 5 dakika boyunca çalışır.';
 
   @override
-  String get device_sync_copy_link => 'Copy link';
+  String get device_sync_copy_link => 'Bağlantıyı kopyala';
 
   @override
-  String get device_sync_link_copied => 'Link copied';
+  String get device_sync_link_copied => 'Bağlantı kopyalandı';
 
   @override
   String get device_sync_no_network =>
-      'This device isn\'t on a local network, so no other device can reach it.';
+      'Bu cihaz yerel bir ağda değil, bu yüzden başka hiçbir cihaz ona ulaşamaz.';
 
   @override
-  String get device_sync_allow_title => 'Allow this device?';
+  String get device_sync_allow_title => 'Bu cihaza izin verilsin mi?';
 
   @override
   String device_sync_allow_message(String name) {
-    return '\"$name\" wants to sync with this device. Allow it only if it\'s yours.';
+    return '\"$name\" bu cihazla senkronize olmak istiyor. Yalnızca sizinse izin verin.';
   }
 
   @override
-  String get device_sync_allow => 'Allow';
+  String get device_sync_allow => 'İzin ver';
 
   @override
-  String get device_sync_deny => 'Deny';
+  String get device_sync_deny => 'Reddet';
 
   @override
-  String get device_sync_switch_title => 'Change what this device syncs with?';
+  String get device_sync_switch_title =>
+      'Bu cihazın neyle senkronize olacağı değiştirilsin mi?';
 
   @override
   String device_sync_switch_message(String server) {
-    return 'This device stops syncing with $server. Nothing is deleted, here or there.';
+    return 'Bu cihaz $server ile senkronize olmayı bırakır. Ne burada ne orada hiçbir şey silinmez.';
   }
 
   @override
   String device_sync_with_host(String server) {
-    return 'Synced with the host at $server';
+    return '$server adresindeki ana cihazla senkronize';
   }
 
   @override
-  String get device_sync_with_this_device => 'Synced with this device\'s host';
+  String get device_sync_with_this_device =>
+      'Bu cihazın ana cihazıyla senkronize';
 
   @override
-  String get device_sync_leave => 'Stop syncing with the host';
+  String get device_sync_leave => 'Ana cihazla senkronizasyonu durdur';
 
   @override
-  String get device_sync_stop_host_title => 'Stop hosting?';
+  String get device_sync_stop_host_title => 'Barındırma durdurulsun mu?';
 
   @override
   String get device_sync_stop_host_message =>
-      'Your other devices can\'t sync until it\'s back on. What the host stored stays on this device.';
+      'Diğer cihazlarınız, tekrar açılana kadar senkronize olamaz. Ana cihazın sakladıkları bu cihazda kalır.';
 
   @override
   String get device_sync_scan_hint =>
-      'Point the camera at the QR code on the host';
+      'Kamerayı ana cihazdaki QR koduna doğrultun';
 
   @override
   String sync_refused(String what) {
-    return 'The sync was refused because of $what. Update Mangayomi and the sync server, then try again.';
+    return 'Senkronizasyon $what nedeniyle reddedildi. Mangayomi\'yi ve senkronizasyon sunucusunu güncelleyip tekrar deneyin.';
   }
 
   @override
   String sync_rows_not_sent(String items) {
-    return 'These items are too long to sync and were left out: $items';
+    return 'Bu öğeler senkronize edilemeyecek kadar uzun ve dışarıda bırakıldı: $items';
   }
 
   @override
-  String get missing_chapters_title => 'Missing chapters';
+  String get missing_chapters_title => 'Eksik bölümler';
 
   @override
-  String get missing_episodes_title => 'Missing episodes';
+  String get missing_episodes_title => 'Eksik bölümler';
 
   @override
   String get missing_chapters_info =>
-      'No chapter of this series carries these numbers. The source may not have them, or may have numbered them differently.';
+      'Bu serinin hiçbir bölümü bu numaraları taşımıyor. Kaynakta olmayabilirler ya da farklı numaralandırılmış olabilirler.';
 
   @override
   String missing_chapters_skipped(int count, String numbers) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Chapters $numbers are missing',
-      one: 'Chapter $numbers is missing',
+      other: 'Bölümler $numbers eksik',
+      one: 'Bölüm $numbers eksik',
     );
     return '$_temp0';
   }
 
   @override
   String missing_chapters_skipped_message(String chapter) {
-    return 'The next chapter is $chapter.';
+    return 'Sonraki bölüm: $chapter.';
   }
 
   @override
-  String get warn_missing_chapters => 'Warn about missing chapters';
+  String get warn_missing_chapters => 'Eksik bölümler için uyar';
 
   @override
   String get warn_missing_chapters_subtitle =>
-      'Before going to the next chapter, say which chapter numbers it skips.';
+      'Sonraki bölüme geçmeden önce hangi bölüm numaralarının atlandığını söyle.';
 }

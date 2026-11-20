@@ -1757,7 +1757,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get fullscreen_wayland_info =>
-      'Under Wayland, not applied on opening: switching the window to fullscreen can freeze the app (a Flutter bug).';
+      'Unter Wayland beim Öffnen nicht angewendet: Das Umschalten des Fensters in den Vollbildmodus kann die App einfrieren (ein Flutter-Fehler).';
 
   @override
   String get update_library => 'Bibliothek aktualisieren';
@@ -3971,7 +3971,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'Eine Reihe der laufenden Serien oben in der Bibliothek';
 
   @override
-  String get show_active_filters => 'Show active filters';
+  String get show_active_filters => 'Aktive Filter anzeigen';
 
   @override
   String get excluded => 'Ausgeschlossen';
@@ -4770,193 +4770,196 @@ class AppLocalizationsDe extends AppLocalizations {
   String get update_all_skip_foreign => 'Nur aus dem eigenen Repository';
 
   @override
-  String get device_sync => 'Sync between your devices';
+  String get device_sync => 'Zwischen deinen Geräten synchronisieren';
 
   @override
   String get device_sync_summary =>
-      'No server needed: one of your devices hosts, the others pair with it';
+      'Kein Server nötig: Eines deiner Geräte ist der Host, die anderen koppeln sich damit';
 
   @override
-  String get device_sync_host_section => 'This device as host';
+  String get device_sync_host_section => 'Dieses Gerät als Host';
 
   @override
-  String get device_sync_host => 'Host sync on this device';
+  String get device_sync_host => 'Synchronisierung auf diesem Gerät hosten';
 
   @override
   String get device_sync_host_info =>
-      'Your other devices sync with this one over your local network or Tailscale, encrypted, and only once paired. Keep the app open on this device so they can sync.';
+      'Deine anderen Geräte synchronisieren sich über dein lokales Netzwerk oder Tailscale mit diesem, verschlüsselt und erst nach dem Koppeln. Lass die App auf diesem Gerät geöffnet, damit sie synchronisieren können.';
 
   @override
   String device_sync_host_running(String port) {
-    return 'Listening on port $port';
+    return 'Lauscht auf Port $port';
   }
 
   @override
   String device_sync_host_failed(String error) {
-    return 'Couldn\'t start the host: $error';
+    return 'Host konnte nicht gestartet werden: $error';
   }
 
   @override
-  String get device_sync_add_device => 'Add a device';
+  String get device_sync_add_device => 'Gerät hinzufügen';
 
   @override
-  String get device_sync_paired_devices => 'Paired devices';
+  String get device_sync_paired_devices => 'Gekoppelte Geräte';
 
   @override
-  String get device_sync_no_paired => 'No device paired yet';
+  String get device_sync_no_paired => 'Noch kein Gerät gekoppelt';
 
   @override
   String device_sync_paired_on(String date) {
-    return 'Paired on $date';
+    return 'Gekoppelt am $date';
   }
 
   @override
   String device_sync_forget_title(String name) {
-    return 'Remove $name?';
+    return '$name entfernen?';
   }
 
   @override
   String get device_sync_forget_message =>
-      'This device stops accepting it at once. It can pair again later with a new QR code.';
+      'Dieses Gerät akzeptiert es ab sofort nicht mehr. Es kann sich später mit einem neuen QR-Code wieder koppeln.';
 
   @override
-  String get device_sync_join_section => 'Join a host';
+  String get device_sync_join_section => 'Einem Host beitreten';
 
   @override
   String get device_sync_join_info =>
-      'Pair with the device that hosts sync. Its QR code is under Add a device on that device.';
+      'Kopple dich mit dem Gerät, das die Synchronisierung hostet. Seinen QR-Code findest du dort unter „Gerät hinzufügen“.';
 
   @override
-  String get device_sync_scan => 'Scan the host\'s QR code';
+  String get device_sync_scan => 'QR-Code des Hosts scannen';
 
   @override
-  String get device_sync_paste => 'Paste a pairing link';
+  String get device_sync_paste => 'Kopplungslink einfügen';
 
   @override
-  String get device_sync_link => 'Pairing link';
+  String get device_sync_link => 'Kopplungslink';
 
   @override
-  String get device_sync_link_invalid => 'This isn\'t a pairing link';
+  String get device_sync_link_invalid => 'Das ist kein Kopplungslink';
 
   @override
-  String get device_sync_pair => 'Pair';
+  String get device_sync_pair => 'Koppeln';
 
   @override
-  String get device_sync_pairing => 'Pairing… accept this device on the host';
+  String get device_sync_pairing =>
+      'Kopplung … akzeptiere dieses Gerät auf dem Host';
 
   @override
-  String get device_sync_paired => 'Paired with the host';
+  String get device_sync_paired => 'Mit dem Host gekoppelt';
 
   @override
   String get device_sync_wrong_code =>
-      'Wrong code. Show a new QR code on the host and try again.';
+      'Falscher Code. Zeige auf dem Host einen neuen QR-Code an und versuche es erneut.';
 
   @override
   String get device_sync_refused =>
-      'The host turned this device down, or the code expired.';
+      'Der Host hat dieses Gerät abgelehnt, oder der Code ist abgelaufen.';
 
   @override
   String get device_sync_unreachable =>
-      'Couldn\'t reach the host. Both devices need to be on the same network.';
+      'Host nicht erreichbar. Beide Geräte müssen im selben Netzwerk sein.';
 
   @override
   String get device_sync_invite_info =>
-      'On the other device, open Settings → Sync → Sync between your devices and scan this code, or paste the link. It works once, for 5 minutes.';
+      'Öffne auf dem anderen Gerät Einstellungen → Synchronisierung → Zwischen deinen Geräten synchronisieren und scanne diesen Code oder füge den Link ein. Er funktioniert einmal, 5 Minuten lang.';
 
   @override
-  String get device_sync_copy_link => 'Copy link';
+  String get device_sync_copy_link => 'Link kopieren';
 
   @override
-  String get device_sync_link_copied => 'Link copied';
+  String get device_sync_link_copied => 'Link kopiert';
 
   @override
   String get device_sync_no_network =>
-      'This device isn\'t on a local network, so no other device can reach it.';
+      'Dieses Gerät ist in keinem lokalen Netzwerk, daher kann kein anderes Gerät es erreichen.';
 
   @override
-  String get device_sync_allow_title => 'Allow this device?';
+  String get device_sync_allow_title => 'Dieses Gerät zulassen?';
 
   @override
   String device_sync_allow_message(String name) {
-    return '\"$name\" wants to sync with this device. Allow it only if it\'s yours.';
+    return '„$name“ möchte sich mit diesem Gerät synchronisieren. Lass es nur zu, wenn es dir gehört.';
   }
 
   @override
-  String get device_sync_allow => 'Allow';
+  String get device_sync_allow => 'Zulassen';
 
   @override
-  String get device_sync_deny => 'Deny';
+  String get device_sync_deny => 'Ablehnen';
 
   @override
-  String get device_sync_switch_title => 'Change what this device syncs with?';
+  String get device_sync_switch_title =>
+      'Ändern, womit dieses Gerät synchronisiert?';
 
   @override
   String device_sync_switch_message(String server) {
-    return 'This device stops syncing with $server. Nothing is deleted, here or there.';
+    return 'Dieses Gerät synchronisiert sich nicht mehr mit $server. Nichts wird gelöscht, weder hier noch dort.';
   }
 
   @override
   String device_sync_with_host(String server) {
-    return 'Synced with the host at $server';
+    return 'Synchronisiert mit dem Host unter $server';
   }
 
   @override
-  String get device_sync_with_this_device => 'Synced with this device\'s host';
+  String get device_sync_with_this_device =>
+      'Synchronisiert mit dem Host dieses Geräts';
 
   @override
-  String get device_sync_leave => 'Stop syncing with the host';
+  String get device_sync_leave => 'Synchronisierung mit dem Host beenden';
 
   @override
-  String get device_sync_stop_host_title => 'Stop hosting?';
+  String get device_sync_stop_host_title => 'Hosten beenden?';
 
   @override
   String get device_sync_stop_host_message =>
-      'Your other devices can\'t sync until it\'s back on. What the host stored stays on this device.';
+      'Deine anderen Geräte können erst wieder synchronisieren, wenn er wieder läuft. Was der Host gespeichert hat, bleibt auf diesem Gerät.';
 
   @override
   String get device_sync_scan_hint =>
-      'Point the camera at the QR code on the host';
+      'Richte die Kamera auf den QR-Code des Hosts';
 
   @override
   String sync_refused(String what) {
-    return 'The sync was refused because of $what. Update Mangayomi and the sync server, then try again.';
+    return 'Die Synchronisierung wurde wegen $what abgelehnt. Aktualisiere Mangayomi und den Sync-Server und versuche es dann erneut.';
   }
 
   @override
   String sync_rows_not_sent(String items) {
-    return 'These items are too long to sync and were left out: $items';
+    return 'Diese Elemente sind zu lang zum Synchronisieren und wurden ausgelassen: $items';
   }
 
   @override
-  String get missing_chapters_title => 'Missing chapters';
+  String get missing_chapters_title => 'Fehlende Kapitel';
 
   @override
-  String get missing_episodes_title => 'Missing episodes';
+  String get missing_episodes_title => 'Fehlende Episoden';
 
   @override
   String get missing_chapters_info =>
-      'No chapter of this series carries these numbers. The source may not have them, or may have numbered them differently.';
+      'Kein Kapitel dieser Serie trägt diese Nummern. Die Quelle hat sie vielleicht nicht oder hat sie anders nummeriert.';
 
   @override
   String missing_chapters_skipped(int count, String numbers) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Chapters $numbers are missing',
-      one: 'Chapter $numbers is missing',
+      other: 'Kapitel $numbers fehlen',
+      one: 'Kapitel $numbers fehlt',
     );
     return '$_temp0';
   }
 
   @override
   String missing_chapters_skipped_message(String chapter) {
-    return 'The next chapter is $chapter.';
+    return 'Das nächste Kapitel ist $chapter.';
   }
 
   @override
-  String get warn_missing_chapters => 'Warn about missing chapters';
+  String get warn_missing_chapters => 'Vor fehlenden Kapiteln warnen';
 
   @override
   String get warn_missing_chapters_subtitle =>
-      'Before going to the next chapter, say which chapter numbers it skips.';
+      'Vor dem Wechsel zum nächsten Kapitel anzeigen, welche Kapitelnummern übersprungen werden.';
 }

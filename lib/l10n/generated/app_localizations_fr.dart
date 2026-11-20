@@ -3993,7 +3993,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Une rangée des séries en cours en haut de la bibliothèque';
 
   @override
-  String get show_active_filters => 'Show active filters';
+  String get show_active_filters => 'Afficher les filtres actifs';
 
   @override
   String get excluded => 'Exclu';

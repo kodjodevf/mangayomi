@@ -1540,6 +1540,7 @@
   "continue_reading": "Reprendre",
   "show_continue_shelf": "Afficher les lectures en cours",
   "show_continue_shelf_subtitle": "Une rangée des séries en cours en haut de la bibliothèque",
+  "show_active_filters": "Afficher les filtres actifs",
   "excluded": "Exclu",
   "remove_filter": "Retirer le filtre",
   "current_chapter": "Chapitre en cours",

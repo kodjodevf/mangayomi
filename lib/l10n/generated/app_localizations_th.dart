@@ -1739,7 +1739,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get fullscreen_wayland_info =>
-      'Under Wayland, not applied on opening: switching the window to fullscreen can freeze the app (a Flutter bug).';
+      'บน Wayland จะไม่ใช้ตอนเปิดแอป: การสลับหน้าต่างเป็นเต็มจออาจทำให้แอปค้าง (บั๊กของ Flutter)';
 
   @override
   String get update_library => 'อัพเดทชั้นหนังสือ';
@@ -3921,7 +3921,7 @@ class AppLocalizationsTh extends AppLocalizations {
       'แถวของเรื่องที่กำลังอ่านอยู่ด้านบนของคลัง';
 
   @override
-  String get show_active_filters => 'Show active filters';
+  String get show_active_filters => 'แสดงตัวกรองที่ใช้อยู่';
 
   @override
   String get excluded => 'ยกเว้น';
@@ -4705,193 +4705,191 @@ class AppLocalizationsTh extends AppLocalizations {
   String get update_all_skip_foreign => 'เฉพาะจากที่เก็บเดิมของตัวเอง';
 
   @override
-  String get device_sync => 'Sync between your devices';
+  String get device_sync => 'ซิงค์ระหว่างอุปกรณ์ของคุณ';
 
   @override
   String get device_sync_summary =>
-      'No server needed: one of your devices hosts, the others pair with it';
+      'ไม่ต้องใช้เซิร์ฟเวอร์: อุปกรณ์หนึ่งเป็นโฮสต์ อุปกรณ์อื่นจับคู่กับเครื่องนั้น';
 
   @override
-  String get device_sync_host_section => 'This device as host';
+  String get device_sync_host_section => 'ใช้อุปกรณ์นี้เป็นโฮสต์';
 
   @override
-  String get device_sync_host => 'Host sync on this device';
+  String get device_sync_host => 'โฮสต์การซิงค์บนอุปกรณ์นี้';
 
   @override
   String get device_sync_host_info =>
-      'Your other devices sync with this one over your local network or Tailscale, encrypted, and only once paired. Keep the app open on this device so they can sync.';
+      'อุปกรณ์อื่นของคุณจะซิงค์กับอุปกรณ์นี้ผ่านเครือข่ายภายในหรือ Tailscale แบบเข้ารหัส และเฉพาะหลังจากจับคู่แล้วเท่านั้น เปิดแอปไว้บนอุปกรณ์นี้เพื่อให้อุปกรณ์อื่นซิงค์ได้';
 
   @override
   String device_sync_host_running(String port) {
-    return 'Listening on port $port';
+    return 'กำลังรอการเชื่อมต่อที่พอร์ต $port';
   }
 
   @override
   String device_sync_host_failed(String error) {
-    return 'Couldn\'t start the host: $error';
+    return 'ไม่สามารถเริ่มโฮสต์: $error';
   }
 
   @override
-  String get device_sync_add_device => 'Add a device';
+  String get device_sync_add_device => 'เพิ่มอุปกรณ์';
 
   @override
-  String get device_sync_paired_devices => 'Paired devices';
+  String get device_sync_paired_devices => 'อุปกรณ์ที่จับคู่แล้ว';
 
   @override
-  String get device_sync_no_paired => 'No device paired yet';
+  String get device_sync_no_paired => 'ยังไม่มีอุปกรณ์ที่จับคู่';
 
   @override
   String device_sync_paired_on(String date) {
-    return 'Paired on $date';
+    return 'จับคู่เมื่อ $date';
   }
 
   @override
   String device_sync_forget_title(String name) {
-    return 'Remove $name?';
+    return 'ลบ $name ใช่ไหม?';
   }
 
   @override
   String get device_sync_forget_message =>
-      'This device stops accepting it at once. It can pair again later with a new QR code.';
+      'อุปกรณ์นี้จะหยุดยอมรับอุปกรณ์นั้นทันที สามารถจับคู่ใหม่ภายหลังด้วยคิวอาร์โค้ดใหม่';
 
   @override
-  String get device_sync_join_section => 'Join a host';
+  String get device_sync_join_section => 'เข้าร่วมโฮสต์';
 
   @override
   String get device_sync_join_info =>
-      'Pair with the device that hosts sync. Its QR code is under Add a device on that device.';
+      'จับคู่กับอุปกรณ์ที่โฮสต์การซิงค์ คิวอาร์โค้ดของเครื่องนั้นอยู่ใน เพิ่มอุปกรณ์ บนเครื่องนั้น';
 
   @override
-  String get device_sync_scan => 'Scan the host\'s QR code';
+  String get device_sync_scan => 'สแกนคิวอาร์โค้ดของโฮสต์';
 
   @override
-  String get device_sync_paste => 'Paste a pairing link';
+  String get device_sync_paste => 'วางลิงก์จับคู่';
 
   @override
-  String get device_sync_link => 'Pairing link';
+  String get device_sync_link => 'ลิงก์จับคู่';
 
   @override
-  String get device_sync_link_invalid => 'This isn\'t a pairing link';
+  String get device_sync_link_invalid => 'นี่ไม่ใช่ลิงก์จับคู่';
 
   @override
-  String get device_sync_pair => 'Pair';
+  String get device_sync_pair => 'จับคู่';
 
   @override
-  String get device_sync_pairing => 'Pairing… accept this device on the host';
+  String get device_sync_pairing => 'กำลังจับคู่… ยอมรับอุปกรณ์นี้บนโฮสต์';
 
   @override
-  String get device_sync_paired => 'Paired with the host';
+  String get device_sync_paired => 'จับคู่กับโฮสต์แล้ว';
 
   @override
   String get device_sync_wrong_code =>
-      'Wrong code. Show a new QR code on the host and try again.';
+      'รหัสไม่ถูกต้อง แสดงคิวอาร์โค้ดใหม่บนโฮสต์แล้วลองอีกครั้ง';
 
   @override
-  String get device_sync_refused =>
-      'The host turned this device down, or the code expired.';
+  String get device_sync_refused => 'โฮสต์ปฏิเสธอุปกรณ์นี้ หรือรหัสหมดอายุแล้ว';
 
   @override
   String get device_sync_unreachable =>
-      'Couldn\'t reach the host. Both devices need to be on the same network.';
+      'ไม่สามารถเชื่อมต่อโฮสต์ได้ อุปกรณ์ทั้งสองต้องอยู่ในเครือข่ายเดียวกัน';
 
   @override
   String get device_sync_invite_info =>
-      'On the other device, open Settings → Sync → Sync between your devices and scan this code, or paste the link. It works once, for 5 minutes.';
+      'บนอุปกรณ์อีกเครื่อง เปิด การตั้งค่า → การซิงค์ → ซิงค์ระหว่างอุปกรณ์ของคุณ แล้วสแกนโค้ดนี้ หรือวางลิงก์ ใช้ได้ครั้งเดียว ภายใน 5 นาที';
 
   @override
-  String get device_sync_copy_link => 'Copy link';
+  String get device_sync_copy_link => 'คัดลอกลิงก์';
 
   @override
-  String get device_sync_link_copied => 'Link copied';
+  String get device_sync_link_copied => 'คัดลอกลิงก์แล้ว';
 
   @override
   String get device_sync_no_network =>
-      'This device isn\'t on a local network, so no other device can reach it.';
+      'อุปกรณ์นี้ไม่ได้อยู่ในเครือข่ายภายใน จึงไม่มีอุปกรณ์อื่นเชื่อมต่อได้';
 
   @override
-  String get device_sync_allow_title => 'Allow this device?';
+  String get device_sync_allow_title => 'อนุญาตอุปกรณ์นี้ไหม?';
 
   @override
   String device_sync_allow_message(String name) {
-    return '\"$name\" wants to sync with this device. Allow it only if it\'s yours.';
+    return '\"$name\" ต้องการซิงค์กับอุปกรณ์นี้ อนุญาตเฉพาะเมื่อเป็นอุปกรณ์ของคุณ';
   }
 
   @override
-  String get device_sync_allow => 'Allow';
+  String get device_sync_allow => 'อนุญาต';
 
   @override
-  String get device_sync_deny => 'Deny';
+  String get device_sync_deny => 'ปฏิเสธ';
 
   @override
-  String get device_sync_switch_title => 'Change what this device syncs with?';
+  String get device_sync_switch_title =>
+      'เปลี่ยนสิ่งที่อุปกรณ์นี้ซิงค์ด้วยไหม?';
 
   @override
   String device_sync_switch_message(String server) {
-    return 'This device stops syncing with $server. Nothing is deleted, here or there.';
+    return 'อุปกรณ์นี้จะหยุดซิงค์กับ $server ไม่มีอะไรถูกลบ ทั้งที่นี่และที่นั่น';
   }
 
   @override
   String device_sync_with_host(String server) {
-    return 'Synced with the host at $server';
+    return 'ซิงค์กับโฮสต์ที่ $server';
   }
 
   @override
-  String get device_sync_with_this_device => 'Synced with this device\'s host';
+  String get device_sync_with_this_device => 'ซิงค์กับโฮสต์ของอุปกรณ์นี้';
 
   @override
-  String get device_sync_leave => 'Stop syncing with the host';
+  String get device_sync_leave => 'หยุดซิงค์กับโฮสต์';
 
   @override
-  String get device_sync_stop_host_title => 'Stop hosting?';
+  String get device_sync_stop_host_title => 'หยุดโฮสต์ไหม?';
 
   @override
   String get device_sync_stop_host_message =>
-      'Your other devices can\'t sync until it\'s back on. What the host stored stays on this device.';
+      'อุปกรณ์อื่นของคุณจะซิงค์ไม่ได้จนกว่าจะเปิดอีกครั้ง ข้อมูลที่โฮสต์เก็บไว้ยังคงอยู่บนอุปกรณ์นี้';
 
   @override
-  String get device_sync_scan_hint =>
-      'Point the camera at the QR code on the host';
+  String get device_sync_scan_hint => 'เล็งกล้องไปที่คิวอาร์โค้ดบนโฮสต์';
 
   @override
   String sync_refused(String what) {
-    return 'The sync was refused because of $what. Update Mangayomi and the sync server, then try again.';
+    return 'การซิงค์ถูกปฏิเสธเนื่องจาก $what อัปเดต Mangayomi และเซิร์ฟเวอร์ซิงค์ แล้วลองอีกครั้ง';
   }
 
   @override
   String sync_rows_not_sent(String items) {
-    return 'These items are too long to sync and were left out: $items';
+    return 'รายการเหล่านี้ยาวเกินกว่าจะซิงค์และถูกข้ามไป: $items';
   }
 
   @override
-  String get missing_chapters_title => 'Missing chapters';
+  String get missing_chapters_title => 'ตอนที่ขาดหายไป';
 
   @override
-  String get missing_episodes_title => 'Missing episodes';
+  String get missing_episodes_title => 'ตอนที่ขาดหายไป';
 
   @override
   String get missing_chapters_info =>
-      'No chapter of this series carries these numbers. The source may not have them, or may have numbered them differently.';
+      'ไม่มีตอนใดในซีรีส์นี้ที่มีหมายเลขเหล่านี้ แหล่งที่มาอาจไม่มี หรืออาจใช้หมายเลขต่างออกไป';
 
   @override
   String missing_chapters_skipped(int count, String numbers) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Chapters $numbers are missing',
-      one: 'Chapter $numbers is missing',
+      other: 'ตอนที่ $numbers ขาดหายไป',
     );
     return '$_temp0';
   }
 
   @override
   String missing_chapters_skipped_message(String chapter) {
-    return 'The next chapter is $chapter.';
+    return 'ตอนถัดไปคือ $chapter';
   }
 
   @override
-  String get warn_missing_chapters => 'Warn about missing chapters';
+  String get warn_missing_chapters => 'เตือนเมื่อมีตอนที่ขาดหายไป';
 
   @override
   String get warn_missing_chapters_subtitle =>
-      'Before going to the next chapter, say which chapter numbers it skips.';
+      'ก่อนไปตอนถัดไป ให้แจ้งว่าจะข้ามตอนหมายเลขใดบ้าง';
 }

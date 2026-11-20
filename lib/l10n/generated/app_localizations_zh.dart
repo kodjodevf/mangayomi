@@ -1688,7 +1688,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get fullscreen_wayland_info =>
-      'Under Wayland, not applied on opening: switching the window to fullscreen can freeze the app (a Flutter bug).';
+      '在 Wayland 下打开时不应用：将窗口切换为全屏可能导致应用卡死（Flutter 的问题）。';
 
   @override
   String get update_library => '更新库';
@@ -3792,7 +3792,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get show_continue_shelf_subtitle => '在书库顶部显示一行进行中的系列';
 
   @override
-  String get show_active_filters => 'Show active filters';
+  String get show_active_filters => '显示已启用的筛选';
 
   @override
   String get excluded => '已排除';
@@ -4555,193 +4555,182 @@ class AppLocalizationsZh extends AppLocalizations {
   String get update_all_skip_foreign => '仅来自其原有存储库';
 
   @override
-  String get device_sync => 'Sync between your devices';
+  String get device_sync => '在你的设备之间同步';
 
   @override
-  String get device_sync_summary =>
-      'No server needed: one of your devices hosts, the others pair with it';
+  String get device_sync_summary => '无需服务器：一台设备作为主机，其他设备与之配对';
 
   @override
-  String get device_sync_host_section => 'This device as host';
+  String get device_sync_host_section => '将此设备作为主机';
 
   @override
-  String get device_sync_host => 'Host sync on this device';
+  String get device_sync_host => '在此设备上托管同步';
 
   @override
   String get device_sync_host_info =>
-      'Your other devices sync with this one over your local network or Tailscale, encrypted, and only once paired. Keep the app open on this device so they can sync.';
+      '你的其他设备通过局域网或 Tailscale 与此设备同步，全程加密，且仅在配对后进行。请在此设备上保持应用打开，以便它们同步。';
 
   @override
   String device_sync_host_running(String port) {
-    return 'Listening on port $port';
+    return '正在监听端口 $port';
   }
 
   @override
   String device_sync_host_failed(String error) {
-    return 'Couldn\'t start the host: $error';
+    return '无法启动主机：$error';
   }
 
   @override
-  String get device_sync_add_device => 'Add a device';
+  String get device_sync_add_device => '添加设备';
 
   @override
-  String get device_sync_paired_devices => 'Paired devices';
+  String get device_sync_paired_devices => '已配对的设备';
 
   @override
-  String get device_sync_no_paired => 'No device paired yet';
+  String get device_sync_no_paired => '尚无已配对的设备';
 
   @override
   String device_sync_paired_on(String date) {
-    return 'Paired on $date';
+    return '配对于 $date';
   }
 
   @override
   String device_sync_forget_title(String name) {
-    return 'Remove $name?';
+    return '移除 $name？';
   }
 
   @override
-  String get device_sync_forget_message =>
-      'This device stops accepting it at once. It can pair again later with a new QR code.';
+  String get device_sync_forget_message => '此设备将立即停止接受它。之后可以用新的二维码重新配对。';
 
   @override
-  String get device_sync_join_section => 'Join a host';
+  String get device_sync_join_section => '加入主机';
 
   @override
-  String get device_sync_join_info =>
-      'Pair with the device that hosts sync. Its QR code is under Add a device on that device.';
+  String get device_sync_join_info => '与托管同步的设备配对。它的二维码位于该设备的“添加设备”中。';
 
   @override
-  String get device_sync_scan => 'Scan the host\'s QR code';
+  String get device_sync_scan => '扫描主机的二维码';
 
   @override
-  String get device_sync_paste => 'Paste a pairing link';
+  String get device_sync_paste => '粘贴配对链接';
 
   @override
-  String get device_sync_link => 'Pairing link';
+  String get device_sync_link => '配对链接';
 
   @override
-  String get device_sync_link_invalid => 'This isn\'t a pairing link';
+  String get device_sync_link_invalid => '这不是配对链接';
 
   @override
-  String get device_sync_pair => 'Pair';
+  String get device_sync_pair => '配对';
 
   @override
-  String get device_sync_pairing => 'Pairing… accept this device on the host';
+  String get device_sync_pairing => '正在配对… 请在主机上接受此设备';
 
   @override
-  String get device_sync_paired => 'Paired with the host';
+  String get device_sync_paired => '已与主机配对';
 
   @override
-  String get device_sync_wrong_code =>
-      'Wrong code. Show a new QR code on the host and try again.';
+  String get device_sync_wrong_code => '代码错误。请在主机上显示新的二维码后重试。';
 
   @override
-  String get device_sync_refused =>
-      'The host turned this device down, or the code expired.';
+  String get device_sync_refused => '主机拒绝了此设备，或代码已过期。';
 
   @override
-  String get device_sync_unreachable =>
-      'Couldn\'t reach the host. Both devices need to be on the same network.';
+  String get device_sync_unreachable => '无法连接到主机。两台设备需要在同一网络中。';
 
   @override
   String get device_sync_invite_info =>
-      'On the other device, open Settings → Sync → Sync between your devices and scan this code, or paste the link. It works once, for 5 minutes.';
+      '在另一台设备上，打开 设置 → 同步 → 在你的设备之间同步，然后扫描此二维码或粘贴链接。仅可使用一次，有效期 5 分钟。';
 
   @override
-  String get device_sync_copy_link => 'Copy link';
+  String get device_sync_copy_link => '复制链接';
 
   @override
-  String get device_sync_link_copied => 'Link copied';
+  String get device_sync_link_copied => '链接已复制';
 
   @override
-  String get device_sync_no_network =>
-      'This device isn\'t on a local network, so no other device can reach it.';
+  String get device_sync_no_network => '此设备未连接局域网，因此其他设备无法连接到它。';
 
   @override
-  String get device_sync_allow_title => 'Allow this device?';
+  String get device_sync_allow_title => '允许此设备？';
 
   @override
   String device_sync_allow_message(String name) {
-    return '\"$name\" wants to sync with this device. Allow it only if it\'s yours.';
+    return '“$name”想要与此设备同步。仅在它属于你时才允许。';
   }
 
   @override
-  String get device_sync_allow => 'Allow';
+  String get device_sync_allow => '允许';
 
   @override
-  String get device_sync_deny => 'Deny';
+  String get device_sync_deny => '拒绝';
 
   @override
-  String get device_sync_switch_title => 'Change what this device syncs with?';
+  String get device_sync_switch_title => '更改此设备的同步对象？';
 
   @override
   String device_sync_switch_message(String server) {
-    return 'This device stops syncing with $server. Nothing is deleted, here or there.';
+    return '此设备将停止与 $server 同步。两边都不会删除任何内容。';
   }
 
   @override
   String device_sync_with_host(String server) {
-    return 'Synced with the host at $server';
+    return '已与 $server 上的主机同步';
   }
 
   @override
-  String get device_sync_with_this_device => 'Synced with this device\'s host';
+  String get device_sync_with_this_device => '已与此设备的主机同步';
 
   @override
-  String get device_sync_leave => 'Stop syncing with the host';
+  String get device_sync_leave => '停止与主机同步';
 
   @override
-  String get device_sync_stop_host_title => 'Stop hosting?';
+  String get device_sync_stop_host_title => '停止托管？';
 
   @override
   String get device_sync_stop_host_message =>
-      'Your other devices can\'t sync until it\'s back on. What the host stored stays on this device.';
+      '在重新开启之前，你的其他设备无法同步。主机存储的内容会保留在此设备上。';
 
   @override
-  String get device_sync_scan_hint =>
-      'Point the camera at the QR code on the host';
+  String get device_sync_scan_hint => '将相机对准主机上的二维码';
 
   @override
   String sync_refused(String what) {
-    return 'The sync was refused because of $what. Update Mangayomi and the sync server, then try again.';
+    return '由于 $what，同步被拒绝。请更新 Mangayomi 和同步服务器后重试。';
   }
 
   @override
   String sync_rows_not_sent(String items) {
-    return 'These items are too long to sync and were left out: $items';
+    return '以下项目过长，无法同步，已被略过：$items';
   }
 
   @override
-  String get missing_chapters_title => 'Missing chapters';
+  String get missing_chapters_title => '缺失的章节';
 
   @override
-  String get missing_episodes_title => 'Missing episodes';
+  String get missing_episodes_title => '缺失的剧集';
 
   @override
-  String get missing_chapters_info =>
-      'No chapter of this series carries these numbers. The source may not have them, or may have numbered them differently.';
+  String get missing_chapters_info => '此系列没有任何章节使用这些编号。来源可能没有这些章节，或使用了不同的编号。';
 
   @override
   String missing_chapters_skipped(int count, String numbers) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Chapters $numbers are missing',
-      one: 'Chapter $numbers is missing',
+      other: '缺少第 $numbers 章',
     );
     return '$_temp0';
   }
 
   @override
   String missing_chapters_skipped_message(String chapter) {
-    return 'The next chapter is $chapter.';
+    return '下一章是 $chapter。';
   }
 
   @override
-  String get warn_missing_chapters => 'Warn about missing chapters';
+  String get warn_missing_chapters => '提醒缺失的章节';
 
   @override
-  String get warn_missing_chapters_subtitle =>
-      'Before going to the next chapter, say which chapter numbers it skips.';
+  String get warn_missing_chapters_subtitle => '在前往下一章之前，提示会跳过哪些章节编号。';
 }

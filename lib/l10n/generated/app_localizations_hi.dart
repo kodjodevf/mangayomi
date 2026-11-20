@@ -1743,7 +1743,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get fullscreen_wayland_info =>
-      'Under Wayland, not applied on opening: switching the window to fullscreen can freeze the app (a Flutter bug).';
+      'Wayland पर खोलते समय लागू नहीं होता: विंडो को पूर्ण स्क्रीन में बदलने से ऐप फ़्रीज़ हो सकता है (Flutter की एक खामी)।';
 
   @override
   String get update_library => 'लाइब्रेरी अपडेट करें';
@@ -3939,7 +3939,7 @@ class AppLocalizationsHi extends AppLocalizations {
       'लाइब्रेरी के ऊपर चल रही सीरीज़ की एक पंक्ति';
 
   @override
-  String get show_active_filters => 'Show active filters';
+  String get show_active_filters => 'सक्रिय फ़िल्टर दिखाएँ';
 
   @override
   String get excluded => 'शामिल नहीं';
@@ -4726,193 +4726,197 @@ class AppLocalizationsHi extends AppLocalizations {
   String get update_all_skip_foreign => 'केवल अपनी रिपॉज़िटरी से';
 
   @override
-  String get device_sync => 'Sync between your devices';
+  String get device_sync => 'अपने डिवाइसों के बीच सिंक करें';
 
   @override
   String get device_sync_summary =>
-      'No server needed: one of your devices hosts, the others pair with it';
+      'किसी सर्वर की ज़रूरत नहीं: आपका एक डिवाइस होस्ट बनता है, बाकी उससे पेयर होते हैं';
 
   @override
-  String get device_sync_host_section => 'This device as host';
+  String get device_sync_host_section => 'यह डिवाइस होस्ट के रूप में';
 
   @override
-  String get device_sync_host => 'Host sync on this device';
+  String get device_sync_host => 'इस डिवाइस पर सिंक होस्ट करें';
 
   @override
   String get device_sync_host_info =>
-      'Your other devices sync with this one over your local network or Tailscale, encrypted, and only once paired. Keep the app open on this device so they can sync.';
+      'आपके अन्य डिवाइस आपके लोकल नेटवर्क या Tailscale के ज़रिए, एन्क्रिप्टेड रूप में और केवल पेयर होने के बाद, इस डिवाइस से सिंक होते हैं। उन्हें सिंक करने देने के लिए इस डिवाइस पर ऐप खुला रखें।';
 
   @override
   String device_sync_host_running(String port) {
-    return 'Listening on port $port';
+    return 'पोर्ट $port पर सुन रहा है';
   }
 
   @override
   String device_sync_host_failed(String error) {
-    return 'Couldn\'t start the host: $error';
+    return 'होस्ट शुरू नहीं हो सका: $error';
   }
 
   @override
-  String get device_sync_add_device => 'Add a device';
+  String get device_sync_add_device => 'डिवाइस जोड़ें';
 
   @override
-  String get device_sync_paired_devices => 'Paired devices';
+  String get device_sync_paired_devices => 'पेयर किए गए डिवाइस';
 
   @override
-  String get device_sync_no_paired => 'No device paired yet';
+  String get device_sync_no_paired => 'अभी तक कोई डिवाइस पेयर नहीं किया गया';
 
   @override
   String device_sync_paired_on(String date) {
-    return 'Paired on $date';
+    return '$date को पेयर किया गया';
   }
 
   @override
   String device_sync_forget_title(String name) {
-    return 'Remove $name?';
+    return '$name हटाएँ?';
   }
 
   @override
   String get device_sync_forget_message =>
-      'This device stops accepting it at once. It can pair again later with a new QR code.';
+      'यह डिवाइस उसे तुरंत स्वीकार करना बंद कर देता है। वह बाद में नए QR कोड से फिर पेयर हो सकता है।';
 
   @override
-  String get device_sync_join_section => 'Join a host';
+  String get device_sync_join_section => 'किसी होस्ट से जुड़ें';
 
   @override
   String get device_sync_join_info =>
-      'Pair with the device that hosts sync. Its QR code is under Add a device on that device.';
+      'उस डिवाइस से पेयर करें जो सिंक होस्ट करता है। उसका QR कोड उसी डिवाइस पर डिवाइस जोड़ें में है।';
 
   @override
-  String get device_sync_scan => 'Scan the host\'s QR code';
+  String get device_sync_scan => 'होस्ट का QR कोड स्कैन करें';
 
   @override
-  String get device_sync_paste => 'Paste a pairing link';
+  String get device_sync_paste => 'पेयरिंग लिंक पेस्ट करें';
 
   @override
-  String get device_sync_link => 'Pairing link';
+  String get device_sync_link => 'पेयरिंग लिंक';
 
   @override
-  String get device_sync_link_invalid => 'This isn\'t a pairing link';
+  String get device_sync_link_invalid => 'यह पेयरिंग लिंक नहीं है';
 
   @override
-  String get device_sync_pair => 'Pair';
+  String get device_sync_pair => 'पेयर करें';
 
   @override
-  String get device_sync_pairing => 'Pairing… accept this device on the host';
+  String get device_sync_pairing =>
+      'पेयर हो रहा है… होस्ट पर इस डिवाइस को स्वीकार करें';
 
   @override
-  String get device_sync_paired => 'Paired with the host';
+  String get device_sync_paired => 'होस्ट से पेयर हो गया';
 
   @override
   String get device_sync_wrong_code =>
-      'Wrong code. Show a new QR code on the host and try again.';
+      'गलत कोड। होस्ट पर नया QR कोड दिखाएँ और फिर से कोशिश करें।';
 
   @override
   String get device_sync_refused =>
-      'The host turned this device down, or the code expired.';
+      'होस्ट ने इस डिवाइस को अस्वीकार कर दिया, या कोड की समय-सीमा समाप्त हो गई।';
 
   @override
   String get device_sync_unreachable =>
-      'Couldn\'t reach the host. Both devices need to be on the same network.';
+      'होस्ट तक नहीं पहुँच सका। दोनों डिवाइस एक ही नेटवर्क पर होने चाहिए।';
 
   @override
   String get device_sync_invite_info =>
-      'On the other device, open Settings → Sync → Sync between your devices and scan this code, or paste the link. It works once, for 5 minutes.';
+      'दूसरे डिवाइस पर, सेटिंग्स → सिंक → अपने डिवाइसों के बीच सिंक करें खोलें और यह कोड स्कैन करें, या लिंक पेस्ट करें। यह एक बार, 5 मिनट के लिए काम करता है।';
 
   @override
-  String get device_sync_copy_link => 'Copy link';
+  String get device_sync_copy_link => 'लिंक कॉपी करें';
 
   @override
-  String get device_sync_link_copied => 'Link copied';
+  String get device_sync_link_copied => 'लिंक कॉपी किया गया';
 
   @override
   String get device_sync_no_network =>
-      'This device isn\'t on a local network, so no other device can reach it.';
+      'यह डिवाइस किसी लोकल नेटवर्क पर नहीं है, इसलिए कोई अन्य डिवाइस उस तक नहीं पहुँच सकता।';
 
   @override
-  String get device_sync_allow_title => 'Allow this device?';
+  String get device_sync_allow_title => 'इस डिवाइस को अनुमति दें?';
 
   @override
   String device_sync_allow_message(String name) {
-    return '\"$name\" wants to sync with this device. Allow it only if it\'s yours.';
+    return '\"$name\" इस डिवाइस के साथ सिंक करना चाहता है। अनुमति तभी दें जब यह आपका हो।';
   }
 
   @override
-  String get device_sync_allow => 'Allow';
+  String get device_sync_allow => 'अनुमति दें';
 
   @override
-  String get device_sync_deny => 'Deny';
+  String get device_sync_deny => 'अस्वीकार करें';
 
   @override
-  String get device_sync_switch_title => 'Change what this device syncs with?';
+  String get device_sync_switch_title =>
+      'यह डिवाइस किसके साथ सिंक करे, यह बदलें?';
 
   @override
   String device_sync_switch_message(String server) {
-    return 'This device stops syncing with $server. Nothing is deleted, here or there.';
+    return 'यह डिवाइस $server के साथ सिंक करना बंद कर देता है। कुछ भी हटाया नहीं जाता, न यहाँ न वहाँ।';
   }
 
   @override
   String device_sync_with_host(String server) {
-    return 'Synced with the host at $server';
+    return '$server पर होस्ट के साथ सिंक किया गया';
   }
 
   @override
-  String get device_sync_with_this_device => 'Synced with this device\'s host';
+  String get device_sync_with_this_device =>
+      'इस डिवाइस के होस्ट के साथ सिंक किया गया';
 
   @override
-  String get device_sync_leave => 'Stop syncing with the host';
+  String get device_sync_leave => 'होस्ट के साथ सिंक करना बंद करें';
 
   @override
-  String get device_sync_stop_host_title => 'Stop hosting?';
+  String get device_sync_stop_host_title => 'होस्ट करना बंद करें?';
 
   @override
   String get device_sync_stop_host_message =>
-      'Your other devices can\'t sync until it\'s back on. What the host stored stays on this device.';
+      'जब तक यह फिर से चालू नहीं होता, आपके अन्य डिवाइस सिंक नहीं कर सकते। होस्ट ने जो संग्रहीत किया है वह इसी डिवाइस पर रहता है।';
 
   @override
   String get device_sync_scan_hint =>
-      'Point the camera at the QR code on the host';
+      'कैमरे को होस्ट पर दिख रहे QR कोड की ओर करें';
 
   @override
   String sync_refused(String what) {
-    return 'The sync was refused because of $what. Update Mangayomi and the sync server, then try again.';
+    return '$what के कारण सिंक अस्वीकार कर दिया गया। Mangayomi और सिंक सर्वर को अपडेट करें, फिर से कोशिश करें।';
   }
 
   @override
   String sync_rows_not_sent(String items) {
-    return 'These items are too long to sync and were left out: $items';
+    return 'ये आइटम सिंक करने के लिए बहुत लंबे हैं और छोड़ दिए गए: $items';
   }
 
   @override
-  String get missing_chapters_title => 'Missing chapters';
+  String get missing_chapters_title => 'अनुपलब्ध अध्याय';
 
   @override
-  String get missing_episodes_title => 'Missing episodes';
+  String get missing_episodes_title => 'अनुपलब्ध एपिसोड';
 
   @override
   String get missing_chapters_info =>
-      'No chapter of this series carries these numbers. The source may not have them, or may have numbered them differently.';
+      'इस सीरीज़ के किसी भी अध्याय पर ये नंबर नहीं हैं। हो सकता है स्रोत में ये न हों, या उन्हें अलग तरह से क्रमांकित किया गया हो।';
 
   @override
   String missing_chapters_skipped(int count, String numbers) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Chapters $numbers are missing',
-      one: 'Chapter $numbers is missing',
+      other: 'अध्याय $numbers अनुपलब्ध हैं',
+      one: 'अध्याय $numbers अनुपलब्ध है',
     );
     return '$_temp0';
   }
 
   @override
   String missing_chapters_skipped_message(String chapter) {
-    return 'The next chapter is $chapter.';
+    return 'अगला अध्याय $chapter है।';
   }
 
   @override
-  String get warn_missing_chapters => 'Warn about missing chapters';
+  String get warn_missing_chapters =>
+      'अनुपलब्ध अध्यायों के बारे में चेतावनी दें';
 
   @override
   String get warn_missing_chapters_subtitle =>
-      'Before going to the next chapter, say which chapter numbers it skips.';
+      'अगले अध्याय पर जाने से पहले बताएँ कि वह कौन-से अध्याय नंबर छोड़ता है।';
 }
