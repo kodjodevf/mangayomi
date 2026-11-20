@@ -36,7 +36,7 @@ class AboutScreen extends ConsumerWidget {
           .watch(getPackageInfoProvider)
           .when(
             data: (data) => ListView(
-              padding: tvPageInsets,
+              padding: pageInsets(context),
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(

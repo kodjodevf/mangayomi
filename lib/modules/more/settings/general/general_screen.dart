@@ -83,7 +83,7 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.general)),
       body: ListView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         children: [
           ShioriSettingsGroup(
             title: l10n.library,

@@ -62,7 +62,7 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.security)),
       body: ListView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         children: [
           ShioriSettingsGroup(
             footer: l10n.app_lock_description,

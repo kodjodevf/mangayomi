@@ -142,13 +142,26 @@ EdgeInsets tvOverscanHorizontalInsets(BuildContext context) =>
 
 /// Bottom room a scrolling page should leave clear.
 ///
-/// On Apple the nav bar floats over the content, and the shell sets
-/// `extendBody`, so the Scaffold reports the bar's height here. On a pushed
-/// route with no bar this is just the home indicator's inset. Either way a
-/// scroll view that sets its own padding *replaces* what the Scaffold provided
-/// rather than adding to it, which is how a list ends up running underneath
-/// the bar; adding this back is what fixes it.
-EdgeInsets pageBottomInsets(BuildContext context) =>
-    FloatingNavigationScope.enabledOf(context)
-    ? EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom + 8)
-    : EdgeInsets.zero;
+/// A scroll view that sets its own padding *replaces* the padding it would
+/// otherwise take from its Scaffold rather than adding to it, which is how a
+/// list ends up running underneath what covers the bottom of the screen;
+/// adding this back is what fixes it. What covers it is:
+///
+/// - the system's navigation bar or home indicator, as Android draws the app
+///   edge to edge since Android 15. A settings page passed its padding and
+///   left its last row under the navigation buttons;
+/// - the floating nav bar of the shell, which sets `extendBody` so the
+///   Scaffold reports the bar's height here, with a little room above it.
+///
+/// Where a Scaffold's bottom bar already took that room, the padding here is
+/// zero and so is this.
+EdgeInsets pageBottomInsets(BuildContext context) => EdgeInsets.only(
+  bottom:
+      MediaQuery.paddingOf(context).bottom +
+      (FloatingNavigationScope.enabledOf(context) ? 8 : 0),
+);
+
+/// The padding of a page's scroll view: [tvPageInsets] at the sides, and
+/// [pageBottomInsets] below the last row.
+EdgeInsets pageInsets(BuildContext context) =>
+    tvPageInsets + pageBottomInsets(context);

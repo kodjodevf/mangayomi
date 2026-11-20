@@ -54,7 +54,7 @@ class LicensesScreen extends StatelessWidget {
             );
           }
           return ListView(
-            padding: tvPageInsets,
+            padding: pageInsets(context),
             children: [
               ShioriSettingsGroup(
                 footer: l10n.open_source_licenses_subtitle,
@@ -88,7 +88,8 @@ class _LicenseTextScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(package.name)),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(ShioriSpace.s16),
+        padding: const EdgeInsets.all(ShioriSpace.s16)
+            .add(pageBottomInsets(context)),
         child: SelectableText(
           package.texts.join('\n\n${'-' * 40}\n\n'),
           style: context.shiori.text.meta.copyWith(

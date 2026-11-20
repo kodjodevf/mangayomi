@@ -345,7 +345,10 @@ class ReaderScreen extends ConsumerWidget {
     if (section == null) return _hub(context);
     return Scaffold(
       appBar: AppBar(title: Text(section.title(context))),
-      body: ListView(padding: tvPageInsets, children: sections[section]!),
+      body: ListView(
+        padding: pageInsets(context),
+        children: sections[section]!,
+      ),
     );
   }
 
@@ -355,7 +358,7 @@ class ReaderScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.reader)),
       body: ListView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         children: [
           for (final section in ReaderSettingsSection.values)
             ShioriSettingRow(

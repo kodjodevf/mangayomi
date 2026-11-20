@@ -65,7 +65,7 @@ class ExtensionsLang extends ConsumerWidget {
 
           languages.sort((a, b) => a.compareTo(b));
           return SuperListView.builder(
-            padding: tvPageInsets,
+            padding: pageInsets(context),
             itemCount: languages.length,
             itemBuilder: (context, index) {
               final lang = languages[index];

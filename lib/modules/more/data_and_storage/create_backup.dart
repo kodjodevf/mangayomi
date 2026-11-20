@@ -54,7 +54,7 @@ class _CreateBackupState extends ConsumerState<CreateBackup> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.create_backup)),
       body: ListView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         children: [
           group(l10n.library, _libraryList),
           group(l10n.settings, _settingsList),

@@ -83,7 +83,7 @@ void main() {
     expect(pushedInset, reserved);
   });
 
-  testWidgets('floating-only bottom room follows the shell toggle', (
+  testWidgets("the floating bar's room follows the shell toggle", (
     tester,
   ) async {
     var inset = -1.0;
@@ -107,10 +107,34 @@ void main() {
       );
     }
 
+    // Without the floating bar, what covers the bottom is the system's own
+    // bar: the page leaves its room, and none for a bar it does not have.
     await pumpProbe(false);
-    expect(inset, 0);
+    expect(inset, reserved);
 
     await pumpProbe(true);
     expect(inset, reserved + 8);
+  });
+
+  testWidgets('a page leaves the system bar room below its last row', (
+    tester,
+  ) async {
+    // Android draws the app edge to edge: a pushed settings page gets the
+    // navigation buttons' height as padding, and a list that sets its own
+    // padding must add it back.
+    late EdgeInsets insets;
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(padding: EdgeInsets.only(bottom: reserved)),
+        child: Builder(
+          builder: (context) {
+            insets = pageInsets(context);
+            return const SizedBox();
+          },
+        ),
+      ),
+    );
+
+    expect(insets, const EdgeInsets.only(bottom: reserved));
   });
 }

@@ -110,7 +110,7 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
           _query.isNotEmpty ||
               (widget.manga.name != null && widget.manga.author != null)
           ? SuperListView.builder(
-              padding: tvPageInsets,
+              padding: pageInsets(context),
               itemCount: sourceList.length,
               extentPrecalculationPolicy: SuperPrecalculationPolicy(),
               itemBuilder: (context, index) {

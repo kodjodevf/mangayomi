@@ -101,7 +101,7 @@ class _RelatedScreenState extends State<RelatedScreen> {
               padding: const EdgeInsets.symmetric(
                 horizontal: ShioriSpace.s12,
                 vertical: ShioriSpace.s8,
-              ).add(tvPageInsets),
+              ).add(pageInsets(context)),
               itemCount: data!.length,
               separatorBuilder: (_, _) =>
                   const SizedBox(height: ShioriSpace.s4),

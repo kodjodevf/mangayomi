@@ -41,7 +41,7 @@ class SyncScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.syncing)),
       body: SingleChildScrollView(
-        padding: tvPageInsets,
+        padding: pageInsets(context),
         child: StreamBuilder(
           stream: syncPreferenceRepository.watchAllWithSyncId(),
           builder: (context, snapshot) {
