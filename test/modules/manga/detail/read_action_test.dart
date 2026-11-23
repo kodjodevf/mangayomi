@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart' as app;
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/read_action.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -72,5 +73,38 @@ void main() {
   test('all read falls back to the first chapter', () async {
     final manga = await series(read: 6);
     expect(firstUnreadChapterFor(manga)?.name, 'Chapter 1');
+  });
+
+  /// Records [name] as the chapter last opened in [manga].
+  Future<void> lastOpened(Manga manga, String name) async {
+    final chapter = manga.chapters.firstWhere((c) => c.name == name);
+    await db.writeTxn(() async {
+      final history = History(
+        itemType: manga.itemType,
+        chapterId: chapter.id,
+        mangaId: manga.id,
+        date: '1',
+      )..chapter.value = chapter;
+      await db.historys.put(history);
+      await history.chapter.save();
+    });
+  }
+
+  test('resumes the last opened chapter while it is unread', () async {
+    final manga = await series(read: 3);
+    await lastOpened(manga, 'Chapter 4');
+    expect(resumeTargetFor(manga, incognito: false)?.name, 'Chapter 4');
+  });
+
+  test('a finished chapter resumes at the next one, even if read', () async {
+    final manga = await series(read: 5);
+    await lastOpened(manga, 'Chapter 4');
+    expect(resumeTargetFor(manga, incognito: false)?.name, 'Chapter 5');
+  });
+
+  test('a finished last chapter resumes at itself', () async {
+    final manga = await series(read: 6);
+    await lastOpened(manga, 'Chapter 6');
+    expect(resumeTargetFor(manga, incognito: false)?.name, 'Chapter 6');
   });
 }

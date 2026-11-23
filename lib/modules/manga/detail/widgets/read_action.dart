@@ -20,6 +20,16 @@ Chapter? resumeChapterFor(Manga manga, {required bool incognito}) {
   return history.chapter.value;
 }
 
+/// Where resuming [manga] leads: the last opened chapter while it is in
+/// progress, the one right after it once it is finished.
+Chapter? resumeTargetFor(Manga manga, {required bool incognito}) {
+  final last = resumeChapterFor(manga, incognito: incognito);
+  if (last == null || !(last.isRead ?? false)) return last;
+  final ordered = manga.getChapterListForReading(current: last);
+  final i = ordered.indexWhere((c) => c.id == last.id);
+  return i >= 0 && i + 1 < ordered.length ? ordered[i + 1] : last;
+}
+
 /// The chapter to open when there is no history: the first unread one in
 /// reading order (by number, under the series' filters), else the first.
 Chapter? firstUnreadChapterFor(Manga manga) {
@@ -45,7 +55,7 @@ class ReadActionButton extends ConsumerWidget {
     final chapters = manga.chapters.toList();
     if (chapters.isEmpty) return const SizedBox.shrink();
     final l10n = context.l10n;
-    final resume = resumeChapterFor(
+    final resume = resumeTargetFor(
       manga,
       incognito: ref.watch(incognitoModeStateProvider),
     );
@@ -70,8 +80,11 @@ class ReadActionButton extends ConsumerWidget {
             : next != null && anyRead && !(next.isRead ?? false)
             ? '${l10n.continue_reading} · ${next.name}'
             : start,
-        onPressed: () =>
-            (resume ?? next ?? chapters.first).pushToReaderView(context),
+        // The label names the chapter, so open exactly that one: without
+        // ignoreIsRead a read chapter would skip ahead to the first unread.
+        onPressed: () => resume != null
+            ? resume.pushToReaderView(context, ignoreIsRead: true)
+            : (next ?? chapters.first).pushToReaderView(context),
       ),
     );
   }
