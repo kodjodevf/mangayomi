@@ -7,6 +7,7 @@ class MangasCardSelector extends StatelessWidget {
   final String text;
   final IconData icon;
   final bool selected;
+  final String? tooltip;
   final VoidCallback onPressed;
   const MangasCardSelector({
     super.key,
@@ -14,6 +15,7 @@ class MangasCardSelector extends StatelessWidget {
     required this.icon,
     required this.selected,
     required this.onPressed,
+    this.tooltip,
   });
 
   @override
@@ -45,6 +47,7 @@ class MangasCardSelector extends StatelessWidget {
       child: ChoiceChip(
         selected: selected,
         showCheckmark: false,
+        tooltip: tooltip,
         avatar: Icon(icon, fill: selected ? 1 : 0),
         label: Text(text),
         onSelected: (_) => onPressed(),

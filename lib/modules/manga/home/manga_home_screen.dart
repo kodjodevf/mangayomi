@@ -16,6 +16,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/repositories/manga_repository.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/manga/home/providers/state_provider.dart';
+import 'package:mangayomi/modules/manga/home/providers/source_catalog_provider.dart';
 import 'package:mangayomi/modules/manga/home/widget/filter_widget.dart';
 import 'package:mangayomi/modules/widgets/listview_widget.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
@@ -26,7 +27,6 @@ import 'package:mangayomi/services/get_popular.dart';
 import 'package:mangayomi/services/get_source_baseurl.dart';
 import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/services/supports_latest.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/manga/home/widget/manga_home_image_card.dart';
 import 'package:mangayomi/modules/manga/home/widget/mangas_card_selector.dart';
@@ -35,7 +35,6 @@ import 'package:mangayomi/modules/widgets/cover_grid_skeleton.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:marquee/marquee.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:mangayomi/modules/widgets/tv_menu.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -73,6 +72,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   int _fullDataLength = 50;
   int _page = 1;
   bool _hasNextPage = true;
+  int _catalogRevision = 0;
   late int _selectedIndex = widget.isLatest
       ? 1
       : widget.isSearch
@@ -81,6 +81,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   late Source source = widget.source;
   late bool isLocal = source.name == "local" && source.lang == "";
   late List<dynamic> filters = isLocal ? [] : getFilterList(source: source);
+  Future<List<dynamic>>? _catalogFilters;
+  List<dynamic>? _appliedCatalogFilters;
   final List<MManga> _mangaList = [];
   late StreamSubscription<List<Manga>> _mangaStreamSub;
   Map<String, Manga> _libraryIndex = {};
@@ -94,6 +96,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   }
 
   Future<MPages?> _loadMore() async {
+    final revision = _catalogRevision;
     MPages? mangaRes;
     if (_isLoading) {
       if (source.isFullData!) {
@@ -101,12 +104,19 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
         _fullDataLength = _fullDataLength + 50;
       } else {
         if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
+          final catalog = _sourceCatalog(_page + 1);
           mangaRes = await ref.read(
-            getPopularProvider(source: source, page: _page + 1).future,
+            catalog?.future ??
+                getPopularProvider(source: source, page: _page + 1).future,
           );
         } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
+          final catalog = _sourceCatalog(_page + 1);
           mangaRes = await ref.read(
-            getLatestUpdatesProvider(source: source, page: _page + 1).future,
+            catalog?.future ??
+                getLatestUpdatesProvider(
+                  source: source,
+                  page: _page + 1,
+                ).future,
           );
         } else if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
             _isFiltering) {
@@ -120,11 +130,13 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           );
         }
       }
-      if (mangaRes!.list.isNotEmpty) {
+      if (revision != _catalogRevision) return null;
+      final result = mangaRes;
+      if (result != null) {
         if (mounted) {
           setState(() {
-            _page = _page + 1;
-            _hasNextPage = mangaRes!.hasNextPage;
+            if (result.list.isNotEmpty) _page++;
+            _hasNextPage = result.hasNextPage;
           });
         }
       }
@@ -226,6 +238,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           filterList: filters,
         ),
       );
+    } else if (_sourceCatalog(1) case final catalog?) {
+      ref.invalidate(catalog);
     } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
       ref.invalidate(getLatestUpdatesProvider(source: source, page: 1));
     } else if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
@@ -272,6 +286,219 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
       ? true
       : ref.watch(supportsLatestProvider(source: source));
   late final filterList = isLocal ? [] : getFilterList(source: source);
+
+  // JavaScript extensions can opt in to a separate catalog selector.
+  bool _isSourceSelector(dynamic filter) =>
+      filter is SelectFilter && filter.type == 'SourceSelector';
+
+  SelectFilter? get _sourceSelector {
+    if (source.sourceCodeLanguage != SourceCodeLanguage.javascript) return null;
+    final selector = filters
+        .whereType<SelectFilter>()
+        .where(_isSourceSelector)
+        .firstOrNull;
+    if (selector == null ||
+        selector.state < 0 ||
+        selector.state >= selector.values.length) {
+      return null;
+    }
+    return selector.values.every((value) => value is SelectFilterOption)
+        ? selector
+        : null;
+  }
+
+  SelectFilterOption _selectedSource(SelectFilter selector) =>
+      selector.values[selector.state] as SelectFilterOption;
+
+  FutureProvider<MPages>? _sourceCatalog(int page) {
+    final selector = _sourceSelector;
+    if (selector == null) return null;
+    return sourceCatalogProvider((
+      source: source,
+      key: _selectedSource(selector).value,
+      page: page,
+      latest: _selectedIndex == 1,
+    ));
+  }
+
+  void _restartCatalog() {
+    _catalogRevision++;
+    _mangaList.clear();
+    _page = 1;
+    _hasNextPage = true;
+    _isLoading = false;
+    if (_scrollController.hasClients) _scrollController.jumpTo(0);
+  }
+
+  void _switchSource(SelectFilter selector, int index) {
+    if (!mounted || !identical(selector, _sourceSelector)) return;
+    setState(() {
+      _catalogFilters = null;
+      _appliedCatalogFilters = null;
+      filters = [
+        SelectFilter(
+          selector.type,
+          selector.name,
+          index,
+          selector.values,
+          selector.typeName,
+        ),
+        ...getFilterList(source: source).where((f) => !_isSourceSelector(f)),
+      ];
+      _isFiltering = false;
+      if (_selectedIndex == 2 && _query.isEmpty) _selectedIndex = 0;
+      _restartCatalog();
+    });
+    _retry();
+  }
+
+  Future<void> _showSources(SelectFilter selector) async {
+    final index = await showShioriChoice<int>(
+      context,
+      title: context.l10n.source,
+      selected: selector.state,
+      options: [
+        for (final (index, option)
+            in selector.values.cast<SelectFilterOption>().indexed)
+          ShioriChoice(index, option.name),
+      ],
+      searchHint: selector.values.length > 10
+          ? MaterialLocalizations.of(context).searchFieldLabel
+          : null,
+    );
+    if (index != null && index != selector.state) {
+      _switchSource(selector, index);
+    }
+  }
+
+  Future<void> _showFilters() async {
+    final l10n = context.l10n;
+    final selector = _sourceSelector;
+    final defaults = getFilterList(source: source)
+        .where((filter) => selector == null || !_isSourceSelector(filter))
+        .toList();
+    final sourceKey = selector == null ? null : _selectedSource(selector).value;
+    List<dynamic>? draft;
+    final result = await showShioriSheet<List<dynamic>>(
+      context,
+      title: l10n.filter,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (context, setSheetState) {
+          Widget body(List<dynamic> catalogFilters) {
+            final resetFilters = [...defaults, ...catalogFilters];
+            draft ??= fromJsonFilterValuesToList(
+              filterValuesListToJson(
+                selector == null && filters.isNotEmpty
+                    ? filters
+                    : _appliedCatalogFilters ?? resetFilters,
+              ),
+            );
+            if (draft!.isEmpty) {
+              return ShioriEmptyState(
+                icon: Symbols.filter_list_rounded,
+                title: l10n.no_result,
+                compact: true,
+              );
+            }
+            return FilterSheetBody(
+              filters: draft!,
+              onChanged: (values) => setSheetState(() => draft = values),
+              onReset: () => setSheetState(() {
+                draft = fromJsonFilterValuesToList(
+                  filterValuesListToJson(resetFilters),
+                );
+              }),
+              onApply: () => Navigator.pop(sheetContext, draft),
+              resetLabel: l10n.reset,
+              applyLabel: l10n.filter,
+            );
+          }
+
+          if (sourceKey == null) return body([]);
+          return FutureBuilder<List<dynamic>>(
+            future: _catalogFilters ??= getCatalogFilters(source, sourceKey),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const Padding(
+                  padding: EdgeInsets.all(ShioriSpace.s16),
+                  child: Center(child: ShioriLoading.inline()),
+                );
+              }
+              if (snapshot.hasError) {
+                return ShioriEmptyState(
+                  icon: Symbols.error_outline_rounded,
+                  title: l10n.error,
+                  actionLabel: l10n.retry,
+                  onAction: () => setSheetState(() {
+                    _catalogFilters = getCatalogFilters(source, sourceKey);
+                  }),
+                  compact: true,
+                );
+              }
+              return body(snapshot.requireData);
+            },
+          );
+        },
+      ),
+    );
+    if (!mounted || result == null) return;
+    setState(() {
+      filters = selector == null ? result : [selector, ...result];
+      if (selector != null) _appliedCatalogFilters = result;
+      _selectedIndex = 2;
+      _isFiltering = true;
+      _restartCatalog();
+    });
+    _retry();
+  }
+
+  Widget _browseControl(int index) {
+    if ((!supportsLatest && index == 1) || (filterList.isEmpty && index == 2)) {
+      return const SizedBox.shrink();
+    }
+    final type = _types(context)[index];
+    return MangasCardSelector(
+      icon: type.icon,
+      selected: _selectedIndex == index,
+      text: type.title,
+      onPressed: index == 2
+          ? _showFilters
+          : () => setState(() {
+              _selectedIndex = index;
+              _isFiltering = false;
+              _isSearch = false;
+              _query = '';
+              _textEditingController.clear();
+              _restartCatalog();
+            }),
+    );
+  }
+
+  Widget _browseToolbar(SelectFilter? selector) {
+    final sourceName = selector == null ? null : _selectedSource(selector).name;
+    // In the body, the toolbar can grow with system text size.
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _browseControl(0),
+          _browseControl(1),
+          _browseControl(2),
+          if (selector != null && sourceName != null)
+            MangasCardSelector(
+              text: sourceName,
+              icon: Symbols.swap_horiz_rounded,
+              selected: false,
+              tooltip: '${context.l10n.source} · $sourceName',
+              onPressed: () => _showSources(selector),
+            ),
+          const SizedBox(width: ShioriSpace.s8),
+        ],
+      ),
+    );
+  }
+
   Future<void> _onSourceOverflow(int value) async {
     if (value == 0) {
       final baseUrl = ref.read(sourceBaseUrlProvider(source: source));
@@ -289,6 +516,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final selector = _sourceSelector;
     if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
         _isFiltering) {
       _getManga = ref.watch(
@@ -299,6 +527,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           filterList: filters,
         ),
       );
+    } else if (_sourceCatalog(1) case final catalog?) {
+      _getManga = ref.watch(catalog);
     } else if (_selectedIndex == 1 && _query.isEmpty) {
       _getManga = ref.watch(getLatestUpdatesProvider(source: source, page: 1));
     } else if (_selectedIndex == 0 && _query.isEmpty) {
@@ -510,103 +740,16 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 ],
               ),
         ],
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(AppBar().preferredSize.height * 0.8),
-          child: Column(
-            children: [
-              SizedBox(
-                width: context.width(1),
-                height: 45,
-                child: SuperListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  itemCount: 3,
-                  itemBuilder: (context, index) {
-                    if (filterList.isEmpty && index == 2) {
-                      return const SizedBox.shrink();
-                    }
-                    if (!supportsLatest && index == 1) {
-                      return const SizedBox.shrink();
-                    }
-                    return MangasCardSelector(
-                      icon: _types(context)[index].icon,
-                      selected: _selectedIndex == index,
-                      text: _types(context)[index].title,
-                      onPressed: () async {
-                        if (filters.isEmpty) {
-                          filters = filterList;
-                        }
-                        if (index == 2) {
-                          final result = await showShioriSheet<String>(
-                            context,
-                            title: l10n.filter,
-                            builder: (context) => StatefulBuilder(
-                              builder: (context, setState) {
-                                return FilterSheetBody(
-                                  filters: filters,
-                                  onChanged: (values) =>
-                                      setState(() => filters = values),
-                                  onReset: () => setState(
-                                    () =>
-                                        filters = getFilterList(source: source),
-                                  ),
-                                  onApply: () =>
-                                      Navigator.pop(context, 'filter'),
-                                  resetLabel: l10n.reset,
-                                  applyLabel: l10n.filter,
-                                );
-                              },
-                            ),
-                          );
-                          if (result == 'filter') {
-                            _mangaList.clear();
-                            if (mounted) {
-                              setState(() {
-                                _selectedIndex = 2;
-                                _isFiltering = true;
-                                _page = 1;
-                                _isLoading = false;
-                              });
-                            }
-
-                            _getManga = ref.refresh(
-                              searchProvider(
-                                source: source,
-                                query: _query,
-                                page: 1,
-                                filterList: filters,
-                              ),
-                            );
-                          }
-                        } else {
-                          _mangaList.clear();
-                          setState(() {
-                            _selectedIndex = index;
-                            _isFiltering = false;
-                            _isSearch = false;
-                            _query = "";
-                            _textEditingController.clear();
-                            _page = 1;
-                            _isLoading = false;
-                          });
-                        }
-                      },
-                    );
-                  },
-                ),
-              ),
-              Container(
-                color: context.shiori.color.accentInk,
-                height: 0.3,
-                width: context.width(1),
-              ),
-            ],
-          ),
-        ),
       ),
       // In developer mode, what failed in the source's code, on the page.
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          _browseToolbar(selector),
+          if (selector == null)
+            Container(height: 0.3, color: context.shiori.color.accentInk)
+          else
+            const Divider(height: 1),
           SourceCodeErrorBanner(source: source),
           Expanded(
             child: _getManga!.isLoading

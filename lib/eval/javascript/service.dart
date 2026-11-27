@@ -76,6 +76,9 @@ class MProvider {
     getFilterList() {
         throw new Error("getFilterList not implemented");
     }
+    async getSourceFilters(sourceKey) {
+        return [];
+    }
     getSourcePreferences() {
         throw new Error("getSourcePreferences not implemented");
     }
@@ -133,6 +136,23 @@ var extention = new DefaultExtension();
   Future<MPages> getLatestUpdates(int page) async {
     return MPages.fromJson(
       await _extensionCallAsync('getLatestUpdates($page)'),
+    );
+  }
+
+  Future<MPages> getSourcePage(
+    String key,
+    int page, {
+    required bool latest,
+  }) async {
+    final method = latest ? 'getLatestUpdates' : 'getPopular';
+    return MPages.fromJson(
+      await _extensionCallAsync('$method($page, ${jsonEncode(key)})'),
+    );
+  }
+
+  Future<List<dynamic>> getSourceFilters(String key) async {
+    return fromJsonFilterValuesToList(
+      await _extensionCallAsync<List>('getSourceFilters(${jsonEncode(key)})'),
     );
   }
 
