@@ -261,7 +261,6 @@ class MangayomiRestoreService {
     }
 
     final oldToNewMangaId = <int, int>{};
-    final newMangaIds = <int>{};
     if (manga != null) {
       final existingMangaByKey = {
         for (final m in mangaRepository.getAll())
@@ -306,28 +305,31 @@ class MangayomiRestoreService {
         }
         mangaRepository.putSync(tempManga);
         if (oldId != null) oldToNewMangaId[oldId] = tempManga.id!;
-        newMangaIds.add(tempManga.id!);
       }
     }
 
     final oldToNewChapterId = <int, int>{};
     if (chapters != null) {
-      final existingUrlsByMangaId = <int, Set<String>>{};
+      final chapterIndexByMangaId = <int, _MangaChapterIndex>{};
       for (final tempChapter in chapters) {
         final newMangaId = tempChapter.mangaId != null
             ? oldToNewMangaId[tempChapter.mangaId]
             : null;
         if (newMangaId == null) continue;
-        if (!newMangaIds.contains(newMangaId)) continue;
-        final existingUrls = existingUrlsByMangaId.putIfAbsent(
+        final index = chapterIndexByMangaId.putIfAbsent(
           newMangaId,
-          () => chapterRepository
-              .getAllByMangaId(newMangaId)
-              .map((c) => c.url)
-              .whereType<String>()
-              .toSet(),
+          () => _MangaChapterIndex.fromChapters(
+            chapterRepository.getAllByMangaId(newMangaId),
+          ),
         );
-        if (tempChapter.url != null && existingUrls.contains(tempChapter.url)) {
+        final existingChapter = index.findMatch(tempChapter);
+        if (existingChapter != null) {
+          if (_reconcileChapterReadingState(existingChapter, tempChapter)) {
+            chapterRepository.putSync(existingChapter);
+          }
+          if (tempChapter.id != null && existingChapter.id != null) {
+            oldToNewChapterId[tempChapter.id!] = existingChapter.id!;
+          }
           continue;
         }
         final mangaRef = mangaRepository.findById(newMangaId);
@@ -337,12 +339,13 @@ class MangayomiRestoreService {
         tempChapter.mangaId = newMangaId;
         chapterRepository.putSync(tempChapter..manga.value = mangaRef);
         tempChapter.manga.saveSync();
-        if (tempChapter.url != null) existingUrls.add(tempChapter.url!);
+        index.add(tempChapter);
         if (oldId != null) oldToNewChapterId[oldId] = tempChapter.id!;
       }
     }
 
     if (history != null) {
+      final historyByMangaId = <int, List<History>>{};
       for (final tempHistory in history) {
         final newChapterId = tempHistory.chapterId != null
             ? oldToNewChapterId[tempHistory.chapterId]
@@ -353,31 +356,185 @@ class MangayomiRestoreService {
         if (newChapterId == null || newMangaId == null) continue;
         final chapterRef = chapterRepository.findByIdSync(newChapterId);
         if (chapterRef == null) continue;
+
+        final existingList = historyByMangaId.putIfAbsent(
+          newMangaId,
+          () => historyRepository.getAllByMangaId(newMangaId).toList(),
+        );
+        final existing = _pickHistoryToMerge(existingList, newChapterId);
+        if (existing != null) {
+          final existingTime = existing.readingTimeSeconds ?? 0;
+          final incomingTime = tempHistory.readingTimeSeconds ?? 0;
+          final mergedTime = incomingTime > existingTime
+              ? incomingTime
+              : existingTime;
+          final incomingIsNewer = _isIncomingNewer(
+            existingUpdatedAt: existing.updatedAt,
+            existingDate: existing.date,
+            incomingUpdatedAt: tempHistory.updatedAt,
+            incomingDate: tempHistory.date,
+          );
+          if (incomingIsNewer) {
+            existing
+              ..mangaId = newMangaId
+              ..chapterId = newChapterId
+              ..chapter.value = chapterRef
+              ..date = tempHistory.date ?? existing.date
+              ..updatedAt = tempHistory.updatedAt ?? existing.updatedAt
+              ..readingTimeSeconds = mergedTime;
+            historyRepository.putSync(existing);
+            existing.chapter.saveSync();
+          } else if (mergedTime > existingTime) {
+            existing.readingTimeSeconds = mergedTime;
+            historyRepository.putSync(existing);
+          }
+          continue;
+        }
+
         tempHistory.id = null;
         tempHistory.mangaId = newMangaId;
         tempHistory.chapterId = newChapterId;
         historyRepository.putSync(tempHistory..chapter.value = chapterRef);
         tempHistory.chapter.saveSync();
+        existingList.add(tempHistory);
       }
     }
 
     if (updates != null) {
+      final updatesByMangaAndName = <int, Map<String, Update>>{};
       for (final tempUpdate in updates) {
         final newMangaId = tempUpdate.mangaId != null
             ? oldToNewMangaId[tempUpdate.mangaId]
             : null;
-        if (newMangaId == null || !newMangaIds.contains(newMangaId)) continue;
+        final chapterName = tempUpdate.chapterName;
+        if (newMangaId == null || chapterName == null) continue;
         final chapter = chapterRepository.findByMangaIdAndName(
           newMangaId,
-          tempUpdate.chapterName,
+          chapterName,
         );
         if (chapter == null) continue;
+
+        final existingByName = updatesByMangaAndName.putIfAbsent(
+          newMangaId,
+          () => {
+            for (final u in updateRepository.getAllByMangaId(newMangaId))
+              if (u.chapterName != null) u.chapterName!: u,
+          },
+        );
+        final existing = existingByName[chapterName];
+        if (existing != null) {
+          if (_isIncomingNewer(
+            existingUpdatedAt: existing.updatedAt,
+            existingDate: existing.date,
+            incomingUpdatedAt: tempUpdate.updatedAt,
+            incomingDate: tempUpdate.date,
+          )) {
+            existing
+              ..date = tempUpdate.date ?? existing.date
+              ..updatedAt = tempUpdate.updatedAt ?? existing.updatedAt
+              ..chapter.value = chapter;
+            updateRepository.putSync(existing);
+            existing.chapter.saveSync();
+          }
+          continue;
+        }
+
         tempUpdate.id = null;
         tempUpdate.mangaId = newMangaId;
         updateRepository.putSync(tempUpdate..chapter.value = chapter);
         tempUpdate.chapter.saveSync();
+        existingByName[chapterName] = tempUpdate;
       }
     }
+  }
+
+  static bool _reconcileChapterReadingState(
+    Chapter existing,
+    Chapter incoming,
+  ) {
+    final existingUpdatedAt = existing.updatedAt ?? 0;
+    final incomingUpdatedAt = incoming.updatedAt ?? 0;
+    if (existingUpdatedAt > incomingUpdatedAt) return false;
+
+    var changed = false;
+    if (incomingUpdatedAt > existingUpdatedAt) {
+      if (incoming.isRead != null && existing.isRead != incoming.isRead) {
+        existing.isRead = incoming.isRead;
+        changed = true;
+      }
+      if (incoming.isBookmarked != null &&
+          existing.isBookmarked != incoming.isBookmarked) {
+        existing.isBookmarked = incoming.isBookmarked;
+        changed = true;
+      }
+      if ((incoming.lastPageRead ?? '').isNotEmpty &&
+          existing.lastPageRead != incoming.lastPageRead) {
+        existing.lastPageRead = incoming.lastPageRead;
+        changed = true;
+      }
+      if (existing.updatedAt != incoming.updatedAt) {
+        existing.updatedAt = incoming.updatedAt;
+        changed = true;
+      }
+      return changed;
+    }
+
+    // Equal timestamps (including both 0): merge reading progress additively.
+    if (incoming.isRead == true && existing.isRead != true) {
+      existing.isRead = true;
+      changed = true;
+    }
+    if (incoming.isBookmarked == true && existing.isBookmarked != true) {
+      existing.isBookmarked = true;
+      changed = true;
+    }
+    if ((existing.lastPageRead ?? '').isEmpty &&
+        (incoming.lastPageRead ?? '').isNotEmpty) {
+      existing.lastPageRead = incoming.lastPageRead;
+      changed = true;
+    }
+    return changed;
+  }
+
+  static History? _pickHistoryToMerge(List<History> entries, int chapterId) {
+    if (entries.isEmpty) return null;
+    final byChapter = entries.firstWhereOrNull((h) => h.chapterId == chapterId);
+    if (byChapter != null) return byChapter;
+    return entries.reduce(
+      (best, current) =>
+          _isIncomingNewer(
+            existingUpdatedAt: best.updatedAt,
+            existingDate: best.date,
+            incomingUpdatedAt: current.updatedAt,
+            incomingDate: current.date,
+          )
+          ? current
+          : best,
+    );
+  }
+
+  static bool _isIncomingNewer({
+    required int? existingUpdatedAt,
+    required String? existingDate,
+    required int? incomingUpdatedAt,
+    required String? incomingDate,
+  }) {
+    final existingTs = existingUpdatedAt ?? 0;
+    final incomingTs = incomingUpdatedAt ?? 0;
+    if (existingTs > 0 && incomingTs > 0 && existingTs != incomingTs) {
+      return incomingTs > existingTs;
+    }
+    final existingEffective = existingTs > 0
+        ? existingTs
+        : (int.tryParse(existingDate ?? '') ?? 0);
+    final incomingEffective = incomingTs > 0
+        ? incomingTs
+        : (int.tryParse(incomingDate ?? '') ?? 0);
+    if (incomingEffective != existingEffective) {
+      return incomingEffective > existingEffective;
+    }
+    return (int.tryParse(incomingDate ?? '') ?? 0) >
+        (int.tryParse(existingDate ?? '') ?? 0);
   }
 
   static Settings _preserveDeviceLocalSettings(
@@ -393,5 +550,64 @@ class MangayomiRestoreService {
       ..androidProxyServer = current.androidProxyServer
       ..jrePath = current.jrePath
       ..extensionServerPath = current.extensionServerPath;
+  }
+}
+
+/// Per-manga chapter index used during merge restore to resolve existing
+/// chapters by non-empty URL first, then by name/scanlator or archive path.
+class _MangaChapterIndex {
+  _MangaChapterIndex();
+
+  final Map<String, Chapter> _byUrl = {};
+  final Map<(String, String), Chapter> _byNameAndScanlator = {};
+  final Map<String, Chapter> _byName = {};
+  final Map<String, Chapter> _byArchivePath = {};
+
+  factory _MangaChapterIndex.fromChapters(List<Chapter> chapters) {
+    final index = _MangaChapterIndex();
+    for (final chapter in chapters) {
+      index.add(chapter);
+    }
+    return index;
+  }
+
+  void add(Chapter chapter) {
+    final url = chapter.url;
+    if (url != null && url.isNotEmpty) {
+      _byUrl.putIfAbsent(url, () => chapter);
+    }
+    final name = chapter.name;
+    if (name != null && name.isNotEmpty) {
+      final scanlator = (chapter.scanlator ?? '').trim();
+      _byNameAndScanlator.putIfAbsent((name, scanlator), () => chapter);
+      _byName.putIfAbsent(name, () => chapter);
+    }
+    final archivePath = chapter.archivePath;
+    if (archivePath != null && archivePath.isNotEmpty) {
+      _byArchivePath.putIfAbsent(archivePath, () => chapter);
+    }
+  }
+
+  Chapter? findMatch(Chapter incoming) {
+    final url = incoming.url;
+    if (url != null && url.isNotEmpty) {
+      return _byUrl[url];
+    }
+    final name = incoming.name;
+    if (name != null && name.isNotEmpty) {
+      final scanlator = (incoming.scanlator ?? '').trim();
+      final exact = _byNameAndScanlator[(name, scanlator)];
+      if (exact != null) return exact;
+      if (scanlator.isEmpty) {
+        return _byName[name];
+      }
+      final unscoped = _byNameAndScanlator[(name, '')];
+      if (unscoped != null) return unscoped;
+    }
+    final archivePath = incoming.archivePath;
+    if (archivePath != null && archivePath.isNotEmpty) {
+      return _byArchivePath[archivePath];
+    }
+    return null;
   }
 }

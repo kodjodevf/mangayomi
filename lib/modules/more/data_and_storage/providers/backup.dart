@@ -89,6 +89,8 @@ Future<String> writeMangayomiBackupZip({
   required String directory,
   int compressionLevel = 6,
   bool encrypt = true,
+  @visibleForTesting
+  ZipFileEncoder Function({String? password})? zipEncoderFactory,
 }) async {
   Map<String, dynamic> datas = {};
   datas.addAll({"version": "2"});
@@ -166,13 +168,45 @@ Future<String> writeMangayomiBackupZip({
       'mangayomi_${DateTime.now().toString().replaceAll(regExp, '_').replaceAll(' ', '_')}';
   final backupFilePath = p.join(directory, "$name.backup.db");
   final file = File(backupFilePath);
-
-  await file.writeAsString(jsonEncode(datas));
   final zipPath = p.join(directory, "$name.backup");
-  final zipEncoder = ZipFileEncoder(password: encryptionPassword);
-  zipEncoder.create(zipPath, level: compressionLevel);
-  await zipEncoder.addFile(file);
-  await zipEncoder.close();
-  file.delete();
+  final zipFile = File(zipPath);
+  final zipEncoder = zipEncoderFactory != null
+      ? zipEncoderFactory(password: encryptionPassword)
+      : ZipFileEncoder(password: encryptionPassword);
+  var encoderOpened = false;
+  var completed = false;
+
+  try {
+    await file.writeAsString(jsonEncode(datas));
+    zipEncoder.create(zipPath, level: compressionLevel);
+    encoderOpened = true;
+    await zipEncoder.addFile(file);
+    try {
+      await zipEncoder.close();
+    } finally {
+      encoderOpened = false;
+    }
+    completed = true;
+  } finally {
+    if (encoderOpened) {
+      try {
+        await zipEncoder.close();
+      } catch (_) {
+        // Best-effort close so the output handle doesn't leak or mask errors.
+      }
+    }
+    if (!completed) {
+      try {
+        if (await zipFile.exists()) await zipFile.delete();
+      } catch (_) {
+        // Best-effort cleanup of incomplete ZIP; preserve original error.
+      }
+    }
+    try {
+      if (await file.exists()) await file.delete();
+    } catch (_) {
+      // Best-effort cleanup of plaintext .backup.db; preserve original error.
+    }
+  }
   return zipPath;
 }

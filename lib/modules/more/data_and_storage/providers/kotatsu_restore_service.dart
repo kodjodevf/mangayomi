@@ -18,67 +18,60 @@ class KotatsuRestoreService {
   const KotatsuRestoreService._();
 
   static Future<void> restore(Ref ref, Archive archive) async {
-    try {
-      final backup = parseKotatsuBackup(archive);
-      await restoreRepository.run(() {
-        categoryRepository.clearSync();
-        mangaRepository.clearSync();
+    final backup = parseKotatsuBackup(archive);
+    await restoreRepository.run(() {
+      categoryRepository.clearSync();
+      mangaRepository.clearSync();
+      chapterRepository.clearSync();
+      downloadRepository.clearSync();
+      historyRepository.clearSync();
+      updateRepository.clearSync();
+      trackRepository.clearSync();
 
-        final categoryIdMap = <int, int>{};
-        for (final category in backup.categories) {
-          final restoredId = categoryRepository.putSync(
-            Category(
-              name: category.name,
-              forItemType: ItemType.manga,
-              pos: category.position,
-              hide: category.hidden,
-            ),
-          );
-          final sourceId = category.sourceId;
-          if (sourceId != null) categoryIdMap[sourceId] = restoredId;
-        }
+      final categoryIdMap = <int, int>{};
+      for (final category in backup.categories) {
+        final restoredId = categoryRepository.putSync(
+          Category(
+            name: category.name,
+            forItemType: ItemType.manga,
+            pos: category.position,
+            hide: category.hidden,
+          ),
+        );
+        final sourceId = category.sourceId;
+        if (sourceId != null) categoryIdMap[sourceId] = restoredId;
+      }
 
-        for (final favourite in backup.mangas) {
-          final tempManga = favourite.manga;
-          final manga = Manga(
-            source: tempManga["source"],
-            author: tempManga["author"],
-            artist: null,
-            genre:
-                (tempManga["tags"] as List?)
-                    ?.map((t) => t["title"] as String)
-                    .toList() ??
-                [],
-            imageUrl: tempManga["large_cover_url"],
-            lang: 'en',
-            link: tempManga["url"],
-            name: tempManga["title"],
-            status: Status.values.firstWhere(
-              (s) =>
-                  s.name.toLowerCase() ==
-                  (tempManga["state"] as String?)?.toLowerCase(),
-              orElse: () => Status.unknown,
-            ),
-            description: null,
-            categories: remapKotatsuCategoryIds(favourite, categoryIdMap),
-            itemType: ItemType.manga,
-            favorite: true,
-            sourceId: null,
-          );
-          mangaRepository.putSync(manga);
-        }
-      });
-      await restoreRepository.run(() {
-        chapterRepository.clearSync();
-        downloadRepository.clearSync();
-        historyRepository.clearSync();
-        updateRepository.clearSync();
-        trackRepository.clearSync();
-        trackRepository.clearPreferencesSync();
-      });
-      invalidateCommonRestoreState(ref);
-    } catch (e) {
-      rethrow;
-    }
+      for (final favourite in backup.mangas) {
+        final tempManga = favourite.manga;
+        final manga = Manga(
+          source: tempManga["source"],
+          author: tempManga["author"],
+          artist: null,
+          genre:
+              (tempManga["tags"] as List?)
+                  ?.map((t) => t["title"] as String)
+                  .toList() ??
+              [],
+          imageUrl: tempManga["large_cover_url"],
+          lang: 'en',
+          link: tempManga["url"],
+          name: tempManga["title"],
+          status: Status.values.firstWhere(
+            (s) =>
+                s.name.toLowerCase() ==
+                (tempManga["state"] as String?)?.toLowerCase(),
+            orElse: () => Status.unknown,
+          ),
+          description: null,
+          categories: remapKotatsuCategoryIds(favourite, categoryIdMap),
+          itemType: ItemType.manga,
+          favorite: true,
+          sourceId: null,
+        );
+        mangaRepository.putSync(manga);
+      }
+    });
+    invalidateCommonRestoreState(ref);
   }
 }
