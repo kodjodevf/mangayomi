@@ -187,7 +187,7 @@ Future<void> _openCatalog(
             lang: 'en',
             itemType: ItemType.anime,
             sourceCode:
-                '${_fixtureScript}\n'
+                '$_fixtureScript\n'
                 'const multiSource = $multiSource;',
           )..sourceCodeLanguage = SourceCodeLanguage.javascript,
         ),
